@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/plugins/DsgTools" >
+        <file>icon.png</file>
+        <file>database.png</file>
+        <file>layers.png</file>
+        <file>frame.png</file>
+        <file>complex.png</file>
+        <file>spatialite.png</file>
+        <file>postgis.png</file>
+        <file>class.png</file>
+        <file>category.png</file>
+        <file>inspect.png</file>
+    </qresource>
+</RCC>
