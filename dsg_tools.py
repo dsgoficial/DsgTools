@@ -191,9 +191,9 @@ class DsgTools:
         complex = self.addMenu(self.dsgTools, u'complex', u'Complex Tools',':/plugins/DsgTools/complex.png')
 
         #QToolButtons
-        databaseButton = self.createToolButton(self.toolbar, u'DatabaseTools')
-        layerButton = self.createToolButton(self.toolbar, u'LayerTools')
-        complexButton = self.createToolButton(self.toolbar, u'ComplexTools')
+        self.databaseButton = self.createToolButton(self.toolbar, u'DatabaseTools')
+        self.layerButton = self.createToolButton(self.toolbar, u'LayerTools')
+        self.complexButton = self.createToolButton(self.toolbar, u'ComplexTools')
 
         icon_path = ':/plugins/DsgTools/spatialite.png'
         action = self.add_action(
@@ -204,8 +204,8 @@ class DsgTools:
             add_to_menu=False,
             add_to_toolbar=False)
         database.addAction(action)
-        databaseButton.addAction(action)
-        databaseButton.setDefaultAction(action)
+        self.databaseButton.addAction(action)
+        self.databaseButton.setDefaultAction(action)
               
         icon_path = ':/plugins/DsgTools/postgis.png'
         action = self.add_action(
@@ -216,7 +216,7 @@ class DsgTools:
             add_to_menu=False,
             add_to_toolbar=False)
         database.addAction(action)
-        databaseButton.addAction(action)
+        self.databaseButton.addAction(action)
 
         icon_path = ':/plugins/DsgTools/category.png'
         action = self.add_action(
@@ -227,8 +227,8 @@ class DsgTools:
             add_to_menu=False,
             add_to_toolbar=False)
         layers.addAction(action)
-        layerButton.addAction(action)
-        layerButton.setDefaultAction(action)
+        self.layerButton.addAction(action)
+        self.layerButton.setDefaultAction(action)
  
         icon_path = ':/plugins/DsgTools/class.png'
         action = self.add_action(
@@ -239,7 +239,7 @@ class DsgTools:
             add_to_menu=False,
             add_to_toolbar=False)
         layers.addAction(action)
-        layerButton.addAction(action)
+        self.layerButton.addAction(action)
  
         icon_path = ':/plugins/DsgTools/frame.png'
         action = self.add_action(
@@ -250,7 +250,7 @@ class DsgTools:
             add_to_menu=False,
             add_to_toolbar=False)
         layers.addAction(action)
-        layerButton.addAction(action)
+        self.layerButton.addAction(action)
 
         icon_path = ':/plugins/DsgTools/complex.png'
         action = self.add_action(
@@ -261,8 +261,8 @@ class DsgTools:
             add_to_menu=False,
             add_to_toolbar=False)
         complex.addAction(action)
-        complexButton.addAction(action)
-        complexButton.setDefaultAction(action)
+        self.complexButton.addAction(action)
+        self.complexButton.setDefaultAction(action)
 
         icon_path = ':/plugins/DsgTools/inspect.png'
         action = self.add_action(
@@ -273,7 +273,7 @@ class DsgTools:
             add_to_menu=False,
             add_to_toolbar=False)
         complex.addAction(action)
-        complexButton.addAction(action)
+        self.complexButton.addAction(action)
         
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -285,8 +285,6 @@ class DsgTools:
             
         if self.dsgTools is not None:
             self.menuBar.removeAction(self.dsgTools.menuAction())
-
-
 
     def run(self):
         """Run method that performs all the real work"""
@@ -301,23 +299,30 @@ class DsgTools:
             pass
         
     def createSpatialiteDatabase(self):
+        self.databaseButton.setDefaultAction(self.toolbar.sender())
         pass
 
     def createPostGISDatabase(self):
+        self.databaseButton.setDefaultAction(self.toolbar.sender())
         pass
 
     def loadByCategory(self):
+        self.layerButton.setDefaultAction(self.toolbar.sender())
         pass
 
     def loadByClass(self):
+        self.layerButton.setDefaultAction(self.toolbar.sender())
         pass
 
     def createFrame(self):
+        self.layerButton.setDefaultAction(self.toolbar.sender())
         pass
 
     def createComplex(self):
+        self.complexButton.setDefaultAction(self.toolbar.sender())
         pass
 
     def inspectComplex(self):
+        self.complexButton.setDefaultAction(self.toolbar.sender())
         pass
 
