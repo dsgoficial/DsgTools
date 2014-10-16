@@ -28,6 +28,7 @@ import resources_rc
 from dsg_tools_dialog import DsgToolsDialog
 import os.path
 
+import aboutDialog
 
 class DsgTools:
     """QGIS Plugin Implementation."""
@@ -189,6 +190,16 @@ class DsgTools:
         database = self.addMenu(self.dsgTools, u'database', u'Database Tools',':/plugins/DsgTools/database.png')
         layers = self.addMenu(self.dsgTools, u'layers', u'Layer Tools',':/plugins/DsgTools/layers.png')
         complex = self.addMenu(self.dsgTools, u'complex', u'Complex Tools',':/plugins/DsgTools/complex.png')
+        
+        icon_path = ':/plugins/DsgTools/dsg.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr(u'About'),
+            callback=self.showAbout,
+            parent=self.dsgTools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        self.dsgTools.addAction(action)
 
         #QToolButtons
         self.databaseButton = self.createToolButton(self.toolbar, u'DatabaseTools')
@@ -297,6 +308,10 @@ class DsgTools:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
             pass
+        
+    def showAbout(self):
+        dlg = aboutDialog.AboutDialog()
+        dlg.exec_()
         
     def createSpatialiteDatabase(self):
         self.databaseButton.setDefaultAction(self.toolbar.sender())

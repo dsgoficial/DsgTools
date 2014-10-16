@@ -11,7 +11,7 @@ name=DSG Tools
 qgisMinimumVersion=2.0
 description=Brazilian Army Cartographic Production Tools
 version=0.1
-author=Luiz Andrade - Cartographic Engineer @ Brazilian Army
+author=Brazilian Army - Geographic Service Bureau
 email=luiz.claudio@dsg.eb.mil.br
 
 # End of mandatory metadata
