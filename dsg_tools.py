@@ -309,7 +309,7 @@ class DsgTools:
             pass
         
     def showAbout(self):
-        dlg = aboutDialog.AboutDialog()
+        dlg = aboutdialog.AboutDialog()
         dlg.exec_()
         
     def createSpatialiteDatabase(self):
