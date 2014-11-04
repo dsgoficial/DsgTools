@@ -27,8 +27,7 @@ import resources_rc
 # Import the code for the dialog
 from dsg_tools_dialog import DsgToolsDialog
 import os.path
-
-import aboutDialog
+import aboutdialog
 
 class DsgTools:
     """QGIS Plugin Implementation."""
