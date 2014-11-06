@@ -326,40 +326,68 @@ class DsgTools:
         dlg.exec_()
 
     def createSpatialiteDatabase(self):
-        self.databaseButton.setDefaultAction(self.toolbar.sender())
-        self.dlg = CriaSpatialiteDialog()
-        self.dlg.show()
-        result = self.dlg.exec_()
-        if result:
-            pass
+        try:
+            self.databaseButton.setDefaultAction(self.toolbar.sender())
+            self.dlg = CriaSpatialiteDialog()
+            self.dlg.show()
+            result = self.dlg.exec_()
+            if result:
+                pass
+        except:
+            self.dlg = CriaSpatialiteDialog()
+            self.dlg.show()
+            result = self.dlg.exec_()
+            if result:
+                pass
 
     def createPostGISDatabase(self):
         self.databaseButton.setDefaultAction(self.toolbar.sender())
         pass
 
     def loadByCategory(self):
-        self.layerButton.setDefaultAction(self.toolbar.sender())
-        self.dlg = CarregaCategoriaDialog()
-        self.dlg.show()
-        result = self.dlg.exec_()
-        if result:
-            pass
+        try:
+            self.layerButton.setDefaultAction(self.toolbar.sender())
+            self.dlg = CarregaCategoriaDialog()
+            self.dlg.show()
+            result = self.dlg.exec_()
+            if result:
+                pass
+        except:
+            self.dlg = CarregaCategoriaDialog()
+            self.dlg.show()
+            result = self.dlg.exec_()
+            if result:
+                pass
 
     def loadByClass(self):
-        self.layerButton.setDefaultAction(self.toolbar.sender())
-        self.dlg = CarregaClasseDialog()
-        self.dlg.show()
-        result = self.dlg.exec_()
-        if result:
-            pass
+        try:
+            self.layerButton.setDefaultAction(self.toolbar.sender())
+            self.dlg = CarregaClasseDialog()
+            self.dlg.show()
+            result = self.dlg.exec_()
+            if result:
+                pass
+        except:
+            self.dlg = CarregaClasseDialog()
+            self.dlg.show()
+            result = self.dlg.exec_()
+            if result:
+                pass
 
     def createFrame(self):
-        self.layerButton.setDefaultAction(self.toolbar.sender())
-        self.dlg = CriaMolduraDialog()
-        self.dlg.show()
-        result = self.dlg.exec_()
-        if result:
-            pass
+        try:
+            self.layerButton.setDefaultAction(self.toolbar.sender())
+            self.dlg = CriaMolduraDialog()
+            self.dlg.show()
+            result = self.dlg.exec_()
+            if result:
+                pass
+        except:
+            self.dlg = CriaMolduraDialog()
+            self.dlg.show()
+            result = self.dlg.exec_()
+            if result:
+                pass
 
     def createComplex(self):
         self.complexButton.setDefaultAction(self.toolbar.sender())
