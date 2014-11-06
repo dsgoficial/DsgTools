@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'carrega_classe_dialog_base.ui'
 #
-# Created: Mon Jun 23 18:43:48 2014
+# Created: Thu Nov 06 19:18:18 2014
 #      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -113,22 +113,12 @@ class Ui_CarregaClasse(object):
         QtCore.QMetaObject.connectSlotsByName(CarregaClasse)
 
     def retranslateUi(self, CarregaClasse):
-        CarregaClasse.setWindowTitle(_translate("CarregaClasse", "Carrega Classe EDGV", None))
-        self.label.setText(_translate("CarregaClasse", "Arquivo                    ", None))
-        self.pushButtonBuscarArquivo.setText(_translate("CarregaClasse", "Buscar", None))
-        self.label_2.setText(_translate("CarregaClasse", "Sistema de Coordenadas", None))
-        self.groupBox.setTitle(_translate("CarregaClasse", "Selecione as Classes", None))
+        CarregaClasse.setWindowTitle(_translate("CarregaClasse", "Load by Class", None))
+        self.label.setText(_translate("CarregaClasse", "File                    ", None))
+        self.pushButtonBuscarArquivo.setText(_translate("CarregaClasse", "Search", None))
+        self.label_2.setText(_translate("CarregaClasse", "Coordinate System", None))
+        self.groupBox.setTitle(_translate("CarregaClasse", "Select the classes", None))
         self.pushButtonOkCarregaClasse.setText(_translate("CarregaClasse", "Ok", None))
-        self.pushButtonCancelarCarregaClasse.setText(_translate("CarregaClasse", "Cancelar", None))
-        self.checkBoxTodosCarregaClasse.setText(_translate("CarregaClasse", "Marcar Todos", None))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    CarregaClasse = QtGui.QWidget()
-    ui = Ui_CarregaClasse()
-    ui.setupUi(CarregaClasse)
-    CarregaClasse.show()
-    sys.exit(app.exec_())
+        self.pushButtonCancelarCarregaClasse.setText(_translate("CarregaClasse", "Cancel", None))
+        self.checkBoxTodosCarregaClasse.setText(_translate("CarregaClasse", "Select All", None))
 

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Philipe Borba\Desktop\carrega_categoria_dialog_base.ui'
+# Form implementation generated from reading ui file 'carrega_categoria_dialog_base.ui'
 #
-# Created: Tue Jun 17 22:01:38 2014
-#      by: PyQt4 UI code generator 4.8.3
+# Created: Thu Nov 06 20:07:26 2014
+#      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,16 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    _fromUtf8 = lambda s: s
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -143,36 +152,26 @@ class Ui_Form(object):
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
-        Form.setWindowTitle(QtGui.QApplication.translate("Form", "Carrega por Categoria v1.0", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("Form", "Arquivo                                 ", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonBuscarArquivo.setText(QtGui.QApplication.translate("Form", "Buscar", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("Form", "Sistema de Coordenadas", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonBuscarSistCoord.setText(QtGui.QApplication.translate("Form", "Buscar", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox.setTitle(QtGui.QApplication.translate("Form", "Carrega por Categoria", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonSelecionaTodas.setToolTip(QtGui.QApplication.translate("Form", "Seleciona todas as categorias do banco", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonSelecionaTodas.setText(QtGui.QApplication.translate("Form", ">>", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonSelecionaUma.setToolTip(QtGui.QApplication.translate("Form", "Seleciona apenas as marcadas", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonSelecionaUma.setText(QtGui.QApplication.translate("Form", ">", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonDeselecionaUma.setToolTip(QtGui.QApplication.translate("Form", "Retira da lista de carga apenas as marcadas", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonDeselecionaUma.setText(QtGui.QApplication.translate("Form", "<", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonDeselecionaTodas.setToolTip(QtGui.QApplication.translate("Form", "Retira da lista de carga todas as categorias selecionadas", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonDeselecionaTodas.setText(QtGui.QApplication.translate("Form", "<<", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox_2.setTitle(QtGui.QApplication.translate("Form", "Agrupar por Primitiva Geométrica", None, QtGui.QApplication.UnicodeUTF8))
-        self.checkBoxPonto.setText(QtGui.QApplication.translate("Form", "Ponto", None, QtGui.QApplication.UnicodeUTF8))
-        self.checkBoxLinha.setText(QtGui.QApplication.translate("Form", "Linha", None, QtGui.QApplication.UnicodeUTF8))
-        self.checkBoxArea.setText(QtGui.QApplication.translate("Form", "Área", None, QtGui.QApplication.UnicodeUTF8))
-        self.checkBoxTodos.setText(QtGui.QApplication.translate("Form", "Marcar Todos", None, QtGui.QApplication.UnicodeUTF8))
-        self.checkBoxSomenteElementos.setText(QtGui.QApplication.translate("Form", "Somente camadas com elementos", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonOk.setText(QtGui.QApplication.translate("Form", "Ok", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonCancelar.setText(QtGui.QApplication.translate("Form", "Cancelar", None, QtGui.QApplication.UnicodeUTF8))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    Form = QtGui.QWidget()
-    ui = Ui_Form()
-    ui.setupUi(Form)
-    Form.show()
-    sys.exit(app.exec_())
+        Form.setWindowTitle(_translate("Form", "Load by Category", None))
+        self.label.setText(_translate("Form", "File                                 ", None))
+        self.pushButtonBuscarArquivo.setText(_translate("Form", "Search", None))
+        self.label_2.setText(_translate("Form", "Coordinate System", None))
+        self.pushButtonBuscarSistCoord.setText(_translate("Form", "Search", None))
+        self.groupBox.setTitle(_translate("Form", "Load by Category", None))
+        self.pushButtonSelecionaTodas.setToolTip(_translate("Form", "Select all categories in the database", None))
+        self.pushButtonSelecionaTodas.setText(_translate("Form", ">>", None))
+        self.pushButtonSelecionaUma.setToolTip(_translate("Form", "Select only the selected", None))
+        self.pushButtonSelecionaUma.setText(_translate("Form", ">", None))
+        self.pushButtonDeselecionaUma.setToolTip(_translate("Form", "Remove from list only the selected categories", None))
+        self.pushButtonDeselecionaUma.setText(_translate("Form", "<", None))
+        self.pushButtonDeselecionaTodas.setToolTip(_translate("Form", "Remove all categories", None))
+        self.pushButtonDeselecionaTodas.setText(_translate("Form", "<<", None))
+        self.groupBox_2.setTitle(_translate("Form", "Group by Geometry Type", None))
+        self.checkBoxPonto.setText(_translate("Form", "Point", None))
+        self.checkBoxLinha.setText(_translate("Form", "Line", None))
+        self.checkBoxArea.setText(_translate("Form", "Polygon", None))
+        self.checkBoxTodos.setText(_translate("Form", "Select All", None))
+        self.checkBoxSomenteElementos.setText(_translate("Form", "Only layers with Elements", None))
+        self.pushButtonOk.setText(_translate("Form", "Ok", None))
+        self.pushButtonCancelar.setText(_translate("Form", "Cancel", None))
 

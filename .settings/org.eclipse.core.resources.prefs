@@ -1,6 +1,7 @@
 eclipse.preferences.version=1
 encoding//DbTools/cria_spatialite_dialog.py=utf-8
 encoding//DbTools/cria_spatialite_dialog_base.py=utf-8
+encoding//LayerTools/carrega_classe_dialog_base.py=utf-8
 encoding/__init__.py=utf-8
 encoding/aboutdialog.py=utf-8
 encoding/dsg_tools.py=utf-8

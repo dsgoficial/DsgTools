@@ -76,7 +76,7 @@ class DsgTools:
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u'&DSG Tools')
+        self.menu = self.tr('&DSG Tools')
         # TODO: We are going to let the user set this up in a future iteration
         self.toolbar = self.iface.addToolBar(u'DsgTools')
         self.toolbar.setObjectName(u'DsgTools')
@@ -194,19 +194,19 @@ class DsgTools:
 
         self.dsgTools = QMenu(self.iface.mainWindow())
         self.dsgTools.setObjectName(u'DsgTools')
-        self.dsgTools.setTitle(self.tr(u'DSG Tools'))
+        self.dsgTools.setTitle(self.tr('DSG Tools'))
 
         self.menuBar.insertMenu(self.iface.firstRightStandardMenu().menuAction(), self.dsgTools)
 
         #Sub menus
-        database = self.addMenu(self.dsgTools, u'database', u'Database Tools',':/plugins/DsgTools/database.png')
-        layers = self.addMenu(self.dsgTools, u'layers', u'Layer Tools',':/plugins/DsgTools/layers.png')
-        complex = self.addMenu(self.dsgTools, u'complex', u'Complex Tools',':/plugins/DsgTools/complex.png')
+        database = self.addMenu(self.dsgTools, u'database', self.tr('Database Tools'),':/plugins/DsgTools/database.png')
+        layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/layers.png')
+        complex = self.addMenu(self.dsgTools, u'complex', self.tr('Complex Tools'),':/plugins/DsgTools/complex.png')
 
         icon_path = ':/plugins/DsgTools/dsg.png'
         action = self.add_action(
             icon_path,
-            text=self.tr(u'About'),
+            text=self.tr('About'),
             callback=self.showAbout,
             parent=self.dsgTools,
             add_to_menu=False,
@@ -221,7 +221,7 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/spatialite.png'
         action = self.add_action(
             icon_path,
-            text=self.tr(u'Create Spatialite'),
+            text=self.tr('Create Spatialite'),
             callback=self.createSpatialiteDatabase,
             parent=database,
             add_to_menu=False,
@@ -233,7 +233,7 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/postgis.png'
         action = self.add_action(
             icon_path,
-            text=self.tr(u'Create PostGIS'),
+            text=self.tr('Create PostGIS'),
             callback=self.createPostGISDatabase,
             parent=database,
             add_to_menu=False,
@@ -244,7 +244,7 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/category.png'
         action = self.add_action(
             icon_path,
-            text=self.tr(u'Load by Category'),
+            text=self.tr('Load by Category'),
             callback=self.loadByCategory,
             parent=database,
             add_to_menu=False,
@@ -256,7 +256,7 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/class.png'
         action = self.add_action(
             icon_path,
-            text=self.tr(u'Load by Class'),
+            text=self.tr('Load by Class'),
             callback=self.loadByClass,
             parent=database,
             add_to_menu=False,
@@ -267,7 +267,7 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/frame.png'
         action = self.add_action(
             icon_path,
-            text=self.tr(u'Create Frame'),
+            text=self.tr('Create Frame'),
             callback=self.createFrame,
             parent=database,
             add_to_menu=False,
@@ -278,7 +278,7 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/complex.png'
         action = self.add_action(
             icon_path,
-            text=self.tr(u'Create Complex'),
+            text=self.tr('Create Complex'),
             callback=self.createComplex,
             parent=database,
             add_to_menu=False,
@@ -290,7 +290,7 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/inspect.png'
         action = self.add_action(
             icon_path,
-            text=self.tr(u'Inspect Complex'),
+            text=self.tr('Inspect Complex'),
             callback=self.inspectComplex,
             parent=database,
             add_to_menu=False,
@@ -302,7 +302,7 @@ class DsgTools:
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
             self.iface.removePluginMenu(
-                self.tr(u'&DSG Tools'),
+                self.tr('&DSG Tools'),
                 action)
             self.iface.removeToolBarIcon(action)
 

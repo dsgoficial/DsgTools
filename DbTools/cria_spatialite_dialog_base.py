@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'cria_spatialite_dialog_base.ui'
 #
-# Created: Sun Jun 22 22:31:03 2014
-#      by: PyQt4 UI code generator 4.8.3
+# Created: Thu Nov 06 19:17:00 2014
+#      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,16 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    _fromUtf8 = lambda s: s
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_CriaSpatialite(object):
     def setupUi(self, CriaSpatialite):
@@ -103,22 +112,12 @@ class Ui_CriaSpatialite(object):
         QtCore.QMetaObject.connectSlotsByName(CriaSpatialite)
 
     def retranslateUi(self, CriaSpatialite):
-        CriaSpatialite.setWindowTitle(QtGui.QApplication.translate("CriaSpatialite", "Cria Spatialite", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("CriaSpatialite", "Pasta Destino                        ", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonBuscarPastaDestinoCriaSpatialite.setText(QtGui.QApplication.translate("CriaSpatialite", "Buscar", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("CriaSpatialite", "Sistema de Coordenadas", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonBuscarSistCoordCriaSpatialite.setText(QtGui.QApplication.translate("CriaSpatialite", "Buscar", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonOkCriaSpatialite.setText(QtGui.QApplication.translate("CriaSpatialite", "Ok", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonCancelarCriaSpatialite.setText(QtGui.QApplication.translate("CriaSpatialite", "Cancelar", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("CriaSpatialite", "Nome do Arquivo            ", None, QtGui.QApplication.UnicodeUTF8))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    CriaSpatialite = QtGui.QWidget()
-    ui = Ui_CriaSpatialite()
-    ui.setupUi(CriaSpatialite)
-    CriaSpatialite.show()
-    sys.exit(app.exec_())
+        CriaSpatialite.setWindowTitle(_translate("CriaSpatialite", "Create Spatialite", None))
+        self.label.setText(_translate("CriaSpatialite", "Select Folder                        ", None))
+        self.pushButtonBuscarPastaDestinoCriaSpatialite.setText(_translate("CriaSpatialite", "Search", None))
+        self.label_2.setText(_translate("CriaSpatialite", "Coordinate System", None))
+        self.pushButtonBuscarSistCoordCriaSpatialite.setText(_translate("CriaSpatialite", "Search", None))
+        self.pushButtonOkCriaSpatialite.setText(_translate("CriaSpatialite", "Ok", None))
+        self.pushButtonCancelarCriaSpatialite.setText(_translate("CriaSpatialite", "Cancel", None))
+        self.label_3.setText(_translate("CriaSpatialite", "File Name            ", None))
 

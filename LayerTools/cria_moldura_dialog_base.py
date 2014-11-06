@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'cria_moldura_dialog_base.ui'
 #
-# Created: Thu Jun 26 00:33:38 2014
-#      by: PyQt4 UI code generator 4.8.3
+# Created: Thu Nov 06 19:18:45 2014
+#      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,16 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    _fromUtf8 = lambda s: s
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_CriaMoldura(object):
     def setupUi(self, CriaMoldura):
@@ -122,23 +131,13 @@ class Ui_CriaMoldura(object):
         QtCore.QMetaObject.connectSlotsByName(CriaMoldura)
 
     def retranslateUi(self, CriaMoldura):
-        CriaMoldura.setWindowTitle(QtGui.QApplication.translate("CriaMoldura", "Cria Moldura", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("CriaMoldura", "Arquivo   ", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonBuscarArquivoCriaMoldura.setText(QtGui.QApplication.translate("CriaMoldura", "Buscar", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("CriaMoldura", "Sistema de Coordenadas", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonOkCriaMoldura.setText(QtGui.QApplication.translate("CriaMoldura", "Ok", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonCancelarCriaMoldura.setText(QtGui.QApplication.translate("CriaMoldura", "Cancelar", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("CriaMoldura", "Escala", None, QtGui.QApplication.UnicodeUTF8))
-        self.radioButtonMI.setText(QtGui.QApplication.translate("CriaMoldura", "MI", None, QtGui.QApplication.UnicodeUTF8))
-        self.radioButtonINOM.setText(QtGui.QApplication.translate("CriaMoldura", "INOM", None, QtGui.QApplication.UnicodeUTF8))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    CriaMoldura = QtGui.QWidget()
-    ui = Ui_CriaMoldura()
-    ui.setupUi(CriaMoldura)
-    CriaMoldura.show()
-    sys.exit(app.exec_())
+        CriaMoldura.setWindowTitle(_translate("CriaMoldura", "Create Frame", None))
+        self.label.setText(_translate("CriaMoldura", "File   ", None))
+        self.pushButtonBuscarArquivoCriaMoldura.setText(_translate("CriaMoldura", "Search", None))
+        self.label_2.setText(_translate("CriaMoldura", "Coordinate System", None))
+        self.pushButtonOkCriaMoldura.setText(_translate("CriaMoldura", "Ok", None))
+        self.pushButtonCancelarCriaMoldura.setText(_translate("CriaMoldura", "Cancel", None))
+        self.label_3.setText(_translate("CriaMoldura", "Scale", None))
+        self.radioButtonMI.setText(_translate("CriaMoldura", "MI", None))
+        self.radioButtonINOM.setText(_translate("CriaMoldura", "INOM", None))
 

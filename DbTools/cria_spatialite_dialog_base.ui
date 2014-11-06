@@ -30,7 +30,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Cria Spatialite</string>
+   <string>Create Spatialite</string>
   </property>
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
@@ -45,7 +45,7 @@
     <item>
      <widget class="QLabel" name="label">
       <property name="text">
-       <string>Pasta Destino                        </string>
+       <string>Select Folder                        </string>
       </property>
      </widget>
     </item>
@@ -87,7 +87,7 @@
     <item>
      <widget class="QPushButton" name="pushButtonBuscarPastaDestinoCriaSpatialite">
       <property name="text">
-       <string>Buscar</string>
+       <string>Search</string>
       </property>
      </widget>
     </item>
@@ -106,7 +106,7 @@
     <item>
      <widget class="QLabel" name="label_2">
       <property name="text">
-       <string>Sistema de Coordenadas</string>
+       <string>Coordinate System</string>
       </property>
      </widget>
     </item>
@@ -148,7 +148,7 @@
     <item>
      <widget class="QPushButton" name="pushButtonBuscarSistCoordCriaSpatialite">
       <property name="text">
-       <string>Buscar</string>
+       <string>Search</string>
       </property>
      </widget>
     </item>
@@ -200,7 +200,7 @@
     <item>
      <widget class="QPushButton" name="pushButtonCancelarCriaSpatialite">
       <property name="text">
-       <string>Cancelar</string>
+       <string>Cancel</string>
       </property>
      </widget>
     </item>
@@ -232,7 +232,7 @@
     <item>
      <widget class="QLabel" name="label_3">
       <property name="text">
-       <string>Nome do Arquivo            </string>
+       <string>File Name            </string>
       </property>
      </widget>
     </item>
