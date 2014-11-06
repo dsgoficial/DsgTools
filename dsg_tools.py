@@ -39,6 +39,7 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/LayerTools'))
 from carrega_categoria_dialog import CarregaCategoriaDialog
 from carrega_classe_dialog import CarregaClasseDialog
 from cria_spatialite_dialog import CriaSpatialiteDialog
+from cria_moldura_dialog import CriaMolduraDialog
 
 
 class DsgTools:
@@ -325,6 +326,7 @@ class DsgTools:
         dlg.exec_()
 
     def createSpatialiteDatabase(self):
+        self.databaseButton.setDefaultAction(self.toolbar.sender())
         self.dlg = CriaSpatialiteDialog()
         self.dlg.show()
         result = self.dlg.exec_()
@@ -336,7 +338,7 @@ class DsgTools:
         pass
 
     def loadByCategory(self):
-        #self.layerButton.setDefaultAction(self.toolbar.sender())
+        self.layerButton.setDefaultAction(self.toolbar.sender())
         self.dlg = CarregaCategoriaDialog()
         self.dlg.show()
         result = self.dlg.exec_()
@@ -344,6 +346,7 @@ class DsgTools:
             pass
 
     def loadByClass(self):
+        self.layerButton.setDefaultAction(self.toolbar.sender())
         self.dlg = CarregaClasseDialog()
         self.dlg.show()
         result = self.dlg.exec_()
@@ -351,6 +354,7 @@ class DsgTools:
             pass
 
     def createFrame(self):
+        self.layerButton.setDefaultAction(self.toolbar.sender())
         self.dlg = CriaMolduraDialog()
         self.dlg.show()
         result = self.dlg.exec_()
