@@ -28,6 +28,18 @@ import resources_rc
 from dsg_tools_dialog import DsgToolsDialog
 import os.path
 import aboutdialog
+import sys
+
+currentPath = os.path.dirname(__file__)
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/DbTools'))
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/LayerTools'))
+
+from carrega_categoria_dialog import CarregaCategoriaDialog
+from carrega_classe_dialog import CarregaClasseDialog
+from cria_spatialite_dialog import CriaSpatialiteDialog
+
 
 class DsgTools:
     """QGIS Plugin Implementation."""
@@ -67,7 +79,7 @@ class DsgTools:
         # TODO: We are going to let the user set this up in a future iteration
         self.toolbar = self.iface.addToolBar(u'DsgTools')
         self.toolbar.setObjectName(u'DsgTools')
-        
+
         self.dsgTools = None
         self.menuBar = self.iface.mainWindow().menuBar()
 
@@ -159,7 +171,7 @@ class DsgTools:
         self.actions.append(action)
 
         return action
-    
+
     def addMenu(self, parent, name, title, icon_path):
         child = QMenu(parent)
         child.setObjectName(name)
@@ -167,7 +179,7 @@ class DsgTools:
         child.setIcon(QIcon(icon_path))
         parent.addMenu(child)
         return child
-        
+
     def createToolButton(self, parent, text):
         button = QToolButton(parent)
         button.setObjectName(text)
@@ -178,7 +190,7 @@ class DsgTools:
 
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
-        
+
         self.dsgTools = QMenu(self.iface.mainWindow())
         self.dsgTools.setObjectName(u'DsgTools')
         self.dsgTools.setTitle(self.tr(u'DSG Tools'))
@@ -189,7 +201,7 @@ class DsgTools:
         database = self.addMenu(self.dsgTools, u'database', u'Database Tools',':/plugins/DsgTools/database.png')
         layers = self.addMenu(self.dsgTools, u'layers', u'Layer Tools',':/plugins/DsgTools/layers.png')
         complex = self.addMenu(self.dsgTools, u'complex', u'Complex Tools',':/plugins/DsgTools/complex.png')
-        
+
         icon_path = ':/plugins/DsgTools/dsg.png'
         action = self.add_action(
             icon_path,
@@ -216,7 +228,7 @@ class DsgTools:
         database.addAction(action)
         self.databaseButton.addAction(action)
         self.databaseButton.setDefaultAction(action)
-              
+
         icon_path = ':/plugins/DsgTools/postgis.png'
         action = self.add_action(
             icon_path,
@@ -239,7 +251,7 @@ class DsgTools:
         layers.addAction(action)
         self.layerButton.addAction(action)
         self.layerButton.setDefaultAction(action)
- 
+
         icon_path = ':/plugins/DsgTools/class.png'
         action = self.add_action(
             icon_path,
@@ -250,7 +262,7 @@ class DsgTools:
             add_to_toolbar=False)
         layers.addAction(action)
         self.layerButton.addAction(action)
- 
+
         icon_path = ':/plugins/DsgTools/frame.png'
         action = self.add_action(
             icon_path,
@@ -284,7 +296,7 @@ class DsgTools:
             add_to_toolbar=False)
         complex.addAction(action)
         self.complexButton.addAction(action)
-        
+
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
@@ -292,7 +304,7 @@ class DsgTools:
                 self.tr(u'&DSG Tools'),
                 action)
             self.iface.removeToolBarIcon(action)
-            
+
         if self.dsgTools is not None:
             self.menuBar.removeAction(self.dsgTools.menuAction())
 
@@ -307,30 +319,43 @@ class DsgTools:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
             pass
-        
+
     def showAbout(self):
         dlg = aboutdialog.AboutDialog()
         dlg.exec_()
-        
+
     def createSpatialiteDatabase(self):
-        self.databaseButton.setDefaultAction(self.toolbar.sender())
-        pass
+        self.dlg = CriaSpatialiteDialog()
+        self.dlg.show()
+        result = self.dlg.exec_()
+        if result:
+            pass
 
     def createPostGISDatabase(self):
         self.databaseButton.setDefaultAction(self.toolbar.sender())
         pass
 
     def loadByCategory(self):
-        self.layerButton.setDefaultAction(self.toolbar.sender())
-        pass
+        #self.layerButton.setDefaultAction(self.toolbar.sender())
+        self.dlg = CarregaCategoriaDialog()
+        self.dlg.show()
+        result = self.dlg.exec_()
+        if result:
+            pass
 
     def loadByClass(self):
-        self.layerButton.setDefaultAction(self.toolbar.sender())
-        pass
+        self.dlg = CarregaClasseDialog()
+        self.dlg.show()
+        result = self.dlg.exec_()
+        if result:
+            pass
 
     def createFrame(self):
-        self.layerButton.setDefaultAction(self.toolbar.sender())
-        pass
+        self.dlg = CriaMolduraDialog()
+        self.dlg.show()
+        result = self.dlg.exec_()
+        if result:
+            pass
 
     def createComplex(self):
         self.complexButton.setDefaultAction(self.toolbar.sender())
