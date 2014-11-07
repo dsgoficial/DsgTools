@@ -62,7 +62,7 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
         self.categoriasSelecionadas = []
         self.setupUi(self)
         #qmlPath will be set as /qml_qgis/qgis_22/edgv_213/, but in a further version, there will be an option to detect from db
-        self.qmlPath = os.path.dirname(__file__)+'/qml_qgis/qgis_22/edgv_213/'
+        self.qmlPath = os.path.dirname(__file__)+'/qml_qgis/qgis_26/edgv_213/'
         self.qmlPath.replace('\\','/')
         self.pontoComElemento = []
         self.linhaComElemento = []
@@ -406,7 +406,11 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
         display_name = nome_camada[0]
         vlayer = QgsVectorLayer(uri.uri(), display_name, 'spatialite')
         vlayer.setCrs(coordSys)
-        vlayer.loadNamedStyle(xmlfilepath+nome_camada[0]+'.qml')
+#         print display_name
+#         print nome_camada
+#         print nome_camada[0]
+#         print xmlfilepath+nome_camada[0]+'.qml'
+        vlayer.loadNamedStyle(xmlfilepath+nome_camada[0]+'.qml',False)
         grupo.append(vlayer)
         return vlayer
         
