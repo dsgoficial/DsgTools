@@ -341,8 +341,11 @@ class DsgTools:
                 pass
 
     def createPostGISDatabase(self):
-        self.databaseButton.setDefaultAction(self.toolbar.sender())
-        pass
+        try:
+            self.databaseButton.setDefaultAction(self.toolbar.sender())
+            pass
+        except:
+            pass
 
     def loadByCategory(self):
         try:
@@ -390,10 +393,16 @@ class DsgTools:
                 pass
 
     def createComplex(self):
-        self.complexButton.setDefaultAction(self.toolbar.sender())
-        pass
+        try:
+            self.complexButton.setDefaultAction(self.toolbar.sender())
+            pass
+        except:
+            pass
 
     def inspectComplex(self):
-        self.complexButton.setDefaultAction(self.toolbar.sender())
-        pass
+        try:
+            self.complexButton.setDefaultAction(self.toolbar.sender())
+            pass
+        except:
+            pass
 
