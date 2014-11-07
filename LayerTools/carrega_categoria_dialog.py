@@ -61,7 +61,8 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
         self.categorias = []
         self.categoriasSelecionadas = []
         self.setupUi(self)
-        self.qmlPath = os.path.dirname(__file__)+'/qml_qgis/'
+        #qmlPath will be set as /qml_qgis/qgis_22/edgv_213/, but in a further version, there will be an option to detect from db
+        self.qmlPath = os.path.dirname(__file__)+'/qml_qgis/qgis_22/edgv_213/'
         self.qmlPath.replace('\\','/')
         self.pontoComElemento = []
         self.linhaComElemento = []
