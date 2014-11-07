@@ -57,7 +57,7 @@ class CriaSpatialiteDialog(QtGui.QDialog, cria_spatialite_dialog_base.Ui_CriaSpa
         self.sqliteFileName = ''
 
         self.setupUi(self)
-        self.seedFile = os.path.dirname(__file__)+'/template/semente_edgv_com_codelists.sqlite'
+        self.seedFile = os.path.dirname(__file__)+'/template/seed_file_edgv_213_v3.sqlite'
         self.seedFile.replace('\\','/')
 
         self.bar = QgsMessageBar()
