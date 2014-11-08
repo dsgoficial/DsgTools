@@ -35,11 +35,13 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/DbTools'))
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/LayerTools'))
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ComplexTools'))
 
 from carrega_categoria_dialog import CarregaCategoriaDialog
 from carrega_classe_dialog import CarregaClasseDialog
 from cria_spatialite_dialog import CriaSpatialiteDialog
 from cria_moldura_dialog import CriaMolduraDialog
+from createComplex import CreateComplexDialog
 
 
 class DsgTools:
@@ -395,9 +397,15 @@ class DsgTools:
     def createComplex(self):
         try:
             self.complexButton.setDefaultAction(self.toolbar.sender())
-            pass
+            self.dlg = CreateComplexDialog()
+            result = self.dlg.exec_()
+            if result:
+                pass
         except:
-            pass
+            self.dlg = CreateComplexDialog()
+            result = self.dlg.exec_()
+            if result:
+                pass
 
     def inspectComplex(self):
         try:

@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
+encoding//ComplexTools/createComplex.py=utf-8
 encoding//DbTools/cria_spatialite_dialog.py=utf-8
 encoding//DbTools/cria_spatialite_dialog_base.py=utf-8
 encoding//LayerTools/carrega_categoria_dialog.py=utf-8
