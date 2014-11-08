@@ -30,10 +30,24 @@ from PyQt4.QtXml import *
 from ui_createComplex import Ui_Dialog
 
 class CreateComplexDialog(QDialog, Ui_Dialog):
-    def __init__(self):
+    def __init__(self, iface):
         """Constructor.
         """
         QDialog.__init__( self )
         self.setupUi( self )
-    
-    
+        
+        self.iface = iface
+        
+        self.populateSelectedFeaturesWidget()
+        
+    def populateSelectedFeaturesWidget(self):
+        self.layers = self.iface.mapCanvas().layers()
+        for layer in self.layers:
+            selectedFeatures = layer.selectedFeatures()
+            if len(selectedFeatures) == 0:
+                continue
+            item = QTreeWidgetItem(self.selectedFeaturesTreeWidget)
+            item.setText(0,layer.name())
+            for feature in selectedFeatures:
+                featureItem = QTreeWidgetItem(item)
+                featureItem.setText(0,str(feature.id()))

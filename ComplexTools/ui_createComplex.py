@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_createComplex.ui'
 #
-# Created: Sat Nov 08 00:28:44 2014
+# Created: Sat Nov 08 01:17:26 2014
 #      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -36,18 +36,28 @@ class Ui_Dialog(object):
         self.selectedFeaturesTreeWidget.setGeometry(QtCore.QRect(20, 60, 256, 291))
         self.selectedFeaturesTreeWidget.setObjectName(_fromUtf8("selectedFeaturesTreeWidget"))
         self.selectedFeaturesTreeWidget.header().setVisible(True)
-        self.widget = QtGui.QWidget(Dialog)
-        self.widget.setGeometry(QtCore.QRect(21, 21, 561, 22))
-        self.widget.setObjectName(_fromUtf8("widget"))
-        self.horizontalLayout = QtGui.QHBoxLayout(self.widget)
+        self.layoutWidget = QtGui.QWidget(Dialog)
+        self.layoutWidget.setGeometry(QtCore.QRect(21, 21, 561, 22))
+        self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
+        self.horizontalLayout = QtGui.QHBoxLayout(self.layoutWidget)
         self.horizontalLayout.setMargin(0)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.label = QtGui.QLabel(self.widget)
+        self.label = QtGui.QLabel(self.layoutWidget)
         self.label.setObjectName(_fromUtf8("label"))
         self.horizontalLayout.addWidget(self.label)
-        self.comboBox = QtGui.QComboBox(self.widget)
+        self.comboBox = QtGui.QComboBox(self.layoutWidget)
         self.comboBox.setObjectName(_fromUtf8("comboBox"))
         self.horizontalLayout.addWidget(self.comboBox)
+        self.tableWidget = QtGui.QTableWidget(Dialog)
+        self.tableWidget.setGeometry(QtCore.QRect(310, 60, 281, 291))
+        self.tableWidget.setObjectName(_fromUtf8("tableWidget"))
+        self.tableWidget.setColumnCount(2)
+        self.tableWidget.setRowCount(0)
+        item = QtGui.QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(0, item)
+        item = QtGui.QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(1, item)
+        self.tableWidget.horizontalHeader().setStretchLastSection(True)
 
         self.retranslateUi(Dialog)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
@@ -58,4 +68,8 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(_translate("Dialog", "Create Complex Features", None))
         self.selectedFeaturesTreeWidget.headerItem().setText(0, _translate("Dialog", "Selected Features", None))
         self.label.setText(_translate("Dialog", "Select the Complex Feature Class:", None))
+        item = self.tableWidget.horizontalHeaderItem(0)
+        item.setText(_translate("Dialog", "Attribute", None))
+        item = self.tableWidget.horizontalHeaderItem(1)
+        item.setText(_translate("Dialog", "Value", None))
 

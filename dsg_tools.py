@@ -397,12 +397,12 @@ class DsgTools:
     def createComplex(self):
         try:
             self.complexButton.setDefaultAction(self.toolbar.sender())
-            self.dlg = CreateComplexDialog()
+            self.dlg = CreateComplexDialog(self.iface)
             result = self.dlg.exec_()
             if result:
                 pass
         except:
-            self.dlg = CreateComplexDialog()
+            self.dlg = CreateComplexDialog(self.iface)
             result = self.dlg.exec_()
             if result:
                 pass
