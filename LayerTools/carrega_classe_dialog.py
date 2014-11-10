@@ -59,7 +59,11 @@ class CarregaClasseDialog(QtGui.QDialog, carrega_classe_dialog_base.Ui_CarregaCl
         self.classesSelecionadas = []
         self.setupUi(self)
         #qmlPath will be set as /qml_qgis/qgis_22/edgv_213/, but in a further version, there will be an option to detect from db
-        self.qmlPath = os.path.dirname(__file__)+'/qml_qgis/qgis_26/edgv_213/'
+        version = qgis.core.QGis.QGIS_VERSION
+        if version == '2.6.0-Brighton':
+            self.qmlPath = os.path.dirname(__file__)+'/qml_qgis/qgis_26/edgv_213/'
+        else:
+            self.qmlPath = os.path.dirname(__file__)+'/qml_qgis/qgis_22/edgv_213/'
         self.qmlPath.replace('\\','/')
 
 
