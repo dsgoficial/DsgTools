@@ -49,6 +49,11 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
         QObject.connect(self.deselectOneButton, SIGNAL(("clicked()")), self.deselectOneFeature)
         QObject.connect(self.deselectAllButton, SIGNAL(("clicked()")), self.deselectAllFeatures)
         
+        self.selectedFeaturesTreeWidget.setDragDropMode(QAbstractItemView.DragDrop)
+        self.selectedFeaturesTreeWidget.setDefaultDropAction(Qt.MoveAction)
+        self.componentFeaturesTreeWidget.setDragDropMode(QAbstractItemView.DragDrop)
+        self.componentFeaturesTreeWidget.setDefaultDropAction(Qt.MoveAction)
+        
         self.populateSelectedFeaturesWidget()
         
     def setFile(self):
@@ -99,14 +104,44 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
                 featureItem.setText(0,str(feature.id()))
                 
     def selectAllFeatures(self):
-        pass
+        root = self.selectedFeaturesTreeWidget.invisibleRootItem()
+        children = root.takeChildren()
+        if len(children) > 0:
+            for child in children:
+                self.componentFeaturesTreeWidget.addTopLevelItem(child)
     
     def selectOneFeature(self):
-        pass
+        root = self.selectedFeaturesTreeWidget.invisibleRootItem()
+        items = self.selectedFeaturesTreeWidget.selectedItems()
+        for item in items:
+            if item.childCount() == 0:#feature selected
+                parentItem = item.parent().clone()
+                parentItem.takeChildren()
+                featureIndex = item.parent().indexOfChild(item)
+                featureItem = item.parent().takeChild(featureIndex)
+                #insert item in the component tree                
+                foundItems = self.componentFeaturesTreeWidget.findItems(parentItem.text(0), Qt.MatchExactly)
+                if len(foundItems) == 0:
+                    parentItem.addChild(featureItem)
+                    self.componentFeaturesTreeWidget.addTopLevelItem(parentItem)
+                else:
+                    foundItems[0].addChild(featureItem)
+                    
+                if item.parent().childCount() == 0:
+                    layerIndex = root.indexOfChild(item.parent())
+                    root.takeChild(layerIndex)
+            else:#layer selected
+                layerIndex = root.indexOfChild(item)
+                layerItem = root.takeChild(layerIndex)
 
     def deselectOneFeature(self):
-        pass
+        items = self.componentFeaturesTreeWidget.selectedItems()
+        for i in range(len(items)):
+            item = self.componentFeaturesTreeWidget.takeTopLevelItem(i)
+            self.selectedFeaturesTreeWidget.addTopLevelItem(item)
 
     def deselectAllFeatures(self):
-        pass
+        self.selectedFeaturesTreeWidget.clear()
+        self.componentFeaturesTreeWidget.clear()
+        self.populateSelectedFeaturesWidget()
     
