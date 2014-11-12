@@ -30,6 +30,7 @@ from PyQt4.QtXml import *
 from PyQt4.QtSql import QSqlQueryModel,QSqlDatabase,QSqlQuery
 
 from ui_createComplex import Ui_Dialog
+from numpy.core.defchararray import count
 
 class CreateComplexDialog(QDialog, Ui_Dialog):
     def __init__(self, iface):
@@ -104,11 +105,14 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
                 featureItem.setText(0,str(feature.id()))
                 
     def selectAllFeatures(self):
-        root = self.selectedFeaturesTreeWidget.invisibleRootItem()
-        children = root.takeChildren()
-        if len(children) > 0:
-            for child in children:
-                self.componentFeaturesTreeWidget.addTopLevelItem(child)
+        self.selectedFeaturesTreeWidget.clear()
+        self.componentFeaturesTreeWidget.clear()
+        self.populateSelectedFeaturesWidget()
+
+        sRoot = self.selectedFeaturesTreeWidget.invisibleRootItem()
+        children = sRoot.takeChildren()
+        cRoot = self.componentFeaturesTreeWidget.invisibleRootItem()
+        cRoot.addChildren(children)
     
     def selectOneFeature(self):
         root = self.selectedFeaturesTreeWidget.invisibleRootItem()
@@ -127,18 +131,54 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
                 else:
                     foundItems[0].addChild(featureItem)
                     
-                if item.parent().childCount() == 0:
-                    layerIndex = root.indexOfChild(item.parent())
-                    root.takeChild(layerIndex)
             else:#layer selected
                 layerIndex = root.indexOfChild(item)
                 layerItem = root.takeChild(layerIndex)
+                foundItems = self.componentFeaturesTreeWidget.findItems(layerItem.text(0), Qt.MatchExactly)
+                if len(foundItems) == 0:
+                    self.componentFeaturesTreeWidget.addTopLevelItem(layerItem)
+                else:
+                    children = layerItem.takeChildren()
+                    foundItems[0].addChildren(children)
+                
+        count = root.childCount()
+        for i in range(count):
+            child = root.child(i)
+            if child.childCount() == 0:
+                root.removeChild(child)
 
     def deselectOneFeature(self):
+        root = self.componentFeaturesTreeWidget.invisibleRootItem()
         items = self.componentFeaturesTreeWidget.selectedItems()
-        for i in range(len(items)):
-            item = self.componentFeaturesTreeWidget.takeTopLevelItem(i)
-            self.selectedFeaturesTreeWidget.addTopLevelItem(item)
+        for item in items:
+            if item.childCount() == 0:#feature selected
+                parentItem = item.parent().clone()
+                parentItem.takeChildren()
+                featureIndex = item.parent().indexOfChild(item)
+                featureItem = item.parent().takeChild(featureIndex)
+                #insert item in the component tree                
+                foundItems = self.selectedFeaturesTreeWidget.findItems(parentItem.text(0), Qt.MatchExactly)
+                if len(foundItems) == 0:
+                    parentItem.addChild(featureItem)
+                    self.selectedFeaturesTreeWidget.addTopLevelItem(parentItem)
+                else:
+                    foundItems[0].addChild(featureItem)
+                    
+            else:#layer selected
+                layerIndex = root.indexOfChild(item)
+                layerItem = root.takeChild(layerIndex)
+                foundItems = self.selectedFeaturesTreeWidget.findItems(layerItem.text(0), Qt.MatchExactly)
+                if len(foundItems) == 0:
+                    self.selectedFeaturesTreeWidget.addTopLevelItem(layerItem)
+                else:
+                    children = layerItem.takeChildren()
+                    foundItems[0].addChildren(children)
+                
+        count = root.childCount()
+        for i in range(count):
+            child = root.child(i)
+            if child.childCount() == 0:
+                root.removeChild(child)
 
     def deselectAllFeatures(self):
         self.selectedFeaturesTreeWidget.clear()
