@@ -27,7 +27,7 @@ from qgis.core import *
 from qgis.gui import *
 from PyQt4.QtXml import *
 
-from PyQt4.QtSql import QSqlQueryModel,QSqlDatabase,QSqlQuery
+from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 
 from ui_createComplex import Ui_Dialog
 from numpy.core.defchararray import count
@@ -49,6 +49,8 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
         QObject.connect(self.selectOneButton, SIGNAL(("clicked()")), self.selectOneFeature)
         QObject.connect(self.deselectOneButton, SIGNAL(("clicked()")), self.deselectOneFeature)
         QObject.connect(self.deselectAllButton, SIGNAL(("clicked()")), self.deselectAllFeatures)
+        QObject.connect(self.addRow, SIGNAL(("clicked()")), self.addComplex)
+        QObject.connect(self.removeRow, SIGNAL(("clicked()")), self.removeComplex)
         
         self.populateSelectedFeaturesWidget()
         
@@ -72,11 +74,20 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
     def updateTableView(self):
         table = self.comboBox.currentText()
         
-        projectModel = QSqlQueryModel()
-        projectModel.setQuery("select * from "+table,self.db)
+        self.projectModel = QSqlTableModel(None, self.db)
+        self.projectModel.setTable(table)
+        self.projectModel.setEditStrategy(QSqlTableModel.OnFieldChange)
+        self.projectModel.select()
         
-        self.tableView.setModel(projectModel)
+        self.tableView.setModel(self.projectModel)
         self.tableView.show()
+        
+    def addComplex(self):
+        self.projectModel.insertRows(self.projectModel.rowCount(), 1)
+        self.projectModel.submit()
+        
+    def removeComplex(self):
+        pass
         
     def populateComboBox(self):
         self.comboBox.clear()
