@@ -50,11 +50,6 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
         QObject.connect(self.deselectOneButton, SIGNAL(("clicked()")), self.deselectOneFeature)
         QObject.connect(self.deselectAllButton, SIGNAL(("clicked()")), self.deselectAllFeatures)
         
-        self.selectedFeaturesTreeWidget.setDragDropMode(QAbstractItemView.DragDrop)
-        self.selectedFeaturesTreeWidget.setDefaultDropAction(Qt.MoveAction)
-        self.componentFeaturesTreeWidget.setDragDropMode(QAbstractItemView.DragDrop)
-        self.componentFeaturesTreeWidget.setDefaultDropAction(Qt.MoveAction)
-        
         self.populateSelectedFeaturesWidget()
         
     def setFile(self):
@@ -104,6 +99,8 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
                 featureItem = QTreeWidgetItem(item)
                 featureItem.setText(0,str(feature.id()))
                 
+        self.selectedFeaturesTreeWidget.sortItems(0, Qt.AscendingOrder)
+                
     def selectAllFeatures(self):
         self.selectedFeaturesTreeWidget.clear()
         self.componentFeaturesTreeWidget.clear()
@@ -114,6 +111,8 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
         cRoot = self.componentFeaturesTreeWidget.invisibleRootItem()
         cRoot.addChildren(children)
     
+        self.componentFeaturesTreeWidget.sortItems(0, Qt.AscendingOrder)
+
     def selectOneFeature(self):
         root = self.selectedFeaturesTreeWidget.invisibleRootItem()
         items = self.selectedFeaturesTreeWidget.selectedItems()
@@ -146,6 +145,8 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
             child = root.child(i)
             if child.childCount() == 0:
                 root.removeChild(child)
+                
+        self.componentFeaturesTreeWidget.sortItems(0, Qt.AscendingOrder)
 
     def deselectOneFeature(self):
         root = self.componentFeaturesTreeWidget.invisibleRootItem()
@@ -179,6 +180,8 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
             child = root.child(i)
             if child.childCount() == 0:
                 root.removeChild(child)
+                
+        self.selectedFeaturesTreeWidget.sortItems(0, Qt.AscendingOrder)
 
     def deselectAllFeatures(self):
         self.selectedFeaturesTreeWidget.clear()
