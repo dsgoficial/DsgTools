@@ -52,7 +52,16 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
         QObject.connect(self.addRow, SIGNAL(("clicked()")), self.addComplex)
         QObject.connect(self.removeRow, SIGNAL(("clicked()")), self.removeComplex)
         
+        QObject.connect(self.buttonBox, SIGNAL(("accepted()")), self.accept)
+        QObject.connect(self.buttonBox, SIGNAL(("rejected()")), self.reject)
+        
         self.populateSelectedFeaturesWidget()
+        
+    def accept(self):
+        self.projectModel.submitAll()
+    
+    def reject(self):
+        pass
         
     def setFile(self):
         fd = QFileDialog()
@@ -76,15 +85,17 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
         
         self.projectModel = QSqlTableModel(None, self.db)
         self.projectModel.setTable(table)
-        self.projectModel.setEditStrategy(QSqlTableModel.OnFieldChange)
+        self.projectModel.setEditStrategy(QSqlTableModel.OnManualSubmit)
         self.projectModel.select()
         
         self.tableView.setModel(self.projectModel)
         self.tableView.show()
         
     def addComplex(self):
-        self.projectModel.insertRows(self.projectModel.rowCount(), 1)
-        self.projectModel.submit()
+#         record = self.projectModel.record()
+#         record.setValue(0, "new")
+        self.projectModel.insertRow(self.projectModel.rowCount())
+#         self.projectModel.updateRowInTable(self.projectModel.rowCount(), record)
         
     def removeComplex(self):
         pass
