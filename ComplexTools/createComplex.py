@@ -53,16 +53,12 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
         QObject.connect(self.removeRow, SIGNAL(("clicked()")), self.removeComplex)
         
         QObject.connect(self.buttonBox, SIGNAL(("accepted()")), self.accept)
-        QObject.connect(self.buttonBox, SIGNAL(("rejected()")), self.reject)
         
         self.populateSelectedFeaturesWidget()
         
     def accept(self):
         self.projectModel.submitAll()
-    
-    def reject(self):
-        pass
-        
+            
     def setFile(self):
         fd = QFileDialog()
         self.filename = fd.getOpenFileName(filter='*.sqlite')
@@ -92,10 +88,7 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
         self.tableView.show()
         
     def addComplex(self):
-#         record = self.projectModel.record()
-#         record.setValue(0, "new")
         self.projectModel.insertRow(self.projectModel.rowCount())
-#         self.projectModel.updateRowInTable(self.projectModel.rowCount(), record)
         
     def removeComplex(self):
         pass

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_createComplex.ui'
 #
-# Created: Mon Nov 10 16:21:34 2014
+# Created: Wed Nov 12 23:37:42 2014
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,9 +17,9 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(550, 410)
-        self.gridLayout_2 = QtGui.QGridLayout(Dialog)
-        self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
+        Dialog.resize(602, 473)
+        self.gridLayout_4 = QtGui.QGridLayout(Dialog)
+        self.gridLayout_4.setObjectName(_fromUtf8("gridLayout_4"))
         self.gridLayout = QtGui.QGridLayout()
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
@@ -45,12 +45,24 @@ class Ui_Dialog(object):
         self.comboBox.setObjectName(_fromUtf8("comboBox"))
         self.horizontalLayout.addWidget(self.comboBox)
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
-        self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
-        self.verticalLayout_2 = QtGui.QVBoxLayout()
-        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.gridLayout_4.addLayout(self.gridLayout, 0, 0, 1, 1)
+        self.gridLayout_3 = QtGui.QGridLayout()
+        self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
+        self.gridLayout_2 = QtGui.QGridLayout()
+        self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
         self.tableView = QtGui.QTableView(Dialog)
         self.tableView.setObjectName(_fromUtf8("tableView"))
-        self.verticalLayout_2.addWidget(self.tableView)
+        self.gridLayout_2.addWidget(self.tableView, 0, 0, 1, 1)
+        self.horizontalLayout_4 = QtGui.QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
+        self.addRow = QtGui.QPushButton(Dialog)
+        self.addRow.setObjectName(_fromUtf8("addRow"))
+        self.horizontalLayout_4.addWidget(self.addRow)
+        self.removeRow = QtGui.QPushButton(Dialog)
+        self.removeRow.setObjectName(_fromUtf8("removeRow"))
+        self.horizontalLayout_4.addWidget(self.removeRow)
+        self.gridLayout_2.addLayout(self.horizontalLayout_4, 1, 0, 1, 1)
+        self.gridLayout_3.addLayout(self.gridLayout_2, 0, 0, 1, 1)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         self.selectedFeaturesTreeWidget = QtGui.QTreeWidget(Dialog)
@@ -75,13 +87,13 @@ class Ui_Dialog(object):
         self.componentFeaturesTreeWidget = QtGui.QTreeWidget(Dialog)
         self.componentFeaturesTreeWidget.setObjectName(_fromUtf8("componentFeaturesTreeWidget"))
         self.horizontalLayout_3.addWidget(self.componentFeaturesTreeWidget)
-        self.verticalLayout_2.addLayout(self.horizontalLayout_3)
-        self.gridLayout_2.addLayout(self.verticalLayout_2, 1, 0, 1, 1)
+        self.gridLayout_3.addLayout(self.horizontalLayout_3, 1, 0, 1, 1)
+        self.gridLayout_4.addLayout(self.gridLayout_3, 1, 0, 1, 1)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
-        self.gridLayout_2.addWidget(self.buttonBox, 2, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.buttonBox, 2, 0, 1, 1)
 
         self.retranslateUi(Dialog)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
@@ -93,6 +105,8 @@ class Ui_Dialog(object):
         self.label_2.setText(QtGui.QApplication.translate("Dialog", "File:", None, QtGui.QApplication.UnicodeUTF8))
         self.filePushButton.setText(QtGui.QApplication.translate("Dialog", "Search", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Dialog", "Select the Complex Feature Class:", None, QtGui.QApplication.UnicodeUTF8))
+        self.addRow.setText(QtGui.QApplication.translate("Dialog", "Add Complex", None, QtGui.QApplication.UnicodeUTF8))
+        self.removeRow.setText(QtGui.QApplication.translate("Dialog", "Remove Complex", None, QtGui.QApplication.UnicodeUTF8))
         self.selectedFeaturesTreeWidget.headerItem().setText(0, QtGui.QApplication.translate("Dialog", "Selected Features", None, QtGui.QApplication.UnicodeUTF8))
         self.selectAllButton.setText(QtGui.QApplication.translate("Dialog", ">>", None, QtGui.QApplication.UnicodeUTF8))
         self.selectOneButton.setText(QtGui.QApplication.translate("Dialog", ">", None, QtGui.QApplication.UnicodeUTF8))
