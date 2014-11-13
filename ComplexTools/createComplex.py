@@ -31,6 +31,7 @@ from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 
 from ui_createComplex import Ui_Dialog
 from numpy.core.defchararray import count
+from Tix import ROW
 
 class CreateComplexDialog(QDialog, Ui_Dialog):
     def __init__(self, iface):
@@ -91,7 +92,10 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
         self.projectModel.insertRow(self.projectModel.rowCount())
         
     def removeComplex(self):
-        pass
+        selectionModel = self.tableView.selectionModel()
+        selectedRows = selectionModel.selectedRows()
+        for row in selectedRows:
+            self.projectModel.removeRows(row.row(), 1)
         
     def populateComboBox(self):
         self.comboBox.clear()
