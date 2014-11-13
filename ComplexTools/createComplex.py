@@ -58,7 +58,8 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
         self.populateSelectedFeaturesWidget()
         
     def accept(self):
-        self.projectModel.submitAll()
+        if not self.projectModel.submitAll():
+            print self.projectModel.lastError().text()
             
     def setFile(self):
         fd = QFileDialog()
