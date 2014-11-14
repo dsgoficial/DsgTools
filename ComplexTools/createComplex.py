@@ -30,8 +30,6 @@ from PyQt4.QtXml import *
 from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 
 from ui_createComplex import Ui_Dialog
-from numpy.core.defchararray import count
-from Tix import ROW
 
 class CreateComplexDialog(QDialog, Ui_Dialog):
     def __init__(self, iface):
@@ -53,27 +51,57 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
         QObject.connect(self.addRow, SIGNAL(("clicked()")), self.addComplex)
         QObject.connect(self.removeRow, SIGNAL(("clicked()")), self.removeComplex)
         
-        QObject.connect(self.buttonBox, SIGNAL(("accepted()")), self.accept)
+        QObject.connect(self.okButton, SIGNAL(("clicked()")), self.accept)
+        QObject.connect(self.cancelButton, SIGNAL(("clicked()")), self.reject)
         
         self.populateSelectedFeaturesWidget()
         
-    def accept(self):
-        ok = self.projectModel.submitAll()
-        if not ok:
-            print self.projectModel.lastError().text()
-            
+        self.db = None
+
+    def reject(self):
+        if self.db:
+            self.db.close()
+        self.done(0)
+             
+    def accept(self): 
+        #getting the selected rows           
+        selectionModel = self.tableView.selectionModel()
+        #getting the index of the column named OGC_FID
+        selectedRows = selectionModel.selectedRows(self.projectModel.fieldIndex("OGC_FID"))
+        # Just one row each time
+        if len(selectedRows) != 1:
+            QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Please, select only one row.")
+            return
+        
+        #complex index entered by the user or calculated using uuid4
+        complexId = int(selectedRows[0].data())
+
+        #iterating over the component features tree            
         root = self.componentFeaturesTreeWidget.invisibleRootItem()
         for i in range(root.childCount()):
+            #getting the layer tree item
             layerItem = root.child(i)
             for layer in self.iface.mapCanvas().layers():
+                #checking the layer name
                 if layer.name() == layerItem.text(0):
+                    #getting the foreign column index that will be updated
+                    fieldIndex = [i for i in range(len(layer.dataProvider().fields())) if "id_complexo" in layer.dataProvider().fields()[i].name()]
                     for j in range(layerItem.childCount()):
+                        #getting the feature tree item
                         featureItem = layerItem.child(j)
+                        #feature id that will be updated
                         id = featureItem.text(0)
-                        attrs = {4:"Teste"}
+                        #attribute pair that will be changed
+                        attrs = {fieldIndex[0]:complexId}
+                        #actual update in the database
                         layer.dataProvider().changeAttributeValues({int(id):attrs})
             
+        #commmiting all pending changes
+        if not self.projectModel.submitAll():
+            print self.projectModel.lastError().text()
+
     def setFile(self):
+        #obtaining the database file name
         fd = QFileDialog()
         self.filename = fd.getOpenFileName(filter='*.sqlite')
         if self.filename <> "":
@@ -82,6 +110,7 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
         self.loadDb()
 
     def loadDb(self):
+        #opening the database
         self.filename = self.fileLineEdit.text()
         
         self.db = QSqlDatabase.addDatabase("QSQLITE")
@@ -91,10 +120,13 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
         self.populateComboBox()
         
     def updateTableView(self):
+        #table name
         table = self.comboBox.currentText()
         
+        ##setting the model in the view
         self.projectModel = QSqlTableModel(None, self.db)
         self.projectModel.setTable(table)
+        #manual commit rule
         self.projectModel.setEditStrategy(QSqlTableModel.OnManualSubmit)
         self.projectModel.select()
         
@@ -111,6 +143,7 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
             self.projectModel.removeRow(row.row())
         
     def populateComboBox(self):
+        #getting all complex tables
         self.comboBox.clear()
         
         query = QSqlQuery("SELECT name FROM sqlite_master WHERE type='table'", self.db)
@@ -120,29 +153,35 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
                 self.comboBox.addItem(query.value(0))
 
     def populateSelectedFeaturesWidget(self):
+        #getting the selected features
         self.layers = self.iface.mapCanvas().layers()
         for layer in self.layers:
             selectedFeatures = layer.selectedFeatures()
             if len(selectedFeatures) == 0:
                 continue
+            #create a layer tree item
             item = QTreeWidgetItem(self.selectedFeaturesTreeWidget)
             item.setText(0,layer.name())
             for feature in selectedFeatures:
+                #create a feature item for each feature selected
                 featureItem = QTreeWidgetItem(item)
                 featureItem.setText(0,str(feature.id()))
                 
         self.selectedFeaturesTreeWidget.sortItems(0, Qt.AscendingOrder)
                 
     def selectAllFeatures(self):
+        #clear both trees
         self.selectedFeaturesTreeWidget.clear()
         self.componentFeaturesTreeWidget.clear()
         self.populateSelectedFeaturesWidget()
 
+        #copying all tree items to the component features tree
         sRoot = self.selectedFeaturesTreeWidget.invisibleRootItem()
         children = sRoot.takeChildren()
         cRoot = self.componentFeaturesTreeWidget.invisibleRootItem()
         cRoot.addChildren(children)
     
+        #sorting
         self.componentFeaturesTreeWidget.sortItems(0, Qt.AscendingOrder)
 
     def selectOneFeature(self):
@@ -171,7 +210,8 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
                 else:
                     children = layerItem.takeChildren()
                     foundItems[0].addChildren(children)
-                
+             
+        #cleaning the tree. Item should have at least one child   
         count = root.childCount()
         for i in range(count):
             child = root.child(i)
@@ -206,7 +246,8 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
                 else:
                     children = layerItem.takeChildren()
                     foundItems[0].addChildren(children)
-                
+          
+        #cleaning the tree. Item should have at least one child      
         count = root.childCount()
         for i in range(count):
             child = root.child(i)
@@ -216,6 +257,7 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
         self.selectedFeaturesTreeWidget.sortItems(0, Qt.AscendingOrder)
 
     def deselectAllFeatures(self):
+        #clear the component features tree and repopulate the selected features tree
         self.selectedFeaturesTreeWidget.clear()
         self.componentFeaturesTreeWidget.clear()
         self.populateSelectedFeaturesWidget()

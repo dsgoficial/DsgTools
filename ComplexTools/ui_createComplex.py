@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_createComplex.ui'
 #
-# Created: Wed Nov 12 23:37:42 2014
+# Created: Fri Nov 14 15:43:35 2014
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -89,15 +89,17 @@ class Ui_Dialog(object):
         self.horizontalLayout_3.addWidget(self.componentFeaturesTreeWidget)
         self.gridLayout_3.addLayout(self.horizontalLayout_3, 1, 0, 1, 1)
         self.gridLayout_4.addLayout(self.gridLayout_3, 1, 0, 1, 1)
-        self.buttonBox = QtGui.QDialogButtonBox(Dialog)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
-        self.gridLayout_4.addWidget(self.buttonBox, 2, 0, 1, 1)
+        self.horizontalLayout_5 = QtGui.QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
+        self.okButton = QtGui.QPushButton(Dialog)
+        self.okButton.setObjectName(_fromUtf8("okButton"))
+        self.horizontalLayout_5.addWidget(self.okButton)
+        self.cancelButton = QtGui.QPushButton(Dialog)
+        self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
+        self.horizontalLayout_5.addWidget(self.cancelButton)
+        self.gridLayout_4.addLayout(self.horizontalLayout_5, 2, 0, 1, 1)
 
         self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -113,4 +115,6 @@ class Ui_Dialog(object):
         self.deselectOneButton.setText(QtGui.QApplication.translate("Dialog", "<", None, QtGui.QApplication.UnicodeUTF8))
         self.deselectAllButton.setText(QtGui.QApplication.translate("Dialog", "<<", None, QtGui.QApplication.UnicodeUTF8))
         self.componentFeaturesTreeWidget.headerItem().setText(0, QtGui.QApplication.translate("Dialog", "Component Features", None, QtGui.QApplication.UnicodeUTF8))
+        self.okButton.setText(QtGui.QApplication.translate("Dialog", "Ok", None, QtGui.QApplication.UnicodeUTF8))
+        self.cancelButton.setText(QtGui.QApplication.translate("Dialog", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 
