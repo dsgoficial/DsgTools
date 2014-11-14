@@ -62,27 +62,16 @@ class CreateComplexDialog(QDialog, Ui_Dialog):
         if not ok:
             print self.projectModel.lastError().text()
             
-        selectionModel = self.tableView.selectionModel()
-        selectedRows = selectionModel.selectedRows()
-        a = 1
-        if a == 0 :
-            QMessageBox.warning(self, "Warning!", "Please, select only one row.")
-        else:
-            root = self.componentFeaturesTreeWidget.invisibleRootItem()
-            for i in range(root.childCount()):
-                layerItem = root.child(i)
-                for layer in self.iface.mapCanvas().layers():
-                    if layer.name() == layerItem.text(0):
-                        layer.startEditing()
-                        for j in range(layerItem.childCount()):
-                            featureItem = layerItem.child(j)
-                            id = featureItem.text(0)
-                            selectedFeatures = layer.selectedFeatures()
-                            for feature in selectedFeatures:
-                                if feature.id() == id:
-                                    value = 2
-                                    layer.changeAttributeValue(id, len(feature.attributes())-1, QVariant(value))
-                        layer.commitChanges()
+        root = self.componentFeaturesTreeWidget.invisibleRootItem()
+        for i in range(root.childCount()):
+            layerItem = root.child(i)
+            for layer in self.iface.mapCanvas().layers():
+                if layer.name() == layerItem.text(0):
+                    for j in range(layerItem.childCount()):
+                        featureItem = layerItem.child(j)
+                        id = featureItem.text(0)
+                        attrs = {4:"Teste"}
+                        layer.dataProvider().changeAttributeValues({int(id):attrs})
             
     def setFile(self):
         fd = QFileDialog()
