@@ -8,9 +8,11 @@ from PyQt4.QtGui import QTreeWidgetItem
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'complexWindow_base.ui'))
 
+from manageComplex import ManageComplexDialog
+from associateWithComplex import AssociateWithComplexDialog
 
 class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
-    def __init__(self, parent=None):
+    def __init__(self, iface, parent=None):
         """Constructor."""
         super(ComplexWindow, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -21,15 +23,22 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         self.setupUi(self)
         #self.enderecoLine.setText('186.228.51.52')
         #self.portaLine.setText('2101'
+        
+        self.iface = iface
     
     @pyqtSlot(bool)    
     def on_managePushButton_clicked(self):
-        pass #Colocar o código do manage aqui
-    
+        self.dlg = ManageComplexDialog(self.iface)
+        result = self.dlg.exec_()
+        if result:
+            pass
     
     @pyqtSlot(bool)    
     def on_associatePushButton_clicked(self):
-        pass #Colocar o código do associate aqui
+        self.dlg = AssociateWithComplexDialog(self.iface)
+        result = self.dlg.exec_()
+        if result:
+            pass
     
     #Function for add a class of a complex
     #className: string of the name of the class
@@ -59,12 +68,10 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         treeItem = QTreeWidgetItem(sl)
         item.addChild(treeItem)
         return treeItem
-        
     
     def __test(self, x):
         if (x.parent() == None) :
             return True
         else:
             return False
-    
     
