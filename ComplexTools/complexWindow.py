@@ -25,10 +25,13 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         #self.portaLine.setText('2101'
         
         self.iface = iface
+        
+        self.treeWidget.clear()
     
     @pyqtSlot(bool)    
     def on_managePushButton_clicked(self):
         self.dlg = ManageComplexDialog(self.iface)
+        QObject.connect(self.dlg, SIGNAL(("tableUpdated(PyQt_PyObject)")), self.updateComplexTree)
         result = self.dlg.exec_()
         if result:
             pass
@@ -39,6 +42,14 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         result = self.dlg.exec_()
         if result:
             pass
+        
+    def updateComplexTree(self, table):
+        for i in range(len(table)):
+            row = table[i]
+            className = row[0]
+            complexName = row[1]
+            complexId = row[2]
+            self.addComplex(className, complexName, complexId)
     
     #Function for add a class of a complex
     #className: string of the name of the class
