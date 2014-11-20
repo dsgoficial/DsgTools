@@ -87,7 +87,7 @@ class DsgTools:
         self.dsgTools = None
         self.menuBar = self.iface.mainWindow().menuBar()
         
-        self.complexWindow = ComplexWindow()
+        self.complexWindow = ComplexWindow(iface)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
