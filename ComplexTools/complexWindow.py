@@ -49,7 +49,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             className = row[0]
             complexName = row[1]
             complexId = row[2]
-            self.addComplex(className, complexName, complexId)
+            self.addComplex(str(className), str(complexName), complexId)
     
     #Function for add a class of a complex
     #className: string of the name of the class
