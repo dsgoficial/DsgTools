@@ -55,6 +55,10 @@ class AssociateWithComplexDialog(QDialog, Ui_Dialog):
         QObject.connect(self.cancelButton, SIGNAL(("clicked()")), self.cancel)
         
         self.populateSelectedFeaturesWidget()
+        
+    def __del__(self):
+        if self.db:
+            self.db.close()        
 
     def associate(self):
         #getting the selected rows           
@@ -125,7 +129,7 @@ class AssociateWithComplexDialog(QDialog, Ui_Dialog):
     def loadDb(self):
         #opening the database
         self.filename = self.fileLineEdit.text()
-        ### tem que ter um seletor aqui ou ter outra funcao para postgis (comentario do borba)
+        
         self.db = QSqlDatabase.addDatabase("QSQLITE")
         self.db.setDatabaseName(self.filename)
         self.db.open()
@@ -135,10 +139,8 @@ class AssociateWithComplexDialog(QDialog, Ui_Dialog):
     def populateComboBox(self):
         #getting all complex tables
         self.comboBox.clear()
-        ###
-        query = QSqlQuery("SELECT name FROM sqlite_master WHERE type='table'", self.db)
-        ### vislubro problema aqui, tem q colocar tipo de banco, pois essa query n funciona pro postgre (comentario do borba)
         
+        query = QSqlQuery("SELECT name FROM sqlite_master WHERE type='table'", self.db)
         while query.next():
             name = query.value(0)
             if 'Complexo' in name:
