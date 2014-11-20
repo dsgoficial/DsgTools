@@ -303,9 +303,6 @@ class DsgTools:
         complex.addAction(action)
         self.complexButton.addAction(action)
         
-        self.complexWindow.addClass("edu_complexo_lazer")
-        self.complexWindow.addClass("edu_complexo_seguranca")
-        self.complexWindow.addComplex("edu_complexo_lazer", "nome", 33)
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
 
     def unload(self):
