@@ -51,6 +51,10 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         QObject.connect(self.updateButton, SIGNAL(("clicked()")), self.updateTable)
         QObject.connect(self.cancelButton, SIGNAL(("clicked()")), self.cancel)
 
+    def __del__(self):
+        if self.db:
+            self.db.close()        
+
     def setFile(self):
         #obtaining the database file name
         fd = QFileDialog()
