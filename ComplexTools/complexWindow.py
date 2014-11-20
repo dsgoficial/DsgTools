@@ -86,3 +86,4 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         else:
             return False
     
+ 

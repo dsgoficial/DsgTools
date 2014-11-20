@@ -41,7 +41,7 @@ from carrega_categoria_dialog import CarregaCategoriaDialog
 from carrega_classe_dialog import CarregaClasseDialog
 from cria_spatialite_dialog import CriaSpatialiteDialog
 from cria_moldura_dialog import CriaMolduraDialog
-from createComplex import CreateComplexDialog
+#from createComplex import CreateComplexDialog
 from complexWindow import ComplexWindow
 
 
@@ -221,7 +221,7 @@ class DsgTools:
         #QToolButtons
         self.databaseButton = self.createToolButton(self.toolbar, u'DatabaseTools')
         self.layerButton = self.createToolButton(self.toolbar, u'LayerTools')
-        self.complexButton = self.createToolButton(self.toolbar, u'ComplexTools')
+        #self.complexButton = self.createToolButton(self.toolbar, u'ComplexTools')
 
         icon_path = ':/plugins/DsgTools/spatialite.png'
         action = self.add_action(
@@ -280,7 +280,7 @@ class DsgTools:
         layers.addAction(action)
         self.layerButton.addAction(action)
 
-        icon_path = ':/plugins/DsgTools/complex.png'
+        """icon_path = ':/plugins/DsgTools/complex.png'
         action = self.add_action(
             icon_path,
             text=self.tr('Create Complex'),
@@ -301,7 +301,7 @@ class DsgTools:
             add_to_menu=False,
             add_to_toolbar=False)
         complex.addAction(action)
-        self.complexButton.addAction(action)
+        self.complexButton.addAction(action)"""
         
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
 
@@ -401,7 +401,7 @@ class DsgTools:
             if result:
                 pass
 
-    def createComplex(self):
+    """def createComplex(self):
         try:
             self.complexButton.setDefaultAction(self.toolbar.sender())
             self.dlg = CreateComplexDialog(self.iface)
@@ -419,5 +419,5 @@ class DsgTools:
             self.complexButton.setDefaultAction(self.toolbar.sender())
             pass
         except:
-            pass
+            pass"""
 
