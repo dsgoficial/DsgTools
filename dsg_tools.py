@@ -42,6 +42,7 @@ from carrega_classe_dialog import CarregaClasseDialog
 from cria_spatialite_dialog import CriaSpatialiteDialog
 from cria_moldura_dialog import CriaMolduraDialog
 from createComplex import CreateComplexDialog
+from complexWindow import ComplexWindow
 
 
 class DsgTools:
@@ -85,6 +86,8 @@ class DsgTools:
 
         self.dsgTools = None
         self.menuBar = self.iface.mainWindow().menuBar()
+        
+        self.complexWindow = ComplexWindow()
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -299,6 +302,11 @@ class DsgTools:
             add_to_toolbar=False)
         complex.addAction(action)
         self.complexButton.addAction(action)
+        
+        self.complexWindow.addClass("edu_complexo_lazer")
+        self.complexWindow.addClass("edu_complexo_seguranca")
+        self.complexWindow.addComplex("edu_complexo_lazer", "nome", 33)
+        self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -310,6 +318,8 @@ class DsgTools:
 
         if self.dsgTools is not None:
             self.menuBar.removeAction(self.dsgTools.menuAction())
+            
+            self.iface.removeDockWidget(self.complexWindow)
 
     def run(self):
         """Run method that performs all the real work"""
