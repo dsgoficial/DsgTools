@@ -90,7 +90,7 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
             complexIdField = record.field("OGC_FID")
             complexName = complexNameField.value()
             complexId = complexIdField.value()
-            className = self.comboBox.currentText()
+            className = self.table
             row.append(className)
             row.append(complexName)
             row.append(complexId)
