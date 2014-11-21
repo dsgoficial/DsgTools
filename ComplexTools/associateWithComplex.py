@@ -32,7 +32,7 @@ from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 from ui_associateWithComplex import Ui_Dialog
 
 class AssociateWithComplexDialog(QDialog, Ui_Dialog):
-    def __init__(self, iface):
+    def __init__(self, iface, db, table):
         """Constructor.
         """
         QDialog.__init__( self )
@@ -40,12 +40,9 @@ class AssociateWithComplexDialog(QDialog, Ui_Dialog):
         
         self.iface = iface
         
-        self.db = None
+        self.db = db
+        self.table = table
 
-        QObject.connect(self.filePushButton, SIGNAL(("clicked()")), self.setFile)
-        QObject.connect(self.fileLineEdit, SIGNAL(("editingFinished()")), self.loadDb)
-        QObject.connect(self.comboBox, SIGNAL("currentIndexChanged (int)"), self.updateTableView)
-        
         QObject.connect(self.selectAllButton, SIGNAL(("clicked()")), self.selectAllFeatures)
         QObject.connect(self.selectOneButton, SIGNAL(("clicked()")), self.selectOneFeature)
         QObject.connect(self.deselectOneButton, SIGNAL(("clicked()")), self.deselectOneFeature)
@@ -55,6 +52,8 @@ class AssociateWithComplexDialog(QDialog, Ui_Dialog):
         QObject.connect(self.cancelButton, SIGNAL(("clicked()")), self.cancel)
         
         self.populateSelectedFeaturesWidget()
+        
+        self.updateTableView()
         
     def __del__(self):
         if self.db:
@@ -115,44 +114,12 @@ class AssociateWithComplexDialog(QDialog, Ui_Dialog):
     def cancel(self):
         if self.db:
             self.db.close()
-        self.done(0)                        
-
-    def setFile(self):
-        #obtaining the database file name
-        fd = QFileDialog()
-        self.filename = fd.getOpenFileName(filter='*.sqlite')
-        if self.filename <> "":
-            self.fileLineEdit.setText(self.filename)
-            
-        self.loadDb()
-
-    def loadDb(self):
-        #opening the database
-        self.filename = self.fileLineEdit.text()
-        
-        self.db = QSqlDatabase.addDatabase("QSQLITE")
-        self.db.setDatabaseName(self.filename)
-        self.db.open()
-        
-        self.populateComboBox()
-
-    def populateComboBox(self):
-        #getting all complex tables
-        self.comboBox.clear()
-        
-        query = QSqlQuery("SELECT name FROM sqlite_master WHERE type='table'", self.db)
-        while query.next():
-            name = query.value(0)
-            if 'Complexo' in name:
-                self.comboBox.addItem(query.value(0))
-
+        self.done(0)
+                              
     def updateTableView(self):
-        #table name
-        table = self.comboBox.currentText()
-        
         ##setting the model in the view
         self.projectModel = QSqlQueryModel()
-        self.projectModel.setQuery("SELECT * FROM "+table, self.db)
+        self.projectModel.setQuery("SELECT * FROM "+self.table, self.db)
         
         self.tableView.setModel(self.projectModel)
         self.tableView.show()

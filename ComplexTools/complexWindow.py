@@ -4,6 +4,7 @@ import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
 from PyQt4.QtGui import QTreeWidgetItem
+from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'complexWindow_base.ui'))
@@ -24,13 +25,51 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         #self.enderecoLine.setText('186.228.51.52')
         #self.portaLine.setText('2101'
         
+        QObject.connect(self.dbButton, SIGNAL(("clicked()")), self.getDataSources)
+        QObject.connect(self.dbCombo, SIGNAL("activated(int)"), self.updateComplexClass)
+        
         self.iface = iface
         
-        self.treeWidget.clear()
+        self.db = None
+        
+    def updateComplexClass(self):
+        if self.db:
+            self.db.close()
+            self.db = None
+            
+        dbName = self.dbCombo.currentText()
+        self.db = QSqlDatabase("QSQLITE")  
+        self.db.setDatabaseName(dbName)
+        self.db.open()
+        
+        self.populateComboBox()
+
+    def populateComboBox(self):
+        #getting all complex tables
+        self.complexCombo.clear()
+        
+        query = QSqlQuery("SELECT name FROM sqlite_master WHERE type='table'", self.db)
+        while query.next():
+            name = query.value(0)
+            if 'Complexo' in name:
+                self.complexCombo.addItem(query.value(0))
+        
+    def getDataSources(self):
+        dbNames = []
+        self.layers = self.iface.mapCanvas().layers()
+        for layer in self.layers:
+            source = layer.source()
+            fullDatabase = source.split(" table")[0]
+            dbName = fullDatabase.split("=")[-1]
+            dbName = dbName.replace("'", "")
+            if dbName not in dbNames:
+                dbNames.append(dbName)
+                if "sqlite" in dbName.split(".")[-1]:
+                    self.dbCombo.addItem(dbName) 
     
     @pyqtSlot(bool)    
     def on_managePushButton_clicked(self):
-        self.dlg = ManageComplexDialog(self.iface)
+        self.dlg = ManageComplexDialog(self.iface, self.db, self.complexCombo.currentText())
         QObject.connect(self.dlg, SIGNAL(("tableUpdated(PyQt_PyObject)")), self.updateComplexTree)
         result = self.dlg.exec_()
         if result:
@@ -38,7 +77,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
     
     @pyqtSlot(bool)    
     def on_associatePushButton_clicked(self):
-        self.dlg = AssociateWithComplexDialog(self.iface)
+        self.dlg = AssociateWithComplexDialog(self.iface, self.db, self.complexCombo.currentText())
         result = self.dlg.exec_()
         if result:
             pass
