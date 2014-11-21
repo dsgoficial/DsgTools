@@ -32,6 +32,11 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         
         self.db = None
         
+    def __del__(self):
+        if self.db:
+            self.db.close()
+            self.db = None        
+        
     def updateComplexClass(self):
         if self.db:
             self.db.close()

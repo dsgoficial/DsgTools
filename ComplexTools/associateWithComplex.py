@@ -55,10 +55,6 @@ class AssociateWithComplexDialog(QDialog, Ui_Dialog):
         
         self.updateTableView()
         
-    def __del__(self):
-        if self.db:
-            self.db.close()        
-
     def associate(self):
         #getting the selected rows           
         selectionModel = self.tableView.selectionModel()

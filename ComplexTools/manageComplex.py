@@ -50,10 +50,6 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         
         self.updateTableView()
 
-    def __del__(self):
-        if self.db:
-            self.db.close()        
-
     def updateTableView(self):
         ##setting the model in the view
         self.projectModel = QSqlTableModel(None, self.db)
