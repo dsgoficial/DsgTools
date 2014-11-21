@@ -88,6 +88,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             pass
         
     def updateComplexTree(self, table):
+        self.treeWidget.clear()
         for i in range(len(table)):
             row = table[i]
             className = row[0]
