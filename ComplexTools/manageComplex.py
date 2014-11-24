@@ -31,6 +31,15 @@ from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 
 from ui_manageComplex import Ui_Dialog
 
+class CustomTableModel(QSqlTableModel):
+    def __init__(self, parent=None, db=QSqlDatabase):
+        QSqlTableModel.__init__(self, parent=parent, db=db)
+        
+    def flags(self, index):
+        if index.column() == self.columnCount()-1:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
+    
 class ManageComplexDialog(QDialog, Ui_Dialog):
     def __init__(self, iface, db, table):
         """Constructor.
@@ -52,7 +61,8 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
 
     def updateTableView(self):
         ##setting the model in the view
-        self.projectModel = QSqlTableModel(None, self.db)
+#         self.projectModel = QSqlTableModel(None, self.db)
+        self.projectModel = CustomTableModel(None, self.db)
         self.projectModel.setTable(self.table)
         #manual commit rule
         self.projectModel.setEditStrategy(QSqlTableModel.OnManualSubmit)
@@ -71,8 +81,6 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
             self.projectModel.removeRow(row.row())
 
     def cancel(self):
-        if self.db:
-            self.db.close()
         self.done(0)
 
     def updateTable(self): 
