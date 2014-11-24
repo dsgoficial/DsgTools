@@ -6,6 +6,8 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import QTreeWidgetItem
 from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 
+from qgis.core import *
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'complexWindow_base.ui'))
 
@@ -31,6 +33,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         self.iface = iface
         
         self.db = None
+        self.databases = None
         
     def __del__(self):
         if self.db:
@@ -43,8 +46,17 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             self.db = None
             
         dbName = self.dbCombo.currentText()
-        self.db = QSqlDatabase("QSQLITE")  
-        self.db.setDatabaseName(dbName)
+        dataSourceUri = self.databases[dbName]
+        if ".sqlite" in dbName:
+            self.db = QSqlDatabase("QSQLITE")  
+            self.db.setDatabaseName(dbName)
+        else:
+            self.db = QSqlDatabase("QPSQL")
+            self.db.setDatabaseName(dbName)
+            self.db.setHostName(dataSourceUri.host())
+            self.db.setPort(int(dataSourceUri.port()))
+            self.db.setUserName(dataSourceUri.username())
+            self.db.setPassword(dataSourceUri.password())
         self.db.open()
         
         self.populateComboBox()
@@ -60,17 +72,17 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                 self.complexCombo.addItem(query.value(0))
         
     def getDataSources(self):
-        dbNames = []
+        if self.databases:
+            self.databases.clear()
+            
+        self.databases = dict()
         self.layers = self.iface.mapCanvas().layers()
         for layer in self.layers:
-            source = layer.source()
-            fullDatabase = source.split(" table")[0]
-            dbName = fullDatabase.split("=")[-1]
-            dbName = dbName.replace("'", "")
-            if dbName not in dbNames:
-                dbNames.append(dbName)
-                if "sqlite" in dbName.split(".")[-1]:
-                    self.dbCombo.addItem(dbName) 
+            dataSourceUri = QgsDataSourceURI( layer.dataProvider().dataSourceUri() )
+            dbName = dataSourceUri.database()
+            if dbName not in self.databases:
+                self.databases[dbName] = dataSourceUri
+                self.dbCombo.addItem(dbName)
     
     @pyqtSlot(bool)    
     def on_managePushButton_clicked(self):
