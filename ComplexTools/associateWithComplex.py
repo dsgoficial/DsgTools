@@ -108,8 +108,6 @@ class AssociateWithComplexDialog(QDialog, Ui_Dialog):
         self.selectedFeaturesTreeWidget.sortItems(0, Qt.AscendingOrder)
 
     def cancel(self):
-        if self.db:
-            self.db.close()
         self.done(0)
                               
     def updateTableView(self):
