@@ -67,7 +67,7 @@ class AssociateWithComplexDialog(QDialog, Ui_Dialog):
         
         #getting the complex index from the field named OGC_FID
         record = self.projectModel.record(selectedRows[0].row())
-        field = record.field("OGC_FID")
+        field = record.field("id")
         complexId = field.value()
 
         #iterating over the component features tree            

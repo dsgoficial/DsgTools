@@ -35,10 +35,10 @@ class CustomTableModel(QSqlTableModel):
     def __init__(self, parent=None, db=QSqlDatabase):
         QSqlTableModel.__init__(self, parent=parent, db=db)
         
-    def flags(self, index):
-        if index.column() == self.columnCount()-1:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
-        return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
+#     def flags(self, index):
+#         if index.column() == 0:
+#             return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+#         return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
     
 class ManageComplexDialog(QDialog, Ui_Dialog):
     def __init__(self, iface, db, table):
@@ -89,21 +89,6 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
             #In case something went wrong we show the message to the user
             QMessageBox.warning(self.iface.mainWindow(), "Error!", self.projectModel.lastError().text())
             
-        rowCount = self.projectModel.rowCount()
-        table = []
-        for i in range(rowCount):
-            row = []
-            record = self.projectModel.record(i)
-            complexNameField = record.field("nome")
-            complexIdField = record.field("OGC_FID")
-            complexName = complexNameField.value()
-            complexId = complexIdField.value()
-            className = self.table
-            row.append(className)
-            row.append(complexName)
-            row.append(complexId)
-            table.append(row)
-        
         #Emit the signal to update the complex tree
-        self.emit( SIGNAL( "tableUpdated(PyQt_PyObject)" ), table)
+        self.emit( SIGNAL( "tableUpdated()" ))
             

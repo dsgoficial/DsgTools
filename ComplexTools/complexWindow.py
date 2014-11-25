@@ -29,7 +29,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         
         QObject.connect(self.dbButton, SIGNAL(("clicked()")), self.getDataSources)
         QObject.connect(self.dbCombo, SIGNAL("activated(int)"), self.updateComplexClass)
-        QObject.connect(self.complexCombo, SIGNAL("activated(int)"), self.showComplexTree)
+        QObject.connect(self.complexCombo, SIGNAL("activated(int)"), self.loadAssociatedFeatures)
         
         self.iface = iface
         
@@ -69,7 +69,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         query = QSqlQuery("SELECT name FROM sqlite_master WHERE type='table'", self.db)
         while query.next():
             name = query.value(0)
-            if 'Complexo' in name:
+            if 'complexos_' in name:
                 self.complexCombo.addItem(query.value(0))
         
     def getDataSources(self):
@@ -88,7 +88,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
     @pyqtSlot(bool)    
     def on_managePushButton_clicked(self):
         self.dlg = ManageComplexDialog(self.iface, self.db, self.complexCombo.currentText())
-        QObject.connect(self.dlg, SIGNAL(("tableUpdated(PyQt_PyObject)")), self.updateComplexTree)
+        QObject.connect(self.dlg, SIGNAL(("tableUpdated()")), self.loadAssociatedFeatures)
         result = self.dlg.exec_()
         if result:
             pass
@@ -100,57 +100,66 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         if result:
             pass
         
+    def loadAssociatedFeatures(self):
+        self.treeWidget.clear()
+        complex = self.complexCombo.currentText()
+        complex = '\''+complex.replace("complexos_","")+'\''
+        sql = "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_metadata where complex = "+complex
+        query = QSqlQuery(sql, self.db)
+        while query.next():
+            complex_schema = query.value(0)
+            complex = query.value(1)
+            aggregated_schema = query.value(2)
+            aggregated_class = query.value(3)
+            column_name = query.value(4)            
+            sql = "SELECT id, nome from "+complex_schema+"_"+complex
+            complexQuery = QSqlQuery(sql, self.db)
+            while complexQuery.next():
+                complex_uuid = complexQuery.value(0)
+                name = complexQuery.value(1)
+                self.addAssociatedFeature(complex_schema+"_"+complex, name, complex_uuid, None, None)
+                
+                sql = "SELECT OGC_FID from "+aggregated_schema+"_"+aggregated_class+" where "+column_name+"="+complex_uuid
+                associatedQuery = QSqlQuery(sql, self.db)
+                while associatedQuery.next():
+                    ogc_fid = associatedQuery.value(0)
+                    self.addAssociatedFeature(str(complex_schema+"_"+complex), str(name), complex_uuid, str(aggregated_schema+"_"+aggregated_class), ogc_fid)
+                         
     def showComplexTree(self):
         self.treeWidget.clear()
         table = self.complexCombo.currentText()
-        query = QSqlQuery("SELECT nome OGC_FID from "+table, self.db)
+        query = QSqlQuery("SELECT id, nome from "+table, self.db)
         while query.next():
-            name = query.value(0)
-            ogc_fid = query.value(1)
-            self.addComplex(str(table), str(name), ogc_fid)
-        
-    def updateComplexTree(self, table):
-        self.treeWidget.clear()
-        for i in range(len(table)):
-            row = table[i]
-            className = row[0]
-            complexName = row[1]
-            complexId = row[2]
-            self.addComplex(str(className), str(complexName), complexId)
+            id = query.value(0)
+            name = query.value(1)
+            self.addComplex(str(table), str(name), id)
     
-    #Function for add a class of a complex
-    #className: string of the name of the class
-    def addClass(self, className):
-        if type(className) is not str:
-            return
-        sl = [className] #string list that will be appended 
-        treeItem = QTreeWidgetItem(sl)
-        self.treeWidget.addTopLevelItem(treeItem)
-        return treeItem
+    def createTreeItem(self, parent, text):
+        count = parent.childCount()
+        children = []
+        for i in range(count):
+            child = parent.child(i)
+            children.append(child.text(0))
         
-    #Function for add a complex of a specific class
-    #className: string of the name of the class
-    #complexName: string of the name of complex
-    #complexId: string of the id of complex
-    def addComplex(self, className, complexName, complexId):
-        if (type(className) is not str) or (type(complexName) is not str):
-            return
-        items = self.treeWidget.findItems(className, Qt.MatchExactly)
-        items = [x for x in items if self.__test(x)] #remove lines that aren't a Top Level
-            
-        if len(items) == 0:
-            item = self.addClass(className)
+        if text not in children:
+            item = QTreeWidgetItem(parent)
+            item.setText(0,text)
         else:
-            item = items[0]
-        sl = [complexName, str(complexId)]
-        treeItem = QTreeWidgetItem(sl)
-        item.addChild(treeItem)
-        return treeItem
+            for i in range(count):
+                child = parent.child(i)
+                if child.text(0) == text:
+                    item = child
+        return item
     
+    def addAssociatedFeature(self, className, complexName, complexId, associatedClass, associatedId):        
+        classNameItem = self.createTreeItem(self.treeWidget.invisibleRootItem(), className)        
+        complexNameItem = self.createTreeItem(classNameItem, complexName)
+        if associatedClass and associatedId:
+            associatedClassItem = self.createTreeItem(complexNameItem, associatedClass)
+            self.createTreeItem(associatedClassItem, str(associatedId))
+
     def __test(self, x):
         if (x.parent() == None) :
             return True
         else:
             return False
-    
- 
