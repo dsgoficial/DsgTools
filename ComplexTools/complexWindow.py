@@ -3,7 +3,7 @@ import os
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
-from PyQt4.QtGui import QTreeWidgetItem
+from PyQt4.QtGui import QTreeWidgetItem, QMessageBox
 from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 
 from qgis.core import *
@@ -95,10 +95,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
     
     @pyqtSlot(bool)    
     def on_associatePushButton_clicked(self):
-        self.dlg = AssociateWithComplexDialog(self.iface, self.db, self.complexCombo.currentText())
-        result = self.dlg.exec_()
-        if result:
-            pass
+        self.associateFeatures()
         
     def loadAssociatedFeatures(self):
         self.treeWidget.clear()
@@ -124,17 +121,71 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                 while associatedQuery.next():
                     ogc_fid = associatedQuery.value(0)
                     self.addAssociatedFeature(str(complex_schema+"_"+complex), str(name), complex_uuid, str(aggregated_schema+"_"+aggregated_class), ogc_fid)
+                    
+    def depth(self, item):
+        depth = 0
+        while item is not None:
+            item = item.parent()
+            depth += 1
+        return depth
                          
-    def showComplexTree(self):
-        self.treeWidget.clear()
-        table = self.complexCombo.currentText()
-        query = QSqlQuery("SELECT id, nome from "+table, self.db)
-        while query.next():
-            id = query.value(0)
-            name = query.value(1)
-            self.addComplex(str(table), str(name), id)
-    
-    def createTreeItem(self, parent, text):
+    def associateFeatures(self):
+        root = self.treeWidget.invisibleRootItem()
+        if len(self.treeWidget.selectedItems()) == 0:
+            QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Please, select a complex.")
+            return
+            
+        item = self.treeWidget.selectedItems()[0]
+        father = item.parent()
+        grandFather = father.parent()
+        if self.depth(item) != 2:
+            QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Please, select a complex.")
+            return
+        
+        complex = self.complexCombo.currentText()
+        complex = '\''+complex.replace("complexos_","")+'\''
+
+        #uuid to be adjust on the selected features
+        uuid = item.text(1)
+        
+        #getting the selected features
+        forbiddenLayers = []
+        self.layers = self.iface.mapCanvas().layers()
+        for layer in self.layers:
+            selectedFeatures = layer.selectedFeatures()
+            if len(selectedFeatures) == 0:
+                continue
+            
+            sql = "SELECT column_name from complex_metadata where complex = "+complex+" and aggregated_class = "+'\''+layer.name()[3:]+'\''
+            query = QSqlQuery(sql, self.db)
+            column_name = ""
+            while query.next():
+                column_name = query.value(0)
+
+            if column_name == "":
+                forbiddenLayers.append(layer.name())
+                continue
+                
+            for feature in selectedFeatures:
+                fieldIndex = [i for i in range(len(layer.dataProvider().fields())) if layer.dataProvider().fields()[i].name() == column_name]  
+                #feature id that will be updated
+                id = feature.id()
+                #attribute pair that will be changed
+                attrs = {fieldIndex[0]:uuid}
+                #actual update in the database
+                layer.dataProvider().changeAttributeValues({id:attrs})
+                                            
+        if len(forbiddenLayers) > 0:
+            message = ""
+            message += "The following layers cannot be associated to complexes from "+self.complexCombo.currentText()+":\n"
+            for text in forbiddenLayers:
+                message += text+"\n"
+            print message
+            QMessageBox.warning(self.iface.mainWindow(), "Warning!", message)
+
+        self.loadAssociatedFeatures()
+
+    def createTreeItem(self, parent, text, uuid = -1):
         count = parent.childCount()
         children = []
         for i in range(count):
@@ -144,6 +195,8 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         if text not in children:
             item = QTreeWidgetItem(parent)
             item.setText(0,text)
+            if uuid != -1:
+                item.setText(1, str(uuid))
         else:
             for i in range(count):
                 child = parent.child(i)
@@ -153,7 +206,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
     
     def addAssociatedFeature(self, className, complexName, complexId, associatedClass, associatedId):        
         classNameItem = self.createTreeItem(self.treeWidget.invisibleRootItem(), className)        
-        complexNameItem = self.createTreeItem(classNameItem, complexName)
+        complexNameItem = self.createTreeItem(classNameItem, complexName, complexId)
         if associatedClass and associatedId:
             associatedClassItem = self.createTreeItem(complexNameItem, associatedClass)
             self.createTreeItem(associatedClassItem, str(associatedId))
