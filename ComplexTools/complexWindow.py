@@ -185,7 +185,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
 
         self.loadAssociatedFeatures()
 
-    def createTreeItem(self, parent, text, uuid = -1):
+    def createTreeItem(self, parent, text, uuid = ""):
         count = parent.childCount()
         children = []
         for i in range(count):
@@ -195,7 +195,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         if text not in children:
             item = QTreeWidgetItem(parent)
             item.setText(0,text)
-            if uuid != -1:
+            if uuid != "":
                 item.setText(1, str(uuid))
         else:
             for i in range(count):
