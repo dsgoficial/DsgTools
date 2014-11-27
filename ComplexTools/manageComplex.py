@@ -68,9 +68,11 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         self.projectModel.setEditStrategy(QSqlTableModel.OnManualSubmit)
         self.projectModel.select()
 
-        record = self.projectModel.record()
-        record.setValue("id",str(uuid4()))
-        self.projectModel.setRecord(0, record)
+        record = self.projectModel.record(0)
+        if not record.value("id"):
+            record.setValue("id",str(uuid4()))
+            record.setValue("nome", "edit this field")
+            self.projectModel.setRecord(0, record)
         
         self.tableView.setModel(self.projectModel)
         self.tableView.show()

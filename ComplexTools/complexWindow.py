@@ -219,7 +219,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         complex = self.complexCombo.currentText()
         complex = '\''+complex.replace("complexos_","")+'\''
         #query to get the possible links to the selected complex in the combobox
-        sql = "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_metadata where complex = "+complex
+        sql = "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_schema where complex = "+complex
         query = QSqlQuery(sql, self.db)
         while query.next():
             #setting the variables
@@ -235,6 +235,9 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             while complexQuery.next():
                 complex_uuid = complexQuery.value(0)
                 name = complexQuery.value(1)
+                
+                if not (complex_uuid and name):
+                    continue
                 #adding the information in the tree widget case there are no associated features
                 self.addAssociatedFeature(complex_schema+"_"+complex, name, complex_uuid, None, None)
                 
@@ -256,7 +259,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
 
     def obtainLinkColumn(self, complexClass, aggregatedClass):
         #query to obtain the link column between the complex and the feature layer
-        sql = "SELECT column_name from complex_metadata where complex = "+complexClass+" and aggregated_class = "+'\''+aggregatedClass[3:]+'\''
+        sql = "SELECT column_name from complex_schema where complex = "+complexClass+" and aggregated_class = "+'\''+aggregatedClass[3:]+'\''
         query = QSqlQuery(sql, self.db)
         column_name = ""
         while query.next():
