@@ -106,6 +106,45 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         self.associateFeatures()
         
     @pyqtSlot(bool)    
+    def on_zoomButton_clicked(self):
+        #case no item is selected we should warn the user
+        if len(self.treeWidget.selectedItems()) == 0:
+            QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Please, select an item to zoom.")
+            return
+        
+        item = self.treeWidget.selectedItems()[0]
+        #checking if the item is a complex (it should have depth = 2)
+        if self.depth(item) == 2:
+            for i in range(item.childCount()):
+                aggregated_item = item.child(i)
+                aggregated_class = aggregated_item.text(0)
+                #getting the layer the needs to be updated
+                aggregated_layer = None
+                layers = self.iface.mapCanvas().layers()
+                for layer in layers:
+                    if layer.name() == aggregated_class:
+                        aggregated_layer = layer
+                        break
+
+                if not aggregated_layer:
+                    QMessageBox.warning(self.iface.mainWindow(), "Warning!", "The associated classes must be loaded in the table of contents.")
+                    return
+
+                bbox = QgsRectangle()
+                for j in range(aggregated_item.childCount()):
+                    id = aggregated_item.child(i).text(0)
+                    freq = QgsFeatureRequest() 
+                    freq.setFilterFid(int(id)) 
+                    feature = layer.getFeatures( freq ).next()
+                    bbox.unionRect(feature.geometry().boundingBox())
+                
+                self.iface.mapCanvas().setExtent(bbox)
+                self.iface.mapCanvas().refresh()
+        else:
+            QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Select a complex.")
+            return
+        
+    @pyqtSlot(bool)    
     def on_disassociatePushButton_clicked(self):
         #case no item is selected we should warn the user
         if len(self.treeWidget.selectedItems()) == 0:
