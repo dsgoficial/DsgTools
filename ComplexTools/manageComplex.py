@@ -67,6 +67,10 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         #manual commit rule
         self.projectModel.setEditStrategy(QSqlTableModel.OnManualSubmit)
         self.projectModel.select()
+
+        record = self.projectModel.record()
+        record.setValue("id",str(uuid4()))
+        self.projectModel.setRecord(0, record)
         
         self.tableView.setModel(self.projectModel)
         self.tableView.show()
