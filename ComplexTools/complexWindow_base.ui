@@ -15,7 +15,7 @@
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0" colspan="3">
+    <item row="0" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QLabel" name="label">
@@ -29,7 +29,7 @@
       </item>
      </layout>
     </item>
-    <item row="1" column="0" colspan="3">
+    <item row="1" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QLabel" name="label_2">
@@ -44,27 +44,49 @@
      </layout>
     </item>
     <item row="2" column="0">
-     <widget class="QPushButton" name="dbButton">
-      <property name="text">
-       <string>Load DB's</string>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QPushButton" name="dbButton">
+        <property name="text">
+         <string>Load DB's</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="managePushButton">
+        <property name="text">
+         <string>Manage</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
-    <item row="2" column="1">
-     <widget class="QPushButton" name="managePushButton">
-      <property name="text">
-       <string>Manage</string>
-      </property>
-     </widget>
+    <item row="3" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <widget class="QPushButton" name="associatePushButton">
+        <property name="text">
+         <string>Associate</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="disassociatePushButton">
+        <property name="text">
+         <string>Disassociate</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="zoomButton">
+        <property name="text">
+         <string>Zoom</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
-    <item row="2" column="2">
-     <widget class="QPushButton" name="associatePushButton">
-      <property name="text">
-       <string>Associate</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0" colspan="3">
+    <item row="4" column="0">
      <widget class="QTreeWidget" name="treeWidget">
       <column>
        <property name="text">

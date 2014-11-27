@@ -7,6 +7,8 @@ from PyQt4.QtGui import QTreeWidgetItem, QMessageBox
 from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 
 from qgis.core import *
+from owslib.swe.common import Item
+from win32pdhquery import Query
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'complexWindow_base.ui'))
@@ -103,6 +105,76 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
     def on_associatePushButton_clicked(self):
         self.associateFeatures()
         
+    @pyqtSlot(bool)    
+    def on_disassociatePushButton_clicked(self):
+        #case no item is selected we should warn the user
+        if len(self.treeWidget.selectedItems()) == 0:
+            QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Please, select an aggregated class or aggregated id.")
+            return
+            
+        item = self.treeWidget.selectedItems()[0]
+        #checking if the item is a complex (it should have depth = 2)
+        if self.depth(item) == 3:
+            aggregated_class = item.text(0)
+            uuid = item.parent().text(1)
+            complex = item.parent().parent().text(0)
+            complex = '\''+complex.replace('complexos_', '')+'\''
+            link_column = self.obtainLinkColumn(complex, aggregated_class)
+            
+            #getting the layer the needs to be updated
+            aggregated_layer = None
+            layers = self.iface.mapCanvas().layers()
+            for layer in layers:
+                if layer.name() == aggregated_class:
+                    aggregated_layer = layer
+                    break
+            if not aggregated_layer:
+                QMessageBox.warning(self.iface.mainWindow(), "Warning!", "The class you're trying to disassociate must loaded in the table of contents.")
+                return
+                
+            for i in range(item.childCount()):
+                #feature id that will be updated
+                id = item.child(i).text(0)
+                #field index that will be set to NULL
+                fieldIndex = [i for i in range(len(layer.dataProvider().fields())) if layer.dataProvider().fields()[i].name() == link_column]  
+                #attribute pair that will be changed
+                attrs = {fieldIndex[0]:None}
+                #actual update in the database
+                from ctypes.wintypes import INT
+                layer.dataProvider().changeAttributeValues({int(id):attrs})
+        elif self.depth(item) == 4:
+            aggregated_class = item.parent().text(0)
+            uuid = item.parent().parent().text(1)
+            complex = item.parent().parent().parent().text(0)
+            complex = '\''+complex.replace('complexos_', '')+'\''
+            link_column = self.obtainLinkColumn(complex, aggregated_class)
+
+            #getting the layer the needs to be updated
+            aggregated_layer = None
+            layers = self.iface.mapCanvas().layers()
+            for layer in layers:
+                if layer.name() == aggregated_class:
+                    aggregated_layer = layer
+                    break    
+
+            if not aggregated_layer:
+                QMessageBox.warning(self.iface.mainWindow(), "Warning!", "The class you're trying to disassociate must loaded in the table of contents.")
+                return
+
+            #feature id that will be updated
+            id = item.text(0)
+            #field index that will be set to NULL
+            fieldIndex = [i for i in range(len(layer.dataProvider().fields())) if layer.dataProvider().fields()[i].name() == link_column]  
+            #attribute pair that will be changed
+            attrs = {fieldIndex[0]:None}
+            #actual update in the database
+            layer.dataProvider().changeAttributeValues({int(id):attrs})
+        else:
+            QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Please, select an aggregated class or aggregated id.")
+            return            
+            
+        self.loadAssociatedFeatures()
+        
     def loadAssociatedFeatures(self):
         self.treeWidget.clear()
         complex = self.complexCombo.currentText()
@@ -128,7 +200,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                 self.addAssociatedFeature(complex_schema+"_"+complex, name, complex_uuid, None, None)
                 
                 #query to obtain the id of the associated feature
-                sql = "SELECT OGC_FID from "+aggregated_schema+"_"+aggregated_class+" where "+column_name+"="+complex_uuid
+                sql = "SELECT OGC_FID from "+aggregated_schema+"_"+aggregated_class+" where "+column_name+"="+'\''+complex_uuid+'\''
                 associatedQuery = QSqlQuery(sql, self.db)
                 while associatedQuery.next():
                     ogc_fid = associatedQuery.value(0)
@@ -142,7 +214,16 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             item = item.parent()
             depth += 1
         return depth
-                         
+
+    def obtainLinkColumn(self, complexClass, aggregatedClass):
+        #query to obtain the link column between the complex and the feature layer
+        sql = "SELECT column_name from complex_metadata where complex = "+complexClass+" and aggregated_class = "+'\''+aggregatedClass[3:]+'\''
+        query = QSqlQuery(sql, self.db)
+        column_name = ""
+        while query.next():
+            column_name = query.value(0)
+        return column_name
+
     def associateFeatures(self):
         #case no item is selected we should warn the user
         if len(self.treeWidget.selectedItems()) == 0:
@@ -171,12 +252,8 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             if len(selectedFeatures) == 0:
                 continue
             
-            #query to obtain the link column between the complex and the feature layer
-            sql = "SELECT column_name from complex_metadata where complex = "+complex+" and aggregated_class = "+'\''+layer.name()[3:]+'\''
-            query = QSqlQuery(sql, self.db)
-            column_name = ""
-            while query.next():
-                column_name = query.value(0)
+            #obtaining the link column
+            column_name = self.obtainLinkColumn(complex, layer.name())
             
             #storing the names of the incompatible layers
             if column_name == "":
