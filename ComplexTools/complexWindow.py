@@ -7,8 +7,6 @@ from PyQt4.QtGui import QTreeWidgetItem, QMessageBox
 from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 
 from qgis.core import *
-from owslib.swe.common import Item
-from win32pdhquery import Query
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'complexWindow_base.ui'))
@@ -28,12 +26,12 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         self.setupUi(self)
         #self.enderecoLine.setText('186.228.51.52')
         #self.portaLine.setText('2101'
+        self.iface = iface
         
         QObject.connect(self.dbButton, SIGNAL(("clicked()")), self.getDataSources)
         QObject.connect(self.dbCombo, SIGNAL("activated(int)"), self.updateComplexClass)
         QObject.connect(self.complexCombo, SIGNAL("activated(int)"), self.loadAssociatedFeatures)
-        
-        self.iface = iface
+        QObject.connect(self.iface, SIGNAL("newProjectCreated()"), self.clearDock)        
         
         self.db = None
         self.databases = None
@@ -42,11 +40,19 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         if self.db:
             self.db.close()
             self.db = None        
+
+    def clearDock(self):
+        self.treeWidget.clear()
+        self.dbCombo.clear()
+        self.complexCombo.clear()
         
     def updateComplexClass(self):
         if self.db:
             self.db.close()
             self.db = None
+            
+        if self.dbCombo.currentIndex() == 0:
+            return
             
         dbName = self.dbCombo.currentText()
         dataSourceUri = self.databases[dbName]
@@ -77,6 +83,9 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                 self.complexCombo.addItem(query.value(0))
         
     def getDataSources(self):
+        self.dbCombo.clear()
+        self.dbCombo.addItem("select a database")
+        
         if self.databases:
             self.databases.clear()
         
@@ -115,6 +124,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         item = self.treeWidget.selectedItems()[0]
         #checking if the item is a complex (it should have depth = 2)
         if self.depth(item) == 2:
+            bbox = QgsRectangle()
             for i in range(item.childCount()):
                 aggregated_item = item.child(i)
                 aggregated_class = aggregated_item.text(0)
@@ -130,7 +140,6 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                     QMessageBox.warning(self.iface.mainWindow(), "Warning!", "The associated classes must be loaded in the table of contents.")
                     return
 
-                bbox = QgsRectangle()
                 for j in range(aggregated_item.childCount()):
                     id = aggregated_item.child(i).text(0)
                     freq = QgsFeatureRequest() 
@@ -138,8 +147,8 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                     feature = layer.getFeatures( freq ).next()
                     bbox.unionRect(feature.geometry().boundingBox())
                 
-                self.iface.mapCanvas().setExtent(bbox)
-                self.iface.mapCanvas().refresh()
+            self.iface.mapCanvas().setExtent(bbox)
+            self.iface.mapCanvas().refresh()
         else:
             QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Select a complex.")
             return
