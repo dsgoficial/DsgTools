@@ -14,7 +14,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'complexWindow_base.ui'))
 
 from manageComplex import ManageComplexDialog
-from associateWithComplex import AssociateWithComplexDialog
+#from associateWithComplex import AssociateWithComplexDialog
 
 class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
     def __init__(self, iface, parent=None):
