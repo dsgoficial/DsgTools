@@ -74,6 +74,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
     def populateComboBox(self):
         #getting all complex tables
         self.complexCombo.clear()
+        self.complexCombo.addItem("select a complex class")
         
         #getting all complex tables
         query = QSqlQuery("SELECT name FROM sqlite_master WHERE type='table'", self.db)
@@ -225,6 +226,10 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         
     def loadAssociatedFeatures(self):
         self.treeWidget.clear()
+        
+        if self.complexCombo.currentIndex() == 0:
+            return
+        
         complex = self.complexCombo.currentText()
         complex = '\''+complex.replace("complexos_","")+'\''
         #query to get the possible links to the selected complex in the combobox
