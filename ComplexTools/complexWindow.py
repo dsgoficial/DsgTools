@@ -181,6 +181,13 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Select a complex.")
             return
         
+    def getAdjustedComplexName(self, dbName, complex):
+        if self.isSpatialiteDatabase(dbName):
+            complex = '\''+complex.replace("complexos_","")+'\''
+        else:
+            complex = '\''+complex+'\''
+        return complex
+        
     @pyqtSlot(bool)    
     def on_disassociatePushButton_clicked(self):
         #case no item is selected we should warn the user
@@ -194,10 +201,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             aggregated_class = item.text(0)
             uuid = item.parent().text(1)
             complex = item.parent().parent().text(0)
-            if self.isSpatialiteDatabase(self.dbCombo.currentText()):
-                complex = '\''+complex.replace("complexos_","")+'\''
-            else:
-                complex = '\''+complex+'\''
+            complex = self.getAdjustedComplexName(self.dbCombo.currentText(), complex)
             link_column = self.obtainLinkColumn(complex, aggregated_class)
             
             #getting the layer the needs to be updated
@@ -226,10 +230,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             aggregated_class = item.parent().text(0)
             uuid = item.parent().parent().text(1)
             complex = item.parent().parent().parent().text(0)
-            if self.isSpatialiteDatabase(self.dbCombo.currentText()):
-                complex = '\''+complex.replace("complexos_","")+'\''
-            else:
-                complex = '\''+complex+'\''
+            complex = self.getAdjustedComplexName(self.dbCombo.currentText(), complex)
             link_column = self.obtainLinkColumn(complex, aggregated_class)
 
             #getting the layer the needs to be updated
@@ -265,10 +266,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             return
         
         complex = self.complexCombo.currentText()
-        if self.isSpatialiteDatabase(self.dbCombo.currentText()):
-            complex = '\''+complex.replace("complexos_","")+'\''
-        else:
-            complex = '\''+complex+'\''
+        complex = self.getAdjustedComplexName(self.dbCombo.currentText(), complex)
             
         #query to get the possible links to the selected complex in the combobox
         sql = "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_schema where complex = "+complex
@@ -352,10 +350,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         
         complex = self.complexCombo.currentText()
         #surrounding the name with ''
-        if self.isSpatialiteDatabase(self.dbCombo.currentText()):
-            complex = '\''+complex.replace("complexos_","")+'\''
-        else:
-            complex = '\''+complex+'\''
+        complex = self.getAdjustedComplexName(self.dbCombo.currentText(), complex)
 
         #uuid to be adjust on the selected features
         uuid = item.text(1)
