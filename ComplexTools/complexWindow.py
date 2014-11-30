@@ -169,11 +169,14 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                     return
 
                 for j in range(aggregated_item.childCount()):
-                    id = aggregated_item.child(i).text(0)
+                    id = aggregated_item.child(j).text(0)
                     freq = QgsFeatureRequest() 
                     freq.setFilterFid(int(id)) 
                     feature = layer.getFeatures( freq ).next()
-                    bbox.unionRect(feature.geometry().boundingBox())
+                    print id
+                    if j==0:
+                        bbox=feature.geometry().boundingBox()
+                    bbox.combineExtentWith(feature.geometry().boundingBox())
                 
             self.iface.mapCanvas().setExtent(bbox)
             self.iface.mapCanvas().refresh()
