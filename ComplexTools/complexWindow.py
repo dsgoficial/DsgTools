@@ -1,5 +1,28 @@
 # -*- coding: utf-8 -*-
-import os
+"""
+/***************************************************************************
+ DsgTools
+                                 A QGIS plugin
+ Brazilian Army Cartographic Production Tools
+                              -------------------
+        begin                : 2014-11-08
+        git sha              : $Format:%H$
+        copyright            : (C) 2014 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
+        email                : luiz.claudio@dsg.eb.mil.br
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+"""
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Factories', 'SqlFactory'))
+from sqlGeneratorFactory import SqlGeneratorFactory
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
@@ -35,6 +58,8 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         
         self.db = None
         self.databases = None
+        self.factory = SqlGeneratorFactory()
+        self.gen = None
         
     def __del__(self):
         if self.db:
@@ -53,13 +78,17 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         return False
         
     def getUserCredentials(self, lyr):
-        connInfo = QgsDataSourceURI( lyr.dataProvider().dataSourceUri() ).connectionInfo()
+        dataSourceUri = QgsDataSourceURI( lyr.dataProvider().dataSourceUri() )
+        if dataSourceUri.host() == "":
+            return (None, None)
+            
+        connInfo = dataSourceUri.connectionInfo()
         (success, user, passwd ) = QgsCredentials.instance().get( connInfo, None, None )
         # Put the credentials back (for yourself and the provider), as QGIS removes it when you "get" it
         if success:
             QgsCredentials.instance().put( connInfo, user, passwd )   
             
-        return (user, passwd)     
+        return (user, passwd)
         
     def updateComplexClass(self):
         if self.db:
@@ -68,8 +97,12 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             
         if self.dbCombo.currentIndex() == 0:
             return
-            
+        
         dbName = self.dbCombo.currentText()
+
+        #getting the sql generator
+        self.gen = self.factory.createSqlGenerator(self.isSpatialiteDatabase(dbName))
+            
         (dataSourceUri, credentials) = self.databases[dbName]
         #verifying the connection type
         if self.isSpatialiteDatabase(dbName):
@@ -94,18 +127,11 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         
         dbName = self.dbCombo.currentText()
         (dataSourceUri, credentials) = self.databases[dbName]
-        if self.isSpatialiteDatabase(dbName):
-            #getting all complex tables
-            query = QSqlQuery("SELECT name FROM sqlite_master WHERE type='table'", self.db)
-            while query.next():
-                name = query.value(0)
-                if 'complexos_' in name:
-                    self.complexCombo.addItem(query.value(0))
-        else:
-            #getting all complex tables
-            query = QSqlQuery("select distinct table_name from information_schema.columns where table_schema = 'complexos'", self.db)
-            while query.next():
-                self.complexCombo.addItem(query.value(0))            
+
+        #getting all complex tables
+        query = QSqlQuery(self.gen.getComplexTablesFromDatabase(), self.db)
+        while query.next():
+            self.complexCombo.addItem(query.value(0))
         
     def getDataSources(self):
         self.dbCombo.clear()
@@ -173,7 +199,6 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                     freq = QgsFeatureRequest() 
                     freq.setFilterFid(int(id)) 
                     feature = layer.getFeatures( freq ).next()
-                    print id
                     if j==0:
                         bbox=feature.geometry().boundingBox()
                     bbox.combineExtentWith(feature.geometry().boundingBox())
@@ -272,9 +297,8 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         complex = self.getAdjustedComplexName(self.dbCombo.currentText(), complex)
             
         #query to get the possible links to the selected complex in the combobox
-        sql = "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_schema where complex = "+complex
+        sql = self.gen.getComplexLinks(complex)
         query = QSqlQuery(sql, self.db)
-        print sql
         while query.next():
             #setting the variables
             complex_schema = query.value(0)
@@ -284,11 +308,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             column_name = query.value(4)
             
             #query to obtain the created complexes
-            if self.isSpatialiteDatabase(self.dbCombo.currentText()):
-                sql = "SELECT id, nome from "+complex_schema+"_"+complex
-            else:
-                sql = "SELECT id, nome from "+complex_schema+"."+complex
-
+            sql = self.gen.getComplexData(complex_schema, complex)
             complexQuery = QSqlQuery(sql, self.db)
             while complexQuery.next():
                 complex_uuid = complexQuery.value(0)
@@ -303,11 +323,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                     self.addAssociatedFeature(complex, name, complex_uuid, None, None)
                 
                 #query to obtain the id of the associated feature
-                if self.isSpatialiteDatabase(self.dbCombo.currentText()):
-                    sql = "SELECT OGC_FID from "+aggregated_schema+"_"+aggregated_class+" where "+column_name+"="+'\''+complex_uuid+'\''
-                else:
-                    sql = "SELECT id from "+aggregated_schema+"."+aggregated_class+" where "+column_name+"="+'\''+complex_uuid+'\''
-
+                sql = self.gen.getAssociatedFeaturesData(aggregated_schema, aggregated_class, column_name, complex_uuid)
                 associatedQuery = QSqlQuery(sql, self.db)
                 
                 while associatedQuery.next():
@@ -328,11 +344,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
 
     def obtainLinkColumn(self, complexClass, aggregatedClass):
         #query to obtain the link column between the complex and the feature layer
-        if self.isSpatialiteDatabase(self.dbCombo.currentText()):
-            sql = "SELECT column_name from complex_schema where complex = "+complexClass+" and aggregated_class = "+'\''+aggregatedClass[3:]+'\''
-        else:
-            sql = "SELECT column_name from complex_schema where complex = "+complexClass+" and aggregated_class = "+'\''+aggregatedClass+'\''
-            
+        sql = self.gen.getLinkColumn(complexClass, aggregatedClass)
         query = QSqlQuery(sql, self.db)
         column_name = ""
         while query.next():
@@ -390,7 +402,6 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             message += "The following layers cannot be associated to complexes from "+self.complexCombo.currentText()+":\n"
             for text in forbiddenLayers:
                 message += text+"\n"
-            print message
             QMessageBox.warning(self.iface.mainWindow(), "Warning!", message)
 
         #updating the tree widget
