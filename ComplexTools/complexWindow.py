@@ -160,6 +160,8 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             self.dlg = ManageComplexDialog(self.iface, self.db, 'complexos.'+self.complexCombo.currentText())
         #connectes a signal to update the tree widget when done
         QObject.connect(self.dlg, SIGNAL(("tableUpdated()")), self.loadAssociatedFeatures)
+        #connectes a signal to disassociate features from complex before removal
+        QObject.connect(self.dlg, SIGNAL(("markedToRemove( PyQt_PyObject )")), self.disassociateFeatures)
         result = self.dlg.exec_()
         if result:
             pass
@@ -215,6 +217,70 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         else:
             complex = '\''+complex+'\''
         return complex
+    
+    def disassociateFeatures(self, toBeRemoved):
+        for uuid in toBeRemoved:
+            complexItem = self.treeWidget.findItems(uuid, Qt.MatchRecursive, 1)[0]
+            count = complexItem.childCount()
+            for i in range(count):
+                self.disassociateAggregatedClass(complexItem.child(i))
+                
+    def disassociateAggregatedClass(self, item):
+        aggregated_class = item.text(0)
+        uuid = item.parent().text(1)
+        complex = item.parent().parent().text(0)
+        complex = self.getAdjustedComplexName(self.dbCombo.currentText(), complex)
+        link_column = self.obtainLinkColumn(complex, aggregated_class)
+            
+        #getting the layer the needs to be updated
+        aggregated_layer = None
+        layers = self.iface.mapCanvas().layers()
+        for layer in layers:
+            if layer.name() == aggregated_class:
+                aggregated_layer = layer
+                break
+            
+        if not aggregated_layer:
+            QMessageBox.warning(self.iface.mainWindow(), "Warning!", "The class you're trying to disassociate must loaded in the table of contents.")
+            return
+            
+        for i in range(item.childCount()):
+            #feature id that will be updated
+            id = item.child(i).text(0)
+            #field index that will be set to NULL
+            fieldIndex = [i for i in range(len(layer.dataProvider().fields())) if layer.dataProvider().fields()[i].name() == link_column]  
+            #attribute pair that will be changed
+            attrs = {fieldIndex[0]:None}
+            #actual update in the database
+            layer.dataProvider().changeAttributeValues({int(id):attrs})
+            
+    def disassociateAggregatedId(self, item):
+        aggregated_class = item.parent().text(0)
+        uuid = item.parent().parent().text(1)
+        complex = item.parent().parent().parent().text(0)
+        complex = self.getAdjustedComplexName(self.dbCombo.currentText(), complex)
+        link_column = self.obtainLinkColumn(complex, aggregated_class)
+
+        #getting the layer the needs to be updated
+        aggregated_layer = None
+        layers = self.iface.mapCanvas().layers()
+        for layer in layers:
+            if layer.name() == aggregated_class:
+                aggregated_layer = layer
+                break    
+
+        if not aggregated_layer:
+            QMessageBox.warning(self.iface.mainWindow(), "Warning!", "The class you're trying to disassociate must loaded in the table of contents.")
+            return
+
+        #feature id that will be updated
+        id = item.text(0)
+        #field index that will be set to NULL
+        fieldIndex = [i for i in range(len(layer.dataProvider().fields())) if layer.dataProvider().fields()[i].name() == link_column]  
+        #attribute pair that will be changed
+        attrs = {fieldIndex[0]:None}
+        #actual update in the database
+        layer.dataProvider().changeAttributeValues({int(id):attrs})
         
     @pyqtSlot(bool)    
     def on_disassociatePushButton_clicked(self):
@@ -226,61 +292,9 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         item = self.treeWidget.selectedItems()[0]
         #checking if the item is a complex (it should have depth = 2)
         if self.depth(item) == 3:
-            aggregated_class = item.text(0)
-            uuid = item.parent().text(1)
-            complex = item.parent().parent().text(0)
-            complex = self.getAdjustedComplexName(self.dbCombo.currentText(), complex)
-            link_column = self.obtainLinkColumn(complex, aggregated_class)
-            
-            #getting the layer the needs to be updated
-            aggregated_layer = None
-            layers = self.iface.mapCanvas().layers()
-            for layer in layers:
-                if layer.name() == aggregated_class:
-                    aggregated_layer = layer
-                    break
-                
-            if not aggregated_layer:
-                QMessageBox.warning(self.iface.mainWindow(), "Warning!", "The class you're trying to disassociate must loaded in the table of contents.")
-                return
-                
-            for i in range(item.childCount()):
-                #feature id that will be updated
-                id = item.child(i).text(0)
-                #field index that will be set to NULL
-                fieldIndex = [i for i in range(len(layer.dataProvider().fields())) if layer.dataProvider().fields()[i].name() == link_column]  
-                #attribute pair that will be changed
-                attrs = {fieldIndex[0]:None}
-                #actual update in the database
-                from ctypes.wintypes import INT
-                layer.dataProvider().changeAttributeValues({int(id):attrs})
+            self.disassociateAggregatedClass(item)
         elif self.depth(item) == 4:
-            aggregated_class = item.parent().text(0)
-            uuid = item.parent().parent().text(1)
-            complex = item.parent().parent().parent().text(0)
-            complex = self.getAdjustedComplexName(self.dbCombo.currentText(), complex)
-            link_column = self.obtainLinkColumn(complex, aggregated_class)
-
-            #getting the layer the needs to be updated
-            aggregated_layer = None
-            layers = self.iface.mapCanvas().layers()
-            for layer in layers:
-                if layer.name() == aggregated_class:
-                    aggregated_layer = layer
-                    break    
-
-            if not aggregated_layer:
-                QMessageBox.warning(self.iface.mainWindow(), "Warning!", "The class you're trying to disassociate must loaded in the table of contents.")
-                return
-
-            #feature id that will be updated
-            id = item.text(0)
-            #field index that will be set to NULL
-            fieldIndex = [i for i in range(len(layer.dataProvider().fields())) if layer.dataProvider().fields()[i].name() == link_column]  
-            #attribute pair that will be changed
-            attrs = {fieldIndex[0]:None}
-            #actual update in the database
-            layer.dataProvider().changeAttributeValues({int(id):attrs})
+            self.disassociateAggregatedId(item)
         else:
             QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Please, select an aggregated class or aggregated id.")
             return            

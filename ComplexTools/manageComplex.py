@@ -52,6 +52,7 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         
         self.db = db
         self.table = table
+        self.toBeRemoved = []
 
         QObject.connect(self.addRow, SIGNAL(("clicked()")), self.addComplex)
         QObject.connect(self.removeRow, SIGNAL(("clicked()")), self.removeComplex)
@@ -86,12 +87,19 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         selectionModel = self.tableView.selectionModel()
         selectedRows = selectionModel.selectedRows()
         for row in selectedRows:
+            #storing the complex to be removed
+            record = self.projectModel.record(row.row())
+            uuid = str(record.value("id"))
+            if uuid not in self.toBeRemoved:
+                print uuid
+                self.toBeRemoved.append(uuid)
             self.projectModel.removeRow(row.row())
 
     def cancel(self):
         self.done(0)
 
-    def updateTable(self): 
+    def updateTable(self):
+        self.emit(SIGNAL("markedToRemove( PyQt_PyObject )"), self.toBeRemoved)
         #commmiting all pending changes
         if not self.projectModel.submitAll():
             #In case something went wrong we show the message to the user
