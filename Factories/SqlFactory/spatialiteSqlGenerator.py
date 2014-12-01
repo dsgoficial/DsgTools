@@ -38,3 +38,11 @@ class SpatialiteSqlGenerator(SqlGenerator):
     def getLinkColumn(self, complexClass, aggregatedClass):
         sql = "SELECT column_name from complex_schema where complex = "+complexClass+" and aggregated_class = "+'\''+aggregatedClass[3:]+'\''
         return sql
+
+    def getSrid(self):
+        sql = "SELECT srid from geometry_columns"
+        return sql
+
+    def getTablesFromDatabase(self):
+        sql = "SELECT name FROM sqlite_master WHERE type='table'"
+        return sql

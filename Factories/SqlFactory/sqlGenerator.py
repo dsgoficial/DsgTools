@@ -36,3 +36,13 @@ class SqlGenerator:
     
     def getLinkColumn(self, complexClass, aggregatedClass):
         return None
+    
+    def getSrid(self):
+        return None
+    
+    def getElementCountFromLayer(self, layerItem):
+        sql = "SELECT count() FROM "+layerItem[0]+";"
+        return sql
+    
+    def getTablesFromDatabase(self):
+        return None

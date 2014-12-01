@@ -38,3 +38,11 @@ class PostGISSqlGenerator(SqlGenerator):
     def getLinkColumn(self, complexClass, aggregatedClass):
         sql = "SELECT column_name from complex_schema where complex = "+complexClass+" and aggregated_class = "+'\''+aggregatedClass+'\''
         return sql
+
+    def getSrid(self):
+        sql = "SELECT srid from geometry_columns WHERE f_table_schema <> 'tiger'"
+        return sql
+
+    def getTablesFromDatabase(self):
+        sql = "select distinct table_name from information_schema.columns"
+        return sql
