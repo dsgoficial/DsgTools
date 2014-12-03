@@ -45,6 +45,20 @@ class CustomTableModel(QSqlTableModel):
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable
         return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
     
+class ComboBoxDelegate(QItemDelegate):
+ 
+    def __init__(self, owner, itemslist):
+        QItemDelegate.__init__(self, owner)
+        self.itemslist = itemslist
+ 
+    def createEditor(self, parent, option, index):
+        # create the ProgressBar as our editor.
+        editor = QComboBox(parent)
+        editor.addItems(self.itemslist)
+        editor.setCurrentIndex(0)
+        editor.installEventFilter(self)            
+        return editor
+    
 class ManageComplexDialog(QDialog, Ui_Dialog):
     def __init__(self, iface, db, table):
         """Constructor.
@@ -90,13 +104,7 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
             self.generateCombo(key, self.domainDict[key])
         
     def generateCombo(self, column, domainValues):
-        combo = QComboBox()
-        for key in domainValues:
-            combo.addItem(key, domainValues[key])
-        self.combos.append(combo)
-        combo.setModel(self.projectModel)
-        combo.setModelColumn(self.projectModel.fieldIndex(column))
-        combo.setCurrentIndex(0)
+        self.tableView.setItemDelegateForColumn(self.projectModel.fieldIndex(column), ComboBoxDelegate(self,domainValues.keys()))
 
     def updateTableView(self):
         #setting the model in the view
