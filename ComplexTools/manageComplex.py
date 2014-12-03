@@ -53,6 +53,9 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         self.db = db
         self.table = table
         self.toBeRemoved = []
+        
+        qgisElement = tempDoc.documentElement()
+        edittypesElement = qgisElement.elementsByTagName("edittypes")
 
         QObject.connect(self.addRow, SIGNAL(("clicked()")), self.addComplex)
         QObject.connect(self.removeRow, SIGNAL(("clicked()")), self.removeComplex)

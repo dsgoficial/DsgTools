@@ -12,6 +12,7 @@ encoding//LayerTools/carrega_categoria_dialog.py=utf-8
 encoding//LayerTools/carrega_categoria_dialog_base.py=utf-8
 encoding//LayerTools/carrega_classe_dialog.py=utf-8
 encoding//LayerTools/carrega_classe_dialog_base.py=utf-8
+encoding//QmlTools/qmlParser.py=utf-8
 encoding/__init__.py=utf-8
 encoding/aboutdialog.py=utf-8
 encoding/dsg_tools.py=utf-8
