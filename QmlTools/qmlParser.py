@@ -22,7 +22,6 @@
 """
 import sys, os
 from PyQt4.QtXml import *
-from PyQt4.QtCore import QFile, QIODevice, QTextStream, QString
 
 class QmlParser:
     def __init__(self, fileName):
