@@ -97,8 +97,6 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         self.table = table
         #rows that are marked for removal
         self.toBeRemoved = []
-        #combobox list to map the attributes
-        self.combos = []
         
         #adjusting the table name to match the correspondent qml file
         fileName = table.replace('complexos_', '')
@@ -127,7 +125,6 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         
     def generateCombo(self, column, domainValues):
         combo = ComboBoxDelegate(self,domainValues, self.projectModel.fieldIndex(column))
-        self.combos.append(combo)
         self.tableView.setItemDelegateForColumn(self.projectModel.fieldIndex(column), combo)
 
     def updateTableView(self):
