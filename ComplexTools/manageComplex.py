@@ -37,13 +37,32 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'QmlTools'))
 from qmlParser import QmlParser
 
 class CustomTableModel(QSqlTableModel):
-    def __init__(self, parent=None, db=QSqlDatabase):
+    def __init__(self, domainDict, parent=None, db=QSqlDatabase):
         QSqlTableModel.__init__(self, parent=parent, db=db)
+        self.dict = domainDict
         
     def flags(self, index):
         if index.column() == 0:
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable
         return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
+    
+    def data(self, index, role):
+        code = str(QSqlTableModel.data(self, index, role))
+        column = self.headerData(index.column(), Qt.Horizontal)
+        if self.dict.has_key(column):
+            dict = self.dict[column]
+            for key, value in dict.iteritems():
+                if code == value:
+                    return key
+        return code
+    
+    def setData(self, index, value, role=Qt.EditRole):
+        column = self.headerData(index.column(), Qt.Horizontal)
+        newValue = value
+        if self.dict.has_key(column):
+            dict = self.dict[column]
+            newValue = int(dict[str(value)])
+        return QSqlTableModel.setData(self, index, newValue, role)
     
 class ComboBoxDelegate(QStyledItemDelegate):
     def __init__(self, parent, itemsDict, column):
@@ -62,27 +81,22 @@ class ComboBoxDelegate(QStyledItemDelegate):
     
     def setEditorData(self, editor, index):
         """ load data from model to editor """
+        m = index.model()
         if index.column() == self.column:
-            value = index.data(Qt.DisplayRole)
-            self.displayText(value)
+            txt = m.data(index, Qt.DisplayRole)
+            editor.setEditText(txt)
         else:
             # use default
             QItemDelegate.setEditorData(self, editor, index)
-
-    def displayText(self, value, locale=None):
-        for key, code in self.itemsDict.iteritems():
-            if value == code:
-                return key
-        return str(value)
-
+            
     def setModelData(self, editor, model, index):
         """ save data from editor back to model """
         if index.column() == self.column:
-            model.setData(index, editor.itemData(editor.currentIndex()))
+            model.setData(index, editor.currentText())
         else:
             # use default
             QItemDelegate.setModelData(self, editor, model, index)
-                     
+                         
 class ManageComplexDialog(QDialog, Ui_Dialog):
     def __init__(self, iface, db, table):
         """Constructor.
@@ -131,7 +145,7 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
 
     def updateTableView(self):
         #setting the model in the view
-        self.projectModel = CustomTableModel(None, self.db)
+        self.projectModel = CustomTableModel(self.domainDict, None, self.db)
         #adjusting the table
         self.projectModel.setTable(self.table)
         #manual commit rule
