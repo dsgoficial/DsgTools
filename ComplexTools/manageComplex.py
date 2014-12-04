@@ -47,13 +47,13 @@ class CustomTableModel(QSqlTableModel):
         return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
     
     def data(self, index, role):
-        code = str(QSqlTableModel.data(self, index, role))
+        code = QSqlTableModel.data(self, index, role)
         column = self.headerData(index.column(), Qt.Horizontal)
         if self.dict.has_key(column):
             dict = self.dict[column]
-            for key, value in dict.iteritems():
-                if code == value:
-                    return key
+            if str(code) in dict.values():
+                id = dict.values().index(str(code))
+                return dict.keys()[id]
         return code
     
     def setData(self, index, value, role=Qt.EditRole):
