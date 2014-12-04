@@ -45,7 +45,7 @@ class CustomTableModel(QSqlTableModel):
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable
         return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
     
-class ComboBoxDelegate(QItemDelegate):
+class ComboBoxDelegate(QStyledItemDelegate):
     def __init__(self, parent, itemsDict, column):
         QItemDelegate.__init__(self, parent)
         self.itemsDict = itemsDict
@@ -62,14 +62,18 @@ class ComboBoxDelegate(QItemDelegate):
     
     def setEditorData(self, editor, index):
         """ load data from model to editor """
-        m = index.model()
         if index.column() == self.column:
-            txt = m.data(index, Qt.DisplayRole)
-            if txt:
-                editor.setEditText(str(txt))
+            value = index.data(Qt.DisplayRole)
+            self.displayText(value)
         else:
             # use default
             QItemDelegate.setEditorData(self, editor, index)
+
+    def displayText(self, value, locale=None):
+        for key, code in self.itemsDict.iteritems():
+            if value == code:
+                return key
+        return str(value)
 
     def setModelData(self, editor, model, index):
         """ save data from editor back to model """
@@ -78,8 +82,6 @@ class ComboBoxDelegate(QItemDelegate):
         else:
             # use default
             QItemDelegate.setModelData(self, editor, model, index)
-#             if index.column() == 0:
-#                 self.emit(SIGNAL("columnNameChanged()"))
                      
 class ManageComplexDialog(QDialog, Ui_Dialog):
     def __init__(self, iface, db, table):
