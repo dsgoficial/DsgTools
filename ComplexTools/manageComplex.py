@@ -66,7 +66,7 @@ class ComboBoxDelegate(QItemDelegate):
         if index.column() == self.column:
             txt = m.data(index, Qt.DisplayRole)
             if txt:
-                editor.setEditText(txt)
+                editor.setEditText(str(txt))
         else:
             # use default
             QItemDelegate.setEditorData(self, editor, index)
@@ -74,7 +74,7 @@ class ComboBoxDelegate(QItemDelegate):
     def setModelData(self, editor, model, index):
         """ save data from editor back to model """
         if index.column() == self.column:
-            model.setData(index, editor.currentText())
+            model.setData(index, editor.itemData(editor.currentIndex()))
         else:
             # use default
             QItemDelegate.setModelData(self, editor, model, index)
