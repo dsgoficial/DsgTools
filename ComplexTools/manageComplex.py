@@ -46,19 +46,41 @@ class CustomTableModel(QSqlTableModel):
         return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
     
 class ComboBoxDelegate(QItemDelegate):
- 
-    def __init__(self, owner, itemslist):
-        QItemDelegate.__init__(self, owner)
-        self.itemslist = itemslist
- 
+    def __init__(self, parent, itemsDict, column):
+        QItemDelegate.__init__(self, parent)
+        self.itemsDict = itemsDict
+        self.column = column
+
     def createEditor(self, parent, option, index):
-        # create the ProgressBar as our editor.
-        editor = QComboBox(parent)
-        editor.addItems(self.itemslist)
-        editor.setCurrentIndex(0)
-        editor.installEventFilter(self)            
-        return editor
+        # special combobox for field type
+        if index.column() == self.column:
+            cbo = QComboBox(parent)
+            for item in self.itemsDict:
+                cbo.addItem(item, self.itemsDict[item])
+            return cbo
+        return QItemDelegate.createEditor(self, parent, option, index)
     
+    def setEditorData(self, editor, index):
+        """ load data from model to editor """
+        m = index.model()
+        if index.column() == self.column:
+            txt = m.data(index, Qt.DisplayRole)
+            if txt:
+                editor.setEditText(txt)
+        else:
+            # use default
+            QItemDelegate.setEditorData(self, editor, index)
+
+    def setModelData(self, editor, model, index):
+        """ save data from editor back to model """
+        if index.column() == self.column:
+            model.setData(index, editor.currentText())
+        else:
+            # use default
+            QItemDelegate.setModelData(self, editor, model, index)
+#             if index.column() == 0:
+#                 self.emit(SIGNAL("columnNameChanged()"))
+                     
 class ManageComplexDialog(QDialog, Ui_Dialog):
     def __init__(self, iface, db, table):
         """Constructor.
@@ -104,7 +126,9 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
             self.generateCombo(key, self.domainDict[key])
         
     def generateCombo(self, column, domainValues):
-        self.tableView.setItemDelegateForColumn(self.projectModel.fieldIndex(column), ComboBoxDelegate(self,domainValues.keys()))
+        combo = ComboBoxDelegate(self,domainValues, self.projectModel.fieldIndex(column))
+        self.combos.append(combo)
+        self.tableView.setItemDelegateForColumn(self.projectModel.fieldIndex(column), combo)
 
     def updateTableView(self):
         #setting the model in the view
