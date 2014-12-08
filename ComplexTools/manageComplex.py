@@ -40,12 +40,12 @@ class CustomTableModel(QSqlTableModel):
     def __init__(self, domainDict, parent=None, db=QSqlDatabase):
         QSqlTableModel.__init__(self, parent=parent, db=db)
         self.dict = domainDict
-        
+
     def flags(self, index):
         if index.column() == 0:
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable
         return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
-    
+
     def data(self, index, role):
         code = QSqlTableModel.data(self, index, role)
         column = self.headerData(index.column(), Qt.Horizontal)
@@ -55,7 +55,7 @@ class CustomTableModel(QSqlTableModel):
                 id = dict.values().index(str(code))
                 return dict.keys()[id]
         return code
-    
+
     def setData(self, index, value, role=Qt.EditRole):
         column = self.headerData(index.column(), Qt.Horizontal)
         newValue = value
@@ -63,7 +63,7 @@ class CustomTableModel(QSqlTableModel):
             dict = self.dict[column]
             newValue = int(dict[str(value)])
         return QSqlTableModel.setData(self, index, newValue, role)
-    
+
 class ComboBoxDelegate(QStyledItemDelegate):
     def __init__(self, parent, itemsDict, column):
         QItemDelegate.__init__(self, parent)
@@ -78,17 +78,20 @@ class ComboBoxDelegate(QStyledItemDelegate):
                 cbo.addItem(item, self.itemsDict[item])
             return cbo
         return QItemDelegate.createEditor(self, parent, option, index)
-    
+
     def setEditorData(self, editor, index):
         """ load data from model to editor """
         m = index.model()
-        if index.column() == self.column:
-            txt = m.data(index, Qt.DisplayRole)
-            editor.setEditText(txt)
-        else:
-            # use default
-            QItemDelegate.setEditorData(self, editor, index)
-            
+        try:
+            if index.column() == self.column:
+                txt = m.data(index, Qt.DisplayRole)
+                editor.setEditText(txt)
+            else:
+                # use default
+                QItemDelegate.setEditorData(self, editor, index)
+        except:
+            pass
+
     def setModelData(self, editor, model, index):
         """ save data from editor back to model """
         if index.column() == self.column:
@@ -96,32 +99,32 @@ class ComboBoxDelegate(QStyledItemDelegate):
         else:
             # use default
             QItemDelegate.setModelData(self, editor, model, index)
-                         
+
 class ManageComplexDialog(QDialog, Ui_Dialog):
     def __init__(self, iface, db, table):
         """Constructor.
         """
         QDialog.__init__( self )
         self.setupUi( self )
-        
+
         #qgis interface
         self.iface = iface
-        
+
         #database conenction
         self.db = db
         #table name
         self.table = table
         #rows that are marked for removal
         self.toBeRemoved = []
-        
+
         #adjusting the table name to match the correspondent qml file
         fileName = table.replace('complexos_', '')
         fileName = fileName.split('.')[-1]+'.qml'
-        
+
         #obtaining the qml file path
         qmlPath = os.path.join(os.path.dirname(__file__), '..', 'Qmls', 'qmlEDGV30', fileName)
         print qmlPath
-        
+
         #getting the domain dictionary that will be used to generate the comboboxes
         parser = QmlParser(qmlPath)
         self.domainDict = parser.getDomainDict()
@@ -130,15 +133,15 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         QObject.connect(self.removeRow, SIGNAL(("clicked()")), self.removeComplex)
         QObject.connect(self.updateButton, SIGNAL(("clicked()")), self.updateTable)
         QObject.connect(self.cancelButton, SIGNAL(("clicked()")), self.cancel)
-        
+
         self.updateTableView()
-        
+
     def generateCombos(self):
         self.combos = []
         print self.domainDict
         for key in self.domainDict:
             self.generateCombo(key, self.domainDict[key])
-        
+
     def generateCombo(self, column, domainValues):
         combo = ComboBoxDelegate(self,domainValues, self.projectModel.fieldIndex(column))
         self.tableView.setItemDelegateForColumn(self.projectModel.fieldIndex(column), combo)
@@ -162,7 +165,7 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
             record.setValue("id",str(uuid4()))
             record.setValue("nome", "edit this field")
             self.projectModel.setRecord(0, record)
-                    
+
         self.tableView.setModel(self.projectModel)
         self.tableView.show()
 
@@ -171,7 +174,7 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         #insert a new record with an already determined uuid value
         record.setValue("id",str(uuid4()))
         self.projectModel.insertRecord(self.projectModel.rowCount(), record)
-        
+
     def removeComplex(self):
         #getting the selected rows
         selectionModel = self.tableView.selectionModel()
@@ -194,7 +197,6 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         if not self.projectModel.submitAll():
             #In case something went wrong we show the message to the user
             QMessageBox.warning(self.iface.mainWindow(), "Error!", self.projectModel.lastError().text())
-            
+
         #Emit the signal to update the complex tree
         self.emit( SIGNAL( "tableUpdated()" ))
-            
