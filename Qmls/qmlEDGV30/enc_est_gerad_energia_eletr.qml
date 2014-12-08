@@ -11,16 +11,16 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tipoestgerad">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Termelétrica" value="2"/>
-        <value key="Eólica" value="3"/>
-        <value key="Hidrelétrica" value="4"/>
-        <value key="Maré-motriz" value="5"/>
+        <value key="TermelÃ©trica" value="2"/>
+        <value key="EÃ³lica" value="3"/>
+        <value key="HidrelÃ©trica" value="4"/>
+        <value key="MarÃ©-motriz" value="5"/>
         <value key="Solar" value="6"/>
         <value key="Desconhecido" value="95"/>
         <value key="Outros" value="99"/>
@@ -28,7 +28,7 @@
     </edittype> 
     <edittype widgetv2type="ValueMap" name="operacional">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
@@ -36,29 +36,29 @@
     <edittype widgetv2type="ValueMap" name="situacaofisica">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Planejada" value="1"/>
-        <value key="Construída" value="2"/>
+        <value key="ConstruÃ­da" value="2"/>
         <value key="Abandonada" value="3"/>
-        <value key="Destruída" value="4"/>
-        <value key="Em construção" value="5"/>
-        <value key="Construída, mas em obras" value="6"/>
+        <value key="DestruÃ­da" value="4"/>
+        <value key="Em construÃ§Ã£o" value="5"/>
+        <value key="ConstruÃ­da, mas em obras" value="6"/>
         <value key="Desconhecida" value="95"/>
-        <value key="Não aplicável" value="97"/>
+        <value key="NÃ£o aplicÃ¡vel" value="97"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="destenergelet">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Serviço público (SP)" value="1"/>
-        <value key="Auto-produção de energia (APE)" value="2"/>
-        <value key="Auto-produção com comercialização de excedente (APE-COM)" value="3"/>
-        <value key="Comercialização de energia (COM)" value="4"/>
-        <value key="Produção independente de energia (PIE)" value="5"/>
+        <value key="ServiÃ§o pÃºblico (SP)" value="1"/>
+        <value key="Auto-produÃ§Ã£o de energia (APE)" value="2"/>
+        <value key="Auto-produÃ§Ã£o com comercializaÃ§Ã£o de excedente (APE-COM)" value="3"/>
+        <value key="ComercializaÃ§Ã£o de energia (COM)" value="4"/>
+        <value key="ProduÃ§Ã£o independente de energia (PIE)" value="5"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="geracao">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Eletricidade - GER 0" value="1"/>
-        <value key="Cogeração" value="2"/>
+        <value key="CogeraÃ§Ã£o" value="2"/>
         <value key="Desconhecida" value="95"/>
       </widgetv2config>
     </edittype> 

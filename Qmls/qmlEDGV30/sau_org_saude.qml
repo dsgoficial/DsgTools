@@ -13,22 +13,22 @@
         <value key="Municipal" value="3"/>
         <value key="Concessionada" value="4"/>
         <value key="Privada" value="5"/>
-        <value key="Não aplicável" value="6"/>
+        <value key="NÃ£o aplicÃ¡vel" value="6"/>
         <value key="Desconhecida" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="grupoativecon">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Ensino médio" value="1"/>
-        <value key="Educação infantil e ensino fundamental" value="2"/>
-        <value key="Serviços veterinários " value="3"/>
+        <value key="Ensino mÃ©dio" value="1"/>
+        <value key="EducaÃ§Ã£o infantil e ensino fundamental" value="2"/>
+        <value key="ServiÃ§os veterinÃ¡rios " value="3"/>
         <value key="Ensino superior" value="4"/>
-        <value key="Educação profissional e outras atividades de ensino" value="5"/>
-        <value key="Administração do estado e da política econômica e social" value="6"/>
-        <value key="Serviços coletivos prestados pela administração" value="7"/>
+        <value key="EducaÃ§Ã£o profissional e outras atividades de ensino" value="5"/>
+        <value key="AdministraÃ§Ã£o do estado e da polÃ­tica econÃ´mica e social" value="6"/>
+        <value key="ServiÃ§os coletivos prestados pela administraÃ§Ã£o" value="7"/>
         <value key="Seguridade social" value="9"/>
-        <value key="Atividades de atenção à saúde" value="10"/>
-        <value key="Serviço social" value="19"/>
+        <value key="Atividades de atenÃ§Ã£o Ã  saÃºde" value="10"/>
+        <value key="ServiÃ§o social" value="19"/>
         <value key="Desconhecido" value="95"/>
         <value key="Misto" value="98"/>
         <value key="Outros" value="99"/>
@@ -37,11 +37,11 @@
     <edittype widgetv2type="ValueMap" name="classeativecon">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Atendimento hospitalar (hospital)" value="27"/>
-        <value key="Atendimento às urgências e emergências (pronto-socorro)" value="28"/>
-        <value key="Atenção ambulatorial (posto e centro de saúde)" value="29"/>
-        <value key="Serviços de complementação diagnóstica ou terapêutica" value="30"/>
-        <value key="Outras atividades relacionadas com atenção à saúde (instituto de pesquisa)" value="32"/>
-        <value key="Serviços veterinários" value="36"/>
+        <value key="Atendimento Ã s urgÃªncias e emergÃªncias (pronto-socorro)" value="28"/>
+        <value key="AtenÃ§Ã£o ambulatorial (posto e centro de saÃºde)" value="29"/>
+        <value key="ServiÃ§os de complementaÃ§Ã£o diagnÃ³stica ou terapÃªutica" value="30"/>
+        <value key="Outras atividades relacionadas com atenÃ§Ã£o Ã  saÃºde (instituto de pesquisa)" value="32"/>
+        <value key="ServiÃ§os veterinÃ¡rios" value="36"/>
         <value key="Desconhecido" value="95"/>
         <value key="Misto" value="97"/>
         <value key="Outros" value="99"/>

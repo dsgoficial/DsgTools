@@ -11,9 +11,9 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="classeativecon">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Produção de energia elétrica" value="2"/>
-        <value key="Transmissão de energia elétrica" value="3"/>
-        <value key="Distribuição de energia elétrica" value="4"/>
+        <value key="ProduÃ§Ã£o de energia elÃ©trica" value="2"/>
+        <value key="TransmissÃ£o de energia elÃ©trica" value="3"/>
+        <value key="DistribuiÃ§Ã£o de energia elÃ©trica" value="4"/>
       </widgetv2config>
     </edittype> 
   </edittypes>

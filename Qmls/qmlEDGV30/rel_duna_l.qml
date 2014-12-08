@@ -8,7 +8,7 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
@@ -19,7 +19,7 @@
     </edittype> 
     <edittype widgetv2type="ValueMap" name="fixa">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 

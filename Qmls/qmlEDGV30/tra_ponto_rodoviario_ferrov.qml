@@ -12,22 +12,22 @@
         <value key="Ponte" value="15"/>
         <value key="Travessia" value="24"/>
         <value key="Contato com localidade" value="26"/>
-        <value key="Edificação rodoviária" value="27"/>
+        <value key="EdificaÃ§Ã£o rodoviÃ¡ria" value="27"/>
         <value key="Entrocamento" value="28"/>
         <value key="Galeria ou bueiro" value="29"/>
-        <value key="Início/fim de trecho" value="30"/>
-        <value key="Mudança de UF" value="31"/>
-        <value key="Mudança de administração" value="32"/>
-        <value key="Mudança de número de faixas" value="34"/>
-        <value key="Mudança de revestimento" value="35"/>
-        <value key="Mudança de tipo de rodovia" value="36"/>
-        <value key="Mudança do número de pistas" value="38"/>
+        <value key="InÃ­cio/fim de trecho" value="30"/>
+        <value key="MudanÃ§a de UF" value="31"/>
+        <value key="MudanÃ§a de administraÃ§Ã£o" value="32"/>
+        <value key="MudanÃ§a de nÃºmero de faixas" value="34"/>
+        <value key="MudanÃ§a de revestimento" value="35"/>
+        <value key="MudanÃ§a de tipo de rodovia" value="36"/>
+        <value key="MudanÃ§a do nÃºmero de pistas" value="38"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 

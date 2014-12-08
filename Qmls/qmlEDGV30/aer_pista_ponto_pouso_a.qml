@@ -11,7 +11,7 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
@@ -24,7 +24,7 @@
     </edittype> 
     <edittype widgetv2type="ValueMap" name="revestimento">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Revestimento primário (solto)" value="1"/>
+        <value key="Revestimento primÃ¡rio (solto)" value="1"/>
         <value key="Pavimentado" value="2"/>
         <value key="Madeira" value="3"/>
         <value key="Sem revestimento (leito natural)" value="4"/>
@@ -35,17 +35,17 @@
     <edittype widgetv2type="ValueMap" name="usopista">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Particular" value="1"/>
-        <value key="Público/militar" value="2"/>
+        <value key="PÃºblico/militar" value="2"/>
         <value key="Militar" value="3"/>
-        <value key="Público" value="4"/>
-        <value key="Público e Militar" value="5"/>
-        <value key="Público e Civil" value="6"/>
+        <value key="PÃºblico" value="4"/>
+        <value key="PÃºblico e Militar" value="5"/>
+        <value key="PÃºblico e Civil" value="6"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="operacional">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
@@ -53,18 +53,18 @@
     <edittype widgetv2type="ValueMap" name="situacaofisica">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Planejada" value="1"/>
-        <value key="Construída" value="2"/>
+        <value key="ConstruÃ­da" value="2"/>
         <value key="Abandonada" value="3"/>
-        <value key="Destruída" value="4"/>
-        <value key="Em construção" value="5"/>
-        <value key="Construída, mas em obras" value="6"/>
+        <value key="DestruÃ­da" value="4"/>
+        <value key="Em construÃ§Ã£o" value="5"/>
+        <value key="ConstruÃ­da, mas em obras" value="6"/>
         <value key="Desconhecida" value="95"/>
-        <value key="Não aplicável" value="97"/>
+        <value key="NÃ£o aplicÃ¡vel" value="97"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="homologacao">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>

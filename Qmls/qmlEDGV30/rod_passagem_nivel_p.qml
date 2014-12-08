@@ -8,7 +8,7 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
@@ -18,13 +18,13 @@
         <value key="Passagem elevada ou viaduto" value="3"/>
         <value key="Comporta" value="4"/>
         <value key="Ponte" value="15"/>
-        <value key="Passagem de nível" value="19"/>
+        <value key="Passagem de nÃ­vel" value="19"/>
         <value key="Travessia" value="24"/>
         <value key="Entrocamento" value="28"/>
-        <value key="Mudança de número de faixas" value="34"/>
-        <value key="Mudança de revestimento" value="35"/>
-        <value key="Mudança de tipo de rodovia" value="36"/>
-        <value key="Mudança do número de pistas" value="38"/>
+        <value key="MudanÃ§a de nÃºmero de faixas" value="34"/>
+        <value key="MudanÃ§a de revestimento" value="35"/>
+        <value key="MudanÃ§a de tipo de rodovia" value="36"/>
+        <value key="MudanÃ§a do nÃºmero de pistas" value="38"/>
       </widgetv2config>
     </edittype> 
   </edittypes>

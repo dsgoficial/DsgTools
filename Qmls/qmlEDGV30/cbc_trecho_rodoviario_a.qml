@@ -8,13 +8,13 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="acostamento">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Auto-estrada" value="1"/>
         <value key="Rodovia" value="3"/>
@@ -30,32 +30,32 @@
         <value key="Municipal" value="3"/>
         <value key="Concessionada" value="4"/>
         <value key="Privada" value="5"/>
-        <value key="Não aplicável" value="6"/>
+        <value key="NÃ£o aplicÃ¡vel" value="6"/>
         <value key="Desconhecida" value="95"/>
-        <value key="Revestimento primário (solto)" value="1"/>
+        <value key="Revestimento primÃ¡rio (solto)" value="1"/>
         <value key="Pavimentado" value="2"/>
         <value key="Madeira" value="3"/>
         <value key="Sem revestimento (leito natural)" value="4"/>
         <value key="Desconhecido" value="95"/>
         <value key="Outros" value="99"/>
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
         <value key="Planejada" value="1"/>
-        <value key="Construída" value="2"/>
+        <value key="ConstruÃ­da" value="2"/>
         <value key="Abandonada" value="3"/>
-        <value key="Destruída" value="4"/>
-        <value key="Em construção" value="5"/>
-        <value key="Construída, mas em obras" value="6"/>
+        <value key="DestruÃ­da" value="4"/>
+        <value key="Em construÃ§Ã£o" value="5"/>
+        <value key="ConstruÃ­da, mas em obras" value="6"/>
         <value key="Desconhecida" value="95"/>
-        <value key="Não aplicável" value="97"/>
-        <value key="Periódico" value="2"/>
+        <value key="NÃ£o aplicÃ¡vel" value="97"/>
+        <value key="PeriÃ³dico" value="2"/>
         <value key="Permanente" value="3"/>
-        <value key="Temporário" value="4"/>
+        <value key="TemporÃ¡rio" value="4"/>
         <value key="Desconhecido" value="95"/>
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
@@ -83,13 +83,13 @@
         <value key="Municipal" value="3"/>
         <value key="Concessionada" value="4"/>
         <value key="Privada" value="5"/>
-        <value key="Não aplicável" value="6"/>
+        <value key="NÃ£o aplicÃ¡vel" value="6"/>
         <value key="Desconhecida" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="revestimento">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Revestimento primário (solto)" value="1"/>
+        <value key="Revestimento primÃ¡rio (solto)" value="1"/>
         <value key="Pavimentado" value="2"/>
         <value key="Madeira" value="3"/>
         <value key="Sem revestimento (leito natural)" value="4"/>
@@ -99,7 +99,7 @@
     </edittype> 
     <edittype widgetv2type="ValueMap" name="operacional">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
@@ -107,26 +107,26 @@
     <edittype widgetv2type="ValueMap" name="situacaofisica">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Planejada" value="1"/>
-        <value key="Construída" value="2"/>
+        <value key="ConstruÃ­da" value="2"/>
         <value key="Abandonada" value="3"/>
-        <value key="Destruída" value="4"/>
-        <value key="Em construção" value="5"/>
-        <value key="Construída, mas em obras" value="6"/>
+        <value key="DestruÃ­da" value="4"/>
+        <value key="Em construÃ§Ã£o" value="5"/>
+        <value key="ConstruÃ­da, mas em obras" value="6"/>
         <value key="Desconhecida" value="95"/>
-        <value key="Não aplicável" value="97"/>
+        <value key="NÃ£o aplicÃ¡vel" value="97"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="trafego">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Periódico" value="2"/>
+        <value key="PeriÃ³dico" value="2"/>
         <value key="Permanente" value="3"/>
-        <value key="Temporário" value="4"/>
+        <value key="TemporÃ¡rio" value="4"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="trechoemperimetrourbano">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
@@ -136,16 +136,16 @@
         <value key="Placa de concreto" value="3"/>
         <value key="Pedra regular" value="4"/>
         <value key="Ladrilho de concreto" value="5"/>
-        <value key="Paralelepípedo" value="6"/>
+        <value key="ParalelepÃ­pedo" value="6"/>
         <value key="Pedra irregular" value="7"/>
         <value key="Desconhecido" value="95"/>
-        <value key="Não aplicável" value="97"/>
+        <value key="NÃ£o aplicÃ¡vel" value="97"/>
         <value key="Outros" value="99"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="canteirodivisorio">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>

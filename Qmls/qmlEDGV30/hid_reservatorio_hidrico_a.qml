@@ -11,20 +11,20 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="usoprincipal">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Lazer" value="0"/>
-        <value key="Irrigação" value="1"/>
+        <value key="IrrigaÃ§Ã£o" value="1"/>
         <value key="Energia" value="5"/>
         <value key="Abastecimento" value="6"/>
-        <value key="Dessedentação animal" value="7"/>
+        <value key="DessedentaÃ§Ã£o animal" value="7"/>
         <value key="Drenagem" value="8"/>
         <value key="Desconhecido" value="95"/>
-        <value key="Não aplicável" value="97"/>
+        <value key="NÃ£o aplicÃ¡vel" value="97"/>
         <value key="Outros" value="99"/>
       </widgetv2config>
     </edittype> 

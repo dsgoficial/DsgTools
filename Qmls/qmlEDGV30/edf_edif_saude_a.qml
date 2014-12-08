@@ -11,13 +11,13 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="operacional">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
@@ -25,13 +25,13 @@
     <edittype widgetv2type="ValueMap" name="situacaofisica">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Planejada" value="1"/>
-        <value key="Construída" value="2"/>
+        <value key="ConstruÃ­da" value="2"/>
         <value key="Abandonada" value="3"/>
-        <value key="Destruída" value="4"/>
-        <value key="Em construção" value="5"/>
-        <value key="Construída, mas em obras" value="6"/>
+        <value key="DestruÃ­da" value="4"/>
+        <value key="Em construÃ§Ã£o" value="5"/>
+        <value key="ConstruÃ­da, mas em obras" value="6"/>
         <value key="Desconhecida" value="95"/>
-        <value key="Não aplicável" value="97"/>
+        <value key="NÃ£o aplicÃ¡vel" value="97"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="matconstr">
@@ -44,20 +44,20 @@
         <value key="Terra" value="7"/>
         <value key="Fibra" value="8"/>
         <value key="Desconhecido" value="95"/>
-        <value key="Não aplicável" value="97"/>
+        <value key="NÃ£o aplicÃ¡vel" value="97"/>
         <value key="Outros" value="99"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="turistica">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="cultura">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
@@ -65,21 +65,21 @@
     <edittype widgetv2type="ValueMap" name="classeativecon">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Atendimento hospitalar (hospital)" value="27"/>
-        <value key="Atendimento às urgências e emergências (pronto-socorro)" value="28"/>
-        <value key="Atenção ambulatorial (posto e centro de saúde)" value="29"/>
-        <value key="Serviços de complementação diagnóstica ou terapêutica" value="30"/>
-        <value key="Serviços sociais com alojamento" value="33"/>
-        <value key="Serviços sociais sem alojamento" value="34"/>
+        <value key="Atendimento Ã s urgÃªncias e emergÃªncias (pronto-socorro)" value="28"/>
+        <value key="AtenÃ§Ã£o ambulatorial (posto e centro de saÃºde)" value="29"/>
+        <value key="ServiÃ§os de complementaÃ§Ã£o diagnÃ³stica ou terapÃªutica" value="30"/>
+        <value key="ServiÃ§os sociais com alojamento" value="33"/>
+        <value key="ServiÃ§os sociais sem alojamento" value="34"/>
         <value key="Limpeza urbana e atividades relacionadas" value="35"/>
-        <value key="Serviços veterinários" value="36"/>
+        <value key="ServiÃ§os veterinÃ¡rios" value="36"/>
         <value key="Misto" value="97"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="nivelatencao">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Secundário" value="1"/>
-        <value key="Terciário" value="2"/>
-        <value key="Primário" value="7"/>
+        <value key="SecundÃ¡rio" value="1"/>
+        <value key="TerciÃ¡rio" value="2"/>
+        <value key="PrimÃ¡rio" value="7"/>
       </widgetv2config>
     </edittype> 
   </edittypes>

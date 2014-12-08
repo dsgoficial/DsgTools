@@ -8,7 +8,7 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
@@ -16,22 +16,22 @@
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Eclusa" value="2"/>
         <value key="Comporta" value="4"/>
-        <value key="Queda dágua" value="5"/>
+        <value key="Queda dÃ¡gua" value="5"/>
         <value key="Corredeira" value="6"/>
-        <value key="Foz marítima" value="7"/>
+        <value key="Foz marÃ­tima" value="7"/>
         <value key="Sumidouro" value="8"/>
         <value key="Meandro abandonado" value="9"/>
         <value key="Lago" value="10"/>
         <value key="Lagoa" value="11"/>
         <value key="Laguna" value="12"/>
-        <value key="Represa/açude" value="13"/>
+        <value key="Represa/aÃ§ude" value="13"/>
         <value key="Entre trechos de drenagem" value="14"/>
-        <value key="Confluência" value="16"/>
+        <value key="ConfluÃªncia" value="16"/>
         <value key="Vertedouro" value="17"/>
         <value key="Barragem" value="21"/>
         <value key="Canal ou vala" value="25"/>
         <value key="Galeria ou bueiro" value="29"/>
-        <value key="Início/fim de trecho" value="30"/>
+        <value key="InÃ­cio/fim de trecho" value="30"/>
       </widgetv2config>
     </edittype> 
   </edittypes>

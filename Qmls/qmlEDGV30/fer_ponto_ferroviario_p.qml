@@ -8,17 +8,17 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="relacionado">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Início/fim de trecho" value="30"/>
-        <value key="Mudança de UF" value="31"/>
-        <value key="Mudança de administração" value="32"/>
-        <value key="Ramificação" value="37"/>
-        <value key="Desvio Ferroviário" value="41"/>
+        <value key="InÃ­cio/fim de trecho" value="30"/>
+        <value key="MudanÃ§a de UF" value="31"/>
+        <value key="MudanÃ§a de administraÃ§Ã£o" value="32"/>
+        <value key="RamificaÃ§Ã£o" value="37"/>
+        <value key="Desvio FerroviÃ¡rio" value="41"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 

@@ -8,9 +8,9 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="secaoativecon">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Indústrias de transformação" value="1"/>
-        <value key="Construção" value="2"/>
-        <value key="Indústrias extrativas" value="3"/>
+        <value key="IndÃºstrias de transformaÃ§Ã£o" value="1"/>
+        <value key="ConstruÃ§Ã£o" value="2"/>
+        <value key="IndÃºstrias extrativas" value="3"/>
         <value key="Desconhecido" value="95"/>
         <value key="Outros" value="99"/>
       </widgetv2config>

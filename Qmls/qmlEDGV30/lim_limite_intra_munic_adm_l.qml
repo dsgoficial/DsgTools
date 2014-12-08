@@ -8,17 +8,17 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tipolimintramun">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Distrital" value="1"/>
-        <value key="Perímetro urbano legal" value="2"/>
+        <value key="PerÃ­metro urbano legal" value="2"/>
         <value key="Sub-distrital" value="3"/>
         <value key="Bairro" value="4"/>
-        <value key="Região administrativa" value="5"/>
+        <value key="RegiÃ£o administrativa" value="5"/>
       </widgetv2config>
     </edittype> 
   </edittypes>

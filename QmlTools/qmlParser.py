@@ -29,28 +29,28 @@ class QmlParser:
         self.qml = QDomDocument()
         self.qgisElement = None
         self.edittypesElement = None
-        self.edittypeElementList = [] 
+        self.edittypeElementList = []
         self.domainDict = dict()
-        
+
     def loadFileContent(self):
         qml = open(self.fileName, 'r')
         data = qml.read()
         loaded = self.qml.setContent(data)
         qml.close()
         return loaded
-        
+
     def readQGISElement(self):
         self.qgisElement = self.qml.documentElement()
-        
+
     def readEdittypesElement(self):
         self.edittypeElementList = []
-        
+
         elements = self.qgisElement.elementsByTagName("edittypes")
         self.edittypesElement = elements.item(0).toElement()
         elements = self.edittypesElement.elementsByTagName("edittype")
         for i in range(len(elements)):
             self.edittypeElementList.append(elements.item(i).toElement())
-        
+
     def readEdittypeElement(self, edittypeElement):
         type = edittypeElement.attribute("widgetv2type")
         if type == "ValueMap":
@@ -61,16 +61,20 @@ class QmlParser:
             values = widgetv2configElement.elementsByTagName("value")
             for i in range(len(values)):
                 value = values.item(i).toElement()
-                valueMapDict[str(value.attribute("key"))] = str(value.attribute("value"))
-            self.domainDict[str(name)] = valueMapDict
-            
+                keyText = value.attribute("key")
+                #print 'key: '+keyText
+                valueText = value.attribute("value")
+                #print 'value: '+valueText
+                valueMapDict[keyText] = valueText
+            self.domainDict[name] = valueMapDict
+
     def getDomainDict(self):
         self.domainDict.clear()
-        
+
         if not self.loadFileContent():
             QMessageBox.warning(self.iface.mainWindow(), "Warning!", "QML file not loaded properly. Enum values won't be available.")
             return
-            
+
         self.readQGISElement()
         self.readEdittypesElement()
         for edittypeElement in self.edittypeElementList:

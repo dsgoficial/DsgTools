@@ -11,17 +11,17 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tipoentroncamento">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Cruzamento ou junção simples" value="1"/>
-        <value key="Círculo " value="2"/>
+        <value key="Cruzamento ou junÃ§Ã£o simples" value="1"/>
+        <value key="CÃ­rculo " value="2"/>
         <value key="Trevo" value="3"/>
-        <value key="Rótula" value="4"/>
-        <value key="Entroncamento ferroviário" value="5"/>
+        <value key="RÃ³tula" value="4"/>
+        <value key="Entroncamento ferroviÃ¡rio" value="5"/>
         <value key="Outros tipos de entroncamento em nivel" value="6"/>
       </widgetv2config>
     </edittype> 

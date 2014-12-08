@@ -11,15 +11,15 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="posicaoreledific">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Adjacente à edificação" value="1"/>
+        <value key="Adjacente Ã  edificaÃ§Ã£o" value="1"/>
         <value key="Isolada" value="2"/>
-        <value key="Sobre edificação" value="3"/>
+        <value key="Sobre edificaÃ§Ã£o" value="3"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 

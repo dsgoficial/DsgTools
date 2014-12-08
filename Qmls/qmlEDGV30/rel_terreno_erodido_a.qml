@@ -8,21 +8,21 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="situacaoterreno">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Em progressão" value="1"/>
+        <value key="Em progressÃ£o" value="1"/>
         <value key="Estabilizada" value="2"/>
-        <value key="Em regressão" value="3"/>
+        <value key="Em regressÃ£o" value="3"/>
         <value key="Desconhecida" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tipoerosao">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Voçoroca" value="2"/>
+        <value key="VoÃ§oroca" value="2"/>
         <value key="Deslizamento" value="3"/>
         <value key="Ravina" value="4"/>
         <value key="Sulco" value="5"/>

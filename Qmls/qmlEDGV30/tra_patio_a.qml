@@ -23,19 +23,19 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="modaluso">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Portuário" value="5"/>
-        <value key="Rodoviário" value="6"/>
-        <value key="Ferroviário" value="7"/>
-        <value key="Metroviário" value="8"/>
+        <value key="PortuÃ¡rio" value="5"/>
+        <value key="RodoviÃ¡rio" value="6"/>
+        <value key="FerroviÃ¡rio" value="7"/>
+        <value key="MetroviÃ¡rio" value="8"/>
         <value key="Dutos" value="9"/>
-        <value key="Hidroviário" value="10"/>
-        <value key="Aeroportuário" value="11"/>
+        <value key="HidroviÃ¡rio" value="10"/>
+        <value key="AeroportuÃ¡rio" value="11"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="administracao">
@@ -45,13 +45,13 @@
         <value key="Municipal" value="3"/>
         <value key="Concessionada" value="4"/>
         <value key="Privada" value="5"/>
-        <value key="Não aplicável" value="6"/>
+        <value key="NÃ£o aplicÃ¡vel" value="6"/>
         <value key="Desconhecida" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="operacional">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
@@ -59,24 +59,24 @@
     <edittype widgetv2type="ValueMap" name="situacaofisica">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Planejada" value="1"/>
-        <value key="Construída" value="2"/>
+        <value key="ConstruÃ­da" value="2"/>
         <value key="Abandonada" value="3"/>
-        <value key="Destruída" value="4"/>
-        <value key="Em construção" value="5"/>
-        <value key="Construída, mas em obras" value="6"/>
+        <value key="DestruÃ­da" value="4"/>
+        <value key="Em construÃ§Ã£o" value="5"/>
+        <value key="ConstruÃ­da, mas em obras" value="6"/>
         <value key="Desconhecida" value="95"/>
-        <value key="Não aplicável" value="97"/>
+        <value key="NÃ£o aplicÃ¡vel" value="97"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="finalidadepatio">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Deposito temporário de cargas e contêineres" value="2"/>
-        <value key="Estacionamento de veículos " value="3"/>
+        <value key="Deposito temporÃ¡rio de cargas e contÃªineres" value="2"/>
+        <value key="Estacionamento de veÃ­culos " value="3"/>
         <value key="Estacionamento de locomotivas" value="4"/>
         <value key="Estacionamento de aeronaves" value="5"/>
         <value key="Manobra de cargas" value="6"/>
-        <value key="Manobra de veículos em geral" value="7"/>
-        <value key="Manutenção" value="8"/>
+        <value key="Manobra de veÃ­culos em geral" value="7"/>
+        <value key="ManutenÃ§Ã£o" value="8"/>
         <value key="Desconhecida" value="95"/>
         <value key="Outros" value="99"/>
       </widgetv2config>

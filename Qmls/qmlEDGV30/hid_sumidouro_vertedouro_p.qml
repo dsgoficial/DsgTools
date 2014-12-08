@@ -8,7 +8,7 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
@@ -20,9 +20,9 @@
     </edittype> 
     <edittype widgetv2type="ValueMap" name="causa">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Absorção" value="2"/>
+        <value key="AbsorÃ§Ã£o" value="2"/>
         <value key="Gruta ou fenda" value="4"/>
-        <value key="Canalização" value="5"/>
+        <value key="CanalizaÃ§Ã£o" value="5"/>
         <value key="Desconhecida" value="95"/>
       </widgetv2config>
     </edittype> 

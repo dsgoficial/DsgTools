@@ -8,27 +8,27 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tipomassadagua">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Trecho massa dágua" value="13"/>
+        <value key="Trecho massa dÃ¡gua" value="13"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="regime">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Temporário com leito permanente" value="1"/>
+        <value key="TemporÃ¡rio com leito permanente" value="1"/>
         <value key="Permanente" value="2"/>
-        <value key="Permanente com grande variação" value="3"/>
-        <value key="Temporário" value="4"/>
+        <value key="Permanente com grande variaÃ§Ã£o" value="3"/>
+        <value key="TemporÃ¡rio" value="4"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="salgada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
@@ -45,7 +45,7 @@
     </edittype> 
     <edittype widgetv2type="ValueMap" name="artificial">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
@@ -53,7 +53,7 @@
     <edittype widgetv2type="ValueMap" name="tipotrechomassadagua">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Laguna" value="5"/>
-        <value key="Represa/açude" value="6"/>
+        <value key="Represa/aÃ§ude" value="6"/>
         <value key="Rio" value="7"/>
         <value key="Outros" value="99"/>
       </widgetv2config>

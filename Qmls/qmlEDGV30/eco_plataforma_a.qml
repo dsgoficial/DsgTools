@@ -11,14 +11,14 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tipoplataforma">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Petróleo" value="1"/>
-        <value key="Gás" value="2"/>
+        <value key="PetrÃ³leo" value="1"/>
+        <value key="GÃ¡s" value="2"/>
         <value key="Desconhecido" value="95"/>
         <value key="Misto" value="98"/>
       </widgetv2config>

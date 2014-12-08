@@ -8,7 +8,7 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
@@ -16,20 +16,20 @@
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Municipal" value="3"/>
         <value key="Estadual" value="23"/>
-        <value key="Internacional secundário" value="24"/>
-        <value key="Internacional de referência" value="25"/>
+        <value key="Internacional secundÃ¡rio" value="24"/>
+        <value key="Internacional de referÃªncia" value="25"/>
         <value key="Internacional principal" value="26"/>
         <value key="Outros" value="99"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="sistemageodesico">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Astro Chuá" value="1"/>
-        <value key="Córrego Alegre" value="2"/>
+        <value key="Astro ChuÃ¡" value="1"/>
+        <value key="CÃ³rrego Alegre" value="2"/>
         <value key="SAD-69" value="3"/>
         <value key="WGS-84" value="5"/>
         <value key="SIRGAS2000" value="6"/>
-        <value key="Outra referência" value="99"/>
+        <value key="Outra referÃªncia" value="99"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="referencialaltim">
@@ -37,7 +37,7 @@
         <value key="Imbituba" value="1"/>
         <value key="Torres" value="3"/>
         <value key="Santana" value="5"/>
-        <value key="Outra referência" value="99"/>
+        <value key="Outra referÃªncia" value="99"/>
       </widgetv2config>
     </edittype> 
   </edittypes>

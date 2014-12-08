@@ -8,7 +8,7 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
@@ -16,12 +16,12 @@
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Linha limite de terrenos de Marinha (LLTM oceano)" value="1"/>
         <value key="Linha limite de terrenos marginais (LLTM rios)" value="2"/>
-        <value key="Linha média de enchentes ordinárias (LMEO)" value="3"/>
-        <value key="Setor censitário" value="4"/>
+        <value key="Linha mÃ©dia de enchentes ordinÃ¡rias (LMEO)" value="3"/>
+        <value key="Setor censitÃ¡rio" value="4"/>
         <value key="Linha de base normal" value="5"/>
         <value key="Linha de base reta" value="6"/>
-        <value key="Costa visível da carta (interpretada)" value="7"/>
-        <value key="Linha preamar média  - 1831" value="8"/>
+        <value key="Costa visÃ­vel da carta (interpretada)" value="7"/>
+        <value key="Linha preamar mÃ©dia  - 1831" value="8"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 

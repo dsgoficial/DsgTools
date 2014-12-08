@@ -18,34 +18,34 @@
         <value key="Cancerologia" value="5"/>
         <value key="Cardiologia" value="6"/>
         <value key="Cirurgia Cardiovascular" value="7"/>
-        <value key="Cirurgia da Mão" value="8"/>
-        <value key="Cirurgia de Cabeça e Pescoço" value="9"/>
+        <value key="Cirurgia da MÃ£o" value="8"/>
+        <value key="Cirurgia de CabeÃ§a e PescoÃ§o" value="9"/>
         <value key="Cirurgia do Aparelho Digestivo" value="10"/>
         <value key="Cirurgia Geral" value="11"/>
-        <value key="Cirurgia Pediátrica" value="12"/>
-        <value key="Cirurgia Plástica" value="13"/>
-        <value key="Cirurgia Torácica" value="14"/>
+        <value key="Cirurgia PediÃ¡trica" value="12"/>
+        <value key="Cirurgia PlÃ¡stica" value="13"/>
+        <value key="Cirurgia TorÃ¡cica" value="14"/>
         <value key="Cirurgia Vascular" value="15"/>
-        <value key="Clínica Médica" value="16"/>
+        <value key="ClÃ­nica MÃ©dica" value="16"/>
         <value key="Coloproctologia" value="17"/>
         <value key="Dermatologia" value="18"/>
         <value key="Endocrinologia e Metabologia" value="19"/>
         <value key="Endoscopia" value="20"/>
         <value key="Gastroenterologia" value="21"/>
-        <value key="Genética Médica" value="22"/>
+        <value key="GenÃ©tica MÃ©dica" value="22"/>
         <value key="Geriatria" value="23"/>
-        <value key="Ginecologia e Obstetrícia" value="24"/>
+        <value key="Ginecologia e ObstetrÃ­cia" value="24"/>
         <value key="Hematologia e Hemoterapia" value="25"/>
         <value key="Homeopatia" value="26"/>
         <value key="Infectologia" value="27"/>
         <value key="Mastologia" value="28"/>
-        <value key="Medicina de Família e Comunidade" value="29"/>
+        <value key="Medicina de FamÃ­lia e Comunidade" value="29"/>
         <value key="Medicina do Trabalho" value="30"/>
-        <value key="Medicina de Tráfego" value="31"/>
+        <value key="Medicina de TrÃ¡fego" value="31"/>
         <value key="Medicina Esportiva" value="32"/>
-        <value key="Medicina Física e Reabilitação" value="33"/>
+        <value key="Medicina FÃ­sica e ReabilitaÃ§Ã£o" value="33"/>
         <value key="Medicina Intensiva" value="34"/>
-        <value key="Medicina Legal e Perícia Médica" value="35"/>
+        <value key="Medicina Legal e PerÃ­cia MÃ©dica" value="35"/>
         <value key="Medicina Nuclear" value="36"/>
         <value key="Medicina Preventiva e Social" value="37"/>
         <value key="Nefrologia" value="38"/>
@@ -55,11 +55,11 @@
         <value key="Oftalmologia e Traumatologia" value="42"/>
         <value key="Otorrinolaringologia" value="43"/>
         <value key="Patologia" value="44"/>
-        <value key="Patologia Clínica/Medicina Laboratorial" value="45"/>
+        <value key="Patologia ClÃ­nica/Medicina Laboratorial" value="45"/>
         <value key="Pediatria" value="46"/>
         <value key="Pneumologia" value="47"/>
         <value key="Psiquiatria" value="48"/>
-        <value key="Radiologia e Diagnóstico por Imagem" value="49"/>
+        <value key="Radiologia e DiagnÃ³stico por Imagem" value="49"/>
         <value key="Radioterapia" value="50"/>
         <value key="Reumatologia" value="51"/>
         <value key="Urologia" value="52"/>

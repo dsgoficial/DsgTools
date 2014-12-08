@@ -11,7 +11,7 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
@@ -22,7 +22,7 @@
     </edittype> 
     <edittype widgetv2type="ValueMap" name="classificacaoporte">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Arbórea" value="4"/>
+        <value key="ArbÃ³rea" value="4"/>
         <value key="Arbustiva" value="5"/>
         <value key="Desconhecida" value="95"/>
         <value key="Mista" value="97"/>
@@ -37,19 +37,19 @@
     </edittype> 
     <edittype widgetv2type="ValueMap" name="especiepredominante">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Cipó" value="11"/>
+        <value key="CipÃ³" value="11"/>
         <value key="Bambu" value="12"/>
-        <value key="Araucária" value="13"/>
+        <value key="AraucÃ¡ria" value="13"/>
         <value key="Sororoca" value="17"/>
         <value key="Palmeira" value="27"/>
-        <value key="Sem predominância" value="37"/>
+        <value key="Sem predominÃ¢ncia" value="37"/>
         <value key="Desconhecido" value="95"/>
-        <value key="Não identificado" value="96"/>
+        <value key="NÃ£o identificado" value="96"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="antropizada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>

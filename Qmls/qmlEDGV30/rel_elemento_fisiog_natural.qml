@@ -8,7 +8,7 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
@@ -17,10 +17,10 @@
         <value key="Chapada" value="1"/>
         <value key="Planalto" value="2"/>
         <value key="Cabo" value="3"/>
-        <value key="Falésia" value="4"/>
+        <value key="FalÃ©sia" value="4"/>
         <value key="Ilha" value="5"/>
         <value key="Montanha" value="6"/>
-        <value key="Planície" value="7"/>
+        <value key="PlanÃ­cie" value="7"/>
         <value key="Praia" value="8"/>
         <value key="Pico" value="9"/>
         <value key="Dolina" value="10"/>
@@ -28,7 +28,7 @@
         <value key="Rocha" value="12"/>
         <value key="Falha" value="14"/>
         <value key="Fenda" value="15"/>
-        <value key="Maciço" value="16"/>
+        <value key="MaciÃ§o" value="16"/>
         <value key="Talude" value="17"/>
         <value key="Caverna" value="18"/>
         <value key="Ponta" value="19"/>

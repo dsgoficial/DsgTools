@@ -11,20 +11,20 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tipoveg">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Vegetação cultivada" value="1"/>
+        <value key="VegetaÃ§Ã£o cultivada" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="classificacaoporte">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Rasteira" value="2"/>
-        <value key="Herbácea" value="3"/>
-        <value key="Arbórea" value="4"/>
+        <value key="HerbÃ¡cea" value="3"/>
+        <value key="ArbÃ³rea" value="4"/>
         <value key="Arbustiva" value="5"/>
         <value key="Desconhecida" value="95"/>
         <value key="Mista" value="97"/>
@@ -48,9 +48,9 @@
     <edittype widgetv2type="ValueMap" name="finalidade">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Ornamental" value="2"/>
-        <value key="Exploração econômica" value="3"/>
-        <value key="Subsistência" value="4"/>
-        <value key="Conservação ambiental" value="5"/>
+        <value key="ExploraÃ§Ã£o econÃ´mica" value="3"/>
+        <value key="SubsistÃªncia" value="4"/>
+        <value key="ConservaÃ§Ã£o ambiental" value="5"/>
         <value key="Desconhecida" value="95"/>
         <value key="Outros" value="99"/>
       </widgetv2config>
@@ -58,13 +58,13 @@
     <edittype widgetv2type="ValueMap" name="cultivopredominante">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Eucalipto" value="22"/>
-        <value key="Acácia" value="23"/>
+        <value key="AcÃ¡cia" value="23"/>
         <value key="Algaroba" value="24"/>
         <value key="Pinus" value="25"/>
-        <value key="Araucária" value="29"/>
-        <value key="Carnaúba" value="30"/>
+        <value key="AraucÃ¡ria" value="29"/>
+        <value key="CarnaÃºba" value="30"/>
         <value key="Juta" value="34"/>
-        <value key="Não identificado" value="96"/>
+        <value key="NÃ£o identificado" value="96"/>
         <value key="Rami" value="76"/>
         <value key="Outros" value="99"/>
       </widgetv2config>

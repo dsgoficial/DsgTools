@@ -8,35 +8,35 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tipotrechodrenagem">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Curso dágua" value="4"/>
+        <value key="Curso dÃ¡gua" value="4"/>
         <value key="Pluvial" value="5"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="navegavel">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="regime">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Temporário com leito permanente" value="1"/>
+        <value key="TemporÃ¡rio com leito permanente" value="1"/>
         <value key="Permanente" value="2"/>
-        <value key="Permanente com grande variação" value="3"/>
-        <value key="Temporário" value="4"/>
+        <value key="Permanente com grande variaÃ§Ã£o" value="3"/>
+        <value key="TemporÃ¡rio" value="4"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="encoberto">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 

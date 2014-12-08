@@ -11,13 +11,13 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="operacional">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
@@ -25,13 +25,13 @@
     <edittype widgetv2type="ValueMap" name="situacaofisica">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Planejada" value="1"/>
-        <value key="Construída" value="2"/>
+        <value key="ConstruÃ­da" value="2"/>
         <value key="Abandonada" value="3"/>
-        <value key="Destruída" value="4"/>
-        <value key="Em construção" value="5"/>
-        <value key="Construída, mas em obras" value="6"/>
+        <value key="DestruÃ­da" value="4"/>
+        <value key="Em construÃ§Ã£o" value="5"/>
+        <value key="ConstruÃ­da, mas em obras" value="6"/>
         <value key="Desconhecida" value="95"/>
-        <value key="Não aplicável" value="97"/>
+        <value key="NÃ£o aplicÃ¡vel" value="97"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="matconstr">
@@ -44,35 +44,35 @@
         <value key="Terra" value="7"/>
         <value key="Fibra" value="8"/>
         <value key="Desconhecido" value="95"/>
-        <value key="Não aplicável" value="97"/>
+        <value key="NÃ£o aplicÃ¡vel" value="97"/>
         <value key="Outros" value="99"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="turistica">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="cultura">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="classeativecon">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Educação infantil - creche" value="17"/>
-        <value key="Educação infantil-pré-escola" value="18"/>
+        <value key="EducaÃ§Ã£o infantil - creche" value="17"/>
+        <value key="EducaÃ§Ã£o infantil-prÃ©-escola" value="18"/>
         <value key="Ensino fundamental" value="19"/>
-        <value key="Ensino médio" value="20"/>
-        <value key="Educação superior-graduação" value="21"/>
-        <value key="Educação superior-graduação e pós-graduação" value="22"/>
-        <value key="Educação superior-pós-graduação e extensão" value="23"/>
-        <value key="Educação profissional de nível técnico" value="24"/>
-        <value key="Educação profissional de nível tecnológico" value="25"/>
+        <value key="Ensino mÃ©dio" value="20"/>
+        <value key="EducaÃ§Ã£o superior-graduaÃ§Ã£o" value="21"/>
+        <value key="EducaÃ§Ã£o superior-graduaÃ§Ã£o e pÃ³s-graduaÃ§Ã£o" value="22"/>
+        <value key="EducaÃ§Ã£o superior-pÃ³s-graduaÃ§Ã£o e extensÃ£o" value="23"/>
+        <value key="EducaÃ§Ã£o profissional de nÃ­vel tÃ©cnico" value="24"/>
+        <value key="EducaÃ§Ã£o profissional de nÃ­vel tecnolÃ³gico" value="25"/>
         <value key="Outras atividades de ensino" value="26"/>
         <value key="Desconhecido" value="95"/>
         <value key="Outros" value="99"/>

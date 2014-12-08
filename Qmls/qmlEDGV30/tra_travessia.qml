@@ -8,14 +8,14 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tipotravessia">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Balsa" value="4"/>
-        <value key="Vau construída" value="5"/>
+        <value key="Vau construÃ­da" value="5"/>
         <value key="Bote transportador" value="6"/>
         <value key="Vau natural" value="8"/>
         <value key="Desconhecido" value="95"/>
@@ -34,9 +34,9 @@
         <value key="Balsa" value="1"/>
         <value key="Lancha" value="2"/>
         <value key="Empurrador-balsa" value="6"/>
-        <value key="Embarcação de pequeno porte" value="7"/>
+        <value key="EmbarcaÃ§Ã£o de pequeno porte" value="7"/>
         <value key="Desconhecido" value="95"/>
-        <value key="Não aplicável" value="97"/>
+        <value key="NÃ£o aplicÃ¡vel" value="97"/>
       </widgetv2config>
     </edittype> 
   </edittypes>

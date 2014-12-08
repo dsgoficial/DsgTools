@@ -9,14 +9,14 @@
     <edittype widgetv2type="ValueMap" name="tipobanco">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Fluvial" value="2"/>
-        <value key="Cordão arenoso" value="3"/>
-        <value key="Marítimo" value="4"/>
+        <value key="CordÃ£o arenoso" value="3"/>
+        <value key="MarÃ­timo" value="4"/>
         <value key="Lacustre" value="12"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
@@ -43,7 +43,7 @@
         <value key="Pedra" value="23"/>
         <value key="Coral" value="24"/>
         <value key="Desconhecido" value="95"/>
-        <value key="Não aplicável" value="97"/>
+        <value key="NÃ£o aplicÃ¡vel" value="97"/>
         <value key="Outros" value="99"/>
       </widgetv2config>
     </edittype> 

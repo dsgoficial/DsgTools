@@ -11,7 +11,7 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="classeativecon">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Telecomunicações" value="6"/>
+        <value key="TelecomunicaÃ§Ãµes" value="6"/>
         <value key="Desconhecido" value="95"/>
         <value key="Misto" value="97"/>
         <value key="Outros" value="99"/>

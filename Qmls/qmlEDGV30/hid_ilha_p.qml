@@ -11,7 +11,7 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
@@ -24,7 +24,7 @@
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Fluvial" value="1"/>
         <value key="Mista" value="2"/>
-        <value key="Marítima" value="3"/>
+        <value key="MarÃ­tima" value="3"/>
         <value key="Lacustre" value="4"/>
       </widgetv2config>
     </edittype> 

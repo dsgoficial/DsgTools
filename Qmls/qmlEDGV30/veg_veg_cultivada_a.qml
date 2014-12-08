@@ -11,20 +11,20 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tipoveg">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Vegetação cultivada" value="1"/>
+        <value key="VegetaÃ§Ã£o cultivada" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="classificacaoporte">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Rasteira" value="2"/>
-        <value key="Herbácea" value="3"/>
-        <value key="Arbórea" value="4"/>
+        <value key="HerbÃ¡cea" value="3"/>
+        <value key="ArbÃ³rea" value="4"/>
         <value key="Arbustiva" value="5"/>
         <value key="Desconhecida" value="95"/>
         <value key="Mista" value="97"/>
@@ -56,9 +56,9 @@
     <edittype widgetv2type="ValueMap" name="finalidade">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Ornamental" value="2"/>
-        <value key="Exploração econômica" value="3"/>
-        <value key="Subsistência" value="4"/>
-        <value key="Conservação ambiental" value="5"/>
+        <value key="ExploraÃ§Ã£o econÃ´mica" value="3"/>
+        <value key="SubsistÃªncia" value="4"/>
+        <value key="ConservaÃ§Ã£o ambiental" value="5"/>
         <value key="Desconhecida" value="95"/>
         <value key="Outros" value="99"/>
       </widgetv2config>
@@ -71,35 +71,35 @@
         <value key="Laranja" value="5"/>
         <value key="Trigo" value="6"/>
         <value key="Abacate" value="7"/>
-        <value key="Algodão herbáceo" value="8"/>
-        <value key="Cana de açúcar" value="9"/>
+        <value key="AlgodÃ£o herbÃ¡ceo" value="8"/>
+        <value key="Cana de aÃ§Ãºcar" value="9"/>
         <value key="Fumo" value="10"/>
         <value key="Soja" value="11"/>
         <value key="Batata inglesa" value="12"/>
         <value key="Mandioca" value="13"/>
-        <value key="Feijão" value="14"/>
+        <value key="FeijÃ£o" value="14"/>
         <value key="Arroz" value="15"/>
-        <value key="Café" value="16"/>
+        <value key="CafÃ©" value="16"/>
         <value key="Cacau" value="17"/>
         <value key="Erva-mate" value="18"/>
         <value key="Palmeira" value="19"/>
-        <value key="Açaí" value="20"/>
+        <value key="AÃ§aÃ­" value="20"/>
         <value key="Seringueira" value="21"/>
         <value key="Eucalipto" value="22"/>
-        <value key="Acácia" value="23"/>
+        <value key="AcÃ¡cia" value="23"/>
         <value key="Algaroba" value="24"/>
         <value key="Pinus" value="25"/>
         <value key="Pastagem cultivada" value="26"/>
-        <value key="Hortaliças" value="27"/>
-        <value key="Abacaxi ou ananás" value="28"/>
-        <value key="Araucária" value="29"/>
-        <value key="Carnaúba" value="30"/>
+        <value key="HortaliÃ§as" value="27"/>
+        <value key="Abacaxi ou ananÃ¡s" value="28"/>
+        <value key="AraucÃ¡ria" value="29"/>
+        <value key="CarnaÃºba" value="30"/>
         <value key="Alfafa" value="31"/>
-        <value key="Maçã" value="32"/>
-        <value key="Pêssego" value="33"/>
+        <value key="MaÃ§Ã£" value="32"/>
+        <value key="PÃªssego" value="33"/>
         <value key="Juta" value="34"/>
         <value key="Cebola" value="35"/>
-        <value key="Algodão arbóreo" value="36"/>
+        <value key="AlgodÃ£o arbÃ³reo" value="36"/>
         <value key="Alho" value="37"/>
         <value key="Amendoim" value="38"/>
         <value key="Aveia" value="39"/>
@@ -109,34 +109,34 @@
         <value key="Centeio" value="43"/>
         <value key="Videira" value="44"/>
         <value key="Cevada" value="45"/>
-        <value key="Chá-da-índia" value="46"/>
-        <value key="Coco-da-baía" value="47"/>
-        <value key="Cravo da índia" value="48"/>
-        <value key="Dendê" value="49"/>
+        <value key="ChÃ¡-da-Ã­ndia" value="46"/>
+        <value key="Coco-da-baÃ­a" value="47"/>
+        <value key="Cravo da Ã­ndia" value="48"/>
+        <value key="DendÃª" value="49"/>
         <value key="Ervilha" value="50"/>
         <value key="Fava" value="51"/>
         <value key="Figo" value="52"/>
         <value key="Flores" value="53"/>
         <value key="Girassol" value="54"/>
         <value key="Goiaba" value="55"/>
-        <value key="Guaraná" value="56"/>
+        <value key="GuaranÃ¡" value="56"/>
         <value key="Inhame" value="57"/>
-        <value key="Limão" value="58"/>
+        <value key="LimÃ£o" value="58"/>
         <value key="Linho" value="59"/>
         <value key="Malva" value="60"/>
-        <value key="Mamão" value="61"/>
+        <value key="MamÃ£o" value="61"/>
         <value key="Mamona" value="62"/>
         <value key="Mandioca, aipim ou macaxeira" value="63"/>
         <value key="Manga" value="64"/>
-        <value key="Maracujá" value="65"/>
+        <value key="MaracujÃ¡" value="65"/>
         <value key="Marmelo" value="66"/>
         <value key="Melancia" value="67"/>
-        <value key="Melão" value="68"/>
-        <value key="Não identificado" value="96"/>
+        <value key="MelÃ£o" value="68"/>
+        <value key="NÃ£o identificado" value="96"/>
         <value key="Noz" value="70"/>
         <value key="Palmito" value="71"/>
         <value key="Pera" value="72"/>
-        <value key="Piaçava" value="73"/>
+        <value key="PiaÃ§ava" value="73"/>
         <value key="Plantas ornamentais" value="74"/>
         <value key="Policultura" value="75"/>
         <value key="Rami" value="76"/>

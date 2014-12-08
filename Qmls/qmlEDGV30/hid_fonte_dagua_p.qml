@@ -8,15 +8,15 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tipofontedagua">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Poço" value="14"/>
-        <value key="Poço artesiano" value="15"/>
-        <value key="Olho dágua" value="16"/>
+        <value key="PoÃ§o" value="14"/>
+        <value key="PoÃ§o artesiano" value="15"/>
+        <value key="Olho dÃ¡gua" value="16"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
@@ -24,17 +24,17 @@
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Mineral" value="1"/>
         <value key="Salobra" value="2"/>
-        <value key="Potável" value="3"/>
-        <value key="Não potável" value="4"/>
+        <value key="PotÃ¡vel" value="3"/>
+        <value key="NÃ£o potÃ¡vel" value="4"/>
         <value key="Desconhecida" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="regime">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Temporário com leito permanente" value="1"/>
+        <value key="TemporÃ¡rio com leito permanente" value="1"/>
         <value key="Permanente" value="2"/>
-        <value key="Permanente com grande variação" value="3"/>
-        <value key="Temporário" value="4"/>
+        <value key="Permanente com grande variaÃ§Ã£o" value="3"/>
+        <value key="TemporÃ¡rio" value="4"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 

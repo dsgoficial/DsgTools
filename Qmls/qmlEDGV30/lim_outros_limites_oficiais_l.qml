@@ -8,17 +8,17 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tipooutlimofic">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Zona contígua" value="1"/>
-        <value key="Zona econômica exclusiva" value="2"/>
-        <value key="Plataforma continental jurídica" value="3"/>
+        <value key="Zona contÃ­gua" value="1"/>
+        <value key="Zona econÃ´mica exclusiva" value="2"/>
+        <value key="Plataforma continental jurÃ­dica" value="3"/>
         <value key="Mar territorial" value="4"/>
-        <value key="Lateral marítima" value="5"/>
+        <value key="Lateral marÃ­tima" value="5"/>
         <value key="Desconhecido" value="95"/>
         <value key="Outros" value="99"/>
       </widgetv2config>
@@ -26,15 +26,15 @@
     <edittype widgetv2type="ValueMap" name="referenciallegal">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Arruamento" value="1"/>
-        <value key="Costa visível da carta" value="2"/>
+        <value key="Costa visÃ­vel da carta" value="2"/>
         <value key="Cumeada" value="3"/>
-        <value key="Limite de massa d´água" value="4"/>
+        <value key="Limite de massa dÅ½Ã¡gua" value="4"/>
         <value key="Linha seca" value="5"/>
-        <value key="Massa d´água" value="6"/>
+        <value key="Massa dÅ½Ã¡gua" value="6"/>
         <value key="Trecho de drenagem" value="7"/>
-        <value key="Trecho ferroviário" value="8"/>
-        <value key="Trecho rodoviário" value="9"/>
-        <value key="Não identificado" value="10"/>
+        <value key="Trecho ferroviÃ¡rio" value="8"/>
+        <value key="Trecho rodoviÃ¡rio" value="9"/>
+        <value key="NÃ£o identificado" value="10"/>
       </widgetv2config>
     </edittype> 
   </edittypes>

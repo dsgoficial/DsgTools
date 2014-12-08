@@ -14,22 +14,22 @@
         <value key="Municipal" value="3"/>
         <value key="Concessionada" value="4"/>
         <value key="Privada" value="5"/>
-        <value key="Não aplicável" value="6"/>
+        <value key="NÃ£o aplicÃ¡vel" value="6"/>
         <value key="Desconhecida" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="grupoativecon">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Ensino médio" value="1"/>
-        <value key="Educação infantil e ensino fundamental" value="2"/>
-        <value key="Serviços veterinários " value="3"/>
+        <value key="Ensino mÃ©dio" value="1"/>
+        <value key="EducaÃ§Ã£o infantil e ensino fundamental" value="2"/>
+        <value key="ServiÃ§os veterinÃ¡rios " value="3"/>
         <value key="Ensino superior" value="4"/>
-        <value key="Educação profissional e outras atividades de ensino" value="5"/>
-        <value key="Administração do estado e da política econômica e social" value="6"/>
-        <value key="Serviços coletivos prestados pela administração" value="7"/>
+        <value key="EducaÃ§Ã£o profissional e outras atividades de ensino" value="5"/>
+        <value key="AdministraÃ§Ã£o do estado e da polÃ­tica econÃ´mica e social" value="6"/>
+        <value key="ServiÃ§os coletivos prestados pela administraÃ§Ã£o" value="7"/>
         <value key="Seguridade social" value="9"/>
-        <value key="Atividades de atenção à saúde" value="10"/>
-        <value key="Serviço social" value="19"/>
+        <value key="Atividades de atenÃ§Ã£o Ã  saÃºde" value="10"/>
+        <value key="ServiÃ§o social" value="19"/>
         <value key="Desconhecido" value="95"/>
         <value key="Misto" value="98"/>
         <value key="Outros" value="99"/>

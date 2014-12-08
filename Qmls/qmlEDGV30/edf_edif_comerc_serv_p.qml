@@ -14,13 +14,13 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="operacional">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
@@ -28,13 +28,13 @@
     <edittype widgetv2type="ValueMap" name="situacaofisica">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Planejada" value="1"/>
-        <value key="Construída" value="2"/>
+        <value key="ConstruÃ­da" value="2"/>
         <value key="Abandonada" value="3"/>
-        <value key="Destruída" value="4"/>
-        <value key="Em construção" value="5"/>
-        <value key="Construída, mas em obras" value="6"/>
+        <value key="DestruÃ­da" value="4"/>
+        <value key="Em construÃ§Ã£o" value="5"/>
+        <value key="ConstruÃ­da, mas em obras" value="6"/>
         <value key="Desconhecida" value="95"/>
-        <value key="Não aplicável" value="97"/>
+        <value key="NÃ£o aplicÃ¡vel" value="97"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="matconstr">
@@ -47,43 +47,43 @@
     </edittype> 
     <edittype widgetv2type="ValueMap" name="turistica">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="cultura">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tipoedifcomercserv">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Farmácia" value="1"/>
-        <value key="Oficina mecânica" value="2"/>
-        <value key="Loja de materiais de construção e/ou ferragem" value="3"/>
+        <value key="FarmÃ¡cia" value="1"/>
+        <value key="Oficina mecÃ¢nica" value="2"/>
+        <value key="Loja de materiais de construÃ§Ã£o e/ou ferragem" value="3"/>
         <value key="Centro comercial" value="4"/>
-        <value key="Loja de conveniência" value="5"/>
-        <value key="Centro de convenções" value="6"/>
+        <value key="Loja de conveniÃªncia" value="5"/>
+        <value key="Centro de convenÃ§Ãµes" value="6"/>
         <value key="Motel" value="7"/>
-        <value key="Loja de móveis" value="8"/>
+        <value key="Loja de mÃ³veis" value="8"/>
         <value key="Supermercado" value="9"/>
-        <value key="Centro de exposições" value="10"/>
-        <value key="Posto de combustível" value="11"/>
+        <value key="Centro de exposiÃ§Ãµes" value="10"/>
+        <value key="Posto de combustÃ­vel" value="11"/>
         <value key="Loja de roupas e/ou tecidos" value="12"/>
-        <value key="Mercado público" value="13"/>
+        <value key="Mercado pÃºblico" value="13"/>
         <value key="Quiosque" value="14"/>
         <value key="Quitanda" value="15"/>
-        <value key="Comércio de carnes" value="16"/>
+        <value key="ComÃ©rcio de carnes" value="16"/>
         <value key="Hotel" value="17"/>
         <value key="Banca de jornal" value="18"/>
-        <value key="Venda de veículos" value="19"/>
+        <value key="Venda de veÃ­culos" value="19"/>
         <value key="Banco" value="20"/>
         <value key="Pousada" value="21"/>
-        <value key="Outros comércios" value="22"/>
-        <value key="Outros serviços" value="23"/>
+        <value key="Outros comÃ©rcios" value="22"/>
+        <value key="Outros serviÃ§os" value="23"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
@@ -93,7 +93,7 @@
         <value key="Uso restrito" value="2"/>
         <value key="Residencial" value="3"/>
         <value key="Comercial" value="4"/>
-        <value key="Serviço" value="5"/>
+        <value key="ServiÃ§o" value="5"/>
         <value key="Desconhecida" value="95"/>
       </widgetv2config>
     </edittype> 

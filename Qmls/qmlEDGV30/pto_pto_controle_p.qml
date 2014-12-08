@@ -8,33 +8,33 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tiporef">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Planimétrico" value="1"/>
-        <value key="Planialtimétrico" value="22"/>
-        <value key="Altimétrico" value="23"/>
-        <value key="Gravimétrico" value="24"/>
+        <value key="PlanimÃ©trico" value="1"/>
+        <value key="PlanialtimÃ©trico" value="22"/>
+        <value key="AltimÃ©trico" value="23"/>
+        <value key="GravimÃ©trico" value="24"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="sistemageodesico">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Astro Chuá" value="1"/>
-        <value key="Córrego Alegre" value="2"/>
+        <value key="Astro ChuÃ¡" value="1"/>
+        <value key="CÃ³rrego Alegre" value="2"/>
         <value key="SAD-69" value="3"/>
         <value key="WGS-84" value="5"/>
         <value key="SIRGAS2000" value="6"/>
-        <value key="Outra referência" value="99"/>
+        <value key="Outra referÃªncia" value="99"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tipoptocontrole">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Centro perspectivo" value="4"/>
         <value key="Ponto de controle" value="5"/>
-        <value key="Ponto fotogramétrico" value="6"/>
+        <value key="Ponto fotogramÃ©trico" value="6"/>
         <value key="Outros" value="99"/>
       </widgetv2config>
     </edittype> 
@@ -43,12 +43,12 @@
         <value key="Imbituba" value="1"/>
         <value key="Torres" value="3"/>
         <value key="Santana" value="5"/>
-        <value key="Outra referência" value="99"/>
+        <value key="Outra referÃªncia" value="99"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="materializado">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>

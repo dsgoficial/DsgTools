@@ -11,7 +11,7 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
@@ -19,18 +19,18 @@
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Pesca" value="2"/>
         <value key="Madeira" value="18"/>
-        <value key="Açaí" value="33"/>
+        <value key="AÃ§aÃ­" value="33"/>
         <value key="Planta ornamental" value="34"/>
         <value key="Turfa" value="35"/>
-        <value key="Látex" value="36"/>
+        <value key="LÃ¡tex" value="36"/>
         <value key="Castanha" value="37"/>
-        <value key="Carnaúba" value="38"/>
+        <value key="CarnaÃºba" value="38"/>
         <value key="Coco" value="39"/>
         <value key="Jaborandi" value="40"/>
         <value key="Palmito" value="41"/>
-        <value key="Babaçu" value="42"/>
+        <value key="BabaÃ§u" value="42"/>
         <value key="Marisco" value="43"/>
-        <value key="Pecuária" value="44"/>
+        <value key="PecuÃ¡ria" value="44"/>
         <value key="Desconhecido" value="95"/>
         <value key="Outros" value="99"/>
       </widgetv2config>

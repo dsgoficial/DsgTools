@@ -11,20 +11,20 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tipoveg">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Vegetação cultivada" value="1"/>
+        <value key="VegetaÃ§Ã£o cultivada" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="classificacaoporte">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Rasteira" value="2"/>
-        <value key="Herbácea" value="3"/>
-        <value key="Arbórea" value="4"/>
+        <value key="HerbÃ¡cea" value="3"/>
+        <value key="ArbÃ³rea" value="4"/>
         <value key="Arbustiva" value="5"/>
         <value key="Desconhecida" value="95"/>
         <value key="Mista" value="97"/>
@@ -53,7 +53,7 @@
     <edittype widgetv2type="ValueMap" name="cultivopredominante">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Flores" value="53"/>
-        <value key="Não identificado" value="96"/>
+        <value key="NÃ£o identificado" value="96"/>
         <value key="Plantas ornamentais" value="74"/>
         <value key="Outros" value="99"/>
       </widgetv2config>

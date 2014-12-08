@@ -8,18 +8,18 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="relacionado">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Ponto de início de drenagem" value="39"/>
+        <value key="Ponto de inÃ­cio de drenagem" value="39"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="nascente">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>

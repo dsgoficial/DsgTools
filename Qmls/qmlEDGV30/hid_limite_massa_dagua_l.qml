@@ -8,19 +8,19 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tipolimmassa">
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Limite interno entre massas e/ou trechos" value="1"/>
-        <value key="Margem direita de trechos de massas dágua" value="2"/>
-        <value key="Costa visível da carta" value="3"/>
+        <value key="Margem direita de trechos de massas dÃ¡gua" value="2"/>
+        <value key="Costa visÃ­vel da carta" value="3"/>
         <value key="Limite com elemento artificial" value="4"/>
-        <value key="Margem esquerda de trechos de massas dágua" value="5"/>
-        <value key="Margem de massa dágua" value="6"/>
-        <value key="Limite interno com foz marítima" value="7"/>
+        <value key="Margem esquerda de trechos de massas dÃ¡gua" value="5"/>
+        <value key="Margem de massa dÃ¡gua" value="6"/>
+        <value key="Limite interno com foz marÃ­tima" value="7"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="materialpredominante">
@@ -36,13 +36,13 @@
         <value key="Seixo" value="21"/>
         <value key="Pedra" value="23"/>
         <value key="Desconhecido" value="95"/>
-        <value key="Não aplicável" value="97"/>
+        <value key="NÃ£o aplicÃ¡vel" value="97"/>
         <value key="Outros" value="99"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="revestida">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>

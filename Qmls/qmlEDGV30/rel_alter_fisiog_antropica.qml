@@ -8,7 +8,7 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
@@ -16,12 +16,12 @@
       <widgetv2config fieldEditable="1" labelOnTop="0">
         <value key="Vala" value="24"/>
         <value key="Canal" value="25"/>
-        <value key="Caixa de empréstimo" value="26"/>
+        <value key="Caixa de emprÃ©stimo" value="26"/>
         <value key="Extrativismo mineral" value="27"/>
         <value key="Corte" value="28"/>
         <value key="Aterro" value="29"/>
-        <value key="Resíduo sólido em geral" value="30"/>
-        <value key="Resíduo de bota-fora" value="31"/>
+        <value key="ResÃ­duo sÃ³lido em geral" value="30"/>
+        <value key="ResÃ­duo de bota-fora" value="31"/>
         <value key="Desconhecido" value="95"/>
         <value key="Outros" value="99"/>
       </widgetv2config>

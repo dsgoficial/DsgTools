@@ -11,13 +11,13 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tipoaglomrurisol">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Núcleo" value="4"/>
+        <value key="NÃºcleo" value="4"/>
         <value key="Povoado" value="5"/>
         <value key="Outros aglomerados rurais isolados" value="22"/>
       </widgetv2config>

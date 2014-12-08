@@ -8,7 +8,7 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
@@ -22,9 +22,9 @@
     </edittype> 
     <edittype widgetv2type="ValueMap" name="formarocha">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Área rochosa - lajedo" value="2"/>
+        <value key="Ãrea rochosa - lajedo" value="2"/>
         <value key="Penedo isolado" value="3"/>
-        <value key="Matacão - pedra" value="4"/>
+        <value key="MatacÃ£o - pedra" value="4"/>
         <value key="Desconhecida" value="95"/>
       </widgetv2config>
     </edittype> 

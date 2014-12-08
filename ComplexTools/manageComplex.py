@@ -61,7 +61,7 @@ class CustomTableModel(QSqlTableModel):
         newValue = value
         if self.dict.has_key(column):
             dict = self.dict[column]
-            newValue = int(dict[str(value)])
+            newValue = int(dict[value])
         return QSqlTableModel.setData(self, index, newValue, role)
 
 class ComboBoxDelegate(QStyledItemDelegate):

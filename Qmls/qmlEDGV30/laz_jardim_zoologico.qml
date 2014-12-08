@@ -23,43 +23,43 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="divisaoativecon">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Agricultura, pecuário e serviços relacionados" value="3"/>
-        <value key="Silvicultura, exploração florestal e serviços relacionados" value="4"/>
-        <value key="Fabricação de produtos de minerais não metálicos" value="5"/>
+        <value key="Agricultura, pecuÃ¡rio e serviÃ§os relacionados" value="3"/>
+        <value key="Silvicultura, exploraÃ§Ã£o florestal e serviÃ§os relacionados" value="4"/>
+        <value key="FabricaÃ§Ã£o de produtos de minerais nÃ£o metÃ¡licos" value="5"/>
         <value key="Atividades recreativas, culturais e desportivas" value="6"/>
-        <value key="Serviços prestados principalmente a empresas (organizações)" value="7"/>
-        <value key="Fabricação de produtos de madeira e celulose" value="10"/>
-        <value key="Pesca, aquicultura e serviços relacionados" value="11"/>
-        <value key="Extração de carvão mineral" value="13"/>
-        <value key="Extração de petróleo e serviços relacionados" value="14"/>
-        <value key="Extração de minerais metálicos" value="15"/>
-        <value key="Extração de minerais não-metálicos" value="16"/>
-        <value key="Fabricação alimentícia e bebidas" value="17"/>
-        <value key="Fabricação de produtos do fumo" value="18"/>
-        <value key="Fabricação de produtos têxteis" value="20"/>
-        <value key="Confecção de artigos do vestuário e acessórios" value="21"/>
-        <value key="Preparação de couros e fabricação de artefatos de couro, artigos de viagens e calçados" value="22"/>
-        <value key="Fabricação de celulose, papel e produtos de papel" value="23"/>
-        <value key="Edição, impressão e reprodução de gravações" value="24"/>
-        <value key="Fabricação de coque, refino de petróleo, elaboração de combustíveis nucleares e produção de álcool" value="25"/>
-        <value key="Fabricação de produtos químicos" value="27"/>
-        <value key="Fabricação de artigos de borracha e material plástico" value="28"/>
-        <value key="Metalurgia básica" value="29"/>
-        <value key="Fabricação de produtos de metal, exclusive máquinas e equipamentos" value="30"/>
-        <value key="Fabricação de máquinas e equipamentos" value="31"/>
-        <value key="Fabricação de máquinas de escritório e equipamentos de informática" value="32"/>
-        <value key="Fabricação de máquinas, aparelhos e materiais elétricos" value="33"/>
-        <value key="Fabricação de material eletrônico, e equipamentos de comunicações" value="34"/>
-        <value key="Fabricação de equipamentos de instrumentação médico-hospitalares, instrumentos de precisão e ópticos, equipamentos pa automação instrustrial, cronômetros e relógios" value="35"/>
-        <value key="Fabricação e montagem de veículos automotores, reboques e carrocerias" value="36"/>
-        <value key="Fabricação de outros equipamentos de transporte" value="37"/>
-        <value key="Fabricação de móveis e indústrias diversas" value="45"/>
+        <value key="ServiÃ§os prestados principalmente a empresas (organizaÃ§Ãµes)" value="7"/>
+        <value key="FabricaÃ§Ã£o de produtos de madeira e celulose" value="10"/>
+        <value key="Pesca, aquicultura e serviÃ§os relacionados" value="11"/>
+        <value key="ExtraÃ§Ã£o de carvÃ£o mineral" value="13"/>
+        <value key="ExtraÃ§Ã£o de petrÃ³leo e serviÃ§os relacionados" value="14"/>
+        <value key="ExtraÃ§Ã£o de minerais metÃ¡licos" value="15"/>
+        <value key="ExtraÃ§Ã£o de minerais nÃ£o-metÃ¡licos" value="16"/>
+        <value key="FabricaÃ§Ã£o alimentÃ­cia e bebidas" value="17"/>
+        <value key="FabricaÃ§Ã£o de produtos do fumo" value="18"/>
+        <value key="FabricaÃ§Ã£o de produtos tÃªxteis" value="20"/>
+        <value key="ConfecÃ§Ã£o de artigos do vestuÃ¡rio e acessÃ³rios" value="21"/>
+        <value key="PreparaÃ§Ã£o de couros e fabricaÃ§Ã£o de artefatos de couro, artigos de viagens e calÃ§ados" value="22"/>
+        <value key="FabricaÃ§Ã£o de celulose, papel e produtos de papel" value="23"/>
+        <value key="EdiÃ§Ã£o, impressÃ£o e reproduÃ§Ã£o de gravaÃ§Ãµes" value="24"/>
+        <value key="FabricaÃ§Ã£o de coque, refino de petrÃ³leo, elaboraÃ§Ã£o de combustÃ­veis nucleares e produÃ§Ã£o de Ã¡lcool" value="25"/>
+        <value key="FabricaÃ§Ã£o de produtos quÃ­micos" value="27"/>
+        <value key="FabricaÃ§Ã£o de artigos de borracha e material plÃ¡stico" value="28"/>
+        <value key="Metalurgia bÃ¡sica" value="29"/>
+        <value key="FabricaÃ§Ã£o de produtos de metal, exclusive mÃ¡quinas e equipamentos" value="30"/>
+        <value key="FabricaÃ§Ã£o de mÃ¡quinas e equipamentos" value="31"/>
+        <value key="FabricaÃ§Ã£o de mÃ¡quinas de escritÃ³rio e equipamentos de informÃ¡tica" value="32"/>
+        <value key="FabricaÃ§Ã£o de mÃ¡quinas, aparelhos e materiais elÃ©tricos" value="33"/>
+        <value key="FabricaÃ§Ã£o de material eletrÃ´nico, e equipamentos de comunicaÃ§Ãµes" value="34"/>
+        <value key="FabricaÃ§Ã£o de equipamentos de instrumentaÃ§Ã£o mÃ©dico-hospitalares, instrumentos de precisÃ£o e Ã³pticos, equipamentos pa automaÃ§Ã£o instrustrial, cronÃ´metros e relÃ³gios" value="35"/>
+        <value key="FabricaÃ§Ã£o e montagem de veÃ­culos automotores, reboques e carrocerias" value="36"/>
+        <value key="FabricaÃ§Ã£o de outros equipamentos de transporte" value="37"/>
+        <value key="FabricaÃ§Ã£o de mÃ³veis e indÃºstrias diversas" value="45"/>
         <value key="Reciclagem" value="50"/>
-        <value key="Construção" value="51"/>
-        <value key="Comércio e reparação de veiculos automotores e motocicletas e comércio a varejo de combustíveis" value="52"/>
-        <value key="Comércio por atacado e representantes comerciais e agentes do comércio" value="55"/>
-        <value key="Comércio varejista e reparação de objetos pessoais e domésticos" value="74"/>
-        <value key="Alojamento e alimentação" value="92"/>
+        <value key="ConstruÃ§Ã£o" value="51"/>
+        <value key="ComÃ©rcio e reparaÃ§Ã£o de veiculos automotores e motocicletas e comÃ©rcio a varejo de combustÃ­veis" value="52"/>
+        <value key="ComÃ©rcio por atacado e representantes comerciais e agentes do comÃ©rcio" value="55"/>
+        <value key="ComÃ©rcio varejista e reparaÃ§Ã£o de objetos pessoais e domÃ©sticos" value="74"/>
+        <value key="Alojamento e alimentaÃ§Ã£o" value="92"/>
         <value key="Desconhecido" value="95"/>
         <value key="Outros" value="99"/>
       </widgetv2config>
@@ -71,20 +71,20 @@
         <value key="Municipal" value="3"/>
         <value key="Concessionada" value="4"/>
         <value key="Privada" value="5"/>
-        <value key="Não aplicável" value="6"/>
+        <value key="NÃ£o aplicÃ¡vel" value="6"/>
         <value key="Desconhecida" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="turistico">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="cultura">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>

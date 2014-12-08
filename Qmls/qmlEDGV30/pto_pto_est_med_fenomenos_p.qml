@@ -11,25 +11,25 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="tipoptoestmed">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Eólica - EO" value="1"/>
-        <value key="Solarimétrica - SL" value="2"/>
-        <value key="Maregráfica - MA" value="3"/>
-        <value key="Pluviométrica - PL" value="4"/>
+        <value key="EÃ³lica - EO" value="1"/>
+        <value key="SolarimÃ©trica - SL" value="2"/>
+        <value key="MaregrÃ¡fica - MA" value="3"/>
+        <value key="PluviomÃ©trica - PL" value="4"/>
         <value key="Radiossonda - RS" value="5"/>
-        <value key="Metero-maregráfica" value="6"/>
-        <value key="Agroclimatológica - AC" value="7"/>
-        <value key="Radar metereológico - RD" value="8"/>
-        <value key="Marés terrestres-crosta" value="9"/>
-        <value key="Climatológica auxiliar- CA" value="10"/>
-        <value key="Evaporimétrica - EV" value="11"/>
-        <value key="Fluviométrica - FL" value="12"/>
-        <value key="Climatológica principal - CP" value="13"/>
+        <value key="Metero-maregrÃ¡fica" value="6"/>
+        <value key="AgroclimatolÃ³gica - AC" value="7"/>
+        <value key="Radar metereolÃ³gico - RD" value="8"/>
+        <value key="MarÃ©s terrestres-crosta" value="9"/>
+        <value key="ClimatolÃ³gica auxiliar- CA" value="10"/>
+        <value key="EvaporimÃ©trica - EV" value="11"/>
+        <value key="FluviomÃ©trica - FL" value="12"/>
+        <value key="ClimatolÃ³gica principal - CP" value="13"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 

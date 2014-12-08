@@ -8,7 +8,7 @@
     </edittype>
     <edittype widgetv2type="ValueMap" name="geometriaaproximada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
       </widgetv2config>
     </edittype> 
@@ -17,18 +17,18 @@
         <value key="Enseada" value="10"/>
         <value key="Meandro abandonado" value="11"/>
         <value key="Lagoa/Lagoa" value="12"/>
-        <value key="Represa/açude" value="14"/>
+        <value key="Represa/aÃ§ude" value="14"/>
         <value key="Oceano" value="15"/>
-        <value key="Baía" value="22"/>
+        <value key="BaÃ­a" value="22"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="regime">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Temporário com leito permanente" value="1"/>
+        <value key="TemporÃ¡rio com leito permanente" value="1"/>
         <value key="Permanente" value="2"/>
-        <value key="Permanente com grande variação" value="3"/>
-        <value key="Temporário" value="4"/>
+        <value key="Permanente com grande variaÃ§Ã£o" value="3"/>
+        <value key="TemporÃ¡rio" value="4"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
@@ -44,14 +44,14 @@
     </edittype> 
     <edittype widgetv2type="ValueMap" name="artificial">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
     </edittype> 
     <edittype widgetv2type="ValueMap" name="salgada">
       <widgetv2config fieldEditable="1" labelOnTop="0">
-        <value key="Não" value="0"/>
+        <value key="NÃ£o" value="0"/>
         <value key="Sim" value="1"/>
         <value key="Desconhecido" value="95"/>
       </widgetv2config>
