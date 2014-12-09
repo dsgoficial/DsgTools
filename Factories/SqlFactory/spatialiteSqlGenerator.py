@@ -32,11 +32,17 @@ class SpatialiteSqlGenerator(SqlGenerator):
         return sql
 
     def getAssociatedFeaturesData(self, aggregated_schema, aggregated_class, column_name, complex_uuid):
-        sql = "SELECT OGC_FID from "+aggregated_schema+"_"+aggregated_class+" where "+column_name+"="+'\''+complex_uuid+'\''
+        if aggregated_schema == 'complexos':
+            sql = "SELECT id from "+aggregated_schema+"_"+aggregated_class+" where "+column_name+"="+'\''+complex_uuid+'\''
+        else:
+            sql = "SELECT OGC_FID from "+aggregated_schema+"_"+aggregated_class+" where "+column_name+"="+'\''+complex_uuid+'\''
         return sql
     
     def getLinkColumn(self, complexClass, aggregatedClass):
-        sql = "SELECT column_name from complex_schema where complex = "+complexClass+" and aggregated_class = "+'\''+aggregatedClass[3:]+'\''
+        if self.isComplexClass(aggregatedClass):
+            sql = "SELECT column_name from complex_schema where complex = "+complexClass+" and aggregated_class = "+'\''+aggregatedClass[10:]+'\''
+        else:
+            sql = "SELECT column_name from complex_schema where complex = "+complexClass+" and aggregated_class = "+'\''+aggregatedClass[3:]+'\''
         return sql
 
     def getSrid(self):
@@ -46,3 +52,9 @@ class SpatialiteSqlGenerator(SqlGenerator):
     def getTablesFromDatabase(self):
         sql = "SELECT name FROM sqlite_master WHERE type='table'"
         return sql
+    
+    def isComplexClass(self, aggregatedClass):
+        size = len(aggregatedClass.split('_')[0])
+        if size == 9:
+            return True
+        return False
