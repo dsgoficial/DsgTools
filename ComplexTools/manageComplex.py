@@ -189,8 +189,19 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
 
     def cancel(self):
         self.done(0)
+        
+    def checkComplexNameField(self):
+        count = self.projectModel.rowCount()
+        for i in range(count):
+            record = self.projectModel.record(i)
+            if not record.value("nome"):
+                QMessageBox.warning(self.iface.mainWindow(), "Warning!", 'The field: \'nome\' must be filled in all rows. Please, check and try again.')
+                return False
 
     def updateTable(self):
+        if not self.checkComplexNameField():
+            return
+        
         #emit the signal to disassocite all features from the complexes marked for removal
         self.emit(SIGNAL("markedToRemove( PyQt_PyObject )"), self.toBeRemoved)
         #commmiting all pending changes
