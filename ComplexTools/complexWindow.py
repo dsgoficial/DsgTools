@@ -433,6 +433,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         if text not in children:
             #case not it should be created
             item = QTreeWidgetItem(parent)
+            item.setExpanded(True)
             item.setText(0,text)
             #adding the complex uuid to the tree widget
             if uuid != "":
