@@ -46,3 +46,8 @@ class PostGISSqlGenerator(SqlGenerator):
     def getTablesFromDatabase(self):
         sql = "select distinct table_name from information_schema.columns"
         return sql
+
+    def disassociateComplexFromComplex(self, aggregated_class, link_column, uuid):
+        sql = "UPDATE complexos."+aggregated_class+" SET "+link_column+"=NULL WHERE id = "+'\''+uuid+'\''
+        return sql
+    

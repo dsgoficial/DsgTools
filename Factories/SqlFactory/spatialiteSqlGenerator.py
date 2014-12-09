@@ -53,6 +53,10 @@ class SpatialiteSqlGenerator(SqlGenerator):
         sql = "SELECT name FROM sqlite_master WHERE type='table'"
         return sql
     
+    def disassociateComplexFromComplex(self, aggregated_class, link_column, uuid):
+        sql = "UPDATE "+aggregated_class+" SET "+link_column+"=NULL WHERE id = "+'\''+uuid+'\''
+        return sql
+    
     def isComplexClass(self, aggregatedClass):
         size = len(aggregatedClass.split('_')[0])
         if size == 9:

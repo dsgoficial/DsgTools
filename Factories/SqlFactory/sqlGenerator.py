@@ -46,3 +46,6 @@ class SqlGenerator:
     
     def getTablesFromDatabase(self):
         return None
+    
+    def disassociateComplexFromComplex(self, aggregated_class, link_column, uuid):
+        return None

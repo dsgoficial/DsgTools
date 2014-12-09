@@ -247,12 +247,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         for i in range(item.childCount()):
             #feature id that will be updated
             id = item.child(i).text(0)
-            #field index that will be set to NULL
-            fieldIndex = [i for i in range(len(layer.dataProvider().fields())) if layer.dataProvider().fields()[i].name() == link_column]  
-            #attribute pair that will be changed
-            attrs = {fieldIndex[0]:None}
-            #actual update in the database
-            layer.dataProvider().changeAttributeValues({int(id):attrs})
+            self.updateLayerOnDisassociate(layer, aggregated_class, link_column, id)
             
     def disassociateAggregatedId(self, item):
         aggregated_class = item.parent().text(0)
@@ -275,12 +270,27 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
 
         #feature id that will be updated
         id = item.text(0)
-        #field index that will be set to NULL
-        fieldIndex = [i for i in range(len(layer.dataProvider().fields())) if layer.dataProvider().fields()[i].name() == link_column]  
-        #attribute pair that will be changed
-        attrs = {fieldIndex[0]:None}
-        #actual update in the database
-        layer.dataProvider().changeAttributeValues({int(id):attrs})
+        self.updateLayerOnDisassociate(layer, aggregated_class, link_column, id)
+        
+    def updateLayerOnDisassociate(self, layer, aggregated_class, link_column, id):
+        if self.isComplexClass(aggregated_class):
+            sql = self.gen.disassociateComplexFromComplex(aggregated_class, link_column, id)
+            query = QSqlQuery(sql, self.db)
+        else: 
+            #field index that will be set to NULL
+            fieldIndex = [i for i in range(len(layer.dataProvider().fields())) if layer.dataProvider().fields()[i].name() == link_column]  
+            #attribute pair that will be changed
+            attrs = {fieldIndex[0]:None}
+            #actual update in the database
+            layer.dataProvider().changeAttributeValues({int(id):attrs})
+    
+    def isComplexClass(self, className):
+        #getting all complex tables
+        query = QSqlQuery(self.gen.getComplexTablesFromDatabase(), self.db)
+        while query.next():
+            if query.value(0) == className:
+                return True
+        return False
         
     @pyqtSlot(bool)    
     def on_disassociatePushButton_clicked(self):
