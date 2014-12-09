@@ -123,7 +123,6 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
 
         #obtaining the qml file path
         qmlPath = os.path.join(os.path.dirname(__file__), '..', 'Qmls', 'qmlEDGV30', fileName)
-        print qmlPath
 
         #getting the domain dictionary that will be used to generate the comboboxes
         parser = QmlParser(qmlPath)
@@ -138,7 +137,6 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
 
     def generateCombos(self):
         self.combos = []
-        print self.domainDict
         for key in self.domainDict:
             self.generateCombo(key, self.domainDict[key])
 
