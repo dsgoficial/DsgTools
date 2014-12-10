@@ -38,7 +38,7 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/LayerTools'))
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ComplexTools'))
 
 from carrega_categoria_dialog import CarregaCategoriaDialog
-from carrega_classe_dialog import CarregaClasseDialog
+from load_by_class import LoadByClass
 from cria_spatialite_dialog import CriaSpatialiteDialog
 from cria_moldura_dialog import CriaMolduraDialog
 #from createComplex import CreateComplexDialog
@@ -86,7 +86,7 @@ class DsgTools:
 
         self.dsgTools = None
         self.menuBar = self.iface.mainWindow().menuBar()
-        
+
         self.complexWindow = ComplexWindow(iface)
 
     # noinspection PyMethodMayBeStatic
@@ -302,7 +302,7 @@ class DsgTools:
             add_to_toolbar=False)
         complex.addAction(action)
         self.complexButton.addAction(action)"""
-        
+
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
 
     def unload(self):
@@ -315,7 +315,7 @@ class DsgTools:
 
         if self.dsgTools is not None:
             self.menuBar.removeAction(self.dsgTools.menuAction())
-            
+
             self.iface.removeDockWidget(self.complexWindow)
 
     def run(self):
@@ -374,13 +374,13 @@ class DsgTools:
     def loadByClass(self):
         try:
             self.layerButton.setDefaultAction(self.toolbar.sender())
-            self.dlg = CarregaClasseDialog()
+            self.dlg = LoadByClass()
             self.dlg.show()
             result = self.dlg.exec_()
             if result:
                 pass
         except:
-            self.dlg = CarregaClasseDialog()
+            self.dlg = LoadByClass()
             self.dlg.show()
             result = self.dlg.exec_()
             if result:
