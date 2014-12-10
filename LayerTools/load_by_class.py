@@ -35,6 +35,11 @@ import qgis as qgis
 from PyQt4 import QtGui
 import sys
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Factories', 'SqlFactory'))
+from sqlGeneratorFactory import SqlGeneratorFactory
+
+from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
+
 
 class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
     def __init__(self, parent=None):
@@ -57,6 +62,8 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         self.classes = []
         self.selectedClasses = []
         self.setupUi(self)
+        self.factory = SqlGeneratorFactory()
+        self.gen = None
         #qmlPath will be set as /qml_qgis/qgis_22/edgv_213/, but in a further version, there will be an option to detect from db
         version = qgis.core.QGis.QGIS_VERSION_INT
         if version >= 20600:
@@ -96,7 +103,6 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         self.fileLineEditLoadByClass.setText(self.filename)
         self.crsLineEditLoadByClassSpatialite.setText(self.crs)
         self.crsLineEditLoadByClassSpatialite.setReadOnly(False)
-
 
         tam = self.listWidgetClassesLoadByClass.__len__()
         for i in range(tam+1,1,-1):
@@ -176,43 +182,46 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         if self.tabWidgetLoadByClass.tabText(self.tabWidgetLoadByClass.currentIndex()) == "Spatialite":
             con = sqlite3.connect(self.filename)
             cursor = con.cursor()
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+            self.gen = self.factory.createSqlGenerator(True)
+            sql = self.gen.getTablesFromDatabase()
+            cursor.execute(sql)
             tableList = cursor.fetchall()
-        #"SELECT table_name FROM information_schema.columns WHERE (table_schema='cb' or table_schema='cc') and column_name = 'id';"
 
-            for i in tableList:
+        for i in tableList:
 
-                if (i[0].split("_")[-1] == "p"):
-                    self.classes.append(i[0])
-                if (i[0].split("_")[-1] == "l"):
-                    self.classes.append(i[0])
-                if (i[0].split("_")[-1] == "a"):
-                    self.classes.append(i[0])
+            if (i[0].split("_")[-1] == "p"):
+                self.classes.append(i[0])
+            if (i[0].split("_")[-1] == "l"):
+                self.classes.append(i[0])
+            if (i[0].split("_")[-1] == "a"):
+                self.classes.append(i[0])
 
-            self.classes.sort() #sorts it into alphabetical order
-
-
-            for i in self.classes:
-                item = QtGui.QListWidgetItem(i)
-                self.listWidgetClassesLoadByClass.addItem(item)
-            try:
-                self.epsg = self.findsEPSG(cursor)
-
-                if self.epsg == -1:
-                    self.bar.pushMessage("", "Coordinate Reference System not set or invalid!", level=QgsMessageBar.WARNING)
-                else:
-                    self.crs = QgsCoordinateReferenceSystem(self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
-                    self.crsLineEditLoadByClassSpatialite.setText(self.crs.description())
-                    self.crsLineEditLoadByClassSpatialite.setReadOnly(True)
-                    self.dbLoaded = True
-            except:
-
-                pass
+        self.classes.sort() #sorts it into alphabetical order
 
 
+        for i in self.classes:
+            item = QtGui.QListWidgetItem(i)
+            self.listWidgetClassesLoadByClass.addItem(item)
+        try:
+            self.epsg = self.findsEPSGSpatialite(cursor)
 
-    def findsEPSG(self,cursor):
-        cursor.execute("SELECT srid from geometry_columns;")
+            if self.epsg == -1:
+                self.bar.pushMessage("", "Coordinate Reference System not set or invalid!", level=QgsMessageBar.WARNING)
+            else:
+                self.crs = QgsCoordinateReferenceSystem(self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
+                self.crsLineEditLoadByClassSpatialite.setText(self.crs.description())
+                self.crsLineEditLoadByClassSpatialite.setReadOnly(True)
+                self.dbLoaded = True
+        except:
+
+            pass
+
+
+
+    def findsEPSGSpatialite(self,cursor):
+        self.gen = self.factory.createSqlGenerator(True)
+        sql = self.gen.getSrid()
+        cursor.execute(sql)
         list = cursor.fetchall()
         return list[0][0]
 
@@ -253,6 +262,13 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
 
 
     def okSelected(self):
+        if isSpatialite:
+            loadSpatialiteLayers()
+        else:
+            pass
+
+
+    def loadSpatialiteLayers(self):
         f = self.filename
         xmlfilepath = self.qmlPath
         coordSys = self.crs
