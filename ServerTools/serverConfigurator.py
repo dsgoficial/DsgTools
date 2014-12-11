@@ -69,8 +69,7 @@ class ServerConfigurator(QDialog, Ui_Dialog):
     
     def storeServerConfiguration(self, name, host, port, user, password):
         settings = QSettings()
-        settings.beginGroup('PostgreSQL/connections/'+name)
-        settings.setValue('database', 'postgres')
+        settings.beginGroup('PostgreSQL/servers/'+name)
         settings.setValue('host', host)
         settings.setValue('port', port)
         settings.setValue('username', user)
@@ -79,8 +78,7 @@ class ServerConfigurator(QDialog, Ui_Dialog):
         
     def getServerConfiguration(self, name):
         settings = QSettings()
-        settings.beginGroup('PostgreSQL/connections/'+name)
-        database = settings.value('database')
+        settings.beginGroup('PostgreSQL/servers/'+name)
         host = settings.value('host')
         port = settings.value('port')
         user = settings.value('username')
@@ -94,7 +92,7 @@ class ServerConfigurator(QDialog, Ui_Dialog):
         
     def getServers(self):
         settings = QSettings()
-        settings.beginGroup('PostgreSQL/connections')
+        settings.beginGroup('PostgreSQL/servers')
         currentConnections = settings.childGroups()
         settings.endGroup()
         return currentConnections
