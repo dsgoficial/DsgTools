@@ -1,4 +1,6 @@
 SET check_function_bodies = false;
+CREATE SCHEMA IF NOT EXISTS topology;
+ALTER SCHEMA topology OWNER TO postgres;
 CREATE SCHEMA dominios;
 CREATE SCHEMA complexos;
 ALTER SCHEMA complexos OWNER TO postgres;
@@ -6,6 +8,14 @@ CREATE SCHEMA cb;
 CREATE SCHEMA cc;
 CREATE SCHEMA ct;
 SET search_path TO pg_catalog,public,topology,dominios,complexos,cb,cc,ct;
+CREATE EXTENSION IF NOT EXISTS postgis
+      WITH SCHEMA public
+      VERSION '2.0.4';
+COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions';
+CREATE EXTENSION IF NOT EXISTS postgis_topology
+      WITH SCHEMA topology
+      VERSION '2.0.4';
+COMMENT ON EXTENSION postgis_topology IS 'PostGIS topology spatial types and functions';
 CREATE TABLE cb.hid_area_umida_a(
 	id serial NOT NULL,
 	nome varchar(80),
@@ -4336,6 +4346,8 @@ CREATE INDEX dci_local_critico_a_gist ON ct.dci_local_critico_a
 	(
 	  geom
 	);
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
+      WITH SCHEMA public;
 CREATE TABLE complexos.adm_org_religiosa(
 	id uuid NOT NULL,
 	nome varchar(80) NOT NULL,
@@ -7381,4 +7393,4 @@ INSERT INTO dominios.uso_principal (code,code_name) VALUES (95, 'Desconhecido');
 INSERT INTO dominios.uso_principal (code,code_name) VALUES (97, 'Não aplicável');  
 INSERT INTO dominios.uso_principal (code,code_name) VALUES (99, 'Outros');  
 INSERT INTO dominios.tipo_tunel (code,code_name) VALUES (1, 'Passagem Subterrânea');  
-INSERT INTO dominios.tipo_tunel (code,code_name) VALUES (2, 'Túnel')
+INSERT INTO dominios.tipo_tunel (code,code_name) VALUES (2, 'Túnel')  
