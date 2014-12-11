@@ -36,6 +36,7 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/DbTools'))
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/LayerTools'))
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ComplexTools'))
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ServerTools'))
 
 from carrega_categoria_dialog import CarregaCategoriaDialog
 from load_by_class import LoadByClass
@@ -43,6 +44,7 @@ from cria_spatialite_dialog import CriaSpatialiteDialog
 from cria_moldura_dialog import CriaMolduraDialog
 #from createComplex import CreateComplexDialog
 from complexWindow import ComplexWindow
+from serverConfigurator import ServerConfigurator
 
 
 class DsgTools:
@@ -204,9 +206,20 @@ class DsgTools:
         self.menuBar.insertMenu(self.iface.firstRightStandardMenu().menuAction(), self.dsgTools)
 
         #Sub menus
+        server = self.addMenu(self.dsgTools, u'server', self.tr('Server Catalog'),':/plugins/DsgTools/server.png')
         database = self.addMenu(self.dsgTools, u'database', self.tr('Database Tools'),':/plugins/DsgTools/database.png')
         layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/layers.png')
         complex = self.addMenu(self.dsgTools, u'complex', self.tr('Complex Tools'),':/plugins/DsgTools/complex.png')
+
+        icon_path = ':/plugins/DsgTools/server.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Server Settings'),
+            callback=self.configurateServers,
+            parent=self.dsgTools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        server.addAction(action)
 
         icon_path = ':/plugins/DsgTools/dsg.png'
         action = self.add_action(
@@ -420,4 +433,11 @@ class DsgTools:
             pass
         except:
             pass"""
-
+            
+    def configurateServers(self):
+        self.dlg = ServerConfigurator(self.iface)
+        self.dlg.show()
+        result = self.dlg.exec_()
+        if result:
+            pass
+        
