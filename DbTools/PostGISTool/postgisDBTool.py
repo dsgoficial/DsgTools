@@ -123,12 +123,15 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         sql = file.read()
         file.close()
         commands = sql.split(';')
+        db.transaction()
         query = QSqlQuery(db)
         for command in commands:
             if not query.exec_(command):
                 print query.lastError().text()
+                db.rollback()
                 db.close()
                 return False
+        db.commit()
         db.close()
         return True
     
