@@ -62,3 +62,10 @@ class SpatialiteSqlGenerator(SqlGenerator):
         if size == 9:
             return True
         return False
+    
+    def getTemplates(self):
+        return None
+    
+    def getCreateDatabase(self, name, template):
+        return None
+    

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_postgisDBTool.ui'
 #
-# Created: Thu Dec 11 10:20:01 2014
+# Created: Thu Dec 11 12:06:22 2014
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(292, 171)
+        Dialog.resize(309, 233)
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.horizontalLayout = QtGui.QHBoxLayout()
@@ -31,7 +31,7 @@ class Ui_Dialog(object):
         self.connectionEdit.setReadOnly(True)
         self.connectionEdit.setObjectName(_fromUtf8("connectionEdit"))
         self.horizontalLayout.addWidget(self.connectionEdit)
-        self.gridLayout.addLayout(self.horizontalLayout, 0, 0, 1, 2)
+        self.gridLayout.addLayout(self.horizontalLayout, 0, 0, 1, 1)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.label_2 = QtGui.QLabel(Dialog)
@@ -40,7 +40,7 @@ class Ui_Dialog(object):
         self.serversCombo = QtGui.QComboBox(Dialog)
         self.serversCombo.setObjectName(_fromUtf8("serversCombo"))
         self.horizontalLayout_2.addWidget(self.serversCombo)
-        self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 2)
+        self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         self.label_3 = QtGui.QLabel(Dialog)
@@ -51,7 +51,16 @@ class Ui_Dialog(object):
         self.databaseEdit = QtGui.QLineEdit(Dialog)
         self.databaseEdit.setObjectName(_fromUtf8("databaseEdit"))
         self.horizontalLayout_3.addWidget(self.databaseEdit)
-        self.gridLayout.addLayout(self.horizontalLayout_3, 2, 0, 1, 2)
+        self.gridLayout.addLayout(self.horizontalLayout_3, 2, 0, 1, 1)
+        self.horizontalLayout_6 = QtGui.QHBoxLayout()
+        self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
+        self.label_5 = QtGui.QLabel(Dialog)
+        self.label_5.setObjectName(_fromUtf8("label_5"))
+        self.horizontalLayout_6.addWidget(self.label_5)
+        self.templatesCombo = QtGui.QComboBox(Dialog)
+        self.templatesCombo.setObjectName(_fromUtf8("templatesCombo"))
+        self.horizontalLayout_6.addWidget(self.templatesCombo)
+        self.gridLayout.addLayout(self.horizontalLayout_6, 3, 0, 1, 1)
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
         self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
         self.label_4 = QtGui.QLabel(Dialog)
@@ -64,13 +73,16 @@ class Ui_Dialog(object):
         self.srsEdit.setReadOnly(True)
         self.srsEdit.setObjectName(_fromUtf8("srsEdit"))
         self.horizontalLayout_4.addWidget(self.srsEdit)
-        self.gridLayout.addLayout(self.horizontalLayout_4, 3, 0, 1, 2)
+        self.gridLayout.addLayout(self.horizontalLayout_4, 4, 0, 1, 1)
+        self.horizontalLayout_5 = QtGui.QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
         self.saveButton = QtGui.QPushButton(Dialog)
         self.saveButton.setObjectName(_fromUtf8("saveButton"))
-        self.gridLayout.addWidget(self.saveButton, 4, 0, 1, 1)
+        self.horizontalLayout_5.addWidget(self.saveButton)
         self.cancelButton = QtGui.QPushButton(Dialog)
         self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
-        self.gridLayout.addWidget(self.cancelButton, 4, 1, 1, 1)
+        self.horizontalLayout_5.addWidget(self.cancelButton)
+        self.gridLayout.addLayout(self.horizontalLayout_5, 5, 0, 1, 1)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -80,6 +92,7 @@ class Ui_Dialog(object):
         self.label.setText(QtGui.QApplication.translate("Dialog", "Connection Name:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Dialog", "Server:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("Dialog", "Database:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_5.setText(QtGui.QApplication.translate("Dialog", "PostGIS template:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("Dialog", "SRS:", None, QtGui.QApplication.UnicodeUTF8))
         self.srsButton.setText(QtGui.QApplication.translate("Dialog", "Search SRS", None, QtGui.QApplication.UnicodeUTF8))
         self.saveButton.setText(QtGui.QApplication.translate("Dialog", "Save", None, QtGui.QApplication.UnicodeUTF8))

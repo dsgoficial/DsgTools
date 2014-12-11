@@ -49,3 +49,9 @@ class SqlGenerator:
     
     def disassociateComplexFromComplex(self, aggregated_class, link_column, uuid):
         return None
+    
+    def getTemplates(self):
+        return None
+    
+    def getCreateDatabase(self, name, template):
+        return None

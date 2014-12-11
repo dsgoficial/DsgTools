@@ -23,9 +23,14 @@
 # Import the PyQt and QGIS libraries
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4.QtSql import QSqlDatabase,QSqlQuery
 
 from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgsGenericProjectionSelector
+
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'Factories', 'SqlFactory'))
+from sqlGeneratorFactory import SqlGeneratorFactory
 
 from ui_postgisDBTool import Ui_Dialog
 
@@ -45,16 +50,22 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         self.populateServersCombo()
         
         self.srs = None
+
+        self.factory = SqlGeneratorFactory()
+        #setting the sql generator
+        self.gen = self.factory.createSqlGenerator(False)
+        
+        self.populateTemplatesCombo()
         
     @pyqtSlot(bool)    
     def on_saveButton_clicked(self):
         if self.checkFields():
             server = self.serversCombo.currentText()
             database = self.databaseEdit.text()
-            name = server+'_'+database
-            srs = self.srsEdit.text()
-            self.storeConnectionConfiguration(server, database, srs)
-            self.populateServersCombo()
+            template = self.templatesCombo.currentText()
+            if self.createDatabase(database, template):
+                srs = self.srsEdit.text()
+                self.storeConnectionConfiguration(server, database, srs)
         else:
             QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Fill all parameters.")
     
@@ -75,6 +86,32 @@ class PostgisDBTool(QDialog, Ui_Dialog):
                 self.srsEdit.setText(self.srs.description())
         except:
             QMessageBox.warning(self.iface.mainWindow(), "Warning!", message)
+            
+    def createDatabase(self, name, template):
+        sql  = self.gen.getCreateDatabase(name, template)
+        
+        db = self.getAuxDB()
+        
+        #creating the database
+        query = QSqlQuery(db)
+        if not query.exec_(sql):
+            QMessageBox.warning(self.iface.mainWindow(), "Warning!", query.lastError().text())
+            return False
+        return True
+    
+    def getAuxDB(self):
+        (host, port, user, password) = self.getServerConfiguration(self.serversCombo.currentText())
+
+        db = QSqlDatabase("QPSQL")
+        db.setDatabaseName('postgres')
+        db.setHostName(host)
+        db.setPort(int(port))
+        db.setUserName(user)
+        db.setPassword(password)
+        if not db.open():
+            print db.lastError().text()
+        
+        return db
     
     def updateConnectionName(self):
         server = self.serversCombo.currentText()
@@ -130,4 +167,15 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         currentConnections = self.getServers()
         for connection in currentConnections:
             self.serversCombo.addItem(connection)
+            
+    def populateTemplatesCombo(self):
+        self.templatesCombo.clear()
+        
+        db = self.getAuxDB()
+        
+        sql  = self.gen.getTemplates()
+        #getting the templates
+        query = QSqlQuery(sql, db)
+        while query.next():
+            self.templatesCombo.addItem(query.value(0))
             

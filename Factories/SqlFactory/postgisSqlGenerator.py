@@ -51,3 +51,14 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "UPDATE complexos."+aggregated_class+" SET "+link_column+"=NULL WHERE id = "+'\''+uuid+'\''
         return sql
     
+    def getTemplates(self):
+        sql = "SELECT datname FROM pg_database WHERE datistemplate = true;"
+        return sql
+    
+    def getCreateDatabase(self, name, template):
+        if template == '':
+            sql = "CREATE DATABASE "+name
+        else:
+            sql = "CREATE DATABASE "+name+" WITH TEMPLATE = "+template
+        return sql
+    
