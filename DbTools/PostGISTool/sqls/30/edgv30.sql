@@ -7393,4 +7393,4 @@ INSERT INTO dominios.uso_principal (code,code_name) VALUES (95, 'Desconhecido');
 INSERT INTO dominios.uso_principal (code,code_name) VALUES (97, 'Não aplicável');  
 INSERT INTO dominios.uso_principal (code,code_name) VALUES (99, 'Outros');  
 INSERT INTO dominios.tipo_tunel (code,code_name) VALUES (1, 'Passagem Subterrânea');  
-INSERT INTO dominios.tipo_tunel (code,code_name) VALUES (2, 'Túnel')  
+INSERT INTO dominios.tipo_tunel (code,code_name) VALUES (2, 'Túnel')
