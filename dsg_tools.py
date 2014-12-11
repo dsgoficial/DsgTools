@@ -34,6 +34,7 @@ currentPath = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/DbTools'))
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/DbTools/PostGISTool'))
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/LayerTools'))
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ComplexTools'))
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ServerTools'))
@@ -45,6 +46,7 @@ from cria_moldura_dialog import CriaMolduraDialog
 #from createComplex import CreateComplexDialog
 from complexWindow import ComplexWindow
 from serverConfigurator import ServerConfigurator
+from postgisDBTool import PostgisDBTool
 
 
 class DsgTools:
@@ -365,9 +367,17 @@ class DsgTools:
     def createPostGISDatabase(self):
         try:
             self.databaseButton.setDefaultAction(self.toolbar.sender())
-            pass
+            self.dlg = PostgisDBTool(self.iface)
+            self.dlg.show()
+            result = self.dlg.exec_()
+            if result:
+                pass
         except:
-            pass
+            self.dlg = PostgisDBTool(self.iface)
+            self.dlg.show()
+            result = self.dlg.exec_()
+            if result:
+                pass
 
     def loadByCategory(self):
         try:
