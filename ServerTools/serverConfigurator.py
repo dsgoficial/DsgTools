@@ -50,7 +50,6 @@ class ServerConfigurator(QDialog, Ui_Dialog):
             user = self.userEdit.text()
             password = self.passwordEdit.text()
             self.storeServerConfiguration(name, host, port, user, password)
-            self.serversCombo.addItem(name)
             self.populateServersCombo()
         else:
             QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Fill all parameters.")
@@ -60,10 +59,6 @@ class ServerConfigurator(QDialog, Ui_Dialog):
         self.done(0)
     
     def on_serversCombo_currentIndexChanged(self, index):
-        index = self.serversCombo.currentIndex()
-        if index == 0:
-            return
-        
         self.getServerConfiguration(self.serversCombo.currentText())
     
     def checkFields(self):
@@ -97,12 +92,16 @@ class ServerConfigurator(QDialog, Ui_Dialog):
         self.userEdit.setText(user)
         self.passwordEdit.setText(password)
         
-    def populateServersCombo(self):
-        self.serversCombo.clear()
+    def getServers(self):
         settings = QSettings()
         settings.beginGroup('PostgreSQL/connections')
         currentConnections = settings.childGroups()
         settings.endGroup()
+        return currentConnections
+        
+    def populateServersCombo(self):
+        self.serversCombo.clear()
+        currentConnections = self.getServers()
         for connection in currentConnections:
             self.serversCombo.addItem(connection)
         
