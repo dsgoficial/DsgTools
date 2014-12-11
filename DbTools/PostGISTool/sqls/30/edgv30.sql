@@ -188,7 +188,8 @@ ALTER TABLE cb.hid_quebramar_molhe OWNER TO postgres;
 CREATE TABLE cb.hid_quebramar_molhe_l(
 	geom geometry(LINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_quebramar_molhe_l_pk PRIMARY KEY (id)
-) INHERITS(cb.hid_quebramar_molhe);
+) INHERITS(cb.hid_quebramar_molhe)
+;
 CREATE INDEX hid_quebramar_molhe_l_geom_1408997019419 ON cb.hid_quebramar_molhe_l
 	USING gist
 	(
@@ -198,7 +199,8 @@ ALTER TABLE cb.hid_quebramar_molhe_l OWNER TO postgres;
 CREATE TABLE cb.hid_queda_dagua_p(
 	geom geometry(POINT, 4326) NOT NULL,
 	CONSTRAINT hid_queda_dagua_p_pk PRIMARY KEY (id)
-) INHERITS(cb.hid_queda_dagua);
+) INHERITS(cb.hid_queda_dagua)
+;
 CREATE INDEX hid_queda_dagua_p_gist ON cb.hid_queda_dagua_p
 	USING gist
 	(
@@ -290,7 +292,7 @@ CREATE TABLE cb.hid_terreno_suj_inundacao_a(
 	periodicidadeinunda character(20),
 	geom geometry(POLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_terreno_sujeito_inundacao_a_pkey PRIMARY KEY (id),
-	CONSTRAINT hid_terreno_sujeito_inundacao_a_check_geomaprox_sim CHECK (geometriaaproximada = 1) NO INHERIT
+	CONSTRAINT hid_terreno_sujeito_inundacao_a_check_geomaprox_sim CHECK (geometriaaproximada = 1)
 );
 CREATE INDEX hid_terreno_sujeito_inundacao_a_geom_140899702189 ON cb.hid_terreno_suj_inundacao_a
 	USING gist
@@ -4334,8 +4336,6 @@ CREATE INDEX dci_local_critico_a_gist ON ct.dci_local_critico_a
 	(
 	  geom
 	);
-CREATE EXTENSION "uuid-ossp"
-      WITH SCHEMA public;
 CREATE TABLE complexos.adm_org_religiosa(
 	id uuid NOT NULL,
 	nome varchar(80) NOT NULL,
@@ -7381,4 +7381,4 @@ INSERT INTO dominios.uso_principal (code,code_name) VALUES (95, 'Desconhecido');
 INSERT INTO dominios.uso_principal (code,code_name) VALUES (97, 'Não aplicável');  
 INSERT INTO dominios.uso_principal (code,code_name) VALUES (99, 'Outros');  
 INSERT INTO dominios.tipo_tunel (code,code_name) VALUES (1, 'Passagem Subterrânea');  
-INSERT INTO dominios.tipo_tunel (code,code_name) VALUES (2, 'Túnel');  
+INSERT INTO dominios.tipo_tunel (code,code_name) VALUES (2, 'Túnel')
