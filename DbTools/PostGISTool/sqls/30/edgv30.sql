@@ -1,6 +1,4 @@
 SET check_function_bodies = false;
-CREATE SCHEMA IF NOT EXISTS topology;
-ALTER SCHEMA topology OWNER TO postgres;
 CREATE SCHEMA dominios;
 CREATE SCHEMA complexos;
 ALTER SCHEMA complexos OWNER TO postgres;
