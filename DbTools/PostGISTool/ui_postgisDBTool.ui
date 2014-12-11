@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>309</width>
-    <height>233</height>
+    <width>291</width>
+    <height>251</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -126,6 +126,31 @@
     </layout>
    </item>
    <item row="5" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item>
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>EDGV version:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="versionCombo">
+       <item>
+        <property name="text">
+         <string>2.1.3</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>3.0</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="6" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
       <widget class="QPushButton" name="saveButton">

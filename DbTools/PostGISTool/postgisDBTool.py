@@ -65,7 +65,12 @@ class PostgisDBTool(QDialog, Ui_Dialog):
             template = self.templatesCombo.currentText()
             if self.createDatabase(database, template):
                 srs = self.srsEdit.text()
-                self.storeConnectionConfiguration(server, database, srs)
+                if self.createDatabaseStructure():
+                    self.storeConnectionConfiguration(server, database, srs)
+                else:
+                    QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Problem creating the database structure.")
+            else:
+                QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Problem creating the database.")
         else:
             QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Fill all parameters.")
     
@@ -90,20 +95,48 @@ class PostgisDBTool(QDialog, Ui_Dialog):
     def createDatabase(self, name, template):
         sql  = self.gen.getCreateDatabase(name, template)
         
-        db = self.getAuxDB()
+        db = self.getDatabase()
         
         #creating the database
         query = QSqlQuery(db)
         if not query.exec_(sql):
             QMessageBox.warning(self.iface.mainWindow(), "Warning!", query.lastError().text())
+            db.close()
             return False
+        db.close()
         return True
     
-    def getAuxDB(self):
+    def createDatabaseStructure(self):
+        version = self.versionCombo.currentText()
+        currentPath = os.path.dirname(__file__)
+        if version == '2.1.3':
+            edgvPath = os.path.join(currentPath, 'sqls', '213', 'edgv213.sql')
+        elif version == '3.0':
+            edgvPath = os.path.join(currentPath, 'sqls', '30', 'edgv30.sql')
+        else:
+            pass
+        return self.loadDatabaseStructure(edgvPath)
+        
+    def loadDatabaseStructure(self, edgvPath):
+        db = self.getDatabase(self.databaseEdit.text())
+        file = open(edgvPath, "r")
+        sql = file.read()
+        file.close()
+        commands = sql.split(';')
+        query = QSqlQuery(db)
+        for command in commands:
+            if not query.exec_(command):
+                print query.lastError().text()
+                db.close()
+                return False
+        db.close()
+        return True
+    
+    def getDatabase(self, database = 'postgres'):
         (host, port, user, password) = self.getServerConfiguration(self.serversCombo.currentText())
 
         db = QSqlDatabase("QPSQL")
-        db.setDatabaseName('postgres')
+        db.setDatabaseName(database)
         db.setHostName(host)
         db.setPort(int(port))
         db.setUserName(user)
@@ -130,6 +163,16 @@ class PostgisDBTool(QDialog, Ui_Dialog):
             or self.srsEdit.text() == '':
             return False
         return True
+    
+    def getPostGISConnection(self, name):
+        settings = QSettings()
+        settings.beginGroup('PostgreSQL/connections/'+name)
+        database = settings.value('database')
+        host = settings.value('host')
+        port = settings.value('port')
+        user = settings.value('username')
+        password = settings.value('password')
+        settings.endGroup()
     
     def getServerConfiguration(self, name):
         settings = QSettings()
@@ -171,11 +214,13 @@ class PostgisDBTool(QDialog, Ui_Dialog):
     def populateTemplatesCombo(self):
         self.templatesCombo.clear()
         
-        db = self.getAuxDB()
+        db = self.getDatabase()
         
         sql  = self.gen.getTemplates()
         #getting the templates
         query = QSqlQuery(sql, db)
         while query.next():
             self.templatesCombo.addItem(query.value(0))
+            
+        db.close()
             
