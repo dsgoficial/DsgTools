@@ -59,21 +59,13 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         
         self.epsg = 4326
         
+    def getParameters(self):
+        return (self.getDatabase(self.databaseEdit.text()), self.versionCombo.currentText(), self.epsg)
+        
     @pyqtSlot(bool)    
     def on_saveButton_clicked(self):
-        if self.checkFields():
-            server = self.serversCombo.currentText()
-            database = self.databaseEdit.text()
-            template = self.templatesCombo.currentText()
-            if self.createDatabase(database, template):
-                if self.createDatabaseStructure():
-                    self.storeConnectionConfiguration(server, database)
-                else:
-                    QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Problem creating the database structure.")
-            else:
-                QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Problem creating the database.")
-        else:
-            QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Fill all parameters.")
+        self.createDatabase(self.databaseEdit.text(), self.templatesCombo.currentText())
+        self.done(1)
     
     @pyqtSlot(bool)    
     def on_cancelButton_clicked(self):
@@ -106,36 +98,6 @@ class PostgisDBTool(QDialog, Ui_Dialog):
             QMessageBox.warning(self.iface.mainWindow(), "Warning!", query.lastError().text())
             db.close()
             return False
-        db.close()
-        return True
-    
-    def createDatabaseStructure(self):
-        version = self.versionCombo.currentText()
-        currentPath = os.path.dirname(__file__)
-        if version == '2.1.3':
-            edgvPath = os.path.join(currentPath, 'sqls', '213', 'edgv213.sql')
-        elif version == '3.0':
-            edgvPath = os.path.join(currentPath, 'sqls', '30', 'edgv30.sql')
-        else:
-            pass
-        return self.loadDatabaseStructure(edgvPath)
-        
-    def loadDatabaseStructure(self, edgvPath):
-        db = self.getDatabase(self.databaseEdit.text())
-        file = open(edgvPath, "r")
-        sql = file.read()
-        sql = sql.replace('[epsg]', str(self.epsg))
-        file.close()
-        commands = sql.split(';')
-        db.transaction()
-        query = QSqlQuery(db)
-        for command in commands:
-            if not query.exec_(command):
-                print query.lastError().text()
-                db.rollback()
-                db.close()
-                return False
-        db.commit()
         db.close()
         return True
     

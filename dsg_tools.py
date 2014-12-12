@@ -47,7 +47,7 @@ from cria_moldura_dialog import CriaMolduraDialog
 from complexWindow import ComplexWindow
 from serverConfigurator import ServerConfigurator
 from postgisDBTool import PostgisDBTool
-
+from createPostGISDatabase import CreatePostGISDatabase
 
 class DsgTools:
     """QGIS Plugin Implementation."""
@@ -352,77 +352,66 @@ class DsgTools:
     def createSpatialiteDatabase(self):
         try:
             self.databaseButton.setDefaultAction(self.toolbar.sender())
-            self.dlg = CriaSpatialiteDialog()
-            self.dlg.show()
-            result = self.dlg.exec_()
-            if result:
-                pass
         except:
-            self.dlg = CriaSpatialiteDialog()
-            self.dlg.show()
-            result = self.dlg.exec_()
-            if result:
-                pass
-
+            pass
+        self.dlg = CriaSpatialiteDialog()
+        self.dlg.show()
+        result = self.dlg.exec_()
+        if result:
+            pass
+    
     def createPostGISDatabase(self):
         try:
             self.databaseButton.setDefaultAction(self.toolbar.sender())
-            self.dlg = PostgisDBTool(self.iface)
-            self.dlg.show()
-            result = self.dlg.exec_()
-            if result:
-                pass
         except:
-            self.dlg = PostgisDBTool(self.iface)
-            self.dlg.show()
-            result = self.dlg.exec_()
-            if result:
-                pass
+            pass
+        self.dlg = PostgisDBTool(self.iface)
+        self.dlg.show()
+        result = self.dlg.exec_()
+        if result:
+            # Setting the progress bar
+            self.progressMessageBar = self.iface.messageBar().createMessage("Creating database structure...")
+            self.progressBar = QProgressBar()
+            self.progressBar.setAlignment(Qt.AlignLeft|Qt.AlignVCenter)
+            self.progressMessageBar.layout().addWidget(self.progressBar)
+            self.iface.messageBar().pushWidget(self.progressMessageBar, self.iface.messageBar().INFO)
+
+            (db, version, epsg) = self.dlg.getParameters()
+            self.thread = CreatePostGISDatabase(db, version, epsg)
+            QObject.connect( self.thread, SIGNAL( "rangeCalculated( PyQt_PyObject )" ), self.setProgressRange )
+            QObject.connect( self.thread, SIGNAL( "queryProcessed()" ), self.queryProcessed )
+            QObject.connect( self.thread, SIGNAL( "processingFinished()" ), self.processFinished )
+
+            # Startin the processing
+            self.thread.start()
 
     def loadByCategory(self):
         try:
             self.layerButton.setDefaultAction(self.toolbar.sender())
-            self.dlg = CarregaCategoriaDialog()
-            self.dlg.show()
-            result = self.dlg.exec_()
-            if result:
-                pass
         except:
-            self.dlg = CarregaCategoriaDialog()
-            self.dlg.show()
-            result = self.dlg.exec_()
-            if result:
-                pass
+            pass
+        self.dlg = CarregaCategoriaDialog()
+        self.dlg.show()
+        result = self.dlg.exec_()
+        if result:
+            pass
 
     def loadByClass(self):
         try:
             self.layerButton.setDefaultAction(self.toolbar.sender())
-            self.dlg = LoadByClass()
-            self.dlg.show()
-            result = self.dlg.exec_()
-            if result:
-                pass
         except:
-            self.dlg = LoadByClass()
-            self.dlg.show()
-            result = self.dlg.exec_()
-            if result:
-                pass
+            pass
+        self.dlg = LoadByClass()
+        self.dlg.show()
+        result = self.dlg.exec_()
+        if result:
+            pass
 
     def createFrame(self):
         try:
             self.layerButton.setDefaultAction(self.toolbar.sender())
-            self.dlg = CriaMolduraDialog()
-            self.dlg.show()
-            result = self.dlg.exec_()
-            if result:
-                pass
         except:
-            self.dlg = CriaMolduraDialog()
-            self.dlg.show()
-            result = self.dlg.exec_()
-            if result:
-                pass
+            pass
 
     """def createComplex(self):
         try:
@@ -450,4 +439,18 @@ class DsgTools:
         result = self.dlg.exec_()
         if result:
             pass
+
+    def setProgressRange( self, maximum ):
+        self.progressBar.setRange( 0, maximum )
+    
+    def queryProcessed( self ):
+        self.progressBar.setValue( self.progressBar.value() + 1 )
+
+    def processFinished( self ):
+        if self.thread != None:
+            self.thread.stop()
+            self.thread = None
+            
+        self.progressBar.setValue( self.progressBar.maximum())
+        QMessageBox.information(self.iface.mainWindow(), 'Database structure successfully created!')
         
