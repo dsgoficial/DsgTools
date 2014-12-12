@@ -65,6 +65,7 @@ class PostgisDBTool(QDialog, Ui_Dialog):
     @pyqtSlot(bool)    
     def on_saveButton_clicked(self):
         self.createDatabase(self.databaseEdit.text(), self.templatesCombo.currentText())
+        self.storeConnectionConfiguration(self.serversCombo.currentText(), self.databaseEdit.text())
         self.done(1)
     
     @pyqtSlot(bool)    
@@ -132,16 +133,6 @@ class PostgisDBTool(QDialog, Ui_Dialog):
             or self.srsEdit.text() == '':
             return False
         return True
-    
-    def getPostGISConnection(self, name):
-        settings = QSettings()
-        settings.beginGroup('PostgreSQL/connections/'+name)
-        database = settings.value('database')
-        host = settings.value('host')
-        port = settings.value('port')
-        user = settings.value('username')
-        password = settings.value('password')
-        settings.endGroup()
     
     def getServerConfiguration(self, name):
         settings = QSettings()

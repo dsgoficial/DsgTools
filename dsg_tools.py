@@ -452,5 +452,5 @@ class DsgTools:
             self.thread = None
             
         self.progressBar.setValue( self.progressBar.maximum())
-        QMessageBox.information(self.iface.mainWindow(), 'Database structure successfully created!')
+        QMessageBox.information(self.iface.mainWindow(), 'DSG Tools','Database structure successfully created!')
         
