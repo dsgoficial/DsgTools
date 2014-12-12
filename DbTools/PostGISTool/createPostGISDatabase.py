@@ -46,10 +46,9 @@ class CreatePostGISDatabase(QThread):
         self.stopMe = 0
         self.mutex.unlock()
         
-        self.createDatabaseStructure()
-
-        # Processing ending
-        self.emit( SIGNAL( "processingFinished()" ) )
+        if self.createDatabaseStructure():
+            # Processing ending
+            self.emit( SIGNAL( "processingFinished()" ) )
     
     def stop( self ):
         # Stopping the thread
