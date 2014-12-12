@@ -19,7 +19,7 @@ CREATE TABLE cb.hid_area_umida_a(
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 1,
 	tipoareaumida smallint NOT NULL DEFAULT 0,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT hid_area_umida_a_pkey PRIMARY KEY (id)
 );
 CREATE INDEX hid_area_umida_a_geom_1408997021488 ON cb.hid_area_umida_a
@@ -94,7 +94,7 @@ CREATE TABLE cb.hid_dique(
 );
 ALTER TABLE cb.hid_dique OWNER TO postgres;
 CREATE TABLE cb.hid_dique_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT hid_dique_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_dique)
 ;
@@ -111,7 +111,7 @@ CREATE TABLE cb.hid_fonte_dagua_p(
 	tipofontedagua smallint NOT NULL,
 	qualidagua smallint NOT NULL,
 	regime smallint NOT NULL DEFAULT 0,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT hid_fonte_dagua_p_pkey PRIMARY KEY (id)
 );
 CREATE INDEX hid_fonte_dagua_p_geom_1408997017228 ON cb.hid_fonte_dagua_p
@@ -140,7 +140,7 @@ CREATE TABLE cb.hid_limite_massa_dagua_l(
 	tipolimmassa smallint NOT NULL,
 	materialpredominante smallint NOT NULL DEFAULT 0,
 	revestida smallint NOT NULL DEFAULT 0,
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT hid_limite_massa_dagua_l_pkey PRIMARY KEY (id)
 );
 CREATE INDEX hid_limite_massa_dagua_l_geom_140899701845 ON cb.hid_limite_massa_dagua_l
@@ -158,7 +158,7 @@ CREATE TABLE cb.hid_massa_dagua_a(
 	salinidade smallint NOT NULL,
 	dominialidade smallint,
 	artificial smallint NOT NULL DEFAULT 0,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT hid_massa_dagua_a_pkey PRIMARY KEY (id)
 );
 CREATE INDEX hid_massa_dagua_a_geom_1408997018171 ON cb.hid_massa_dagua_a
@@ -172,7 +172,7 @@ CREATE TABLE cb.hid_ponto_drenagem_p(
 	nome varchar(80),
 	geometriaaproximada smallint,
 	relacionado smallint,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT hid_ponto_drenagem_p_pkey PRIMARY KEY (id)
 );
 CREATE INDEX hid_ponto_drenagem_p_geom_1408997018772 ON cb.hid_ponto_drenagem_p
@@ -194,7 +194,7 @@ CREATE TABLE cb.hid_quebramar_molhe(
 );
 ALTER TABLE cb.hid_quebramar_molhe OWNER TO postgres;
 CREATE TABLE cb.hid_quebramar_molhe_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT hid_quebramar_molhe_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_quebramar_molhe)
 ;
@@ -205,7 +205,7 @@ CREATE INDEX hid_quebramar_molhe_l_geom_1408997019419 ON cb.hid_quebramar_molhe_
 	);
 ALTER TABLE cb.hid_quebramar_molhe_l OWNER TO postgres;
 CREATE TABLE cb.hid_queda_dagua_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT hid_queda_dagua_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_queda_dagua)
 ;
@@ -215,7 +215,7 @@ CREATE INDEX hid_queda_dagua_p_gist ON cb.hid_queda_dagua_p
 	  geom
 	);
 CREATE TABLE cb.hid_recife_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT hid_recife_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_recife)
 ;
@@ -234,7 +234,7 @@ CREATE TABLE cb.hid_rocha_em_agua(
 );
 ALTER TABLE cb.hid_rocha_em_agua OWNER TO postgres;
 CREATE TABLE cb.hid_rocha_em_agua_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT hid_rocha_em_agua_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_rocha_em_agua)
 ;
@@ -252,7 +252,7 @@ CREATE TABLE cb.hid_reservatorio_hidrico_a(
 	namaximomaximorum smallint,
 	namaximooperacional smallint,
 	id_enc_complexo_gerad_energ_eletr uuid NOT NULL,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT hid_reservatorio_hidrico_a_pkey PRIMARY KEY (id)
 );
 CREATE INDEX hid_reservatorio_hidrico_a_geom_1408997020482 ON cb.hid_reservatorio_hidrico_a
@@ -269,7 +269,7 @@ CREATE TABLE cb.hid_trecho_massa_dagua_a(
 ;
 ALTER TABLE cb.hid_trecho_massa_dagua_a OWNER TO postgres;
 CREATE TABLE cb.hid_barragem_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT hid_barragem_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_barragem)
 ;
@@ -284,7 +284,7 @@ CREATE TABLE cb.hid_sumidouro_vertedouro_p(
 	geometriaaproximada smallint NOT NULL DEFAULT 1,
 	tiposumvert smallint NOT NULL,
 	causa smallint NOT NULL,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT hid_sumidouro_vertedouro_p_pkey PRIMARY KEY (id)
 )WITH ( OIDS = TRUE );
 CREATE INDEX hid_sumidouro_vertedouro_p_geom_1408997020972 ON cb.hid_sumidouro_vertedouro_p
@@ -298,7 +298,7 @@ CREATE TABLE cb.hid_terreno_suj_inundacao_a(
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 1,
 	periodicidadeinunda character(20),
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT hid_terreno_sujeito_inundacao_a_pkey PRIMARY KEY (id),
 	CONSTRAINT hid_terreno_sujeito_inundacao_a_check_geomaprox_sim CHECK (geometriaaproximada = 1)
 );
@@ -317,7 +317,7 @@ CREATE TABLE cb.hid_trecho_drenagem_l(
 	regime smallint NOT NULL DEFAULT 0,
 	larguramedia real,
 	encoberto smallint NOT NULL DEFAULT 2,
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	dentrodepoligono smallint NOT NULL DEFAULT 2,
 	CONSTRAINT hid_trecho_drenagem_l_pkey PRIMARY KEY (id)
 );
@@ -328,7 +328,7 @@ CREATE INDEX hid_trecho_drenagem_l_geom_1408997021361 ON cb.hid_trecho_drenagem_
 	);
 ALTER TABLE cb.hid_trecho_drenagem_l OWNER TO postgres;
 CREATE TABLE cb.hid_dique_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT hid_dique_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_dique)
 ;
@@ -339,7 +339,7 @@ CREATE INDEX hid_dique_l_geom_1408997017169 ON cb.hid_dique_l
 	);
 ALTER TABLE cb.hid_dique_l OWNER TO postgres;
 CREATE TABLE cb.hid_dique_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT hid_dique_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_dique)
 ;
@@ -350,7 +350,7 @@ CREATE INDEX hid_dique_p_geom_1408997017188 ON cb.hid_dique_p
 	);
 ALTER TABLE cb.hid_dique_p OWNER TO postgres;
 CREATE TABLE cb.hid_quebramar_molhe_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT hid_quebramar_molhe_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_quebramar_molhe)
 ;
@@ -361,7 +361,7 @@ CREATE INDEX hid_quebramar_molhe_a_geom_1408997019255 ON cb.hid_quebramar_molhe_
 	);
 ALTER TABLE cb.hid_quebramar_molhe_a OWNER TO postgres;
 CREATE TABLE cb.hid_banco_areia_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT hid_banco_areia_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_banco_areia)
 ;
@@ -371,7 +371,7 @@ CREATE INDEX hid_banco_areia_l_gist ON cb.hid_banco_areia_l
 	  geom
 	);
 CREATE TABLE cb.hid_banco_areia_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT hid_banco_areia_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_banco_areia)
 ;
@@ -382,7 +382,7 @@ CREATE INDEX hid_banco_areia_a_geom_1408997016227 ON cb.hid_banco_areia_a
 	);
 ALTER TABLE cb.hid_banco_areia_a OWNER TO postgres;
 CREATE TABLE cb.hid_barragem_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT hid_barragem_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_barragem)
 ;
@@ -392,7 +392,7 @@ CREATE INDEX hid_barragem_l_gist ON cb.hid_barragem_l
 	  geom
 	);
 CREATE TABLE cb.hid_recife_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT hid_recife_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_recife)
 ;
@@ -403,7 +403,7 @@ CREATE INDEX hid_recife_l_gist ON cb.hid_recife_l
 	);
 ALTER TABLE cb.hid_recife_l OWNER TO postgres;
 CREATE TABLE cb.hid_recife_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT hid_recife_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_recife)
 ;
@@ -414,7 +414,7 @@ CREATE INDEX hid_recife_a_gist ON cb.hid_recife_a
 	);
 ALTER TABLE cb.hid_recife_a OWNER TO postgres;
 CREATE TABLE cb.hid_barragem_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT hid_barragem_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_barragem)
 ;
@@ -424,7 +424,7 @@ CREATE INDEX hid_barragem_a_gist ON cb.hid_barragem_a
 	  geom
 	);
 CREATE TABLE cb.hid_rocha_em_agua_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT hid_rocha_em_agua_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_rocha_em_agua)
 ;
@@ -440,7 +440,7 @@ CREATE TABLE cb.rel_elemento_fisiog_natural(
 ) INHERITS(cb.rel_elemento_fisiografico)
 ;
 CREATE TABLE cb.rel_elemento_fisiog_natural_p(
-	geom geometry(POINT, 4326) NOT NULL
+	geom geometry(POINT, [epsg]) NOT NULL
 ) INHERITS(cb.rel_elemento_fisiog_natural)
 ;
 CREATE INDEX rel_elemento_fisiog_natural_p_gist ON cb.rel_elemento_fisiog_natural_p
@@ -449,7 +449,7 @@ CREATE INDEX rel_elemento_fisiog_natural_p_gist ON cb.rel_elemento_fisiog_natura
 	  geom
 	);
 CREATE TABLE cb.hid_comporta_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT hid_comporta_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_comporta)
 ;
@@ -459,7 +459,7 @@ CREATE INDEX hid_comporta_p_gist ON cb.hid_comporta_p
 	  geom
 	);
 CREATE TABLE cb.hid_queda_dagua_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT hid_queda_dagua_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_queda_dagua)
 ;
@@ -469,7 +469,7 @@ CREATE INDEX hid_queda_dagua_l_gist ON cb.hid_queda_dagua_l
 	  geom
 	);
 CREATE TABLE cb.hid_queda_dagua_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT hid_queda_dagua_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_queda_dagua)
 ;
@@ -479,7 +479,7 @@ CREATE INDEX hid_queda_dagua_a_gist ON cb.hid_queda_dagua_a
 	  geom
 	);
 CREATE TABLE cb.hid_corredeira_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT hid_corredeira_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_corredeira)
 ;
@@ -489,7 +489,7 @@ CREATE INDEX hid_corredeira_p_gist ON cb.hid_corredeira_p
 	  geom
 	);
 CREATE TABLE cb.hid_corredeira_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT hid_corredeira_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_corredeira)
 ;
@@ -499,7 +499,7 @@ CREATE INDEX hid_corredeira_l_gist ON cb.hid_corredeira_l
 	  geom
 	);
 CREATE TABLE cb.hid_comporta_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT hid_comporta_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_comporta)
 ;
@@ -510,7 +510,7 @@ CREATE INDEX hid_comporta_l_geom_1408997016713 ON cb.hid_comporta_l
 	);
 ALTER TABLE cb.hid_comporta_l OWNER TO postgres;
 CREATE TABLE cb.hid_corredeira_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT hid_corredeira_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_corredeira)
 ;
@@ -530,7 +530,7 @@ CREATE TABLE cb.hid_confluencia_p(
 ) INHERITS(cb.hid_ponto_drenagem_p)
 ;
 CREATE TABLE cb.hid_foz_maritima_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT hid_foz_maritima_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_foz_maritima)
 ;
@@ -540,7 +540,7 @@ CREATE INDEX hid_foz_maritima_p_gist ON cb.hid_foz_maritima_p
 	  geom
 	);
 CREATE TABLE cb.hid_foz_maritima_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT hid_foz_maritima_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_foz_maritima)
 ;
@@ -550,7 +550,7 @@ CREATE INDEX hid_foz_maritima_l_gist ON cb.hid_foz_maritima_l
 	  geom
 	);
 CREATE TABLE cb.hid_foz_maritima_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT hid_foz_maritima_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_foz_maritima)
 ;
@@ -566,7 +566,7 @@ CREATE TABLE cb.veg_vegetacao_a(
 	tipoveg smallint NOT NULL DEFAULT 0,
 	classificacaoporte smallint NOT NULL DEFAULT 0,
 	densidade smallint NOT NULL DEFAULT 0,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	id_area_verde uuid,
 	CONSTRAINT veg_vegetacao_a_pk PRIMARY KEY (id)
 );
@@ -650,7 +650,7 @@ CREATE TABLE cb.rel_curva_nivel_l(
 	cota integer NOT NULL,
 	depressao smallint NOT NULL DEFAULT 2,
 	tipocurvanivel smallint NOT NULL,
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT rel_curva_nivel_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_isolinha_hipsometrica)
 ;
@@ -661,7 +661,7 @@ CREATE INDEX rel_curva_nivel_l_gist ON cb.rel_curva_nivel_l
 	);
 CREATE TABLE cb.rel_curva_batimetrica_l(
 	profundidade integer,
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT rel_curva_batimetrica_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_isolinha_hipsometrica)
 ;
@@ -679,7 +679,7 @@ CREATE TABLE cb.rel_terreno_erodido(
 	CONSTRAINT rel_terreno_erodido_1 PRIMARY KEY (id)
 );
 CREATE TABLE cb.rel_terreno_erodido_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT rel_terreno_erodido_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_terreno_erodido)
 ;
@@ -689,7 +689,7 @@ CREATE INDEX rel_terreno_erodido_p_gist ON cb.rel_terreno_erodido_p
 	  geom
 	);
 CREATE TABLE cb.rel_terreno_erodido_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT rel_terreno_erodido_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_terreno_erodido)
 ;
@@ -699,7 +699,7 @@ CREATE INDEX rel_terreno_erodido_l_gist ON cb.rel_terreno_erodido_l
 	  geom
 	);
 CREATE TABLE cb.rel_terreno_erodido_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT rel_terreno_erodido_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_terreno_erodido)
 ;
@@ -715,7 +715,7 @@ CREATE TABLE cb.rel_ponto_hipsometrico(
 );
 CREATE TABLE cb.rel_ponto_cotado_batimetrico_p(
 	profundidade float,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT rel_ponto_cotado_batimetrico_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_ponto_hipsometrico)
 ;
@@ -727,7 +727,7 @@ CREATE INDEX rel_ponto_cotado_batimetrico_p_gist ON cb.rel_ponto_cotado_batimetr
 CREATE TABLE cb.rel_ponto_cotado_altimetrico_p(
 	cotacomprovada smallint NOT NULL DEFAULT 2,
 	cota float,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT rel_ponto_cotado_altimetrico_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_ponto_hipsometrico)
 ;
@@ -742,7 +742,7 @@ CREATE TABLE cb.rel_alter_fisiog_antropica(
 ) INHERITS(cb.rel_elemento_fisiografico)
 ;
 CREATE TABLE cb.rel_elemento_fisiog_natural_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT rel_elemento_fisiog_natural_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_elemento_fisiog_natural)
 ;
@@ -752,7 +752,7 @@ CREATE INDEX rel_elemento_fisiog_natural_l_gist ON cb.rel_elemento_fisiog_natura
 	  geom
 	);
 CREATE TABLE cb.rel_elemento_fisiog_natural_a(
-	geom geometry(POLYGON, 4326) NOT NULL
+	geom geometry(POLYGON, [epsg]) NOT NULL
 ) INHERITS(cb.rel_elemento_fisiog_natural)
 ;
 CREATE INDEX rel_elemento_fisiog_natural_a_gist ON cb.rel_elemento_fisiog_natural_a
@@ -761,7 +761,7 @@ CREATE INDEX rel_elemento_fisiog_natural_a_gist ON cb.rel_elemento_fisiog_natura
 	  geom
 	);
 CREATE TABLE cb.rel_alter_fisiog_antropica_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT rel_alter_fisiog_antropica_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_alter_fisiog_antropica)
 ;
@@ -771,7 +771,7 @@ CREATE INDEX rel_alter_fisiog_antropica_p_gist ON cb.rel_alter_fisiog_antropica_
 	  geom
 	);
 CREATE TABLE cb.rel_alter_fisiog_antropica_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT rel_alter_fisiog_antropica_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_alter_fisiog_antropica)
 ;
@@ -781,7 +781,7 @@ CREATE INDEX rel_alter_fisiog_antropica_l_gist ON cb.rel_alter_fisiog_antropica_
 	  geom
 	);
 CREATE TABLE cb.rel_alter_fisiog_antropica_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT rel_alter_fisiog_antropica_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_alter_fisiog_antropica)
 ;
@@ -927,7 +927,7 @@ CREATE TABLE cc.edf_edificacao(
 	CONSTRAINT "EDF_Edificacao_pk" PRIMARY KEY (id)
 );
 CREATE TABLE cc.edf_edificacao_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT edf_edificacao_p_pk PRIMARY KEY (id)
 ) INHERITS(cc.edf_edificacao)
 ;
@@ -937,7 +937,7 @@ CREATE INDEX edf_edificacao_p_gist ON cc.edf_edificacao_p
 	  geom
 	);
 CREATE TABLE cc.edf_edificacao_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT edf_edificacao_a_pk PRIMARY KEY (id)
 ) INHERITS(cc.edf_edificacao)
 ;
@@ -1435,7 +1435,7 @@ CREATE TABLE cb.asb_dep_abast_agua(
 	CONSTRAINT asb_dep_abast_agua_pk PRIMARY KEY (id)
 );
 CREATE TABLE cb.asb_dep_abast_agua_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT asb_dep_abast_agua_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.asb_dep_abast_agua)
 ;
@@ -1445,7 +1445,7 @@ CREATE INDEX asb_dep_abast_agua_p_gist ON cb.asb_dep_abast_agua_p
 	  geom
 	);
 CREATE TABLE cb.asb_dep_abast_agua_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT asb_dep_abast_agua_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.asb_dep_abast_agua)
 ;
@@ -1457,7 +1457,7 @@ CREATE INDEX "äsb_dep_abast_agua_a_gist" ON cb.asb_dep_abast_agua_a
 CREATE TABLE cb.asb_area_abast_agua_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	"ïd_complexo_abast_agua" uuid,
 	CONSTRAINT asb_area_abast_agua_a_pk PRIMARY KEY (id)
 );
@@ -1489,7 +1489,7 @@ CREATE TABLE cb.asb_dep_saneamento(
 	CONSTRAINT asb_dep_saneamento_pk PRIMARY KEY (id)
 );
 CREATE TABLE cb.asb_dep_saneamento_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT asb_dep_saneamento_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.asb_dep_saneamento)
 ;
@@ -1499,7 +1499,7 @@ CREATE INDEX asb_dep_saneamento_p_gist ON cb.asb_dep_saneamento_p
 	  geom
 	);
 CREATE TABLE cb.asb_dep_saneamento_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT asb_dep_saneamento_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.asb_dep_saneamento)
 ;
@@ -1535,7 +1535,7 @@ CREATE TABLE cb.eco_deposito_geral(
 	CONSTRAINT eco_deposito_geral_pk PRIMARY KEY (id)
 );
 CREATE TABLE cb.eco_deposito_geral_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT eco_deposito_geral_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_deposito_geral)
 ;
@@ -1545,7 +1545,7 @@ CREATE INDEX eco_deposito_geral_p_gist ON cb.eco_deposito_geral_p
 	  geom
 	);
 CREATE TABLE cb.eco_deposito_geral_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT eco_deposito_geral_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_deposito_geral)
 ;
@@ -1595,7 +1595,7 @@ CREATE TABLE complexos.eco_madeireira(
 ;
 CREATE TABLE cb.eco_area_industrial_a(
 	id serial NOT NULL,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	id_org_industrial uuid,
 	CONSTRAINT eco_area_industrial_a_pk PRIMARY KEY (id)
@@ -1617,7 +1617,7 @@ CREATE TABLE cb.eco_equip_agropec(
 	CONSTRAINT eco_equip_agropec_pk PRIMARY KEY (id)
 );
 CREATE TABLE cb.eco_equip_agropec_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT eco_equip_agropec_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_equip_agropec)
 ;
@@ -1627,7 +1627,7 @@ CREATE INDEX eco_equip_agropec_p_gist ON cb.eco_equip_agropec_p
 	  geom
 	);
 CREATE TABLE cb.eco_equip_agropec_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT eco_equip_agropec_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_equip_agropec)
 ;
@@ -1637,7 +1637,7 @@ CREATE INDEX eco_equip_agropec_l_gist ON cb.eco_equip_agropec_l
 	  geom
 	);
 CREATE TABLE cb.eco_equip_agropec_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT eco_equip_agropec_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_equip_agropec)
 ;
@@ -1655,7 +1655,7 @@ CREATE TABLE cb.eco_plataforma(
 	CONSTRAINT eco_plataforma_pk PRIMARY KEY (id)
 );
 CREATE TABLE cb.eco_plataforma_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT eco_plataforma_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_plataforma)
 ;
@@ -1665,7 +1665,7 @@ CREATE INDEX eco_plataforma_p_gist ON cb.eco_plataforma_p
 	  geom
 	);
 CREATE TABLE cb.eco_plataforma_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT eco_plataforma_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_plataforma)
 ;
@@ -1676,7 +1676,7 @@ CREATE INDEX eco_plataforma_a_gist ON cb.eco_plataforma_a
 	);
 CREATE TABLE cb.eco_area_ext_mineral_a(
 	id serial NOT NULL,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	id_org_ext_mineral uuid,
 	CONSTRAINT eco_ext_mineral_a_pk_1 PRIMARY KEY (id)
@@ -1745,7 +1745,7 @@ CREATE TABLE cb.enc_grupo_transformadores(
 	CONSTRAINT enc_grupo_transformadores_pk PRIMARY KEY (id)
 );
 CREATE TABLE cb.enc_grupo_transformadores_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT enc_grupo_transformadores_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.enc_grupo_transformadores)
 ;
@@ -1755,7 +1755,7 @@ CREATE INDEX enc_grupo_transformadores_p_gist ON cb.enc_grupo_transformadores_p
 	  geom
 	);
 CREATE TABLE cb.enc_grupo_transformadores_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT enc_grupo_transformadores_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.enc_grupo_transformadores)
 ;
@@ -1767,7 +1767,7 @@ CREATE INDEX enc_grupo_transformadores_a_gist ON cb.enc_grupo_transformadores_a
 CREATE TABLE cb.enc_area_energia_eletrica_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	id_subest_transf uuid,
 	CONSTRAINT enc_area_energia_eletrica_a_pk PRIMARY KEY (id)
 );
@@ -1780,7 +1780,7 @@ CREATE TABLE cb.enc_zona_linhas_energia_com_a(
 	id serial NOT NULL,
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT enc_zona_lin_energ_comunic_a_pk PRIMARY KEY (id)
 );
 CREATE INDEX enc_zona_lin_energ_comunic_a_gist ON cb.enc_zona_linhas_energia_com_a
@@ -1791,7 +1791,7 @@ CREATE INDEX enc_zona_lin_energ_comunic_a_gist ON cb.enc_zona_linhas_energia_com
 CREATE TABLE cb.enc_area_comunicacao_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	id_complexo_comunicacao uuid,
 	CONSTRAINT enc_area_energia_eletrica_a_pk_1 PRIMARY KEY (id)
 );
@@ -1810,7 +1810,7 @@ CREATE TABLE cb.enc_torre_energia_p(
 	alturaestimada float,
 	tipotorre smallint NOT NULL DEFAULT 0,
 	arranjofases varchar(80),
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT enc_torre_energia_p_pk PRIMARY KEY (id)
 );
 CREATE INDEX enc_torre_energia_p_gist ON cb.enc_torre_energia_p
@@ -1823,7 +1823,7 @@ CREATE TABLE cb.enc_antena_comunic_p(
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	posicaoreledific smallint NOT NULL DEFAULT 0,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	id_complexo_comunicacao uuid,
 	CONSTRAINT enc_antena_comunic_p_pk PRIMARY KEY (id)
 );
@@ -1843,7 +1843,7 @@ CREATE TABLE cb.enc_torre_comunic_p(
 	alturaestimada float,
 	modalidade smallint NOT NULL DEFAULT 0,
 	id_complexo_comunicacao uuid,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT enc_torre_comunic_p_pk PRIMARY KEY (id)
 );
 CREATE INDEX enc_torre_comunic_p_gist ON cb.enc_torre_comunic_p
@@ -1853,7 +1853,7 @@ CREATE INDEX enc_torre_comunic_p_gist ON cb.enc_torre_comunic_p
 	);
 CREATE TABLE cb.enc_trecho_energia_l(
 	id serial NOT NULL,
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	especie smallint NOT NULL DEFAULT 0,
@@ -1874,7 +1874,7 @@ CREATE INDEX enc_trecho_energia_l_gist ON cb.enc_trecho_energia_l
 	);
 CREATE TABLE cb.enc_trecho_comunic_l(
 	id serial NOT NULL,
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	tipotrechocomunic smallint NOT NULL DEFAULT 0,
@@ -1907,7 +1907,7 @@ CREATE TABLE cb.enc_est_gerad_energia_eletr(
 	CONSTRAINT enc_est_gerad_energia_eletrica_fk PRIMARY KEY (id)
 );
 CREATE TABLE cb.enc_est_gerad_energia_eletr_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT enc_est_gerad_energia_eletr_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.enc_est_gerad_energia_eletr)
 ;
@@ -1917,7 +1917,7 @@ CREATE INDEX enc_est_gerad_energia_eletrica_p_gist ON cb.enc_est_gerad_energia_e
 	  geom
 	);
 CREATE TABLE cb.enc_est_gerad_energia_eletr_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT enc_est_gerad_energia_eletr_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.enc_est_gerad_energia_eletr)
 ;
@@ -1927,7 +1927,7 @@ CREATE INDEX enc_est_gerad_energia_eletrica_l_gist ON cb.enc_est_gerad_energia_e
 	  geom
 	);
 CREATE TABLE cb.enc_est_gerad_energia_eletr_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT enc_est_gerad_energia_eletr_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.enc_est_gerad_energia_eletr)
 ;
@@ -1977,7 +1977,7 @@ CREATE TABLE cb.enc_hidreletrica_a(
 ;
 CREATE TABLE cb.pto_geod_topo_controle_p(
 	id serial NOT NULL,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	tiporef smallint NOT NULL,
 	latitude varchar(80),
@@ -2027,7 +2027,7 @@ CREATE TABLE cb.pto_est_med_fenomenos_p(
 	tipoptoestmed smallint NOT NULL DEFAULT 0,
 	codestacao varchar(80),
 	id_est_med_fenomenos uuid,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT pto_est_med_fenomenos_p_fk PRIMARY KEY (id)
 );
 CREATE INDEX pto_est_med_fenomenos_p_gist ON cb.pto_est_med_fenomenos_p
@@ -2038,7 +2038,7 @@ CREATE INDEX pto_est_med_fenomenos_p_gist ON cb.pto_est_med_fenomenos_p
 CREATE TABLE cb.pto_area_est_med_fenomenos_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	id_est_med_fenomenos uuid,
 	CONSTRAINT pto_area_est_med_fenomenos_a_pk PRIMARY KEY (id)
 );
@@ -2084,7 +2084,7 @@ CREATE TABLE complexos.aer_complexo_aeroportuario(
 ) INHERITS(complexos.tra_estrut_transporte)
 ;
 CREATE TABLE cb.aer_pista_ponto_pouso_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT aer_pista_ponto_pouso_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.aer_pista_ponto_pouso)
 ;
@@ -2094,7 +2094,7 @@ CREATE INDEX aer_pista_ponto_pouso_p_gist ON cb.aer_pista_ponto_pouso_p
 	  geom
 	);
 CREATE TABLE cb.aer_pista_ponto_pouso_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT aer_pista_ponto_pouso_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.aer_pista_ponto_pouso)
 ;
@@ -2104,7 +2104,7 @@ CREATE INDEX aer_pista_ponto_pouso_l_gist ON cb.aer_pista_ponto_pouso_l
 	  geom
 	);
 CREATE TABLE cb.aer_pista_ponto_pouso_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT aer_pista_ponto_pouso_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.aer_pista_ponto_pouso)
 ;
@@ -2115,7 +2115,7 @@ CREATE INDEX aer_pista_ponto_pouso_a_gist ON cb.aer_pista_ponto_pouso_a
 	);
 CREATE TABLE cb.dut_trecho_duto_l(
 	id serial NOT NULL,
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	tipotrechoduto smallint NOT NULL DEFAULT 0,
@@ -2140,7 +2140,7 @@ CREATE TABLE cb.aer_faixa_seg_aeroportuaria_a(
 	geometriaaproximada smallint NOT NULL,
 	largura float,
 	extensao float,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT aer_faixa_seg_aeroportuaria_a_pk PRIMARY KEY (id)
 );
 CREATE INDEX aer_faixa_seg_aeroportuaria_a_gist ON cb.aer_faixa_seg_aeroportuaria_a
@@ -2160,7 +2160,7 @@ CREATE TABLE cb.dut_condutor_hidrico_l(
 ;
 CREATE TABLE cb.dut_ponto_duto_p(
 	id serial NOT NULL,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	id_duto uuid,
 	relacionado smallint NOT NULL,
@@ -2173,7 +2173,7 @@ CREATE INDEX dut_ponto_duto_p_gist ON cb.dut_ponto_duto_p
 	);
 CREATE TABLE cb.dut_faixa_dominial_duto_a(
 	id serial NOT NULL,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	largura float,
 	CONSTRAINT dut_faixa_dominial_duto_a_pk PRIMARY KEY (id)
@@ -2227,7 +2227,7 @@ CREATE TABLE cb.tra_patio(
 	CONSTRAINT tra_patio_pk PRIMARY KEY (id)
 );
 CREATE TABLE cb.tra_patio_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT tra_patio_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_patio)
 ;
@@ -2237,7 +2237,7 @@ CREATE INDEX tra_patio_p_gist ON cb.tra_patio_p
 	  geom
 	);
 CREATE TABLE cb.tra_patio_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT tra_patio_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_patio)
 ;
@@ -2269,7 +2269,7 @@ CREATE TABLE cb.tra_funicular(
 	CONSTRAINT tra_funicular_pk PRIMARY KEY (id)
 );
 CREATE TABLE cb.tra_funicular_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT tra_funicular_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_funicular)
 ;
@@ -2279,7 +2279,7 @@ CREATE INDEX tra_funicular_p_gist ON cb.tra_funicular_p
 	  geom
 	);
 CREATE TABLE cb.tra_funicular_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT tra_funicular_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_funicular)
 ;
@@ -2295,7 +2295,7 @@ CREATE TABLE cb.tra_caminho_aereo_l(
 	tipocaminhoaer smallint NOT NULL,
 	operacional smallint NOT NULL DEFAULT 0,
 	situacaofisica smallint NOT NULL DEFAULT 0,
-	geom geometry(LINESTRING, 4326) NOT NULL
+	geom geometry(LINESTRING, [epsg]) NOT NULL
 );
 CREATE INDEX tra_caminho_aereo_l_gist ON cb.tra_caminho_aereo_l
 	USING gist
@@ -2313,7 +2313,7 @@ CREATE TABLE cb.tra_entroncamento_p(
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	tipoentroncamento smallint NOT NULL,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	id_entroncamento uuid,
 	CONSTRAINT tra_entroncamento_p_pk PRIMARY KEY (id)
 );
@@ -2324,7 +2324,7 @@ CREATE INDEX tra_entroncamento_p_gist ON cb.tra_entroncamento_p
 	);
 CREATE TABLE cb.tra_entroncamento_l(
 	id serial NOT NULL,
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	id_entroncamento uuid,
 	CONSTRAINT tra_entroncamento_l_pk PRIMARY KEY (id)
@@ -2360,7 +2360,7 @@ CREATE TABLE cb.tra_passagem_elevada_viaduto(
 ) INHERITS(cb.tra_obra_de_arte_viaria)
 ;
 CREATE TABLE cb.tra_passagem_elevada_viaduto_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT tra_passagem_elevada_viaduto_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_passagem_elevada_viaduto)
 ;
@@ -2370,7 +2370,7 @@ CREATE INDEX tra_passagem_elevada_viaduto_p_gist ON cb.tra_passagem_elevada_viad
 	  geom
 	);
 CREATE TABLE cb.tra_passagem_elevada_viaduto_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT tra_passagem_elevada_viaduto_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_passagem_elevada_viaduto)
 ;
@@ -2388,7 +2388,7 @@ CREATE TABLE cb.tra_ponte(
 ) INHERITS(cb.tra_obra_de_arte_viaria)
 ;
 CREATE TABLE cb.tra_ponte_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT tra_ponte_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_ponte)
 ;
@@ -2398,7 +2398,7 @@ CREATE INDEX tra_ponte_p_gist ON cb.tra_ponte_p
 	  geom
 	);
 CREATE TABLE cb.tra_ponte_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT tra_ponte_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_ponte)
 ;
@@ -2413,7 +2413,7 @@ CREATE TABLE cb.tra_tunel(
 ) INHERITS(cb.tra_obra_de_arte_viaria)
 ;
 CREATE TABLE cb.tra_tunel_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT tra_tunel_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_tunel)
 ;
@@ -2423,7 +2423,7 @@ CREATE INDEX tra_tunel_p_gist ON cb.tra_tunel_p
 	  geom
 	);
 CREATE TABLE cb.tra_tunel_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT tra_tunel_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_tunel)
 ;
@@ -2443,7 +2443,7 @@ CREATE TABLE cc.emu_acesso(
 	CONSTRAINT emu_acesso_pk PRIMARY KEY (id)
 );
 CREATE TABLE cc.emu_acesso_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT emu_acesso_p_pk PRIMARY KEY (id)
 ) INHERITS(cc.emu_acesso)
 ;
@@ -2453,7 +2453,7 @@ CREATE INDEX emu_acesso_p_gist ON cc.emu_acesso_p
 	  geom
 	);
 CREATE TABLE cc.emu_acesso_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT emu_acesso_l_pk PRIMARY KEY (id)
 ) INHERITS(cc.emu_acesso)
 ;
@@ -2463,7 +2463,7 @@ CREATE INDEX emu_acesso_l_1 ON cc.emu_acesso_l
 	  geom
 	);
 CREATE TABLE cc.emu_acesso_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT emu_acesso_a_pk PRIMARY KEY (id)
 ) INHERITS(cc.emu_acesso)
 ;
@@ -2481,7 +2481,7 @@ CREATE TABLE cb.tra_travessia_pedestre(
 ) INHERITS(cc.emu_acesso)
 ;
 CREATE TABLE cb.tra_travessia_pedestre_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT tra_travessia_pedestre_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_travessia_pedestre)
 ;
@@ -2491,7 +2491,7 @@ CREATE INDEX tra_travesssia_pedestre_p_gist ON cb.tra_travessia_pedestre_p
 	  geom
 	);
 CREATE TABLE cb.tra_travessia_pedestre_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT tra_travessia_pedestre_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_travessia_pedestre)
 ;
@@ -2504,7 +2504,7 @@ CREATE TABLE cb.tra_caminho_carrocavel_l(
 	id serial NOT NULL,
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT tra_caminho_carrocavel_l_pk PRIMARY KEY (id)
 );
 CREATE INDEX tra_caminho_carrocavel_l_gist ON cb.tra_caminho_carrocavel_l
@@ -2516,7 +2516,7 @@ CREATE TABLE cb.tra_trilha_picada_l(
 	id serial NOT NULL,
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
-	geom geometry(LINESTRING, 4326) NOT NULL
+	geom geometry(LINESTRING, [epsg]) NOT NULL
 );
 CREATE INDEX tra_trilha_picada_l_gist ON cb.tra_trilha_picada_l
 	USING gist
@@ -2533,7 +2533,7 @@ CREATE TABLE cb.tra_travessia(
 	CONSTRAINT tra_travessia_pk PRIMARY KEY (id)
 );
 CREATE TABLE cb.tra_travessia_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT tra_travessia_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_travessia)
 ;
@@ -2543,7 +2543,7 @@ CREATE INDEX tra_travessia_p_gist ON cb.tra_travessia_p
 	  geom
 	);
 CREATE TABLE cb.tra_travessia_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT tra_travessia_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_travessia)
 ;
@@ -2555,7 +2555,7 @@ CREATE INDEX tra_travessia_l_gist ON cb.tra_travessia_l
 CREATE TABLE cb.tra_ponto_rodoviario_ferrov_p(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
-	geom geometry(POINT, 4326) NOT NULL
+	geom geometry(POINT, [epsg]) NOT NULL
 );
 CREATE INDEX tra_ponto_rodoviario_ferrov_p_gist ON cb.tra_ponto_rodoviario_ferrov_p
 	USING gist
@@ -2587,7 +2587,7 @@ CREATE TABLE cb.rod_trecho_rodoviario(
 	CONSTRAINT rod_trecho_rodoviario_pk PRIMARY KEY (id)
 );
 CREATE TABLE cb.rod_trecho_rodoviario_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT rod_trecho_rodoviario_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.rod_trecho_rodoviario)
 ;
@@ -2600,7 +2600,7 @@ CREATE TABLE cb.rod_passagem_nivel_p(
 	id serial NOT NULL,
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
-	geom geometry(POINT, 4326) NOT NULL
+	geom geometry(POINT, [epsg]) NOT NULL
 );
 CREATE INDEX rod_passagem_nivel_p_gist ON cb.rod_passagem_nivel_p
 	USING gist
@@ -2614,7 +2614,7 @@ CREATE TABLE cb.fer_girador_ferroviario_p(
 	administracao smallint NOT NULL DEFAULT 0,
 	operacional smallint NOT NULL DEFAULT 0,
 	situacaofisica smallint NOT NULL DEFAULT 0,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	id_estacao_ferroviaria uuid,
 	id_estacao_metroviaria uuid,
 	CONSTRAINT fer_girador_ferroviario_p_pk PRIMARY KEY (id)
@@ -2641,7 +2641,7 @@ CREATE TABLE cb.fer_trecho_ferroviario_l(
 	cargasuportmaxima float,
 	tipotrechoferrov smallint NOT NULL,
 	id_via_ferrea uuid,
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT fer_trecho_ferroviario_l_pk PRIMARY KEY (id)
 );
 CREATE INDEX fer_trecho_ferroviario_l_gist ON cb.fer_trecho_ferroviario_l
@@ -2658,7 +2658,7 @@ CREATE TABLE cb.fer_cremalheira(
 	CONSTRAINT fer_cremalheira_pk PRIMARY KEY (id)
 );
 CREATE TABLE cb.fer_cremalheira_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT fer_cremalheira_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.fer_cremalheira)
 ;
@@ -2668,7 +2668,7 @@ CREATE INDEX fer_cremalheira_p_gist ON cb.fer_cremalheira_p
 	  geom
 	);
 CREATE TABLE cb.fer_cremalheira_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT fer_cremalheira_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.fer_cremalheira)
 ;
@@ -2691,7 +2691,7 @@ CREATE TABLE cb.hdv_atracadouro_terminal(
 	CONSTRAINT hdv_atracadouro_terminal_pk PRIMARY KEY (id)
 );
 CREATE TABLE cb.hdv_atracadouro_terminal_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT hdv_atracadouro_terminal_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hdv_atracadouro_terminal)
 ;
@@ -2701,7 +2701,7 @@ CREATE INDEX hdv_atracadouro_p_gist ON cb.hdv_atracadouro_terminal_p
 	  geom
 	);
 CREATE TABLE cb.hdv_atracadouro_terminal_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT hdv_atracadouro_terminal_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hdv_atracadouro_terminal)
 ;
@@ -2711,7 +2711,7 @@ CREATE INDEX hdv_atracadouro_l_1 ON cb.hdv_atracadouro_terminal_l
 	  geom
 	);
 CREATE TABLE cb.hdv_atracadouro_terminal_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT hdv_atracadouro_terminal_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hdv_atracadouro_terminal)
 ;
@@ -2729,7 +2729,7 @@ CREATE TABLE cb.hdv_fundeadouro(
 	CONSTRAINT hdv_fundeadouro_pk PRIMARY KEY (id)
 );
 CREATE TABLE cb.hdv_fundeadouro_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT hdv_fundeadouro_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hdv_fundeadouro)
 ;
@@ -2739,7 +2739,7 @@ CREATE INDEX hdv_fundeadouro_p_gist ON cb.hdv_fundeadouro_p
 	  geom
 	);
 CREATE TABLE cb.hdv_fundeadouro_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT hdv_fundeadouro_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hdv_fundeadouro)
 ;
@@ -2749,7 +2749,7 @@ CREATE INDEX hdv_fundeadouro_l_gist ON cb.hdv_fundeadouro_l
 	  geom
 	);
 CREATE TABLE cb.hdv_fundeadouro_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT hdv_fundeadouro_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hdv_fundeadouro)
 ;
@@ -2765,7 +2765,7 @@ CREATE TABLE cb.hdv_sinalizacao_p(
 	tiposinal smallint NOT NULL DEFAULT 0,
 	operacional smallint NOT NULL DEFAULT 0,
 	situacaofisica smallint NOT NULL DEFAULT 0,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT hdv_sinalizacao_p_pk PRIMARY KEY (id)
 );
 CREATE INDEX hdv_sinalizacao_p_gist ON cb.hdv_sinalizacao_p
@@ -2782,7 +2782,7 @@ CREATE TABLE cb.hdv_obstaculo_navegacao(
 	CONSTRAINT hdv_obstaculo_navegacao_pk PRIMARY KEY (id)
 );
 CREATE TABLE cb.hdv_obstaculo_navegacao_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT hdv_obstaculo_navegacao_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hdv_obstaculo_navegacao)
 ;
@@ -2792,7 +2792,7 @@ CREATE INDEX hdv_obstaculo_navegacao_p_gist ON cb.hdv_obstaculo_navegacao_p
 	  geom
 	);
 CREATE TABLE cb.hdv_obstaculo_navegacao_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT hdv_obstaculo_navegacao_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hdv_obstaculo_navegacao)
 ;
@@ -2802,7 +2802,7 @@ CREATE INDEX hdv_obstaculo_navegacao_l_gist ON cb.hdv_obstaculo_navegacao_l
 	  geom
 	);
 CREATE TABLE cb.hdv_obstaculo_navegacao_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT hdv_obstaculo_navegacao_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hdv_obstaculo_navegacao)
 ;
@@ -2825,7 +2825,7 @@ CREATE TABLE cb.hdv_eclusa(
 	CONSTRAINT hdv_eclusa_pk PRIMARY KEY (id)
 );
 CREATE TABLE cb.hdv_eclusa_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT hdv_eclusa_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hdv_eclusa)
 ;
@@ -2835,7 +2835,7 @@ CREATE INDEX hdv_eclusa_p_gist ON cb.hdv_eclusa_p
 	  geom
 	);
 CREATE TABLE cb.hdv_eclusa_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT hdv_eclusa_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hdv_eclusa)
 ;
@@ -2845,7 +2845,7 @@ CREATE INDEX hdv_eclusa_l_gist ON cb.hdv_eclusa_l
 	  geom
 	);
 CREATE TABLE cb.hdv_eclusa_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT hdv_eclusa_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hdv_eclusa)
 ;
@@ -2861,7 +2861,7 @@ CREATE TABLE cb.lim_linha_de_limite_l(
 	referenciallegal smallint NOT NULL,
 	obssituacao varchar(80),
 	extensao float,
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT lim_linha_de_limite_l_pk PRIMARY KEY (id)
 );
 CREATE INDEX lim_linha_de_limite_l_gist ON cb.lim_linha_de_limite_l
@@ -2906,7 +2906,7 @@ CREATE TABLE cb.lim_delimitacao_fisica_l(
 	tipodelimfis smallint NOT NULL,
 	matconstr smallint NOT NULL,
 	eletrificada smallint NOT NULL DEFAULT 0,
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT lim_delimitacao_fisica_l_pk PRIMARY KEY (id)
 );
 CREATE INDEX lim_delimitacao_fisica_l_gist ON cb.lim_delimitacao_fisica_l
@@ -2930,7 +2930,7 @@ CREATE TABLE cb.lim_marco_de_limite_p(
 	referencialaltim smallint NOT NULL,
 	outrarefalt varchar(80),
 	orgresp varchar(80),
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT lim_marco_de_limite_p_pk PRIMARY KEY (id)
 );
 CREATE INDEX lim_marco_de_limite_p_gist ON cb.lim_marco_de_limite_p
@@ -2943,7 +2943,7 @@ CREATE TABLE cb.lim_area_de_litigio_a(
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	descricao varchar(80),
-	geom geometry(POLYGON, 4326) NOT NULL
+	geom geometry(POLYGON, [epsg]) NOT NULL
 );
 CREATE INDEX lim_area_de_litigio_a_gist ON cb.lim_area_de_litigio_a
 	USING gist
@@ -2954,7 +2954,7 @@ CREATE TABLE cb.lim_area_politico_adm_a(
 	id serial NOT NULL,
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT lim_area_politico_adm_a_pk PRIMARY KEY (id)
 );
 CREATE INDEX lim_area_politico_adm_a_gist ON cb.lim_area_politico_adm_a
@@ -3012,7 +3012,7 @@ CREATE TABLE cb.lim_area_especial_a(
 	codidentificadorunico varchar(80),
 	arealegal float,
 	cep integer,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT lim_area_especial_a_pk PRIMARY KEY (id)
 );
 CREATE INDEX lim_area_especial_a_gist ON cb.lim_area_especial_a
@@ -3040,7 +3040,7 @@ CREATE TABLE cb.loc_localidade_p(
 	latitude_gms real,
 	longitude varchar(80),
 	longitude_gms real,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT loc_localidade_p_pk PRIMARY KEY (id)
 );
 CREATE INDEX loc_localidade_p_gist ON cb.loc_localidade_p
@@ -3071,7 +3071,7 @@ CREATE TABLE cb.loc_capital_p(
 CREATE TABLE cb.loc_area_construida_a(
 	id serial NOT NULL,
 	nome varchar(80),
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT loc_area_construida_a_pk PRIMARY KEY (id)
 );
 CREATE INDEX loc_area_construida_a_1 ON cb.loc_area_construida_a
@@ -3083,7 +3083,7 @@ CREATE TABLE cb.loc_nome_local_p(
 	id serial NOT NULL,
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT loc_nome_local_p_pk PRIMARY KEY (id)
 );
 CREATE INDEX loc_nome_local_p_gist ON cb.loc_nome_local_p
@@ -3127,7 +3127,7 @@ CREATE TABLE complexos.ver_area_verde_urbana(
 CREATE TABLE cc.ver_arvore_isolada_p(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	id_area_verde uuid,
 	CONSTRAINT ver_arvore_isolada_p_pk PRIMARY KEY (id)
 );
@@ -3289,7 +3289,7 @@ CREATE TABLE cc.laz_arquibancada(
 	CONSTRAINT laz_arquibancada_pk PRIMARY KEY (id)
 );
 CREATE TABLE cc.laz_arquibancada_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT laz_arquibancada_p_pk PRIMARY KEY (id)
 ) INHERITS(cc.laz_arquibancada)
 ;
@@ -3299,7 +3299,7 @@ CREATE INDEX laz_arquibancada_p_gist ON cc.laz_arquibancada_p
 	  geom
 	);
 CREATE TABLE cc.laz_arquibancada_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT laz_arquibancada_l_pk PRIMARY KEY (id)
 ) INHERITS(cc.laz_arquibancada)
 ;
@@ -3309,7 +3309,7 @@ CREATE INDEX laz_arquibancada_l_gist ON cc.laz_arquibancada_l
 	  geom
 	);
 CREATE TABLE cc.laz_arquibancada_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT laz_arquibancada_a_pk PRIMARY KEY (id)
 ) INHERITS(cc.laz_arquibancada)
 ;
@@ -3324,7 +3324,7 @@ CREATE TABLE cc.laz_praca_a(
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	turistica smallint NOT NULL DEFAULT 1,
 	id_complexo_desportivo_lazer uuid,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT laz_praca_a_pk PRIMARY KEY (id)
 );
 CREATE INDEX laz_praca_a_gist ON cc.laz_praca_a
@@ -3337,7 +3337,7 @@ CREATE TABLE cc.laz_largo_a(
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	id_complexo_desportivo_lazer uuid,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT laz_largo_a_pk PRIMARY KEY (id)
 );
 CREATE INDEX laz_largo_a_gist ON cc.laz_largo_a
@@ -3356,7 +3356,7 @@ CREATE TABLE cc.laz_campo_quadra(
 	CONSTRAINT laz_campo_quadra_pk PRIMARY KEY (id)
 );
 CREATE TABLE cc.laz_campo_quadra_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT laz_campo_quadra_p_pk PRIMARY KEY (id)
 ) INHERITS(cc.laz_campo_quadra)
 ;
@@ -3366,7 +3366,7 @@ CREATE INDEX laz_campo_quadra_p_gist ON cc.laz_campo_quadra_p
 	  geom
 	);
 CREATE TABLE cc.laz_campo_quadra_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT laz_campo_quadra_a_pk PRIMARY KEY (id)
 ) INHERITS(cc.laz_campo_quadra)
 ;
@@ -3386,7 +3386,7 @@ CREATE TABLE cc.laz_pista_competicao(
 	CONSTRAINT laz_pista_competicao_fk PRIMARY KEY (id)
 );
 CREATE TABLE cc.laz_pista_competicao_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT laz_pista_competicao_p_pk PRIMARY KEY (id)
 ) INHERITS(cc.laz_pista_competicao)
 ;
@@ -3396,7 +3396,7 @@ CREATE INDEX laz_pista_competicao_p_gist ON cc.laz_pista_competicao_p
 	  geom
 	);
 CREATE TABLE cc.laz_pista_competicao_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT laz_pista_competicao_l_pk PRIMARY KEY (id)
 ) INHERITS(cc.laz_pista_competicao)
 ;
@@ -3406,7 +3406,7 @@ CREATE INDEX laz_pista_competicao_l_gist ON cc.laz_pista_competicao_l
 	  geom
 	);
 CREATE TABLE cc.laz_pista_competicao_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT laz_pista_competicao_a_pk PRIMARY KEY (id)
 ) INHERITS(cc.laz_pista_competicao)
 ;
@@ -3421,7 +3421,7 @@ CREATE TABLE cc.laz_piscina_a(
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	operacional smallint NOT NULL DEFAULT 0,
 	situacaofisica smallint NOT NULL DEFAULT 0,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	id_complexo_desportivo uuid,
 	CONSTRAINT laz_piscina_a_pk PRIMARY KEY (id)
 );
@@ -3435,7 +3435,7 @@ CREATE TABLE cc.laz_ruina(
 	CONSTRAINT laz_ruina_pk PRIMARY KEY (id)
 );
 CREATE TABLE cc.laz_ruina_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT laz_ruina_p_pk PRIMARY KEY (id)
 ) INHERITS(cc.laz_ruina)
 ;
@@ -3445,7 +3445,7 @@ CREATE INDEX laz_ruina_p_gist ON cc.laz_ruina_p
 	  geom
 	);
 CREATE TABLE cc.laz_ruina_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT laz_ruina_a_pk PRIMARY KEY (id)
 ) INHERITS(cc.laz_ruina)
 ;
@@ -3462,7 +3462,7 @@ CREATE TABLE cc.laz_sitio_arqueologico(
 	CONSTRAINT laz_sitio_arqueologico_pk PRIMARY KEY (id)
 );
 CREATE TABLE cc.laz_sitio_arqueologico_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT laz_sitio_arqueologico_p_pk PRIMARY KEY (id)
 ) INHERITS(cc.laz_sitio_arqueologico)
 ;
@@ -3472,7 +3472,7 @@ CREATE INDEX laz_sitio_arqueologico_p_gist ON cc.laz_sitio_arqueologico_p
 	  geom
 	);
 CREATE TABLE cc.laz_sitio_arqueologico_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT laz_sitio_arqueologico_a_pk PRIMARY KEY (id)
 ) INHERITS(cc.laz_sitio_arqueologico)
 ;
@@ -3533,7 +3533,7 @@ CREATE TABLE cc.emu_ciclovia_l(
 	revestimento smallint NOT NULL,
 	operacional smallint NOT NULL DEFAULT 95,
 	situacaofisica smallint NOT NULL,
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT emu_ciclovia_l_pk PRIMARY KEY (id)
 );
 CREATE INDEX emu_ciclovia_l_gist ON cc.emu_ciclovia_l
@@ -3600,7 +3600,7 @@ CREATE TABLE complexos.cbc_favela(
 CREATE TABLE cc.cbc_area_habitacional_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cbc_area_habitacional_a_pk PRIMARY KEY (id)
 );
 CREATE INDEX cbc_area_habitacional_a_gist ON cc.cbc_area_habitacional_a
@@ -3611,7 +3611,7 @@ CREATE INDEX cbc_area_habitacional_a_gist ON cc.cbc_area_habitacional_a
 CREATE TABLE cc.cbc_area_comunicacao_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cbc_area_comunicacao_a_pk PRIMARY KEY (id)
 );
 CREATE INDEX cbc_area_comunicacao_a_gist ON cc.cbc_area_comunicacao_a
@@ -3622,7 +3622,7 @@ CREATE INDEX cbc_area_comunicacao_a_gist ON cc.cbc_area_comunicacao_a
 CREATE TABLE cc.cbc_area_abast_agua_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cbc_area_abast_agua_a_pk PRIMARY KEY (id)
 );
 CREATE INDEX cbc_area_abast_agua_a_gist ON cc.cbc_area_abast_agua_a
@@ -3633,7 +3633,7 @@ CREATE INDEX cbc_area_abast_agua_a_gist ON cc.cbc_area_abast_agua_a
 CREATE TABLE cc.cbc_area_saneamento_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cbc_area_saneamento_a_pk PRIMARY KEY (id)
 );
 CREATE INDEX cbc_area_saneamento_a_gist ON cc.cbc_area_saneamento_a
@@ -3644,7 +3644,7 @@ CREATE INDEX cbc_area_saneamento_a_gist ON cc.cbc_area_saneamento_a
 CREATE TABLE cc.cbc_area_duto_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cbc_area_duto_a_pk PRIMARY KEY (id)
 );
 CREATE INDEX cbc_area_duto_a_gist ON cc.cbc_area_duto_a
@@ -3655,7 +3655,7 @@ CREATE INDEX cbc_area_duto_a_gist ON cc.cbc_area_duto_a
 CREATE TABLE cc.cbc_area_de_prop_particular_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cbc_area_de_prop_particular_a_pk PRIMARY KEY (id)
 );
 CREATE INDEX cbc_area_de_prop_particular_a_gist ON cc.cbc_area_de_prop_particular_a
@@ -3666,7 +3666,7 @@ CREATE INDEX cbc_area_de_prop_particular_a_gist ON cc.cbc_area_de_prop_particula
 CREATE TABLE cc.cbc_area_servico_social_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	id_org_servico_social uuid
 );
 CREATE INDEX cbc_area_servico_social_a_gist ON cc.cbc_area_servico_social_a
@@ -3677,7 +3677,7 @@ CREATE INDEX cbc_area_servico_social_a_gist ON cc.cbc_area_servico_social_a
 CREATE TABLE cc.cbc_area_saude_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	id_org_saude uuid,
 	CONSTRAINT cbc_area_saude_a_pk PRIMARY KEY (id)
 );
@@ -3689,7 +3689,7 @@ CREATE INDEX cbc_area_saude_a_gist ON cc.cbc_area_saude_a
 CREATE TABLE cc.cbc_area_ruinas_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	id_compl_desportivo_laz uuid,
 	CONSTRAINT cbc_area_ruinas_a_pk PRIMARY KEY (id)
 );
@@ -3701,7 +3701,7 @@ CREATE INDEX cbc_area_ruinas_a_gist ON cc.cbc_area_ruinas_a
 CREATE TABLE cc.cbc_area_lazer_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	id_compl_desportivo_laz uuid,
 	CONSTRAINT cbc_area_lazer_a_pk PRIMARY KEY (id)
 );
@@ -3713,7 +3713,7 @@ CREATE INDEX cbc_area_lazer_a_gist ON cc.cbc_area_lazer_a
 CREATE TABLE cc.cbc_area_comerc_serv_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	id_org_comerc_serv uuid,
 	CONSTRAINT cbc_area_comerc_serv_a_pk PRIMARY KEY (id)
 );
@@ -3725,7 +3725,7 @@ CREATE INDEX cbc_area_comerc_serv_a_gist ON cc.cbc_area_comerc_serv_a
 CREATE TABLE cc.cbc_area_ensino_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	id_org_ensino uuid,
 	CONSTRAINT cbc_area_ensino_a_pk PRIMARY KEY (id)
 );
@@ -3737,7 +3737,7 @@ CREATE INDEX cbc_area_ensino_a_gist ON cc.cbc_area_ensino_a
 CREATE TABLE cc.cbc_area_religiosa_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cbc_area_religiosa_a_pk PRIMARY KEY (id)
 );
 CREATE INDEX cbc_area_religiosa_a_gist ON cc.cbc_area_religiosa_a
@@ -3750,7 +3750,7 @@ CREATE TABLE cc.cbc_area_urbana_isolada_a(
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
 	tipoassociado smallint NOT NULL,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cbc_area_urbana_isolada_a_ok PRIMARY KEY (id)
 );
 CREATE INDEX cbc_area_urbana_isolada_a_gist ON cc.cbc_area_urbana_isolada_a
@@ -3769,7 +3769,7 @@ CREATE TABLE cc.cbc_retorno(
 	CONSTRAINT cbc_retorno_pk PRIMARY KEY (id)
 );
 CREATE TABLE cc.cbc_retorno_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT cbc_retorno_p_pk PRIMARY KEY (id)
 ) INHERITS(cc.cbc_retorno)
 ;
@@ -3779,7 +3779,7 @@ CREATE INDEX cbc_retorno_p_gist ON cc.cbc_retorno_p
 	  geom
 	);
 CREATE TABLE cc.cbc_retorno_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT cbc_retorno_l_pk PRIMARY KEY (id)
 ) INHERITS(cc.cbc_retorno)
 ;
@@ -3789,7 +3789,7 @@ CREATE INDEX cbc_retorno_l_gist ON cc.cbc_retorno_l
 	  geom
 	);
 CREATE TABLE cc.cbc_retorno_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cbc_retorno_a_pk PRIMARY KEY (id)
 ) INHERITS(cc.cbc_retorno)
 ;
@@ -3805,7 +3805,7 @@ CREATE TABLE cc.cbc_canteiro_central(
 	CONSTRAINT cbc_canteiro_central_pk PRIMARY KEY (id)
 );
 CREATE TABLE cc.cbc_canteiro_central_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT cbc_canteiro_central_l_pk PRIMARY KEY (id)
 ) INHERITS(cc.cbc_canteiro_central)
 ;
@@ -3815,7 +3815,7 @@ CREATE INDEX cbc_canteiro_central_l_gist ON cc.cbc_canteiro_central_l
 	  geom
 	);
 CREATE TABLE cc.cbc_canteiro_central_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cbc_canteiro_central_a_pk PRIMARY KEY (id)
 ) INHERITS(cc.cbc_canteiro_central)
 ;
@@ -3828,7 +3828,7 @@ CREATE TABLE cc.cbc_meio_fio_l(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
 	comsargeta smallint NOT NULL DEFAULT 95,
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT cbc_meio_fio_l_pk PRIMARY KEY (id)
 );
 CREATE INDEX cbc_meio_fio_l_gist ON cc.cbc_meio_fio_l
@@ -3844,7 +3844,7 @@ CREATE TABLE cc.cbc_passeio(
 	pavimentacao smallint NOT NULL
 );
 CREATE TABLE cc.cbc_passeio_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cbc_passeio_a_pk PRIMARY KEY (id)
 ) INHERITS(cc.cbc_passeio)
 ;
@@ -3854,7 +3854,7 @@ CREATE INDEX cbc_passeio_a_gist ON cc.cbc_passeio_a
 	  geom
 	);
 CREATE TABLE cc.cbc_passeio_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT cbc_passeio_l_pk PRIMARY KEY (id)
 ) INHERITS(cc.cbc_passeio)
 ;
@@ -3880,7 +3880,7 @@ CREATE TABLE cc.cbc_trecho_arruamento(
 	CONSTRAINT cbc_trecho_arruamento_pk PRIMARY KEY (id)
 );
 CREATE TABLE cc.cbc_trecho_arruamento_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT cbc_trecho_arruamento_l_pk PRIMARY KEY (id)
 ) INHERITS(cc.cbc_trecho_arruamento)
 ;
@@ -3890,7 +3890,7 @@ CREATE INDEX cbc_trecho_arruamento_l_gist ON cc.cbc_trecho_arruamento_l
 	  geom
 	);
 CREATE TABLE cc.cbc_trecho_arruamento_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cbc_trecho_arruamento_a_pk PRIMARY KEY (id)
 ) INHERITS(cc.cbc_trecho_arruamento)
 ;
@@ -3916,7 +3916,7 @@ CREATE INDEX cbc_entroncamento_a_gist ON cc.cbc_entroncamento_a
 	  geom
 	);
 CREATE TABLE cc.cbc_ponte_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cbc_ponte_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_ponte)
 ;
@@ -3939,7 +3939,7 @@ CREATE TABLE cc.cbc_quadra_a(
 	id serial NOT NULL,
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	id_bairro uuid,
 	CONSTRAINT cbc_quadra_a_pk PRIMARY KEY (id)
 );
@@ -3949,7 +3949,7 @@ CREATE INDEX cbc_quadra_a_gist ON cc.cbc_quadra_a
 	  geom
 	);
 CREATE TABLE cc.cbc_tunel_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cbc_tunel_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_tunel)
 ;
@@ -3959,7 +3959,7 @@ CREATE INDEX cbc_tunel_a_gist ON cc.cbc_tunel_a
 	  geom
 	);
 CREATE TABLE cc.cbc_passagem_elevada_viaduto_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cbc_passagem_elevada_viaduto_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_passagem_elevada_viaduto)
 ;
@@ -3969,7 +3969,7 @@ CREATE INDEX cbc_passagem_elevada_viaduto_a_gist ON cc.cbc_passagem_elevada_viad
 	  geom
 	);
 CREATE TABLE cc.cbc_travessia_pedrestre_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cbc_travessia_pedrestre_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_travessia_pedestre)
 ;
@@ -3981,7 +3981,7 @@ CREATE INDEX cbc_travessia_pedrestre_a_gist ON cc.cbc_travessia_pedrestre_a
 CREATE TABLE cc.cbc_perimetro_legal_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POLYGON, 4326) NOT NULL
+	geom geometry(POLYGON, [epsg]) NOT NULL
 );
 CREATE INDEX cbc_perimetro_legal_a_gist ON cc.cbc_perimetro_legal_a
 	USING gist
@@ -3997,7 +3997,7 @@ CREATE TABLE cc.mub_bebedouro_p(
 	id serial NOT NULL,
 	codident varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT mub_bebedouro_p_pk PRIMARY KEY (id)
 );
 CREATE INDEX mub_bebedouro_p_gist ON cc.mub_bebedouro_p
@@ -4012,7 +4012,7 @@ CREATE TABLE cc.mub_banco_praca(
 	CONSTRAINT mub_banco_praca_pk PRIMARY KEY (id)
 );
 CREATE TABLE cc.mub_banco_praca_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT mub_banco_praca_l_pk PRIMARY KEY (id)
 ) INHERITS(cc.mub_banco_praca)
 ;
@@ -4022,7 +4022,7 @@ CREATE INDEX mub_banco_praca_l_gist ON cc.mub_banco_praca_l
 	  geom
 	);
 CREATE TABLE cc.mub_banco_praca_p(
-	geom geometry(POINT, 4326) NOT NULL
+	geom geometry(POINT, [epsg]) NOT NULL
 ) INHERITS(cc.mub_banco_praca)
 ;
 CREATE INDEX mub_banco_praca_p_gist ON cc.mub_banco_praca_p
@@ -4034,7 +4034,7 @@ CREATE TABLE cc.mub_vaso_jardineira_p(
 	id serial NOT NULL,
 	codident varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT mub_vaso_jardineira_p_pk PRIMARY KEY (id)
 );
 CREATE INDEX mub_vaso_jardineira_p_gist ON cc.mub_vaso_jardineira_p
@@ -4047,7 +4047,7 @@ CREATE TABLE cc.mub_espelho_dagua_a(
 	nome varchar(80),
 	codident varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT mub_espelho_dagua_a_pk PRIMARY KEY (id)
 );
 CREATE INDEX mub_espelho_dagua_a_gist ON cc.mub_espelho_dagua_a
@@ -4060,7 +4060,7 @@ CREATE TABLE cc.mub_fonte_p(
 	nome varchar(80),
 	codident varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT mub_fonte_p_pk PRIMARY KEY (id)
 );
 CREATE INDEX mub_fonte_p_gist ON cc.mub_fonte_p
@@ -4072,7 +4072,7 @@ CREATE TABLE cc.mub_academia_esporte_publico_p(
 	id serial NOT NULL,
 	codident varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT mub_academia_esporte_publico_p_pk PRIMARY KEY (id)
 );
 CREATE INDEX mub_academia_esporte_publico_p_gist ON cc.mub_academia_esporte_publico_p
@@ -4084,7 +4084,7 @@ CREATE TABLE cc.mub_parquinho_infantil_p(
 	id serial NOT NULL,
 	codident varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POINT, 4326) NOT NULL
+	geom geometry(POINT, [epsg]) NOT NULL
 );
 CREATE INDEX mub_parquinho_infantil_p_gist ON cc.mub_parquinho_infantil_p
 	USING gist
@@ -4095,7 +4095,7 @@ CREATE TABLE cc.mub_relogio_p(
 	id serial NOT NULL,
 	codident varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT mub_relogio_p_pk PRIMARY KEY (id)
 );
 CREATE INDEX mub_relogio_p_gist ON cc.mub_relogio_p
@@ -4107,7 +4107,7 @@ CREATE TABLE cc.mub_lixeira_p(
 	id serial NOT NULL,
 	codident varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT mub_lixeira_p_pk PRIMARY KEY (id)
 );
 CREATE INDEX mub_lixeira_p_gist ON cc.mub_lixeira_p
@@ -4119,7 +4119,7 @@ CREATE TABLE cc.mub_hidrante_p(
 	id serial NOT NULL,
 	codident varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT mub_hidrante_p_pk PRIMARY KEY (id)
 );
 CREATE INDEX mub_hidrante_p_gist ON cc.mub_hidrante_p
@@ -4131,7 +4131,7 @@ CREATE TABLE cc.mub_caixa_coleta_correios_p(
 	id serial NOT NULL,
 	codident varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POINT, 4326) NOT NULL
+	geom geometry(POINT, [epsg]) NOT NULL
 );
 CREATE INDEX mub_caixa_coleta_correios_p_gist ON cc.mub_caixa_coleta_correios_p
 	USING gist
@@ -4144,7 +4144,7 @@ CREATE TABLE cc.mub_armario_p(
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
 	matconstr smallint NOT NULL,
 	tipoarmario smallint NOT NULL,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT mub_armario_p_pk PRIMARY KEY (id)
 );
 CREATE INDEX mub_armario_p_gist ON cc.mub_armario_p
@@ -4158,7 +4158,7 @@ CREATE TABLE cc.mub_poste_p(
 	codident varchar(80),
 	matconstr smallint NOT NULL,
 	tipoposte smallint NOT NULL,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT mub_poste_p_pk PRIMARY KEY (id)
 );
 CREATE INDEX mub_poste_p_gist ON cc.mub_poste_p
@@ -4175,7 +4175,7 @@ CREATE TABLE cc.mub_cabine_telefonica_publica_p(
 	id serial NOT NULL,
 	codident varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT mub_cabine_telefonica_publica_p_pk PRIMARY KEY (id)
 );
 CREATE INDEX mub_cabine_telefonica_publica_p_gist ON cc.mub_cabine_telefonica_publica_p
@@ -4187,7 +4187,7 @@ CREATE TABLE cc.mub_engenho_publicicade_p(
 	id serial NOT NULL,
 	codident varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT mub_engenho_publicicade_p_pk PRIMARY KEY (id)
 );
 CREATE INDEX mub_engenho_publicicade_p_gist ON cc.mub_engenho_publicicade_p
@@ -4204,7 +4204,7 @@ CREATE TABLE cc.mub_parada_onibus(
 	CONSTRAINT mub_parada_onibus_pk PRIMARY KEY (id)
 );
 CREATE TABLE cc.mub_parada_onibus_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT mub_parada_onibus_p_pk PRIMARY KEY (id)
 ) INHERITS(cc.mub_parada_onibus)
 ;
@@ -4214,7 +4214,7 @@ CREATE INDEX mub_parada_onibus_p_gist ON cc.mub_parada_onibus_p
 	  geom
 	);
 CREATE TABLE cc.mub_parada_onibus_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT mub_parada_onibus_l_pk PRIMARY KEY (id)
 ) INHERITS(cc.mub_parada_onibus)
 ;
@@ -4228,7 +4228,7 @@ CREATE TABLE cc.mub_parada_taxi_p(
 	geometriaaproximada smallint NOT NULL DEFAULT 0,
 	nome varchar(80),
 	codident varchar(80),
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	id_estrut_apoio uuid,
 	CONSTRAINT mub_parada_taxi_p_pk PRIMARY KEY (id)
 );
@@ -4270,7 +4270,7 @@ CREATE TABLE cb.asb_cemiterio(
 	CONSTRAINT asb_cemiterio_pk PRIMARY KEY (id)
 );
 CREATE TABLE cb.asb_cemiterio_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT asb_cemiterio_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.asb_cemiterio)
 ;
@@ -4280,7 +4280,7 @@ CREATE INDEX asb_cemiterio_p_gist ON cb.asb_cemiterio_p
 	  geom
 	);
 CREATE TABLE cb.asb_cemiterio_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT asb_cemiterio_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.asb_cemiterio)
 ;
@@ -4315,7 +4315,7 @@ CREATE TABLE ct.dci_local_critico(
 ) INHERITS(ct.dci_local_risco)
 ;
 CREATE TABLE ct.dci_local_critico_p(
-	geom geometry(POINT, 4326) NOT NULL,
+	geom geometry(POINT, [epsg]) NOT NULL,
 	CONSTRAINT dci_local_critico_p_pk PRIMARY KEY (id)
 ) INHERITS(ct.dci_local_critico)
 ;
@@ -4325,7 +4325,7 @@ CREATE INDEX dci_local_critico_p_gist ON ct.dci_local_critico_p
 	  geom
 	);
 CREATE TABLE ct.dci_local_critico_l(
-	geom geometry(LINESTRING, 4326) NOT NULL,
+	geom geometry(LINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT dci_local_critico_l_pk PRIMARY KEY (id)
 ) INHERITS(ct.dci_local_critico)
 ;
@@ -4335,7 +4335,7 @@ CREATE INDEX dci_local_critico_l_gist ON ct.dci_local_critico_l
 	  geom
 	);
 CREATE TABLE ct.dci_local_critico_a(
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT dci_local_critico_a_pk PRIMARY KEY (id)
 ) INHERITS(ct.dci_local_critico)
 ;
@@ -4412,7 +4412,7 @@ CREATE TABLE cc.cbc_area_industrial_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	id_org_industrial uuid,
-	geom geometry(POLYGON, 4326) NOT NULL,
+	geom geometry(POLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cbc_area_industrial_a_pk PRIMARY KEY (id)
 );
 CREATE INDEX cbc_area_industrial_a_gist ON cc.cbc_area_industrial_a

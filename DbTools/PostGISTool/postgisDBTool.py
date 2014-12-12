@@ -57,6 +57,8 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         
         self.populateTemplatesCombo()
         
+        self.epsg = 4326
+        
     @pyqtSlot(bool)    
     def on_saveButton_clicked(self):
         if self.checkFields():
@@ -64,9 +66,8 @@ class PostgisDBTool(QDialog, Ui_Dialog):
             database = self.databaseEdit.text()
             template = self.templatesCombo.currentText()
             if self.createDatabase(database, template):
-                srs = self.srsEdit.text()
                 if self.createDatabaseStructure():
-                    self.storeConnectionConfiguration(server, database, srs)
+                    self.storeConnectionConfiguration(server, database)
                 else:
                     QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Problem creating the database structure.")
             else:
@@ -85,10 +86,12 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         projSelector.setMessage(theMessage=message)
         projSelector.exec_()
         try:
-            epsg = int(projSelector.selectedAuthId().split(':')[-1])
-            self.srs = QgsCoordinateReferenceSystem(epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
-            if self.srs:
-                self.srsEdit.setText(self.srs.description())
+            self.epsg = int(projSelector.selectedAuthId().split(':')[-1])
+            srs = QgsCoordinateReferenceSystem(self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
+            if srs:
+                self.srsEdit.setText(srs.description())
+            else:
+                self.epsg = 4326
         except:
             QMessageBox.warning(self.iface.mainWindow(), "Warning!", message)
             
@@ -121,6 +124,7 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         db = self.getDatabase(self.databaseEdit.text())
         file = open(edgvPath, "r")
         sql = file.read()
+        sql = sql.replace('[epsg]', str(self.epsg))
         file.close()
         commands = sql.split(';')
         db.transaction()
@@ -187,7 +191,7 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         settings.endGroup()
         return (host, port, user, password)
     
-    def storeConnectionConfiguration(self, server, database, srs):
+    def storeConnectionConfiguration(self, server, database):
         name = self.connectionEdit.text()
         
         (host, port, user, password) = self.getServerConfiguration(server)
