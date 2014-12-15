@@ -46,9 +46,8 @@ class CreatePostGISDatabase(QThread):
         self.stopMe = 0
         self.mutex.unlock()
         
-        if self.createDatabaseStructure():
-            # Processing ending
-            self.emit( SIGNAL( "processingFinished()" ) )
+        # Processing ending
+        self.emit( SIGNAL( "processingFinished(PyQt_PyObject)" ), self.createDatabaseStructure())
     
     def stop( self ):
         # Stopping the thread
@@ -56,7 +55,7 @@ class CreatePostGISDatabase(QThread):
         self.stopMe = 1
         self.mutex.unlock()        
         QThread.wait( self )
-        
+
     def createDatabaseStructure(self):
         currentPath = os.path.dirname(__file__)
         if self.version == '2.1.3':
@@ -79,14 +78,22 @@ class CreatePostGISDatabase(QThread):
         
         self.db.transaction()
         query = QSqlQuery(self.db)
+
         for command in commands:
+            if self.stopMe == 1:
+                self.db.rollback()
+                self.db.close()
+                self.emit( SIGNAL( "userCanceled()" ) )
+
             if not query.exec_(command):
                 print query.lastError().text()
                 self.db.rollback()
                 self.db.close()
                 return False
+
             # Updating progress
             self.emit( SIGNAL( "queryProcessed()" ) )
+
         self.db.commit()
         self.db.close()
         return True

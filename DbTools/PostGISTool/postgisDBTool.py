@@ -64,9 +64,11 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         
     @pyqtSlot(bool)    
     def on_saveButton_clicked(self):
-        self.createDatabase(self.databaseEdit.text(), self.templatesCombo.currentText())
-        self.storeConnectionConfiguration(self.serversCombo.currentText(), self.databaseEdit.text())
-        self.done(1)
+        if self.createDatabase(self.databaseEdit.text(), self.templatesCombo.currentText()):
+            self.storeConnectionConfiguration(self.serversCombo.currentText(), self.databaseEdit.text())
+            self.done(1)
+        else:
+            self.done(0)
     
     @pyqtSlot(bool)    
     def on_cancelButton_clicked(self):
@@ -86,7 +88,7 @@ class PostgisDBTool(QDialog, Ui_Dialog):
             else:
                 self.epsg = 4326
         except:
-            QMessageBox.warning(self.iface.mainWindow(), "Warning!", message)
+            QMessageBox.warning(self, "Warning!", message)
             
     def createDatabase(self, name, template):
         sql  = self.gen.getCreateDatabase(name, template)
@@ -96,7 +98,7 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         #creating the database
         query = QSqlQuery(db)
         if not query.exec_(sql):
-            QMessageBox.warning(self.iface.mainWindow(), "Warning!", query.lastError().text())
+            QMessageBox.warning(self, "Warning!", query.lastError().text())
             db.close()
             return False
         db.close()
