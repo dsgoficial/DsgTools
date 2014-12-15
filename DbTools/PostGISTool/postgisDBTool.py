@@ -72,7 +72,7 @@ class PostgisDBTool(QDialog, Ui_Dialog):
     
     @pyqtSlot(bool)    
     def on_cancelButton_clicked(self):
-        self.done(0)
+        self.done(-1)
 
     @pyqtSlot(bool)    
     def on_srsButton_clicked(self):

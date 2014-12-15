@@ -368,7 +368,7 @@ class DsgTools:
         self.dlg = PostgisDBTool(self.iface)
         self.dlg.show()
         result = self.dlg.exec_()
-        if result:
+        if result == 1:
             # Setting the progress bar
             self.progressMessageBar = self.iface.messageBar().createMessage("Creating database structure...")
             self.progressBar = QProgressBar()
@@ -387,7 +387,7 @@ class DsgTools:
 
             # Startin the processing
             self.thread.start()
-        else:
+        elif result == 0:
             QMessageBox.information(self.iface.mainWindow(), 'DSG Tools','Problem creating the Database!')
 
     def loadByCategory(self):
