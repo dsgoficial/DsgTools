@@ -382,9 +382,8 @@ class DsgTools:
             QObject.connect( self.thread, SIGNAL( "rangeCalculated( PyQt_PyObject )" ), self.setProgressRange )
             QObject.connect( self.thread, SIGNAL( "queryProcessed()" ), self.queryProcessed )
             QObject.connect( self.thread, SIGNAL( "processingFinished(PyQt_PyObject)" ), self.processFinished )
-            QObject.connect( self.thread, SIGNAL( "userCanceled()" ), self.userCanceled )
-#             #Connecting the signal to cancel the thread if the progress bar is closed
-#             QObject.connect( self.iface.messageBar(), SIGNAL( "widgetRemoved(PyQt_PyObject)" ), self.processCanceled )
+
+            QObject.connect( self.progressMessageBar, SIGNAL( "destroyed()" ), self.progressCanceled )
 
             # Startin the processing
             self.thread.start()
@@ -447,30 +446,33 @@ class DsgTools:
             pass
 
     def setProgressRange( self, maximum ):
-        if self.progressBar:
+        if self.progressMessageBar:
             self.progressBar.setRange( 0, maximum )
     
-    def queryProcessed( self ):
-        if self.progressBar:
+    def queryProcessed( self):
+        if self.progressMessageBar:
             self.progressBar.setValue( self.progressBar.value() + 1 )
 
     def userCanceled( self ):
         QMessageBox.information(self.iface.mainWindow(), 'DSG Tools','Database structure creation canceled!')
 
-    def processFinished( self, success):
+    def processFinished( self, feedback):
         if self.thread != None:
             self.thread.stop()
             self.thread = None
             
-        if success:
+        if feedback == 1:
             self.progressBar.setValue( self.progressBar.maximum())
             QMessageBox.information(self.iface.mainWindow(), 'DSG Tools','Database structure successfully created!')
-        else:
-            QMessageBox.information(self.iface.mainWindow(), 'DSG Tools','Problem creating the database structure!\n Check the python terminal for details')
+        elif feedback == 0:
+            QMessageBox.information(self.iface.mainWindow(), 'DSG Tools','Problem creating the database structure!\n Check the Log terminal for details.')
+        elif feedback == -1:
+            QMessageBox.information(self.iface.mainWindow(), 'DSG Tools','User canceled the database structure creation!')
             
-#     def processCanceled( self):
-#         if self.thread != None:
-#             self.thread.stop()
-#             self.thread = None
-#         print 'mandou cancelar'
-        
+    def progressCanceled(self):
+        self.progressMessageBar = None
+        self.progressBar = None
+            
+        if self.thread:
+            self.thread.stop()
+            self.thread = None

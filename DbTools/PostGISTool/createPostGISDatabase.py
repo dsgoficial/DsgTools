@@ -24,6 +24,8 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSql import QSqlDatabase,QSqlQuery
 
+from qgis.core import QgsMessageLog 
+
 import sys, os
 
 class CreatePostGISDatabase(QThread):
@@ -78,23 +80,26 @@ class CreatePostGISDatabase(QThread):
         
         self.db.transaction()
         query = QSqlQuery(self.db)
-
+        
+        update = True
         for command in commands:
-            if self.stopMe == 1:
+            if self.stopMe == 0:
+                if not query.exec_(command):
+                    QgsMessageLog.logMessage("DSG Tools", "Problem on database structure creation: "+query.lastError().text(), QgsMessageLog.CRITICAL)
+                    self.db.rollback()
+                    self.db.close()
+                    return 0
+    
+                # Updating progress
+                self.emit( SIGNAL( "queryProcessed()" ))
+            else:
                 self.db.rollback()
                 self.db.close()
-                self.emit( SIGNAL( "userCanceled()" ) )
-
-            if not query.exec_(command):
-                print query.lastError().text()
-                self.db.rollback()
-                self.db.close()
-                return False
-
-            # Updating progress
-            self.emit( SIGNAL( "queryProcessed()" ) )
+                QgsMessageLog.logMessage("DSG Tools", "User canceled datatabase structure creation", QgsMessageLog.INFO)
+                return -1
 
         self.db.commit()
         self.db.close()
-        return True
+        QgsMessageLog.logMessage("DSG Tools", "Successful datatabase structure creation", QgsMessageLog.INFO)
+        return 1
     
