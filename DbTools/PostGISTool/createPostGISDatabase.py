@@ -85,7 +85,7 @@ class CreatePostGISDatabase(QThread):
         for command in commands:
             if self.stopMe == 0:
                 if not query.exec_(command):
-                    QgsMessageLog.logMessage("DSG Tools", "Problem on database structure creation: "+query.lastError().text(), QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage("Problem on database structure creation: "+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     self.db.rollback()
                     self.db.close()
                     return 0
@@ -95,11 +95,11 @@ class CreatePostGISDatabase(QThread):
             else:
                 self.db.rollback()
                 self.db.close()
-                QgsMessageLog.logMessage("DSG Tools", "User canceled datatabase structure creation", QgsMessageLog.INFO)
+                QgsMessageLog.logMessage("User canceled datatabase structure creation", "DSG Tools Plugin", QgsMessageLog.INFO)
                 return -1
 
         self.db.commit()
         self.db.close()
-        QgsMessageLog.logMessage("DSG Tools", "Successful datatabase structure creation", QgsMessageLog.INFO)
+        QgsMessageLog.logMessage("Successful datatabase structure creation", "DSG Tools Plugin", QgsMessageLog.INFO)
         return 1
     
