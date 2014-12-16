@@ -48,6 +48,7 @@ from complexWindow import ComplexWindow
 from serverConfigurator import ServerConfigurator
 from postgisDBTool import PostgisDBTool
 from createPostGISDatabase import CreatePostGISDatabase
+from ui_create_inom_dialog import CreateInomDialog
 
 class DsgTools:
     """QGIS Plugin Implementation."""
@@ -92,6 +93,7 @@ class DsgTools:
         self.menuBar = self.iface.mainWindow().menuBar()
 
         self.complexWindow = ComplexWindow(iface)
+        
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -319,6 +321,7 @@ class DsgTools:
         self.complexButton.addAction(action)"""
 
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
+        
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
