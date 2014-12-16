@@ -26,7 +26,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def getComplexTablesFromDatabase(self):
         sql = "select distinct table_name from information_schema.columns where table_schema = 'complexos'  ORDER BY table_name"
         return sql
-    
+
     def getComplexData(self, complex_schema, complex):
         sql = "SELECT id, nome from "+complex_schema+"."+complex
         return sql
@@ -34,7 +34,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def getAssociatedFeaturesData(self, aggregated_schema, aggregated_class, column_name, complex_uuid):
         sql = "SELECT id from "+aggregated_schema+"."+aggregated_class+" where "+column_name+"="+'\''+complex_uuid+'\''
         return sql
-    
+
     def getLinkColumn(self, complexClass, aggregatedClass):
         sql = "SELECT column_name from complex_schema where complex = "+complexClass+" and aggregated_class = "+'\''+aggregatedClass+'\''
         return sql
@@ -50,15 +50,18 @@ class PostGISSqlGenerator(SqlGenerator):
     def disassociateComplexFromComplex(self, aggregated_class, link_column, uuid):
         sql = "UPDATE complexos."+aggregated_class+" SET "+link_column+"=NULL WHERE id = "+'\''+uuid+'\''
         return sql
-    
+
     def getTemplates(self):
         sql = "SELECT datname FROM pg_database WHERE datistemplate = true;"
         return sql
-    
+
+    def allowConnections(self,name):
+        sql = "ALTER DATABASE "+name+" SET search_path = public, topology, cb, cc, complexos, ct;"
+        return sql
+
     def getCreateDatabase(self, name, template):
         if template == '':
             sql = "CREATE DATABASE "+name
         else:
             sql = "CREATE DATABASE "+name+" WITH TEMPLATE = "+template
         return sql
-    

@@ -61,17 +61,22 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         self.crs = ''
         self.classes = []
         self.selectedClasses = []
+
+        #Sql factory generator
+        self.isSpatialite = True
+
         self.setupUi(self)
+        self.tabWidgetLoadByClass.setCurrentIndex(0)
         self.factory = SqlGeneratorFactory()
-        self.gen = None
+        self.gen = self.factory.createSqlGenerator(self.isSpatialite)
+
         #qmlPath will be set as /qml_qgis/qgis_22/edgv_213/, but in a further version, there will be an option to detect from db
         version = qgis.core.QGis.QGIS_VERSION_INT
+        currentPath = os.path.dirname(__file__)
         if version >= 20600:
-            self.qmlPath = os.path.dirname(__file__)+'/qml_qgis/qgis_26/edgv_213/'
+            self.qmlPath = os.path.join(currentPath, 'qml_qgis', 'qgis_26', 'edgv_213')
         else:
-            self.qmlPath = os.path.dirname(__file__)+'/qml_qgis/qgis_22/edgv_213/'
-        self.qmlPath.replace('\\','/')
-
+            self.qmlPath = os.path.join(currentPath, 'qml_qgis', 'qgis_22', 'edgv_213')
 
         self.bar = QgsMessageBar()
         self.setLayout(QtGui.QGridLayout(self))
@@ -82,14 +87,18 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         self.layout().addWidget(self.bar, 0,0,1,1)
 
         #Objects Connections
-        QtCore.QObject.connect(self.pushButtonOpenFile, QtCore.SIGNAL(("clicked()")), self.loadSpatialite)
-        QtCore.QObject.connect(self.fileLineEditLoadByClass, QtCore.SIGNAL(("textChanged(QString)")), self.listsCategories)
+        QtCore.QObject.connect(self.pushButtonOpenFile, QtCore.SIGNAL(("clicked()")), self.loadDatabase)
+#         QtCore.QObject.connect(self.comboBoxPostgis, QtCore.SIGNAL(("currentIndexChanged(int)")), self.loadDatabase)
+#         QtCore.QObject.connect(self.fileLineEditLoadByClass, QtCore.SIGNAL(("textChanged(QString)")), self.listClassesFromDatabase)
         QtCore.QObject.connect(self.pushButtonCancelLoadByClass, QtCore.SIGNAL(("clicked()")), self.cancel)
         QtCore.QObject.connect(self.checkBoxSelectAllLoadByClass, QtCore.SIGNAL(("stateChanged(int)")), self.selectAll)
         QtCore.QObject.connect(self.pushButtonOkLoadByClass, QtCore.SIGNAL(("clicked()")), self.okSelected)
         QtCore.QObject.connect(self.tabWidgetLoadByClass,QtCore.SIGNAL(("currentChanged(int)")), self.restoreInitialState)
 
 
+        self.db = None
+        #populating the postgis combobox
+        self.populatePostGISConnectionsCombo()
 
     def restoreInitialState(self):
         self.filename = ""
@@ -110,17 +119,18 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
 
 
         self.checkBoxSelectAllLoadByClass.setCheckState(0)
+        #Setting the database type
+        if self.tabWidgetLoadByClass.currentIndex() == 0:
+            self.isSpatialite = True
+        else:
+            self.isSpatialite = False
+        #getting the sql generator according to the database type
+        self.gen = self.factory.createSqlGenerator(self.isSpatialite)
+        self.comboBoxPostgis.setCurrentIndex(0)
 
 
 
 
-
-    def loadSpatialite(self):
-        fd = QtGui.QFileDialog()
-        self.filename = fd.getOpenFileName(filter='*.sqlite')
-        if self.filename <> "":
-            self.dbLoaded = True
-            self.fileLineEditLoadByClass.setText(self.filename)
 
     def updateBDField(self):
         if self.dbLoaded == True:
@@ -128,22 +138,6 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         else:
             self.filename = ""
             self.fileLineEditLoadByClass.setText(self.filename)
-
-
-
-    def setCRS(self):
-        projSelector = QgsGenericProjectionSelector()
-        projSelector.setMessage(theMessage='Select the Coordinate Reference System')
-        projSelector.exec_()
-        try:
-            self.epsg = int(projSelector.selectedAuthId().split(':')[-1])
-            self.crs = QgsCoordinateReferenceSystem(self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
-            if self.crs <> "":
-                self.crsSet = True
-                self.crsLineEditLoadByClassSpatialite.setText(self.crs.description())
-        except:
-            self.bar.pushMessage("", "Coordinate Reference System not set!", level=QgsMessageBar.WARNING)
-            pass
 
     def countElements(self,lista):
         con = sqlite3.connect(self.filename)
@@ -178,6 +172,117 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
             count+=1
 
 
+    def listClassesFromDatabase(self):
+        print "executou"
+
+        sql = self.gen.getTablesFromDatabase()
+
+        query = QSqlQuery(sql, self.db)
+        tableList = []
+
+        while query.next():
+            tableList.append(query.value(0))
+
+        self.db.close()
+
+
+        for i in tableList:
+
+            if (i.split("_")[-1] == "p"):
+                self.classes.append(i)
+            if (i.split("_")[-1] == "l"):
+                self.classes.append(i)
+            if (i.split("_")[-1] == "a"):
+                self.classes.append(i)
+
+        self.classes.sort() #sorts it into alphabetical order
+
+        for i in self.classes:
+            item = QtGui.QListWidgetItem(i)
+            self.listWidgetClassesLoadByClass.addItem(item)
+
+
+        try:
+            self.epsg = self.findEPSG()
+            if self.epsg == -1:
+                self.bar.pushMessage("", "Coordinate Reference System not set or invalid!", level=QgsMessageBar.WARNING)
+            else:
+                self.crs = QgsCoordinateReferenceSystem(self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
+                self.crsLineEditLoadByClassSpatialite.setText(self.crs.description())
+                self.crsLineEditLoadByClassSpatialite.setReadOnly(True)
+                self.dbLoaded = True
+        except:
+            pass
+
+
+    def on_comboBoxPostgis_currentIndexChanged(self):
+        if self.comboBoxPostgis.currentIndex() <> 0:
+            self.loadDatabase()
+
+
+    def loadDatabase(self):
+        self.restoreInitialState()
+        if self.isSpatialite:
+            fd = QtGui.QFileDialog()
+            self.filename = fd.getOpenFileName(filter='*.sqlite')
+
+            if self.filename:
+                self.fileLineEditLoadByClass.setText(self.filename)
+                self.db = QSqlDatabase("QSQLITE")
+                self.db.setDatabaseName(self.filename)
+                self.db.open()
+                self.listClassesFromDatabase()
+                self.dbLoaded = True
+        else:
+            self.db = QSqlDatabase("QPSQL")
+            (database, host, port, user, password) = self.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
+#             database='aaa'
+#             host = 'localhost'
+#             port = '5432'
+#             user = 'postgres'
+#             password = 'postgres'
+            print "database: "+str(database)
+            print "host: "+str(host)
+            print "port: "+str(port)
+            print "user: "+str(user)
+            print "password: "+str(password)
+            self.db.setDatabaseName(database)
+            self.db.setHostName(host)
+            self.db.setPort(int(port))
+            self.db.setUserName(user)
+            self.db.setPassword(password)
+            self.db.open()
+            self.dbLoaded = True
+            self.listClassesFromDatabase()
+
+
+
+        if not self.db.open():
+            print self.db.lastError().text()
+
+    def getPostGISConnectionParameters(self, name):
+        settings = QSettings()
+        settings.beginGroup('PostgreSQL/connections/'+name)
+        database = settings.value('database')
+        host = settings.value('host')
+        port = settings.value('port')
+        user = settings.value('username')
+        password = settings.value('password')
+        settings.endGroup()
+        return (database, host, port, user, password)
+
+    def getPostGISConnections(self):
+        settings = QSettings()
+        settings.beginGroup('PostgreSQL/connections')
+        currentConnections = settings.childGroups()
+        settings.endGroup()
+        return currentConnections
+
+    def populatePostGISConnectionsCombo(self):
+        self.comboBoxPostgis.clear()
+        self.comboBoxPostgis.addItem("Select Database")
+        self.comboBoxPostgis.addItems(self.getPostGISConnections())
+
     def listsCategories(self):
         if self.tabWidgetLoadByClass.tabText(self.tabWidgetLoadByClass.currentIndex()) == "Spatialite":
             con = sqlite3.connect(self.filename)
@@ -186,6 +291,7 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
             sql = self.gen.getTablesFromDatabase()
             cursor.execute(sql)
             tableList = cursor.fetchall()
+
 
         for i in tableList:
 
@@ -203,7 +309,7 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
             item = QtGui.QListWidgetItem(i)
             self.listWidgetClassesLoadByClass.addItem(item)
         try:
-            self.epsg = self.findsEPSGSpatialite(cursor)
+            self.epsg = self.findEPSG()
 
             if self.epsg == -1:
                 self.bar.pushMessage("", "Coordinate Reference System not set or invalid!", level=QgsMessageBar.WARNING)
@@ -218,12 +324,14 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
 
 
 
-    def findsEPSGSpatialite(self,cursor):
-        self.gen = self.factory.createSqlGenerator(True)
+    def findEPSG(self):
         sql = self.gen.getSrid()
-        cursor.execute(sql)
-        list = cursor.fetchall()
-        return list[0][0]
+        query = QSqlQuery(sql, self.db)
+        srids = []
+        while query.next():
+            srids.append(query.value(0))
+
+        return srids[0]
 
     def cancel(self):
         self.restoreInitialState()
@@ -299,4 +407,4 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
 
 
     def showText(self):
-        print self.tabWidgetLoadByClass.tabText(self.tabWidgetLoadByClass.currentIndex())
+        print 'Entrou'

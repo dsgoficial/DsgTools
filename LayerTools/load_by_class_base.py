@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'load_by_class_base.ui'
 #
-# Created: Mon Nov 24 17:55:52 2014
+# Created: Mon Dec 15 21:35:12 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -101,46 +101,6 @@ class Ui_LoadByClass(object):
         self.comboBoxPostgis = QtGui.QComboBox(self.layoutWidget)
         self.comboBoxPostgis.setObjectName(_fromUtf8("comboBoxPostgis"))
         self.verticalLayout.addWidget(self.comboBoxPostgis)
-        self.horizontalLayout_13 = QtGui.QHBoxLayout()
-        self.horizontalLayout_13.setSpacing(5)
-        self.horizontalLayout_13.setObjectName(_fromUtf8("horizontalLayout_13"))
-        self.pushButtonConnectPostgis = QtGui.QPushButton(self.layoutWidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pushButtonConnectPostgis.sizePolicy().hasHeightForWidth())
-        self.pushButtonConnectPostgis.setSizePolicy(sizePolicy)
-        self.pushButtonConnectPostgis.setMaximumSize(QtCore.QSize(70, 16777215))
-        self.pushButtonConnectPostgis.setObjectName(_fromUtf8("pushButtonConnectPostgis"))
-        self.horizontalLayout_13.addWidget(self.pushButtonConnectPostgis)
-        self.pushButtonNewPostgis = QtGui.QPushButton(self.layoutWidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pushButtonNewPostgis.sizePolicy().hasHeightForWidth())
-        self.pushButtonNewPostgis.setSizePolicy(sizePolicy)
-        self.pushButtonNewPostgis.setMaximumSize(QtCore.QSize(70, 16777215))
-        self.pushButtonNewPostgis.setObjectName(_fromUtf8("pushButtonNewPostgis"))
-        self.horizontalLayout_13.addWidget(self.pushButtonNewPostgis)
-        self.pushButtonEditPostgis = QtGui.QPushButton(self.layoutWidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pushButtonEditPostgis.sizePolicy().hasHeightForWidth())
-        self.pushButtonEditPostgis.setSizePolicy(sizePolicy)
-        self.pushButtonEditPostgis.setMaximumSize(QtCore.QSize(70, 16777215))
-        self.pushButtonEditPostgis.setObjectName(_fromUtf8("pushButtonEditPostgis"))
-        self.horizontalLayout_13.addWidget(self.pushButtonEditPostgis)
-        self.pushButtonPostgis = QtGui.QPushButton(self.layoutWidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pushButtonPostgis.sizePolicy().hasHeightForWidth())
-        self.pushButtonPostgis.setSizePolicy(sizePolicy)
-        self.pushButtonPostgis.setMaximumSize(QtCore.QSize(70, 16777215))
-        self.pushButtonPostgis.setObjectName(_fromUtf8("pushButtonPostgis"))
-        self.horizontalLayout_13.addWidget(self.pushButtonPostgis)
-        self.verticalLayout.addLayout(self.horizontalLayout_13)
         self.tabWidgetLoadByClass.addTab(self.tabPostGIS, _fromUtf8(""))
         self.horizontalLayoutWidget_4 = QtGui.QWidget(LoadByClass)
         self.horizontalLayoutWidget_4.setGeometry(QtCore.QRect(40, 600, 350, 44))
@@ -184,7 +144,7 @@ class Ui_LoadByClass(object):
         self.verticalLayout_2.addWidget(self.checkBoxSelectAllLoadByClass)
 
         self.retranslateUi(LoadByClass)
-        self.tabWidgetLoadByClass.setCurrentIndex(0)
+        self.tabWidgetLoadByClass.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(LoadByClass)
 
     def retranslateUi(self, LoadByClass):
@@ -195,10 +155,6 @@ class Ui_LoadByClass(object):
         self.tabWidgetLoadByClass.setTabText(self.tabWidgetLoadByClass.indexOf(self.tabSpatialite), _translate("LoadByClass", "Spatialite", None))
         self.groupBox_3.setTitle(_translate("LoadByClass", "Connections", None))
         self.label_7.setText(_translate("LoadByClass", "Coordinate System", None))
-        self.pushButtonConnectPostgis.setText(_translate("LoadByClass", "Connect", None))
-        self.pushButtonNewPostgis.setText(_translate("LoadByClass", "New", None))
-        self.pushButtonEditPostgis.setText(_translate("LoadByClass", "Edit", None))
-        self.pushButtonPostgis.setText(_translate("LoadByClass", "Delete", None))
         self.tabWidgetLoadByClass.setTabText(self.tabWidgetLoadByClass.indexOf(self.tabPostGIS), _translate("LoadByClass", "PostGIS", None))
         self.pushButtonOkLoadByClass.setText(_translate("LoadByClass", "Ok", None))
         self.pushButtonCancelLoadByClass.setText(_translate("LoadByClass", "Cancel", None))

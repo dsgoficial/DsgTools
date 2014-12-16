@@ -23,8 +23,9 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSql import QSqlDatabase,QSqlQuery
+from sqlGeneratorFactory import SqlGeneratorFactory
 
-from qgis.core import QgsMessageLog 
+from qgis.core import QgsMessageLog
 
 import sys, os
 
@@ -33,7 +34,7 @@ class CreatePostGISDatabase(QThread):
         """Constructor.
         """
         QThread.__init__( self, QThread.currentThread() )
-        
+
         self.db = db
         self.version = version
         self.epsg = epsg
@@ -41,21 +42,24 @@ class CreatePostGISDatabase(QThread):
         # QThread
         self.mutex = QMutex()
         self.stopMe = 0
+        self.factory = SqlGeneratorFactory()
+        #setting the sql generator
+        self.gen = self.factory.createSqlGenerator(False)
 
     def run(self):
         # QThread
         self.mutex.lock()
         self.stopMe = 0
         self.mutex.unlock()
-        
+
         # Processing ending
         self.emit( SIGNAL( "processingFinished(PyQt_PyObject)" ), self.createDatabaseStructure())
-    
+
     def stop( self ):
         # Stopping the thread
         self.mutex.lock()
         self.stopMe = 1
-        self.mutex.unlock()        
+        self.mutex.unlock()
         QThread.wait( self )
 
     def createDatabaseStructure(self):
@@ -67,7 +71,7 @@ class CreatePostGISDatabase(QThread):
         else:
             pass
         return self.loadDatabaseStructure(edgvPath)
-        
+
     def loadDatabaseStructure(self, edgvPath):
         file = open(edgvPath, "r")
         sql = file.read()
@@ -77,10 +81,10 @@ class CreatePostGISDatabase(QThread):
 
         # Progress bar steps calculated
         self.emit( SIGNAL( "rangeCalculated( PyQt_PyObject )" ), len(commands))
-        
+
         self.db.transaction()
         query = QSqlQuery(self.db)
-        
+
         update = True
         for command in commands:
             if self.stopMe == 0:
@@ -89,7 +93,7 @@ class CreatePostGISDatabase(QThread):
                     self.db.rollback()
                     self.db.close()
                     return 0
-    
+
                 # Updating progress
                 self.emit( SIGNAL( "queryProcessed()" ))
             else:
@@ -99,7 +103,11 @@ class CreatePostGISDatabase(QThread):
                 return -1
 
         self.db.commit()
+        print self.db.connectionName()
+        sql = self.gen.allowConnections(self.db.connectionName())
+        print sql
+        query = QSqlQuery(sql,self.db)
+        self.db.commit()
         self.db.close()
         QgsMessageLog.logMessage("Successful datatabase structure creation", "DSG Tools Plugin", QgsMessageLog.INFO)
         return 1
-    
