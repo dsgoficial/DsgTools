@@ -44,7 +44,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getTablesFromDatabase(self):
-        sql = "select distinct table_name from information_schema.columns"
+        sql = "select distinct table_schema, table_name from information_schema.columns"
         return sql
 
     def disassociateComplexFromComplex(self, aggregated_class, link_column, uuid):

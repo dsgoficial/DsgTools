@@ -134,13 +134,16 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
             self.fileLineEditLoadByClass.setText(self.filename)
 
     def listClassesFromDatabase(self):
+        self.listWidgetClassesLoadByClass.clear()
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
         while query.next():
-            tableName = query.value(0)
+            tableSchema = query.value(0)
+            tableName = query.value(1)
             if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
-                or tableName.split("_")[-1] == "a": 
-                item = QtGui.QListWidgetItem(tableName)
+                or tableName.split("_")[-1] == "a":
+                layerName = tableSchema+'.'+tableName 
+                item = QtGui.QListWidgetItem(layerName)
                 self.listWidgetClassesLoadByClass.addItem(item)
         self.listWidgetClassesLoadByClass.sortItems()
         self.setCRS()
@@ -247,9 +250,16 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
 
     def okSelected(self):
         if isSpatialite:
-            loadSpatialiteLayers()
+            self.loadSpatialiteLayers()
         else:
-            pass
+            self.loadPostGISLayers()
+            
+    def loadPostGISLayers(self):
+        self.getSelectedItems()
+        (database, host, port, user, password) = self.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
+        uri = QgsDataSourceURI()
+        uri.setConnection(str(host),str(port), str(database), str(user), str(password))
+        uri.setDataSource()
 
     def loadSpatialiteLayers(self):
         f = self.filename
