@@ -59,6 +59,10 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "ALTER DATABASE "+name+" SET search_path = public, topology, cb, cc, complexos, ct;"
         return sql
 
+    def loadLayerFromDatabase(self,lyr):
+        sql = "SELECT * FROM ONLY "+lyr
+        return sql
+
     def getCreateDatabase(self, name, template):
         if template == '':
             sql = "CREATE DATABASE "+name
