@@ -55,12 +55,12 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "SELECT datname FROM pg_database WHERE datistemplate = true;"
         return sql
 
-    def allowConnections(self,name):
+    def allowConnections(self, name):
         sql = "ALTER DATABASE "+name+" SET search_path = public, topology, cb, cc, complexos, ct;"
         return sql
 
-    def loadLayerFromDatabase(self,lyr):
-        sql = "SELECT * FROM ONLY "+lyr
+    def loadLayerFromDatabase(self, layer_name):
+        sql = "id in (SELECT id FROM ONLY "+layer_name+")"
         return sql
 
     def getCreateDatabase(self, name, template):

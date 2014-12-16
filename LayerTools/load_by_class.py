@@ -23,20 +23,17 @@
 import load_by_class_base
 import sqlite3, os
 
-from qgis.core import QgsCoordinateReferenceSystem,QgsDataSourceURI,QgsVectorLayer,QgsMapLayerRegistry
+from qgis.core import QgsCoordinateReferenceSystem,QgsDataSourceURI,QgsVectorLayer,QgsMapLayerRegistry,QgsMessageLog
 from qgis.gui import QgsGenericProjectionSelector,QgsMessageBar
 import qgis as qgis
 
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import QFileInfo,QSettings
+from PyQt4.QtCore import QFileInfo,QSettings,pyqtSlot
+from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Factories', 'SqlFactory'))
 from sqlGeneratorFactory import SqlGeneratorFactory
-
-from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
-
-from PyQt4.QtCore import pyqtSlot
 
 class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
     def __init__(self, parent=None):
@@ -171,6 +168,7 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
                     self.coordSysLineEditCarregaClassePostgis.setReadOnly(True)
         except:
             pass
+        
     @pyqtSlot(int)
     def on_comboBoxPostgis_currentIndexChanged(self):
         if self.comboBoxPostgis.currentIndex() > 0:
@@ -266,60 +264,48 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         (database, host, port, user, password) = self.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
         uri = QgsDataSourceURI()
         uri.setConnection(str(host),str(port), str(database), str(user), str(password))
-        f = self.filename
-        xmlfilepath = self.qmlPath
-        coordSys = self.crs
-        self.getSelectedItems()
-
-
         if len(self.selectedClasses)>0:
-#             try:
-            for i in self.selectedClasses:
-                schema = ''
-                sql = self.gen.loadLayerFromDatabase(i)
-                print sql
+            try:
                 geom_column = 'geom'
-                uri.setDataSource("",u"(%s\n)"%sql,geom_column,"",'id')
-                uri.disableSelectAtId(True)
-                vlayer = QgsVectorLayer(uri.uri(), i, "postgres")
-                vlayer.setCrs(coordSys)
-                QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
-                vlayer.loadNamedStyle(self.qmlPath+'/'+i.replace('\r','').split('.')[-1]+'.qml',False)
-                QgsMapLayerRegistry.instance().addMapLayer(vlayer)
-
-#                 self.loadEDGVLayer(uri, i, coordSys, xmlfilepath,dbType="postgres")
-            self.restoreInitialState()
-            self.close()
-#             except:
-#                 self.bar.pushMessage("Error!", "Parameters not properly set!", level=QgsMessageBar.CRITICAL)
+                for layer in self.selectedClasses:
+                    split = layer.split('.')
+                    schema = split[0]
+                    layerName = split[1]
+                    sql = self.gen.loadLayerFromDatabase(layer)
+                    uri.setDataSource(schema, layerName, geom_column, sql,'id')
+                    uri.disableSelectAtId(True)
+                    self.loadEDGVLayer(uri, layerName, schema, 'postgres')
+                self.restoreInitialState()
+                self.close()
+            except:
+                self.bar.pushMessage("Error!", "Could not load the selected classes!", level=QgsMessageBar.CRITICAL)
         else:
-            self.bar.pushMessage("Error!", "Parameters not properly set!", level=QgsMessageBar.CRITICAL)
+            self.bar.pushMessage("Warning!", "Please, select at least one class!", level=QgsMessageBar.WARNING)
 
     def loadSpatialiteLayers(self):
-        f = self.filename
-        xmlfilepath = self.qmlPath
-        print xmlfilepath
-        coordSys = self.crs
         self.getSelectedItems()
         uri = QgsDataSourceURI()
-        uri.setDatabase(f)
+        uri.setDatabase(self.filename)
         schema = ''
         geom_column = 'GEOMETRY'
         if len(self.selectedClasses)>0:
             try:
-                for i in self.selectedClasses:
-                    uri.setDataSource(schema, i, geom_column)
-                    vlayer = QgsVectorLayer(uri.uri(), i, 'spatialite')
-                    vlayer.setCrs(coordSys)
-                    QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
-                    vlayer.loadNamedStyle(xmlfilepath+'/'+i.replace('\r','').split('.')[-1]+'.qml',False)
-                    QgsMapLayerRegistry.instance().addMapLayer(vlayer)
-#                     self.loadEDGVLayer(uri, i, schema, geom_column, coordSys, xmlfilepath,dbType='spatialite')
+                for layer_name in self.selectedClasses:
+                    uri.setDataSource(schema, layer_name, geom_column)
+                    self.loadEDGVLayer(uri, layer_name, schema, 'spatialite')
                 self.restoreInitialState()
                 self.close()
             except:
-                self.bar.pushMessage("Error!", "Parameters not properly set!", level=QgsMessageBar.CRITICAL)
+                self.bar.pushMessage("Error!", "Could not load the layer(s)!", level=QgsMessageBar.CRITICAL)
         else:
-            self.bar.pushMessage("Error!", "Parameters not properly set!", level=QgsMessageBar.CRITICAL)
+            self.bar.pushMessage("Warning!", "Please select at least one layer!", level=QgsMessageBar.WARNING)
 
-
+    def loadEDGVLayer(self, uri, layer_name, schema, provider):
+        vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
+        vlayer.setCrs(self.crs)
+        QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
+        vlayerQml = os.path.join(self.qmlPath, layer_name.replace('\r','')+'.qml')
+        vlayer.loadNamedStyle(vlayerQml,False)
+        QgsMapLayerRegistry.instance().addMapLayer(vlayer)
+        if not vlayer.isValid():
+            print vlayer.error().summary()
