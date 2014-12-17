@@ -40,8 +40,8 @@ class SqlGenerator:
     def getSrid(self):
         return None
     
-    def getElementCountFromLayer(self, layerItem):
-        sql = "SELECT count() FROM "+layerItem[0]+";"
+    def getElementCountFromLayer(self, layer):
+        sql = "SELECT count(*) FROM "+layer
         return sql
     
     def getTablesFromDatabase(self):

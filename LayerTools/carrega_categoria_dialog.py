@@ -40,15 +40,12 @@ import sys
 class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_Form):
     def __init__(self, parent=None):
         """Constructor."""
-#         super(QtGui.QDialog).__init__(parent)
-
         super(CarregaCategoriaDialog, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
-#         self.connect(self.pushButtonBuscarArquivo, QtCore.SIGNAL("clicked()"), self.carregaSpatialite)
         self.filename = ""
         self.bdCarregado = False
         self.coordSysDefinido = False
@@ -72,7 +69,6 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
         self.linhaComElemento = []
         self.areaComElemento = []
 
-
         self.bar = QgsMessageBar()
         self.setLayout(QtGui.QGridLayout(self))
         self.layout().setContentsMargins(0,0,0,0)
@@ -82,21 +78,13 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
         self.bar.setSizePolicy(sizePolicy)
         self.layout().addWidget(self.bar, 0,0,1,1)
 
-#         self.bar.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Fixed)
-#         self.addWidget(self.bar)
-
-
         QtCore.QObject.connect(self.pushButtonBuscarArquivo, QtCore.SIGNAL(("clicked()")), self.carregaSpatialite)
         QtCore.QObject.connect(self.arquivoLineEdit, QtCore.SIGNAL(("textChanged(QString)")), self.listaCategorias)
-#         QtCore.QObject.connect(self.bdCarregado,  QtCore.SIGNAL("valueChanged(bool)"),  self.updateBDField )
         QtCore.QObject.connect(self.pushButtonBuscarSistCoord, QtCore.SIGNAL(("clicked()")), self.setaSistCoord)
         QtCore.QObject.connect(self.pushButtonSelecionaTodas, QtCore.SIGNAL(("clicked()")), self.selecionaTodas)
         QtCore.QObject.connect(self.pushButtonDeselecionaTodas, QtCore.SIGNAL(("clicked()")), self.deselecionaTodas)
         QtCore.QObject.connect(self.pushButtonSelecionaUma, QtCore.SIGNAL(("clicked()")), self.selecionaUma)
         QtCore.QObject.connect(self.pushButtonDeselecionaUma, QtCore.SIGNAL(("clicked()")), self.deselecionaUma)
-#         QtCore.QObject.connect(self.checkBoxPonto, QtCore.SIGNAL(("stateChanged(int)")), self.setaBoolPonto)
-#         QtCore.QObject.connect(self.checkBoxLinha, QtCore.SIGNAL(("stateChanged(int)")), self.setaBoolLinha)
-#         QtCore.QObject.connect(self.checkBoxArea, QtCore.SIGNAL(("stateChanged(int)")), self.setaBoolArea)
         QtCore.QObject.connect(self.checkBoxTodos, QtCore.SIGNAL(("stateChanged(int)")), self.setaBoolTodos)
         QtCore.QObject.connect(self.pushButtonOk, QtCore.SIGNAL(("clicked()")), self.okselecionado)
         QtCore.QObject.connect(self.pushButtonCancelar, QtCore.SIGNAL(("clicked()")), self.cancela)
@@ -135,9 +123,6 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
         self.checkBoxSomenteElementos.setCheckState(0)
         self.pushButtonBuscarSistCoord.setEnabled(True)
 
-
-
-
     def carregaSpatialite(self):
         fd = QtGui.QFileDialog()
         self.filename = fd.getOpenFileName(filter='*.sqlite')
@@ -167,7 +152,6 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
         return lista[0][0]
 
     def updateSistCoordField(self):
-#         if self.bdCarregado == True:
         try:
 
             epsg = self.descobreEPSG()
@@ -186,9 +170,6 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
                     self.coordSysLineEdit.setReadOnly(True)
         except:
             pass
-
-
-
 
     def setaSistCoord(self):
         projSelector = QgsGenericProjectionSelector()
@@ -235,7 +216,6 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
                 self.areaComElemento.append(self.area[count])
             count+=1
 
-
     def listaCategorias(self):
         con = sqlite3.connect(self.filename)
         cursor = con.cursor()
@@ -259,8 +239,6 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
         for i in self.area:
             categoriasAux.append(i[0].split("_")[0])
 
-
-
         for j in categoriasAux:
             if j not in self.categorias:
                 self.categorias.append(j)
@@ -273,8 +251,6 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
             self.listWidgetOrigemCategoria.addItem(item)
         self.bdCarregado = True
         self.updateBDField()
-
-
 
     def selecionaTodas(self):
         tam = self.listWidgetOrigemCategoria.__len__()
@@ -348,20 +324,10 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
             ponto = self.pontoComElemento
             linha = self.linhaComElemento
             area = self.areaComElemento
-
-#             print ponto
-#             print linha
-#             print area
         else:
             ponto = self.ponto
             linha = self.linha
             area = self.area
-#             print ponto
-#             print linha
-#             print area
-#
-
-
 
         if self.bdCarregado and self.coordSysDefinido and len(self.listWidgetDestinoCategoria)>0:
             self.categoriasSelecionadas = []
@@ -389,7 +355,6 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
                 pass
 
         else:
-#             qgis.utils.iface.messageBar().pushMessage("Erro!", "Selecione o sistema de coordenadas e o banco de dados corretamente!", level=QgsMessageBar.CRITICAL)
             if self.bdCarregado == True and self.coordSysDefinido == False:
                 self.bar.pushMessage("Erro!", "Selecione o sistema de coordenadas corretamente!", level=QgsMessageBar.CRITICAL)
             if self.bdCarregado == False and self.coordSysDefinido == False:
@@ -401,9 +366,6 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
             self.pontoComElemento = []
             self.linhaComElemento = []
             self.areaComElemento = []
-
-#             self.pushMessage("Erro!", "Selecione o sistema de coordenadas e o banco de dados corretamente!", level=QgsMessageBar.WARNING)
-
 
     def carregaCamada(self,uri, nome_camada,schema,geom_column, coordSys,grupo,xmlfilepath):
         uri.setDataSource(schema, nome_camada[0], geom_column)
@@ -430,15 +392,6 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
 
 
     def carregaCamadaPrimitiva(self,uri,primitiva,listaCategorias,listaCamadas,schema,geom_column, coordSys,xmlfilepath):
-    #    s = QSettings()
-    #    oldValidation = s.value("/Projections/defaultBehaviour")
-    #    s.setValue("/Projections/defaultBehaviour","useGlobal")
-    #
-    #    uri = QgsDataSourceURI()
-    #    uri.setDatabase(filename)
-    #    schema = ''
-    #    geom_column = 'GEOMETRY'
-
         if primitiva == 'p':
             idGrupo = qgis.utils.iface.legendInterface (). addGroup ("Ponto", -1)
             for categoria in listaCategorias:
@@ -452,7 +405,6 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
             for categoria in listaCategorias:
                 self.carregaCamadaPrimitivaCategoria(uri,categoria,listaCamadas,schema,geom_column, coordSys,idGrupo,xmlfilepath)
 
-
     def carregaCamadas(self,filename,xmlfilepath,coordSys,primitiva,listaCategorias,listaCamadas):
         s = QSettings()
         oldValidation = s.value("/Projections/defaultBehaviour")
@@ -465,7 +417,6 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
 
         self.carregaCamadaPrimitiva(uri,primitiva,listaCategorias,listaCamadas,schema,geom_column, coordSys,xmlfilepath)
         s.setValue("/Projections/defaultBehaviour",oldValidation)
-
 
     def cancela(self):
         self.restauraInicio()

@@ -50,6 +50,13 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         self.categories = []
         self.selectedClasses = []
 
+        self.point = []
+        self.line = []
+        self.polygon = []
+        self.pointWithElement = []
+        self.lineWithElement = []
+        self.polygonWithElement = []
+
         #Sql factory generator
         self.isSpatialite = True
 
@@ -83,6 +90,10 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         QtCore.QObject.connect(self.pushButtonDeselectAll, QtCore.SIGNAL(("clicked()")), self.deselectAll)
         QtCore.QObject.connect(self.pushButtonSelectOne, QtCore.SIGNAL(("clicked()")), self.selectOne)
         QtCore.QObject.connect(self.pushButtonDeselectOne, QtCore.SIGNAL(("clicked()")), self.deselectOne)
+        QtCore.QObject.connect(self.checkBoxPoint, QtCore.SIGNAL(("stateChanged(int)")), self.setPointGroup)
+        QtCore.QObject.connect(self.checkBoxLine, QtCore.SIGNAL(("stateChanged(int)")), self.setLineGroup)
+        QtCore.QObject.connect(self.checkBoxPolygon, QtCore.SIGNAL(("stateChanged(int)")), self.setPolygonGroup)
+        QtCore.QObject.connect(self.checkBoxAll, QtCore.SIGNAL(("stateChanged(int)")), self.setAllGroup)
 
         self.db = None
         #populating the postgis combobox
@@ -111,6 +122,13 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         self.listWidgetCategoryFrom.clear()
         self.listWidgetCategoryTo.clear()
 
+        self.point = []
+        self.line = []
+        self.polygon = []
+        self.pointWithElement = []
+        self.lineWithElement = []
+        self.polygonWithElement = []
+
         #Setting the database type
         if self.tabWidget.currentIndex() == 0:
             self.isSpatialite = True
@@ -128,7 +146,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             self.filename = ""
             self.spatialiteFileEdit.setText(self.filename)
 
-    def listClassesFromDatabase(self):
+    def listCategoriesFromDatabase(self):
         self.listWidgetCategoryFrom.clear()
         self.listWidgetCategoryTo.clear()
         sql = self.gen.getTablesFromDatabase()
@@ -138,6 +156,8 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
                 tableName = query.value(0)
                 layerName = tableName
                 split = tableName.split('_')
+                if len(split) < 2:
+                    continue
                 schema = split[0]
                 category = split[1]
                 categoryName = schema+'.'+category
@@ -147,9 +167,19 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
                 split = tableName.split('_')
                 category = split[0]
                 categoryName = tableSchema+'.'+category
+                layerName = tableSchema+'.'+tableName
+                
+            if layerName.split("_")[-1] == "p":
+                self.point.append(layerName)
+            if layerName.split("_")[-1] == "l":
+                self.line.append(layerName)
+            if layerName.split("_")[-1] == "a":
+                self.polygon.append(layerName)
+
             if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
                 or tableName.split("_")[-1] == "a":
                 self.insertIntoListView(categoryName)
+
         self.listWidgetCategoryFrom.sortItems()
         self.setCRS()
         
@@ -186,6 +216,34 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             item = self.listWidgetCategoryTo.takeItem(self.listWidgetCategoryTo.row(i))
             self.listWidgetCategoryFrom.addItem(item)
         self.listWidgetCategoryFrom.sortItems()
+
+    def setPointGroup(self):
+        if self.checkBoxPoint.isChecked() and self.checkBoxLine.isChecked() and self.checkBoxPolygon.isChecked():
+            self.checkBoxAll.setCheckState(2)
+        else:
+            self.checkBoxAll.setCheckState(0)
+
+    def setLineGroup(self):
+        if self.checkBoxPoint.isChecked() and self.checkBoxLine.isChecked() and self.checkBoxPolygon.isChecked():
+            self.checkBoxAll.setCheckState(2)
+        else:
+            self.checkBoxAll.setCheckState(0)
+
+    def setPolygonGroup(self):
+        if self.checkBoxPoint.isChecked() and self.checkBoxLine.isChecked() and self.checkBoxPolygon.isChecked():
+            self.checkBoxAll.setCheckState(2)
+        else:
+            self.checkBoxAll.setCheckState(0)
+
+    def setAllGroup(self):
+        if self.checkBoxAll.isChecked():
+            self.checkBoxPoint.setCheckState(2)
+            self.checkBoxLine.setCheckState(2)
+            self.checkBoxPolygon.setCheckState(2)
+        else:
+            self.checkBoxPoint.setCheckState(0)
+            self.checkBoxLine.setCheckState(0)
+            self.checkBoxPolygon.setCheckState(0)
 
     def setCRS(self):
         try:
@@ -229,7 +287,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             print self.db.lastError().text()
         else:
             self.dbLoaded = True
-            self.listClassesFromDatabase()
+            self.listCategoriesFromDatabase()
 
     def getPostGISConnectionParameters(self, name):
         settings = QSettings()
@@ -275,35 +333,128 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         self.selectedClasses.sort()
 
     def okSelected(self):
-        if self.isSpatialite:
-            self.loadSpatialiteLayers()
+        if self.checkBoxOnlyWithElements.isChecked():
+            self.setLayersWithElements()
+            ponto = self.pointWithElement
+            linha = self.lineWithElement
+            area = self.polygonWithElement
         else:
-            self.loadPostGISLayers()
+            ponto = self.point
+            linha = self.line
+            area = self.polygon
+            
+        if self.db and self.crs and len(self.listWidgetCategoryTo)>0:
+            categoriasSelecionadas = []
 
-    def loadPostGISLayers(self):
-        self.getSelectedItems()
+            for i in range(self.listWidgetCategoryTo.__len__()):
+                categoriasSelecionadas.append(self.listWidgetCategoryTo.item(i).text())
+                
+            try:
+                if self.checkBoxPoint.isChecked():
+                    self.loadLayers('p',categoriasSelecionadas,ponto)
+
+                if self.checkBoxLine.isChecked():
+                    self.loadLayers('l',categoriasSelecionadas,linha)
+
+                if self.checkBoxPolygon.isChecked():
+                    self.loadLayers('a',categoriasSelecionadas,area)
+
+                if self.checkBoxPoint.isChecked()== False and self.checkBoxLine.isChecked() == False and self.checkBoxPolygon.isChecked() == False:
+                    self.bar.pushMessage("WARNING!", "Please, select at least one type of layer!", level=QgsMessageBar.WARNING)
+                else:
+                    self.restoreInitialState()
+                    self.close()
+            except:
+                qgis.utils.iface.messageBar().pushMessage("CRITICAL!", "Problem loading the categories!", level=QgsMessageBar.CRITICAL)
+                pass
+
+        else:
+            if self.db and not self.crs:
+                self.bar.pushMessage("CRITICAL!", "Could not determine the coordinate reference system!", level=QgsMessageBar.CRITICAL)
+            if not self.db and not self.crs:
+                self.bar.pushMessage("CRITICAL!", "Database not loaded properly!", level=QgsMessageBar.CRITICAL)
+                self.bar.pushMessage("CRITICAL!", "Could not determine the coordinate reference system!", level=QgsMessageBar.CRITICAL)
+            if len(self.listWidgetCategoryTo)==0:
+                self.bar.pushMessage("WARNING!", "Please, select at least one category!", level=QgsMessageBar.WARNING)
+            categoriasSelecionadas = []
+            self.pointWithElement = []
+            self.lineWithElement = []
+            self.polygonWithElement = []
+            
+    def loadLayers(self, type, categories, layer_names):
+        if self.isSpatialite:
+            self.loadSpatialiteLayers(type, categories, layer_names)
+        else:
+            self.loadPostGISLayers(type, categories, layer_names)
+            
+    def setLayersWithElements(self):
+        self.pointWithElement = []
+        self.lineWithElement = []
+        self.polygonWithElement = []
+
+        pontoAux = self.countElements(self.point)
+        linhaAux = self.countElements(self.line)
+        areaAux = self.countElements(self.polygon)
+        count = 0
+        for i in pontoAux:
+            if i > 0:
+                self.pointWithElement.append(self.point[count])
+            count+=1
+        count = 0
+        for i in linhaAux:
+            if i > 0:
+                self.lineWithElement.append(self.line[count])
+            count+=1
+        count = 0
+        for i in areaAux:
+            if i > 0:
+                self.polygonWithElement.append(self.polygon[count])
+            count+=1
+            
+    def countElements(self, layers):
+        listaQuantidades = []
+        for layer in layers:
+            sql = self.gen.getElementCountFromLayer(layer)
+            query = QSqlQuery(self.db)
+            if not query.exec_(sql):
+                QgsMessageLog.logMessage("Problem counting elements: "+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            listaQuantidades.append(query.value(0))
+        return listaQuantidades
+
+    def loadPostGISLayers(self, type, categories, layer_names):
         (database, host, port, user, password) = self.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
         uri = QgsDataSourceURI()
         uri.setConnection(str(host),str(port), str(database), str(user), str(password))
-        if len(self.selectedClasses)>0:
-            try:
-                geom_column = 'geom'
-                for layer in self.selectedClasses:
-                    split = layer.split('.')
-                    schema = split[0]
-                    layerName = split[1]
-                    sql = self.gen.loadLayerFromDatabase(layer)
-                    uri.setDataSource(schema, layerName, geom_column, sql,'id')
-                    uri.disableSelectAtId(True)
-                    self.loadEDGVLayer(uri, layerName, schema, 'postgres')
-                self.restoreInitialState()
-                self.close()
-            except:
-                self.bar.pushMessage("Error!", "Could not load the selected classes!", level=QgsMessageBar.CRITICAL)
-        else:
-            self.bar.pushMessage("Warning!", "Please, select at least one class!", level=QgsMessageBar.WARNING)
+        geom_column = 'geom'
 
-    def loadSpatialiteLayers(self):
+        if type == 'p':
+            idGrupo = qgis.utils.iface.legendInterface (). addGroup ("Ponto", -1)
+            for categoria in categories:
+                self.preparePostGISToLoad(uri, categoria, layer_names, idGrupo, geom_column)
+        if type == 'l':
+            idGrupo = qgis.utils.iface.legendInterface (). addGroup ("Linha", -1)
+            for categoria in categories:
+                self.preparePostGISToLoad(uri, categoria, layer_names, idGrupo, geom_column)
+        if type == 'a':
+            idGrupo = qgis.utils.iface.legendInterface (). addGroup ("Area", -1)
+            for categoria in categories:
+                self.preparePostGISToLoad(uri, categoria, layer_names, idGrupo, geom_column)
+                        
+    def preparePostGISToLoad(self, uri, categoria, layer_names, idGrupo, geom_column):
+        for layer_name in layer_names:
+            split = layer_name.split('_')
+            category = split[0]
+            schema = category.split('.')[0]
+            name = layer_name.replace(schema+'.','')
+            if category == categoria:
+                idSubgrupo = qgis.utils.iface.legendInterface().addGroup(category,True,idGrupo)
+                sql = self.gen.loadLayerFromDatabase(layer_name)
+                print schema,name,geom_column,sql
+                uri.setDataSource(schema, name, geom_column, sql,'id')
+                uri.disableSelectAtId(True)
+                self.loadEDGVLayer(uri, name, schema, 'postgres', idSubgrupo)
+
+    def loadSpatialiteLayers(self, type, categories, layer_names):
         self.getSelectedItems()
         uri = QgsDataSourceURI()
         uri.setDatabase(self.filename)
@@ -321,12 +472,13 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         else:
             self.bar.pushMessage("Warning!", "Please select at least one layer!", level=QgsMessageBar.WARNING)
 
-    def loadEDGVLayer(self, uri, layer_name, schema, provider):
+    def loadEDGVLayer(self, uri, layer_name, schema, provider, idSubgrupo):
         vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
         vlayer.setCrs(self.crs)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
         vlayerQml = os.path.join(self.qmlPath, layer_name.replace('\r','')+'.qml')
         vlayer.loadNamedStyle(vlayerQml,False)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer)
+        qgis.utils.iface.legendInterface().moveLayer(vlayer, idSubgrupo)
         if not vlayer.isValid():
             print vlayer.error().summary()
