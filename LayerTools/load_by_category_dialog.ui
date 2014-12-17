@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>LoadByCategory</class>
+ <widget class="QDialog" name="LoadByCategory">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_8">
    <item row="0" column="0">
-    <widget class="QTabWidget" name="tabWidgetLoadByClass">
+    <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
       <number>1</number>
      </property>

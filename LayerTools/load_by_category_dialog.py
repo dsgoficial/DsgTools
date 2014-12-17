@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'load_by_category_dialog_base.ui'
+# Form implementation generated from reading ui file 'load_by_category_dialog.ui'
 #
-# Created: Wed Dec 17 11:02:33 2014
+# Created: Wed Dec 17 12:42:58 2014
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -14,14 +14,14 @@ try:
 except AttributeError:
     _fromUtf8 = lambda s: s
 
-class Ui_Dialog(object):
-    def setupUi(self, Dialog):
-        Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(551, 436)
-        self.gridLayout_8 = QtGui.QGridLayout(Dialog)
+class Ui_LoadByCategory(object):
+    def setupUi(self, LoadByCategory):
+        LoadByCategory.setObjectName(_fromUtf8("LoadByCategory"))
+        LoadByCategory.resize(551, 436)
+        self.gridLayout_8 = QtGui.QGridLayout(LoadByCategory)
         self.gridLayout_8.setObjectName(_fromUtf8("gridLayout_8"))
-        self.tabWidgetLoadByClass = QtGui.QTabWidget(Dialog)
-        self.tabWidgetLoadByClass.setObjectName(_fromUtf8("tabWidgetLoadByClass"))
+        self.tabWidget = QtGui.QTabWidget(LoadByCategory)
+        self.tabWidget.setObjectName(_fromUtf8("tabWidget"))
         self.tabSpatialite = QtGui.QWidget()
         self.tabSpatialite.setObjectName(_fromUtf8("tabSpatialite"))
         self.gridLayout_7 = QtGui.QGridLayout(self.tabSpatialite)
@@ -56,7 +56,7 @@ class Ui_Dialog(object):
         self.horizontalLayout_2.addItem(spacerItem2)
         self.gridLayout_6.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
         self.gridLayout_7.addLayout(self.gridLayout_6, 0, 0, 1, 1)
-        self.tabWidgetLoadByClass.addTab(self.tabSpatialite, _fromUtf8(""))
+        self.tabWidget.addTab(self.tabSpatialite, _fromUtf8(""))
         self.tabPostGIS = QtGui.QWidget()
         self.tabPostGIS.setObjectName(_fromUtf8("tabPostGIS"))
         self.gridLayout_5 = QtGui.QGridLayout(self.tabPostGIS)
@@ -83,11 +83,11 @@ class Ui_Dialog(object):
         self.horizontalLayout_12.addItem(spacerItem3)
         self.gridLayout.addLayout(self.horizontalLayout_12, 1, 0, 1, 1)
         self.gridLayout_5.addWidget(self.groupBox_3, 0, 0, 1, 1)
-        self.tabWidgetLoadByClass.addTab(self.tabPostGIS, _fromUtf8(""))
-        self.gridLayout_8.addWidget(self.tabWidgetLoadByClass, 0, 0, 1, 1)
+        self.tabWidget.addTab(self.tabPostGIS, _fromUtf8(""))
+        self.gridLayout_8.addWidget(self.tabWidget, 0, 0, 1, 1)
         self.gridLayout_4 = QtGui.QGridLayout()
         self.gridLayout_4.setObjectName(_fromUtf8("gridLayout_4"))
-        self.groupBox = QtGui.QGroupBox(Dialog)
+        self.groupBox = QtGui.QGroupBox(LoadByCategory)
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.gridLayout_3 = QtGui.QGridLayout(self.groupBox)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
@@ -118,7 +118,7 @@ class Ui_Dialog(object):
         self.horizontalLayout_3.addWidget(self.listWidgetCategoryTo)
         self.gridLayout_3.addLayout(self.horizontalLayout_3, 0, 0, 1, 1)
         self.gridLayout_4.addWidget(self.groupBox, 0, 0, 1, 1)
-        self.groupBox_2 = QtGui.QGroupBox(Dialog)
+        self.groupBox_2 = QtGui.QGroupBox(LoadByCategory)
         self.groupBox_2.setObjectName(_fromUtf8("groupBox_2"))
         self.gridLayout_2 = QtGui.QGridLayout(self.groupBox_2)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
@@ -146,46 +146,46 @@ class Ui_Dialog(object):
         self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
         spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem4)
-        self.pushButtonOk = QtGui.QPushButton(Dialog)
+        self.pushButtonOk = QtGui.QPushButton(LoadByCategory)
         self.pushButtonOk.setObjectName(_fromUtf8("pushButtonOk"))
         self.horizontalLayout_4.addWidget(self.pushButtonOk)
         spacerItem5 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem5)
-        self.pushButtonCancel = QtGui.QPushButton(Dialog)
+        self.pushButtonCancel = QtGui.QPushButton(LoadByCategory)
         self.pushButtonCancel.setObjectName(_fromUtf8("pushButtonCancel"))
         self.horizontalLayout_4.addWidget(self.pushButtonCancel)
         spacerItem6 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem6)
         self.gridLayout_8.addLayout(self.horizontalLayout_4, 2, 0, 1, 1)
 
-        self.retranslateUi(Dialog)
-        self.tabWidgetLoadByClass.setCurrentIndex(1)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        self.retranslateUi(LoadByCategory)
+        self.tabWidget.setCurrentIndex(1)
+        QtCore.QMetaObject.connectSlotsByName(LoadByCategory)
 
-    def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("Dialog", "File                    ", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonOpenFile.setText(QtGui.QApplication.translate("Dialog", "Search", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("Dialog", "Coordinate System", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidgetLoadByClass.setTabText(self.tabWidgetLoadByClass.indexOf(self.tabSpatialite), QtGui.QApplication.translate("Dialog", "Spatialite", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox_3.setTitle(QtGui.QApplication.translate("Dialog", "Connections", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_7.setText(QtGui.QApplication.translate("Dialog", "Coordinate System", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidgetLoadByClass.setTabText(self.tabWidgetLoadByClass.indexOf(self.tabPostGIS), QtGui.QApplication.translate("Dialog", "PostGIS", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox.setTitle(QtGui.QApplication.translate("Dialog", "Load by Category", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonSelectAll.setToolTip(QtGui.QApplication.translate("Dialog", "Select all categories in the database", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonSelectAll.setText(QtGui.QApplication.translate("Dialog", ">>", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonSelectOne.setToolTip(QtGui.QApplication.translate("Dialog", "Select only the selected", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonSelectOne.setText(QtGui.QApplication.translate("Dialog", ">", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonDeselectOne.setToolTip(QtGui.QApplication.translate("Dialog", "Remove from list only the selected categories", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonDeselectOne.setText(QtGui.QApplication.translate("Dialog", "<", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonDeselectAll.setToolTip(QtGui.QApplication.translate("Dialog", "Remove all categories", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonDeselectAll.setText(QtGui.QApplication.translate("Dialog", "<<", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox_2.setTitle(QtGui.QApplication.translate("Dialog", "Group by Geometry Type", None, QtGui.QApplication.UnicodeUTF8))
-        self.checkBoxPoint.setText(QtGui.QApplication.translate("Dialog", "Point", None, QtGui.QApplication.UnicodeUTF8))
-        self.checkBoxLine.setText(QtGui.QApplication.translate("Dialog", "Line", None, QtGui.QApplication.UnicodeUTF8))
-        self.checkBoxPolygon.setText(QtGui.QApplication.translate("Dialog", "Polygon", None, QtGui.QApplication.UnicodeUTF8))
-        self.checkBoxAll.setText(QtGui.QApplication.translate("Dialog", "Select All", None, QtGui.QApplication.UnicodeUTF8))
-        self.checkBoxOnlyWithElements.setText(QtGui.QApplication.translate("Dialog", "Only layers with Elements", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonOk.setText(QtGui.QApplication.translate("Dialog", "Ok", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonCancel.setText(QtGui.QApplication.translate("Dialog", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+    def retranslateUi(self, LoadByCategory):
+        LoadByCategory.setWindowTitle(QtGui.QApplication.translate("LoadByCategory", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("LoadByCategory", "File                    ", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonOpenFile.setText(QtGui.QApplication.translate("LoadByCategory", "Search", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("LoadByCategory", "Coordinate System", None, QtGui.QApplication.UnicodeUTF8))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSpatialite), QtGui.QApplication.translate("LoadByCategory", "Spatialite", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBox_3.setTitle(QtGui.QApplication.translate("LoadByCategory", "Connections", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_7.setText(QtGui.QApplication.translate("LoadByCategory", "Coordinate System", None, QtGui.QApplication.UnicodeUTF8))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPostGIS), QtGui.QApplication.translate("LoadByCategory", "PostGIS", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBox.setTitle(QtGui.QApplication.translate("LoadByCategory", "Load by Category", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonSelectAll.setToolTip(QtGui.QApplication.translate("LoadByCategory", "Select all categories in the database", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonSelectAll.setText(QtGui.QApplication.translate("LoadByCategory", ">>", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonSelectOne.setToolTip(QtGui.QApplication.translate("LoadByCategory", "Select only the selected", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonSelectOne.setText(QtGui.QApplication.translate("LoadByCategory", ">", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonDeselectOne.setToolTip(QtGui.QApplication.translate("LoadByCategory", "Remove from list only the selected categories", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonDeselectOne.setText(QtGui.QApplication.translate("LoadByCategory", "<", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonDeselectAll.setToolTip(QtGui.QApplication.translate("LoadByCategory", "Remove all categories", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonDeselectAll.setText(QtGui.QApplication.translate("LoadByCategory", "<<", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBox_2.setTitle(QtGui.QApplication.translate("LoadByCategory", "Group by Geometry Type", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxPoint.setText(QtGui.QApplication.translate("LoadByCategory", "Point", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxLine.setText(QtGui.QApplication.translate("LoadByCategory", "Line", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxPolygon.setText(QtGui.QApplication.translate("LoadByCategory", "Polygon", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxAll.setText(QtGui.QApplication.translate("LoadByCategory", "Select All", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxOnlyWithElements.setText(QtGui.QApplication.translate("LoadByCategory", "Only layers with Elements", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonOk.setText(QtGui.QApplication.translate("LoadByCategory", "Ok", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonCancel.setText(QtGui.QApplication.translate("LoadByCategory", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 

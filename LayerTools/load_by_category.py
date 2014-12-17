@@ -20,8 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-import load_by_class_base
-import sqlite3, os
+import load_by_category_dialog
 
 from qgis.core import QgsCoordinateReferenceSystem,QgsDataSourceURI,QgsVectorLayer,QgsMapLayerRegistry,QgsMessageLog
 from qgis.gui import QgsGenericProjectionSelector,QgsMessageBar
@@ -35,10 +34,10 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Factories', 'SqlFactory'))
 from sqlGeneratorFactory import SqlGeneratorFactory
 
-class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
+class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
     def __init__(self, parent=None):
         """Constructor."""
-        super(LoadByClass, self).__init__(parent)
+        super(LoadByCategory, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
@@ -48,6 +47,7 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         self.dbLoaded = False
         self.epsg = 0
         self.crs = None
+        self.categories = []
         self.selectedClasses = []
 
         #Sql factory generator
@@ -77,7 +77,6 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         #Objects Connections
         QtCore.QObject.connect(self.pushButtonOpenFile, QtCore.SIGNAL(("clicked()")), self.loadDatabase)
         QtCore.QObject.connect(self.pushButtonCancel, QtCore.SIGNAL(("clicked()")), self.cancel)
-        QtCore.QObject.connect(self.selectAllCheck, QtCore.SIGNAL(("stateChanged(int)")), self.selectAll)
         QtCore.QObject.connect(self.pushButtonOk, QtCore.SIGNAL(("clicked()")), self.okSelected)
         QtCore.QObject.connect(self.tabWidget,QtCore.SIGNAL(("currentChanged(int)")), self.restoreInitialState)
 
@@ -98,23 +97,22 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         self.dbLoaded = False
         self.epsg = 0
         self.crs = None
+        self.categories = []
         self.selectedClasses = []
         self.spatialiteFileEdit.setText(self.filename)
         self.postGISCrsEdit.setText('')
         self.postGISCrsEdit.setReadOnly(True)
         self.spatialiteCrsEdit.setText('')
         self.spatialiteCrsEdit.setReadOnly(True)
+        self.listWidgetCategoryFrom.clear()
+        self.listWidgetCategoryTo.clear()
 
-        tam = self.classesListWidget.__len__()
-        for i in range(tam+1,1,-1):
-            item = self.classesListWidget.takeItem(i-2)
-
-        self.selectAllCheck.setCheckState(0)
         #Setting the database type
         if self.tabWidget.currentIndex() == 0:
             self.isSpatialite = True
         else:
             self.isSpatialite = False
+
         #getting the sql generator according to the database type
         self.gen = self.factory.createSqlGenerator(self.isSpatialite)
         self.comboBoxPostgis.setCurrentIndex(0)
@@ -127,7 +125,8 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
             self.spatialiteFileEdit.setText(self.filename)
 
     def listClassesFromDatabase(self):
-        self.classesListWidget.clear()
+        self.listWidgetCategoryFrom.clear()
+        self.listWidgetCategoryTo.clear()
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
         while query.next():
@@ -137,13 +136,14 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
             else:
                 tableSchema = query.value(0)
                 tableName = query.value(1)
-                layerName = tableSchema+'.'+tableName
+                split = tableName.split('_')
+                category = split[0]
+                categoryName = tableSchema+'.'+category
             if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
                 or tableName.split("_")[-1] == "a":
-
-                item = QtGui.QListWidgetItem(layerName)
-                self.classesListWidget.addItem(item)
-        self.classesListWidget.sortItems()
+                item = QtGui.QListWidgetItem(categoryName)
+                self.listWidgetCategoryFrom.addItem(item)
+        self.listWidgetCategoryFrom.sortItems()
         self.setCRS()
 
     def setCRS(self):
@@ -224,19 +224,6 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
     def cancel(self):
         self.restoreInitialState()
         self.close()
-
-    def selectAll(self):
-        if self.selectAllCheck.isChecked():
-            tam = self.classesListWidget.__len__()
-            for i in range(tam+1):
-                item = self.classesListWidget.item(i-1)
-                self.classesListWidget.setItemSelected(item,2)
-
-        else:
-            tam = self.classesListWidget.__len__()
-            for i in range(tam+1):
-                item = self.classesListWidget.item(i-1)
-                self.classesListWidget.setItemSelected(item,0)
 
     def getSelectedItems(self):
         lista = self.classesListWidget.selectedItems()

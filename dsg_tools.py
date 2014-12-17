@@ -39,8 +39,8 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/LayerTools'))
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ComplexTools'))
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ServerTools'))
 
-from carrega_categoria_dialog import CarregaCategoriaDialog
 from load_by_class import LoadByClass
+from load_by_category import LoadByCategory
 from cria_spatialite_dialog import CriaSpatialiteDialog
 from cria_moldura_dialog import CriaMolduraDialog
 #from createComplex import CreateComplexDialog
@@ -398,7 +398,7 @@ class DsgTools:
             self.layerButton.setDefaultAction(self.toolbar.sender())
         except:
             pass
-        self.dlg = CarregaCategoriaDialog()
+        self.dlg = LoadByCategory()
         self.dlg.show()
         result = self.dlg.exec_()
         if result:
