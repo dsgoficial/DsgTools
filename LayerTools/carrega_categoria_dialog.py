@@ -40,12 +40,15 @@ import sys
 class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_Form):
     def __init__(self, parent=None):
         """Constructor."""
+#         super(QtGui.QDialog).__init__(parent)
+
         super(CarregaCategoriaDialog, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
+#         self.connect(self.pushButtonBuscarArquivo, QtCore.SIGNAL("clicked()"), self.carregaSpatialite)
         self.filename = ""
         self.bdCarregado = False
         self.coordSysDefinido = False
@@ -69,6 +72,7 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
         self.linhaComElemento = []
         self.areaComElemento = []
 
+
         self.bar = QgsMessageBar()
         self.setLayout(QtGui.QGridLayout(self))
         self.layout().setContentsMargins(0,0,0,0)
@@ -78,6 +82,10 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
         self.bar.setSizePolicy(sizePolicy)
         self.layout().addWidget(self.bar, 0,0,1,1)
 
+#         self.bar.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Fixed)
+#         self.addWidget(self.bar)
+
+
         QtCore.QObject.connect(self.pushButtonBuscarArquivo, QtCore.SIGNAL(("clicked()")), self.carregaSpatialite)
         QtCore.QObject.connect(self.arquivoLineEdit, QtCore.SIGNAL(("textChanged(QString)")), self.listaCategorias)
         QtCore.QObject.connect(self.pushButtonBuscarSistCoord, QtCore.SIGNAL(("clicked()")), self.setaSistCoord)
@@ -85,6 +93,9 @@ class CarregaCategoriaDialog(QtGui.QDialog, carrega_categoria_dialog_base.Ui_For
         QtCore.QObject.connect(self.pushButtonDeselecionaTodas, QtCore.SIGNAL(("clicked()")), self.deselecionaTodas)
         QtCore.QObject.connect(self.pushButtonSelecionaUma, QtCore.SIGNAL(("clicked()")), self.selecionaUma)
         QtCore.QObject.connect(self.pushButtonDeselecionaUma, QtCore.SIGNAL(("clicked()")), self.deselecionaUma)
+#         QtCore.QObject.connect(self.checkBoxPonto, QtCore.SIGNAL(("stateChanged(int)")), self.setaBoolPonto)
+#         QtCore.QObject.connect(self.checkBoxLinha, QtCore.SIGNAL(("stateChanged(int)")), self.setaBoolLinha)
+#         QtCore.QObject.connect(self.checkBoxArea, QtCore.SIGNAL(("stateChanged(int)")), self.setaBoolArea)
         QtCore.QObject.connect(self.checkBoxTodos, QtCore.SIGNAL(("stateChanged(int)")), self.setaBoolTodos)
         QtCore.QObject.connect(self.pushButtonOk, QtCore.SIGNAL(("clicked()")), self.okselecionado)
         QtCore.QObject.connect(self.pushButtonCancelar, QtCore.SIGNAL(("clicked()")), self.cancela)
