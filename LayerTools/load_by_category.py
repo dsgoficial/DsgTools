@@ -27,7 +27,7 @@ from qgis.gui import QgsGenericProjectionSelector,QgsMessageBar
 import qgis as qgis
 
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import QFileInfo,QSettings,pyqtSlot
+from PyQt4.QtCore import QFileInfo,QSettings,pyqtSlot, Qt
 from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 
 import sys, os
@@ -79,6 +79,10 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         QtCore.QObject.connect(self.pushButtonCancel, QtCore.SIGNAL(("clicked()")), self.cancel)
         QtCore.QObject.connect(self.pushButtonOk, QtCore.SIGNAL(("clicked()")), self.okSelected)
         QtCore.QObject.connect(self.tabWidget,QtCore.SIGNAL(("currentChanged(int)")), self.restoreInitialState)
+        QtCore.QObject.connect(self.pushButtonSelectAll, QtCore.SIGNAL(("clicked()")), self.selectAll)
+        QtCore.QObject.connect(self.pushButtonDeselectAll, QtCore.SIGNAL(("clicked()")), self.deselectAll)
+        QtCore.QObject.connect(self.pushButtonSelectOne, QtCore.SIGNAL(("clicked()")), self.selectOne)
+        QtCore.QObject.connect(self.pushButtonDeselectOne, QtCore.SIGNAL(("clicked()")), self.deselectOne)
 
         self.db = None
         #populating the postgis combobox
@@ -133,6 +137,10 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             if self.isSpatialite:
                 tableName = query.value(0)
                 layerName = tableName
+                split = tableName.split('_')
+                schema = split[0]
+                category = split[1]
+                categoryName = schema+'.'+category
             else:
                 tableSchema = query.value(0)
                 tableName = query.value(1)
@@ -141,10 +149,43 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
                 categoryName = tableSchema+'.'+category
             if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
                 or tableName.split("_")[-1] == "a":
-                item = QtGui.QListWidgetItem(categoryName)
-                self.listWidgetCategoryFrom.addItem(item)
+                self.insertIntoListView(categoryName)
         self.listWidgetCategoryFrom.sortItems()
         self.setCRS()
+        
+    def insertIntoListView(self, item_name):
+        found = self.listWidgetCategoryFrom.findItems(item_name, Qt.MatchExactly)
+        if len(found) == 0:
+            item = QtGui.QListWidgetItem(item_name)
+            self.listWidgetCategoryFrom.addItem(item)
+            
+    def selectAll(self):
+        tam = self.listWidgetCategoryFrom.__len__()
+        for i in range(tam+1,1,-1):
+            item = self.listWidgetCategoryFrom.takeItem(i-2)
+            self.listWidgetCategoryTo.addItem(item)
+        self.listWidgetCategoryTo.sortItems()
+
+    def deselectAll(self):
+        tam = self.listWidgetCategoryTo.__len__()
+        for i in range(tam+1,1,-1):
+            item = self.listWidgetCategoryTo.takeItem(i-2)
+            self.listWidgetCategoryFrom.addItem(item)
+        self.listWidgetCategoryFrom.sortItems()
+
+    def selectOne(self):
+        listedItems = self.listWidgetCategoryFrom.selectedItems()
+        for i in listedItems:
+            item = self.listWidgetCategoryFrom.takeItem(self.listWidgetCategoryFrom.row(i))
+            self.listWidgetCategoryTo.addItem(item)
+        self.listWidgetCategoryTo.sortItems()
+
+    def deselectOne(self):
+        listedItems = self.listWidgetCategoryTo.selectedItems()
+        for i in listedItems:
+            item = self.listWidgetCategoryTo.takeItem(self.listWidgetCategoryTo.row(i))
+            self.listWidgetCategoryFrom.addItem(item)
+        self.listWidgetCategoryFrom.sortItems()
 
     def setCRS(self):
         try:
