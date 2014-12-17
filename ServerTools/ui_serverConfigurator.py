@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_serverConfigurator.ui'
 #
-# Created: Thu Dec 11 08:47:30 2014
+# Created: Wed Dec 17 10:35:51 2014
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(340, 206)
+        Dialog.resize(246, 206)
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.horizontalLayout = QtGui.QHBoxLayout()
