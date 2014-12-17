@@ -454,23 +454,34 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
                 uri.disableSelectAtId(True)
                 self.loadEDGVLayer(uri, name, schema, 'postgres', idSubgrupo)
 
+    def prepareSpatialiteToLoad(self, uri, categoria, layer_names, idGrupo, geom_column):
+        print layer_names
+        for layer_name in layer_names:
+            split = layer_name.split('_')
+            category = split[0]+'.'+split[1]
+            if category == categoria:
+                idSubgrupo = qgis.utils.iface.legendInterface().addGroup(category,True,idGrupo)
+                print category,layer_name,geom_column
+                uri.setDataSource('', layer_name, geom_column)
+                self.loadEDGVLayer(uri, layer_name, '', 'spatialite', idSubgrupo)
+
     def loadSpatialiteLayers(self, type, categories, layer_names):
-        self.getSelectedItems()
         uri = QgsDataSourceURI()
         uri.setDatabase(self.filename)
-        schema = ''
         geom_column = 'GEOMETRY'
-        if len(self.selectedClasses)>0:
-            try:
-                for layer_name in self.selectedClasses:
-                    uri.setDataSource(schema, layer_name, geom_column)
-                    self.loadEDGVLayer(uri, layer_name, schema, 'spatialite')
-                self.restoreInitialState()
-                self.close()
-            except:
-                self.bar.pushMessage("Error!", "Could not load the layer(s)!", level=QgsMessageBar.CRITICAL)
-        else:
-            self.bar.pushMessage("Warning!", "Please select at least one layer!", level=QgsMessageBar.WARNING)
+
+        if type == 'p':
+            idGrupo = qgis.utils.iface.legendInterface (). addGroup ("Ponto", -1)
+            for categoria in categories:
+                self.prepareSpatialiteToLoad(uri, categoria, layer_names, idGrupo, geom_column)
+        if type == 'l':
+            idGrupo = qgis.utils.iface.legendInterface (). addGroup ("Linha", -1)
+            for categoria in categories:
+                self.prepareSpatialiteToLoad(uri, categoria, layer_names, idGrupo, geom_column)
+        if type == 'a':
+            idGrupo = qgis.utils.iface.legendInterface (). addGroup ("Area", -1)
+            for categoria in categories:
+                self.prepareSpatialiteToLoad(uri, categoria, layer_names, idGrupo, geom_column)
 
     def loadEDGVLayer(self, uri, layer_name, schema, provider, idSubgrupo):
         vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
