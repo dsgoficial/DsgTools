@@ -441,13 +441,13 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
                 self.preparePostGISToLoad(uri, categoria, layer_names, idGrupo, geom_column)
                         
     def preparePostGISToLoad(self, uri, categoria, layer_names, idGrupo, geom_column):
+        idSubgrupo = qgis.utils.iface.legendInterface().addGroup(categoria,True,idGrupo)
         for layer_name in layer_names:
             split = layer_name.split('_')
             category = split[0]
             schema = category.split('.')[0]
             name = layer_name.replace(schema+'.','')
             if category == categoria:
-                idSubgrupo = qgis.utils.iface.legendInterface().addGroup(category,True,idGrupo)
                 sql = self.gen.loadLayerFromDatabase(layer_name)
                 print schema,name,geom_column,sql
                 uri.setDataSource(schema, name, geom_column, sql,'id')
@@ -455,12 +455,11 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
                 self.loadEDGVLayer(uri, name, schema, 'postgres', idSubgrupo)
 
     def prepareSpatialiteToLoad(self, uri, categoria, layer_names, idGrupo, geom_column):
-        print layer_names
+        idSubgrupo = qgis.utils.iface.legendInterface().addGroup(categoria,True,idGrupo)
         for layer_name in layer_names:
             split = layer_name.split('_')
             category = split[0]+'.'+split[1]
             if category == categoria:
-                idSubgrupo = qgis.utils.iface.legendInterface().addGroup(category,True,idGrupo)
                 print category,layer_name,geom_column
                 uri.setDataSource('', layer_name, geom_column)
                 self.loadEDGVLayer(uri, layer_name, '', 'spatialite', idSubgrupo)
