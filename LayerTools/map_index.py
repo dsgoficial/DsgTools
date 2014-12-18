@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Load database classes.
                              -------------------
-        begin                : 2014-06-17
+        begin                : 2014-12-18
         git sha              : $Format:%H$
         copyright            : (C) 2014 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
         email                : luiz.claudio@dsg.eb.mil.br
@@ -198,6 +198,15 @@ class UtmGrid:
     def createFrame(self, map_index, layer):
         stopScale = self.getScale(map_index)
         
+        # Enter in edit mode
+        layer.startEditing()
+
+        self.populateQgsLayer(map_index, stopScale, layer)
+
+        # Commiting changes        
+        layer.commitChanges()        
+    
+    def createFrame(self, map_index, layer, stopScale):
         # Enter in edit mode
         layer.startEditing()
 
