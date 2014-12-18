@@ -19,20 +19,18 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
-
-from qgis.core import QgsCoordinateReferenceSystem,QgsDataSourceURI,QgsVectorLayer,QgsMapLayerRegistry,QgsMessageLog
+from qgis.core import QgsGeometry,QgsCoordinateReferenceSystem,QgsDataSourceURI,QgsVectorLayer,QgsMapLayerRegistry,QgsMessageLog,QgsCoordinateTransform
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
 from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'ui_create_inom_dialog_base.ui'))
-
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Factories', 'SqlFactory'))
 from sqlGeneratorFactory import SqlGeneratorFactory
+
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'ui_create_inom_dialog_base.ui'))
 
 from map_index import UtmGrid
 
@@ -95,7 +93,8 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot()
     def on_buttonBox_accepted(self):
         frame = self.map_index.getQgsPolygonFrame(self.inomLineEdit.text())
-        ewkt = '\''+frame.exportToWkt()+'\','+str(self.epsg)
+        reprojected = self.reprojectFrame(frame)
+        ewkt = '\''+reprojected.exportToWkt()+'\','+str(self.epsg)
         sql = self.gen.insertFrameIntoTable(ewkt)
         print sql
         query = QSqlQuery(self.db)
@@ -107,6 +106,17 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         if self.comboBoxPostgis.currentIndex() > 0:
             self.loadDatabase()
             
+    def reprojectFrame(self, poly):
+        print self.crs.geographicCRSAuthId(),self.epsg
+        crsSrc = QgsCoordinateReferenceSystem(self.crs.geographicCRSAuthId())
+        coordinateTransformer = QgsCoordinateTransform(crsSrc, self.crs)
+        polyline = poly.asPolygon()[0]
+        newPolyline = []
+        for point in polyline:
+            newPolyline.append(coordinateTransformer.transform(point))
+        qgsPolygon = QgsGeometry.fromPolygon([newPolyline])
+        return qgsPolygon
+           
     def closeDatabase(self):
         if self.db:
             self.db.close()
