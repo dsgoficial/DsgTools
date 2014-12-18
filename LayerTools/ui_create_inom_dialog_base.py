@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_create_inom_dialog_base.ui'
 #
-# Created: Thu Dec 18 14:05:35 2014
+# Created: Thu Dec 18 15:54:18 2014
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -404,15 +404,15 @@ class Ui_Dialog(object):
         self.latitudeComboBox.setItemText(23, QtGui.QApplication.translate("Dialog", "Z", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("Dialog", "Longitude:", None, QtGui.QApplication.UnicodeUTF8))
         self.longitudeComboBox.setItemText(0, QtGui.QApplication.translate("Dialog", "-", None, QtGui.QApplication.UnicodeUTF8))
-        self.longitudeComboBox.setItemText(1, QtGui.QApplication.translate("Dialog", "1", None, QtGui.QApplication.UnicodeUTF8))
-        self.longitudeComboBox.setItemText(2, QtGui.QApplication.translate("Dialog", "2", None, QtGui.QApplication.UnicodeUTF8))
-        self.longitudeComboBox.setItemText(3, QtGui.QApplication.translate("Dialog", "3", None, QtGui.QApplication.UnicodeUTF8))
-        self.longitudeComboBox.setItemText(4, QtGui.QApplication.translate("Dialog", "4", None, QtGui.QApplication.UnicodeUTF8))
-        self.longitudeComboBox.setItemText(5, QtGui.QApplication.translate("Dialog", "5", None, QtGui.QApplication.UnicodeUTF8))
-        self.longitudeComboBox.setItemText(6, QtGui.QApplication.translate("Dialog", "6", None, QtGui.QApplication.UnicodeUTF8))
-        self.longitudeComboBox.setItemText(7, QtGui.QApplication.translate("Dialog", "7", None, QtGui.QApplication.UnicodeUTF8))
-        self.longitudeComboBox.setItemText(8, QtGui.QApplication.translate("Dialog", "8", None, QtGui.QApplication.UnicodeUTF8))
-        self.longitudeComboBox.setItemText(9, QtGui.QApplication.translate("Dialog", "9", None, QtGui.QApplication.UnicodeUTF8))
+        self.longitudeComboBox.setItemText(1, QtGui.QApplication.translate("Dialog", "01", None, QtGui.QApplication.UnicodeUTF8))
+        self.longitudeComboBox.setItemText(2, QtGui.QApplication.translate("Dialog", "02", None, QtGui.QApplication.UnicodeUTF8))
+        self.longitudeComboBox.setItemText(3, QtGui.QApplication.translate("Dialog", "03", None, QtGui.QApplication.UnicodeUTF8))
+        self.longitudeComboBox.setItemText(4, QtGui.QApplication.translate("Dialog", "04", None, QtGui.QApplication.UnicodeUTF8))
+        self.longitudeComboBox.setItemText(5, QtGui.QApplication.translate("Dialog", "05", None, QtGui.QApplication.UnicodeUTF8))
+        self.longitudeComboBox.setItemText(6, QtGui.QApplication.translate("Dialog", "06", None, QtGui.QApplication.UnicodeUTF8))
+        self.longitudeComboBox.setItemText(7, QtGui.QApplication.translate("Dialog", "07", None, QtGui.QApplication.UnicodeUTF8))
+        self.longitudeComboBox.setItemText(8, QtGui.QApplication.translate("Dialog", "08", None, QtGui.QApplication.UnicodeUTF8))
+        self.longitudeComboBox.setItemText(9, QtGui.QApplication.translate("Dialog", "09", None, QtGui.QApplication.UnicodeUTF8))
         self.longitudeComboBox.setItemText(10, QtGui.QApplication.translate("Dialog", "10", None, QtGui.QApplication.UnicodeUTF8))
         self.longitudeComboBox.setItemText(11, QtGui.QApplication.translate("Dialog", "11", None, QtGui.QApplication.UnicodeUTF8))
         self.longitudeComboBox.setItemText(12, QtGui.QApplication.translate("Dialog", "12", None, QtGui.QApplication.UnicodeUTF8))
