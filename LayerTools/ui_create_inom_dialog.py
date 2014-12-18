@@ -95,7 +95,8 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot()
     def on_buttonBox_accepted(self):
         frame = self.map_index.getQgsPolygonFrame(self.inomLineEdit.text())
-        sql = self.gen.insertFrameIntoTable(frame.exportToWkt())
+        ewkt = '\''+frame.exportToWkt()+'\','+str(self.epsg)
+        sql = self.gen.insertFrameIntoTable(ewkt)
         print sql
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
