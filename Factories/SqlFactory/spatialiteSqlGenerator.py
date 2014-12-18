@@ -66,6 +66,6 @@ class SpatialiteSqlGenerator(SqlGenerator):
     def getTemplates(self):
         return None
     
-    def getCreateDatabase(self, name, template):
+    def getCreateDatabase(self, name):
         return None
     

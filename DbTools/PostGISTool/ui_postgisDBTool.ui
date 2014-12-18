@@ -87,20 +87,6 @@
     </layout>
    </item>
    <item row="3" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_6">
-     <item>
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>PostGIS template:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="templatesCombo"/>
-     </item>
-    </layout>
-   </item>
-   <item row="4" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
       <widget class="QLabel" name="label_4">
@@ -125,7 +111,7 @@
      </item>
     </layout>
    </item>
-   <item row="5" column="0">
+   <item row="4" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_7">
      <item>
       <widget class="QLabel" name="label_6">
@@ -150,7 +136,7 @@
      </item>
     </layout>
    </item>
-   <item row="6" column="0">
+   <item row="5" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
       <widget class="QPushButton" name="saveButton">

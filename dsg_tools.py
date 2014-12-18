@@ -420,6 +420,11 @@ class DsgTools:
             self.layerButton.setDefaultAction(self.toolbar.sender())
         except:
             pass
+        self.dlg = CreateInomDialog()
+        self.dlg.show()
+        result = self.dlg.exec_()
+        if result:
+            pass
 
     """def createComplex(self):
         try:

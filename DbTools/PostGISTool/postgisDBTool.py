@@ -55,8 +55,6 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         #setting the sql generator
         self.gen = self.factory.createSqlGenerator(False)
         
-        self.populateTemplatesCombo()
-        
         self.epsg = 4326
         
     def getParameters(self):
@@ -64,7 +62,7 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         
     @pyqtSlot(bool)    
     def on_saveButton_clicked(self):
-        if self.createDatabase(self.databaseEdit.text(), self.templatesCombo.currentText()):
+        if self.createDatabase(self.databaseEdit.text()):
             self.storeConnectionConfiguration(self.serversCombo.currentText(), self.databaseEdit.text())
             self.done(1)
         else:
@@ -90,8 +88,8 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         except:
             QMessageBox.warning(self, "Warning!", message)
             
-    def createDatabase(self, name, template):
-        sql  = self.gen.getCreateDatabase(name, template)
+    def createDatabase(self, name):
+        sql  = self.gen.getCreateDatabase(name)
         
         db = self.getDatabase()
         
@@ -172,17 +170,3 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         currentConnections = self.getServers()
         for connection in currentConnections:
             self.serversCombo.addItem(connection)
-            
-    def populateTemplatesCombo(self):
-        self.templatesCombo.clear()
-        
-        db = self.getDatabase()
-        
-        sql  = self.gen.getTemplates()
-        #getting the templates
-        query = QSqlQuery(sql, db)
-        while query.next():
-            self.templatesCombo.addItem(query.value(0))
-            
-        db.close()
-            

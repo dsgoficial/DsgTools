@@ -5,14 +5,11 @@ ALTER SCHEMA complexos OWNER TO postgres;
 CREATE SCHEMA cb;
 CREATE SCHEMA cc;
 CREATE SCHEMA ct;
-SET search_path TO pg_catalog,public,topology,dominios,complexos,cb,cc,ct;
-CREATE EXTENSION IF NOT EXISTS postgis
-      WITH SCHEMA public
-      VERSION '2.0.4';
+CREATE EXTENSION IF NOT EXISTS postgis;
 COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions';
-CREATE EXTENSION IF NOT EXISTS postgis_topology
-      WITH SCHEMA topology
-      VERSION '2.0.4';
+CREATE EXTENSION IF NOT EXISTS postgis_topology;
+COMMENT ON EXTENSION postgis_topology IS 'PostGIS topology spatial types and functions';
+SET search_path TO pg_catalog,public,topology,dominios,complexos,cb,cc,ct;
 COMMENT ON EXTENSION postgis_topology IS 'PostGIS topology spatial types and functions';
 CREATE TABLE cb.hid_area_umida_a(
 	id serial NOT NULL,

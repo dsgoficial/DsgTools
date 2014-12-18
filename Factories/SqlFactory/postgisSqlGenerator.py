@@ -63,9 +63,6 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "id in (SELECT id FROM ONLY "+layer_name+")"
         return sql
 
-    def getCreateDatabase(self, name, template):
-        if template == '':
-            sql = "CREATE DATABASE "+name
-        else:
-            sql = "CREATE DATABASE "+name+" WITH TEMPLATE = "+template
+    def getCreateDatabase(self, name):
+        sql = "CREATE DATABASE "+name
         return sql
