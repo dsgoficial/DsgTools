@@ -55,3 +55,6 @@ class SqlGenerator:
     
     def getCreateDatabase(self, name):
         return None
+
+    def insertFrameIntoTable(self, wkb):
+        return None

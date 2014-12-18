@@ -66,3 +66,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def getCreateDatabase(self, name):
         sql = "CREATE DATABASE "+name
         return sql
+
+    def insertFrameIntoTable(self, wkt):
+        sql = "INSERT INTO aux_moldura_a(geom) VALUES(ST_GeomFromText(\'"+wkt+"\'))"
+        return sql

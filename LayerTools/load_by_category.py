@@ -268,6 +268,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             self.loadDatabase()
 
     def loadDatabase(self):
+        self.closeDatabase()
         if self.isSpatialite:
             fd = QtGui.QFileDialog()
             self.filename = fd.getOpenFileName(filter='*.sqlite')

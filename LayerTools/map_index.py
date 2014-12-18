@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 from qgis.core import QgsPoint,QgsGeometry,QgsFeature
+import string
 
 class UtmGrid:
     def __init__(self):
@@ -213,7 +214,18 @@ class UtmGrid:
         self.populateQgsLayer(map_index, stopScale, layer)
 
         # Commiting changes        
-        layer.commitChanges()        
+        layer.commitChanges()
+        
+    def getQgsPolygonFrame(self, map_index):
+        """Particular case used to create frame polygon for the given
+        map_index
+        """
+        scale = self.getScale(map_index)
+        (x, y) = self.getLLCorner(map_index)
+        dx = self.getSpacingX(scale)
+        dy = self.getSpacingY(scale)
+        poly = self.makeQgsPolygon(x, y, x + dx, y + dy)
+        return poly
     
     def populateQgsLayer(self, iNomen, stopScale, layer):
         """Generic recursive method to create frame polygon for the given
