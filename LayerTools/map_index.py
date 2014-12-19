@@ -290,7 +290,8 @@ class UtmGrid:
         data = csvFile.readlines()
         csvFile.close()
         l1 = map(lambda x: (x.strip()).split(';'),data)
-        return dict((a[1].lstrip('0'),a[0]) for a in l1)
+        dicionario = dict((a[1].lstrip('0'),a[0]) for a in l1)
+        return dicionario
 
     def getINomenFromMI(self,mi):
         return self.getINomen(self.getMIdict(), mi)

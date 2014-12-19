@@ -224,12 +224,12 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         self.chars.append(chars)
         chars = 'ABCDEFGHIJKLMNOPQRSTUVZ'
         self.chars.append(chars)
-        chars = ['01','02','03','04','05','06','07','08','09','10'\
-                           '11','12','13','14','15','16','17','18','19','20'\
-                           '21','22','23','24','25','26','27','28','29','30'\
-                           '31','32','33','34','35','36','37','38','39','40'\
-                           '41','42','43','44','45','46','47','48','49','50'\
-                           '51','52','53','54','55','56','57','58','59','60']
+        chars = ['01','02','03','04','05','06','07','08','09','10',
+                   '11','12','13','14','15','16','17','18','19','20',
+                   '21','22','23','24','25','26','27','28','29','30',
+                   '31','32','33','34','35','36','37','38','39','40',
+                   '41','42','43','44','45','46','47','48','49','50',
+                   '51','52','53','54','55','56','57','58','59','60']
         self.chars.append(chars)
         chars = 'VXYZ'
         self.chars.append(chars)
@@ -259,7 +259,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
             self.inomLineEdit.setInputMask('NN-NN-N-N')
         elif self.scaleCombo.currentText() == '100k':
             self.inomLineEdit.setInputMask('NN-NN-N-N-Nn')
-        elif self.scaleCombo.currentText() == '50k':
+        elif self.scaleCombo.currentText() == '50k': 
             self.inomLineEdit.setInputMask('NN-NN-N-N-Nn-N')
         elif self.scaleCombo.currentText() == '25k':
             self.inomLineEdit.setInputMask('NN-NN-N-N-Nn-N-NN')
@@ -276,43 +276,55 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         mi = self.inomLineEdit.text()
         split = mi.split('-')
         for i in range(len(split)):
-            word = split[i]
+            word = str(split[i])
             if len(word) == 0:
                 return False
             if i == 0:
                 if word[0] not in self.chars[0]:
+                    print word
                     return False
                 if word[1] not in self.chars[1]:
+                    print word
                     return False
             elif i == 1:
                 if word not in self.chars[2]:
+                    print word
                     return False
             elif i == 2:
                 if word not in self.chars[3]:
+                    print word
                     return False
             elif i == 3:
                 if word not in self.chars[4]:
+                    print word
                     return False
             elif i == 4:
                 if word not in self.chars[5]:
+                    print word
                     return False
             elif i == 5:
                 if word not in self.chars[6]:
+                    print word
                     return False
             elif i == 6:
                 if word not in self.chars[7]:
+                    print word
                     return False
             elif i == 7:
                 if word not in self.chars[8]:
+                    print word
                     return False
             elif i == 8:
                 if word not in self.chars[9]:
+                    print word
                     return False
             elif i == 9:
                 if word not in self.chars[10]:
+                    print word
                     return False
             elif i == 10:
                 if word not in self.chars[11]:
+                    print word
                     return False
         return True
 
