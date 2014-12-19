@@ -9,6 +9,8 @@
         git sha              : $Format:%H$
         copyright            : (C) 2014 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
         email                : luiz.claudio@dsg.eb.mil.br
+        mod history          : 2014-12-17 by Leonardo Lourenço - Computing Engineer @ Brazilian Army
+        mod history          : 2014-12-17 by Maurício de Paulo - Cartographic Engineer @ Brazilian Army
  ***************************************************************************/
 
 /***************************************************************************
@@ -275,40 +277,35 @@ class UtmGrid:
     
     def getMIdict(self):
         if not self.MIdict:
-            mi100=open(os.path.join(os.path.dirname(__file__),"MI100.csv"))
-            s=mi100.readlines()
-            mi100.close()
-            l1=map(lambda x: (x.strip()).split(';'),s)
-            self.MIdict=dict((a[1].lstrip('0'),a[0]) for a in l1)
+            self.MIdict = self.getDict("MI100.csv")
         return self.MIdict
             
     def getMIRdict(self):
         if not self.MIRdict:
-            mir250=open(os.path.join(os.path.dirname(__file__),"MIR250.csv"))
-            s=mir250.readlines()
-            mir250.close()
-            l1=map(lambda x: (x.strip()).split(';'),s)
-            self.MIRdict=dict((a[1].lstrip('0'),a[0]) for a in l1)
-        return self.MIRdict        
+            self.MIRdict = self.getDict("MIR250.csv")
+        return self.MIRdict    
+    
+    def getDict(self, file_name):    
+        csvFile = open(os.path.join(os.path.dirname(__file__),file_name))
+        data = csvFile.readlines()
+        csvFile.close()
+        l1 = map(lambda x: (x.strip()).split(';'),data)
+        return dict((a[1].lstrip('0'),a[0]) for a in l1)
 
     def getINomenFromMI(self,mi):
-        MIdict=self.getMIdict()
-        mi100=mi.split('-')[0]
-        miOtherParts=mi.split('-')[1:]
-        if (MIdict.has_key(mi100)):
-            return MIdict[mi100]+'-'+string.join(miOtherParts,'-')
-        else:
-            return ''
+        return self.getINomen(self.getMIdict(), mi)
 
     def getINomenFromMIR(self,mir):
-        MIRdict=self.getMIRdict()
-        mir250=mir.split('-')[0]
-        mirOtherParts=mir.split('-')[1:]
-        if (MIRdict.has_key(mir250)):
-            return MIRdict[mir250]+'-'+string.join(mirOtherParts,'-')
+        return self.getINomen(self.getMIRdict(), mir)
+        
+    def getINomen(self, dict, index):
+        key = index.split('-')[0]
+        otherParts = index.split('-')[1:]
+        if (dict.has_key(key)):
+            return dict[key]+'-'+string.join(otherParts,'-')
         else:
             return ''
-
+        
 if (__name__=="__main__"):
     test=UtmGrid()
     mi="2895-1"
