@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>329</width>
-    <height>320</height>
+    <width>480</width>
+    <height>348</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -133,6 +133,71 @@
     </widget>
    </item>
    <item row="1" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Scale:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="scaleCombo">
+       <item>
+        <property name="text">
+         <string>1000k</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>500k</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>250k</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>100k</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>50k</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>25k</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>10k</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>5k</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>2k</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1k</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="0">
     <widget class="QGroupBox" name="Spatia">
      <property name="title">
       <string>Index Frame Selection</string>
@@ -242,7 +307,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Index:</string>
+           <string>WKT:</string>
           </property>
          </widget>
         </item>
@@ -254,7 +319,7 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

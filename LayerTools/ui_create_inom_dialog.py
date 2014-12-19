@@ -24,6 +24,7 @@ from qgis.core import QgsGeometry,QgsCoordinateReferenceSystem,QgsDataSourceURI,
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
 from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
+from PyQt4.QtGui import QMessageBox
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Factories', 'SqlFactory'))
@@ -64,12 +65,16 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         
         self.disableAll()
         
+        self.setValidCharacters()
 
     def __del__(self):
         self.closeDatabase()
 
     @pyqtSlot()
     def on_buttonBox_accepted(self):
+        if not self.validateMI():
+            QMessageBox.warning(self, "Warning!", 'Map name index not valid!')
+            return
         frame = self.map_index.getQgsPolygonFrame(self.inomLineEdit.text())
         reprojected = self.reprojectFrame(frame)
         ewkt = '\''+reprojected.exportToWkt()+'\','+str(self.epsg)
@@ -112,10 +117,8 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
 
         if self.tabWidget.currentIndex() == 0:
             self.isSpatialite = True
-            self.frameLayer = 'aux_aux_moldura_a'
         else:
             self.isSpatialite = False
-            self.frameLayer = 'aux.aux_moldura_a'
 
         #getting the sql generator according to the database type
         self.gen = self.factory.createSqlGenerator(self.isSpatialite)
@@ -191,13 +194,113 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         while query.next():
             srids.append(query.value(0))
         return srids[0]
+    
+    def setValidCharacters(self):
+        self.chars = []
+
+        chars = 'NS'
+        self.chars.append(chars)
+        chars = 'ABCDEFGHIJKLMNOPQRSTUVZ'
+        self.chars.append(chars)
+        chars = ['01','02','03','04','05','06','07','08','09','10'\
+                           '11','12','13','14','15','16','17','18','19','20'\
+                           '21','22','23','24','25','26','27','28','29','30'\
+                           '31','32','33','34','35','36','37','38','39','40'\
+                           '41','42','43','44','45','46','47','48','49','50'\
+                           '51','52','53','54','55','56','57','58','59','60']
+        self.chars.append(chars)
+        chars = 'VXYZ'
+        self.chars.append(chars)
+        chars = 'ABCD'
+        self.chars.append(chars)
+        chars = ['I','II','III','IV','V','VI']
+        self.chars.append(chars)
+        chars = '1234'
+        self.chars.append(chars)
+        chars = ['NO','NE','SO','SE']
+        self.chars.append(chars)
+        chars = 'ABCDEF'
+        self.chars.append(chars)
+        chars = ['I','II','III','IV']
+        self.chars.append(chars)
+        chars = '123456'
+        self.chars.append(chars)
+        chars = 'ABCD'
+        self.chars.append(chars)
         
+    def setMask(self):
+        if self.scaleCombo.currentText() == '1000k':
+            self.inomLineEdit.setInputMask('NN-NN')
+        elif self.scaleCombo.currentText() == '500k':
+            self.inomLineEdit.setInputMask('NN-NN-N')
+        elif self.scaleCombo.currentText() == '250k':
+            self.inomLineEdit.setInputMask('NN-NN-N-N')
+        elif self.scaleCombo.currentText() == '100k':
+            self.inomLineEdit.setInputMask('NN-NN-N-N-Nn')
+        elif self.scaleCombo.currentText() == '50k':
+            self.inomLineEdit.setInputMask('NN-NN-N-N-Nn-N')
+        elif self.scaleCombo.currentText() == '25k':
+            self.inomLineEdit.setInputMask('NN-NN-N-N-Nn-N-NN')
+        elif self.scaleCombo.currentText() == '10k':
+            self.inomLineEdit.setInputMask('NN-NN-N-N-Nn-N-NN-N')
+        elif self.scaleCombo.currentText() == '5k':
+            self.inomLineEdit.setInputMask('NN-NN-N-N-Nn-N-NN-N-Nn')
+        elif self.scaleCombo.currentText() == '2k':
+            self.inomLineEdit.setInputMask('NN-NN-N-N-Nn-N-NN-N-Nn-N')
+        elif self.scaleCombo.currentText() == '1k':
+            self.inomLineEdit.setInputMask('NN-NN-N-N-Nn-N-NN-N-Nn-N-N')
+        
+    def validateMI(self):
+        mi = self.inomLineEdit.text()
+        split = mi.split('-')
+        for i in range(len(split)):
+            word = split[i]
+            if i == 0:
+                if word[0] not in self.chars[0]:
+                    return False
+                if word[1] not in self.chars[1]:
+                    return False
+            elif i == 1:
+                if word not in self.chars[2]:
+                    return False
+            elif i == 2:
+                if word not in self.chars[3]:
+                    return False
+            elif i == 3:
+                if word not in self.chars[4]:
+                    return False
+            elif i == 4:
+                if word not in self.chars[5]:
+                    return False
+            elif i == 5:
+                if word not in self.chars[6]:
+                    return False
+            elif i == 6:
+                if word not in self.chars[7]:
+                    return False
+            elif i == 7:
+                if word not in self.chars[8]:
+                    return False
+            elif i == 8:
+                if word not in self.chars[9]:
+                    return False
+            elif i == 9:
+                if word not in self.chars[10]:
+                    return False
+            elif i == 10:
+                if word not in self.chars[11]:
+                    return False
+        return True
 
     def disableAll(self):
         self.mirLineEdit.setEnabled(False)
         self.miLineEdit.setEnabled(False)
         self.inomLineEdit.setEnabled(False)
         
+    @pyqtSlot(int)
+    def on_scaleCombo_currentIndexChanged(self):
+        self.setMask()
+
     @pyqtSlot(bool)
     def on_mirRadioButton_toggled(self, toggled):
         if toggled:
