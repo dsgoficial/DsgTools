@@ -10,6 +10,7 @@
         copyright            : (C) 2014 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba@dsg.eb.mil.br
         mod history          : 2014-12-17 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
+                               2014-12-19 by Philipe Borba- Cartographic Engineer @ Brazilian Army
  ***************************************************************************/
 
 /***************************************************************************
@@ -420,30 +421,32 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         pontoAux = self.countElements(self.point)
         linhaAux = self.countElements(self.line)
         areaAux = self.countElements(self.polygon)
-        count = 0
+
         for i in pontoAux:
-            if i > 0:
-                self.pointWithElement.append(self.point[count])
-            count+=1
-        count = 0
+            if i[1] > 0:
+                self.pointWithElement.append(i[0])
+
         for i in linhaAux:
-            if i > 0:
-                self.lineWithElement.append(self.line[count])
-            count+=1
-        count = 0
+            if i[1] > 0:
+                self.lineWithElement.append(i[0])
+
         for i in areaAux:
-            if i > 0:
-                self.polygonWithElement.append(self.polygon[count])
-            count+=1
+            if i[1] > 0:
+                self.polygonWithElement.append(i[0])
 
     def countElements(self, layers):
         listaQuantidades = []
         for layer in layers:
             sql = self.gen.getElementCountFromLayer(layer)
-            query = QSqlQuery(self.db)
+            query = QSqlQuery(sql,self.db)
+            query.next()
+            number = query.value(0)
+            if number > 0:
+                print sql
+                print number
             if not query.exec_(sql):
                 QgsMessageLog.logMessage("Problem counting elements: "+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            listaQuantidades.append(query.value(0))
+            listaQuantidades.append([layer, number])
         return listaQuantidades
 
     def loadPostGISLayers(self, type, categories, layer_names):
@@ -520,6 +523,5 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         vlayer.loadNamedStyle(vlayerQml,False)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer)
         qgis.utils.iface.legendInterface().moveLayer(vlayer, idSubgrupo)
-        print self.area
         if not vlayer.isValid():
             print vlayer.error().summary()
