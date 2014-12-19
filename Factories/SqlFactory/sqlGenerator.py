@@ -24,35 +24,39 @@ class SqlGenerator:
     def getComplexLinks(self, complex):
         sql = "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_schema where complex = "+complex
         return sql
-    
+
     def getComplexTablesFromDatabase(self):
         return None
-    
+
     def getComplexData(self, complex_schema, complex):
         return None
 
     def getAssociatedFeaturesData(self, aggregated_schema, aggregated_class, column_name, complex_uuid):
         return None
-    
+
     def getLinkColumn(self, complexClass, aggregatedClass):
         return None
-    
+
     def getSrid(self):
         return None
-    
+
     def getElementCountFromLayer(self, layer):
         sql = "SELECT count(*) FROM "+layer
         return sql
-    
+
+    def getEDGVVersion(self):
+        sql = "SELECT edgvversion FROM db_metadata LIMIT 1"
+        return sql
+
     def getTablesFromDatabase(self):
         return None
-    
+
     def disassociateComplexFromComplex(self, aggregated_class, link_column, uuid):
         return None
-    
+
     def getTemplates(self):
         return None
-    
+
     def getCreateDatabase(self, name):
         return None
 
