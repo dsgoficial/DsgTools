@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from qgis.core import QgsPoint,QgsGeometry,QgsFeature
-import string
+import string,os
 
 class UtmGrid:
     def __init__(self):
@@ -44,6 +44,8 @@ class UtmGrid:
         self.stepsDone=0
         self.stepsTotal=0
         self.featureBuffer=[]
+        self.MIdict=[]
+        self.MIRdict=[]
         
     def __del__(self):
         """Destructor."""
@@ -270,3 +272,50 @@ class UtmGrid:
 
         # Adding the feature into the file
         provider.addFeatures([feature])
+    
+    def getMIdict(self):
+        if not self.MIdict:
+            mi100=open(os.path.join(os.path.dirname(__file__),"MI100.csv"))
+            s=mi100.readlines()
+            mi100.close()
+            l1=map(lambda x: (x.strip()).split(';'),s)
+            self.MIdict=dict((a[1].lstrip('0'),a[0]) for a in l1)
+        return self.MIdict
+            
+    def getMIRdict(self):
+        if not self.MIRdict:
+            mir250=open(os.path.join(os.path.dirname(__file__),"MIR250.csv"))
+            s=mir250.readlines()
+            mir250.close()
+            l1=map(lambda x: (x.strip()).split(';'),s)
+            self.MIRdict=dict((a[1].lstrip('0'),a[0]) for a in l1)
+        return self.MIRdict        
+
+    def getINomenFromMI(self,mi):
+        MIdict=self.getMIdict()
+        mi100=mi.split('-')[0]
+        miOtherParts=mi.split('-')[1:]
+        if (MIdict.has_key(mi100)):
+            return MIdict[mi100]+'-'+string.join(miOtherParts,'-')
+        else:
+            return ''
+
+    def getINomenFromMIR(self,mir):
+        MIRdict=self.getMIRdict()
+        mir250=mir.split('-')[0]
+        mirOtherParts=mir.split('-')[1:]
+        if (MIRdict.has_key(mir250)):
+            return MIRdict[mir250]+'-'+string.join(mirOtherParts,'-')
+        else:
+            return ''
+
+if (__name__=="__main__"):
+    test=UtmGrid()
+    mi="2895-1"
+    inomen=test.getINomenFromMI(mi)
+    print 'Working test:',inomen,'.'
+    mi='teste'
+    inomen=test.getINomenFromMI(mi)
+    print 'Not working test:',inomen,'.'
+    #print test.getQgsPolygonFrame(inomen).exportToWkt()
+    

@@ -66,12 +66,14 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         self.disableAll()
         
         self.setValidCharacters()
+        
+        self.setMask()
 
     def __del__(self):
         self.closeDatabase()
 
     @pyqtSlot()
-    def on_buttonBox_accepted(self):
+    def on_okButton_clicked(self):
         if not self.validateMI():
             QMessageBox.warning(self, "Warning!", 'Map name index not valid!')
             return
@@ -82,12 +84,31 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         print sql
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
+            QMessageBox.warning(self, "Critical!", 'Problem creating the frame! Check log for details.')
             QgsMessageLog.logMessage("Problem creating the frame:"+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return
+        self.done(1)
+
+    @pyqtSlot()
+    def on_cancelButton_clicked(self):
+        self.done(0)
 
     @pyqtSlot(int)
     def on_comboBoxPostgis_currentIndexChanged(self):
         if self.comboBoxPostgis.currentIndex() > 0:
             self.loadDatabase()
+            
+    @pyqtSlot(str)
+    def on_miLineEdit_textChanged(self,s):
+        if (s!=''):
+            inomen=self.map_index.getINomenFromMI(str(s))
+            self.inomLineEdit.setText(inomen)
+
+    @pyqtSlot(str)
+    def on_mirLineEdit_textChanged(self,s):
+        if (s!=''):
+            inomen=self.map_index.getINomenFromMIR(str(s))
+            self.inomLineEdit.setText(inomen)
             
     def reprojectFrame(self, poly):
         print self.crs.geographicCRSAuthId(),self.epsg
@@ -255,6 +276,8 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         split = mi.split('-')
         for i in range(len(split)):
             word = split[i]
+            if len(word) == 0:
+                return False
             if i == 0:
                 if word[0] not in self.chars[0]:
                     return False
@@ -321,3 +344,4 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
             self.inomLineEdit.setEnabled(True)
         else:
             self.inomLineEdit.setEnabled(False)
+            

@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'ui_create_inom_dialog_base.ui'
 #
-# Created: Fri Dec 19 09:20:21 2014
-#      by: PyQt4 UI code generator 4.8.3
+# Created: Fri Dec 19 11:25:39 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,12 +12,21 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    _fromUtf8 = lambda s: s
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(480, 348)
+        Dialog.resize(306, 356)
         self.gridLayout_3 = QtGui.QGridLayout(Dialog)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
         self.tabWidget = QtGui.QTabWidget(Dialog)
@@ -147,41 +156,45 @@ class Ui_Dialog(object):
         self.horizontalLayout_4.addWidget(self.wktLineEdit)
         self.gridLayout.addLayout(self.horizontalLayout_4, 3, 0, 1, 1)
         self.gridLayout_3.addWidget(self.Spatia, 2, 0, 1, 1)
-        self.buttonBox = QtGui.QDialogButtonBox(Dialog)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
-        self.gridLayout_3.addWidget(self.buttonBox, 3, 0, 1, 1)
+        self.horizontalLayout_8 = QtGui.QHBoxLayout()
+        self.horizontalLayout_8.setObjectName(_fromUtf8("horizontalLayout_8"))
+        self.okButton = QtGui.QPushButton(Dialog)
+        self.okButton.setObjectName(_fromUtf8("okButton"))
+        self.horizontalLayout_8.addWidget(self.okButton)
+        self.cancelButton = QtGui.QPushButton(Dialog)
+        self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
+        self.horizontalLayout_8.addWidget(self.cancelButton)
+        self.gridLayout_3.addLayout(self.horizontalLayout_8, 3, 0, 1, 1)
 
         self.retranslateUi(Dialog)
         self.tabWidget.setCurrentIndex(1)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Create Frame", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_16.setText(QtGui.QApplication.translate("Dialog", "File                    ", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonOpenFile.setText(QtGui.QApplication.translate("Dialog", "Search", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_17.setText(QtGui.QApplication.translate("Dialog", "Coordinate System", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSpatialite), QtGui.QApplication.translate("Dialog", "Spatialite", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox_3.setTitle(QtGui.QApplication.translate("Dialog", "Connections", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_18.setText(QtGui.QApplication.translate("Dialog", "Coordinate System", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPostGIS), QtGui.QApplication.translate("Dialog", "PostGIS", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("Dialog", "Scale:", None, QtGui.QApplication.UnicodeUTF8))
-        self.scaleCombo.setItemText(0, QtGui.QApplication.translate("Dialog", "1000k", None, QtGui.QApplication.UnicodeUTF8))
-        self.scaleCombo.setItemText(1, QtGui.QApplication.translate("Dialog", "500k", None, QtGui.QApplication.UnicodeUTF8))
-        self.scaleCombo.setItemText(2, QtGui.QApplication.translate("Dialog", "250k", None, QtGui.QApplication.UnicodeUTF8))
-        self.scaleCombo.setItemText(3, QtGui.QApplication.translate("Dialog", "100k", None, QtGui.QApplication.UnicodeUTF8))
-        self.scaleCombo.setItemText(4, QtGui.QApplication.translate("Dialog", "50k", None, QtGui.QApplication.UnicodeUTF8))
-        self.scaleCombo.setItemText(5, QtGui.QApplication.translate("Dialog", "25k", None, QtGui.QApplication.UnicodeUTF8))
-        self.scaleCombo.setItemText(6, QtGui.QApplication.translate("Dialog", "10k", None, QtGui.QApplication.UnicodeUTF8))
-        self.scaleCombo.setItemText(7, QtGui.QApplication.translate("Dialog", "5k", None, QtGui.QApplication.UnicodeUTF8))
-        self.scaleCombo.setItemText(8, QtGui.QApplication.translate("Dialog", "2k", None, QtGui.QApplication.UnicodeUTF8))
-        self.scaleCombo.setItemText(9, QtGui.QApplication.translate("Dialog", "1k", None, QtGui.QApplication.UnicodeUTF8))
-        self.Spatia.setTitle(QtGui.QApplication.translate("Dialog", "Index Frame Selection", None, QtGui.QApplication.UnicodeUTF8))
-        self.mirRadioButton.setText(QtGui.QApplication.translate("Dialog", "MIR:", None, QtGui.QApplication.UnicodeUTF8))
-        self.miRadioButton.setText(QtGui.QApplication.translate("Dialog", "MI:", None, QtGui.QApplication.UnicodeUTF8))
-        self.inomRadioButton.setText(QtGui.QApplication.translate("Dialog", "Index:", None, QtGui.QApplication.UnicodeUTF8))
-        self.wktRadioButton.setText(QtGui.QApplication.translate("Dialog", "WKT:", None, QtGui.QApplication.UnicodeUTF8))
+        Dialog.setWindowTitle(_translate("Dialog", "Create Frame", None))
+        self.label_16.setText(_translate("Dialog", "File                    ", None))
+        self.pushButtonOpenFile.setText(_translate("Dialog", "Search", None))
+        self.label_17.setText(_translate("Dialog", "Coordinate System", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSpatialite), _translate("Dialog", "Spatialite", None))
+        self.groupBox_3.setTitle(_translate("Dialog", "Connections", None))
+        self.label_18.setText(_translate("Dialog", "Coordinate System", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPostGIS), _translate("Dialog", "PostGIS", None))
+        self.label.setText(_translate("Dialog", "Scale:", None))
+        self.scaleCombo.setItemText(0, _translate("Dialog", "1000k", None))
+        self.scaleCombo.setItemText(1, _translate("Dialog", "500k", None))
+        self.scaleCombo.setItemText(2, _translate("Dialog", "250k", None))
+        self.scaleCombo.setItemText(3, _translate("Dialog", "100k", None))
+        self.scaleCombo.setItemText(4, _translate("Dialog", "50k", None))
+        self.scaleCombo.setItemText(5, _translate("Dialog", "25k", None))
+        self.scaleCombo.setItemText(6, _translate("Dialog", "10k", None))
+        self.scaleCombo.setItemText(7, _translate("Dialog", "5k", None))
+        self.scaleCombo.setItemText(8, _translate("Dialog", "2k", None))
+        self.scaleCombo.setItemText(9, _translate("Dialog", "1k", None))
+        self.Spatia.setTitle(_translate("Dialog", "Index Frame Selection", None))
+        self.mirRadioButton.setText(_translate("Dialog", "MIR:", None))
+        self.miRadioButton.setText(_translate("Dialog", "MI:", None))
+        self.inomRadioButton.setText(_translate("Dialog", "Index:", None))
+        self.wktRadioButton.setText(_translate("Dialog", "WKT:", None))
+        self.okButton.setText(_translate("Dialog", "Ok", None))
+        self.cancelButton.setText(_translate("Dialog", "Cancel", None))
 
