@@ -462,6 +462,38 @@ p, li { white-space: pre-wrap; }
         <source>Create Frame</source>
         <translation>Criar Moldura</translation>
     </message>
+    <message>
+        <location filename="dsg_tools.py" line="374"/>
+        <source>Creating database structure...</source>
+        <translation>Criando Estrutura do Banco de Dados...</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="392"/>
+        <source>Problem creating the Database!</source>
+        <translation>Problema naCriação do Banco de Dados!</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="463"/>
+        <source>Database structure creation canceled!</source>
+        <translation>Criação da Estrutura de Dados Cancelada!</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="472"/>
+        <source>Database structure successfully created!</source>
+        <translation>Estrutura de Banco de Dados criada com sucesso!</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="474"/>
+        <source>Problem creating the database structure!
+ Check the Log terminal for details.</source>
+        <translation>Problema na Criação da Estrutura de Dados!
+Olhe o Terminal Python para detalhes.</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="476"/>
+        <source>User canceled the database structure creation!</source>
+        <translation>Usuário cancelou a criação da estrutura de dados!</translation>
+    </message>
 </context>
 <context>
     <name>LoadByCategory</name>
