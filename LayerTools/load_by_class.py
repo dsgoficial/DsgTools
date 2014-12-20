@@ -152,7 +152,7 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
             self.epsg = self.findEPSG()
             print self.epsg
             if self.epsg == -1:
-                self.bar.pushMessage("", self.tr('DsgTools',"Coordinate Reference System not set or invalid!"), level=QgsMessageBar.WARNING)
+                self.bar.pushMessage("", self.tr("Coordinate Reference System not set or invalid!"), level=QgsMessageBar.WARNING)
             else:
                 self.crs = QgsCoordinateReferenceSystem(self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
                 if self.isSpatialite:
@@ -212,7 +212,7 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
 
     def populatePostGISConnectionsCombo(self):
         self.comboBoxPostgis.clear()
-        self.comboBoxPostgis.addItem(self.tr('DsgTools',"Select Database"))
+        self.comboBoxPostgis.addItem(self.tr("Select Database"))
         self.comboBoxPostgis.addItems(self.getPostGISConnections())
 
     def findEPSG(self):
@@ -273,9 +273,9 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
                 self.restoreInitialState()
                 self.close()
             except:
-                self.bar.pushMessage(self.tr('DsgTools',"Error!"), self.tr('DsgTools',"Could not load the selected classes!"), level=QgsMessageBar.CRITICAL)
+                self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load the selected classes!"), level=QgsMessageBar.CRITICAL)
         else:
-            self.bar.pushMessage(self.tr('DsgTools',"Warning!"), self.tr('DsgTools',"Please, select at least one class!"), level=QgsMessageBar.WARNING)
+            self.bar.pushMessage(self.tr("Warning!"), self.tr("Please, select at least one class!"), level=QgsMessageBar.WARNING)
 
     def loadSpatialiteLayers(self):
         self.getSelectedItems()
@@ -291,9 +291,9 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
                 self.restoreInitialState()
                 self.close()
             except:
-                self.bar.pushMessage(self.tr('DsgTools',"Error!"), self.tr('DsgTools',"Could not load the layer(s)!"), level=QgsMessageBar.CRITICAL)
+                self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load the layer(s)!"), level=QgsMessageBar.CRITICAL)
         else:
-            self.bar.pushMessage(self.tr('DsgTools',"Warning!"), self.tr('DsgTools',"Please select at least one layer!"), level=QgsMessageBar.WARNING)
+            self.bar.pushMessage(self.tr("Warning!"), self.tr("Please select at least one layer!"), level=QgsMessageBar.WARNING)
 
     def loadEDGVLayer(self, uri, layer_name, schema, provider):
         vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)

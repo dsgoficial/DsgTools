@@ -72,7 +72,7 @@ class QmlParser:
         self.domainDict.clear()
 
         if not self.loadFileContent():
-            QMessageBox.warning(self.iface.mainWindow(), self.tr('DsgTools',"Warning!"), self.tr('DsgTools',"QML file not loaded properly. Enum values won't be available."))
+            QMessageBox.warning(self.iface.mainWindow(), self.tr("Warning!"), self.tr("QML file not loaded properly. Enum values won't be available."))
             return
 
         self.readQGISElement()

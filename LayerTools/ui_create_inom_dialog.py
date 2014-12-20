@@ -76,7 +76,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot()
     def on_okButton_clicked(self):
         if not self.validateMI():
-            QMessageBox.warning(self, self.tr('DsgTools',"Warning!"), self.tr('DsgTools','Map name index not valid!'))
+            QMessageBox.warning(self, self.tr("Warning!"), self.tr('Map name index not valid!'))
             return
         frame = self.map_index.getQgsPolygonFrame(self.inomLineEdit.text())
         reprojected = self.reprojectFrame(frame)
@@ -85,8 +85,8 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         print sql
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
-            QMessageBox.warning(self, self.tr('DsgTools',"Critical!"), self.tr('DsgTools','Problem creating the frame! Check log for details.'))
-            QgsMessageLog.logMessage(self.tr('DsgTools',"Problem creating the frame:")+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QMessageBox.warning(self, self.tr("Critical!"), self.tr('Problem creating the frame! Check log for details.'))
+            QgsMessageLog.logMessage(self.tr("Problem creating the frame:")+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return
         self.done(1)
 
@@ -151,7 +151,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
             self.epsg = self.findEPSG()
             print self.epsg
             if self.epsg == -1:
-                self.bar.pushMessage("", self.tr('DsgTools',"Coordinate Reference System not set or invalid!"), level=QgsMessageBar.WARNING)
+                self.bar.pushMessage("", self.tr("Coordinate Reference System not set or invalid!"), level=QgsMessageBar.WARNING)
             else:
                 self.crs = QgsCoordinateReferenceSystem(self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
                 if self.isSpatialite:
@@ -206,7 +206,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
 
     def populatePostGISConnectionsCombo(self):
         self.comboBoxPostgis.clear()
-        self.comboBoxPostgis.addItem(self.tr('DsgTools',"Select Database"))
+        self.comboBoxPostgis.addItem(self.tr("Select Database"))
         self.comboBoxPostgis.addItems(self.getPostGISConnections())
 
     def findEPSG(self):

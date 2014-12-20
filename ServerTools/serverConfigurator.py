@@ -52,7 +52,7 @@ class ServerConfigurator(QDialog, Ui_Dialog):
             self.storeServerConfiguration(name, host, port, user, password)
             self.populateServersCombo()
         else:
-            QMessageBox.warning(self.iface.mainWindow(), self.tr('DsgTools',"Warning!"), self.tr('DsgTools',"Fill all parameters."))
+            QMessageBox.warning(self.iface.mainWindow(), self.tr("Warning!"), self.tr("Fill all parameters."))
     
     @pyqtSlot(bool)    
     def on_cancelButton_clicked(self):
