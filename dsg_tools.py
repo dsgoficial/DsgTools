@@ -25,7 +25,6 @@ from PyQt4.QtGui import *
 # Initialize Qt resources from file resources.py
 import resources_rc
 # Import the code for the dialog
-from dsg_tools_dialog import DsgToolsDialog
 import os.path
 import aboutdialog
 import sys
@@ -80,7 +79,6 @@ class DsgTools:
                 QCoreApplication.installTranslator(self.translator)
 
         # Create the dialog (after translation) and keep reference
-        self.dlg = DsgToolsDialog()
 
         # Declare instance attributes
         self.actions = []
@@ -210,12 +208,12 @@ class DsgTools:
         self.menuBar.insertMenu(self.iface.firstRightStandardMenu().menuAction(), self.dsgTools)
 
         #Sub menus
-        server = self.addMenu(self.dsgTools, u'server', self.tr('Server Catalog'),':/plugins/DsgTools/server.png')
-        database = self.addMenu(self.dsgTools, u'database', self.tr('Database Tools'),':/plugins/DsgTools/database.png')
-        layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/layers.png')
-        complex = self.addMenu(self.dsgTools, u'complex', self.tr('Complex Tools'),':/plugins/DsgTools/complex.png')
+        server = self.addMenu(self.dsgTools, u'server', self.tr('Server Catalog'),':/plugins/DsgTools/icons/server.png')
+        database = self.addMenu(self.dsgTools, u'database', self.tr('Database Tools'),':/plugins/DsgTools/icons/database.png')
+        layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/icons/layers.png')
+        complex = self.addMenu(self.dsgTools, u'complex', self.tr('Complex Tools'),':/plugins/DsgTools/icons/complex.png')
 
-        icon_path = ':/plugins/DsgTools/server.png'
+        icon_path = ':/plugins/DsgTools/icons/server.png'
         action = self.add_action(
             icon_path,
             text=self.tr('Server Settings'),
@@ -225,7 +223,7 @@ class DsgTools:
             add_to_toolbar=False)
         server.addAction(action)
 
-        icon_path = ':/plugins/DsgTools/dsg.png'
+        icon_path = ':/plugins/DsgTools/icons/dsg.png'
         action = self.add_action(
             icon_path,
             text=self.tr('About'),
@@ -240,7 +238,7 @@ class DsgTools:
         self.layerButton = self.createToolButton(self.toolbar, u'LayerTools')
         #self.complexButton = self.createToolButton(self.toolbar, u'ComplexTools')
 
-        icon_path = ':/plugins/DsgTools/spatialite.png'
+        icon_path = ':/plugins/DsgTools/icons/spatialite.png'
         action = self.add_action(
             icon_path,
             text=self.tr('Create Spatialite'),
@@ -252,7 +250,7 @@ class DsgTools:
         self.databaseButton.addAction(action)
         self.databaseButton.setDefaultAction(action)
 
-        icon_path = ':/plugins/DsgTools/postgis.png'
+        icon_path = ':/plugins/DsgTools/icons/postgis.png'
         action = self.add_action(
             icon_path,
             text=self.tr('Create PostGIS'),
@@ -263,7 +261,7 @@ class DsgTools:
         database.addAction(action)
         self.databaseButton.addAction(action)
 
-        icon_path = ':/plugins/DsgTools/category.png'
+        icon_path = ':/plugins/DsgTools/icons/category.png'
         action = self.add_action(
             icon_path,
             text=self.tr('Load by Category'),
@@ -275,7 +273,7 @@ class DsgTools:
         self.layerButton.addAction(action)
         self.layerButton.setDefaultAction(action)
 
-        icon_path = ':/plugins/DsgTools/class.png'
+        icon_path = ':/plugins/DsgTools/icons/class.png'
         action = self.add_action(
             icon_path,
             text=self.tr('Load by Class'),
@@ -286,7 +284,7 @@ class DsgTools:
         layers.addAction(action)
         self.layerButton.addAction(action)
 
-        icon_path = ':/plugins/DsgTools/frame.png'
+        icon_path = ':/plugins/DsgTools/icons/frame.png'
         action = self.add_action(
             icon_path,
             text=self.tr('Create Frame'),
@@ -297,7 +295,7 @@ class DsgTools:
         layers.addAction(action)
         self.layerButton.addAction(action)
 
-        """icon_path = ':/plugins/DsgTools/complex.png'
+        """icon_path = ':/plugins/DsgTools/icons/complex.png'
         action = self.add_action(
             icon_path,
             text=self.tr('Create Complex'),

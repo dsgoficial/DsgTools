@@ -1,17 +1,17 @@
 <RCC>
     <qresource prefix="/plugins/DsgTools" >
-        <file>icon.png</file>
-        <file>database.png</file>
-        <file>layers.png</file>
-        <file>frame.png</file>
-        <file>complex.png</file>
-        <file>spatialite.png</file>
-        <file>postgis.png</file>
-        <file>class.png</file>
-        <file>category.png</file>
-        <file>inspect.png</file>
-        <file>dsg.png</file>
+        <file>icons/icon.png</file>
+        <file>icons/database.png</file>
+        <file>icons/layers.png</file>
+        <file>icons/frame.png</file>
+        <file>icons/complex.png</file>
+        <file>icons/spatialite.png</file>
+        <file>icons/postgis.png</file>
+        <file>icons/class.png</file>
+        <file>icons/category.png</file>
+        <file>icons/inspect.png</file>
+        <file>icons/dsg.png</file>
         <file>eb.jpg</file>
-        <file>server.png</file>
+        <file>icons/server.png</file>
     </qresource>
 </RCC>

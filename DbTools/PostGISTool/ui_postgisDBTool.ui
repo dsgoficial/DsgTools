@@ -91,14 +91,14 @@
      <item>
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>SRS:</string>
+        <string>CRS:</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="srsButton">
        <property name="text">
-        <string>Search SRS</string>
+        <string>Search CRS</string>
        </property>
       </widget>
      </item>
