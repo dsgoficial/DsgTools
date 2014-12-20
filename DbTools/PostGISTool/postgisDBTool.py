@@ -86,7 +86,7 @@ class PostgisDBTool(QDialog, Ui_Dialog):
             else:
                 self.epsg = 4326
         except:
-            QMessageBox.warning(self, "Warning!", message)
+            QMessageBox.warning(self, self.tr('DsgTools',"Warning!"), self.tr('DsgTools',message))
             
     def createDatabase(self, name):
         sql  = self.gen.getCreateDatabase(name)
@@ -96,7 +96,7 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         #creating the database
         query = QSqlQuery(db)
         if not query.exec_(sql):
-            QMessageBox.warning(self, "Warning!", query.lastError().text())
+            QMessageBox.warning(self, self.tr('DsgTools',"Warning!"), query.lastError().text())
             db.close()
             return False
         db.close()

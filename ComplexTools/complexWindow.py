@@ -123,7 +123,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
     def populateComboBox(self):
         #getting all complex tables
         self.complexCombo.clear()
-        self.complexCombo.addItem("select a complex class")
+        self.complexCombo.addItem(self.tr('DsgTools',"select a complex class"))
         
         dbName = self.dbCombo.currentText()
         (dataSourceUri, credentials) = self.databases[dbName]
@@ -135,7 +135,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         
     def getDataSources(self):
         self.dbCombo.clear()
-        self.dbCombo.addItem("select a database")
+        self.dbCombo.addItem(self.tr('DsgTools',"select a database"))
         
         if self.databases:
             self.databases.clear()
@@ -174,7 +174,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
     def on_zoomButton_clicked(self):
         #case no item is selected we should warn the user
         if len(self.treeWidget.selectedItems()) == 0:
-            QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Please, select an item to zoom.")
+            QMessageBox.warning(self.iface.mainWindow(), self.tr('DsgTools',"Warning!"), self.tr('DsgTools',"Please, select an item to zoom."))
             return
         
         item = self.treeWidget.selectedItems()[0]
@@ -193,7 +193,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                         break
 
                 if not aggregated_layer:
-                    QMessageBox.warning(self.iface.mainWindow(), "Warning!", "The associated classes must be loaded in the table of contents.")
+                    QMessageBox.warning(self.iface.mainWindow(), self.tr('DsgTools',"Warning!"), self.tr('DsgTools',"The associated classes must be loaded in the table of contents."))
                     return
 
                 for j in range(aggregated_item.childCount()):
@@ -208,7 +208,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             self.iface.mapCanvas().setExtent(bbox)
             self.iface.mapCanvas().refresh()
         else:
-            QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Select a complex.")
+            QMessageBox.warning(self.iface.mainWindow(), self.tr('DsgTools',"Warning!"), self.tr('DsgTools',"Select a complex."))
             return
         
     def getAdjustedComplexName(self, dbName, complex):
@@ -241,7 +241,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                 break
             
         if not aggregated_layer:
-            QMessageBox.warning(self.iface.mainWindow(), "Warning!", "The class you're trying to disassociate must loaded in the table of contents.")
+            QMessageBox.warning(self.iface.mainWindow(), self.tr('DsgTools',"Warning!"), self.tr('DsgTools',"The class you're trying to disassociate must loaded in the table of contents."))
             return
             
         for i in range(item.childCount()):
@@ -265,7 +265,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                 break    
 
         if not aggregated_layer:
-            QMessageBox.warning(self.iface.mainWindow(), "Warning!", "The class you're trying to disassociate must loaded in the table of contents.")
+            QMessageBox.warning(self.iface.mainWindow(), self.tr('DsgTools',"Warning!"), self.tr('DsgTools',"The class you're trying to disassociate must loaded in the table of contents."))
             return
 
         #feature id that will be updated
@@ -296,7 +296,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
     def on_disassociatePushButton_clicked(self):
         #case no item is selected we should warn the user
         if len(self.treeWidget.selectedItems()) == 0:
-            QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Please, select an aggregated class or aggregated id.")
+            QMessageBox.warning(self.iface.mainWindow(), self.tr('DsgTools',"Warning!"), self.tr('DsgTools',"Please, select an aggregated class or aggregated id."))
             return
             
         item = self.treeWidget.selectedItems()[0]
@@ -306,7 +306,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         elif self.depth(item) == 4:
             self.disassociateAggregatedId(item)
         else:
-            QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Please, select an aggregated class or aggregated id.")
+            QMessageBox.warning(self.iface.mainWindow(), self.tr('DsgTools',"Warning!"), self.tr('DsgTools',"Please, select an aggregated class or aggregated id."))
             return            
             
         self.loadAssociatedFeatures()
@@ -378,13 +378,13 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
     def associateFeatures(self):
         #case no item is selected we should warn the user
         if len(self.treeWidget.selectedItems()) == 0:
-            QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Please, select a complex.")
+            QMessageBox.warning(self.iface.mainWindow(), self.tr('DsgTools',"Warning!"), self.tr('DsgTools',"Please, select a complex."))
             return
             
         item = self.treeWidget.selectedItems()[0]
         #checking if the item is a complex (it should have depth = 2)
         if self.depth(item) != 2:
-            QMessageBox.warning(self.iface.mainWindow(), "Warning!", "Please, select a complex.")
+            QMessageBox.warning(self.iface.mainWindow(), self.tr('DsgTools',"Warning!"), self.tr('DsgTools',"Please, select a complex."))
             return
         
         complex = self.complexCombo.currentText()
@@ -423,10 +423,10 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         #show the message of incompatible classes to associate                                   
         if len(forbiddenLayers) > 0:
             message = ""
-            message += "The following layers cannot be associated to complexes from "+self.complexCombo.currentText()+":\n"
+            message += self.tr('DsgTools',"The following layers cannot be associated to complexes from ")+self.complexCombo.currentText()+":\n"
             for text in forbiddenLayers:
                 message += text+"\n"
-            QMessageBox.warning(self.iface.mainWindow(), "Warning!", message)
+            QMessageBox.warning(self.iface.mainWindow(), self.tr('DsgTools',"Warning!"), message)
 
         #updating the tree widget
         self.loadAssociatedFeatures()

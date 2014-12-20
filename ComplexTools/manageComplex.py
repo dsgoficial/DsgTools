@@ -161,7 +161,7 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         record = self.projectModel.record(0)
         if not record.value("id"):
             record.setValue("id",str(uuid4()))
-            record.setValue("nome", "edit this field")
+            record.setValue("nome", self.tr('DsgTools',"edit this field"))
             self.projectModel.setRecord(0, record)
 
         self.tableView.setModel(self.projectModel)
@@ -193,7 +193,7 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         for i in range(count):
             record = self.projectModel.record(i)
             if record.isNull('nome'):
-                QMessageBox.warning(self.iface.mainWindow(), "Warning!", 'The field: \'nome\' must be filled in all rows. Please, check and try again.')
+                QMessageBox.warning(self.iface.mainWindow(), self.tr('DsgTools',"Warning!"), self.tr('DsgTools','The field: \'nome\' must be filled in all rows. Please, check and try again.'))
                 return False
         return True
 
@@ -207,7 +207,7 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         #commmiting all pending changes
         if not self.projectModel.submitAll():
             #In case something went wrong we show the message to the user
-            QMessageBox.warning(self.iface.mainWindow(), "Error!", self.projectModel.lastError().text())
+            QMessageBox.warning(self.iface.mainWindow(), self.tr('DsgTools',"Error!"), self.projectModel.lastError().text())
 
         #Emit the signal to update the complex tree
         self.emit( SIGNAL( "tableUpdated()" ))

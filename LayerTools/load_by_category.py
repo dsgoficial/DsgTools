@@ -269,7 +269,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             self.epsg = self.findEPSG()
             print self.epsg
             if self.epsg == -1:
-                self.bar.pushMessage("", "Coordinate Reference System not set or invalid!", level=QgsMessageBar.WARNING)
+                self.bar.pushMessage("", self.tr('DsgTools',"Coordinate Reference System not set or invalid!"), level=QgsMessageBar.WARNING)
             else:
                 self.crs = QgsCoordinateReferenceSystem(self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
                 if self.isSpatialite:
@@ -386,22 +386,22 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
                     self.loadLayers('a',categoriasSelecionadas,area)
 
                 if self.checkBoxPoint.isChecked()== False and self.checkBoxLine.isChecked() == False and self.checkBoxPolygon.isChecked() == False:
-                    self.bar.pushMessage("WARNING!", "Please, select at least one type of layer!", level=QgsMessageBar.WARNING)
+                    self.bar.pushMessage(self.tr('DsgTools',"WARNING!"), self.tr('DsgTools',"Please, select at least one type of layer!"), level=QgsMessageBar.WARNING)
                 else:
                     self.restoreInitialState()
                     self.close()
             except:
-                qgis.utils.iface.messageBar().pushMessage("CRITICAL!", "Problem loading the categories!", level=QgsMessageBar.CRITICAL)
+                qgis.utils.iface.messageBar().pushMessage(self.tr('DsgTools',"CRITICAL!"), self.tr('DsgTools',"Problem loading the categories!"), level=QgsMessageBar.CRITICAL)
                 pass
 
         else:
             if self.db and not self.crs:
-                self.bar.pushMessage("CRITICAL!", "Could not determine the coordinate reference system!", level=QgsMessageBar.CRITICAL)
+                self.bar.pushMessage(self.tr('DsgTools',"CRITICAL!"), self.tr('DsgTools',"Could not determine the coordinate reference system!"), level=QgsMessageBar.CRITICAL)
             if not self.db and not self.crs:
-                self.bar.pushMessage("CRITICAL!", "Database not loaded properly!", level=QgsMessageBar.CRITICAL)
-                self.bar.pushMessage("CRITICAL!", "Could not determine the coordinate reference system!", level=QgsMessageBar.CRITICAL)
+                self.bar.pushMessage(self.tr('DsgTools',"CRITICAL!"), self.tr('DsgTools',"Database not loaded properly!"), level=QgsMessageBar.CRITICAL)
+                self.bar.pushMessage(self.tr('DsgTools',"CRITICAL!"), self.tr('DsgTools',"Could not determine the coordinate reference system!"), level=QgsMessageBar.CRITICAL)
             if len(self.listWidgetCategoryTo)==0:
-                self.bar.pushMessage("WARNING!", "Please, select at least one category!", level=QgsMessageBar.WARNING)
+                self.bar.pushMessage(self.tr('DsgTools',"WARNING!"), self.tr('DsgTools',"Please, select at least one category!"), level=QgsMessageBar.WARNING)
             categoriasSelecionadas = []
             self.pointWithElement = []
             self.lineWithElement = []
@@ -445,7 +445,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
                 print sql
                 print number
             if not query.exec_(sql):
-                QgsMessageLog.logMessage("Problem counting elements: "+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('DsgTools',"Problem counting elements: ")+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             listaQuantidades.append([layer, number])
         return listaQuantidades
 

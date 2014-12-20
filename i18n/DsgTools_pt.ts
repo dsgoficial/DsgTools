@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.0" language="pt_BR">
+<!DOCTYPE TS><TS version="1.1" language="pt_BR">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -29,51 +28,132 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>CriaMoldura</name>
+    <name>ComplexWindow</name>
     <message>
-        <location filename="LayerTools/cria_moldura_dialog_base.ui" line="33"/>
-        <source>Create Frame</source>
-        <translation>Criar Moldura</translation>
+        <location filename="ComplexTools/complexWindow.py" line="126"/>
+        <source>DsgTools</source>
+        <comment>select a complex class</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="LayerTools/cria_moldura_dialog_base.ui" line="48"/>
-        <source>File   </source>
-        <translation>Arquivo</translation>
+        <location filename="ComplexTools/complexWindow.py" line="138"/>
+        <source>DsgTools</source>
+        <comment>select a database</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="LayerTools/cria_moldura_dialog_base.ui" line="90"/>
-        <source>Search</source>
-        <translation>Pesquisar</translation>
+        <location filename="ComplexTools/complexWindow.py" line="429"/>
+        <source>DsgTools</source>
+        <comment>Warning!</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="LayerTools/cria_moldura_dialog_base.ui" line="109"/>
-        <source>Coordinate System</source>
-        <translation>Sistema de Coordenadas</translation>
+        <location filename="ComplexTools/complexWindow.py" line="177"/>
+        <source>DsgTools</source>
+        <comment>Please, select an item to zoom.</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="LayerTools/cria_moldura_dialog_base.ui" line="176"/>
-        <source>Ok</source>
-        <translation>Ok</translation>
+        <location filename="ComplexTools/complexWindow.py" line="196"/>
+        <source>DsgTools</source>
+        <comment>The associated classes must be loaded in the table of contents.</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="LayerTools/cria_moldura_dialog_base.ui" line="196"/>
-        <source>Cancel</source>
-        <translation>Cancelar</translation>
+        <location filename="ComplexTools/complexWindow.py" line="211"/>
+        <source>DsgTools</source>
+        <comment>Select a complex.</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="LayerTools/cria_moldura_dialog_base.ui" line="228"/>
-        <source>Scale</source>
-        <translation>Escala</translation>
+        <location filename="ComplexTools/complexWindow.py" line="268"/>
+        <source>DsgTools</source>
+        <comment>The class you&apos;re trying to disassociate must loaded in the table of contents.</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="LayerTools/cria_moldura_dialog_base.ui" line="250"/>
-        <source>MI</source>
-        <translation>MI</translation>
+        <location filename="ComplexTools/complexWindow.py" line="309"/>
+        <source>DsgTools</source>
+        <comment>Please, select an aggregated class or aggregated id.</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="LayerTools/cria_moldura_dialog_base.ui" line="276"/>
-        <source>INOM</source>
-        <translation>INOM</translation>
+        <location filename="ComplexTools/complexWindow.py" line="387"/>
+        <source>DsgTools</source>
+        <comment>Please, select a complex.</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ComplexTools/complexWindow.py" line="426"/>
+        <source>DsgTools</source>
+        <comment>The following layers cannot be associated to complexes from </comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CreateInomDialog</name>
+    <message>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="79"/>
+        <source>DsgTools</source>
+        <comment>Warning!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="79"/>
+        <source>DsgTools</source>
+        <comment>Map name index not valid!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="88"/>
+        <source>DsgTools</source>
+        <comment>Critical!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="88"/>
+        <source>DsgTools</source>
+        <comment>Problem creating the frame! Check log for details.</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="89"/>
+        <source>DsgTools</source>
+        <comment>Problem creating the frame:</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="154"/>
+        <source>DsgTools</source>
+        <comment>Coordinate Reference System not set or invalid!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="209"/>
+        <source>DsgTools</source>
+        <comment>Select Database</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CreatePostGISDatabase</name>
+    <message>
+        <location filename="DbTools/PostGISTool/createPostGISDatabase.py" line="92"/>
+        <source>DsgTools</source>
+        <comment>Problem on database structure creation: </comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="DbTools/PostGISTool/createPostGISDatabase.py" line="102"/>
+        <source>DsgTools</source>
+        <comment>User canceled datatabase structure creation</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="DbTools/PostGISTool/createPostGISDatabase.py" line="112"/>
+        <source>DsgTools</source>
+        <comment>Successful datatabase structure creation</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -400,99 +480,99 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="dsg_tools.py" line="327"/>
         <source>&amp;DSG Tools</source>
-        <translation>&amp;Ferramentas DSG</translation>
+        <translation type="unfinished">&amp;Ferramentas DSG</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="206"/>
         <source>DSG Tools</source>
-        <translation>Ferramentas DSG</translation>
+        <translation type="unfinished">Ferramentas DSG</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="211"/>
         <source>Server Catalog</source>
-        <translation>Catálogo de Servidores</translation>
+        <translation type="unfinished">Catálogo de Servidores</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="212"/>
         <source>Database Tools</source>
-        <translation>Ferramentas de BD</translation>
+        <translation type="unfinished">Ferramentas de BD</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="213"/>
         <source>Layer Tools</source>
-        <translation>Ferramentas de Camadas</translation>
+        <translation type="unfinished">Ferramentas de Camadas</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="214"/>
         <source>Complex Tools</source>
-        <translation>Ferramentas de Complexos</translation>
+        <translation type="unfinished">Ferramentas de Complexos</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="217"/>
         <source>Server Settings</source>
-        <translation>Configurações de Servidor</translation>
+        <translation type="unfinished">Configurações de Servidor</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="227"/>
         <source>About</source>
-        <translation>Sobre</translation>
+        <translation type="unfinished">Sobre</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="242"/>
         <source>Create Spatialite</source>
-        <translation>Criar Spatialite</translation>
+        <translation type="unfinished">Criar Spatialite</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="254"/>
         <source>Create PostGIS</source>
-        <translation>Criar PostGIS</translation>
+        <translation type="unfinished">Criar PostGIS</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="265"/>
         <source>Load by Category</source>
-        <translation>Carrega por Categoria</translation>
+        <translation type="unfinished">Carrega por Categoria</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="277"/>
         <source>Load by Class</source>
-        <translation>Carrega por Classe</translation>
+        <translation type="unfinished">Carrega por Classe</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="288"/>
         <source>Create Frame</source>
-        <translation>Criar Moldura</translation>
+        <translation type="unfinished">Criar Moldura</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="374"/>
         <source>Creating database structure...</source>
-        <translation>Criando Estrutura do Banco de Dados...</translation>
+        <translation type="unfinished">Criando Estrutura do Banco de Dados...</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="392"/>
         <source>Problem creating the Database!</source>
-        <translation>Problema naCriação do Banco de Dados!</translation>
+        <translation type="unfinished">Problema naCriação do Banco de Dados!</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="463"/>
         <source>Database structure creation canceled!</source>
-        <translation>Criação da Estrutura de Dados Cancelada!</translation>
+        <translation type="unfinished">Criação da Estrutura de Dados Cancelada!</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="472"/>
         <source>Database structure successfully created!</source>
-        <translation>Estrutura de Banco de Dados criada com sucesso!</translation>
+        <translation type="unfinished">Estrutura de Banco de Dados criada com sucesso!</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="474"/>
         <source>Problem creating the database structure!
  Check the Log terminal for details.</source>
-        <translation>Problema na Criação da Estrutura de Dados!
+        <translation type="unfinished">Problema na Criação da Estrutura de Dados!
 Olhe o Terminal Python para detalhes.</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="476"/>
         <source>User canceled the database structure creation!</source>
-        <translation>Usuário cancelou a criação da estrutura de dados!</translation>
+        <translation type="unfinished">Usuário cancelou a criação da estrutura de dados!</translation>
     </message>
 </context>
 <context>
@@ -617,6 +697,60 @@ Olhe o Terminal Python para detalhes.</translation>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
+    <message>
+        <location filename="LayerTools/load_by_category.py" line="272"/>
+        <source>DsgTools</source>
+        <comment>Coordinate Reference System not set or invalid!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/load_by_category.py" line="404"/>
+        <source>DsgTools</source>
+        <comment>WARNING!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/load_by_category.py" line="389"/>
+        <source>DsgTools</source>
+        <comment>Please, select at least one type of layer!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/load_by_category.py" line="402"/>
+        <source>DsgTools</source>
+        <comment>CRITICAL!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/load_by_category.py" line="394"/>
+        <source>DsgTools</source>
+        <comment>Problem loading the categories!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/load_by_category.py" line="402"/>
+        <source>DsgTools</source>
+        <comment>Could not determine the coordinate reference system!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/load_by_category.py" line="401"/>
+        <source>DsgTools</source>
+        <comment>Database not loaded properly!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/load_by_category.py" line="404"/>
+        <source>DsgTools</source>
+        <comment>Please, select at least one category!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/load_by_category.py" line="448"/>
+        <source>DsgTools</source>
+        <comment>Problem counting elements: </comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LoadByClass</name>
@@ -674,6 +808,125 @@ Olhe o Terminal Python para detalhes.</translation>
         <location filename="LayerTools/load_by_class_base.ui" line="223"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
+    </message>
+    <message>
+        <location filename="LayerTools/load_by_class.py" line="155"/>
+        <source>DsgTools</source>
+        <comment>Coordinate Reference System not set or invalid!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/load_by_class.py" line="215"/>
+        <source>DsgTools</source>
+        <comment>Select Database</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/load_by_class.py" line="294"/>
+        <source>DsgTools</source>
+        <comment>Error!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/load_by_class.py" line="276"/>
+        <source>DsgTools</source>
+        <comment>Could not load the selected classes!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/load_by_class.py" line="296"/>
+        <source>DsgTools</source>
+        <comment>Warning!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/load_by_class.py" line="278"/>
+        <source>DsgTools</source>
+        <comment>Please, select at least one class!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/load_by_class.py" line="294"/>
+        <source>DsgTools</source>
+        <comment>Could not load the layer(s)!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="LayerTools/load_by_class.py" line="296"/>
+        <source>DsgTools</source>
+        <comment>Please select at least one layer!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ManageComplexDialog</name>
+    <message>
+        <location filename="ComplexTools/manageComplex.py" line="164"/>
+        <source>DsgTools</source>
+        <comment>edit this field</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ComplexTools/manageComplex.py" line="196"/>
+        <source>DsgTools</source>
+        <comment>Warning!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ComplexTools/manageComplex.py" line="196"/>
+        <source>DsgTools</source>
+        <comment>The field: &apos;nome&apos; must be filled in all rows. Please, check and try again.</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ComplexTools/manageComplex.py" line="210"/>
+        <source>DsgTools</source>
+        <comment>Error!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PostgisDBTool</name>
+    <message>
+        <location filename="DbTools/PostGISTool/postgisDBTool.py" line="99"/>
+        <source>DsgTools</source>
+        <comment>Warning!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="DbTools/PostGISTool/postgisDBTool.py" line="89"/>
+        <source>DsgTools</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QmlParser</name>
+    <message>
+        <location filename="QmlTools/qmlParser.py" line="75"/>
+        <source>DsgTools</source>
+        <comment>Warning!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="QmlTools/qmlParser.py" line="75"/>
+        <source>DsgTools</source>
+        <comment>QML file not loaded properly. Enum values won&apos;t be available.</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ServerConfigurator</name>
+    <message>
+        <location filename="ServerTools/serverConfigurator.py" line="55"/>
+        <source>DsgTools</source>
+        <comment>Warning!</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ServerTools/serverConfigurator.py" line="55"/>
+        <source>DsgTools</source>
+        <comment>Fill all parameters.</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
