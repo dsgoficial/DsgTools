@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_serverConfigurator.ui'
 #
-# Created: Wed Dec 17 10:35:51 2014
+# Created: Sun Dec 21 00:49:32 2014
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(246, 206)
+        Dialog.resize(246, 209)
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.horizontalLayout = QtGui.QHBoxLayout()
@@ -74,9 +74,6 @@ class Ui_Dialog(object):
         self.passwordEdit.setObjectName(_fromUtf8("passwordEdit"))
         self.horizontalLayout_5.addWidget(self.passwordEdit)
         self.gridLayout.addLayout(self.horizontalLayout_5, 4, 0, 1, 1)
-        self.storeCredentialsCheckBox = QtGui.QCheckBox(Dialog)
-        self.storeCredentialsCheckBox.setObjectName(_fromUtf8("storeCredentialsCheckBox"))
-        self.gridLayout.addWidget(self.storeCredentialsCheckBox, 5, 0, 1, 1)
         self.horizontalLayout_6 = QtGui.QHBoxLayout()
         self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
         self.saveButton = QtGui.QPushButton(Dialog)
@@ -85,7 +82,7 @@ class Ui_Dialog(object):
         self.cancelButton = QtGui.QPushButton(Dialog)
         self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
         self.horizontalLayout_6.addWidget(self.cancelButton)
-        self.gridLayout.addLayout(self.horizontalLayout_6, 6, 0, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout_6, 5, 0, 1, 1)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -97,7 +94,6 @@ class Ui_Dialog(object):
         self.label_3.setText(QtGui.QApplication.translate("Dialog", "Port:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("Dialog", "User:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("Dialog", "Password:", None, QtGui.QApplication.UnicodeUTF8))
-        self.storeCredentialsCheckBox.setText(QtGui.QApplication.translate("Dialog", "Store Credentials", None, QtGui.QApplication.UnicodeUTF8))
         self.saveButton.setText(QtGui.QApplication.translate("Dialog", "Save", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelButton.setText(QtGui.QApplication.translate("Dialog", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 
