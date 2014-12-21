@@ -41,6 +41,8 @@ class ServerConfigurator(QDialog, Ui_Dialog):
         
         self.populateServersCombo()
         
+        self.passwordEdit.setEchoMode(QLineEdit.Password)
+        
     @pyqtSlot(bool)    
     def on_saveButton_clicked(self):
         if self.checkFields():

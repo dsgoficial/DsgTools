@@ -41,8 +41,6 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ServerTools'))
 from load_by_class import LoadByClass
 from load_by_category import LoadByCategory
 from cria_spatialite_dialog import CriaSpatialiteDialog
-from cria_moldura_dialog import CriaMolduraDialog
-#from createComplex import CreateComplexDialog
 from complexWindow import ComplexWindow
 from serverConfigurator import ServerConfigurator
 from postgisDBTool import PostgisDBTool
@@ -211,7 +209,6 @@ class DsgTools:
         server = self.addMenu(self.dsgTools, u'server', self.tr('Server Catalog'),':/plugins/DsgTools/icons/server.png')
         database = self.addMenu(self.dsgTools, u'database', self.tr('Database Tools'),':/plugins/DsgTools/icons/database.png')
         layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/icons/layers.png')
-        complex = self.addMenu(self.dsgTools, u'complex', self.tr('Complex Tools'),':/plugins/DsgTools/icons/complex.png')
 
         icon_path = ':/plugins/DsgTools/icons/server.png'
         action = self.add_action(
@@ -294,29 +291,6 @@ class DsgTools:
             add_to_toolbar=False)
         layers.addAction(action)
         self.layerButton.addAction(action)
-
-        """icon_path = ':/plugins/DsgTools/icons/complex.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Create Complex'),
-            callback=self.createComplex,
-            parent=database,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        complex.addAction(action)
-        self.complexButton.addAction(action)
-        self.complexButton.setDefaultAction(action)
-
-        icon_path = ':/plugins/DsgTools/inspect.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Inspect Complex'),
-            callback=self.inspectComplex,
-            parent=database,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        complex.addAction(action)
-        self.complexButton.addAction(action)"""
 
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
         
@@ -423,26 +397,6 @@ class DsgTools:
         result = self.dlg.exec_()
         if result:
             pass
-
-    """def createComplex(self):
-        try:
-            self.complexButton.setDefaultAction(self.toolbar.sender())
-            self.dlg = CreateComplexDialog(self.iface)
-            result = self.dlg.exec_()
-            if result:
-                pass
-        except:
-            self.dlg = CreateComplexDialog(self.iface)
-            result = self.dlg.exec_()
-            if result:
-                pass
-
-    def inspectComplex(self):
-        try:
-            self.complexButton.setDefaultAction(self.toolbar.sender())
-            pass
-        except:
-            pass"""
             
     def configurateServers(self):
         self.dlg = ServerConfigurator(self.iface)
