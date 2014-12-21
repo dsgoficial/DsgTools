@@ -161,12 +161,15 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             self.qmlVersionPath = os.path.join(currentPath, 'qml_qgis', 'qgis_26')
         else:
             self.qmlVersionPath = os.path.join(currentPath, 'qml_qgis', 'qgis_22')
-        sqlVersion = self.gen.getEDGVVersion()
-        queryVersion =  QSqlQuery(sqlVersion, self.db)
-        queryVersion.next()
-        if queryVersion is not None:
-            self.dbVersion = queryVersion.value(0)
-        else:
+        try:
+            sqlVersion = self.gen.getEDGVVersion()
+            queryVersion =  QSqlQuery(sqlVersion, self.db)
+            queryVersion.next()
+            if queryVersion is not None:
+                self.dbVersion = queryVersion.value(0)
+            else:
+                self.dbVersion = '2.1.3'
+        except:
             self.dbVersion = '2.1.3'
 
         if self.dbVersion == '3.0':
@@ -214,7 +217,6 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
                 or tableName.split("_")[-1] == "a":
                 self.insertIntoListView(categoryName)
-
         self.listWidgetCategoryFrom.sortItems()
         self.setCRS()
 
@@ -487,7 +489,10 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         idSubgrupo = qgis.utils.iface.legendInterface().addGroup(categoria,True,idGrupo)
         for layer_name in layer_names:
             split = layer_name.split('_')
-            category = split[0]+'.'+split[1]
+            if self.dbVersion == '3.0':
+                category = split[0]+'.'+split[1]
+            else:
+                category = split[0]
             if category == categoria:
                 print category,layer_name,geom_column
                 uri.setDataSource('', layer_name, geom_column)
@@ -518,7 +523,11 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
         vlayer.setCrs(self.crs)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
-        vlayerQml = os.path.join(self.qmlPath, layer_name.replace('\r','')+'.qml')
+        if self.isSpatialite and self.dbVersion == '3.0':
+            lyr = '_'.join(layer_name.replace('\r','').split('_')[1::])
+        else:
+            lyr = layer_name.replace('\r','')
+        vlayerQml = os.path.join(self.qmlPath, lyr+'.qml')
         vlayer.loadNamedStyle(vlayerQml,False)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer)
         qgis.utils.iface.legendInterface().moveLayer(vlayer, idSubgrupo)
