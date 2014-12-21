@@ -101,7 +101,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="LayerTools/ui_create_inom_dialog.py" line="88"/>
         <source>Problem creating the frame! Check log for details.</source>
-        <translation>Problema na criação da moldura! Verifique o Terminal para detalhes.</translation>
+        <translation>Problema na criação da moldura! Verifique o log para detalhes.</translation>
     </message>
     <message>
         <location filename="LayerTools/ui_create_inom_dialog.py" line="89"/>
@@ -837,7 +837,7 @@ Olhe o Terminal Python para detalhes.</translation>
     <message>
         <location filename="ComplexTools/manageComplex.py" line="196"/>
         <source>The field: &apos;nome&apos; must be filled in all rows. Please, check and try again.</source>
-        <translation>O campo &apos;nome&apos; precisa ser preenchido em todas as colunas. Por favor, verifique e tente novamente.</translation>
+        <translation>O campo &apos;nome&apos; precisa ser preenchido em todas as linhas. Por favor, verifique e tente novamente.</translation>
     </message>
     <message>
         <location filename="ComplexTools/manageComplex.py" line="210"/>
@@ -857,15 +857,13 @@ Olhe o Terminal Python para detalhes.</translation>
     <name>QmlParser</name>
     <message>
         <location filename="QmlTools/qmlParser.py" line="75"/>
-        <source>DsgTools</source>
-        <comment>Warning!</comment>
-        <translation>FerramentasDsg</translation>
+        <source>Warning!</source>
+        <translation>Alerta!</translation>
     </message>
     <message>
         <location filename="QmlTools/qmlParser.py" line="75"/>
-        <source>DsgTools</source>
-        <comment>QML file not loaded properly. Enum values won&apos;t be available.</comment>
-        <translation>FerramentasDsg</translation>
+        <source>QML file not loaded properly. Enum values won&apos;t be available.</source>
+        <translation>Arquivo QML não carregado corretamente. Os mapas de valores não estarão disponíveis.</translation>
     </message>
 </context>
 <context>
