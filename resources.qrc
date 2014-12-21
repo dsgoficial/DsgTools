@@ -11,7 +11,7 @@
         <file>icons/category.png</file>
         <file>icons/inspect.png</file>
         <file>icons/dsg.png</file>
-        <file>eb.jpg</file>
+        <file>icons/eb.jpg</file>
         <file>icons/server.png</file>
     </qresource>
 </RCC>

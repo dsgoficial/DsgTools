@@ -20,3 +20,6 @@
                    ServerTools/ui_serverConfigurator.ui
 
  TRANSLATIONS    = i18n/DsgTools_pt.ts
+
+RESOURCES += \
+    resources.qrc
