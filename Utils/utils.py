@@ -39,19 +39,25 @@ class Utils:
     
     def __del__(self):
         pass
-    
-    def getQmlDir(self):
+     
+    def getQmlDir(self, db):
         currentPath = os.path.dirname(__file__)
         if qgis.core.QGis.QGIS_VERSION_INT >= 20600:
             qmlVersionPath = os.path.join(currentPath, '..', 'Qmls', 'qgis_26')
         else:
             qmlVersionPath = os.path.join(currentPath, '..', 'Qmls', 'qgis_22')
-        return qmlVersionPath      
+            
+        version = self.getDatabaseVersion(db)
+        if version == '3.0':
+            qmlPath = os.path.join(qmlVersionPath, 'edgv_30')
+        elif version == '2.1.3':
+            qmlPath = os.path.join(qmlVersionPath, 'edgv_213')
+        return qmlPath
 
-    def findEPSG(self, isSpatialite):
-        gen = self.factory.createSqlGenerator(isSpatialite)
+    def findEPSG(self, db):
+        gen = self.factory.createSqlGenerator(self.isSpatialiteDB(db))
         sql = self.gen.getSrid()
-        query = QSqlQuery(sql, self.db)
+        query = QSqlQuery(sql, db)
         srids = []
         while query.next():
             srids.append(query.value(0))
@@ -95,14 +101,21 @@ class Utils:
         db.setPassword(password)
         return db
     
-    def getDatabaseVersion(self, isSpatialite):
-        gen = self.factory.createSqlGenerator(isSpatialite)
+    def getDatabaseVersion(self, db):
+        gen = self.factory.createSqlGenerator(self.isSpatialiteDB(db))
         sqlVersion = gen.getEDGVVersion()
-        queryVersion =  QSqlQuery(sqlVersion, self.db)
+        queryVersion =  QSqlQuery(sqlVersion, db)
         queryVersion.next()
         if queryVersion is not None:
             version = queryVersion.value(0)
         else:
             version = '2.1.3'
         return version
+    
+    def isSpatialiteDB(self, db):
+        if db.driverName() == 'QPSQL':
+            isSpatialite = False
+        elif db.driverName() == 'QSQLITE':
+            isSpatialite = True
+        return isSpatialite
         

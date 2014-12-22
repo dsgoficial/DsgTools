@@ -125,8 +125,8 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
 
         #obtaining the qml file path
         self.utils = Utils()
-        qmlParentPath = self.utils.getQmlDir()
-        qmlPath = os.path.join(qmlParentPath, 'edgv_30', fileName)
+        qmlDirPath = self.utils.getQmlDir(db)
+        qmlPath = os.path.join(qmlDirPath, fileName)
 
         #getting the domain dictionary that will be used to generate the comboboxes
         parser = QmlParser(qmlPath)
