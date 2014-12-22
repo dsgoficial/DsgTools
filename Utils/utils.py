@@ -66,7 +66,7 @@ class Utils:
         settings.endGroup()
         return currentConnections
 
-    def getSpatialiteDatabase(self, spatialiteFileEdit):
+    def getSpatialiteDatabase(self):
         db = None
         fd = QtGui.QFileDialog()
         filename = fd.getOpenFileName(filter='*.sqlite')
