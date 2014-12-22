@@ -158,9 +158,9 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
     def getDatabaseVersion(self):
         currentPath = os.path.dirname(__file__)
         if qgis.core.QGis.QGIS_VERSION_INT >= 20600:
-            self.qmlVersionPath = os.path.join(currentPath, 'qml_qgis', 'qgis_26')
+            self.qmlVersionPath = os.path.join(currentPath, '..', 'Qmls', 'qgis_26')
         else:
-            self.qmlVersionPath = os.path.join(currentPath, 'qml_qgis', 'qgis_22')
+            self.qmlVersionPath = os.path.join(currentPath, '..', 'Qmls', 'qgis_22')
         try:
             sqlVersion = self.gen.getEDGVVersion()
             queryVersion =  QSqlQuery(sqlVersion, self.db)

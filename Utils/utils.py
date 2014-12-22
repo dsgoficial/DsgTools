@@ -38,6 +38,14 @@ class Utils:
     
     def __del__(self):
         pass
+    
+    def getQmlDir(self):
+        currentPath = os.path.dirname(__file__)
+        if qgis.core.QGis.QGIS_VERSION_INT >= 20600:
+            qmlVersionPath = os.path.join(currentPath, '..', 'Qmls', 'qgis_26')
+        else:
+            qmlVersionPath = os.path.join(currentPath, '..', 'Qmls', 'qgis_22')
+        return qmlVersionPath      
 
     def findEPSG(self, isSpatialite):
         gen = self.factory.createSqlGenerator(isSpatialite)

@@ -34,7 +34,9 @@ from uuid import uuid4
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'QmlTools'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Utils'))
 from qmlParser import QmlParser
+from utils import Utils
 
 class CustomTableModel(QSqlTableModel):
     def __init__(self, domainDict, parent=None, db=QSqlDatabase):
@@ -122,7 +124,9 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         fileName = fileName.split('.')[-1]+'.qml'
 
         #obtaining the qml file path
-        qmlPath = os.path.join(os.path.dirname(__file__), '..', 'Qmls', 'qmlEDGV30', fileName)
+        self.utils = Utils()
+        qmlParentPath = self.utils.getQmlDir()
+        qmlPath = os.path.join(qmlParentPath, 'edgv_30', fileName)
 
         #getting the domain dictionary that will be used to generate the comboboxes
         parser = QmlParser(qmlPath)
