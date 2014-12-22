@@ -75,15 +75,6 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         self.checkBoxPolygon.setCheckState(0)
         self.checkBoxAll.setCheckState(0)
 
-
-        #qmlPath will be set as /qml_qgis/qgis_22/edgv_213/, but in a further version, there will be an option to detect from db
-        version = qgis.core.QGis.QGIS_VERSION_INT
-        currentPath = os.path.dirname(__file__)
-        if version >= 20600:
-            self.qmlVersionPath = os.path.join(currentPath, 'qml_qgis', 'qgis_26')
-        else:
-            self.qmlVersionPath = os.path.join(currentPath, 'qml_qgis', 'qgis_22')
-
         self.bar = QgsMessageBar()
         self.setLayout(QtGui.QGridLayout(self))
         self.layout().setContentsMargins(0,0,0,0)
@@ -164,12 +155,12 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             self.filename = ""
             self.spatialiteFileEdit.setText(self.filename)
 
-    def listCategoriesFromDatabase(self):
-        self.listWidgetCategoryFrom.clear()
-        self.listWidgetCategoryTo.clear()
-        sql = self.gen.getTablesFromDatabase()
-        query = QSqlQuery(sql, self.db)
-
+    def getDatabaseVersion(self):
+        currentPath = os.path.dirname(__file__)
+        if qgis.core.QGis.QGIS_VERSION_INT >= 20600:
+            self.qmlVersionPath = os.path.join(currentPath, 'qml_qgis', 'qgis_26')
+        else:
+            self.qmlVersionPath = os.path.join(currentPath, 'qml_qgis', 'qgis_22')
         sqlVersion = self.gen.getEDGVVersion()
         queryVersion =  QSqlQuery(sqlVersion, self.db)
         queryVersion.next()
@@ -182,6 +173,14 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             self.qmlPath = os.path.join(self.qmlVersionPath, 'edgv_30')
         else:
             self.qmlPath = os.path.join(self.qmlVersionPath, 'edgv_213')
+
+    def listCategoriesFromDatabase(self):
+        self.listWidgetCategoryFrom.clear()
+        self.listWidgetCategoryTo.clear()
+        sql = self.gen.getTablesFromDatabase()
+        query = QSqlQuery(sql, self.db)
+
+        self.getDatabaseVersion()
 
         while query.next():
             if self.isSpatialite:

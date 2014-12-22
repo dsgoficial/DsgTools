@@ -59,14 +59,6 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         self.factory = SqlGeneratorFactory()
         self.gen = self.factory.createSqlGenerator(self.isSpatialite)
 
-        #qmlPath will be set as /qml_qgis/qgis_22/edgv_213/, but in a further version, there will be an option to detect from db
-        version = qgis.core.QGis.QGIS_VERSION_INT
-        currentPath = os.path.dirname(__file__)
-        if version >= 20600:
-            self.qmlPath = os.path.join(currentPath, 'qml_qgis', 'qgis_26', 'edgv_213')
-        else:
-            self.qmlPath = os.path.join(currentPath, 'qml_qgis', 'qgis_22', 'edgv_213')
-
         self.bar = QgsMessageBar()
         self.setLayout(QtGui.QGridLayout(self))
         self.layout().setContentsMargins(0,0,0,0)
@@ -127,8 +119,29 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
             self.filename = ""
             self.spatialiteFileEdit.setText(self.filename)
 
+    def getDatabaseVersion(self):
+        currentPath = os.path.dirname(__file__)
+        if qgis.core.QGis.QGIS_VERSION_INT >= 20600:
+            self.qmlVersionPath = os.path.join(currentPath, 'qml_qgis', 'qgis_26')
+        else:
+            self.qmlVersionPath = os.path.join(currentPath, 'qml_qgis', 'qgis_22')
+        sqlVersion = self.gen.getEDGVVersion()
+        queryVersion =  QSqlQuery(sqlVersion, self.db)
+        queryVersion.next()
+        if queryVersion is not None:
+            self.dbVersion = queryVersion.value(0)
+        else:
+            self.dbVersion = '2.1.3'
+
+        if self.dbVersion == '3.0':
+            self.qmlPath = os.path.join(self.qmlVersionPath, 'edgv_30')
+        else:
+            self.qmlPath = os.path.join(self.qmlVersionPath, 'edgv_213')
+
+
     def listClassesFromDatabase(self):
         self.classesListWidget.clear()
+        self.getDatabaseVersion()
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
         while query.next():
@@ -163,7 +176,7 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
                     self.postGISCrsEdit.setReadOnly(True)
         except:
             pass
-        
+
     @pyqtSlot(int)
     def on_comboBoxPostgis_currentIndexChanged(self):
         if self.comboBoxPostgis.currentIndex() > 0:
