@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Sec-SDT\.qgis2\python\plugins\DsgTools\DbTools\cria_spatialite_dialog_base.ui'
+# Form implementation generated from reading ui file 'DbTools/cria_spatialite_dialog_base.ui'
 #
-# Created: Mon Dec 22 11:33:11 2014
+# Created: Mon Dec 22 13:59:44 2014
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_CriaSpatialite(object):
     def setupUi(self, CriaSpatialite):
         CriaSpatialite.setObjectName(_fromUtf8("CriaSpatialite"))
-        CriaSpatialite.resize(363, 160)
+        CriaSpatialite.resize(380, 163)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -25,7 +25,9 @@ class Ui_CriaSpatialite(object):
         CriaSpatialite.setSizePolicy(sizePolicy)
         CriaSpatialite.setMinimumSize(QtCore.QSize(0, 0))
         CriaSpatialite.setMaximumSize(QtCore.QSize(1000, 1000))
-        self.verticalLayout = QtGui.QVBoxLayout(CriaSpatialite)
+        self.gridLayout = QtGui.QGridLayout(CriaSpatialite)
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
@@ -92,6 +94,7 @@ class Ui_CriaSpatialite(object):
         self.pushButtonCancelarCriaSpatialite.setObjectName(_fromUtf8("pushButtonCancelarCriaSpatialite"))
         self.horizontalLayout_4.addWidget(self.pushButtonCancelarCriaSpatialite)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
+        self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
 
         self.retranslateUi(CriaSpatialite)
         QtCore.QObject.connect(self.pushButtonCancelarCriaSpatialite, QtCore.SIGNAL(_fromUtf8("clicked()")), CriaSpatialite.close)
