@@ -27,6 +27,7 @@ from PyQt4.QtSql import QSqlDatabase,QSqlQuery
 
 from qgis.core import *
 from qgis.gui import *
+import qgis as qgis
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Factories', 'SqlFactory'))
