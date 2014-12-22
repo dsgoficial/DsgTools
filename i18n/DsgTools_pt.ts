@@ -140,39 +140,87 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CriaSpatialite</name>
     <message>
-        <location filename="DbTools/cria_spatialite_dialog_base.ui" line="33"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="33"/>
         <source>Create Spatialite</source>
         <translation>Criar Spatialite</translation>
     </message>
     <message>
-        <location filename="DbTools/cria_spatialite_dialog_base.ui" line="41"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="43"/>
         <source>Select Folder</source>
         <translation>Selecionar Pasta</translation>
     </message>
     <message>
-        <location filename="DbTools/cria_spatialite_dialog_base.ui" line="136"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="106"/>
         <source>Search</source>
         <translation>Pesquisar</translation>
     </message>
     <message>
-        <location filename="DbTools/cria_spatialite_dialog_base.ui" line="94"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="80"/>
         <source>Coordinate System</source>
         <translation>Sistema de Coordenadas</translation>
     </message>
     <message>
-        <location filename="DbTools/cria_spatialite_dialog_base.ui" line="147"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="117"/>
         <source>File Name</source>
         <translation>Nome do Arquivo</translation>
     </message>
     <message>
-        <location filename="DbTools/cria_spatialite_dialog_base.ui" line="206"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="198"/>
         <source>Ok</source>
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="DbTools/cria_spatialite_dialog_base.ui" line="226"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="221"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
+    </message>
+    <message>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="147"/>
+        <source>EDGV Version:</source>
+        <translation>Versão EDGV</translation>
+    </message>
+    <message>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="155"/>
+        <source>2.1.3</source>
+        <translation>2.1.3</translation>
+    </message>
+    <message>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="160"/>
+        <source>3.0</source>
+        <translation>3.0</translation>
+    </message>
+</context>
+<context>
+    <name>CriaSpatialiteDialog</name>
+    <message>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="141"/>
+        <source>Please, select the coordinate system</source>
+        <translation>Por favor, selecione o sistema de coordenadas</translation>
+    </message>
+    <message>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="136"/>
+        <source>Error!</source>
+        <translation>Erro!</translation>
+    </message>
+    <message>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="136"/>
+        <source>Problem creating the database!</source>
+        <translation>Problema criando o banco de dados.</translation>
+    </message>
+    <message>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="145"/>
+        <source>Warning!</source>
+        <translation>Alerta!</translation>
+    </message>
+    <message>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="143"/>
+        <source>Please, select a folder to save the database</source>
+        <translation>Por favor, selecione uma pasta para salvar o banco.</translation>
+    </message>
+    <message>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="145"/>
+        <source>Please, fill the file name.</source>
+        <translation>Por favor, preencha o nome do arquivo.</translation>
     </message>
 </context>
 <context>
@@ -198,7 +246,7 @@ p, li { white-space: pre-wrap; }
         <translation>Atualizar Tabela</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.ui" line="162"/>
+        <location filename="ServerTools/ui_serverConfigurator.ui" line="155"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
@@ -238,7 +286,7 @@ p, li { white-space: pre-wrap; }
         <translation>3.0</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.ui" line="155"/>
+        <location filename="ServerTools/ui_serverConfigurator.ui" line="148"/>
         <source>Save</source>
         <translation>Salvar</translation>
     </message>
@@ -390,7 +438,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="ServerTools/ui_serverConfigurator.ui" line="146"/>
         <source>Store Credentials</source>
-        <translation>Salvar Senha</translation>
+        <translation type="obsolete">Salvar Senha</translation>
     </message>
     <message>
         <location filename="DbTools/PostGISTool/ui_postgisDBTool.ui" line="94"/>
@@ -459,99 +507,99 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DsgTools</name>
     <message>
-        <location filename="dsg_tools.py" line="327"/>
+        <location filename="dsg_tools.py" line="301"/>
         <source>&amp;DSG Tools</source>
         <translation>&amp;Ferramentas DSG</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="206"/>
+        <location filename="dsg_tools.py" line="204"/>
         <source>DSG Tools</source>
         <translation>Ferramentas DSG</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="211"/>
+        <location filename="dsg_tools.py" line="209"/>
         <source>Server Catalog</source>
         <translation>Catálogo de Servidores</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="212"/>
+        <location filename="dsg_tools.py" line="210"/>
         <source>Database Tools</source>
         <translation>Ferramentas de BD</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="213"/>
+        <location filename="dsg_tools.py" line="211"/>
         <source>Layer Tools</source>
         <translation>Ferramentas de Camadas</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="214"/>
         <source>Complex Tools</source>
-        <translation>Ferramentas de Complexos</translation>
+        <translation type="obsolete">Ferramentas de Complexos</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="217"/>
+        <location filename="dsg_tools.py" line="214"/>
         <source>Server Settings</source>
         <translation>Configurações de Servidor</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="227"/>
+        <location filename="dsg_tools.py" line="224"/>
         <source>About</source>
         <translation>Sobre</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="242"/>
+        <location filename="dsg_tools.py" line="239"/>
         <source>Create Spatialite</source>
         <translation>Criar Spatialite</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="254"/>
+        <location filename="dsg_tools.py" line="251"/>
         <source>Create PostGIS</source>
         <translation>Criar PostGIS</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="265"/>
+        <location filename="dsg_tools.py" line="262"/>
         <source>Load by Category</source>
         <translation>Carrega por Categoria</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="277"/>
+        <location filename="dsg_tools.py" line="274"/>
         <source>Load by Class</source>
         <translation>Carrega por Classe</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="288"/>
+        <location filename="dsg_tools.py" line="285"/>
         <source>Create Frame</source>
         <translation>Criar Moldura</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="374"/>
+        <location filename="dsg_tools.py" line="348"/>
         <source>Creating database structure...</source>
         <translation>Criando Estrutura do Banco de Dados...</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="392"/>
+        <location filename="dsg_tools.py" line="366"/>
         <source>Problem creating the Database!</source>
         <translation>Problema naCriação do Banco de Dados!</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="463"/>
+        <location filename="dsg_tools.py" line="417"/>
         <source>Database structure creation canceled!</source>
         <translation>Criação da Estrutura de Dados Cancelada!</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="472"/>
+        <location filename="dsg_tools.py" line="426"/>
         <source>Database structure successfully created!</source>
         <translation>Estrutura de Banco de Dados criada com sucesso!</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="474"/>
+        <location filename="dsg_tools.py" line="428"/>
         <source>Problem creating the database structure!
  Check the Log terminal for details.</source>
         <translation>Problema na Criação da Estrutura de Dados!
 Olhe o Terminal Python para detalhes.</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="476"/>
+        <location filename="dsg_tools.py" line="430"/>
         <source>User canceled the database structure creation!</source>
         <translation>Usuário cancelou a criação da estrutura de dados!</translation>
     </message>
@@ -869,12 +917,12 @@ Olhe o Terminal Python para detalhes.</translation>
 <context>
     <name>ServerConfigurator</name>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="55"/>
+        <location filename="ServerTools/serverConfigurator.py" line="57"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="55"/>
+        <location filename="ServerTools/serverConfigurator.py" line="57"/>
         <source>Fill all parameters.</source>
         <translation>Preencha todos os parâmetros.</translation>
     </message>
