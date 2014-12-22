@@ -32,8 +32,8 @@ import sys
 currentPath = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/DbTools'))
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/DbTools/PostGISTool'))
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/DbTools/SpatialiteTool'))
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/LayerTools'))
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ComplexTools'))
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ServerTools'))

@@ -40,15 +40,14 @@ import sys
 class CriaSpatialiteDialog(QtGui.QDialog, cria_spatialite_dialog_base.Ui_CriaSpatialite):
     def __init__(self, parent=None):
         """Constructor."""
-#         super(QtGui.QDialog).__init__(parent)
-
         super(CriaSpatialiteDialog, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
-#         self.connect(self.pushButtonBuscarArquivo, QtCore.SIGNAL("clicked()"), self.carregaSpatialite)
+        self.setupUi(self)
+
         self.filepath = ""
         self.carregado = False
         self.coordSysDefinido = False
@@ -56,28 +55,26 @@ class CriaSpatialiteDialog(QtGui.QDialog, cria_spatialite_dialog_base.Ui_CriaSpa
         self.srsCriaSpatialite = ''
         self.sqliteFileName = ''
 
-        self.setupUi(self)
-#         self.seedFile = os.path.dirname(__file__)+'/template/seed_file_edgv_213_v3.sqlite'
-        self.seedFile = os.path.dirname(__file__)+'/template/seed_edgv30_the_one_seed_to_rule_them_all.sqlite'
-        self.seedFile.replace('\\','/')
-
         self.bar = QgsMessageBar()
         self.setLayout(QtGui.QGridLayout(self))
         self.layout().setContentsMargins(0,0,0,0)
         self.layout().setAlignment(QtCore.Qt.AlignTop)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
-#         sizePolicy.setHorizontalStretch(1)
         self.bar.setSizePolicy(sizePolicy)
         self.layout().addWidget(self.bar, 0,0,1,1)
 
-#         self.bar.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Fixed)
-#         self.addWidget(self.bar)
-
-#
         QtCore.QObject.connect(self.pushButtonBuscarPastaDestinoCriaSpatialite, QtCore.SIGNAL(("clicked()")), self.definePastaDestino)
         QtCore.QObject.connect(self.pushButtonBuscarSistCoordCriaSpatialite, QtCore.SIGNAL(("clicked()")), self.setaSistCoordCriaSpatialite)
         QtCore.QObject.connect(self.pushButtonOkCriaSpatialite, QtCore.SIGNAL(("clicked()")), self.okselecionadoCriaSpatialite)
-#
+        
+    def getTemplateLocation(self):
+        currentPath = os.path.dirname(__file__)
+        if self.versionComboBox.currentText() == '2.1.3':
+            edgvPath = os.path.join(currentPath, 'template', '213', 'seed_edgv213_v3.sqlite')
+        elif self.versionComboBox.currentText() == '3.0':
+            edgvPath = os.path.join(currentPath, 'template', '30', 'seed_edgv30.sqlite')
+        return edgvPath
+
     def restauraInicio(self):
         self.filepath = ""
         self.carregado = False
@@ -89,8 +86,6 @@ class CriaSpatialiteDialog(QtGui.QDialog, cria_spatialite_dialog_base.Ui_CriaSpa
         self.coordSysCriaSpatialiteLineEdit.setText("")
         self.nomeLineEdit.setText("")
 
-
-
     def definePastaDestino(self):
         fd = QtGui.QFileDialog()
         self.filepath = fd.getExistingDirectory()
@@ -98,11 +93,9 @@ class CriaSpatialiteDialog(QtGui.QDialog, cria_spatialite_dialog_base.Ui_CriaSpa
             self.carregado = True
             self.pastaDestinoCriaSpatialiteLineEdit.setText(self.filepath)
 
-
-
     def setaSistCoordCriaSpatialite(self):
         projSelector = QgsGenericProjectionSelector()
-        projSelector.setMessage(theMessage='Selecione o Sistema de Coordenadas')
+        projSelector.setMessage(theMessage=self.tr('Please, select the coordinate system'))
         projSelector.exec_()
         try:
             self.epsgCriaSpatialite = int(projSelector.selectedAuthId().split(':')[-1])
@@ -111,11 +104,11 @@ class CriaSpatialiteDialog(QtGui.QDialog, cria_spatialite_dialog_base.Ui_CriaSpa
                 self.coordSysDefinido = True
                 self.coordSysCriaSpatialiteLineEdit.setText(self.srsCriaSpatialite.description())
         except:
-            self.bar.pushMessage("", "Selecione o sistema de coordenadas", level=QgsMessageBar.WARNING)
+            self.bar.pushMessage("", self.tr('Please, select the coordinate system'), level=QgsMessageBar.WARNING)
             pass
 
     def copiaSemente(self,destino,srid):
-        f = open(self.seedFile,'rb')
+        f = open(self.getTemplateLocation(),'rb')
         g = open(destino,'wb')
         x = f.readline()
         while x:
@@ -131,13 +124,8 @@ class CriaSpatialiteDialog(QtGui.QDialog, cria_spatialite_dialog_base.Ui_CriaSpa
         con.commit()
         con.close()
 
-
-
     def okselecionadoCriaSpatialite(self):
-
-#
         if self.carregado and self.coordSysDefinido and len(self.nomeLineEdit.text()) > 0:
-
             try:
                 self.sqliteFileName = self.filepath+'/'+self.nomeLineEdit.text()+'.sqlite'
                 destino = self.sqliteFileName
@@ -145,20 +133,13 @@ class CriaSpatialiteDialog(QtGui.QDialog, cria_spatialite_dialog_base.Ui_CriaSpa
                 self.close()
                 self.restauraInicio()
             except:
-                qgis.utils.iface.messageBar().pushMessage("Erro!", "Entre com os par�metros corretamente!", level=QgsMessageBar.CRITICAL)
+                qgis.utils.iface.messageBar().pushMessage(self.tr("Error!"), self.tr("Problem creating the database!"), level=QgsMessageBar.CRITICAL)
                 self.restauraInicio()
                 pass
-
         else:
-#             qgis.utils.iface.messageBar().pushMessage("Erro!", "Selecione o sistema de coordenadas e o banco de dados corretamente!", level=QgsMessageBar.CRITICAL)
             if self.coordSysDefinido == False:
-                self.bar.pushMessage("Erro!", "Selecione o sistema de coordenadas corretamente!", level=QgsMessageBar.CRITICAL)
+                self.bar.pushMessage(self.tr("Warning!"), self.tr('Please, select the coordinate system'), level=QgsMessageBar.WARNING)
             if self.carregado == False:
-                self.bar.pushMessage("Erro!", "Selecione a pasta de Destino!", level=QgsMessageBar.CRITICAL)
+                self.bar.pushMessage(self.tr("Warning!"), self.tr('Please, select a folder to save the database'), level=QgsMessageBar.CRITICAL)
             if len(self.nomeLineEdit.text()) == 0:
-                self.bar.pushMessage("Erro!", "Entre com o nome do arquivo!", level=QgsMessageBar.CRITICAL)
-
-
-#             self.pushMessage("Erro!", "Selecione o sistema de coordenadas e o banco de dados corretamente!", level=QgsMessageBar.WARNING)
-
-
+                self.bar.pushMessage(self.tr("Warning!"), self.tr('Please, fill the file name.'), level=QgsMessageBar.CRITICAL)
