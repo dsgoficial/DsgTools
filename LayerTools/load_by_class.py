@@ -34,6 +34,8 @@ from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Factories', 'SqlFactory'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Utils'))
+from utils import Utils
 from sqlGeneratorFactory import SqlGeneratorFactory
 
 class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
@@ -58,6 +60,7 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         self.tabWidget.setCurrentIndex(0)
         self.factory = SqlGeneratorFactory()
         self.gen = self.factory.createSqlGenerator(self.isSpatialite)
+        self.utils = Utils()
 
         self.bar = QgsMessageBar()
         self.setLayout(QtGui.QGridLayout(self))
@@ -120,24 +123,8 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
             self.spatialiteFileEdit.setText(self.filename)
 
     def getDatabaseVersion(self):
-        currentPath = os.path.dirname(__file__)
-        if qgis.core.QGis.QGIS_VERSION_INT >= 20600:
-            self.qmlVersionPath = os.path.join(currentPath, '..', 'Qmls', 'qgis_26')
-        else:
-            self.qmlVersionPath = os.path.join(currentPath, '..', 'Qmls', 'qgis_22')
-        sqlVersion = self.gen.getEDGVVersion()
-        queryVersion =  QSqlQuery(sqlVersion, self.db)
-        queryVersion.next()
-        if queryVersion is not None:
-            self.dbVersion = queryVersion.value(0)
-        else:
-            self.dbVersion = '2.1.3'
-
-        if self.dbVersion == '3.0':
-            self.qmlPath = os.path.join(self.qmlVersionPath, 'edgv_30')
-        else:
-            self.qmlPath = os.path.join(self.qmlVersionPath, 'edgv_213')
-
+        self.dbVersion = self.utils.getDatabaseVersion(self.db)
+        self.qmlPath = self.utils.getQmlDir(self.db)
 
     def listClassesFromDatabase(self):
         self.classesListWidget.clear()
@@ -162,8 +149,7 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
 
     def setCRS(self):
         try:
-            self.epsg = self.findEPSG()
-            print self.epsg
+            self.epsg = self.utils.findEPSG(self.db)
             if self.epsg == -1:
                 self.bar.pushMessage("", self.tr("Coordinate Reference System not set or invalid!"), level=QgsMessageBar.WARNING)
             else:
@@ -185,56 +171,21 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
     def loadDatabase(self):
         self.closeDatabase()
         if self.isSpatialite:
-            fd = QtGui.QFileDialog()
-            self.filename = fd.getOpenFileName(filter='*.sqlite')
+            (self.filename, self.db) = self.utils.getSpatialiteDatabase()
             if self.filename:
                 self.spatialiteFileEdit.setText(self.filename)
-                self.db = QSqlDatabase("QSQLITE")
-                self.db.setDatabaseName(self.filename)
         else:
-            self.db = QSqlDatabase("QPSQL")
-            (database, host, port, user, password) = self.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
-            self.db.setDatabaseName(database)
-            self.db.setHostName(host)
-            self.db.setPort(int(port))
-            self.db.setUserName(user)
-            self.db.setPassword(password)
+            self.db = self.utils.getPostGISDatabase(self.comboBoxPostgis.currentText())
         if not self.db.open():
             print self.db.lastError().text()
         else:
             self.dbLoaded = True
             self.listClassesFromDatabase()
 
-    def getPostGISConnectionParameters(self, name):
-        settings = QSettings()
-        settings.beginGroup('PostgreSQL/connections/'+name)
-        database = settings.value('database')
-        host = settings.value('host')
-        port = settings.value('port')
-        user = settings.value('username')
-        password = settings.value('password')
-        settings.endGroup()
-        return (database, host, port, user, password)
-
-    def getPostGISConnections(self):
-        settings = QSettings()
-        settings.beginGroup('PostgreSQL/connections')
-        currentConnections = settings.childGroups()
-        settings.endGroup()
-        return currentConnections
-
     def populatePostGISConnectionsCombo(self):
         self.comboBoxPostgis.clear()
         self.comboBoxPostgis.addItem(self.tr("Select Database"))
-        self.comboBoxPostgis.addItems(self.getPostGISConnections())
-
-    def findEPSG(self):
-        sql = self.gen.getSrid()
-        query = QSqlQuery(sql, self.db)
-        srids = []
-        while query.next():
-            srids.append(query.value(0))
-        return srids[0]
+        self.comboBoxPostgis.addItems(self.utils.getPostGISConnections())
 
     def cancel(self):
         self.restoreInitialState()
@@ -269,7 +220,7 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
 
     def loadPostGISLayers(self):
         self.getSelectedItems()
-        (database, host, port, user, password) = self.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
+        (database, host, port, user, password) = self.utils.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
         uri = QgsDataSourceURI()
         uri.setConnection(str(host),str(port), str(database), str(user), str(password))
         if len(self.selectedClasses)>0:
@@ -312,7 +263,11 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
         vlayer.setCrs(self.crs)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
-        vlayerQml = os.path.join(self.qmlPath, layer_name.replace('\r','')+'.qml')
+        if self.isSpatialite and self.dbVersion == '3.0':
+            lyr = '_'.join(layer_name.replace('\r','').split('_')[1::])
+        else:
+            lyr = layer_name.replace('\r','')
+        vlayerQml = os.path.join(self.qmlPath, lyr+'.qml')
         vlayer.loadNamedStyle(vlayerQml,False)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer)
         if not vlayer.isValid():

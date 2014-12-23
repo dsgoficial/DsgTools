@@ -56,7 +56,7 @@ class Utils:
 
     def findEPSG(self, db):
         gen = self.factory.createSqlGenerator(self.isSpatialiteDB(db))
-        sql = self.gen.getSrid()
+        sql = gen.getSrid()
         query = QSqlQuery(sql, db)
         srids = []
         while query.next():
@@ -83,7 +83,7 @@ class Utils:
 
     def getSpatialiteDatabase(self):
         db = None
-        fd = QtGui.QFileDialog()
+        fd = QFileDialog()
         filename = fd.getOpenFileName(filter='*.sqlite')
         if filename:
             db = QSqlDatabase("QSQLITE")
@@ -105,11 +105,9 @@ class Utils:
         gen = self.factory.createSqlGenerator(self.isSpatialiteDB(db))
         sqlVersion = gen.getEDGVVersion()
         queryVersion =  QSqlQuery(sqlVersion, db)
-        queryVersion.next()
-        if queryVersion is not None:
+        version = '2.1.3'
+        while queryVersion.next():
             version = queryVersion.value(0)
-        else:
-            version = '2.1.3'
         return version
     
     def isSpatialiteDB(self, db):

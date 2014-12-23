@@ -34,6 +34,8 @@ from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Factories', 'SqlFactory'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Utils'))
+from utils import Utils
 from sqlGeneratorFactory import SqlGeneratorFactory
 
 class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
@@ -66,6 +68,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         self.tabWidget.setCurrentIndex(0)
         self.factory = SqlGeneratorFactory()
         self.gen = self.factory.createSqlGenerator(self.isSpatialite)
+        self.utils = Utils()
 
         self.parentTreeNode = None
 
@@ -156,26 +159,8 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             self.spatialiteFileEdit.setText(self.filename)
 
     def getDatabaseVersion(self):
-        currentPath = os.path.dirname(__file__)
-        if qgis.core.QGis.QGIS_VERSION_INT >= 20600:
-            self.qmlVersionPath = os.path.join(currentPath, '..', 'Qmls', 'qgis_26')
-        else:
-            self.qmlVersionPath = os.path.join(currentPath, '..', 'Qmls', 'qgis_22')
-        try:
-            sqlVersion = self.gen.getEDGVVersion()
-            queryVersion =  QSqlQuery(sqlVersion, self.db)
-            queryVersion.next()
-            if queryVersion is not None:
-                self.dbVersion = queryVersion.value(0)
-            else:
-                self.dbVersion = '2.1.3'
-        except:
-            self.dbVersion = '2.1.3'
-
-        if self.dbVersion == '3.0':
-            self.qmlPath = os.path.join(self.qmlVersionPath, 'edgv_30')
-        else:
-            self.qmlPath = os.path.join(self.qmlVersionPath, 'edgv_213')
+        self.dbVersion = self.utils.getDatabaseVersion(self.db)
+        self.qmlPath = self.utils.getQmlDir(self.db)
 
     def listCategoriesFromDatabase(self):
         self.listWidgetCategoryFrom.clear()
@@ -267,7 +252,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
 
     def setCRS(self):
         try:
-            self.epsg = self.findEPSG()
+            self.epsg = self.utils.findEPSG(self.db)
             print self.epsg
             if self.epsg == -1:
                 self.bar.pushMessage("", self.tr("Coordinate Reference System not set or invalid!"), level=QgsMessageBar.WARNING)
@@ -291,21 +276,11 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         self.closeDatabase()
         try:
             if self.isSpatialite:
-                fd = QtGui.QFileDialog()
-                self.filename = fd.getOpenFileName(filter='*.sqlite')
+                (self.filename, self.db) = self.utils.getSpatialiteDatabase()
                 if self.filename:
                     self.spatialiteFileEdit.setText(self.filename)
-                    self.db = QSqlDatabase("QSQLITE")
-                    self.db.setDatabaseName(self.filename)
-
             else:
-                self.db = QSqlDatabase("QPSQL")
-                (database, host, port, user, password) = self.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
-                self.db.setDatabaseName(database)
-                self.db.setHostName(host)
-                self.db.setPort(int(port))
-                self.db.setUserName(user)
-                self.db.setPassword(password)
+                self.db = self.utils.getPostGISDatabase(self.comboBoxPostgis.currentText())
             if not self.db.open():
                 print self.db.lastError().text()
             else:
@@ -314,37 +289,10 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         except:
             pass
 
-
-    def getPostGISConnectionParameters(self, name):
-        settings = QSettings()
-        settings.beginGroup('PostgreSQL/connections/'+name)
-        database = settings.value('database')
-        host = settings.value('host')
-        port = settings.value('port')
-        user = settings.value('username')
-        password = settings.value('password')
-        settings.endGroup()
-        return (database, host, port, user, password)
-
-    def getPostGISConnections(self):
-        settings = QSettings()
-        settings.beginGroup('PostgreSQL/connections')
-        currentConnections = settings.childGroups()
-        settings.endGroup()
-        return currentConnections
-
     def populatePostGISConnectionsCombo(self):
         self.comboBoxPostgis.clear()
         self.comboBoxPostgis.addItem("Select Database")
-        self.comboBoxPostgis.addItems(self.getPostGISConnections())
-
-    def findEPSG(self):
-        sql = self.gen.getSrid()
-        query = QSqlQuery(sql, self.db)
-        srids = []
-        while query.next():
-            srids.append(query.value(0))
-        return srids[0]
+        self.comboBoxPostgis.addItems(self.utils.getPostGISConnections())
 
     def cancel(self):
         self.restoreInitialState()
@@ -371,21 +319,15 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
 
         if self.db and self.crs and len(self.listWidgetCategoryTo)>0:
             categoriasSelecionadas = []
-
             for i in range(self.listWidgetCategoryTo.__len__()):
                 categoriasSelecionadas.append(self.listWidgetCategoryTo.item(i).text())
-
             try:
-
                 if self.checkBoxPoint.isChecked():
                     self.loadLayers('p',categoriasSelecionadas,ponto)
-
                 if self.checkBoxLine.isChecked():
                     self.loadLayers('l',categoriasSelecionadas,linha)
-
                 if self.checkBoxPolygon.isChecked():
                     self.loadLayers('a',categoriasSelecionadas,area)
-
                 if self.checkBoxPoint.isChecked()== False and self.checkBoxLine.isChecked() == False and self.checkBoxPolygon.isChecked() == False:
                     self.bar.pushMessage(self.tr("WARNING!"), self.tr("Please, select at least one type of layer!"), level=QgsMessageBar.WARNING)
                 else:
@@ -394,7 +336,6 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             except:
                 qgis.utils.iface.messageBar().pushMessage(self.tr("CRITICAL!"), self.tr("Problem loading the categories!"), level=QgsMessageBar.CRITICAL)
                 pass
-
         else:
             if self.db and not self.crs:
                 self.bar.pushMessage(self.tr("CRITICAL!"), self.tr("Could not determine the coordinate reference system!"), level=QgsMessageBar.CRITICAL)
@@ -451,7 +392,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         return listaQuantidades
 
     def loadPostGISLayers(self, type, categories, layer_names):
-        (database, host, port, user, password) = self.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
+        (database, host, port, user, password) = self.utils.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
         uri = QgsDataSourceURI()
         uri.setConnection(str(host),str(port), str(database), str(user), str(password))
         geom_column = 'geom'
