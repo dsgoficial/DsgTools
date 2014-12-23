@@ -22,6 +22,7 @@ encoding//QmlTools/qmlParser.py=utf-8
 encoding//ServerTools/serverConfigurator.py=utf-8
 encoding//ServerTools/ui_serverConfigurator.py=utf-8
 encoding//Utils/utils.py=utf-8
+encoding//help/source/conf.py=utf-8
 encoding//test/utilities.py=utf-8
 encoding/__init__.py=utf-8
 encoding/aboutdialog.py=utf-8

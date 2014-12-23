@@ -13,5 +13,6 @@
         <file>icons/dsg.png</file>
         <file>icons/eb.jpg</file>
         <file>icons/server.png</file>
+        <file>icons/help.png</file>
     </qresource>
 </RCC>

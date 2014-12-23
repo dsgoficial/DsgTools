@@ -47,6 +47,8 @@ from postgisDBTool import PostgisDBTool
 from createPostGISDatabase import CreatePostGISDatabase
 from ui_create_inom_dialog import CreateInomDialog
 
+from qgis.utils import showPluginHelp
+
 class DsgTools:
     """QGIS Plugin Implementation."""
 
@@ -230,6 +232,16 @@ class DsgTools:
             add_to_toolbar=False)
         self.dsgTools.addAction(action)
 
+        icon_path = ':/plugins/DsgTools/icons/help.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Help'),
+            callback=self.showHelp,
+            parent=self.dsgTools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        self.dsgTools.addAction(action)
+
         #QToolButtons
         self.databaseButton = self.createToolButton(self.toolbar, u'DatabaseTools')
         self.layerButton = self.createToolButton(self.toolbar, u'LayerTools')
@@ -323,6 +335,10 @@ class DsgTools:
     def showAbout(self):
         dlg = aboutdialog.AboutDialog()
         dlg.exec_()
+
+    def showHelp(self):
+        index = os.path.join(os.path.dirname(__file__), 'help', 'index')
+        showPluginHelp('DsgTools', index)
 
     def createSpatialiteDatabase(self):
         try:
