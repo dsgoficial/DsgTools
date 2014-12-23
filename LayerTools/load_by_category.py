@@ -274,13 +274,14 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
 
     def loadDatabase(self):
         self.closeDatabase()
+
+        if self.isSpatialite:
+            (self.filename, self.db) = self.utils.getSpatialiteDatabase()
+            if self.filename:
+                self.spatialiteFileEdit.setText(self.filename)
+        else:
+            self.db = self.utils.getPostGISDatabase(self.comboBoxPostgis.currentText())
         try:
-            if self.isSpatialite:
-                (self.filename, self.db) = self.utils.getSpatialiteDatabase()
-                if self.filename:
-                    self.spatialiteFileEdit.setText(self.filename)
-            else:
-                self.db = self.utils.getPostGISDatabase(self.comboBoxPostgis.currentText())
             if not self.db.open():
                 print self.db.lastError().text()
             else:

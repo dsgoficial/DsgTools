@@ -176,11 +176,14 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
                 self.spatialiteFileEdit.setText(self.filename)
         else:
             self.db = self.utils.getPostGISDatabase(self.comboBoxPostgis.currentText())
-        if not self.db.open():
-            print self.db.lastError().text()
-        else:
-            self.dbLoaded = True
-            self.listClassesFromDatabase()
+        try:
+            if not self.db.open():
+                print self.db.lastError().text()
+            else:
+                self.dbLoaded = True
+                self.listClassesFromDatabase()
+        except:
+            pass
 
     def populatePostGISConnectionsCombo(self):
         self.comboBoxPostgis.clear()
