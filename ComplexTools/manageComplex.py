@@ -129,8 +129,12 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         qmlPath = os.path.join(qmlDirPath, fileName)
 
         #getting the domain dictionary that will be used to generate the comboboxes
-        parser = QmlParser(qmlPath)
-        self.domainDict = parser.getDomainDict()
+        try:
+            parser = QmlParser(qmlPath)
+            self.domainDict = parser.getDomainDict()
+        except:
+            self.domainDict = dict()
+            pass
 
         QObject.connect(self.addRow, SIGNAL(("clicked()")), self.addComplex)
         QObject.connect(self.removeRow, SIGNAL(("clicked()")), self.removeComplex)
