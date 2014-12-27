@@ -40,9 +40,6 @@ class SqlGenerator:
     def getSrid(self):
         return None
 
-    def getElementCountFromLayer(self, layer):
-        sql = "SELECT count(*) FROM "+layer
-        return sql
 
     def getEDGVVersion(self):
         sql = "SELECT edgvversion FROM db_metadata LIMIT 1"

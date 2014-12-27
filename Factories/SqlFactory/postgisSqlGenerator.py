@@ -70,3 +70,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def insertFrameIntoTable(self, wkt):
         sql = "INSERT INTO aux_moldura_a(geom) VALUES(ST_GeomFromText("+wkt+"))"
         return sql
+
+    def getElementCountFromLayer(self, layer):
+        sql = "SELECT count(*) FROM ONLY "+layer
+        return sql

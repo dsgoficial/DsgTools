@@ -26,7 +26,7 @@ class SpatialiteSqlGenerator(SqlGenerator):
     def getComplexTablesFromDatabase(self):
         sql = "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'complexos_%' ORDER BY name"
         return sql
-    
+
     def getComplexData(self, complex_schema, complex):
         sql = "SELECT id, nome from "+complex_schema+"_"+complex
         return sql
@@ -37,7 +37,7 @@ class SpatialiteSqlGenerator(SqlGenerator):
         else:
             sql = "SELECT OGC_FID from "+aggregated_schema+"_"+aggregated_class+" where "+column_name+"="+'\''+complex_uuid+'\''
         return sql
-    
+
     def getLinkColumn(self, complexClass, aggregatedClass):
         if self.isComplexClass(aggregatedClass):
             sql = "SELECT column_name from complex_schema where complex = "+complexClass+" and aggregated_class = "+'\''+aggregatedClass[10:]+'\''
@@ -52,24 +52,27 @@ class SpatialiteSqlGenerator(SqlGenerator):
     def getTablesFromDatabase(self):
         sql = "SELECT name FROM sqlite_master WHERE type='table'"
         return sql
-    
+
     def disassociateComplexFromComplex(self, aggregated_class, link_column, uuid):
         sql = "UPDATE "+aggregated_class+" SET "+link_column+"=NULL WHERE id = "+'\''+uuid+'\''
         return sql
-    
+
     def isComplexClass(self, aggregatedClass):
         size = len(aggregatedClass.split('_')[0])
         if size == 9:
             return True
         return False
-    
+
     def getTemplates(self):
         return None
-    
+
     def getCreateDatabase(self, name):
         return None
 
     def insertFrameIntoTable(self, wkb):
         sql = "INSERT INTO aux_moldura_a(geom) VALUES(ST_GeomFromText("+wkt+"))"
         return sql
-    
+
+    def getElementCountFromLayer(self, layer):
+        sql = "SELECT count(*) FROM "+layer
+        return sql
