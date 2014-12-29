@@ -69,8 +69,8 @@ class SpatialiteSqlGenerator(SqlGenerator):
     def getCreateDatabase(self, name):
         return None
 
-    def insertFrameIntoTable(self, wkb):
-        sql = "INSERT INTO aux_moldura_a(geom) VALUES(ST_GeomFromText("+wkt+"))"
+    def insertFrameIntoTable(self, wkt):
+        sql = "INSERT INTO aux_moldura_a(GEOMETRY) VALUES(geomfromtext("+wkt+"))"
         return sql
 
     def getElementCountFromLayer(self, layer):
