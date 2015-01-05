@@ -10,9 +10,9 @@
 name=DSG Tools
 qgisMinimumVersion=2.0
 description=Brazilian Army Cartographic Production Tools
-version=0.1
+version=1.0
 author=Brazilian Army - Geographic Service Bureau
-email=luiz.claudio@dsg.eb.mil.br
+email=luiz.claudio@dsg.eb.mil.br/borba@dsg.eb.mil.br/ferrari@dsg.eb.mil.br
 
 # End of mandatory metadata
 
@@ -22,12 +22,12 @@ email=luiz.claudio@dsg.eb.mil.br
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=EDGV,PostGIS,Spatialite,Brazilian Army
+tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico
 
-homepage=
-tracker=
-repository=
-icon=icon.png
+homepage=http://hub.qgis.org/projects/dsgtools
+tracker=http://hub.qgis.org/projects/dsgtools
+repository=https://github.com/lcoandrade/DsgTools
+icon=icons/dsg.png
 # experimental flag
 experimental=False
 
