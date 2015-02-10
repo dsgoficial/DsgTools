@@ -1,92 +1,59 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
-<HEAD>
-	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
-	<TITLE></TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice 4.1.1  (Win32)">
-	<META NAME="AUTHOR" CONTENT="Luiz Claudio Andrade">
-	<META NAME="CREATED" CONTENT="20141223;16061223">
-	<META NAME="CHANGEDBY" CONTENT="Luiz Claudio Andrade">
-	<META NAME="CHANGED" CONTENT="20141226;10414356">
-	<META NAME="CHANGEDBY" CONTENT="Luiz Claudio Andrade">
-	<META NAME="CHANGEDBY" CONTENT="Luiz Claudio Andrade">
-	<META NAME="CHANGEDBY" CONTENT="Luiz Claudio Andrade">
-	<STYLE TYPE="text/css">
-	<!--
-		@page { margin: 2cm }
-		P { margin-bottom: 0.21cm }
-		A:link { so-language: zxx }
-	-->
-	</STYLE>
-</HEAD>
-<BODY LANG="pt-BR" DIR="LTR">
-<P ALIGN=CENTER STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm">
-<B>DSG Tools</B></P>
-<P ALIGN=CENTER STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm">
-<B>Criar Moldura</B></P>
-<P ALIGN=CENTER STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm">
-<BR>
-</P>
-<P ALIGN=LEFT STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm">
-A funcionalidade de criar moldura permite a cria&ccedil;&atilde;o de
-uma &aacute;rea de trabalho para a carta que ser&aacute; trabalhada
-de acordo com o &iacute;ndice de nomenclatura informado pelo usu&aacute;rio
-(<I>INOM:</I>). &Eacute; poss&iacute;vel ainda utilizar o campo MI
-(mapa &iacute;ndice) para que automaticamente o campo INOM seja
-ajustado. Da mesma forma &eacute; poss&iacute;vel utilizar o campo
-MIR (mapa &iacute;ndice reduzido) para que automaticamente o campo
-INOM seja ajustado.</P>
-<P ALIGN=LEFT STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm">
-<BR>
-</P>
-<IMG SRC="dsg_tools/moldura_postgis.bmp" NAME="figuras1" ALIGN=LEFT HSPACE=76 WIDTH=319 HEIGHT=388 BORDER=0><BR CLEAR=LEFT>
-<P ALIGN=LEFT STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm">
-<BR>
-</P>
-<P ALIGN=LEFT STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm">
-<BR>
-</P>
-<P ALIGN=LEFT STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm">
-O banco de dados selecionado ser&aacute; utilizado para a cria&ccedil;&atilde;o
-da moldura. No caso do PostGIS a moldura fica presente na camada
-<I>aux_moldura_a</I> presente no schema p&uacute;blico (<I>public</I>).
-No caso do Spatialite a moldura fica salva diretamente na camada
-<I>aux_moldura_a.</I></P>
-<P ALIGN=LEFT STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm">
-<BR>
-</P>
-<P ALIGN=LEFT STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm; font-style: normal">
-O &iacute;ndice pode ser inserido pelo campo INOM como se pode ver a
-figura abaixo.</P>
-<P ALIGN=LEFT STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm; font-style: normal">
-<BR>
-</P>
-<IMG SRC="dsg_tools/moldura_inom.bmp" NAME="figuras2" ALIGN=LEFT HSPACE=76 WIDTH=319 HEIGHT=386 BORDER=0><BR CLEAR=LEFT>
-<P ALIGN=LEFT STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm; font-style: normal">
-<BR>
-</P>
-<P ALIGN=LEFT STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm; font-style: normal">
-Da mesma for pode ser inserido o c&oacute;digo do mapa &iacute;ndice
-ou do mapa &iacute;ndice (MI) reduzido (MIR). Somente restando clicar
-em OK para criar a moldura determinada.</P>
-<P ALIGN=LEFT STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm; font-style: normal">
-<BR>
-</P>
-<IMG SRC="dsg_tools/moldura_mi_mir.bmp" NAME="figuras3" ALIGN=LEFT HSPACE=76 WIDTH=319 HEIGHT=387 BORDER=0><BR CLEAR=LEFT>
-<P ALIGN=LEFT STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm; font-style: normal">
-<BR>
-</P>
-<P ALIGN=CENTER STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm">
-<BR>
-</P>
-<P ALIGN=CENTER STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm">
-<BR>
-</P>
-<P ALIGN=CENTER STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm">
-<BR>
-</P>
-<P ALIGN=CENTER STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0cm">
-<BR>
-</P>
-</BODY>
-</HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+  	
+	<title>Criar Moldura</title>
+    
+    <link rel="stylesheet" href="css/bootstrap.css">
+	<link rel="stylesheet" href="everydayimstyling.css" />
+</head>
+
+<body>
+	
+    <h2>
+    	Ferramentas de Camada <small>Criar Moldura</small>
+    </h2>
+    
+	<p align="justify">
+		<small>
+        	<i>
+            	Observação: Em caso de se usar BD Spatialite, em vez de selecionar a conexão, é feita a seleção do arquivo SQLite.
+            </i>
+        </small>
+	</p>
+	<p align="justify">
+        A funcionalidade de criar moldura permite a criação de uma área de trabalho para a carta que será trabalhada de acordo com o índice de nomenclatura informado pelo usuário (<kbd>INOM:</kbd>). É possível ainda utilizar o campo MI (mapa índice) para que automaticamente o campo INOM seja ajustado. Da mesma forma é possível utilizar o campo MIR (mapa índice reduzido) para que automaticamente o campo INOM seja ajustado.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/moldura_postgis.bmp' name='figuras1' width=319 height=388 alt='Erro ao mostrar a imagem'>
+    </p>
+
+    <p align="justify">
+        O banco de dados selecionado será utilizado para a criação da moldura. No caso do PostGIS a moldura fica presente na camada <kbd>aux_moldura_a</kbd> presente no schema público (<kbd>public</kbd>). No caso do Spatialite a moldura fica salva diretamente na camada <kbd>aux_moldura_a</kbd>.
+    </p>
+
+    <p align="justify">
+        O índice pode ser inserido pelo campo INOM como se pode ver a figura abaixo.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/moldura_inom.bmp' name='figuras1' width=319 height=386 alt='Erro ao mostrar a imagem'>
+    </p>
+
+    <p align="justify">
+        Da mesma for pode ser inserido o código do mapa índice (MI) ou do mapa índice reduzido (MIR). Somente restando clicar em OK para criar a moldura determinada.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/moldura_mi_mir.bmp' name='figuras1' width=319 height=387 alt='Erro ao mostrar a imagem'>
+    </p>
+
+    <br>
+
+
+</body>
+</html>
