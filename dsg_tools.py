@@ -37,6 +37,7 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/DbTools/Spatialite
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/LayerTools'))
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ComplexTools'))
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ServerTools'))
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/MosaicTools'))
 
 from load_by_class import LoadByClass
 from load_by_category import LoadByCategory
@@ -46,6 +47,7 @@ from serverConfigurator import ServerConfigurator
 from postgisDBTool import PostgisDBTool
 from createPostGISDatabase import CreatePostGISDatabase
 from ui_create_inom_dialog import CreateInomDialog
+from mosaicTools import MosaicTools
 
 from qgis.utils import showPluginHelp
 
@@ -242,6 +244,16 @@ class DsgTools:
             add_to_toolbar=False)
         self.dsgTools.addAction(action)
 
+        icon_path = ':/plugins/DsgTools/icons/help.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Mosaic tools'),
+            callback=self.showMosaic,
+            parent=self.dsgTools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        #self.dsgTools.addAction(action)
+
         #QToolButtons
         self.databaseButton = self.createToolButton(self.toolbar, u'DatabaseTools')
         self.layerButton = self.createToolButton(self.toolbar, u'LayerTools')
@@ -339,6 +351,11 @@ class DsgTools:
     def showHelp(self):
         index = os.path.join(os.path.dirname(__file__), 'help', 'index')
         showPluginHelp('DsgTools', index)
+    
+    def showMosaic(self):
+        dlg = MosaicTools(self.iface)
+        result = dlg.exec_()
+
 
     def createSpatialiteDatabase(self):
         try:
