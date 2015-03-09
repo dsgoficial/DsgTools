@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_mosaicTools.ui'
 #
-# Created: Mon Mar 09 13:40:34 2015
+# Created: Mon Mar 09 15:02:18 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -138,7 +138,7 @@ class Ui_Dialog(object):
         self.verticalLayout_2.addWidget(self.buttonBox)
 
         self.retranslateUi(Dialog)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
