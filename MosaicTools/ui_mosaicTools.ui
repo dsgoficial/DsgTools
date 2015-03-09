@@ -17,17 +17,17 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Imagem</string>
+       <string>Image</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout">
        <item row="0" column="0" colspan="2">
         <widget class="QCheckBox" name="checkBox">
          <property name="text">
-          <string>Processar as imagens</string>
+          <string>Process images</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -37,7 +37,7 @@
        <item row="2" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>Imagens de entrada:</string>
+          <string>Input images:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -54,21 +54,21 @@
            <item>
             <widget class="QPushButton" name="addButton">
              <property name="text">
-              <string>Adicionar</string>
+              <string>Add</string>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QPushButton" name="removeButton">
              <property name="text">
-              <string>Remover</string>
+              <string>Remove</string>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QPushButton" name="addFolderButton">
              <property name="text">
-              <string>Adicionar pasta</string>
+              <string>Add folder</string>
              </property>
             </widget>
            </item>
@@ -92,7 +92,7 @@
        <item row="8" column="0">
         <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>Sistema de referẽncia de saída</string>
+          <string>Spatial Reference System:</string>
          </property>
         </widget>
        </item>
@@ -102,9 +102,9 @@
           <widget class="QLineEdit" name="srLineEdit"/>
          </item>
          <item>
-          <widget class="QPushButton" name="searchSRButton">
+          <widget class="QPushButton" name="srsButton">
            <property name="text">
-            <string>Procurar SR</string>
+            <string>CRS</string>
            </property>
           </widget>
          </item>
@@ -113,7 +113,7 @@
        <item row="11" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>Tipo de número nas imagens de saída:</string>
+          <string>Output raster type</string>
          </property>
         </widget>
        </item>
@@ -164,7 +164,7 @@
        <item row="5" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>Aplicar realce de contraste:</string>
+          <string>Apply contrast enhancement:</string>
          </property>
         </widget>
        </item>
@@ -172,7 +172,7 @@
         <widget class="QComboBox" name="stretchComboBox">
          <item>
           <property name="text">
-           <string>Nenhum</string>
+           <string>None</string>
           </property>
          </item>
          <item>
@@ -186,13 +186,13 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Metadado</string>
+       <string>Metadata</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout_2">
        <item row="6" column="0">
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>Modelo XML do metadado de saída:</string>
+          <string>Metadata output XML model:</string>
          </property>
         </widget>
        </item>
@@ -202,9 +202,9 @@
           <widget class="QLineEdit" name="lineEdit_2"/>
          </item>
          <item>
-          <widget class="QPushButton" name="metadataTemplateButton">
+          <widget class="QPushButton" name="xmlModelButton">
            <property name="text">
-            <string>Procurar</string>
+            <string>Search</string>
            </property>
           </widget>
          </item>
@@ -213,7 +213,7 @@
        <item row="5" column="0" colspan="2">
         <widget class="QCheckBox" name="checkBox_2">
          <property name="text">
-          <string>Processar os metadados</string>
+          <string>Process metadata</string>
          </property>
         </widget>
        </item>
@@ -226,7 +226,7 @@
      <item>
       <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>Pasta dos arquivos de saída:</string>
+        <string>Output files folder:</string>
        </property>
       </widget>
      </item>
@@ -236,7 +236,7 @@
      <item>
       <widget class="QPushButton" name="outputFolderButton">
        <property name="text">
-        <string>Procurar</string>
+        <string>Search</string>
        </property>
       </widget>
      </item>

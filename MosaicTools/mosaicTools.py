@@ -20,9 +20,14 @@
  *                                                                         *
  ***************************************************************************/
 """
+import os
+
 # Import the PyQt and QGIS libraries
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+
+from qgis.core import QgsCoordinateReferenceSystem
+from qgis.gui import QgsGenericProjectionSelector
 
 from ui_mosaicTools import Ui_Dialog
 
@@ -43,25 +48,46 @@ class MosaicTools(QDialog, Ui_Dialog):
     def on_buttonBox_accepted(self):
         print "foi"
         
-    @pyqtSlot()
-    def on_procuraSRButton_clicked(self):
-        print "procuraSR"
+    @pyqtSlot(bool)    
+    def on_srsButton_clicked(self):
+        projSelector = QgsGenericProjectionSelector()
+        message = 'Select the Spatial Reference System!'
+        projSelector.setMessage(theMessage=message)
+        projSelector.exec_()
+        try:
+            self.epsg = int(projSelector.selectedAuthId().split(':')[-1])
+            srs = QgsCoordinateReferenceSystem(self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
+            if srs:
+                self.srsEdit.setText(srs.description())
+            else:
+                self.epsg = 4326
+        except:
+            QMessageBox.warning(self, self.tr("Warning!"), self.tr(message))
         
-    @pyqtSlot()
+    @pyqtSlot(bool)
     def on_addButton_clicked(self):
-        print "addButton"
+        fileNames = QFileDialog.getOpenFileNames(self, self.tr("Select Images"), "", self.tr("Image files (*.tif)"))
+        self.fileListWidget.addItems(fileNames)
         
-    @pyqtSlot()
+    @pyqtSlot(bool)
     def on_removeButton_clicked(self):
-        print "removeButton"
+        selectedItems = self.fileListWidget.selectedItems()
+        for item in selectedItems:
+            row = self.fileListWidget.row(item)
+            self.fileListWidget.takeItem(row)
         
-    @pyqtSlot()
+    @pyqtSlot(bool)
     def on_addFolderButton_clicked(self):
-        print "addFolderButton"
+        folder = QFileDialog.getExistingDirectory(self, "Select Directory")
+        for dirName, subdirList, fileList in os.walk(folder):
+            for fileName in fileList:
+                if fileName.split(".")[-1] == 'tif':
+                    self.fileListWidget.addItem(fileName)
     
-    @pyqtSlot()
+    @pyqtSlot(bool)
     def on_outputFolderButton_clicked(self):
-        print "outputFolderButton"
+        folder = QFileDialog.getExistingDirectory(self, "Select Directory")
+        self.outputFolderEdit.setText(folder)
     
     #Aplica realce de contraste, reprojecao e troca o tipo de numero utilizando a GDAL. 
     def stretchImage(inFile, outFile, percent, zone, bands, epsg=4674, maxOutValue=254, minOutValue=0):

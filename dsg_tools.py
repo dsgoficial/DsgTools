@@ -252,7 +252,7 @@ class DsgTools:
             parent=self.dsgTools,
             add_to_menu=False,
             add_to_toolbar=False)
-        #self.dsgTools.addAction(action)
+        self.dsgTools.addAction(action)
 
         #QToolButtons
         self.databaseButton = self.createToolButton(self.toolbar, u'DatabaseTools')
