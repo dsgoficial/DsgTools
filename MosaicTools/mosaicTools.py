@@ -21,6 +21,8 @@
  ***************************************************************************/
 """
 import os
+import osgeo.gdal
+import osgeo.osr
 
 # Import the PyQt and QGIS libraries
 from PyQt4.QtCore import *
@@ -46,7 +48,11 @@ class MosaicTools(QDialog, Ui_Dialog):
     
     @pyqtSlot()
     def on_buttonBox_accepted(self):
-        print "foi"
+        outDir = self.outputFolderEdit.text()
+        items = self.fileListWidget.items()
+        for item in items:
+            inFile = item.text()
+            self.stretchImage(inFile, outDir, self.getStretchingPercentage(), zone, bands, self.epsg)
         
     @pyqtSlot(bool)    
     def on_srsButton_clicked(self):
@@ -88,40 +94,74 @@ class MosaicTools(QDialog, Ui_Dialog):
     def on_outputFolderButton_clicked(self):
         folder = QFileDialog.getExistingDirectory(self, "Select Directory")
         self.outputFolderEdit.setText(folder)
+        
+    def getStretchingPercentage(self):
+        index = self.stretchComboBox.currentIndex()
+        if index == 0:
+            return 0
+        elif index == 1:
+            return 2
+        
+    def getGDALRasterType(self):
+        index = self.numberComboBox.currentIndex()
+        if index == 1:
+            return osgeo.gdal.GDT_Byte
+        elif index == 2:
+            return osgeo.gdal.GDT_UInt16
+        elif index == 3:
+            return osgeo.gdal.GDT_UInt16
+        elif index == 4:
+            return osgeo.gdal.GDT_UInt32
+        elif index == 5:
+            return osgeo.gdal.GDT_UInt32
+        elif index == 6:
+            return osgeo.gdal.GDT_Float32
+        elif index == 7:
+            return osgeo.gdal.GDT_Float64
+        elif index == 0:
+            return osgeo.gdal.GDT_Byte #check this one
     
     #Aplica realce de contraste, reprojecao e troca o tipo de numero utilizando a GDAL. 
-    def stretchImage(inFile, outFile, percent, zone, bands, epsg=4674, maxOutValue=254, minOutValue=0):
+    def stretchImage(inFile, outDir, percent, zone, bands, epsg=4674, maxOutValue=254, minOutValue=0):
         """Method that applies a specific histogram stretching to a group of images.
             The method also performs a conversion changing the raster type.
         """
 
         #Open image
-        imgIn=gdal.Open(inFile)
+        imgIn = osgeo.gdal.Open(inFile)
         if not imgIn:
             QMessageBox.critical(self.iface.mainWindow(), self.tr("Critical!"), self.tr("Failed to open input file."))
             return
         
+        #Setting the output file name
+        fileName = inFile.split("/")[-1]
+        split = fileName.split(".")
+        baseName = split[0]
+        extension = split[-1]
+        
         #Defining the output driver
-        outDriver=imgIn.GetDriver()
-        createOptions=['PHOTOMETRIC=RGB', 'ALPHA=NO']
+        outDriver = imgIn.GetDriver()
+        createOptions = ['PHOTOMETRIC=RGB', 'ALPHA=NO']
         
         #creating temp file for contrast stretch
-        outFileTmp=outFile+'tmp'
+        outFileTmp = os.path.join(outDir, baseName+'_tmp'+extension)
+        #creating output file for contrast stretch
+        outFile = os.path.join(outDir, baseName+'_stretch'+extension)
         
         #Creating a temp image, with the same input parameters, to store the converted input image to 8 bits
-        imgOut=outDriver.Create(outFileTmp,imgIn.RasterXSize, imgIn.RasterYSize, len(bands), gdal.GDT_Byte, options = createOptions)
+        imgOut = outDriver.Create(outFileTmp,imgIn.RasterXSize, imgIn.RasterYSize, len(bands), self.getGDALRasterType(), options = createOptions)
         imgOut.SetProjection(imgIn.GetProjection())
         imgOut.SetGeoTransform(imgIn.GetGeoTransform())
         
         #Linear stretching
-        topPercent=1-percent/2
-        bottomPercent=percent/2
-        outBandNumber=1
+        topPercent = 1-percent/2
+        bottomPercent = percent/2
+        outBandNumber = 1
         for bandNumber in bands:
             
-            b1=imgIn.GetRasterBand(bandNumber+1)
-            matrix=b1.ReadAsArray()
-            arr=numpy.array(matrix)
+            b1 = imgIn.GetRasterBand(bandNumber+1)
+            matrix = b1.ReadAsArray()
+            arr = numpy.array(matrix)
             
             minValue, maxValue = numpy.percentile(matrix, [bottomPercent*100., topPercent*100.])
             print minValue, maxValue
@@ -132,27 +172,27 @@ class MosaicTools(QDialog, Ui_Dialog):
             numpy.putmask(arr, arr<minValue,minValue)
             
             #The maxOutValue and the minOutValue must be set according to the convertion that will be applied (e.g. 8 bits, 16 bits, 32 bits)
-            a=(maxOutValue-minOutValue)/(maxValue-minValue)
-            newArr=numpy.floor((arr-minValue)*a+minOutValue)
+            a = (maxOutValue-minOutValue)/(maxValue-minValue)
+            newArr = numpy.floor((arr-minValue)*a+minOutValue)
             
-            outB=imgOut.GetRasterBand(outBandNumber)
-            outBandNumber+=1
+            outB = imgOut.GetRasterBand(outBandNumber)
+            outBandNumber += 1
             outB.WriteArray(newArr)
             outB.FlushCache()
               
             print "Band", bandNumber, ",", percentValue, ",",
         
         #creating final image for reprojection
-        outRasterSRS = osr.SpatialReference()
+        outRasterSRS = osgeo.osr.SpatialReference()
         outRasterSRS.ImportFromEPSG(epsg)
         
         #this code uses virtual raster to compute the parameters of the output image
-        vrt = gdal.AutoCreateWarpedVRT(imgOut, None, outRasterSRS.ExportToWkt(), gdal.GRA_NearestNeighbour,  0.0)
-        imgWGS=outDriver.CreateCopy(outFile, vrt, options = createOptions)
+        vrt = osgeo.gdal.AutoCreateWarpedVRT(imgOut, None, outRasterSRS.ExportToWkt(), gdal.GRA_NearestNeighbour,  0.0)
+        imgWGS = outDriver.CreateCopy(outFile, vrt, options = createOptions)
         
         #Checking if the output file was created with success
         if os.path.exists(outFile):
-            QMessageBox.information(self.iface.mainWindow(), self.tr("Success!"), self.tr("File successfully created: ")+outFile)
+            QgsMessageLog.logMessage(self.tr("File successfully created: ")+outFile, "DSG Tools Plugin", QgsMessageLog.INFO)
         
         #Deleting the objects
         del imgWGS
