@@ -14,5 +14,6 @@
         <file>icons/eb.jpg</file>
         <file>icons/server.png</file>
         <file>icons/help.png</file>
+        <file>icons/histogram.png</file>
     </qresource>
 </RCC>

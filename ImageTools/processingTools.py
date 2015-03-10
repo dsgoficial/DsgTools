@@ -126,12 +126,12 @@ class ProcessingTools(QDialog, Ui_Dialog):
             max = math.pow(2, 31) - 1
             return (osgeo.gdal.GDT_Int32, min, max)
         elif index == 5:
-            min = 0
-            max = math.pow(2, 8)
+            min = numpy.finfo(numpy.float32).min
+            max = numpy.finfo(numpy.float32).max
             return (osgeo.gdal.GDT_Float32, min, max)
         elif index == 6:
-            min = 0
-            max = math.pow(2, 8)
+            min = numpy.finfo(numpy.float64).min
+            max = numpy.finfo(numpy.float64).max
             return (osgeo.gdal.GDT_Float64, min, max)
     
     #Aplica realce de contraste, reprojecao e troca o tipo de numero utilizando a GDAL. 
