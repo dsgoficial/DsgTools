@@ -106,24 +106,24 @@ class ProcessingTools(QDialog, Ui_Dialog):
     def getGDALRasterType(self):
         index = self.numberComboBox.currentIndex()
         if index == 0:
-            min = 0
-            max = math.pow(2, 8) - 1
+            min = numpy.finfo(numpy.uint8).min
+            max = numpy.finfo(numpy.uint8).max
             return (osgeo.gdal.GDT_Byte, min, max)
         elif index == 1:
-            min = 0
-            max = math.pow(2, 16) - 1
+            min = numpy.finfo(numpy.uint16).min
+            max = numpy.finfo(numpy.uint16).max
             return (osgeo.gdal.GDT_UInt16, min, max)
         elif index == 2:
-            min = -1*math.pow(2, 15)
-            max = math.pow(2, 15) - 1
+            min = numpy.finfo(numpy.int16).min
+            max = numpy.finfo(numpy.int16).max
             return (osgeo.gdal.GDT_Int16, min, max)
         elif index == 3:
-            min = 0
-            max = math.pow(2, 32) - 1
+            min = numpy.finfo(numpy.uint32).min
+            max = numpy.finfo(numpy.uint32).max
             return (osgeo.gdal.GDT_UInt32, min, max)
         elif index == 4:
-            min = -1*math.pow(2, 31)
-            max = math.pow(2, 31) - 1
+            min = numpy.finfo(numpy.int32).min
+            max = numpy.finfo(numpy.int32).max
             return (osgeo.gdal.GDT_Int32, min, max)
         elif index == 5:
             min = numpy.finfo(numpy.float32).min
