@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_processingTools.ui'
 #
-# Created: Tue Mar 10 09:05:36 2015
+# Created: Tue Mar 10 13:32:09 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -143,7 +143,7 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_translate("Dialog", "Preparação de imagens para mosaicos", None))
+        Dialog.setWindowTitle(_translate("Dialog", "Batch Image Processor", None))
         self.checkBox.setText(_translate("Dialog", "Process images", None))
         self.label.setText(_translate("Dialog", "Input images:", None))
         self.addButton.setText(_translate("Dialog", "Add", None))
