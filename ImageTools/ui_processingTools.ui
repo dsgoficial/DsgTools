@@ -121,11 +121,6 @@
         <widget class="QComboBox" name="numberComboBox">
          <item>
           <property name="text">
-           <string>Byte with color palette</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
            <string>Byte</string>
           </property>
          </item>

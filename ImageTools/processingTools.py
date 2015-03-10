@@ -23,52 +23,53 @@
 import os
 import osgeo.gdal
 import osgeo.osr
+import numpy
+import math
 
 # Import the PyQt and QGIS libraries
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from qgis.core import QgsCoordinateReferenceSystem
+from qgis.core import QgsCoordinateReferenceSystem, QgsMessageLog
 from qgis.gui import QgsGenericProjectionSelector
 
-from ui_mosaicTools import Ui_Dialog
+from ui_processingTools import Ui_Dialog
 
-class MosaicTools(QDialog, Ui_Dialog):
+class ProcessingTools(QDialog, Ui_Dialog):
     def __init__(self, iface):
         """Constructor."""
-        super(MosaicTools, self).__init__()
+        super(ProcessingTools, self).__init__()
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        
         self.iface = iface
+
+        self.epsg = 4326
+        srs = QgsCoordinateReferenceSystem(self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
+        self.srLineEdit.setText(srs.description())
     
     @pyqtSlot()
     def on_buttonBox_accepted(self):
         outDir = self.outputFolderEdit.text()
-        items = self.fileListWidget.items()
-        for item in items:
-            inFile = item.text()
-            self.stretchImage(inFile, outDir, self.getStretchingPercentage(), zone, bands, self.epsg)
+        for itemNumber in range(0,self.fileListWidget.count()):
+            inFile = self.fileListWidget.item(itemNumber).text()
+            self.stretchImage(str(inFile), str(outDir), self.getStretchingPercentage(), self.epsg)
         
     @pyqtSlot(bool)    
     def on_srsButton_clicked(self):
         projSelector = QgsGenericProjectionSelector()
         message = 'Select the Spatial Reference System!'
         projSelector.setMessage(theMessage=message)
-        projSelector.exec_()
-        try:
-            self.epsg = int(projSelector.selectedAuthId().split(':')[-1])
-            srs = QgsCoordinateReferenceSystem(self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
-            if srs:
-                self.srsEdit.setText(srs.description())
-            else:
-                self.epsg = 4326
-        except:
+        if not projSelector.exec_():
             QMessageBox.warning(self, self.tr("Warning!"), self.tr(message))
+            return
+        else:
+            self.epsg = int(projSelector.selectedAuthId().split(':')[-1])
+        srs = QgsCoordinateReferenceSystem(self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
+        self.srLineEdit.setText(srs.description())
         
     @pyqtSlot(bool)
     def on_addButton_clicked(self):
@@ -88,7 +89,7 @@ class MosaicTools(QDialog, Ui_Dialog):
         for dirName, subdirList, fileList in os.walk(folder):
             for fileName in fileList:
                 if fileName.split(".")[-1] == 'tif':
-                    self.fileListWidget.addItem(fileName)
+                    self.fileListWidget.addItem(os.path.join(dirName,fileName))
     
     @pyqtSlot(bool)
     def on_outputFolderButton_clicked(self):
@@ -104,28 +105,43 @@ class MosaicTools(QDialog, Ui_Dialog):
         
     def getGDALRasterType(self):
         index = self.numberComboBox.currentIndex()
-        if index == 1:
-            return osgeo.gdal.GDT_Byte
+        if index == 0:
+            min = 0
+            max = math.pow(2, 8) - 1
+            return (osgeo.gdal.GDT_Byte, min, max)
+        elif index == 1:
+            min = 0
+            max = math.pow(2, 16) - 1
+            return (osgeo.gdal.GDT_UInt16, min, max)
         elif index == 2:
-            return osgeo.gdal.GDT_UInt16
+            min = -1*math.pow(2, 15)
+            max = math.pow(2, 15) - 1
+            return (osgeo.gdal.GDT_Int16, min, max)
         elif index == 3:
-            return osgeo.gdal.GDT_UInt16
+            min = 0
+            max = math.pow(2, 32) - 1
+            return (osgeo.gdal.GDT_UInt32, min, max)
         elif index == 4:
-            return osgeo.gdal.GDT_UInt32
+            min = -1*math.pow(2, 31)
+            max = math.pow(2, 31) - 1
+            return (osgeo.gdal.GDT_Int32, min, max)
         elif index == 5:
-            return osgeo.gdal.GDT_UInt32
+            min = 0
+            max = math.pow(2, 8)
+            return (osgeo.gdal.GDT_Float32, min, max)
         elif index == 6:
-            return osgeo.gdal.GDT_Float32
-        elif index == 7:
-            return osgeo.gdal.GDT_Float64
-        elif index == 0:
-            return osgeo.gdal.GDT_Byte #check this one
+            min = 0
+            max = math.pow(2, 8)
+            return (osgeo.gdal.GDT_Float64, min, max)
     
     #Aplica realce de contraste, reprojecao e troca o tipo de numero utilizando a GDAL. 
-    def stretchImage(inFile, outDir, percent, zone, bands, epsg=4674, maxOutValue=254, minOutValue=0):
+    def stretchImage(self, inFile, outDir, percent, epsg, bands = []):
         """Method that applies a specific histogram stretching to a group of images.
             The method also performs a conversion changing the raster type.
         """
+        
+        #Getting the output raster type
+        (rasterType, minOutValue, maxOutValue) = self.getGDALRasterType()
 
         #Open image
         imgIn = osgeo.gdal.Open(inFile)
@@ -137,7 +153,7 @@ class MosaicTools(QDialog, Ui_Dialog):
         fileName = inFile.split("/")[-1]
         split = fileName.split(".")
         baseName = split[0]
-        extension = split[-1]
+        extension = '.' + split[-1]
         
         #Defining the output driver
         outDriver = imgIn.GetDriver()
@@ -148,14 +164,18 @@ class MosaicTools(QDialog, Ui_Dialog):
         #creating output file for contrast stretch
         outFile = os.path.join(outDir, baseName+'_stretch'+extension)
         
+        #if bands is empty, make a new file with the same band size
+        if bands == []:
+            bands = range(0, imgIn.RasterCount)        
+        
         #Creating a temp image, with the same input parameters, to store the converted input image to 8 bits
-        imgOut = outDriver.Create(outFileTmp,imgIn.RasterXSize, imgIn.RasterYSize, len(bands), self.getGDALRasterType(), options = createOptions)
+        imgOut = outDriver.Create(outFileTmp,imgIn.RasterXSize, imgIn.RasterYSize, len(bands), rasterType, options = createOptions)
         imgOut.SetProjection(imgIn.GetProjection())
         imgOut.SetGeoTransform(imgIn.GetGeoTransform())
         
         #Linear stretching
-        topPercent = 1-percent/2
-        bottomPercent = percent/2
+        topPercent = 100.-percent/2.
+        bottomPercent = percent/2.
         outBandNumber = 1
         for bandNumber in bands:
             
@@ -163,7 +183,7 @@ class MosaicTools(QDialog, Ui_Dialog):
             matrix = b1.ReadAsArray()
             arr = numpy.array(matrix)
             
-            minValue, maxValue = numpy.percentile(matrix, [bottomPercent*100., topPercent*100.])
+            minValue, maxValue = numpy.percentile(matrix, [bottomPercent, topPercent])
             print minValue, maxValue
     
             #Transformation parameters
@@ -180,19 +200,19 @@ class MosaicTools(QDialog, Ui_Dialog):
             outB.WriteArray(newArr)
             outB.FlushCache()
               
-            print "Band", bandNumber, ",", percentValue, ",",
+            QgsMessageLog.logMessage(self.tr("Band "+ str(bandNumber)+ ": "+str(minValue)+" , "+str(maxValue)),"DSG Tools Plugin", QgsMessageLog.INFO)
         
         #creating final image for reprojection
         outRasterSRS = osgeo.osr.SpatialReference()
         outRasterSRS.ImportFromEPSG(epsg)
         
         #this code uses virtual raster to compute the parameters of the output image
-        vrt = osgeo.gdal.AutoCreateWarpedVRT(imgOut, None, outRasterSRS.ExportToWkt(), gdal.GRA_NearestNeighbour,  0.0)
+        vrt = osgeo.gdal.AutoCreateWarpedVRT(imgOut, None, outRasterSRS.ExportToWkt(), osgeo.gdal.GRA_NearestNeighbour,  0.0)
         imgWGS = outDriver.CreateCopy(outFile, vrt, options = createOptions)
         
         #Checking if the output file was created with success
         if os.path.exists(outFile):
-            QgsMessageLog.logMessage(self.tr("File successfully created: ")+outFile, "DSG Tools Plugin", QgsMessageLog.INFO)
+            QgsMessageLog.logMessage(self.tr("File successfully created: ") + outFile, "DSG Tools Plugin", QgsMessageLog.INFO)
         
         #Deleting the objects
         del imgWGS

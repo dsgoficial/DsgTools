@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui_mosaicTools.ui'
+# Form implementation generated from reading ui file 'ui_processingTools.ui'
 #
-# Created: Mon Mar 09 15:02:18 2015
+# Created: Tue Mar 10 09:05:36 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -87,7 +87,6 @@ class Ui_Dialog(object):
         self.numberComboBox.addItem(_fromUtf8(""))
         self.numberComboBox.addItem(_fromUtf8(""))
         self.numberComboBox.addItem(_fromUtf8(""))
-        self.numberComboBox.addItem(_fromUtf8(""))
         self.formLayout.setWidget(11, QtGui.QFormLayout.FieldRole, self.numberComboBox)
         self.label_3 = QtGui.QLabel(self.tab)
         self.label_3.setObjectName(_fromUtf8("label_3"))
@@ -153,14 +152,13 @@ class Ui_Dialog(object):
         self.label_4.setText(_translate("Dialog", "Spatial Reference System:", None))
         self.srsButton.setText(_translate("Dialog", "CRS", None))
         self.label_5.setText(_translate("Dialog", "Output raster type", None))
-        self.numberComboBox.setItemText(0, _translate("Dialog", "Byte with color palette", None))
-        self.numberComboBox.setItemText(1, _translate("Dialog", "Byte", None))
-        self.numberComboBox.setItemText(2, _translate("Dialog", "Unsigned Int 16", None))
-        self.numberComboBox.setItemText(3, _translate("Dialog", "Int 16", None))
-        self.numberComboBox.setItemText(4, _translate("Dialog", "Unsigned Int 32", None))
-        self.numberComboBox.setItemText(5, _translate("Dialog", "Int 32", None))
-        self.numberComboBox.setItemText(6, _translate("Dialog", "Float 32", None))
-        self.numberComboBox.setItemText(7, _translate("Dialog", "Float 64", None))
+        self.numberComboBox.setItemText(0, _translate("Dialog", "Byte", None))
+        self.numberComboBox.setItemText(1, _translate("Dialog", "Unsigned Int 16", None))
+        self.numberComboBox.setItemText(2, _translate("Dialog", "Int 16", None))
+        self.numberComboBox.setItemText(3, _translate("Dialog", "Unsigned Int 32", None))
+        self.numberComboBox.setItemText(4, _translate("Dialog", "Int 32", None))
+        self.numberComboBox.setItemText(5, _translate("Dialog", "Float 32", None))
+        self.numberComboBox.setItemText(6, _translate("Dialog", "Float 64", None))
         self.label_3.setText(_translate("Dialog", "Apply contrast enhancement:", None))
         self.stretchComboBox.setItemText(0, _translate("Dialog", "None", None))
         self.stretchComboBox.setItemText(1, _translate("Dialog", "Linear 2%", None))

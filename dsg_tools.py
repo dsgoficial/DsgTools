@@ -37,7 +37,7 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/DbTools/Spatialite
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/LayerTools'))
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ComplexTools'))
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ServerTools'))
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/MosaicTools'))
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ImageTools'))
 
 from load_by_class import LoadByClass
 from load_by_category import LoadByCategory
@@ -47,7 +47,7 @@ from serverConfigurator import ServerConfigurator
 from postgisDBTool import PostgisDBTool
 from createPostGISDatabase import CreatePostGISDatabase
 from ui_create_inom_dialog import CreateInomDialog
-from mosaicTools import MosaicTools
+from processingTools import ProcessingTools
 
 from qgis.utils import showPluginHelp
 
@@ -237,8 +237,8 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/icons/help.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Help'),
-            callback=self.showHelp,
+            text=self.tr('Image tools'),
+            callback=self.showImageProcessor,
             parent=self.dsgTools,
             add_to_menu=False,
             add_to_toolbar=False)
@@ -247,8 +247,8 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/icons/help.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Mosaic tools'),
-            callback=self.showMosaic,
+            text=self.tr('Help'),
+            callback=self.showHelp,
             parent=self.dsgTools,
             add_to_menu=False,
             add_to_toolbar=False)
@@ -352,10 +352,9 @@ class DsgTools:
         index = os.path.join(os.path.dirname(__file__), 'help', 'index')
         showPluginHelp('DsgTools', index)
     
-    def showMosaic(self):
-        dlg = MosaicTools(self.iface)
+    def showImageProcessor(self):
+        dlg = ProcessingTools(self.iface)
         result = dlg.exec_()
-
 
     def createSpatialiteDatabase(self):
         try:
