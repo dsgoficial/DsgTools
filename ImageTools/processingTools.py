@@ -54,6 +54,14 @@ class ProcessingTools(QDialog, Ui_Dialog):
     
     @pyqtSlot()
     def on_buttonBox_accepted(self):
+        if self.fileListWidget.count() == 0:
+            QMessageBox.warning(self.iface.mainWindow(), self.tr("Warning!"), self.tr("Please select at least one image."))
+            return
+        
+        if self.outputFolderEdit.text() == '':
+            QMessageBox.warning(self.iface.mainWindow(), self.tr("Warning!"), self.tr("Please select at the output folder."))
+            return
+        
         QMessageBox.information(self.iface.mainWindow(), self.tr("Information!"), self.tr("The processing may take several minutes. Please wait the final message."))
         
         outDir = self.outputFolderEdit.text()
