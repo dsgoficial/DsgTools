@@ -9,6 +9,7 @@
         git sha              : $Format:%H$
         copyright            : (C) 2014 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
         email                : luiz.claudio@dsg.eb.mil.br
+        mod history          : 2015-03-10 by Maurício de Paulo - Cartographic Engineer @ Brazilian Army        
  ***************************************************************************/
 
 /***************************************************************************
@@ -53,10 +54,14 @@ class ProcessingTools(QDialog, Ui_Dialog):
     
     @pyqtSlot()
     def on_buttonBox_accepted(self):
+        QMessageBox.information(self.iface.mainWindow(), self.tr("Information!"), self.tr("The processing may take several minutes. Please wait the final message."))
+        
         outDir = self.outputFolderEdit.text()
         for itemNumber in range(0,self.fileListWidget.count()):
             inFile = self.fileListWidget.item(itemNumber).text()
             self.stretchImage(str(inFile), str(outDir), self.getStretchingPercentage(), self.epsg)
+
+        QMessageBox.information(self.iface.mainWindow(), self.tr("Success!"), self.tr("Images Successfully processed."))
         
     @pyqtSlot(bool)    
     def on_srsButton_clicked(self):
@@ -90,7 +95,7 @@ class ProcessingTools(QDialog, Ui_Dialog):
             for fileName in fileList:
                 if fileName.split(".")[-1] == 'tif':
                     self.fileListWidget.addItem(os.path.join(dirName,fileName))
-    
+                        
     @pyqtSlot(bool)
     def on_outputFolderButton_clicked(self):
         folder = QFileDialog.getExistingDirectory(self, "Select Directory")
@@ -106,24 +111,24 @@ class ProcessingTools(QDialog, Ui_Dialog):
     def getGDALRasterType(self):
         index = self.numberComboBox.currentIndex()
         if index == 0:
-            min = numpy.finfo(numpy.uint8).min
-            max = numpy.finfo(numpy.uint8).max
+            min = numpy.iinfo(numpy.uint8).min
+            max = numpy.iinfo(numpy.uint8).max
             return (osgeo.gdal.GDT_Byte, min, max)
         elif index == 1:
-            min = numpy.finfo(numpy.uint16).min
-            max = numpy.finfo(numpy.uint16).max
+            min = numpy.iinfo(numpy.uint16).min
+            max = numpy.iinfo(numpy.uint16).max
             return (osgeo.gdal.GDT_UInt16, min, max)
         elif index == 2:
-            min = numpy.finfo(numpy.int16).min
-            max = numpy.finfo(numpy.int16).max
+            min = numpy.iinfo(numpy.int16).min
+            max = numpy.iinfo(numpy.int16).max
             return (osgeo.gdal.GDT_Int16, min, max)
         elif index == 3:
-            min = numpy.finfo(numpy.uint32).min
-            max = numpy.finfo(numpy.uint32).max
+            min = numpy.iinfo(numpy.uint32).min
+            max = numpy.iinfo(numpy.uint32).max
             return (osgeo.gdal.GDT_UInt32, min, max)
         elif index == 4:
-            min = numpy.finfo(numpy.int32).min
-            max = numpy.finfo(numpy.int32).max
+            min = numpy.iinfo(numpy.int32).min
+            max = numpy.iinfo(numpy.int32).max
             return (osgeo.gdal.GDT_Int32, min, max)
         elif index == 5:
             min = numpy.finfo(numpy.float32).min
