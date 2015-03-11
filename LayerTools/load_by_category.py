@@ -33,6 +33,7 @@ from PyQt4.QtCore import QFileInfo,QSettings,pyqtSlot, Qt
 from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 
 import sys, os
+from PyQt4.QtGui import QApplication, QCursor
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Factories', 'SqlFactory'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Utils'))
 from utils import Utils
@@ -308,6 +309,8 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         self.selectedClasses.sort()
 
     def okSelected(self):
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+
         if self.checkBoxOnlyWithElements.isChecked():
             self.setLayersWithElements()
             ponto = self.pointWithElement
@@ -349,6 +352,8 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             self.pointWithElement = []
             self.lineWithElement = []
             self.polygonWithElement = []
+
+        QApplication.restoreOverrideCursor()
 
     def loadLayers(self, type, categories, layer_names):
         if self.isSpatialite:

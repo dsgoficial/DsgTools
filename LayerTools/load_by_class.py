@@ -216,10 +216,14 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         self.selectedClasses.sort()
 
     def okSelected(self):
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+
         if self.isSpatialite:
             self.loadSpatialiteLayers()
         else:
             self.loadPostGISLayers()
+
+        QApplication.restoreOverrideCursor()
 
     def loadPostGISLayers(self):
         self.getSelectedItems()

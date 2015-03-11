@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'DbTools/cria_spatialite_dialog_base.ui'
+# Form implementation generated from reading ui file 'cria_spatialite_dialog_base.ui'
 #
-# Created: Mon Dec 22 13:59:44 2014
-#      by: PyQt4 UI code generator 4.8.3
+# Created: Wed Mar 11 16:28:38 2015
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,12 +12,21 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    _fromUtf8 = lambda s: s
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_CriaSpatialite(object):
     def setupUi(self, CriaSpatialite):
         CriaSpatialite.setObjectName(_fromUtf8("CriaSpatialite"))
-        CriaSpatialite.resize(380, 163)
+        CriaSpatialite.resize(391, 189)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -76,7 +85,6 @@ class Ui_CriaSpatialite(object):
         self.versionComboBox = QtGui.QComboBox(CriaSpatialite)
         self.versionComboBox.setObjectName(_fromUtf8("versionComboBox"))
         self.versionComboBox.addItem(_fromUtf8(""))
-        self.versionComboBox.addItem(_fromUtf8(""))
         self.horizontalLayout_5.addWidget(self.versionComboBox)
         spacerItem3 = QtGui.QSpacerItem(128, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem3)
@@ -101,15 +109,14 @@ class Ui_CriaSpatialite(object):
         QtCore.QMetaObject.connectSlotsByName(CriaSpatialite)
 
     def retranslateUi(self, CriaSpatialite):
-        CriaSpatialite.setWindowTitle(QtGui.QApplication.translate("CriaSpatialite", "Create Spatialite", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("CriaSpatialite", "Select Folder", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonBuscarPastaDestinoCriaSpatialite.setText(QtGui.QApplication.translate("CriaSpatialite", "Search", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("CriaSpatialite", "Coordinate System", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonBuscarSistCoordCriaSpatialite.setText(QtGui.QApplication.translate("CriaSpatialite", "Search", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("CriaSpatialite", "File Name", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_4.setText(QtGui.QApplication.translate("CriaSpatialite", "EDGV Version:", None, QtGui.QApplication.UnicodeUTF8))
-        self.versionComboBox.setItemText(0, QtGui.QApplication.translate("CriaSpatialite", "2.1.3", None, QtGui.QApplication.UnicodeUTF8))
-        self.versionComboBox.setItemText(1, QtGui.QApplication.translate("CriaSpatialite", "3.0", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonOkCriaSpatialite.setText(QtGui.QApplication.translate("CriaSpatialite", "Ok", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonCancelarCriaSpatialite.setText(QtGui.QApplication.translate("CriaSpatialite", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+        CriaSpatialite.setWindowTitle(_translate("CriaSpatialite", "Create Spatialite", None))
+        self.label.setText(_translate("CriaSpatialite", "Select Folder", None))
+        self.pushButtonBuscarPastaDestinoCriaSpatialite.setText(_translate("CriaSpatialite", "Search", None))
+        self.label_2.setText(_translate("CriaSpatialite", "Coordinate System", None))
+        self.pushButtonBuscarSistCoordCriaSpatialite.setText(_translate("CriaSpatialite", "Search", None))
+        self.label_3.setText(_translate("CriaSpatialite", "File Name", None))
+        self.label_4.setText(_translate("CriaSpatialite", "EDGV Version:", None))
+        self.versionComboBox.setItemText(0, _translate("CriaSpatialite", "2.1.3", None))
+        self.pushButtonOkCriaSpatialite.setText(_translate("CriaSpatialite", "Ok", None))
+        self.pushButtonCancelarCriaSpatialite.setText(_translate("CriaSpatialite", "Cancel", None))
 

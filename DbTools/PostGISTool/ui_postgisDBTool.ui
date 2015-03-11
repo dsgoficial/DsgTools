@@ -127,11 +127,6 @@
          <string>2.1.3</string>
         </property>
        </item>
-       <item>
-        <property name="text">
-         <string>3.0</string>
-        </property>
-       </item>
       </widget>
      </item>
     </layout>

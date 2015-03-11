@@ -66,11 +66,11 @@ class CriaSpatialiteDialog(QtGui.QDialog, cria_spatialite_dialog_base.Ui_CriaSpa
         QtCore.QObject.connect(self.pushButtonBuscarPastaDestinoCriaSpatialite, QtCore.SIGNAL(("clicked()")), self.definePastaDestino)
         QtCore.QObject.connect(self.pushButtonBuscarSistCoordCriaSpatialite, QtCore.SIGNAL(("clicked()")), self.setaSistCoordCriaSpatialite)
         QtCore.QObject.connect(self.pushButtonOkCriaSpatialite, QtCore.SIGNAL(("clicked()")), self.okselecionadoCriaSpatialite)
-        
+
     def getTemplateLocation(self):
         currentPath = os.path.dirname(__file__)
         if self.versionComboBox.currentText() == '2.1.3':
-            edgvPath = os.path.join(currentPath, 'template', '213', 'seed_edgv213_v3.sqlite')
+            edgvPath = os.path.join(currentPath, 'template', '213', 'seed_edgv213.sqlite')
         elif self.versionComboBox.currentText() == '3.0':
             edgvPath = os.path.join(currentPath, 'template', '30', 'seed_edgv30.sqlite')
         return edgvPath

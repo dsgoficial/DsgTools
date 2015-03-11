@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'ui_postgisDBTool.ui'
 #
-# Created: Thu Dec 18 12:07:01 2014
-#      by: PyQt4 UI code generator 4.8.3
+# Created: Wed Mar 11 16:27:56 2015
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,16 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    _fromUtf8 = lambda s: s
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -73,7 +82,6 @@ class Ui_Dialog(object):
         self.versionCombo = QtGui.QComboBox(Dialog)
         self.versionCombo.setObjectName(_fromUtf8("versionCombo"))
         self.versionCombo.addItem(_fromUtf8(""))
-        self.versionCombo.addItem(_fromUtf8(""))
         self.horizontalLayout_7.addWidget(self.versionCombo)
         self.gridLayout.addLayout(self.horizontalLayout_7, 4, 0, 1, 1)
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
@@ -90,15 +98,14 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Create Database", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("Dialog", "Connection Name:", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("Dialog", "Server:", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("Dialog", "Database:", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_4.setText(QtGui.QApplication.translate("Dialog", "SRS:", None, QtGui.QApplication.UnicodeUTF8))
-        self.srsButton.setText(QtGui.QApplication.translate("Dialog", "Search SRS", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_6.setText(QtGui.QApplication.translate("Dialog", "EDGV version:", None, QtGui.QApplication.UnicodeUTF8))
-        self.versionCombo.setItemText(0, QtGui.QApplication.translate("Dialog", "2.1.3", None, QtGui.QApplication.UnicodeUTF8))
-        self.versionCombo.setItemText(1, QtGui.QApplication.translate("Dialog", "3.0", None, QtGui.QApplication.UnicodeUTF8))
-        self.saveButton.setText(QtGui.QApplication.translate("Dialog", "Save", None, QtGui.QApplication.UnicodeUTF8))
-        self.cancelButton.setText(QtGui.QApplication.translate("Dialog", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+        Dialog.setWindowTitle(_translate("Dialog", "Create Database", None))
+        self.label.setText(_translate("Dialog", "Connection Name:", None))
+        self.label_2.setText(_translate("Dialog", "Server:", None))
+        self.label_3.setText(_translate("Dialog", "Database:", None))
+        self.label_4.setText(_translate("Dialog", "CRS:", None))
+        self.srsButton.setText(_translate("Dialog", "Search CRS", None))
+        self.label_6.setText(_translate("Dialog", "EDGV version:", None))
+        self.versionCombo.setItemText(0, _translate("Dialog", "2.1.3", None))
+        self.saveButton.setText(_translate("Dialog", "Save", None))
+        self.cancelButton.setText(_translate("Dialog", "Cancel", None))
 
