@@ -18,7 +18,7 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Federal Decree 6,666.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -26,6 +26,25 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Diretoria de Serviço Geográfico&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Este plugin foi desenvolvido de acordo com o Decreto 6,666.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="ui_about.ui" line="89"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Exército Brasileiro&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Diretoria de Serviço Geográfico&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -165,19 +184,19 @@ p, li { white-space: pre-wrap; }
         <translation>Nome do Arquivo</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="198"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="193"/>
         <source>Ok</source>
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="221"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="216"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="147"/>
         <source>EDGV Version:</source>
-        <translation>Versão EDGV</translation>
+        <translation>Versão EDGV:</translation>
     </message>
     <message>
         <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="155"/>
@@ -187,7 +206,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="160"/>
         <source>3.0</source>
-        <translation>3.0</translation>
+        <translation type="obsolete">3.0</translation>
     </message>
 </context>
 <context>
@@ -205,7 +224,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="136"/>
         <source>Problem creating the database!</source>
-        <translation>Problema criando o banco de dados.</translation>
+        <translation>Problema criando o banco de dados!</translation>
     </message>
     <message>
         <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="145"/>
@@ -215,7 +234,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="143"/>
         <source>Please, select a folder to save the database</source>
-        <translation>Por favor, selecione uma pasta para salvar o banco.</translation>
+        <translation>Por favor, selecione uma pasta para salvar o banco</translation>
     </message>
     <message>
         <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="145"/>
@@ -246,7 +265,7 @@ p, li { white-space: pre-wrap; }
         <translation>Atualizar Tabela</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.ui" line="155"/>
+        <location filename="ServerTools/ui_serverConfigurator.py" line="98"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
@@ -283,10 +302,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="DbTools/PostGISTool/ui_postgisDBTool.ui" line="132"/>
         <source>3.0</source>
-        <translation>3.0</translation>
+        <translation type="obsolete">3.0</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.ui" line="148"/>
+        <location filename="ServerTools/ui_serverConfigurator.py" line="97"/>
         <source>Save</source>
         <translation>Salvar</translation>
     </message>
@@ -406,32 +425,32 @@ p, li { white-space: pre-wrap; }
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.ui" line="14"/>
+        <location filename="ServerTools/ui_serverConfigurator.py" line="91"/>
         <source>Configurate Servers</source>
         <translation>Configurar Servidores</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.ui" line="22"/>
+        <location filename="ServerTools/ui_serverConfigurator.py" line="92"/>
         <source>Server Name:</source>
         <translation>Nome do Servidor:</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.ui" line="40"/>
+        <location filename="ServerTools/ui_serverConfigurator.py" line="93"/>
         <source>Host:</source>
         <translation>Servidor:</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.ui" line="67"/>
+        <location filename="ServerTools/ui_serverConfigurator.py" line="94"/>
         <source>Port:</source>
         <translation>Porta:</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.ui" line="94"/>
+        <location filename="ServerTools/ui_serverConfigurator.py" line="95"/>
         <source>User:</source>
         <translation>Usuário:</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.ui" line="121"/>
+        <location filename="ServerTools/ui_serverConfigurator.py" line="96"/>
         <source>Password:</source>
         <translation>Senha:</translation>
     </message>
@@ -507,27 +526,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DsgTools</name>
     <message>
-        <location filename="dsg_tools.py" line="301"/>
+        <location filename="dsg_tools.py" line="325"/>
         <source>&amp;DSG Tools</source>
         <translation>&amp;Ferramentas DSG</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="204"/>
+        <location filename="dsg_tools.py" line="208"/>
         <source>DSG Tools</source>
         <translation>Ferramentas DSG</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="209"/>
+        <location filename="dsg_tools.py" line="213"/>
         <source>Server Catalog</source>
         <translation>Catálogo de Servidores</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="210"/>
+        <location filename="dsg_tools.py" line="214"/>
         <source>Database Tools</source>
         <translation>Ferramentas de BD</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="211"/>
+        <location filename="dsg_tools.py" line="215"/>
         <source>Layer Tools</source>
         <translation>Ferramentas de Camadas</translation>
     </message>
@@ -537,71 +556,81 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Ferramentas de Complexos</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="214"/>
+        <location filename="dsg_tools.py" line="218"/>
         <source>Server Settings</source>
         <translation>Configurações de Servidor</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="224"/>
+        <location filename="dsg_tools.py" line="238"/>
         <source>About</source>
         <translation>Sobre</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="239"/>
+        <location filename="dsg_tools.py" line="263"/>
         <source>Create Spatialite</source>
         <translation>Criar Spatialite</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="251"/>
+        <location filename="dsg_tools.py" line="275"/>
         <source>Create PostGIS</source>
         <translation>Criar PostGIS</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="262"/>
+        <location filename="dsg_tools.py" line="286"/>
         <source>Load by Category</source>
         <translation>Carrega por Categoria</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="274"/>
+        <location filename="dsg_tools.py" line="298"/>
         <source>Load by Class</source>
         <translation>Carrega por Classe</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="285"/>
+        <location filename="dsg_tools.py" line="309"/>
         <source>Create Frame</source>
         <translation>Criar Moldura</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="348"/>
+        <location filename="dsg_tools.py" line="380"/>
         <source>Creating database structure...</source>
         <translation>Criando Estrutura do Banco de Dados...</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="366"/>
+        <location filename="dsg_tools.py" line="398"/>
         <source>Problem creating the Database!</source>
         <translation>Problema naCriação do Banco de Dados!</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="417"/>
+        <location filename="dsg_tools.py" line="449"/>
         <source>Database structure creation canceled!</source>
         <translation>Criação da Estrutura de Dados Cancelada!</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="426"/>
+        <location filename="dsg_tools.py" line="458"/>
         <source>Database structure successfully created!</source>
         <translation>Estrutura de Banco de Dados criada com sucesso!</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="428"/>
+        <location filename="dsg_tools.py" line="460"/>
         <source>Problem creating the database structure!
  Check the Log terminal for details.</source>
         <translation>Problema na Criação da Estrutura de Dados!
 Olhe o Terminal Python para detalhes.</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="430"/>
+        <location filename="dsg_tools.py" line="462"/>
         <source>User canceled the database structure creation!</source>
         <translation>Usuário cancelou a criação da estrutura de dados!</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="228"/>
+        <source>Image tools</source>
+        <translation>Ferramentas para Imagens</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="248"/>
+        <source>Help</source>
+        <translation>Ajuda</translation>
     </message>
 </context>
 <context>
@@ -727,47 +756,47 @@ Olhe o Terminal Python para detalhes.</translation>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="272"/>
+        <location filename="LayerTools/load_by_category.py" line="259"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="404"/>
+        <location filename="LayerTools/load_by_category.py" line="350"/>
         <source>WARNING!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="389"/>
+        <location filename="LayerTools/load_by_category.py" line="336"/>
         <source>Please, select at least one type of layer!</source>
         <translation>Por favor, selecione pelo menos um tipo de camada!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="402"/>
+        <location filename="LayerTools/load_by_category.py" line="348"/>
         <source>CRITICAL!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="394"/>
+        <location filename="LayerTools/load_by_category.py" line="341"/>
         <source>Problem loading the categories!</source>
         <translation>Problema na carga das categorias!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="402"/>
+        <location filename="LayerTools/load_by_category.py" line="348"/>
         <source>Could not determine the coordinate reference system!</source>
         <translation>Não foi possível determinar o Sistema de Coordenadas de Referência!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="401"/>
+        <location filename="LayerTools/load_by_category.py" line="347"/>
         <source>Database not loaded properly!</source>
         <translation>Banco de dados não foi carregado corretamente!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="404"/>
+        <location filename="LayerTools/load_by_category.py" line="350"/>
         <source>Please, select at least one category!</source>
         <translation>Por favor, selecione pelo menos uma categoria!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="448"/>
+        <location filename="LayerTools/load_by_category.py" line="396"/>
         <source>Problem counting elements: </source>
         <translation>Problema na contagem dos elementos:</translation>
     </message>
@@ -830,42 +859,42 @@ Olhe o Terminal Python para detalhes.</translation>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="155"/>
+        <location filename="LayerTools/load_by_class.py" line="154"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="215"/>
+        <location filename="LayerTools/load_by_class.py" line="190"/>
         <source>Select Database</source>
         <translation>Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="294"/>
+        <location filename="LayerTools/load_by_class.py" line="265"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="276"/>
+        <location filename="LayerTools/load_by_class.py" line="247"/>
         <source>Could not load the selected classes!</source>
         <translation>Não foi possível carregar as classes selecionadas!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="296"/>
+        <location filename="LayerTools/load_by_class.py" line="267"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="278"/>
+        <location filename="LayerTools/load_by_class.py" line="249"/>
         <source>Please, select at least one class!</source>
         <translation>Por favor, selecione pelo menos uma classe!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="294"/>
+        <location filename="LayerTools/load_by_class.py" line="265"/>
         <source>Could not load the layer(s)!</source>
         <translation>Não foi possível carregar a(s) camada(s)!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="296"/>
+        <location filename="LayerTools/load_by_class.py" line="267"/>
         <source>Please select at least one layer!</source>
         <translation>Por favor, selecione pelo menos uma camada!</translation>
     </message>
@@ -873,22 +902,22 @@ Olhe o Terminal Python para detalhes.</translation>
 <context>
     <name>ManageComplexDialog</name>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="164"/>
+        <location filename="ComplexTools/manageComplex.py" line="172"/>
         <source>edit this field</source>
         <translation>edite este campo</translation>
     </message>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="196"/>
+        <location filename="ComplexTools/manageComplex.py" line="204"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="196"/>
+        <location filename="ComplexTools/manageComplex.py" line="204"/>
         <source>The field: &apos;nome&apos; must be filled in all rows. Please, check and try again.</source>
         <translation>O campo &apos;nome&apos; precisa ser preenchido em todas as linhas. Por favor, verifique e tente novamente.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="210"/>
+        <location filename="ComplexTools/manageComplex.py" line="218"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
@@ -917,14 +946,24 @@ Olhe o Terminal Python para detalhes.</translation>
 <context>
     <name>ServerConfigurator</name>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="57"/>
+        <location filename="ServerTools/serverConfigurator.py" line="58"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="57"/>
+        <location filename="ServerTools/serverConfigurator.py" line="58"/>
         <source>Fill all parameters.</source>
         <translation>Preencha todos os parâmetros.</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/serverConfigurator.py" line="56"/>
+        <source>Info!</source>
+        <translation>Informação!</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/serverConfigurator.py" line="56"/>
+        <source>Server stored.</source>
+        <translation>Servidor armazenado.</translation>
     </message>
 </context>
 </TS>

@@ -8,7 +8,8 @@
                     LayerTools/load_by_class.py \
                     LayerTools/load_by_category.py \
                     QmlTools/qmlParser.py \
-                    ServerTools/serverConfigurator.py
+                    ServerTools/serverConfigurator.py \
+                    ServerTools/ui_serverConfigurator.py
 
  FORMS           = ComplexTools/complexWindow_base.ui \
                    ComplexTools/ui_manageComplex.ui \
