@@ -36,14 +36,14 @@ class ServerConfigurator(QDialog, Ui_Dialog):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        
+
         self.iface = iface
-        
+
         self.populateServersCombo()
-        
+
         self.passwordEdit.setEchoMode(QLineEdit.Password)
-        
-    @pyqtSlot(bool)    
+
+    @pyqtSlot(bool)
     def on_saveButton_clicked(self):
         if self.checkFields():
             name = self.serversCombo.currentText()
@@ -53,22 +53,23 @@ class ServerConfigurator(QDialog, Ui_Dialog):
             password = self.passwordEdit.text()
             self.storeServerConfiguration(name, host, port, user, password)
             self.populateServersCombo()
+            QMessageBox.warning(self.iface.mainWindow(), self.tr("Info!"), self.tr("Server stored."))
         else:
             QMessageBox.warning(self.iface.mainWindow(), self.tr("Warning!"), self.tr("Fill all parameters."))
-    
-    @pyqtSlot(bool)    
+
+    @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
         self.done(0)
-    
+
     def on_serversCombo_currentIndexChanged(self, index):
         self.getServerConfiguration(self.serversCombo.currentText())
-    
+
     def checkFields(self):
         if self.hostEdit.text() == '' or self.portEdit.text() == '' \
             or self.userEdit.text() == '' or self.passwordEdit.text() == '':
             return False
         return True
-    
+
     def storeServerConfiguration(self, name, host, port, user, password):
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers/'+name)
@@ -77,7 +78,7 @@ class ServerConfigurator(QDialog, Ui_Dialog):
         settings.setValue('username', user)
         settings.setValue('password', password)
         settings.endGroup()
-        
+
     def getServerConfiguration(self, name):
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers/'+name)
@@ -86,22 +87,21 @@ class ServerConfigurator(QDialog, Ui_Dialog):
         user = settings.value('username')
         password = settings.value('password')
         settings.endGroup()
-        
+
         self.hostEdit.setText(host)
         self.portEdit.setText(port)
         self.userEdit.setText(user)
         self.passwordEdit.setText(password)
-        
+
     def getServers(self):
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers')
         currentConnections = settings.childGroups()
         settings.endGroup()
         return currentConnections
-        
+
     def populateServersCombo(self):
         self.serversCombo.clear()
         currentConnections = self.getServers()
         for connection in currentConnections:
             self.serversCombo.addItem(connection)
-        
