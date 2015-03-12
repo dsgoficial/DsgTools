@@ -309,51 +309,54 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         self.selectedClasses.sort()
 
     def okSelected(self):
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
 
-        if self.checkBoxOnlyWithElements.isChecked():
-            self.setLayersWithElements()
-            ponto = self.pointWithElement
-            linha = self.lineWithElement
-            area = self.polygonWithElement
-        else:
-            ponto = self.point
-            linha = self.line
-            area = self.polygon
+            if self.checkBoxOnlyWithElements.isChecked():
+                self.setLayersWithElements()
+                ponto = self.pointWithElement
+                linha = self.lineWithElement
+                area = self.polygonWithElement
+            else:
+                ponto = self.point
+                linha = self.line
+                area = self.polygon
 
-        if self.db and self.crs and len(self.listWidgetCategoryTo)>0:
-            categoriasSelecionadas = []
-            for i in range(self.listWidgetCategoryTo.__len__()):
-                categoriasSelecionadas.append(self.listWidgetCategoryTo.item(i).text())
-            try:
-                if self.checkBoxPoint.isChecked():
-                    self.loadLayers('p',categoriasSelecionadas,ponto)
-                if self.checkBoxLine.isChecked():
-                    self.loadLayers('l',categoriasSelecionadas,linha)
-                if self.checkBoxPolygon.isChecked():
-                    self.loadLayers('a',categoriasSelecionadas,area)
-                if self.checkBoxPoint.isChecked()== False and self.checkBoxLine.isChecked() == False and self.checkBoxPolygon.isChecked() == False:
-                    self.bar.pushMessage(self.tr("WARNING!"), self.tr("Please, select at least one type of layer!"), level=QgsMessageBar.WARNING)
-                else:
-                    self.restoreInitialState()
-                    self.close()
-            except:
-                qgis.utils.iface.messageBar().pushMessage(self.tr("CRITICAL!"), self.tr("Problem loading the categories!"), level=QgsMessageBar.CRITICAL)
-                pass
-        else:
-            if self.db and not self.crs:
-                self.bar.pushMessage(self.tr("CRITICAL!"), self.tr("Could not determine the coordinate reference system!"), level=QgsMessageBar.CRITICAL)
-            if not self.db and not self.crs:
-                self.bar.pushMessage(self.tr("CRITICAL!"), self.tr("Database not loaded properly!"), level=QgsMessageBar.CRITICAL)
-                self.bar.pushMessage(self.tr("CRITICAL!"), self.tr("Could not determine the coordinate reference system!"), level=QgsMessageBar.CRITICAL)
-            if len(self.listWidgetCategoryTo)==0:
-                self.bar.pushMessage(self.tr("WARNING!"), self.tr("Please, select at least one category!"), level=QgsMessageBar.WARNING)
-            categoriasSelecionadas = []
-            self.pointWithElement = []
-            self.lineWithElement = []
-            self.polygonWithElement = []
+            if self.db and self.crs and len(self.listWidgetCategoryTo)>0:
+                categoriasSelecionadas = []
+                for i in range(self.listWidgetCategoryTo.__len__()):
+                    categoriasSelecionadas.append(self.listWidgetCategoryTo.item(i).text())
+                try:
+                    if self.checkBoxPoint.isChecked():
+                        self.loadLayers('p',categoriasSelecionadas,ponto)
+                    if self.checkBoxLine.isChecked():
+                        self.loadLayers('l',categoriasSelecionadas,linha)
+                    if self.checkBoxPolygon.isChecked():
+                        self.loadLayers('a',categoriasSelecionadas,area)
+                    if self.checkBoxPoint.isChecked()== False and self.checkBoxLine.isChecked() == False and self.checkBoxPolygon.isChecked() == False:
+                        self.bar.pushMessage(self.tr("WARNING!"), self.tr("Please, select at least one type of layer!"), level=QgsMessageBar.WARNING)
+                    else:
+                        self.restoreInitialState()
+                        self.close()
+                except:
+                    qgis.utils.iface.messageBar().pushMessage(self.tr("CRITICAL!"), self.tr("Problem loading the categories!"), level=QgsMessageBar.CRITICAL)
+                    pass
+            else:
+                if self.db and not self.crs:
+                    self.bar.pushMessage(self.tr("CRITICAL!"), self.tr("Could not determine the coordinate reference system!"), level=QgsMessageBar.CRITICAL)
+                if not self.db and not self.crs:
+                    self.bar.pushMessage(self.tr("CRITICAL!"), self.tr("Database not loaded properly!"), level=QgsMessageBar.CRITICAL)
+                    self.bar.pushMessage(self.tr("CRITICAL!"), self.tr("Could not determine the coordinate reference system!"), level=QgsMessageBar.CRITICAL)
+                if len(self.listWidgetCategoryTo)==0:
+                    self.bar.pushMessage(self.tr("WARNING!"), self.tr("Please, select at least one category!"), level=QgsMessageBar.WARNING)
+                categoriasSelecionadas = []
+                self.pointWithElement = []
+                self.lineWithElement = []
+                self.polygonWithElement = []
 
-        QApplication.restoreOverrideCursor()
+            QApplication.restoreOverrideCursor()
+        except:
+            QApplication.restoreOverrideCursor()
 
     def loadLayers(self, type, categories, layer_names):
         if self.isSpatialite:

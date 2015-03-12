@@ -93,7 +93,7 @@ class DsgTools:
         self.menuBar = self.iface.mainWindow().menuBar()
 
         self.complexWindow = ComplexWindow(iface)
-        
+
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -213,6 +213,101 @@ class DsgTools:
         server = self.addMenu(self.dsgTools, u'server', self.tr('Server Catalog'),':/plugins/DsgTools/icons/server.png')
         database = self.addMenu(self.dsgTools, u'database', self.tr('Database Tools'),':/plugins/DsgTools/icons/database.png')
         layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/icons/layers.png')
+        bdgex = self.addMenu(self.dsgTools, u'bdgex', self.tr('BDGEx'),':/plugins/DsgTools/icons/eb.png')
+        topocharts = self.addMenu(bdgex, u'topocharts', self.tr('Topo Charts'),':/plugins/DsgTools/icons/eb.png')
+        indexes = self.addMenu(bdgex, u'indexes', self.tr('Product Indexes'),':/plugins/DsgTools/icons/eb.png')
+        rasterIndex = self.addMenu(indexes, u'rasterindex', self.tr('Topo Charts'),':/plugins/DsgTools/icons/eb.png')
+        vectorIndex = self.addMenu(indexes, u'vectorindex', self.tr('Vectorial Charts'),':/plugins/DsgTools/icons/eb.png')
+
+        icon_path = ':/plugins/DsgTools/icons/eb.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('1:250,000'),
+            callback=self.load250kLayer,
+            parent=topocharts,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        topocharts.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/eb.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('1:250,000'),
+            callback=self.load250kRasterIndex,
+            parent=rasterIndex,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        rasterIndex.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/eb.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('1:100,000'),
+            callback=self.load100kRasterIndex,
+            parent=rasterIndex,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        rasterIndex.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/eb.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('1:50,000'),
+            callback=self.load50kRasterIndex,
+            parent=rasterIndex,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        rasterIndex.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/eb.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('1:25,000'),
+            callback=self.load25kRasterIndex,
+            parent=rasterIndex,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        rasterIndex.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/eb.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('1:250,000'),
+            callback=self.load250kVectorIndex,
+            parent=rasterIndex,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        vectorIndex.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/eb.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('1:100,000'),
+            callback=self.load100kVectorIndex,
+            parent=rasterIndex,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        vectorIndex.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/eb.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('1:50,000'),
+            callback=self.load50kVectorIndex,
+            parent=rasterIndex,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        vectorIndex.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/eb.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('1:25,000'),
+            callback=self.load25kVectorIndex,
+            parent=rasterIndex,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        vectorIndex.addAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/server.png'
         action = self.add_action(
@@ -257,7 +352,6 @@ class DsgTools:
         #QToolButtons
         self.databaseButton = self.createToolButton(self.toolbar, u'DatabaseTools')
         self.layerButton = self.createToolButton(self.toolbar, u'LayerTools')
-        #self.complexButton = self.createToolButton(self.toolbar, u'ComplexTools')
 
         icon_path = ':/plugins/DsgTools/icons/spatialite.png'
         action = self.add_action(
@@ -317,7 +411,6 @@ class DsgTools:
         self.layerButton.addAction(action)
 
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
-        
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -351,7 +444,7 @@ class DsgTools:
     def showHelp(self):
         index = os.path.join(os.path.dirname(__file__), 'help', 'index')
         showPluginHelp('DsgTools', index)
-    
+
     def showImageProcessor(self):
         dlg = ProcessingTools(self.iface)
         result = dlg.exec_()
@@ -366,7 +459,7 @@ class DsgTools:
         result = self.dlg.exec_()
         if result:
             pass
-    
+
     def createPostGISDatabase(self):
         try:
             self.databaseButton.setDefaultAction(self.toolbar.sender())
@@ -429,7 +522,7 @@ class DsgTools:
         result = self.dlg.exec_()
         if result:
             pass
-            
+
     def configurateServers(self):
         self.dlg = ServerConfigurator(self.iface)
         self.dlg.show()
@@ -440,7 +533,7 @@ class DsgTools:
     def setProgressRange( self, maximum ):
         if self.progressMessageBar:
             self.progressBar.setRange( 0, maximum )
-    
+
     def queryProcessed( self):
         if self.progressMessageBar:
             self.progressBar.setValue( self.progressBar.value() + 1 )
@@ -452,7 +545,7 @@ class DsgTools:
         if self.thread != None:
             self.thread.stop()
             self.thread = None
-            
+
         if feedback == 1:
             self.progressBar.setValue( self.progressBar.maximum())
             QMessageBox.information(self.iface.mainWindow(), 'DSG Tools',self.tr('Database structure successfully created!'))
@@ -460,11 +553,47 @@ class DsgTools:
             QMessageBox.information(self.iface.mainWindow(), 'DSG Tools',self.tr('Problem creating the database structure!\n Check the Log terminal for details.'))
         elif feedback == -1:
             QMessageBox.information(self.iface.mainWindow(), 'DSG Tools',self.tr('User canceled the database structure creation!'))
-            
+
     def progressCanceled(self):
         self.progressMessageBar = None
         self.progressBar = None
-            
+
         if self.thread:
             self.thread.stop()
             self.thread = None
+
+    def load250kLayer(self):
+        urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/gif&layers=ctm250&styles=&tileMatrixSet=ctm250-wmsc-4&url=http://www.geoportal.eb.mil.br/tiles'
+        self.iface.addRasterLayer(urlWithParams, '1:250k','wms')
+
+    def load250kRasterIndex(self):
+        urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F250_WGS84_MATRICIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
+        self.iface.addRasterLayer(urlWithParams, self.tr('1:250k Raster Index'),'wms')
+
+    def load100kRasterIndex(self):
+        urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F100_WGS84_MATRICIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
+        self.iface.addRasterLayer(urlWithParams, self.tr('1:100k Raster Index'),'wms')
+
+    def load50kRasterIndex(self):
+        urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F50_WGS84_MATRICIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
+        self.iface.addRasterLayer(urlWithParams, self.tr('1:50k Raster Index'),'wms')
+
+    def load25kRasterIndex(self):
+        urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F25_WGS84_MATRICIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
+        self.iface.addRasterLayer(urlWithParams, self.tr('1:25k Raster Index'),'wms')
+
+    def load250kVectorIndex(self):
+        urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F250_WGS84_VETORIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
+        self.iface.addRasterLayer(urlWithParams, self.tr('1:250k Vectorial Index'),'wms')
+
+    def load100kVectorIndex(self):
+        urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F100_WGS84_VETORIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
+        self.iface.addRasterLayer(urlWithParams, self.tr('1:100k Vectorial Index'),'wms')
+
+    def load50kVectorIndex(self):
+        urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F50_WGS84_VETORIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
+        self.iface.addRasterLayer(urlWithParams, self.tr('1:50k Vectorial Index'),'wms')
+
+    def load25kVectorIndex(self):
+        urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F25_WGS84_VETORIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
+        self.iface.addRasterLayer(urlWithParams, self.tr('1:25k Vectorial Index'),'wms')

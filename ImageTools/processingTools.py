@@ -64,14 +64,17 @@ class ProcessingTools(QDialog, Ui_Dialog):
 
         QMessageBox.information(self.iface.mainWindow(), self.tr("Information!"), self.tr("The processing may take several minutes. Please wait the final message."))
 
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
 
-        outDir = self.outputFolderEdit.text()
-        for itemNumber in range(0,self.fileListWidget.count()):
-            inFile = self.fileListWidget.item(itemNumber).text()
-            self.stretchImage(str(inFile), str(outDir), self.getStretchingPercentage(), self.epsg)
+            outDir = self.outputFolderEdit.text()
+            for itemNumber in range(0,self.fileListWidget.count()):
+                inFile = self.fileListWidget.item(itemNumber).text()
+                self.stretchImage(str(inFile), str(outDir), self.getStretchingPercentage(), self.epsg)
 
-        QApplication.restoreOverrideCursor()
+            QApplication.restoreOverrideCursor()
+        except:
+            QApplication.restoreOverrideCursor()
 
         QMessageBox.information(self.iface.mainWindow(), self.tr("Success!"), self.tr("Images Successfully processed."))
 
