@@ -214,9 +214,9 @@ class DsgTools:
         database = self.addMenu(self.dsgTools, u'database', self.tr('Database Tools'),':/plugins/DsgTools/icons/database.png')
         layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/icons/layers.png')
         bdgex = self.addMenu(self.dsgTools, u'bdgex', self.tr('BDGEx'),':/plugins/DsgTools/icons/eb.png')
-        topocharts = self.addMenu(bdgex, u'topocharts', self.tr('Topo Charts'),':/plugins/DsgTools/icons/eb.png')
+        topocharts = self.addMenu(bdgex, u'topocharts', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
         indexes = self.addMenu(bdgex, u'indexes', self.tr('Product Indexes'),':/plugins/DsgTools/icons/eb.png')
-        rasterIndex = self.addMenu(indexes, u'rasterindex', self.tr('Topo Charts'),':/plugins/DsgTools/icons/eb.png')
+        rasterIndex = self.addMenu(indexes, u'rasterindex', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
         vectorIndex = self.addMenu(indexes, u'vectorindex', self.tr('Vectorial Charts'),':/plugins/DsgTools/icons/eb.png')
 
         icon_path = ':/plugins/DsgTools/icons/eb.png'
@@ -327,7 +327,7 @@ class DsgTools:
             parent=self.dsgTools,
             add_to_menu=False,
             add_to_toolbar=False)
-        self.dsgTools.addAction(action)
+#         self.dsgTools.addAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/dsg.png'
         action = self.add_action(
@@ -568,32 +568,32 @@ class DsgTools:
 
     def load250kRasterIndex(self):
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F250_WGS84_MATRICIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
-        self.iface.addRasterLayer(urlWithParams, self.tr('1:250k Raster Index'),'wms')
+        self.iface.addRasterLayer(urlWithParams, self.tr('1:250k Available Raster Charts'),'wms')
 
     def load100kRasterIndex(self):
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F100_WGS84_MATRICIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
-        self.iface.addRasterLayer(urlWithParams, self.tr('1:100k Raster Index'),'wms')
+        self.iface.addRasterLayer(urlWithParams, self.tr('1:100k Available Raster Charts'),'wms')
 
     def load50kRasterIndex(self):
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F50_WGS84_MATRICIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
-        self.iface.addRasterLayer(urlWithParams, self.tr('1:50k Raster Index'),'wms')
+        self.iface.addRasterLayer(urlWithParams, self.tr('1:50k Available Raster Charts'),'wms')
 
     def load25kRasterIndex(self):
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F25_WGS84_MATRICIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
-        self.iface.addRasterLayer(urlWithParams, self.tr('1:25k Raster Index'),'wms')
+        self.iface.addRasterLayer(urlWithParams, self.tr('1:25k Available Raster Charts'),'wms')
 
     def load250kVectorIndex(self):
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F250_WGS84_VETORIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
-        self.iface.addRasterLayer(urlWithParams, self.tr('1:250k Vectorial Index'),'wms')
+        self.iface.addRasterLayer(urlWithParams, self.tr('1:250k Available Vectorial Charts'),'wms')
 
     def load100kVectorIndex(self):
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F100_WGS84_VETORIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
-        self.iface.addRasterLayer(urlWithParams, self.tr('1:100k Vectorial Index'),'wms')
+        self.iface.addRasterLayer(urlWithParams, self.tr('1:100k Available Vectorial Charts'),'wms')
 
     def load50kVectorIndex(self):
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F50_WGS84_VETORIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
-        self.iface.addRasterLayer(urlWithParams, self.tr('1:50k Vectorial Index'),'wms')
+        self.iface.addRasterLayer(urlWithParams, self.tr('1:50k Available Vectorial Charts'),'wms')
 
     def load25kVectorIndex(self):
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F25_WGS84_VETORIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
-        self.iface.addRasterLayer(urlWithParams, self.tr('1:25k Vectorial Index'),'wms')
+        self.iface.addRasterLayer(urlWithParams, self.tr('1:25k Available Vectorial Charts'),'wms')
