@@ -33,7 +33,7 @@ def generateQml(filename, attrs, codelists):
             #starting edittype
             xmlWriter.writeStartElement("edittype")
             xmlWriter.writeAttribute("widgetv2type","TextEdit")
-            xmlWriter.writeAttribute("name","\""+attr+"\"")
+            xmlWriter.writeAttribute("name",attr)
 
             #starting widgetv2config
             xmlWriter.writeStartElement("widgetv2config")
@@ -51,7 +51,7 @@ def generateQml(filename, attrs, codelists):
             #starting edittype
             xmlWriter.writeStartElement("edittype")
             xmlWriter.writeAttribute("widgetv2type","ValueMap")
-            xmlWriter.writeAttribute("name","\""+key+"\"")
+            xmlWriter.writeAttribute("name",key)
 
             #starting widgetv2config
             xmlWriter.writeStartElement("widgetv2config")
@@ -65,8 +65,8 @@ def generateQml(filename, attrs, codelists):
 
                 #starting value
                 xmlWriter.writeStartElement("value")
-                xmlWriter.writeAttribute("key","\""+codeValue+"\"")
-                xmlWriter.writeAttribute("value","\""+code+"\"")
+                xmlWriter.writeAttribute("key",codeValue)
+                xmlWriter.writeAttribute("value",code)
                 #closing value
                 xmlWriter.writeEndElement()
 
@@ -100,3 +100,12 @@ if __name__ == '__main__':
     codelists["d"] = codelist
 
     generateQml("teste.qml", attrs, codelists)
+    
+    qml = open("teste.qml", "r")
+    fileData = qml.read()
+    qml.close()    
+    newData = fileData.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>")
+    qml = open("teste.qml", "w")
+    qml.write(newData)
+    qml.close()
+
