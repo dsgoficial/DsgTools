@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from PyQt4.QtCore import *
 
 def generateQml(filename, attrs, codelists):
@@ -95,7 +96,7 @@ if __name__ == '__main__':
 
     codelist = dict()
     codelist["SIM"] = "1"
-    codelist["NAO"] = "2"
+    codelist["NÃO"] = "2"
 
     codelists["d"] = codelist
 

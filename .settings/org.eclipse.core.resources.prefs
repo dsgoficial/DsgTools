@@ -20,6 +20,7 @@ encoding//LayerTools/map_index.py=utf-8
 encoding//LayerTools/ui_create_inom_dialog.py=utf-8
 encoding//LayerTools/ui_create_inom_dialog_base.py=utf-8
 encoding//QmlTools/qmlParser.py=utf-8
+encoding//QmlTools/qml_creator.py=utf-8
 encoding//ServerTools/serverConfigurator.py=utf-8
 encoding//ServerTools/ui_serverConfigurator.py=utf-8
 encoding//Utils/utils.py=utf-8
