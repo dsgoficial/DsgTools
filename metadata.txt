@@ -8,7 +8,7 @@
 
 [general]
 name=DSG Tools
-qgisMinimumVersion=2.0
+qgisMinimumVersion=2.6
 description=Brazilian Army Cartographic Production Tools
 version=1.0
 author=Brazilian Army - Geographic Service Bureau
@@ -22,7 +22,7 @@ email=luiz.claudio@dsg.eb.mil.br/borba@dsg.eb.mil.br/ferrari@dsg.eb.mil.br
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico
+tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE
 
 homepage=http://hub.qgis.org/projects/dsgtools
 tracker=http://hub.qgis.org/projects/dsgtools
