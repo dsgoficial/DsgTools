@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'load_by_category_dialog.ui'
+# Form implementation generated from reading ui file 'C:\Users\Sec-SDT\.qgis2\python\plugins\DsgTools\LayerTools\load_by_category_dialog.ui'
 #
-# Created: Wed Dec 17 12:42:58 2014
+# Created: Fri Mar 13 23:44:07 2015
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -163,7 +163,7 @@ class Ui_LoadByCategory(object):
         QtCore.QMetaObject.connectSlotsByName(LoadByCategory)
 
     def retranslateUi(self, LoadByCategory):
-        LoadByCategory.setWindowTitle(QtGui.QApplication.translate("LoadByCategory", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        LoadByCategory.setWindowTitle(QtGui.QApplication.translate("LoadByCategory", "Load Layers by Category", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("LoadByCategory", "File                    ", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonOpenFile.setText(QtGui.QApplication.translate("LoadByCategory", "Search", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("LoadByCategory", "Coordinate System", None, QtGui.QApplication.UnicodeUTF8))
