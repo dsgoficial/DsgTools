@@ -77,7 +77,7 @@ class CreatePostGISDatabase(QThread):
         sql = file.read()
         sql = sql.replace('[epsg]', str(self.epsg))
         file.close()
-        commands = sql.split(';')
+        commands = sql.split('#')
 
         # Progress bar steps calculated
         self.emit( SIGNAL( "rangeCalculated( PyQt_PyObject )" ), len(commands))
