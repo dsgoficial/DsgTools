@@ -195,7 +195,7 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
 
     def cancel(self):
         self.done(0)
-        
+
     def checkComplexNameField(self):
         count = self.projectModel.rowCount()
         for i in range(count):
@@ -207,9 +207,10 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
 
     def updateTable(self):
         #checking if the name field is filled
-        if not self.checkComplexNameField():
-            return
-         
+        #Now the database checks the field "nome", therefore the method checkComplexNameField() is no longer needed
+#         if not self.checkComplexNameField():
+#             return
+
         #emit the signal to disassocite all features from the complexes marked for removal
         self.emit(SIGNAL("markedToRemove( PyQt_PyObject )"), self.toBeRemoved)
         #commmiting all pending changes
