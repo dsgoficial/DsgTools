@@ -4,9 +4,9 @@ CREATE SCHEMA dominios#
 CREATE SCHEMA complexos#
 ALTER SCHEMA complexos OWNER TO postgres#
 CREATE SCHEMA cb#
-CREATE EXTENSION IF NOT EXISTS postgis#
+CREATE EXTENSION postgis#
 COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions'#
-CREATE EXTENSION IF NOT EXISTS postgis_topology#
+CREATE EXTENSION postgis_topology#
 COMMENT ON EXTENSION postgis_topology IS 'PostGIS topology spatial types and functions'#
 SET search_path TO pg_catalog,public,topology,dominios,complexos,cb#
 CREATE TABLE cb.hid_area_umida_a(
@@ -15,7 +15,7 @@ CREATE TABLE cb.hid_area_umida_a(
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
 	tipoareaumida smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_area_umida_a_pkey PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -97,7 +97,7 @@ CREATE TABLE cb.hid_fonte_dagua_p(
 	tipofontedagua smallint NOT NULL,
 	qualidagua smallint NOT NULL,
 	regime smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_fonte_dagua_p_pkey PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -126,7 +126,7 @@ CREATE TABLE cb.hid_limite_massa_dagua_l(
 	materialpredominante smallint NOT NULL,
 	alturamediamargem real,
 	nomeabrev varchar(50),
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_limite_massa_dagua_l_pkey PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -139,7 +139,7 @@ CREATE TABLE cb.hid_massa_dagua_a(
 	tipomassadagua smallint NOT NULL,
 	regime smallint NOT NULL,
 	salinidade smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_massa_dagua_a_pkey PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -150,7 +150,7 @@ CREATE TABLE cb.hid_ponto_drenagem_p(
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
 	relacionado smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_ponto_drenagem_p_pkey PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -170,18 +170,18 @@ CREATE TABLE cb.hid_quebramar_molhe(
 )#
 ALTER TABLE cb.hid_quebramar_molhe OWNER TO postgres#
 CREATE TABLE cb.hid_quebramar_molhe_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_quebramar_molhe_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_quebramar_molhe)
 #
 ALTER TABLE cb.hid_quebramar_molhe_l OWNER TO postgres#
 CREATE TABLE cb.hid_queda_dagua_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_queda_dagua_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_queda_dagua)
 #
 CREATE TABLE cb.hid_recife_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_recife_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_recife)
 #
@@ -200,7 +200,7 @@ CREATE TABLE cb.hid_reservatorio_hidrico_a(
 	namaximomaximorum integer,
 	namaximooperacional integer,
 	id_complexo_gerad_energ_eletr uuid NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_reservatorio_hidrico_a_pkey PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -213,12 +213,12 @@ CREATE TABLE cb.hid_trecho_massa_dagua_a(
 	regime smallint NOT NULL,
 	salinidade smallint NOT NULL,
 	id_trecho_curso_dagua uuid,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_trecho_massa_dagua_a_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.hid_trecho_massa_dagua_a OWNER TO postgres#
 CREATE TABLE cb.hid_barragem_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_barragem_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_barragem)
 #
@@ -229,7 +229,7 @@ CREATE TABLE cb.hid_sumidouro_vertedouro_p(
 	geometriaaproximada smallint NOT NULL,
 	tiposumvert smallint NOT NULL,
 	causa smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_sumidouro_vertedouro_p_pkey PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )WITH ( OIDS = TRUE )#
@@ -240,7 +240,7 @@ CREATE TABLE cb.hid_terreno_suj_inundacao_a(
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
 	periodicidadeinunda character(20),
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_terreno_sujeito_inundacao_a_pkey PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -261,47 +261,47 @@ CREATE TABLE cb.hid_trecho_drenagem_l(
 	velocidademedcorrente real,
 	profundidademedia real,
 	id_trecho_curso_dagua uuid,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_trecho_drenagem_l_pkey PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
 ALTER TABLE cb.hid_trecho_drenagem_l OWNER TO postgres#
 CREATE TABLE cb.hid_quebramar_molhe_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_quebramar_molhe_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_quebramar_molhe)
 #
 ALTER TABLE cb.hid_quebramar_molhe_a OWNER TO postgres#
 CREATE TABLE cb.hid_banco_areia_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_banco_areia_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_banco_areia)
 #
 CREATE TABLE cb.hid_banco_areia_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_banco_areia_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_banco_areia)
 #
 ALTER TABLE cb.hid_banco_areia_a OWNER TO postgres#
 CREATE TABLE cb.hid_barragem_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_barragem_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_barragem)
 #
 CREATE TABLE cb.hid_recife_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_recife_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_recife)
 #
 ALTER TABLE cb.hid_recife_l OWNER TO postgres#
 CREATE TABLE cb.hid_recife_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_recife_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_recife)
 #
 ALTER TABLE cb.hid_recife_a OWNER TO postgres#
 CREATE TABLE cb.hid_barragem_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_barragem_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_barragem)
 #
@@ -311,43 +311,43 @@ CREATE TABLE cb.rel_alter_fisiog_antropica(
 ) INHERITS(cb.rel_elemento_fisiografico)
 #
 CREATE TABLE cb.rel_elemento_fisiog_natural_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT rel_elemento_fisiog_natural_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_elemento_fisiog_natural)
 #
 CREATE TABLE cb.hid_comporta_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_comporta_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_comporta)
 WITH ( OIDS = TRUE )#
 CREATE TABLE cb.hid_queda_dagua_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_queda_dagua_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_queda_dagua)
 #
 CREATE TABLE cb.hid_queda_dagua_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_queda_dagua_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_queda_dagua)
 #
 CREATE TABLE cb.hid_corredeira_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_corredeira_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_corredeira)
 #
 CREATE TABLE cb.hid_corredeira_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_corredeira_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_corredeira)
 #
 CREATE TABLE cb.hid_comporta_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_comporta_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_comporta)
 WITH ( OIDS = TRUE )#
 ALTER TABLE cb.hid_comporta_l OWNER TO postgres#
 CREATE TABLE cb.hid_corredeira_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_corredeira_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_corredeira)
 #
@@ -361,17 +361,17 @@ CREATE TABLE cb.hid_confluencia_p(
 ) INHERITS(cb.hid_ponto_drenagem_p)
 #
 CREATE TABLE cb.hid_foz_maritima_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_foz_maritima_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_foz_maritima)
 #
 CREATE TABLE cb.hid_foz_maritima_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_foz_maritima_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_foz_maritima)
 #
 CREATE TABLE cb.hid_foz_maritima_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_foz_maritima_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_foz_maritima)
 #
@@ -382,7 +382,7 @@ CREATE TABLE cb.veg_vegetacao_a(
 	geometriaaproximada smallint NOT NULL,
 	denso smallint NOT NULL,
 	antropizada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT veg_vegetacao_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -400,7 +400,7 @@ CREATE TABLE cb.veg_veg_cultivada_a(
 	denso smallint NOT NULL,
 	alturamediaindividuos real,
 	cultivopredominante smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT veg_veg_cultivada_a_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.veg_veg_area_contato_a(
@@ -411,7 +411,7 @@ CREATE TABLE cb.veg_veg_area_contato_a(
 	denso smallint NOT NULL,
 	alturamediaindividuos real,
 	antropizada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT veg_veg_area_contato_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.veg_campo_a(
@@ -421,7 +421,7 @@ CREATE TABLE cb.veg_campo_a(
 	geometriaaproximada smallint NOT NULL,
 	tipocampo smallint NOT NULL,
 	ocorrenciaem smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT veg_campo_a_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.veg_cerrado_cerradao_a(
@@ -478,13 +478,13 @@ CREATE TABLE cb.rel_curva_nivel_l(
 	cota integer NOT NULL,
 	depressao smallint NOT NULL,
 	indice smallint NOT NULL,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT rel_curva_nivel_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_isolinha_hipsometrica)
 #
 CREATE TABLE cb.rel_curva_batimetrica_l(
 	profundidade integer,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT rel_curva_batimetrica_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_isolinha_hipsometrica)
 #
@@ -493,7 +493,7 @@ CREATE TABLE cb.rel_terreno_exposto_a(
 	geometriaaproximada smallint NOT NULL DEFAULT 1,
 	tipoterrexp smallint NOT NULL DEFAULT 0,
 	causaexposicao smallint NOT NULL DEFAULT 0,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT rel_terreno_exposto_a_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.rel_ponto_hipsometrico(
@@ -503,7 +503,7 @@ CREATE TABLE cb.rel_ponto_hipsometrico(
 )#
 CREATE TABLE cb.rel_ponto_cotado_batimetrico_p(
 	profundidade float,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT rel_ponto_cotado_batimetrico_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_ponto_hipsometrico)
 #
@@ -511,12 +511,12 @@ CREATE TABLE cb.rel_ponto_cotado_altimetrico_p(
 	geometriaaproximada smallint NOT NULL,
 	cotacomprovada smallint NOT NULL,
 	cota float,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT rel_ponto_cotado_altimetrico_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_ponto_hipsometrico)
 #
 CREATE TABLE cb.rel_elemento_fisiog_natural_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT rel_elemento_fisiog_natural_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_elemento_fisiog_natural)
 #
@@ -537,12 +537,12 @@ CREATE TABLE cb.loc_edificacao(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.rel_alter_fisiog_antropica_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT rel_alter_fisiog_antropica_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_alter_fisiog_antropica)
 #
 CREATE TABLE cb.rel_alter_fisiog_antropica_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT rel_alter_fisiog_antropica_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_alter_fisiog_antropica)
 #
@@ -563,7 +563,7 @@ CREATE TABLE cb.eco_ext_mineral(
 	CONSTRAINT eco_ext_mineral_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.loc_edificacao_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT loc_edificacao_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_edificacao)
 #
@@ -573,12 +573,12 @@ CREATE TABLE cb.rel_duna_p(
 ) INHERITS(cb.rel_elemento_fisiog_natural_p)
 #
 CREATE TABLE cb.loc_edificacao_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT loc_edificacao_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_edificacao)
 #
 CREATE TABLE cb.rel_elemento_fisiog_natural_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT rel_elemento_fisiog_natural_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_elemento_fisiog_natural)
 #
@@ -749,7 +749,7 @@ CREATE TABLE cb.hid_rocha_em_agua(
 	 WITH (FILLFACTOR = 100)
 )#
 CREATE TABLE cb.hid_rocha_em_agua_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_rocha_em_agua_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_rocha_em_agua)
 #
@@ -807,7 +807,7 @@ CREATE TABLE cb.asb_dep_abast_agua(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.asb_dep_abast_agua_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT asb_dep_abast_agua_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.asb_dep_abast_agua)
 #
@@ -829,7 +829,7 @@ CREATE TABLE cb.asb_dep_saneamento(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.asb_dep_saneamento_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT asb_dep_saneamento_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.asb_dep_saneamento)
 #
@@ -857,7 +857,7 @@ CREATE TABLE cb.eco_deposito_geral(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.eco_deposito_geral_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT eco_deposito_geral_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_deposito_geral)
 #
@@ -890,12 +890,12 @@ CREATE TABLE cb.eco_equip_agropec(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.eco_equip_agropec_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT eco_equip_agropec_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_equip_agropec)
 #
 CREATE TABLE cb.eco_equip_agropec_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT eco_equip_agropec_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_equip_agropec)
 #
@@ -909,7 +909,7 @@ CREATE TABLE cb.eco_plataforma(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.eco_plataforma_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT eco_plataforma_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_plataforma)
 #
@@ -965,7 +965,7 @@ CREATE TABLE cb.enc_grupo_transformadores(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.enc_grupo_transformadores_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT enc_grupo_transformadores_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.enc_grupo_transformadores)
 #
@@ -986,12 +986,12 @@ CREATE TABLE cb.enc_est_gerad_energia_eletr(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.enc_est_gerad_energia_eletr_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT enc_est_gerad_energia_eletr_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.enc_est_gerad_energia_eletr)
 #
 CREATE TABLE cb.enc_est_gerad_energia_eletr_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT enc_est_gerad_energia_eletr_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.enc_est_gerad_energia_eletr)
 #
@@ -1004,7 +1004,7 @@ CREATE TABLE cb.enc_termeletrica_a(
 ) INHERITS(cb.enc_est_gerad_energia_eletr_a)
 #
 CREATE TABLE cb.enc_est_gerad_energia_eletr_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT enc_est_gerad_energia_eletr_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.enc_est_gerad_energia_eletr)
 #
@@ -1044,7 +1044,7 @@ CREATE TABLE cb.pto_pto_geod_topo_controle_p(
 	orgaoenteresp varchar(80),
 	codponto varchar(80),
 	obs varchar(255),
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT pto_pto_geod_topo_controle_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -1094,7 +1094,7 @@ CREATE TABLE cb.enc_edif_comunic_a(
 ) INHERITS(cb.loc_edificacao_a)
 #
 CREATE TABLE cb.tra_pista_ponto_pouso_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_pista_ponto_pouso_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_pista_ponto_pouso)
 #
@@ -1106,7 +1106,7 @@ CREATE TABLE cb.tra_edif_constr_aeroportuaria_p(
 ) INHERITS(cb.loc_edificacao_p)
 #
 CREATE TABLE cb.tra_pista_ponto_pouso_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_pista_ponto_pouso_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_pista_ponto_pouso)
 #
@@ -1132,7 +1132,7 @@ CREATE TABLE cb.tra_trecho_duto_l(
 	operacional smallint NOT NULL DEFAULT 0,
 	situacaofisica smallint NOT NULL DEFAULT 0,
 	id_duto uuid,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_trecho_duto_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -1222,7 +1222,7 @@ CREATE TABLE cb.eco_edif_agrop_ext_veg_pesca_p(
 ) INHERITS(cb.loc_edificacao_p)
 #
 CREATE TABLE cb.asb_dep_abast_agua_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT asb_dep_abast_agua_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.asb_dep_abast_agua)
 #
@@ -1240,7 +1240,7 @@ CREATE TABLE cb.eco_edif_industrial_p(
 ) INHERITS(cb.loc_edificacao_p)
 #
 CREATE TABLE cb.asb_dep_saneamento_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT asb_dep_saneamento_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.asb_dep_saneamento)
 #
@@ -1252,7 +1252,7 @@ CREATE TABLE cb.eco_edif_industrial_a(
 ) INHERITS(cb.loc_edificacao_a)
 #
 CREATE TABLE cb.eco_deposito_geral_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT eco_deposito_geral_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_deposito_geral)
 #
@@ -1280,17 +1280,17 @@ CREATE TABLE complexos.eco_frigorifico_matadouro(
 ) INHERITS(complexos.eco_org_industrial)
 #
 CREATE TABLE cb.tra_patio_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_patio_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_patio)
 #
 CREATE TABLE cb.eco_equip_agropec_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT eco_equip_agropec_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_equip_agropec)
 #
 CREATE TABLE cb.tra_patio_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_patio_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_patio)
 #
@@ -1315,7 +1315,7 @@ CREATE TABLE complexos.asb_complexo_abast_agua(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.eco_plataforma_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT eco_plataforma_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_plataforma)
 #
@@ -1340,7 +1340,7 @@ CREATE TABLE complexos.adm_org_comerc_serv(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.tra_funicular_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_funicular_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_funicular)
 #
@@ -1395,7 +1395,7 @@ CREATE TABLE cb.eco_area_agrop_ext_veg_pesca_a(
 	geometriaaproximada smallint NOT NULL,
 	destinadoa smallint NOT NULL,
 	id_org_agropec_ext_veg_pesca uuid,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT eco_area_agropec_ext_vegetal_pesca_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -1404,7 +1404,7 @@ CREATE TABLE complexos.edu_org_ensino_religioso(
 ) INHERITS(complexos.edu_org_ensino,complexos.edu_org_religiosa)
 #
 CREATE TABLE cb.enc_grupo_transformadores_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT enc_grupo_transformadores_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.enc_grupo_transformadores)
 #
@@ -1430,7 +1430,7 @@ CREATE TABLE cb.tra_ponte(
 	 WITH (FILLFACTOR = 100)
 )#
 CREATE TABLE cb.tra_ponte_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_ponte_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_ponte)
 #
@@ -1452,18 +1452,18 @@ CREATE TABLE cb.tra_tunel(
 	CONSTRAINT tra_tunel_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.tra_tunel_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_tunel_p_pk PRIMARY KEY (nome)
 ) INHERITS(cb.tra_tunel)
 #
 CREATE TABLE cb.tra_tunel_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_tunel_l_pk PRIMARY KEY (nome)
 ) INHERITS(cb.tra_tunel)
 #
 CREATE TABLE cb.eco_area_ext_mineral_a(
 	id serial NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	id_org_ext_mineral uuid,
 	CONSTRAINT eco_ext_mineral_a_pk_1 PRIMARY KEY (id)
@@ -1491,7 +1491,7 @@ CREATE TABLE cb.tra_travessia_pedestre(
 	CONSTRAINT tra_travessia_pedestre_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.tra_travessia_pedestre_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_travessia_pedestre_p_pk PRIMARY KEY (tipotravessiaped)
 ) INHERITS(cb.tra_travessia_pedestre)
 #
@@ -1523,7 +1523,7 @@ CREATE TABLE complexos.enc_complexo_comunicacao(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.tra_travessia_pedestre_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_travessia_pedestre_l_pk PRIMARY KEY (tipotravessiaped)
 ) INHERITS(cb.tra_travessia_pedestre)
 #
@@ -1550,7 +1550,7 @@ CREATE TABLE cb.tra_travessia(
 CREATE TABLE cb.enc_area_energia_eletrica_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_subestacao_ener_eletr uuid,
 	id_complexo_gerad_energ_eletr uuid,
 	CONSTRAINT enc_area_energia_eletrica_a_pk PRIMARY KEY (id)
@@ -1561,7 +1561,7 @@ CREATE TABLE cb.enc_zona_linhas_energia_com_a(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT enc_zona_lin_energ_comunic_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -1576,7 +1576,7 @@ CREATE TABLE cb.enc_torre_energia_p(
 	alturaestimada float,
 	tipotorre smallint NOT NULL,
 	arranjofases varchar(80),
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT enc_torre_energia_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -1585,7 +1585,7 @@ CREATE TABLE cb.enc_antena_comunic_p(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	id_complexo_comunicacao uuid,
 	CONSTRAINT enc_antena_comunic_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -1601,7 +1601,7 @@ CREATE TABLE cb.enc_torre_comunic_p(
 	ovgd smallint NOT NULL,
 	alturaestimada float,
 	id_complexo_comunicacao uuid,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT enc_torre_comunic_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -1618,7 +1618,7 @@ CREATE TABLE cb.enc_trecho_energia_l(
 	tensaoeletrica float,
 	numcircuitos integer,
 	id_org_comerc_serv uuid,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT enc_trecho_comunic_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -1634,17 +1634,17 @@ CREATE TABLE cb.enc_trecho_comunic_l(
 	situacaofisica smallint NOT NULL,
 	emduto smallint NOT NULL,
 	id_org_comerc_serv uuid,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT enc_trecho_comunic_l_pk_1 PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.tra_travessia_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_travessia_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_travessia)
 #
 CREATE TABLE cb.tra_pista_ponto_pouso_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_pista_ponto_pouso_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_pista_ponto_pouso)
 #
@@ -1663,7 +1663,7 @@ CREATE TABLE cb.tra_trecho_rodoviario_l(
 	nrfaixas integer,
 	trafego smallint NOT NULL,
 	canteirodivisorio smallint NOT NULL,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	id_via_rodoviaria uuid,
 	CONSTRAINT tra_trecho_rodoviario_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
@@ -1679,7 +1679,7 @@ CREATE TABLE cb.tra_cremalheira(
 	 WITH (FILLFACTOR = 100)
 )#
 CREATE TABLE cb.tra_cremalheira_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_cremalheira_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_cremalheira)
 #
@@ -1710,12 +1710,12 @@ CREATE TABLE complexos.tra_complexo_portuario(
 ) INHERITS(complexos.tra_estrut_transporte)
 #
 CREATE TABLE cb.tra_atracadouro_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_atracadouro_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_atracadouro)
 #
 CREATE TABLE cb.tra_atracadouro_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_atracadouro_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_atracadouro)
 #
@@ -1731,12 +1731,12 @@ CREATE TABLE cb.tra_fundeadouro(
 	 WITH (FILLFACTOR = 100)
 )#
 CREATE TABLE cb.tra_fundeadouro_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_fundeadouro_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_fundeadouro)
 #
 CREATE TABLE cb.tra_fundeadouro_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_fundeadouro_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_fundeadouro)
 #
@@ -1769,17 +1769,17 @@ CREATE TABLE cb.pto_pto_est_med_fenomenos_p(
 	codestacao varchar(80),
 	orgaoenteresp varchar(15),
 	id_est_med_fenomenos uuid,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT pto_est_med_fenomenos_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.tra_obstaculo_navegacao_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_obstaculo_navegacao_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_obstaculo_navegacao)
 #
 CREATE TABLE cb.tra_obstaculo_navegacao_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_obstaculo_navegacao_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_obstaculo_navegacao)
 #
@@ -1799,7 +1799,7 @@ CREATE TABLE cb.tra_eclusa(
 	 WITH (FILLFACTOR = 100)
 )#
 CREATE TABLE cb.tra_eclusa_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_eclusa_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_eclusa)
 #
@@ -1808,7 +1808,7 @@ CREATE TABLE cb.tra_faixa_seguranca_a(
 	geometriaaproximada smallint NOT NULL,
 	largura float,
 	extensao float,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_faixa_seguranca_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -1819,18 +1819,18 @@ CREATE TABLE complexos.tra_duto(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.tra_eclusa_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_eclusa_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_eclusa)
 #
 CREATE TABLE cb.tra_funicular_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_funicular_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_funicular)
 #
 CREATE TABLE cb.tra_ponto_duto_p(
 	id serial NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	relacionado smallint NOT NULL,
 	CONSTRAINT tra_ponto_duto_p_pk PRIMARY KEY (id)
@@ -1843,7 +1843,7 @@ CREATE TABLE cb.lim_linha_de_limite_l(
 	coincidecomdentrode smallint NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	extensao float,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT lim_linha_de_limite_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -1860,7 +1860,7 @@ CREATE TABLE cb.lim_limite_operacional_l(
 ) INHERITS(cb.lim_linha_de_limite_l)
 #
 CREATE TABLE cb.tra_passag_elevada_viaduto_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_passag_elevada_viaduto_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_passag_elevada_viaduto)
 #
@@ -1886,7 +1886,7 @@ CREATE TABLE cb.lim_area_politico_adm_a(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT lim_area_politico_adm_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -1921,7 +1921,7 @@ CREATE TABLE cb.tra_caminho_aereo_l(
 	tipousocaminhoaer smallint NOT NULL,
 	operacional smallint NOT NULL,
 	situacaofisica smallint NOT NULL,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	id_org_ext_mineral uuid,
 	CONSTRAINT tra_caminho_aereo_l_pk PRIMARY KEY (id)
 )#
@@ -1931,7 +1931,7 @@ CREATE TABLE cb.tra_entroncamento_p(
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	tipoentroncamento smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_entroncamento_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -1956,7 +1956,7 @@ CREATE TABLE cb.lim_area_especial(
 )#
 ALTER TABLE cb.lim_area_especial OWNER TO postgres#
 CREATE TABLE cb.lim_area_especial_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT lim_area_especial_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.lim_area_especial)
 #
@@ -1971,12 +1971,12 @@ CREATE TABLE cb.loc_localidade_p(
 	latitude_gms real,
 	longitude varchar(15),
 	longitude_gms real,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT loc_localidade_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.tra_travessia_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_travessia_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_travessia)
 #
@@ -1994,22 +1994,22 @@ CREATE TABLE cb.loc_capital_p(
 ) INHERITS(cb.loc_cidade_p)
 #
 CREATE TABLE cb.tra_cremalheira_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_cremalheira_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_cremalheira)
 #
 CREATE TABLE cb.tra_atracadouro_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_atracadouro_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_atracadouro)
 #
 CREATE TABLE cb.tra_fundeadouro_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_fundeadouro_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_fundeadouro)
 #
 CREATE TABLE cb.tra_obstaculo_navegacao_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_obstaculo_navegacao_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_obstaculo_navegacao)
 #
@@ -2038,7 +2038,7 @@ CREATE TABLE cb.tra_passagem_nivel_p(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_passagem_nivel_p_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.tra_girador_ferroviario_p(
@@ -2049,7 +2049,7 @@ CREATE TABLE cb.tra_girador_ferroviario_p(
 	administracao smallint NOT NULL DEFAULT 0,
 	operacional smallint NOT NULL DEFAULT 0,
 	situacaofisica smallint NOT NULL DEFAULT 0,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	id_estrut_apoio uuid,
 	CONSTRAINT tra_girador_ferroviario_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
@@ -2073,12 +2073,12 @@ CREATE TABLE cb.tra_trecho_ferroviario_l(
 	situacaofisica smallint NOT NULL,
 	cargasuportmaxima float,
 	id_via_ferrea uuid,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_trecho_ferroviario_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
 CREATE TABLE cb.tra_eclusa_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_eclusa_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_eclusa)
 #
@@ -2096,7 +2096,7 @@ CREATE TABLE cb.tra_sinalizacao_p(
 	tiposinal smallint NOT NULL,
 	operacional smallint NOT NULL,
 	situacaofisica smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_sinalizacao_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -2128,7 +2128,7 @@ CREATE TABLE cb.lim_area_uso_comunitario_a(
 ) INHERITS(cb.lim_area_especial_a)
 #
 CREATE TABLE cb.edu_arquibancada_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT edu_arquibancada_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.edu_arquibancada)
 #
@@ -2156,7 +2156,7 @@ CREATE TABLE cb.lim_delimitacao_fisica_l(
 	tipodelimfis smallint NOT NULL,
 	matconstr smallint NOT NULL,
 	eletrificada smallint NOT NULL,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT lim_delimitacao_fisica_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -2176,7 +2176,7 @@ CREATE TABLE cb.lim_marco_de_limite_p(
 	referencialaltim smallint NOT NULL,
 	outrarefalt varchar(80),
 	orgresp varchar(80),
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT lim_marco_de_limite_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -2185,11 +2185,11 @@ CREATE TABLE cb.lim_area_de_litigio_a(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT lim_area_de_litigio_a_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.edu_campo_quadra_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT edu_campo_quadra_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.edu_campo_quadra)
 #
@@ -2202,7 +2202,7 @@ CREATE TABLE cb.edu_pista_competicao_l(
 	situacaofisica smallint NOT NULL,
 	tipopista smallint NOT NULL,
 	id_complexo_lazer uuid,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT edu_pista_competicao_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -2216,7 +2216,7 @@ CREATE TABLE cb.edu_ruina(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.edu_ruina_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT edu_ruina_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.edu_ruina)
 #
@@ -2224,7 +2224,7 @@ CREATE TABLE cb.loc_area_construida_a(
 	id serial NOT NULL,
 	nome varchar(80),
 	nomeabrev varchar(50),
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT loc_area_construida_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -2232,17 +2232,17 @@ CREATE TABLE cb.loc_nome_local_p(
 	id serial NOT NULL,
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT loc_nome_local_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.edu_arquibancada_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT edu_arquibancada_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.edu_arquibancada)
 #
 CREATE TABLE cb.edu_campo_quadra_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT edu_campo_quadra_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.edu_campo_quadra)
 #
@@ -2257,12 +2257,12 @@ CREATE TABLE cb.tra_arruamento_l(
 	nrfaixas integer,
 	trafego smallint NOT NULL,
 	canteirodivisorio smallint NOT NULL,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_arruamento_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.edu_ruina_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT edu_ruina_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.edu_ruina)
 #
@@ -2277,7 +2277,7 @@ CREATE TABLE cb.asb_cemiterio(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.asb_cemiterio_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT asb_cemiterio_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.asb_cemiterio)
 #
@@ -2306,7 +2306,7 @@ CREATE TABLE complexos.sau_org_servico_social(
 CREATE TABLE cb.enc_area_comunicacao_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_complexo_comunicacao uuid,
 	CONSTRAINT cbc_area_comunicacao_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -2314,7 +2314,7 @@ CREATE TABLE cb.enc_area_comunicacao_a(
 CREATE TABLE cb.asb_area_abast_agua_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_complexo_abast_agua uuid,
 	CONSTRAINT cbc_area_abast_agua_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -2323,14 +2323,14 @@ CREATE TABLE cb.asb_area_saneamento_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	id_complexo_saneamento uuid,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT cbc_area_saneamento_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.tra_area_duto_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_area_duto_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -2338,13 +2338,13 @@ CREATE TABLE cb.sau_area_servico_social_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	id_org_servico_social uuid,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT sau_area_servico_social_a_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.sau_area_saude_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_org_saude uuid,
 	CONSTRAINT sau_area_saude_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -2352,7 +2352,7 @@ CREATE TABLE cb.sau_area_saude_a(
 CREATE TABLE cb.edu_area_ruinas_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_complexo_lazer uuid,
 	CONSTRAINT cbc_area_ruinas_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -2360,7 +2360,7 @@ CREATE TABLE cb.edu_area_ruinas_a(
 CREATE TABLE cb.edu_area_lazer_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_complexo_lazer uuid,
 	CONSTRAINT edu_area_lazer_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -2368,7 +2368,7 @@ CREATE TABLE cb.edu_area_lazer_a(
 CREATE TABLE cb.eco_area_comerc_serv_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_org_comerc_serv uuid,
 	CONSTRAINT eco_area_comerc_serv_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -2376,7 +2376,7 @@ CREATE TABLE cb.eco_area_comerc_serv_a(
 CREATE TABLE cb.edu_area_ensino_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_org_ensino uuid,
 	CONSTRAINT cbc_area_ensino_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -2384,23 +2384,23 @@ CREATE TABLE cb.edu_area_ensino_a(
 CREATE TABLE cb.edu_area_religiosa_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_org_religiosa uuid,
 	CONSTRAINT cbc_area_religiosa_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.tra_ponto_ferroviario_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_ponto_ferroviario_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_ponto_rodoviario_ferrov)
 #
 CREATE TABLE cb.tra_ponto_rodoviario_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_ponto_rodoviario_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_ponto_rodoviario_ferrov)
 #
 CREATE TABLE cb.asb_cemiterio_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT asb_cemiterio_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.asb_cemiterio)
 #
@@ -2433,7 +2433,7 @@ CREATE TABLE cb.eco_area_industrial_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	id_org_industrial uuid,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT eco_area_industrial_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -2441,7 +2441,7 @@ CREATE TABLE cb.tra_area_estrut_transporte_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	id_estrut_transporte uuid,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT cbc_area_estrut_transporte_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -2458,7 +2458,7 @@ CREATE TABLE cb.pto_area_est_med_fenom_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	id_est_med_fenomenos uuid,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT cbc_area_est_med_fenom_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -2476,38 +2476,38 @@ CREATE TABLE public.aux_objeto_desconhecido(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE public.aux_objeto_desconhecido_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT aux_objeto_desconhecido_l_pk PRIMARY KEY (id)
 ) INHERITS(public.aux_objeto_desconhecido)
 #
 CREATE TABLE public.aux_ponto_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT aux_ponto_p_pk PRIMARY KEY (id)
 ) INHERITS(public.aux_geometria)
 #
 CREATE TABLE public.aux_linha_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT aux_linha_l_pk PRIMARY KEY (id)
 ) INHERITS(public.aux_geometria)
 #
 CREATE TABLE public.aux_area_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT aux_area_a_pk PRIMARY KEY (id)
 ) INHERITS(public.aux_geometria)
 #
 CREATE TABLE public.aux_objeto_desconhecido_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT aux_objeto_desconhecido_p_pk PRIMARY KEY (id)
 ) INHERITS(public.aux_objeto_desconhecido)
 #
 CREATE TABLE public.aux_objeto_desconhecido_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT aux_objeto_desconhecido_a_pk PRIMARY KEY (id)
 ) INHERITS(public.aux_objeto_desconhecido)
 #
 CREATE TABLE public.aux_moldura_a(
 	id serial NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	mi varchar(80),
 	inom varchar(80),
 	escala varchar(80),
@@ -2573,22 +2573,22 @@ CREATE TABLE cb.hid_natureza_fundo(
 	 WITH (FILLFACTOR = 100)
 )#
 CREATE TABLE cb.hid_natureza_fundo_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_natureza_fundo_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_natureza_fundo)
 #
 CREATE TABLE cb.hid_natureza_fundo_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_natureza_fundo_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_natureza_fundo)
 #
 CREATE TABLE cb.hid_natureza_fundo_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_natureza_fundo_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_natureza_fundo)
 #
 CREATE TABLE cb.hid_rocha_em_agua_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_rocha_em_agua_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_rocha_em_agua)
 #
@@ -2600,7 +2600,7 @@ CREATE TABLE cb.hid_bacia_hidrografica_a(
 	geometriaaproximada smallint NOT NULL,
 	codigootto integer NOT NULL,
 	nivelotto integer NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_bacia_hidrografica_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -3355,7 +3355,7 @@ CREATE INDEX hid_bacia_hidrografica_a_gist ON cb.hid_bacia_hidrografica_a
 	  geom
 	)#
 CREATE TABLE cb.eco_ext_mineral_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT eco_ext_mineral_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_ext_mineral)
 #
@@ -3366,7 +3366,7 @@ CREATE INDEX eco_ext_mineral_p_gist ON cb.eco_ext_mineral_p
 	  geom
 	)#
 CREATE TABLE cb.eco_ext_mineral_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT eco_ext_mineral_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_ext_mineral)
 #
@@ -3428,7 +3428,7 @@ CREATE TABLE cb.tra_identific_trecho_rod_p(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	sigla varchar(6) NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	id_via_rodoviaria uuid,
 	CONSTRAINT tra_identific_trecho_rod_p_pk PRIMARY KEY (id)
 )#
@@ -3450,7 +3450,7 @@ CREATE TABLE cb.tra_galeria_bueiro(
 )#
 ALTER TABLE cb.tra_galeria_bueiro OWNER TO postgres#
 CREATE TABLE cb.tra_galeria_bueiro_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_galeria_bueiro_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_galeria_bueiro)
 #
@@ -3461,7 +3461,7 @@ CREATE INDEX tra_galeria_bueiro_p_gist ON cb.tra_galeria_bueiro_p
 	  geom
 	)#
 CREATE TABLE cb.tra_galeria_bueiro_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_galeria_bueiro_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_galeria_bueiro)
 #
@@ -3472,12 +3472,12 @@ CREATE INDEX tra_galeria_bueiro_l_gist ON cb.tra_galeria_bueiro_l
 	  geom
 	)#
 CREATE TABLE cb.tra_ponte_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_ponte_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_ponte)
 #
 CREATE TABLE cb.tra_passag_elevada_viaduto_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_passag_elevada_viaduto_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_passag_elevada_viaduto)
 #
@@ -3486,7 +3486,7 @@ CREATE TABLE cb.tra_trilha_picada_l(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_trilha_picada_l_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.tra_trilha_picada_l OWNER TO postgres#
@@ -3505,7 +3505,7 @@ CREATE TABLE cb.tra_ciclovia_l(
 	operacional smallint NOT NULL,
 	situacaofisica smallint NOT NULL,
 	trafego smallint NOT NULL,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL
+	geom geometry(MULTILINESTRING, 4326) NOT NULL
 )#
 ALTER TABLE cb.tra_ciclovia_l OWNER TO postgres#
 CREATE INDEX tra_ciclovia_l_gist ON cb.tra_ciclovia_l
@@ -3535,7 +3535,7 @@ CREATE TABLE cb.tra_local_critico(
 )#
 ALTER TABLE cb.tra_local_critico OWNER TO postgres#
 CREATE TABLE cb.tra_local_critico_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_local_critico_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_local_critico)
 #
@@ -3546,7 +3546,7 @@ CREATE INDEX tra_local_critico_p_gist ON cb.tra_local_critico_p
 	  geom
 	)#
 CREATE TABLE cb.tra_local_critico_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_local_critico_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_local_critico)
 #
@@ -3557,7 +3557,7 @@ CREATE INDEX tra_local_critico_l_gist ON cb.tra_local_critico_l
 	  geom
 	)#
 CREATE TABLE cb.tra_local_critico_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_local_critico_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_local_critico)
 #
@@ -3586,7 +3586,7 @@ CREATE TABLE cb.tra_trecho_hidroviario_l(
 	regime smallint NOT NULL,
 	extensaotrecho real,
 	caladomaxseca real,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	id_hidrovia uuid,
 	CONSTRAINT tra_trecho_hidroviario_l_pk PRIMARY KEY (id)
 )#
@@ -3600,7 +3600,7 @@ CREATE TABLE cb.tra_ponto_hidroviario_p(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	relacionado smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL
+	geom geometry(MULTIPOINT, 4326) NOT NULL
 )#
 ALTER TABLE cb.tra_ponto_hidroviario_p OWNER TO postgres#
 CREATE INDEX tra_ponto_hidroviario_p_gist ON cb.tra_ponto_hidroviario_p
@@ -3631,7 +3631,7 @@ CREATE TABLE cb.tra_posto_combustivel(
 )#
 ALTER TABLE cb.tra_posto_combustivel OWNER TO postgres#
 CREATE TABLE cb.tra_posto_combustivel_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_posto_combustivel_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_posto_combustivel)
 #
@@ -3642,7 +3642,7 @@ CREATE INDEX tra_posto_combustivel_p_gist ON cb.tra_posto_combustivel_p
 	  geom
 	)#
 CREATE TABLE cb.tra_posto_combustivel_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_posto_combustivel_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_posto_combustivel)
 #
@@ -3656,7 +3656,7 @@ CREATE TABLE cb.enc_ponto_trecho_energia_p(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	tipoptoenergia smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT enc_ponto_trecho_energia_p_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.enc_ponto_trecho_energia_p OWNER TO postgres#
@@ -3673,7 +3673,7 @@ CREATE TABLE cb.edu_piscina_a(
 	operacional smallint NOT NULL,
 	situacaofisica smallint NOT NULL,
 	id_complexo_lazer uuid,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT edu_piscina_a_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.edu_piscina_a OWNER TO postgres#
@@ -3699,7 +3699,7 @@ CREATE TABLE cb.edu_coreto_tribuna(
 )#
 ALTER TABLE cb.edu_coreto_tribuna OWNER TO postgres#
 CREATE TABLE cb.edu_coreto_tribuna_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT edu_coreto_tribuna_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.edu_coreto_tribuna)
 #
@@ -3710,7 +3710,7 @@ CREATE INDEX edu_coreto_tribuna_p_gist ON cb.edu_coreto_tribuna_p
 	  geom
 	)#
 CREATE TABLE cb.edu_coreto_tribuna_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT edu_coreto_tribuna_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.edu_coreto_tribuna)
 #
@@ -3728,7 +3728,7 @@ CREATE INDEX eco_area_agrop_ext_veg_pesca_a_gist ON cb.eco_area_agrop_ext_veg_pe
 CREATE TABLE cb.adm_area_pub_civil_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_org_pub_civil uuid,
 	CONSTRAINT adm_area_pub_civil_a_pk PRIMARY KEY (id)
 )#
@@ -3746,7 +3746,7 @@ CREATE TABLE cb.adm_posto_fiscal(
 )#
 ALTER TABLE cb.adm_posto_fiscal OWNER TO postgres#
 CREATE TABLE cb.adm_posto_fiscal_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT adm_posto_fiscal_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.adm_posto_fiscal)
 #
@@ -3754,7 +3754,7 @@ ALTER TABLE cb.adm_posto_fiscal_p OWNER TO postgres#
 CREATE TABLE cb.adm_area_pub_militar_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_org_pub_militar uuid,
 	CONSTRAINT adm_area_pub_militar_a_pk PRIMARY KEY (id)
 )#
@@ -3773,7 +3773,7 @@ CREATE TABLE cb.adm_posto_pol_rod(
 )#
 ALTER TABLE cb.adm_posto_pol_rod OWNER TO postgres#
 CREATE TABLE cb.adm_posto_pol_rod_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT adm_posto_pol_rod_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.adm_posto_pol_rod)
 #
@@ -3817,7 +3817,7 @@ CREATE TABLE cb.loc_edif_habitacional_a(
 #
 ALTER TABLE cb.loc_edif_habitacional_a OWNER TO postgres#
 CREATE TABLE cb.loc_hab_indigena_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT loc_hab_indigena_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_hab_indigena)
 #
@@ -3827,7 +3827,7 @@ CREATE TABLE cb.loc_area_habitacional_a(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	id_complexo_habitacional uuid,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT loc_area_habitacional_a_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.loc_area_habitacional_a OWNER TO postgres#
@@ -3840,7 +3840,7 @@ CREATE TABLE cb.loc_area_edificada_a(
 	id serial NOT NULL,
 	nome varchar(80),
 	nomeabrev varchar(50),
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT loc_area_edificada_a_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.loc_area_edificada_a OWNER TO postgres#
@@ -3864,7 +3864,7 @@ CREATE TABLE cb.lim_terra_indigena(
 )#
 ALTER TABLE cb.lim_terra_indigena OWNER TO postgres#
 CREATE TABLE cb.lim_terra_indigena_p(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT lim_terra_indigena_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.lim_terra_indigena)
 #
@@ -3885,7 +3885,7 @@ CREATE INDEX adm_area_pub_militar_a_gist ON cb.adm_area_pub_militar_a
 	  geom
 	)#
 CREATE TABLE cb.lim_terra_indigena_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT lim_terra_indigena_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.lim_terra_indigena)
 #
@@ -3939,7 +3939,7 @@ CREATE TABLE cb.lim_unidade_uso_sustentavel_a(
 #
 ALTER TABLE cb.lim_unidade_uso_sustentavel_a OWNER TO postgres#
 CREATE TABLE cb.lim_area_especial_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT lim_area_especial_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.lim_area_especial)
 #
@@ -4017,7 +4017,7 @@ CREATE TABLE cb.lim_area_particular_a(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT lim_area_particular_a_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.lim_area_particular_a OWNER TO postgres#
@@ -4032,7 +4032,7 @@ CREATE INDEX adm_posto_pol_rod_p_gist ON cb.adm_posto_pol_rod_p
 	  geom
 	)#
 CREATE TABLE cb.adm_posto_pol_rod_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT adm_posto_pol_rod_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.adm_posto_pol_rod)
 #
@@ -4048,7 +4048,7 @@ CREATE INDEX adm_posto_fiscal_p_gist ON cb.adm_posto_fiscal_p
 	  geom
 	)#
 CREATE TABLE cb.adm_posto_fiscal_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT adm_posto_fiscal_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.adm_posto_fiscal)
 #
@@ -4074,7 +4074,7 @@ CREATE INDEX hid_trecho_massa_dagua_a_gist ON cb.hid_trecho_massa_dagua_a
 	  geom
 	)#
 CREATE TABLE cb.loc_hab_indigena_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT loc_hab_indigena_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_hab_indigena)
 #
@@ -4095,7 +4095,7 @@ CREATE TABLE cb.loc_area_urbana_isolada_a(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	tipoassociado smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT loc_area_urbana_isolada_a_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.loc_area_urbana_isolada_a OWNER TO postgres#
@@ -4112,7 +4112,7 @@ CREATE TABLE cb.aux_descontinuidade_geometrica(
 )#
 ALTER TABLE cb.aux_descontinuidade_geometrica OWNER TO postgres#
 CREATE TABLE cb.aux_descontinuidade_geometrica_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT aux_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.aux_descontinuidade_geometrica)
 #
@@ -4123,7 +4123,7 @@ CREATE INDEX aux_descontinuidade_geometrica_p_gist ON cb.aux_descontinuidade_geo
 	  geom
 	)#
 CREATE TABLE cb.aux_descontinuidade_geometrica_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT aux_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.aux_descontinuidade_geometrica)
 #
@@ -4134,7 +4134,7 @@ CREATE INDEX aux_descontinuidade_geom_l_gist ON cb.aux_descontinuidade_geometric
 	  geom
 	)#
 CREATE TABLE cb.aux_descontinuidade_geometrica_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT aux_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.aux_descontinuidade_geometrica)
 #
@@ -14031,186 +14031,6 @@ ALTER TABLE cb.adm_descontinuidade_geometrica_p ADD CONSTRAINT adm_descontinuida
 ALTER TABLE cb.adm_descontinuidade_geometrica_a ADD CONSTRAINT adm_descontinuidade_geometrica_a_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
 ALTER TABLE cb.sau_descontinuidade_geometrica_a ADD CONSTRAINT sau_descontinuidade_geometrica_a_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
 ALTER TABLE cb.sau_descontinuidade_geometrica_p ADD CONSTRAINT sau_descontinuidade_geometrica_p_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.hid_barragem
-  ADD CONSTRAINT hid_barragem_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.hid_reservatorio_hidrico_a
-  ADD CONSTRAINT hid_reservatorio_hidrico_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.hid_trecho_massa_dagua_a
-  ADD CONSTRAINT hid_trecho_massa_dagua_a_id_trecho_curso_dagua_fk FOREIGN KEY (id_trecho_curso_dagua)
-   REFERENCES complexos.hid_trecho_curso_dagua (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.hid_barragem_p
-  ADD CONSTRAINT hid_barragem_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.hid_trecho_drenagem_l
-  ADD CONSTRAINT hid_trecho_drenagem_l_id_trecho_curso_dagua_fk FOREIGN KEY (id_trecho_curso_dagua)
-   REFERENCES complexos.hid_trecho_curso_dagua (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.hid_barragem_l
-  ADD CONSTRAINT hid_barragem_l_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.hid_barragem_a
-  ADD CONSTRAINT hid_barragem_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_ext_mineral
-  ADD CONSTRAINT eco_ext_mineral_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_edif_abast_agua_p
-  ADD CONSTRAINT asb_edif_abast_agua_p_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
-   REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_edif_saneamento_p
-  ADD CONSTRAINT asb_edif_saneamento_p_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
-   REFERENCES complexos.asb_complexo_saneamento (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.sau_edif_saude_p
-  ADD CONSTRAINT sau_edif_saude_p_id_org_saude_fk FOREIGN KEY (id_org_saude)
-   REFERENCES complexos.sau_org_saude (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.sau_edif_servico_social_p
-  ADD CONSTRAINT sau_edif_servico_social_p_id_org_servico_social_fk FOREIGN KEY (id_org_servico_social)
-   REFERENCES complexos.sau_org_servico_social (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_edif_abast_agua_a
-  ADD CONSTRAINT asb_edif_abast_agua_a_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
-   REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_edif_saneamento_a
-  ADD CONSTRAINT asb_edif_saneamento_a_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
-   REFERENCES complexos.asb_complexo_saneamento (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_edif_pub_militar_p
-  ADD CONSTRAINT adm_edif_pub_militar_p_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_edif_pub_militar_a
-  ADD CONSTRAINT adm_edif_pub_militar_a_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.sau_edif_servico_social_a
-  ADD CONSTRAINT sau_edif_servico_social_a_id_org_servico_social_fk FOREIGN KEY (id_org_servico_social)
-   REFERENCES complexos.sau_org_servico_social (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_edif_ensino_a
-  ADD CONSTRAINT edu_edif_ensino_a_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
-   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_edif_pub_civil_p
-  ADD CONSTRAINT adm_edif_pub_civil_p_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_edif_pub_civil_a
-  ADD CONSTRAINT adm_edif_pub_civil_a_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_edif_religiosa_p
-  ADD CONSTRAINT edu_edif_religiosa_p_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
-   REFERENCES complexos.edu_org_religiosa (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.sau_edif_saude_a
-  ADD CONSTRAINT sau_edif_saude_a_id_org_saude_fk FOREIGN KEY (id_org_saude)
-   REFERENCES complexos.sau_org_saude (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_edif_religiosa_a
-  ADD CONSTRAINT edu_edif_religiosa_a_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
-   REFERENCES complexos.edu_org_religiosa (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_edif_const_lazer_p
-  ADD CONSTRAINT edu_edif_const_lazer_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_edif_const_lazer_a
-  ADD CONSTRAINT edu_edif_const_lazer_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_edif_const_turistica_p
-  ADD CONSTRAINT edu_edif_const_turistica_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_edif_const_turistica_a
-  ADD CONSTRAINT edu_edif_const_turistica_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_edif_comerc_serv_p
-  ADD CONSTRAINT eco_edif_comerc_serv_p_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_edif_comerc_serv_a
-  ADD CONSTRAINT eco_edif_comerc_serv_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_dep_abast_agua
-  ADD CONSTRAINT asb_dep_abast_agua_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
-   REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_dep_abast_agua_a
-  ADD CONSTRAINT asb_dep_abast_agua_a_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
-   REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_dep_saneamento
-  ADD CONSTRAINT asb_dep_saneamento_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
-   REFERENCES complexos.asb_complexo_saneamento (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_dep_saneamento_a
-  ADD CONSTRAINT asb_dep_saneamento_a_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
-   REFERENCES complexos.asb_complexo_saneamento (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral
-  ADD CONSTRAINT eco_deposito_geral_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral
-  ADD CONSTRAINT eco_deposito_geral_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral
-  ADD CONSTRAINT eco_deposito_geral_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral
-  ADD CONSTRAINT eco_deposito_geral_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral
-  ADD CONSTRAINT eco_deposito_geral_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_a
-  ADD CONSTRAINT eco_deposito_geral_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_a
-  ADD CONSTRAINT eco_deposito_geral_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_a
-  ADD CONSTRAINT eco_deposito_geral_a_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_a
-  ADD CONSTRAINT eco_deposito_geral_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_a
-  ADD CONSTRAINT eco_deposito_geral_a_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.eco_org_industrial
-  ADD CONSTRAINT eco_org_industrial_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.eco_org_industrial
-  ADD CONSTRAINT eco_org_industrial_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.eco_madeireira
   ADD CONSTRAINT eco_madeireira_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
    REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
@@ -14223,218 +14043,6 @@ ALTER TABLE complexos.eco_madeireira
   ADD CONSTRAINT eco_madeireira_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
    REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_equip_agropec
-  ADD CONSTRAINT eco_equip_agropec_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_equip_agropec_l
-  ADD CONSTRAINT eco_equip_agropec_l_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_equip_agropec_a
-  ADD CONSTRAINT eco_equip_agropec_a_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.adm_org_pub_militar
-  ADD CONSTRAINT adm_org_pub_militar_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.adm_org_pub_militar
-  ADD CONSTRAINT adm_org_pub_militar_id_instituicao_publica_fk FOREIGN KEY (id_instituicao_publica)
-   REFERENCES complexos.adm_instituicao_publica (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.adm_org_pub_civil
-  ADD CONSTRAINT adm_org_pub_civil_id_instituicao_publica_fk FOREIGN KEY (id_instituicao_publica)
-   REFERENCES complexos.adm_instituicao_publica (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.adm_org_pub_civil
-  ADD CONSTRAINT adm_org_pub_civil_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_grupo_transformadores
-  ADD CONSTRAINT enc_grupo_transformadores_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
-   REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_grupo_transformadores_a
-  ADD CONSTRAINT enc_grupo_transformadores_a_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
-   REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_est_gerad_energia_eletr
-  ADD CONSTRAINT enc_est_gerad_energia_eletr_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_est_gerad_energia_eletr_l
-  ADD CONSTRAINT enc_est_gerad_energia_eletr_l_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_est_gerad_energia_eletr_a
-  ADD CONSTRAINT enc_est_gerad_energia_eletr_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_termeletrica_a
-  ADD CONSTRAINT enc_termeletrica_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_est_gerad_energia_eletr_p
-  ADD CONSTRAINT enc_est_gerad_energia_eletr_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_hidreletrica_p
-  ADD CONSTRAINT enc_hidreletrica_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_hidreletrica_l
-  ADD CONSTRAINT enc_hidreletrica_l_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_hidreletrica_a
-  ADD CONSTRAINT enc_hidreletrica_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_edif_energia_p
-  ADD CONSTRAINT enc_edif_energia_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_edif_energia_p
-  ADD CONSTRAINT enc_edif_energia_p_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
-   REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_edif_energia_a
-  ADD CONSTRAINT enc_edif_energia_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_edif_energia_a
-  ADD CONSTRAINT enc_edif_energia_a_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
-   REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_edif_comunic_p
-  ADD CONSTRAINT enc_edif_comunic_p_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
-   REFERENCES complexos.enc_complexo_comunicacao (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_pista_ponto_pouso
-  ADD CONSTRAINT tra_pista_ponto_pouso_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_edif_comunic_a
-  ADD CONSTRAINT enc_edif_comunic_a_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
-   REFERENCES complexos.enc_complexo_comunicacao (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_pista_ponto_pouso_l
-  ADD CONSTRAINT tra_pista_ponto_pouso_l_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_edif_constr_aeroportuaria_p
-  ADD CONSTRAINT tra_edif_constr_aeroportuaria_p_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_pista_ponto_pouso_a
-  ADD CONSTRAINT tra_pista_ponto_pouso_a_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_edif_constr_portuaria_a
-  ADD CONSTRAINT tra_edif_constr_portuaria_a_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_trecho_duto_l
-  ADD CONSTRAINT tra_trecho_duto_l_id_duto_fk FOREIGN KEY (id_duto)
-   REFERENCES complexos.tra_duto (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_edif_metro_ferroviaria_p
-  ADD CONSTRAINT tra_edif_metro_ferroviaria_p_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
-   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_edif_constr_portuaria_p
-  ADD CONSTRAINT tra_edif_constr_portuaria_p_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_edif_constr_aeroportuaria_a
-  ADD CONSTRAINT tra_edif_constr_aeroportuaria_a_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_edif_metro_ferroviaria_a
-  ADD CONSTRAINT tra_edif_metro_ferroviaria_a_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
-   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_edif_rodoviaria_p
-  ADD CONSTRAINT tra_edif_rodoviaria_p_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
-   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_edif_rodoviaria_a
-  ADD CONSTRAINT tra_edif_rodoviaria_a_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
-   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_edif_ext_mineral_p
-  ADD CONSTRAINT eco_edif_ext_mineral_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_edif_ext_mineral_a
-  ADD CONSTRAINT eco_edif_ext_mineral_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_p
-  ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_p_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_dep_abast_agua_p
-  ADD CONSTRAINT asb_dep_abast_agua_p_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
-   REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_a
-  ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_a_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_edif_industrial_p
-  ADD CONSTRAINT eco_edif_industrial_p_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
-   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_dep_saneamento_p
-  ADD CONSTRAINT asb_dep_saneamento_p_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
-   REFERENCES complexos.asb_complexo_saneamento (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_edif_industrial_a
-  ADD CONSTRAINT eco_edif_industrial_a_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
-   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_p
-  ADD CONSTRAINT eco_deposito_geral_p_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_p
-  ADD CONSTRAINT eco_deposito_geral_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_p
-  ADD CONSTRAINT eco_deposito_geral_p_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_p
-  ADD CONSTRAINT eco_deposito_geral_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_p
-  ADD CONSTRAINT eco_deposito_geral_p_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio
-  ADD CONSTRAINT tra_patio_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio
-  ADD CONSTRAINT tra_patio_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio
-  ADD CONSTRAINT tra_patio_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio
-  ADD CONSTRAINT tra_patio_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
-   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio
-  ADD CONSTRAINT tra_patio_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
-   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.eco_frigorifico_matadouro
   ADD CONSTRAINT eco_frigorifico_matadouro_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
    REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
@@ -14446,66 +14054,6 @@ ALTER TABLE complexos.eco_frigorifico_matadouro
 ALTER TABLE complexos.eco_frigorifico_matadouro
   ADD CONSTRAINT eco_frigorifico_matadouro_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
    REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_a
-  ADD CONSTRAINT tra_patio_a_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_a
-  ADD CONSTRAINT tra_patio_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_a
-  ADD CONSTRAINT tra_patio_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_a
-  ADD CONSTRAINT tra_patio_a_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
-   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_a
-  ADD CONSTRAINT tra_patio_a_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
-   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_equip_agropec_p
-  ADD CONSTRAINT eco_equip_agropec_p_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_p
-  ADD CONSTRAINT tra_patio_p_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_p
-  ADD CONSTRAINT tra_patio_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_p
-  ADD CONSTRAINT tra_patio_p_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_p
-  ADD CONSTRAINT tra_patio_p_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
-   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_p
-  ADD CONSTRAINT tra_patio_p_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
-   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.asb_complexo_saneamento
-  ADD CONSTRAINT asb_complexo_saneamento_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.asb_complexo_abast_agua
-  ADD CONSTRAINT asb_complexo_abast_agua_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_funicular
-  ADD CONSTRAINT tra_funicular_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_funicular_l
-  ADD CONSTRAINT tra_funicular_l_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.edu_org_ensino_militar
   ADD CONSTRAINT edu_org_ensino_militar_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
@@ -14523,185 +14071,13 @@ ALTER TABLE complexos.edu_org_ensino_pub
   ADD CONSTRAINT edu_org_ensino_pub_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
    REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_area_agrop_ext_veg_pesca_a
-  ADD CONSTRAINT eco_area_agrop_ext_veg_pesca_a_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_grupo_transformadores_p
-  ADD CONSTRAINT enc_grupo_transformadores_p_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
-   REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_area_ext_mineral_a
-  ADD CONSTRAINT eco_area_ext_mineral_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_termeletrica_p
-  ADD CONSTRAINT enc_termeletrica_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+ALTER TABLE complexos.enc_subestacao_ener_eletr
+  ADD CONSTRAINT enc_subestacao_ener_eletr_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
    REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.enc_complexo_gerad_energ_eletr
   ADD CONSTRAINT enc_complexo_gerad_energ_eletr_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
    REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.enc_subestacao_ener_eletr
-  ADD CONSTRAINT enc_subestacao_ener_eletr_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.enc_complexo_comunicacao
-  ADD CONSTRAINT enc_complexo_comunicacao_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_area_energia_eletrica_a
-  ADD CONSTRAINT enc_area_energia_eletrica_a_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
-   REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_area_energia_eletrica_a
-  ADD CONSTRAINT enc_area_energia_eletrica_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_antena_comunic_p
-  ADD CONSTRAINT enc_antena_comunic_p_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
-   REFERENCES complexos.enc_complexo_comunicacao (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_torre_comunic_p
-  ADD CONSTRAINT enc_torre_comunic_p_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
-   REFERENCES complexos.enc_complexo_comunicacao (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_trecho_energia_l
-  ADD CONSTRAINT enc_trecho_energia_l_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_trecho_comunic_l
-  ADD CONSTRAINT enc_trecho_comunic_l_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_pista_ponto_pouso_p
-  ADD CONSTRAINT tra_pista_ponto_pouso_p_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_trecho_rodoviario_l
-  ADD CONSTRAINT tra_trecho_rodoviario_l_id_via_rodoviaria_fk FOREIGN KEY (id_via_rodoviaria)
-   REFERENCES complexos.tra_via_rodoviaria (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_atracadouro
-  ADD CONSTRAINT tra_atracadouro_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_condutor_hidrico_l
-  ADD CONSTRAINT tra_condutor_hidrico_l_id_duto_fk FOREIGN KEY (id_duto)
-   REFERENCES complexos.tra_duto (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_condutor_hidrico_l
-  ADD CONSTRAINT tra_condutor_hidrico_l_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_atracadouro_l
-  ADD CONSTRAINT tra_atracadouro_l_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_atracadouro_a
-  ADD CONSTRAINT tra_atracadouro_a_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_fundeadouro
-  ADD CONSTRAINT tra_fundeadouro_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_fundeadouro_l
-  ADD CONSTRAINT tra_fundeadouro_l_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_fundeadouro_a
-  ADD CONSTRAINT tra_fundeadouro_a_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.pto_est_med_fenomenos
-  ADD CONSTRAINT pto_est_med_fenomenos_id_est_med_fenomenos_fk FOREIGN KEY (id_est_med_fenomenos)
-   REFERENCES complexos.pto_est_med_fenomenos (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.pto_pto_est_med_fenomenos_p
-  ADD CONSTRAINT pto_pto_est_med_fenomenos_p_id_est_med_fenomenos_fk FOREIGN KEY (id_est_med_fenomenos)
-   REFERENCES complexos.pto_est_med_fenomenos (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_funicular_p
-  ADD CONSTRAINT tra_funicular_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_caminho_aereo_l
-  ADD CONSTRAINT tra_caminho_aereo_l_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_atracadouro_p
-  ADD CONSTRAINT tra_atracadouro_p_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_fundeadouro_p
-  ADD CONSTRAINT tra_fundeadouro_p_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.edu_complexo_lazer
-  ADD CONSTRAINT edu_complexo_lazer_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
-   REFERENCES complexos.edu_org_religiosa (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.edu_complexo_lazer
-  ADD CONSTRAINT edu_complexo_lazer_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.edu_complexo_lazer
-  ADD CONSTRAINT edu_complexo_lazer_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
-   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.edu_complexo_lazer
-  ADD CONSTRAINT edu_complexo_lazer_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_girador_ferroviario_p
-  ADD CONSTRAINT tra_girador_ferroviario_p_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
-   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_trecho_ferroviario_l
-  ADD CONSTRAINT tra_trecho_ferroviario_l_id_via_ferrea_fk FOREIGN KEY (id_via_ferrea)
-   REFERENCES complexos.tra_via_ferrea (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_arquibancada
-  ADD CONSTRAINT edu_arquibancada_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_arquibancada_a
-  ADD CONSTRAINT edu_arquibancada_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_campo_quadra
-  ADD CONSTRAINT edu_campo_quadra_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_campo_quadra_a
-  ADD CONSTRAINT edu_campo_quadra_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_pista_competicao_l
-  ADD CONSTRAINT edu_pista_competicao_l_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_ruina
-  ADD CONSTRAINT edu_ruina_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_ruina_a
-  ADD CONSTRAINT edu_ruina_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_arquibancada_p
-  ADD CONSTRAINT edu_arquibancada_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_campo_quadra_p
-  ADD CONSTRAINT edu_campo_quadra_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_ruina_p
-  ADD CONSTRAINT edu_ruina_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.sau_org_saude_pub
   ADD CONSTRAINT sau_org_saude_pub_id_instituicao_publica_fk FOREIGN KEY (id_instituicao_publica)
@@ -14711,49 +14087,17 @@ ALTER TABLE complexos.sau_org_saude_pub
   ADD CONSTRAINT sau_org_saude_pub_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
    REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_area_comunicacao_a
-  ADD CONSTRAINT enc_area_comunicacao_a_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
-   REFERENCES complexos.enc_complexo_comunicacao (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_area_abast_agua_a
-  ADD CONSTRAINT asb_area_abast_agua_a_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
-   REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_area_saneamento_a
-  ADD CONSTRAINT asb_area_saneamento_a_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
-   REFERENCES complexos.asb_complexo_saneamento (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.sau_area_servico_social_a
-  ADD CONSTRAINT sau_area_servico_social_a_id_org_servico_social_fk FOREIGN KEY (id_org_servico_social)
-   REFERENCES complexos.sau_org_servico_social (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.sau_area_saude_a
-  ADD CONSTRAINT sau_area_saude_a_id_org_saude_fk FOREIGN KEY (id_org_saude)
-   REFERENCES complexos.sau_org_saude (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_area_ruinas_a
-  ADD CONSTRAINT edu_area_ruinas_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_area_lazer_a
-  ADD CONSTRAINT edu_area_lazer_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_area_comerc_serv_a
-  ADD CONSTRAINT eco_area_comerc_serv_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+ALTER TABLE complexos.enc_complexo_comunicacao
+  ADD CONSTRAINT enc_complexo_comunicacao_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
    REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_area_ensino_a
-  ADD CONSTRAINT edu_area_ensino_a_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
-   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
+ALTER TABLE complexos.asb_complexo_abast_agua
+  ADD CONSTRAINT asb_complexo_abast_agua_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_area_religiosa_a
-  ADD CONSTRAINT edu_area_religiosa_a_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
-   REFERENCES complexos.edu_org_religiosa (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_edif_ensino_p
-  ADD CONSTRAINT edu_edif_ensino_p_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
-   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
+ALTER TABLE complexos.asb_complexo_saneamento
+  ADD CONSTRAINT asb_complexo_saneamento_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.sau_org_saude_militar
   ADD CONSTRAINT sau_org_saude_militar_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
@@ -14775,105 +14119,521 @@ ALTER TABLE complexos.adm_instituicao_publica
   ADD CONSTRAINT adm_instituicao_publica_id_instituicao_publica_fk FOREIGN KEY (id_instituicao_publica)
    REFERENCES complexos.adm_instituicao_publica (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_area_industrial_a
-  ADD CONSTRAINT eco_area_industrial_a_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
-   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
+ALTER TABLE complexos.eco_org_industrial
+  ADD CONSTRAINT eco_org_industrial_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_area_estrut_transporte_a
-  ADD CONSTRAINT tra_area_estrut_transporte_a_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
+ALTER TABLE complexos.eco_org_industrial
+  ADD CONSTRAINT eco_org_industrial_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.pto_area_est_med_fenom_a
-  ADD CONSTRAINT pto_area_est_med_fenom_a_id_est_med_fenomenos_fk FOREIGN KEY (id_est_med_fenomenos)
+ALTER TABLE complexos.pto_est_med_fenomenos
+  ADD CONSTRAINT pto_est_med_fenomenos_id_est_med_fenomenos_fk FOREIGN KEY (id_est_med_fenomenos)
    REFERENCES complexos.pto_est_med_fenomenos (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.hid_trecho_curso_dagua
   ADD CONSTRAINT hid_trecho_curso_dagua_id_curso_dagua_fk FOREIGN KEY (id_curso_dagua)
    REFERENCES complexos.hid_curso_dagua (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_ext_mineral_p
-  ADD CONSTRAINT eco_ext_mineral_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+ALTER TABLE complexos.edu_complexo_lazer
+  ADD CONSTRAINT edu_complexo_lazer_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
+   REFERENCES complexos.edu_org_religiosa (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.edu_complexo_lazer
+  ADD CONSTRAINT edu_complexo_lazer_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.edu_complexo_lazer
+  ADD CONSTRAINT edu_complexo_lazer_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
+   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.edu_complexo_lazer
+  ADD CONSTRAINT edu_complexo_lazer_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.adm_org_pub_militar
+  ADD CONSTRAINT adm_org_pub_militar_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.adm_org_pub_militar
+  ADD CONSTRAINT adm_org_pub_militar_id_instituicao_publica_fk FOREIGN KEY (id_instituicao_publica)
+   REFERENCES complexos.adm_instituicao_publica (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.adm_org_pub_civil
+  ADD CONSTRAINT adm_org_pub_civil_id_instituicao_publica_fk FOREIGN KEY (id_instituicao_publica)
+   REFERENCES complexos.adm_instituicao_publica (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.adm_org_pub_civil
+  ADD CONSTRAINT adm_org_pub_civil_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_area_saneamento_a
+  ADD CONSTRAINT asb_area_saneamento_a_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
+   REFERENCES complexos.asb_complexo_saneamento (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_edif_comerc_serv_p
+  ADD CONSTRAINT eco_edif_comerc_serv_p_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_edif_comerc_serv_a
+  ADD CONSTRAINT eco_edif_comerc_serv_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_area_pub_militar_a
+  ADD CONSTRAINT adm_area_pub_militar_a_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_campo_quadra_p
+  ADD CONSTRAINT edu_campo_quadra_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_campo_quadra_a
+  ADD CONSTRAINT edu_campo_quadra_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.loc_hab_indigena_p
+  ADD CONSTRAINT loc_hab_indigena_p_id_aldeia_indigena_fk FOREIGN KEY (id_aldeia_indigena)
+   REFERENCES complexos.loc_aldeia_indigena (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_edif_comunic_p
+  ADD CONSTRAINT enc_edif_comunic_p_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
+   REFERENCES complexos.enc_complexo_comunicacao (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.loc_hab_indigena_a
+  ADD CONSTRAINT loc_hab_indigena_a_id_aldeia_indigena_fk FOREIGN KEY (id_aldeia_indigena)
+   REFERENCES complexos.loc_aldeia_indigena (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_edif_comunic_a
+  ADD CONSTRAINT enc_edif_comunic_a_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
+   REFERENCES complexos.enc_complexo_comunicacao (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_ext_mineral_a
   ADD CONSTRAINT eco_ext_mineral_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
    REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_identific_trecho_rod_p
-  ADD CONSTRAINT tra_identific_trecho_rod_p_id_via_rodoviaria_fk FOREIGN KEY (id_via_rodoviaria)
-   REFERENCES complexos.tra_via_rodoviaria (id) MATCH FULL
+ALTER TABLE cb.eco_ext_mineral_p
+  ADD CONSTRAINT eco_ext_mineral_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_trecho_hidroviario_l
-  ADD CONSTRAINT tra_trecho_hidroviario_l_id_hidrovia_fk FOREIGN KEY (id_hidrovia)
-   REFERENCES complexos.tra_hidrovia (id) MATCH FULL
+ALTER TABLE cb.enc_area_comunicacao_a
+  ADD CONSTRAINT enc_area_comunicacao_a_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
+   REFERENCES complexos.enc_complexo_comunicacao (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_piscina_a
-  ADD CONSTRAINT edu_piscina_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+ALTER TABLE cb.edu_ruina_a
+  ADD CONSTRAINT edu_ruina_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
    REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_coreto_tribuna
-  ADD CONSTRAINT edu_coreto_tribuna_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+ALTER TABLE cb.eco_edif_industrial_a
+  ADD CONSTRAINT eco_edif_industrial_a_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
+   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_ruina_p
+  ADD CONSTRAINT edu_ruina_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
    REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_coreto_tribuna_p
-  ADD CONSTRAINT edu_coreto_tribuna_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+ALTER TABLE cb.eco_edif_industrial_p
+  ADD CONSTRAINT eco_edif_industrial_p_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
+   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_grupo_transformadores_p
+  ADD CONSTRAINT enc_grupo_transformadores_p_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
+   REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_grupo_transformadores_a
+  ADD CONSTRAINT enc_grupo_transformadores_a_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
+   REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_edif_saneamento_a
+  ADD CONSTRAINT asb_edif_saneamento_a_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
+   REFERENCES complexos.asb_complexo_saneamento (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_edif_saude_a
+  ADD CONSTRAINT sau_edif_saude_a_id_org_saude_fk FOREIGN KEY (id_org_saude)
+   REFERENCES complexos.sau_org_saude (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_edif_saneamento_p
+  ADD CONSTRAINT asb_edif_saneamento_p_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
+   REFERENCES complexos.asb_complexo_saneamento (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_edif_saude_p
+  ADD CONSTRAINT sau_edif_saude_p_id_org_saude_fk FOREIGN KEY (id_org_saude)
+   REFERENCES complexos.sau_org_saude (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_area_energia_eletrica_a
+  ADD CONSTRAINT enc_area_energia_eletrica_a_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
+   REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_area_energia_eletrica_a
+  ADD CONSTRAINT enc_area_energia_eletrica_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_area_lazer_a
+  ADD CONSTRAINT edu_area_lazer_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
    REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_coreto_tribuna_a
   ADD CONSTRAINT edu_coreto_tribuna_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
    REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_area_pub_civil_a
-  ADD CONSTRAINT adm_area_pub_civil_a_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+ALTER TABLE cb.edu_coreto_tribuna_p
+  ADD CONSTRAINT edu_coreto_tribuna_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_piscina_a
+  ADD CONSTRAINT edu_piscina_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_atracadouro_l
+  ADD CONSTRAINT tra_atracadouro_l_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.hid_barragem_p
+  ADD CONSTRAINT hid_barragem_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_atracadouro_a
+  ADD CONSTRAINT tra_atracadouro_a_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_atracadouro_p
+  ADD CONSTRAINT tra_atracadouro_p_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_edif_rodoviaria_p
+  ADD CONSTRAINT tra_edif_rodoviaria_p_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_area_abast_agua_a
+  ADD CONSTRAINT asb_area_abast_agua_a_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
+   REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_condutor_hidrico_l
+  ADD CONSTRAINT tra_condutor_hidrico_l_id_duto_fk FOREIGN KEY (id_duto)
+   REFERENCES complexos.tra_duto (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_condutor_hidrico_l
+  ADD CONSTRAINT tra_condutor_hidrico_l_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_edif_rodoviaria_a
+  ADD CONSTRAINT tra_edif_rodoviaria_a_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_trecho_ferroviario_l
+  ADD CONSTRAINT tra_trecho_ferroviario_l_id_via_ferrea_fk FOREIGN KEY (id_via_ferrea)
+   REFERENCES complexos.tra_via_ferrea (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_edif_constr_portuaria_a
+  ADD CONSTRAINT tra_edif_constr_portuaria_a_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.hid_trecho_drenagem_l
+  ADD CONSTRAINT hid_trecho_drenagem_l_id_trecho_curso_dagua_fk FOREIGN KEY (id_trecho_curso_dagua)
+   REFERENCES complexos.hid_trecho_curso_dagua (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_edif_constr_portuaria_p
+  ADD CONSTRAINT tra_edif_constr_portuaria_p_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.pto_pto_est_med_fenomenos_p
+  ADD CONSTRAINT pto_pto_est_med_fenomenos_p_id_est_med_fenomenos_fk FOREIGN KEY (id_est_med_fenomenos)
+   REFERENCES complexos.pto_est_med_fenomenos (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_const_lazer_a
+  ADD CONSTRAINT edu_edif_const_lazer_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_a
+  ADD CONSTRAINT eco_deposito_geral_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_a
+  ADD CONSTRAINT eco_deposito_geral_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_a
+  ADD CONSTRAINT eco_deposito_geral_a_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_a
+  ADD CONSTRAINT eco_deposito_geral_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_a
+  ADD CONSTRAINT eco_deposito_geral_a_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
+   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_const_lazer_p
+  ADD CONSTRAINT edu_edif_const_lazer_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_p
+  ADD CONSTRAINT eco_deposito_geral_p_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_p
+  ADD CONSTRAINT eco_deposito_geral_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_p
+  ADD CONSTRAINT eco_deposito_geral_p_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_p
+  ADD CONSTRAINT eco_deposito_geral_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_p
+  ADD CONSTRAINT eco_deposito_geral_p_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
+   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_area_servico_social_a
+  ADD CONSTRAINT sau_area_servico_social_a_id_org_servico_social_fk FOREIGN KEY (id_org_servico_social)
+   REFERENCES complexos.sau_org_servico_social (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_posto_fiscal_a
+  ADD CONSTRAINT adm_posto_fiscal_a_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
    REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_posto_fiscal
-  ADD CONSTRAINT adm_posto_fiscal_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
+ALTER TABLE cb.asb_dep_abast_agua_p
+  ADD CONSTRAINT asb_dep_abast_agua_p_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
+   REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_posto_fiscal_p
-  ADD CONSTRAINT adm_posto_fiscal_p_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
+ALTER TABLE cb.asb_dep_abast_agua_a
+  ADD CONSTRAINT asb_dep_abast_agua_a_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
+   REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_area_pub_militar_a
-  ADD CONSTRAINT adm_area_pub_militar_a_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_posto_pol_rod
-  ADD CONSTRAINT adm_posto_pol_rod_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_posto_pol_rod
-  ADD CONSTRAINT adm_posto_pol_rod_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_posto_pol_rod_p
-  ADD CONSTRAINT adm_posto_pol_rod_p_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_posto_pol_rod_p
-  ADD CONSTRAINT adm_posto_pol_rod_p_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
+ALTER TABLE cb.asb_dep_saneamento_a
+  ADD CONSTRAINT asb_dep_saneamento_a_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
+   REFERENCES complexos.asb_complexo_saneamento (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.loc_edif_habitacional_p
   ADD CONSTRAINT loc_edif_habitacional_p_id_complexo_habitacional_fk FOREIGN KEY (id_complexo_habitacional)
    REFERENCES complexos.loc_complexo_habitacional (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.loc_hab_indigena
-  ADD CONSTRAINT loc_hab_indigena_id_aldeia_indigena_fk FOREIGN KEY (id_aldeia_indigena)
-   REFERENCES complexos.loc_aldeia_indigena (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.loc_edif_habitacional_a
   ADD CONSTRAINT loc_edif_habitacional_a_id_complexo_habitacional_fk FOREIGN KEY (id_complexo_habitacional)
    REFERENCES complexos.loc_complexo_habitacional (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.loc_hab_indigena_a
-  ADD CONSTRAINT loc_hab_indigena_a_id_aldeia_indigena_fk FOREIGN KEY (id_aldeia_indigena)
-   REFERENCES complexos.loc_aldeia_indigena (id) MATCH FULL
+ALTER TABLE cb.edu_area_ensino_a
+  ADD CONSTRAINT edu_area_ensino_a_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
+   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.loc_area_habitacional_a
-  ADD CONSTRAINT loc_area_habitacional_a_id_complexo_habitacional_fk FOREIGN KEY (id_complexo_habitacional)
-   REFERENCES complexos.loc_complexo_habitacional (id) MATCH FULL
+ALTER TABLE cb.tra_fundeadouro_p
+  ADD CONSTRAINT tra_fundeadouro_p_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_p
+  ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_p_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_edif_constr_aeroportuaria_a
+  ADD CONSTRAINT tra_edif_constr_aeroportuaria_a_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_area_ruinas_a
+  ADD CONSTRAINT edu_area_ruinas_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_fundeadouro_l
+  ADD CONSTRAINT tra_fundeadouro_l_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_a
+  ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_a_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_fundeadouro_a
+  ADD CONSTRAINT tra_fundeadouro_a_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_edif_constr_aeroportuaria_p
+  ADD CONSTRAINT tra_edif_constr_aeroportuaria_p_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_saneamento_p
+  ADD CONSTRAINT asb_dep_saneamento_p_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
+   REFERENCES complexos.asb_complexo_saneamento (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_caminho_aereo_l
+  ADD CONSTRAINT tra_caminho_aereo_l_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_edif_ext_mineral_p
+  ADD CONSTRAINT eco_edif_ext_mineral_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_area_pub_civil_a
+  ADD CONSTRAINT adm_area_pub_civil_a_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_edif_energia_a
+  ADD CONSTRAINT enc_edif_energia_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_edif_energia_a
+  ADD CONSTRAINT enc_edif_energia_a_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
+   REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_edif_energia_p
+  ADD CONSTRAINT enc_edif_energia_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_edif_energia_p
+  ADD CONSTRAINT enc_edif_energia_p_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
+   REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_area_ext_mineral_a
+  ADD CONSTRAINT eco_area_ext_mineral_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_pista_ponto_pouso_a
+  ADD CONSTRAINT tra_pista_ponto_pouso_a_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
+   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
+   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
+   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_pista_ponto_pouso_l
+  ADD CONSTRAINT tra_pista_ponto_pouso_l_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_pista_ponto_pouso_p
+  ADD CONSTRAINT tra_pista_ponto_pouso_p_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
+   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
+   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
+   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_pista_competicao_l
+  ADD CONSTRAINT edu_pista_competicao_l_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_area_industrial_a
+  ADD CONSTRAINT eco_area_industrial_a_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
+   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_area_religiosa_a
+  ADD CONSTRAINT edu_area_religiosa_a_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
+   REFERENCES complexos.edu_org_religiosa (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.hid_barragem_a
+  ADD CONSTRAINT hid_barragem_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_area_saude_a
+  ADD CONSTRAINT sau_area_saude_a_id_org_saude_fk FOREIGN KEY (id_org_saude)
+   REFERENCES complexos.sau_org_saude (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.hid_barragem_l
+  ADD CONSTRAINT hid_barragem_l_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_edif_pub_militar_a
+  ADD CONSTRAINT adm_edif_pub_militar_a_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_area_agrop_ext_veg_pesca_a
+  ADD CONSTRAINT eco_area_agrop_ext_veg_pesca_a_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_edif_pub_militar_p
+  ADD CONSTRAINT adm_edif_pub_militar_p_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_trecho_hidroviario_l
+  ADD CONSTRAINT tra_trecho_hidroviario_l_id_hidrovia_fk FOREIGN KEY (id_hidrovia)
+   REFERENCES complexos.tra_hidrovia (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_identific_trecho_rod_p
+  ADD CONSTRAINT tra_identific_trecho_rod_p_id_via_rodoviaria_fk FOREIGN KEY (id_via_rodoviaria)
+   REFERENCES complexos.tra_via_rodoviaria (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.hid_trecho_massa_dagua_a
+  ADD CONSTRAINT hid_trecho_massa_dagua_a_id_trecho_curso_dagua_fk FOREIGN KEY (id_trecho_curso_dagua)
+   REFERENCES complexos.hid_trecho_curso_dagua (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.hid_reservatorio_hidrico_a
+  ADD CONSTRAINT hid_reservatorio_hidrico_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_antena_comunic_p
+  ADD CONSTRAINT enc_antena_comunic_p_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
+   REFERENCES complexos.enc_complexo_comunicacao (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_edif_servico_social_p
+  ADD CONSTRAINT sau_edif_servico_social_p_id_org_servico_social_fk FOREIGN KEY (id_org_servico_social)
+   REFERENCES complexos.sau_org_servico_social (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_edif_servico_social_a
+  ADD CONSTRAINT sau_edif_servico_social_a_id_org_servico_social_fk FOREIGN KEY (id_org_servico_social)
+   REFERENCES complexos.sau_org_servico_social (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_trecho_rodoviario_l
+  ADD CONSTRAINT tra_trecho_rodoviario_l_id_via_rodoviaria_fk FOREIGN KEY (id_via_rodoviaria)
+   REFERENCES complexos.tra_via_rodoviaria (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_trecho_duto_l
+  ADD CONSTRAINT tra_trecho_duto_l_id_duto_fk FOREIGN KEY (id_duto)
+   REFERENCES complexos.tra_duto (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_edif_ext_mineral_a
+  ADD CONSTRAINT eco_edif_ext_mineral_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_torre_comunic_p
+  ADD CONSTRAINT enc_torre_comunic_p_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
+   REFERENCES complexos.enc_complexo_comunicacao (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_const_turistica_a
+  ADD CONSTRAINT edu_edif_const_turistica_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_girador_ferroviario_p
+  ADD CONSTRAINT tra_girador_ferroviario_p_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.pto_area_est_med_fenom_a
+  ADD CONSTRAINT pto_area_est_med_fenom_a_id_est_med_fenomenos_fk FOREIGN KEY (id_est_med_fenomenos)
+   REFERENCES complexos.pto_est_med_fenomenos (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_const_turistica_p
+  ADD CONSTRAINT edu_edif_const_turistica_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_posto_pol_rod_a
   ADD CONSTRAINT adm_posto_pol_rod_a_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
@@ -14883,5972 +14643,138 @@ ALTER TABLE cb.adm_posto_pol_rod_a
   ADD CONSTRAINT adm_posto_pol_rod_a_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
    REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_posto_fiscal_a
-  ADD CONSTRAINT adm_posto_fiscal_a_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+ALTER TABLE cb.enc_trecho_comunic_l
+  ADD CONSTRAINT enc_trecho_comunic_l_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_posto_pol_rod_p
+  ADD CONSTRAINT adm_posto_pol_rod_p_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_posto_pol_rod_p
+  ADD CONSTRAINT adm_posto_pol_rod_p_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
    REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.loc_hab_indigena_p
-  ADD CONSTRAINT loc_hab_indigena_p_id_aldeia_indigena_fk FOREIGN KEY (id_aldeia_indigena)
-   REFERENCES complexos.loc_aldeia_indigena (id) MATCH FULL
+ALTER TABLE cb.edu_edif_ensino_a
+  ADD CONSTRAINT edu_edif_ensino_a_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
+   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-CREATE OR REPLACE FUNCTION edu_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $edu_descontinuidade_geometrica_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_descontinuidade_geometrica_l(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_descontinuidade_geometrica_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_descontinuidade_geometrica_l
-    FOR EACH ROW EXECUTE PROCEDURE edu_descontinuidade_geometrica_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION asb_area_saneamento_a_avoid_multi () RETURNS TRIGGER AS $asb_area_saneamento_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.asb_area_saneamento_a(geometriaaproximada,id_complexo_saneamento,geom) SELECT NEW.geometriaaproximada,NEW.id_complexo_saneamento,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$asb_area_saneamento_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER asb_area_saneamento_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.asb_area_saneamento_a
-    FOR EACH ROW EXECUTE PROCEDURE asb_area_saneamento_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_edif_comerc_serv_p_avoid_multi () RETURNS TRIGGER AS $eco_edif_comerc_serv_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_edif_comerc_serv_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifcomercserv,finalidade,id_org_comerc_serv) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifcomercserv,NEW.finalidade,NEW.id_org_comerc_serv ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_edif_comerc_serv_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_edif_comerc_serv_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_edif_comerc_serv_p
-    FOR EACH ROW EXECUTE PROCEDURE eco_edif_comerc_serv_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION veg_cerrado_cerradao_a_avoid_multi () RETURNS TRIGGER AS $veg_cerrado_cerradao_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.veg_cerrado_cerradao_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom,tipocerr,classificacaoporte) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipocerr,NEW.classificacaoporte ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$veg_cerrado_cerradao_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER veg_cerrado_cerradao_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.veg_cerrado_cerradao_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_cerrado_cerradao_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_edif_comerc_serv_a_avoid_multi () RETURNS TRIGGER AS $eco_edif_comerc_serv_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_edif_comerc_serv_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifcomercserv,finalidade,id_org_comerc_serv) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifcomercserv,NEW.finalidade,NEW.id_org_comerc_serv ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_edif_comerc_serv_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_edif_comerc_serv_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_edif_comerc_serv_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_edif_comerc_serv_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $edu_descontinuidade_geometrica_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_descontinuidade_geometrica_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE edu_descontinuidade_geometrica_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_elemento_fisiog_natural_l_avoid_multi () RETURNS TRIGGER AS $rel_elemento_fisiog_natural_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_elemento_fisiog_natural_l(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_elemento_fisiog_natural_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_elemento_fisiog_natural_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_elemento_fisiog_natural_l
-    FOR EACH ROW EXECUTE PROCEDURE rel_elemento_fisiog_natural_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION adm_area_pub_militar_a_avoid_multi () RETURNS TRIGGER AS $adm_area_pub_militar_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.adm_area_pub_militar_a(geometriaaproximada,geom,id_org_pub_militar) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_org_pub_militar ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$adm_area_pub_militar_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER adm_area_pub_militar_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.adm_area_pub_militar_a
-    FOR EACH ROW EXECUTE PROCEDURE adm_area_pub_militar_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_campo_quadra_p_avoid_multi () RETURNS TRIGGER AS $edu_campo_quadra_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_campo_quadra_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipocampoquadra,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipocampoquadra,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_campo_quadra_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_campo_quadra_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_campo_quadra_p
-    FOR EACH ROW EXECUTE PROCEDURE edu_campo_quadra_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_elemento_fisiog_natural_a_avoid_multi () RETURNS TRIGGER AS $rel_elemento_fisiog_natural_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_elemento_fisiog_natural_a(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_elemento_fisiog_natural_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_elemento_fisiog_natural_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_elemento_fisiog_natural_a
-    FOR EACH ROW EXECUTE PROCEDURE rel_elemento_fisiog_natural_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_area_particular_a_avoid_multi () RETURNS TRIGGER AS $lim_area_particular_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_area_particular_a(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_area_particular_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_area_particular_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_area_particular_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_area_particular_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_campo_quadra_a_avoid_multi () RETURNS TRIGGER AS $edu_campo_quadra_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_campo_quadra_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipocampoquadra,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipocampoquadra,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_campo_quadra_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_campo_quadra_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_campo_quadra_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_campo_quadra_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_elemento_fisiog_natural_p_avoid_multi () RETURNS TRIGGER AS $rel_elemento_fisiog_natural_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_elemento_fisiog_natural_p(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_elemento_fisiog_natural_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_elemento_fisiog_natural_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_elemento_fisiog_natural_p
-    FOR EACH ROW EXECUTE PROCEDURE rel_elemento_fisiog_natural_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_delimitacao_fisica_l_avoid_multi () RETURNS TRIGGER AS $lim_delimitacao_fisica_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_delimitacao_fisica_l(nome,nomeabrev,geometriaaproximada,tipodelimfis,matconstr,eletrificada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipodelimfis,NEW.matconstr,NEW.eletrificada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_delimitacao_fisica_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_delimitacao_fisica_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_delimitacao_fisica_l
-    FOR EACH ROW EXECUTE PROCEDURE lim_delimitacao_fisica_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_hab_indigena_p_avoid_multi () RETURNS TRIGGER AS $loc_hab_indigena_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_hab_indigena_p(nome,nomeabrev,geometriaaproximada,coletiva,isolada,id_aldeia_indigena,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.coletiva,NEW.isolada,NEW.id_aldeia_indigena,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_hab_indigena_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_hab_indigena_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_hab_indigena_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_hab_indigena_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION pto_edif_constr_est_med_fen_a_avoid_multi () RETURNS TRIGGER AS $pto_edif_constr_est_med_fen_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.pto_edif_constr_est_med_fen_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$pto_edif_constr_est_med_fen_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER pto_edif_constr_est_med_fen_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.pto_edif_constr_est_med_fen_a
-    FOR EACH ROW EXECUTE PROCEDURE pto_edif_constr_est_med_fen_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_edif_comunic_p_avoid_multi () RETURNS TRIGGER AS $enc_edif_comunic_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_edif_comunic_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,modalidade,tipoedifcomunic,id_complexo_comunicacao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.modalidade,NEW.tipoedifcomunic,NEW.id_complexo_comunicacao ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_edif_comunic_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_edif_comunic_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_edif_comunic_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_edif_comunic_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_terra_indigena_p_avoid_multi () RETURNS TRIGGER AS $lim_terra_indigena_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_terra_indigena_p(nome,nomeabrev,nomeTi,situacaojuridica,datasituacaojuridica,grupoetnico,areaoficialha,perimetrooficial,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.nomeTi,NEW.situacaojuridica,NEW.datasituacaojuridica,NEW.grupoetnico,NEW.areaoficialha,NEW.perimetrooficial,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_terra_indigena_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_terra_indigena_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_terra_indigena_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_terra_indigena_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $edu_descontinuidade_geometrica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_descontinuidade_geometrica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_descontinuidade_geometrica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_hab_indigena_a_avoid_multi () RETURNS TRIGGER AS $loc_hab_indigena_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_hab_indigena_a(nome,nomeabrev,geometriaaproximada,coletiva,isolada,id_aldeia_indigena,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.coletiva,NEW.isolada,NEW.id_aldeia_indigena,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_hab_indigena_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_hab_indigena_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_hab_indigena_a
-    FOR EACH ROW EXECUTE PROCEDURE loc_hab_indigena_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_edif_comunic_a_avoid_multi () RETURNS TRIGGER AS $enc_edif_comunic_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_edif_comunic_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,modalidade,tipoedifcomunic,id_complexo_comunicacao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.modalidade,NEW.tipoedifcomunic,NEW.id_complexo_comunicacao ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_edif_comunic_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_edif_comunic_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_edif_comunic_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_edif_comunic_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_terra_indigena_a_avoid_multi () RETURNS TRIGGER AS $lim_terra_indigena_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_terra_indigena_a(nome,nomeabrev,nomeTi,situacaojuridica,datasituacaojuridica,grupoetnico,areaoficialha,perimetrooficial,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.nomeTi,NEW.situacaojuridica,NEW.datasituacaojuridica,NEW.grupoetnico,NEW.areaoficialha,NEW.perimetrooficial,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_terra_indigena_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_terra_indigena_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_terra_indigena_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_terra_indigena_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_limite_operacional_l_avoid_multi () RETURNS TRIGGER AS $lim_limite_operacional_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_limite_operacional_l(nome,nomeabrev,coincidecomdentrode,geometriaaproximada,extensao,geom,tipolimoper,obssituacao) SELECT NEW.nome,NEW.nomeabrev,NEW.coincidecomdentrode,NEW.geometriaaproximada,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipolimoper,NEW.obssituacao ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_limite_operacional_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_limite_operacional_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_limite_operacional_l
-    FOR EACH ROW EXECUTE PROCEDURE lim_limite_operacional_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_foz_maritima_p_avoid_multi () RETURNS TRIGGER AS $hid_foz_maritima_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_foz_maritima_p(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_foz_maritima_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_foz_maritima_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_foz_maritima_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_foz_maritima_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_foz_maritima_l_avoid_multi () RETURNS TRIGGER AS $hid_foz_maritima_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_foz_maritima_l(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_foz_maritima_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_foz_maritima_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_foz_maritima_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_foz_maritima_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_foz_maritima_a_avoid_multi () RETURNS TRIGGER AS $hid_foz_maritima_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_foz_maritima_a(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_foz_maritima_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_foz_maritima_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_foz_maritima_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_foz_maritima_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_ponte_p_avoid_multi () RETURNS TRIGGER AS $tra_ponte_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_ponte_p(nome,nomeabrev,geometriaaproximada,tipoponte,modaluso,matconstr,operacional,situacaofisica,vaolivrehoriz,vaolivrevertical,cargasuportmaxima,nrfaixas,nrpistas,posicaopista,largura,extensao,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoponte,NEW.modaluso,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.vaolivrehoriz,NEW.vaolivrevertical,NEW.cargasuportmaxima,NEW.nrfaixas,NEW.nrpistas,NEW.posicaopista,NEW.largura,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_ponte_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_ponte_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_ponte_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_ponte_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_ponte_l_avoid_multi () RETURNS TRIGGER AS $tra_ponte_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_ponte_l(nome,nomeabrev,geometriaaproximada,tipoponte,modaluso,matconstr,operacional,situacaofisica,vaolivrehoriz,vaolivrevertical,cargasuportmaxima,nrfaixas,nrpistas,posicaopista,largura,extensao,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoponte,NEW.modaluso,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.vaolivrehoriz,NEW.vaolivrevertical,NEW.cargasuportmaxima,NEW.nrfaixas,NEW.nrpistas,NEW.posicaopista,NEW.largura,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_ponte_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_ponte_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_ponte_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_ponte_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_sinalizacao_p_avoid_multi () RETURNS TRIGGER AS $tra_sinalizacao_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_sinalizacao_p(nome,nomeabrev,geometriaaproximada,tiposinal,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tiposinal,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_sinalizacao_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_sinalizacao_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_sinalizacao_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_sinalizacao_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION pto_pto_controle_p_avoid_multi () RETURNS TRIGGER AS $pto_pto_controle_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.pto_pto_controle_p(nomeabrev,geometriaaproximada,tiporef,latitude,longitude,altitudeortometrica,sistemageodesico,referencialaltim,outrarefalt,orgaoenteresp,codponto,obs,geom,tipoptocontrole,materializado,codprojeto) SELECT NEW.nomeabrev,NEW.geometriaaproximada,NEW.tiporef,NEW.latitude,NEW.longitude,NEW.altitudeortometrica,NEW.sistemageodesico,NEW.referencialaltim,NEW.outrarefalt,NEW.orgaoenteresp,NEW.codponto,NEW.obs,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoptocontrole,NEW.materializado,NEW.codprojeto ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$pto_pto_controle_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER pto_pto_controle_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.pto_pto_controle_p
-    FOR EACH ROW EXECUTE PROCEDURE pto_pto_controle_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_unidade_conserv_nao_snuc_a_avoid_multi () RETURNS TRIGGER AS $lim_unidade_conserv_nao_snuc_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_unidade_conserv_nao_snuc_a(nome,nomeabrev,geometriaaproximada,geom,atolegal,administracao,classificacao,anocriacao,sigla,areaoficial) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.atolegal,NEW.administracao,NEW.classificacao,NEW.anocriacao,NEW.sigla,NEW.areaoficial ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_unidade_conserv_nao_snuc_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_unidade_conserv_nao_snuc_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_unidade_conserv_nao_snuc_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_conserv_nao_snuc_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_aglomerado_rural_isolado_p_avoid_multi () RETURNS TRIGGER AS $loc_aglomerado_rural_isolado_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_aglomerado_rural_isolado_p(nome,nomeabrev,geometriaaproximada,geocodigo,identificador,latitude,latitude_gms,longitude,longitude_gms,geom,tipoaglomrurisol) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.geocodigo,NEW.identificador,NEW.latitude,NEW.latitude_gms,NEW.longitude,NEW.longitude_gms,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoaglomrurisol ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_aglomerado_rural_isolado_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_aglomerado_rural_isolado_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_aglomerado_rural_isolado_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_aglomerado_rural_isolado_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_massa_dagua_a_avoid_multi () RETURNS TRIGGER AS $hid_massa_dagua_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_massa_dagua_a(nome,nomeabrev,geometriaaproximada,tipomassadagua,regime,salinidade,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipomassadagua,NEW.regime,NEW.salinidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_massa_dagua_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_massa_dagua_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_massa_dagua_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_massa_dagua_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_unidade_conserv_nao_snuc_p_avoid_multi () RETURNS TRIGGER AS $lim_unidade_conserv_nao_snuc_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_unidade_conserv_nao_snuc_p(nome,nomeabrev,geometriaaproximada,geom,atolegal,administracao,classificacao,anocriacao,sigla,areaoficial) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.atolegal,NEW.administracao,NEW.classificacao,NEW.anocriacao,NEW.sigla,NEW.areaoficial ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_unidade_conserv_nao_snuc_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_unidade_conserv_nao_snuc_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_unidade_conserv_nao_snuc_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_conserv_nao_snuc_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_ext_mineral_a_avoid_multi () RETURNS TRIGGER AS $eco_ext_mineral_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_ext_mineral_a(nome,nomeabrev,tiposecaocnae,operacional,situacaofisica,tipoextmin,tipoprodutoresiduo,tipopocomina,procextracao,formaextracao,atividade,id_org_ext_mineral,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.tiposecaocnae,NEW.operacional,NEW.situacaofisica,NEW.tipoextmin,NEW.tipoprodutoresiduo,NEW.tipopocomina,NEW.procextracao,NEW.formaextracao,NEW.atividade,NEW.id_org_ext_mineral,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_ext_mineral_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_ext_mineral_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_ext_mineral_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_ext_mineral_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_ext_mineral_p_avoid_multi () RETURNS TRIGGER AS $eco_ext_mineral_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_ext_mineral_p(nome,nomeabrev,tiposecaocnae,operacional,situacaofisica,tipoextmin,tipoprodutoresiduo,tipopocomina,procextracao,formaextracao,atividade,id_org_ext_mineral,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.tiposecaocnae,NEW.operacional,NEW.situacaofisica,NEW.tipoextmin,NEW.tipoprodutoresiduo,NEW.tipopocomina,NEW.procextracao,NEW.formaextracao,NEW.atividade,NEW.id_org_ext_mineral,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_ext_mineral_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_ext_mineral_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_ext_mineral_p
-    FOR EACH ROW EXECUTE PROCEDURE eco_ext_mineral_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_area_comunicacao_a_avoid_multi () RETURNS TRIGGER AS $enc_area_comunicacao_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_area_comunicacao_a(geometriaaproximada,geom,id_complexo_comunicacao) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_complexo_comunicacao ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_area_comunicacao_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_area_comunicacao_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_area_comunicacao_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_area_comunicacao_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION veg_vegetacao_a_avoid_multi () RETURNS TRIGGER AS $veg_vegetacao_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.veg_vegetacao_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$veg_vegetacao_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER veg_vegetacao_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.veg_vegetacao_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_vegetacao_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_nome_local_p_avoid_multi () RETURNS TRIGGER AS $loc_nome_local_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_nome_local_p(nome,geometriaaproximada,geom) SELECT NEW.nome,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_nome_local_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_nome_local_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_nome_local_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_nome_local_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_aglomerado_rural_p_avoid_multi () RETURNS TRIGGER AS $loc_aglomerado_rural_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_aglomerado_rural_p(nome,nomeabrev,geometriaaproximada,geocodigo,identificador,latitude,latitude_gms,longitude,longitude_gms,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.geocodigo,NEW.identificador,NEW.latitude,NEW.latitude_gms,NEW.longitude,NEW.longitude_gms,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_aglomerado_rural_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_aglomerado_rural_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_aglomerado_rural_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_aglomerado_rural_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_ruina_a_avoid_multi () RETURNS TRIGGER AS $edu_ruina_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_ruina_a(nome,nomeabrev,geometriaaproximada,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_ruina_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_ruina_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_ruina_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_ruina_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_edif_industrial_a_avoid_multi () RETURNS TRIGGER AS $eco_edif_industrial_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_edif_industrial_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,chamine,tipodivisaocnae,id_org_industrial) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.chamine,NEW.tipodivisaocnae,NEW.id_org_industrial ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_edif_industrial_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_edif_industrial_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_edif_industrial_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_edif_industrial_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_ruina_p_avoid_multi () RETURNS TRIGGER AS $edu_ruina_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_ruina_p(nome,nomeabrev,geometriaaproximada,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_ruina_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_ruina_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_ruina_p
-    FOR EACH ROW EXECUTE PROCEDURE edu_ruina_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_edif_industrial_p_avoid_multi () RETURNS TRIGGER AS $eco_edif_industrial_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_edif_industrial_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,chamine,tipodivisaocnae,id_org_industrial) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.chamine,NEW.tipodivisaocnae,NEW.id_org_industrial ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_edif_industrial_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_edif_industrial_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_edif_industrial_p
-    FOR EACH ROW EXECUTE PROCEDURE eco_edif_industrial_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION pto_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $pto_descontinuidade_geometrica_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.pto_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$pto_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER pto_descontinuidade_geometrica_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.pto_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE pto_descontinuidade_geometrica_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_rocha_em_agua_a_avoid_multi () RETURNS TRIGGER AS $hid_rocha_em_agua_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_rocha_em_agua_a(nome,nomeabrev,situacaoemagua,alturalamina,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.situacaoemagua,NEW.alturalamina,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_rocha_em_agua_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_rocha_em_agua_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_rocha_em_agua_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_rocha_em_agua_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION pto_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $pto_descontinuidade_geometrica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.pto_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$pto_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER pto_descontinuidade_geometrica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.pto_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE pto_descontinuidade_geometrica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_rocha_em_agua_p_avoid_multi () RETURNS TRIGGER AS $hid_rocha_em_agua_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_rocha_em_agua_p(nome,nomeabrev,situacaoemagua,alturalamina,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.situacaoemagua,NEW.alturalamina,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_rocha_em_agua_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_rocha_em_agua_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_rocha_em_agua_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_rocha_em_agua_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION veg_estepe_a_avoid_multi () RETURNS TRIGGER AS $veg_estepe_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.veg_estepe_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom,alturamediaindividuos) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.alturamediaindividuos ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$veg_estepe_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER veg_estepe_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.veg_estepe_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_estepe_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_tunel_p_avoid_multi () RETURNS TRIGGER AS $tra_tunel_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_tunel_p(geometriaaproximada,nome,nomeabrev,tipotunel,modaluso,matconstr,operacional,situacaofisica,nrpistas,nrfaixas,posicaopista,altura,extensao,geom) SELECT NEW.geometriaaproximada,NEW.nome,NEW.nomeabrev,NEW.tipotunel,NEW.modaluso,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.nrpistas,NEW.nrfaixas,NEW.posicaopista,NEW.altura,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_tunel_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_tunel_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_tunel_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_tunel_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_obstaculo_navegacao_p_avoid_multi () RETURNS TRIGGER AS $tra_obstaculo_navegacao_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_obstaculo_navegacao_p(nome,nomeabrev,geometriaaproximada,tipoobst,situacaoemagua,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoobst,NEW.situacaoemagua,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_obstaculo_navegacao_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_obstaculo_navegacao_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_obstaculo_navegacao_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_obstaculo_navegacao_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_grupo_transformadores_p_avoid_multi () RETURNS TRIGGER AS $enc_grupo_transformadores_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_grupo_transformadores_p(nome,nomeabrev,geometriaaproximada,id_subestacao_ener_eletr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.id_subestacao_ener_eletr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_grupo_transformadores_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_grupo_transformadores_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_grupo_transformadores_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_grupo_transformadores_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION pto_pto_ref_geod_topo_p_avoid_multi () RETURNS TRIGGER AS $pto_pto_ref_geod_topo_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.pto_pto_ref_geod_topo_p(nomeabrev,geometriaaproximada,tiporef,latitude,longitude,altitudeortometrica,sistemageodesico,referencialaltim,outrarefalt,orgaoenteresp,codponto,obs,geom,nome,proximidade,tipoptorefgeodtopo,rede,referencialgrav,situacaomarco,datavisita) SELECT NEW.nomeabrev,NEW.geometriaaproximada,NEW.tiporef,NEW.latitude,NEW.longitude,NEW.altitudeortometrica,NEW.sistemageodesico,NEW.referencialaltim,NEW.outrarefalt,NEW.orgaoenteresp,NEW.codponto,NEW.obs,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.nome,NEW.proximidade,NEW.tipoptorefgeodtopo,NEW.rede,NEW.referencialgrav,NEW.situacaomarco,NEW.datavisita ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$pto_pto_ref_geod_topo_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER pto_pto_ref_geod_topo_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.pto_pto_ref_geod_topo_p
-    FOR EACH ROW EXECUTE PROCEDURE pto_pto_ref_geod_topo_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_obstaculo_navegacao_a_avoid_multi () RETURNS TRIGGER AS $tra_obstaculo_navegacao_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_obstaculo_navegacao_a(nome,nomeabrev,geometriaaproximada,tipoobst,situacaoemagua,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoobst,NEW.situacaoemagua,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_obstaculo_navegacao_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_obstaculo_navegacao_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_obstaculo_navegacao_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_obstaculo_navegacao_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_grupo_transformadores_a_avoid_multi () RETURNS TRIGGER AS $enc_grupo_transformadores_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_grupo_transformadores_a(nome,nomeabrev,geometriaaproximada,id_subestacao_ener_eletr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.id_subestacao_ener_eletr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_grupo_transformadores_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_grupo_transformadores_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_grupo_transformadores_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_grupo_transformadores_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_obstaculo_navegacao_l_avoid_multi () RETURNS TRIGGER AS $tra_obstaculo_navegacao_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_obstaculo_navegacao_l(nome,nomeabrev,geometriaaproximada,tipoobst,situacaoemagua,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoobst,NEW.situacaoemagua,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_obstaculo_navegacao_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_obstaculo_navegacao_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_obstaculo_navegacao_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_obstaculo_navegacao_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION asb_edif_saneamento_a_avoid_multi () RETURNS TRIGGER AS $asb_edif_saneamento_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.asb_edif_saneamento_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifsaneam,id_complexo_saneamento) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifsaneam,NEW.id_complexo_saneamento ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$asb_edif_saneamento_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER asb_edif_saneamento_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.asb_edif_saneamento_a
-    FOR EACH ROW EXECUTE PROCEDURE asb_edif_saneamento_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION sau_edif_saude_a_avoid_multi () RETURNS TRIGGER AS $sau_edif_saude_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.sau_edif_saude_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoclassecnae,nivelatencao,id_org_saude) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoclassecnae,NEW.nivelatencao,NEW.id_org_saude ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$sau_edif_saude_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER sau_edif_saude_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.sau_edif_saude_a
-    FOR EACH ROW EXECUTE PROCEDURE sau_edif_saude_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION asb_edif_saneamento_p_avoid_multi () RETURNS TRIGGER AS $asb_edif_saneamento_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.asb_edif_saneamento_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifsaneam,id_complexo_saneamento) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifsaneam,NEW.id_complexo_saneamento ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$asb_edif_saneamento_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER asb_edif_saneamento_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.asb_edif_saneamento_p
-    FOR EACH ROW EXECUTE PROCEDURE asb_edif_saneamento_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION sau_edif_saude_p_avoid_multi () RETURNS TRIGGER AS $sau_edif_saude_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.sau_edif_saude_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoclassecnae,nivelatencao,id_org_saude) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoclassecnae,NEW.nivelatencao,NEW.id_org_saude ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$sau_edif_saude_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER sau_edif_saude_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.sau_edif_saude_p
-    FOR EACH ROW EXECUTE PROCEDURE sau_edif_saude_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_area_energia_eletrica_a_avoid_multi () RETURNS TRIGGER AS $enc_area_energia_eletrica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_area_energia_eletrica_a(geometriaaproximada,geom,id_subestacao_ener_eletr,id_complexo_gerad_energ_eletr) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_subestacao_ener_eletr,NEW.id_complexo_gerad_energ_eletr ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_area_energia_eletrica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_area_energia_eletrica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_area_energia_eletrica_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_area_energia_eletrica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_area_lazer_a_avoid_multi () RETURNS TRIGGER AS $edu_area_lazer_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_area_lazer_a(geometriaaproximada,geom,id_complexo_lazer) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_complexo_lazer ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_area_lazer_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_area_lazer_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_area_lazer_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_area_lazer_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION veg_campinarana_a_avoid_multi () RETURNS TRIGGER AS $veg_campinarana_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.veg_campinarana_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom,alturamediaindividuos,classificacaoporte) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.alturamediaindividuos,NEW.classificacaoporte ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$veg_campinarana_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER veg_campinarana_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.veg_campinarana_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_campinarana_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION veg_brejo_pantano_a_avoid_multi () RETURNS TRIGGER AS $veg_brejo_pantano_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.veg_brejo_pantano_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom,tipobrejopantano,alturamediaindividuos,classificacaoporte) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipobrejopantano,NEW.alturamediaindividuos,NEW.classificacaoporte ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$veg_brejo_pantano_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER veg_brejo_pantano_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.veg_brejo_pantano_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_brejo_pantano_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_ponto_drenagem_p_avoid_multi () RETURNS TRIGGER AS $hid_ponto_drenagem_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_ponto_drenagem_p(nome,nomeabrev,geometriaaproximada,relacionado,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.relacionado,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_ponto_drenagem_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_ponto_drenagem_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_ponto_drenagem_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_ponto_drenagem_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_limite_massa_dagua_l_avoid_multi () RETURNS TRIGGER AS $hid_limite_massa_dagua_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_limite_massa_dagua_l(geometriaaproximada,tipolimmassa,materialpredominante,alturamediamargem,nomeabrev,geom) SELECT NEW.geometriaaproximada,NEW.tipolimmassa,NEW.materialpredominante,NEW.alturamediamargem,NEW.nomeabrev,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_limite_massa_dagua_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_limite_massa_dagua_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_limite_massa_dagua_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_limite_massa_dagua_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_coreto_tribuna_a_avoid_multi () RETURNS TRIGGER AS $edu_coreto_tribuna_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_coreto_tribuna_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_coreto_tribuna_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_coreto_tribuna_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_coreto_tribuna_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_coreto_tribuna_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_alter_fisiog_antropica_a_avoid_multi () RETURNS TRIGGER AS $rel_alter_fisiog_antropica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_alter_fisiog_antropica_a(nome,nomeabrev,geometriaaproximada,tipoalterantrop,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoalterantrop,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_alter_fisiog_antropica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_alter_fisiog_antropica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_alter_fisiog_antropica_a
-    FOR EACH ROW EXECUTE PROCEDURE rel_alter_fisiog_antropica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_alter_fisiog_antropica_l_avoid_multi () RETURNS TRIGGER AS $rel_alter_fisiog_antropica_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_alter_fisiog_antropica_l(nome,nomeabrev,geometriaaproximada,tipoalterantrop,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoalterantrop,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_alter_fisiog_antropica_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_alter_fisiog_antropica_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_alter_fisiog_antropica_l
-    FOR EACH ROW EXECUTE PROCEDURE rel_alter_fisiog_antropica_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_coreto_tribuna_p_avoid_multi () RETURNS TRIGGER AS $edu_coreto_tribuna_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_coreto_tribuna_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_coreto_tribuna_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_coreto_tribuna_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_coreto_tribuna_p
-    FOR EACH ROW EXECUTE PROCEDURE edu_coreto_tribuna_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_piscina_a_avoid_multi () RETURNS TRIGGER AS $edu_piscina_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_piscina_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_piscina_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_piscina_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_piscina_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_piscina_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_edificacao_a_avoid_multi () RETURNS TRIGGER AS $loc_edificacao_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_edificacao_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_edificacao_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_edificacao_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_edificacao_a
-    FOR EACH ROW EXECUTE PROCEDURE loc_edificacao_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION pto_pto_geod_topo_controle_p_avoid_multi () RETURNS TRIGGER AS $pto_pto_geod_topo_controle_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.pto_pto_geod_topo_controle_p(nomeabrev,geometriaaproximada,tiporef,latitude,longitude,altitudeortometrica,sistemageodesico,referencialaltim,outrarefalt,orgaoenteresp,codponto,obs,geom) SELECT NEW.nomeabrev,NEW.geometriaaproximada,NEW.tiporef,NEW.latitude,NEW.longitude,NEW.altitudeortometrica,NEW.sistemageodesico,NEW.referencialaltim,NEW.outrarefalt,NEW.orgaoenteresp,NEW.codponto,NEW.obs,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$pto_pto_geod_topo_controle_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER pto_pto_geod_topo_controle_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.pto_pto_geod_topo_controle_p
-    FOR EACH ROW EXECUTE PROCEDURE pto_pto_geod_topo_controle_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_edificacao_p_avoid_multi () RETURNS TRIGGER AS $loc_edificacao_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_edificacao_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_edificacao_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_edificacao_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_edificacao_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_edificacao_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_bairro_a_avoid_multi () RETURNS TRIGGER AS $lim_bairro_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_bairro_a(nome,nomeabrev,geometriaaproximada,geom,anodereferencia) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.anodereferencia ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_bairro_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_bairro_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_bairro_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_bairro_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_terra_publica_a_avoid_multi () RETURNS TRIGGER AS $lim_terra_publica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_terra_publica_a(nome,nomeabrev,geometriaaproximada,geom,classificacao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.classificacao ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_terra_publica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_terra_publica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_terra_publica_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_terra_publica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_limite_intra_munic_adm_l_avoid_multi () RETURNS TRIGGER AS $lim_limite_intra_munic_adm_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_limite_intra_munic_adm_l(nome,nomeabrev,coincidecomdentrode,geometriaaproximada,extensao,geom,tipolimintramun,obssituacao) SELECT NEW.nome,NEW.nomeabrev,NEW.coincidecomdentrode,NEW.geometriaaproximada,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipolimintramun,NEW.obssituacao ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_limite_intra_munic_adm_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_limite_intra_munic_adm_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_limite_intra_munic_adm_l
-    FOR EACH ROW EXECUTE PROCEDURE lim_limite_intra_munic_adm_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_eclusa_l_avoid_multi () RETURNS TRIGGER AS $tra_eclusa_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_eclusa_l(nome,nomeabrev,geometriaaproximada,desnivel,largura,extensao,calado,matconstr,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.desnivel,NEW.largura,NEW.extensao,NEW.calado,NEW.matconstr,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_eclusa_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_eclusa_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_eclusa_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_eclusa_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_atracadouro_l_avoid_multi () RETURNS TRIGGER AS $tra_atracadouro_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_atracadouro_l(nome,nomeabrev,geometriaaproximada,tipoatracad,administracao,matconstr,operacional,situacaofisica,id_complexo_portuario,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoatracad,NEW.administracao,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_portuario,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_atracadouro_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_atracadouro_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_atracadouro_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_atracadouro_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_barragem_p_avoid_multi () RETURNS TRIGGER AS $hid_barragem_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_barragem_p(nome,nomeabrev,geometriaaproximada,matconstr,usoprincipal,operacional,situacaofisica,id_complexo_gerad_energ_eletr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.matconstr,NEW.usoprincipal,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_barragem_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_barragem_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_barragem_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_barragem_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $eco_descontinuidade_geometrica_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_descontinuidade_geometrica_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE eco_descontinuidade_geometrica_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_atracadouro_a_avoid_multi () RETURNS TRIGGER AS $tra_atracadouro_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_atracadouro_a(nome,nomeabrev,geometriaaproximada,tipoatracad,administracao,matconstr,operacional,situacaofisica,id_complexo_portuario,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoatracad,NEW.administracao,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_portuario,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_atracadouro_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_atracadouro_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_atracadouro_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_atracadouro_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_eclusa_a_avoid_multi () RETURNS TRIGGER AS $tra_eclusa_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_eclusa_a(nome,nomeabrev,geometriaaproximada,desnivel,largura,extensao,calado,matconstr,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.desnivel,NEW.largura,NEW.extensao,NEW.calado,NEW.matconstr,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_eclusa_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_eclusa_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_eclusa_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_eclusa_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_ponto_inicio_drenagem_p_avoid_multi () RETURNS TRIGGER AS $hid_ponto_inicio_drenagem_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_ponto_inicio_drenagem_p(nome,nomeabrev,geometriaaproximada,relacionado,geom,nascente) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.relacionado,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.nascente ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_ponto_inicio_drenagem_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_ponto_inicio_drenagem_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_ponto_inicio_drenagem_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_ponto_inicio_drenagem_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $eco_descontinuidade_geometrica_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_descontinuidade_geometrica_l(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_descontinuidade_geometrica_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_descontinuidade_geometrica_l
-    FOR EACH ROW EXECUTE PROCEDURE eco_descontinuidade_geometrica_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $eco_descontinuidade_geometrica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_descontinuidade_geometrica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_descontinuidade_geometrica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_linha_de_limite_l_avoid_multi () RETURNS TRIGGER AS $lim_linha_de_limite_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_linha_de_limite_l(nome,nomeabrev,coincidecomdentrode,geometriaaproximada,extensao,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.coincidecomdentrode,NEW.geometriaaproximada,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_linha_de_limite_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_linha_de_limite_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_linha_de_limite_l
-    FOR EACH ROW EXECUTE PROCEDURE lim_linha_de_limite_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $lim_descontinuidade_geometrica_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_descontinuidade_geometrica_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_descontinuidade_geometrica_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_atracadouro_p_avoid_multi () RETURNS TRIGGER AS $tra_atracadouro_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_atracadouro_p(nome,nomeabrev,geometriaaproximada,tipoatracad,administracao,matconstr,operacional,situacaofisica,id_complexo_portuario,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoatracad,NEW.administracao,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_portuario,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_atracadouro_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_atracadouro_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_atracadouro_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_atracadouro_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_sumidouro_vertedouro_p_avoid_multi () RETURNS TRIGGER AS $hid_sumidouro_vertedouro_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_sumidouro_vertedouro_p(nome,nomeabrev,geometriaaproximada,tiposumvert,causa,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tiposumvert,NEW.causa,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_sumidouro_vertedouro_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_sumidouro_vertedouro_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_sumidouro_vertedouro_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_sumidouro_vertedouro_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $tra_descontinuidade_geometrica_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_descontinuidade_geometrica_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_descontinuidade_geometrica_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_limite_politico_adm_l_avoid_multi () RETURNS TRIGGER AS $lim_limite_politico_adm_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_limite_politico_adm_l(nome,nomeabrev,coincidecomdentrode,geometriaaproximada,extensao,geom,tipolimpol,obssituacao) SELECT NEW.nome,NEW.nomeabrev,NEW.coincidecomdentrode,NEW.geometriaaproximada,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipolimpol,NEW.obssituacao ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_limite_politico_adm_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_limite_politico_adm_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_limite_politico_adm_l
-    FOR EACH ROW EXECUTE PROCEDURE lim_limite_politico_adm_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_confluencia_p_avoid_multi () RETURNS TRIGGER AS $hid_confluencia_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_confluencia_p(nome,nomeabrev,geometriaaproximada,relacionado,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.relacionado,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_confluencia_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_confluencia_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_confluencia_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_confluencia_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $tra_descontinuidade_geometrica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_descontinuidade_geometrica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_descontinuidade_geometrica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_edif_rodoviaria_p_avoid_multi () RETURNS TRIGGER AS $tra_edif_rodoviaria_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_edif_rodoviaria_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifrod,administracao,id_estrut_apoio) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifrod,NEW.administracao,NEW.id_estrut_apoio ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_edif_rodoviaria_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_edif_rodoviaria_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_edif_rodoviaria_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_edif_rodoviaria_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION asb_area_abast_agua_a_avoid_multi () RETURNS TRIGGER AS $asb_area_abast_agua_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.asb_area_abast_agua_a(geometriaaproximada,geom,id_complexo_abast_agua) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_complexo_abast_agua ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$asb_area_abast_agua_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER asb_area_abast_agua_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.asb_area_abast_agua_a
-    FOR EACH ROW EXECUTE PROCEDURE asb_area_abast_agua_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_condutor_hidrico_l_avoid_multi () RETURNS TRIGGER AS $tra_condutor_hidrico_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_condutor_hidrico_l(nome,nomeabrev,geometriaaproximada,tipotrechoduto,mattransp,setor,posicaorelativa,matconstr,ndutos,situacaoespacial,operacional,situacaofisica,id_duto,geom,tipocondutor,id_complexo_gerad_energ_eletr) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipotrechoduto,NEW.mattransp,NEW.setor,NEW.posicaorelativa,NEW.matconstr,NEW.ndutos,NEW.situacaoespacial,NEW.operacional,NEW.situacaofisica,NEW.id_duto,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipocondutor,NEW.id_complexo_gerad_energ_eletr ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_condutor_hidrico_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_condutor_hidrico_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_condutor_hidrico_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_condutor_hidrico_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION asb_cemiterio_p_avoid_multi () RETURNS TRIGGER AS $asb_cemiterio_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.asb_cemiterio_p(nome,nomeabrev,geometriaaproximada,tipocemiterio,denominacaoassociada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipocemiterio,NEW.denominacaoassociada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$asb_cemiterio_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER asb_cemiterio_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.asb_cemiterio_p
-    FOR EACH ROW EXECUTE PROCEDURE asb_cemiterio_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_outras_unid_protegidas_a_avoid_multi () RETURNS TRIGGER AS $lim_outras_unid_protegidas_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_outras_unid_protegidas_a(nome,nomeabrev,geometriaaproximada,geom,tipooutunidprot,anocriacao,historicomodificacao,sigla,areaoficial,administracao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipooutunidprot,NEW.anocriacao,NEW.historicomodificacao,NEW.sigla,NEW.areaoficial,NEW.administracao ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_outras_unid_protegidas_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_outras_unid_protegidas_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_outras_unid_protegidas_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_outras_unid_protegidas_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_ponto_hidroviario_p_avoid_multi () RETURNS TRIGGER AS $tra_ponto_hidroviario_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_ponto_hidroviario_p(geometriaaproximada,relacionado,geom) SELECT NEW.geometriaaproximada,NEW.relacionado,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_ponto_hidroviario_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_ponto_hidroviario_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_ponto_hidroviario_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_ponto_hidroviario_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_edif_rodoviaria_a_avoid_multi () RETURNS TRIGGER AS $tra_edif_rodoviaria_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_edif_rodoviaria_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifrod,administracao,id_estrut_apoio) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifrod,NEW.administracao,NEW.id_estrut_apoio ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_edif_rodoviaria_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_edif_rodoviaria_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_edif_rodoviaria_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_edif_rodoviaria_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_outras_unid_protegidas_p_avoid_multi () RETURNS TRIGGER AS $lim_outras_unid_protegidas_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_outras_unid_protegidas_p(nome,nomeabrev,geometriaaproximada,geom,tipooutunidprot,anocriacao,historicomodificacao,sigla,areaoficial,administracao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipooutunidprot,NEW.anocriacao,NEW.historicomodificacao,NEW.sigla,NEW.areaoficial,NEW.administracao ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_outras_unid_protegidas_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_outras_unid_protegidas_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_outras_unid_protegidas_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_outras_unid_protegidas_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION asb_cemiterio_a_avoid_multi () RETURNS TRIGGER AS $asb_cemiterio_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.asb_cemiterio_a(nome,nomeabrev,geometriaaproximada,tipocemiterio,denominacaoassociada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipocemiterio,NEW.denominacaoassociada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$asb_cemiterio_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER asb_cemiterio_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.asb_cemiterio_a
-    FOR EACH ROW EXECUTE PROCEDURE asb_cemiterio_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_comporta_p_avoid_multi () RETURNS TRIGGER AS $hid_comporta_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_comporta_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_comporta_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_comporta_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_comporta_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_comporta_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_trecho_ferroviario_l_avoid_multi () RETURNS TRIGGER AS $tra_trecho_ferroviario_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_trecho_ferroviario_l(nome,nomeabrev,geometriaaproximada,codtrechoferrov,posicaorelativa,tipotrechoferrov,bitola,eletrificada,nrlinhas,emarruamento,jurisdicao,administracao,concessionaria,operacional,situacaofisica,cargasuportmaxima,id_via_ferrea,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.codtrechoferrov,NEW.posicaorelativa,NEW.tipotrechoferrov,NEW.bitola,NEW.eletrificada,NEW.nrlinhas,NEW.emarruamento,NEW.jurisdicao,NEW.administracao,NEW.concessionaria,NEW.operacional,NEW.situacaofisica,NEW.cargasuportmaxima,NEW.id_via_ferrea,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_trecho_ferroviario_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_trecho_ferroviario_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_trecho_ferroviario_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_trecho_ferroviario_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_vila_p_avoid_multi () RETURNS TRIGGER AS $loc_vila_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_vila_p(nome,nomeabrev,geometriaaproximada,geocodigo,identificador,latitude,latitude_gms,longitude,longitude_gms,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.geocodigo,NEW.identificador,NEW.latitude,NEW.latitude_gms,NEW.longitude,NEW.longitude_gms,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_vila_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_vila_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_vila_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_vila_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_comporta_l_avoid_multi () RETURNS TRIGGER AS $hid_comporta_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_comporta_l(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_comporta_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_comporta_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_comporta_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_comporta_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_edif_constr_portuaria_a_avoid_multi () RETURNS TRIGGER AS $tra_edif_constr_portuaria_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_edif_constr_portuaria_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifport,administracao,id_complexo_portuario) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifport,NEW.administracao,NEW.id_complexo_portuario ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_edif_constr_portuaria_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_edif_constr_portuaria_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_edif_constr_portuaria_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_edif_constr_portuaria_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_trecho_drenagem_l_avoid_multi () RETURNS TRIGGER AS $hid_trecho_drenagem_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_trecho_drenagem_l(nome,nomeabrev,geometriaaproximada,coincidecomdentrode,dentrodepoligono,compartilhado,eixoprincipal,navegabilidade,caladomax,regime,larguramedia,velocidademedcorrente,profundidademedia,id_trecho_curso_dagua,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.coincidecomdentrode,NEW.dentrodepoligono,NEW.compartilhado,NEW.eixoprincipal,NEW.navegabilidade,NEW.caladomax,NEW.regime,NEW.larguramedia,NEW.velocidademedcorrente,NEW.profundidademedia,NEW.id_trecho_curso_dagua,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_trecho_drenagem_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_trecho_drenagem_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_trecho_drenagem_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_trecho_drenagem_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_edif_constr_portuaria_p_avoid_multi () RETURNS TRIGGER AS $tra_edif_constr_portuaria_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_edif_constr_portuaria_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifport,administracao,id_complexo_portuario) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifport,NEW.administracao,NEW.id_complexo_portuario ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_edif_constr_portuaria_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_edif_constr_portuaria_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_edif_constr_portuaria_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_edif_constr_portuaria_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_travessia_l_avoid_multi () RETURNS TRIGGER AS $tra_travessia_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_travessia_l(nome,nomeabrev,geometriaaproximada,tipotravessia,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipotravessia,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_travessia_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_travessia_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_travessia_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_travessia_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_travessia_p_avoid_multi () RETURNS TRIGGER AS $tra_travessia_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_travessia_p(nome,nomeabrev,geometriaaproximada,tipotravessia,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipotravessia,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_travessia_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_travessia_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_travessia_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_travessia_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_area_duto_a_avoid_multi () RETURNS TRIGGER AS $tra_area_duto_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_area_duto_a(geometriaaproximada,geom) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_area_duto_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_area_duto_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_area_duto_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_area_duto_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_plataforma_a_avoid_multi () RETURNS TRIGGER AS $eco_plataforma_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_plataforma_a(nome,nomeabrev,geometriaaproximada,tipoplataforma,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoplataforma,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_plataforma_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_plataforma_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_plataforma_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_plataforma_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_plataforma_p_avoid_multi () RETURNS TRIGGER AS $eco_plataforma_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_plataforma_p(nome,nomeabrev,geometriaaproximada,tipoplataforma,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoplataforma,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_plataforma_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_plataforma_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_plataforma_p
-    FOR EACH ROW EXECUTE PROCEDURE eco_plataforma_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_torre_energia_p_avoid_multi () RETURNS TRIGGER AS $enc_torre_energia_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_torre_energia_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,ovgd,alturaestimada,tipotorre,arranjofases,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.ovgd,NEW.alturaestimada,NEW.tipotorre,NEW.arranjofases,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_torre_energia_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_torre_energia_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_torre_energia_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_torre_energia_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION pto_pto_est_med_fenomenos_p_avoid_multi () RETURNS TRIGGER AS $pto_pto_est_med_fenomenos_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.pto_pto_est_med_fenomenos_p(nome,geometriaaproximada,tipoptoestmed,codestacao,orgaoenteresp,id_est_med_fenomenos,geom) SELECT NEW.nome,NEW.geometriaaproximada,NEW.tipoptoestmed,NEW.codestacao,NEW.orgaoenteresp,NEW.id_est_med_fenomenos,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$pto_pto_est_med_fenomenos_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER pto_pto_est_med_fenomenos_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.pto_pto_est_med_fenomenos_p
-    FOR EACH ROW EXECUTE PROCEDURE pto_pto_est_med_fenomenos_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_edif_const_lazer_a_avoid_multi () RETURNS TRIGGER AS $edu_edif_const_lazer_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_edif_const_lazer_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoediflazer,id_complexo_lazer) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoediflazer,NEW.id_complexo_lazer ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_edif_const_lazer_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_edif_const_lazer_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_edif_const_lazer_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_edif_const_lazer_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_deposito_geral_a_avoid_multi () RETURNS TRIGGER AS $eco_deposito_geral_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_deposito_geral_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipodepgeral,matconstr,tipoexposicao,tipoprodutoresiduo,tipoconteudo,unidadevolume,valorvolume,tratamento,id_org_comerc_serv,id_org_ext_mineral,id_org_agrop_ext_veg_pesca,id_complexo_gerad_energ_eletr,id_estrut_transporte,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipodepgeral,NEW.matconstr,NEW.tipoexposicao,NEW.tipoprodutoresiduo,NEW.tipoconteudo,NEW.unidadevolume,NEW.valorvolume,NEW.tratamento,NEW.id_org_comerc_serv,NEW.id_org_ext_mineral,NEW.id_org_agrop_ext_veg_pesca,NEW.id_complexo_gerad_energ_eletr,NEW.id_estrut_transporte,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_deposito_geral_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_deposito_geral_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_deposito_geral_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_deposito_geral_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_ponto_ferroviario_p_avoid_multi () RETURNS TRIGGER AS $tra_ponto_ferroviario_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_ponto_ferroviario_p(geometriaaproximada,relacionado,geom) SELECT NEW.geometriaaproximada,NEW.relacionado,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_ponto_ferroviario_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_ponto_ferroviario_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_ponto_ferroviario_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_ponto_ferroviario_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_edif_const_lazer_p_avoid_multi () RETURNS TRIGGER AS $edu_edif_const_lazer_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_edif_const_lazer_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoediflazer,id_complexo_lazer) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoediflazer,NEW.id_complexo_lazer ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_edif_const_lazer_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_edif_const_lazer_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_edif_const_lazer_p
-    FOR EACH ROW EXECUTE PROCEDURE edu_edif_const_lazer_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_deposito_geral_p_avoid_multi () RETURNS TRIGGER AS $eco_deposito_geral_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_deposito_geral_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipodepgeral,matconstr,tipoexposicao,tipoprodutoresiduo,tipoconteudo,unidadevolume,valorvolume,tratamento,id_org_comerc_serv,id_org_ext_mineral,id_org_agrop_ext_veg_pesca,id_complexo_gerad_energ_eletr,id_estrut_transporte,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipodepgeral,NEW.matconstr,NEW.tipoexposicao,NEW.tipoprodutoresiduo,NEW.tipoconteudo,NEW.unidadevolume,NEW.valorvolume,NEW.tratamento,NEW.id_org_comerc_serv,NEW.id_org_ext_mineral,NEW.id_org_agrop_ext_veg_pesca,NEW.id_complexo_gerad_energ_eletr,NEW.id_estrut_transporte,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_deposito_geral_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_deposito_geral_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_deposito_geral_p
-    FOR EACH ROW EXECUTE PROCEDURE eco_deposito_geral_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION sau_area_servico_social_a_avoid_multi () RETURNS TRIGGER AS $sau_area_servico_social_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.sau_area_servico_social_a(geometriaaproximada,id_org_servico_social,geom) SELECT NEW.geometriaaproximada,NEW.id_org_servico_social,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$sau_area_servico_social_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER sau_area_servico_social_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.sau_area_servico_social_a
-    FOR EACH ROW EXECUTE PROCEDURE sau_area_servico_social_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION adm_posto_fiscal_a_avoid_multi () RETURNS TRIGGER AS $adm_posto_fiscal_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.adm_posto_fiscal_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipopostofisc,id_org_pub_civil,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipopostofisc,NEW.id_org_pub_civil,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$adm_posto_fiscal_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER adm_posto_fiscal_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.adm_posto_fiscal_a
-    FOR EACH ROW EXECUTE PROCEDURE adm_posto_fiscal_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_duna_p_avoid_multi () RETURNS TRIGGER AS $rel_duna_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_duna_p(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom,fixa) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.fixa ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_duna_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_duna_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_duna_p
-    FOR EACH ROW EXECUTE PROCEDURE rel_duna_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_marco_de_limite_p_avoid_multi () RETURNS TRIGGER AS $lim_marco_de_limite_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_marco_de_limite_p(nome,nomeabrev,geometriaaproximada,tipomarcolim,latitude_gms,latitude,longitude_gms,longitude,altitudeortometrica,sistemageodesico,outrarefplan,referencialaltim,outrarefalt,orgresp,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipomarcolim,NEW.latitude_gms,NEW.latitude,NEW.longitude_gms,NEW.longitude,NEW.altitudeortometrica,NEW.sistemageodesico,NEW.outrarefplan,NEW.referencialaltim,NEW.outrarefalt,NEW.orgresp,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_marco_de_limite_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_marco_de_limite_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_marco_de_limite_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_marco_de_limite_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_duna_a_avoid_multi () RETURNS TRIGGER AS $rel_duna_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_duna_a(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom,fixa) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.fixa ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_duna_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_duna_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_duna_a
-    FOR EACH ROW EXECUTE PROCEDURE rel_duna_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_arruamento_l_avoid_multi () RETURNS TRIGGER AS $tra_arruamento_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_arruamento_l(nome,nomeabrev,geometriaaproximada,revestimento,operacional,situacaofisica,nrfaixas,trafego,canteirodivisorio,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.revestimento,NEW.operacional,NEW.situacaofisica,NEW.nrfaixas,NEW.trafego,NEW.canteirodivisorio,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_arruamento_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_arruamento_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_arruamento_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_arruamento_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_recife_a_avoid_multi () RETURNS TRIGGER AS $hid_recife_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_recife_a(nome,nomeabrev,geometriaaproximada,tiporecife,situamare,situacaocosta,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tiporecife,NEW.situamare,NEW.situacaocosta,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_recife_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_recife_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_recife_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_recife_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_recife_l_avoid_multi () RETURNS TRIGGER AS $hid_recife_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_recife_l(nome,nomeabrev,geometriaaproximada,tiporecife,situamare,situacaocosta,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tiporecife,NEW.situamare,NEW.situacaocosta,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_recife_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_recife_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_recife_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_recife_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_recife_p_avoid_multi () RETURNS TRIGGER AS $hid_recife_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_recife_p(nome,nomeabrev,geometriaaproximada,tiporecife,situamare,situacaocosta,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tiporecife,NEW.situamare,NEW.situacaocosta,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_recife_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_recife_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_recife_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_recife_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_pais_a_avoid_multi () RETURNS TRIGGER AS $lim_pais_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_pais_a(nome,nomeabrev,geometriaaproximada,geom,sigla,codiso3166) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.sigla,NEW.codiso3166 ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_pais_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_pais_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_pais_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_pais_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_curva_batimetrica_l_avoid_multi () RETURNS TRIGGER AS $rel_curva_batimetrica_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_curva_batimetrica_l(profundidade,geom) SELECT NEW.profundidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_curva_batimetrica_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_curva_batimetrica_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_curva_batimetrica_l
-    FOR EACH ROW EXECUTE PROCEDURE rel_curva_batimetrica_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_ponto_cotado_batimetrico_p_avoid_multi () RETURNS TRIGGER AS $rel_ponto_cotado_batimetrico_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_ponto_cotado_batimetrico_p(profundidade,geom) SELECT NEW.profundidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_ponto_cotado_batimetrico_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_ponto_cotado_batimetrico_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_ponto_cotado_batimetrico_p
-    FOR EACH ROW EXECUTE PROCEDURE rel_ponto_cotado_batimetrico_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION asb_dep_abast_agua_p_avoid_multi () RETURNS TRIGGER AS $asb_dep_abast_agua_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.asb_dep_abast_agua_p(nome,nomeabrev,geometriaaproximada,tipodepabast,situacaoagua,construcao,matconstr,finalidade,situacaofisica,operacional,id_complexo_abast_agua,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipodepabast,NEW.situacaoagua,NEW.construcao,NEW.matconstr,NEW.finalidade,NEW.situacaofisica,NEW.operacional,NEW.id_complexo_abast_agua,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$asb_dep_abast_agua_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER asb_dep_abast_agua_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.asb_dep_abast_agua_p
-    FOR EACH ROW EXECUTE PROCEDURE asb_dep_abast_agua_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_gruta_caverna_p_avoid_multi () RETURNS TRIGGER AS $rel_gruta_caverna_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_gruta_caverna_p(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom,tipogrutacaverna) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipogrutacaverna ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_gruta_caverna_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_gruta_caverna_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_gruta_caverna_p
-    FOR EACH ROW EXECUTE PROCEDURE rel_gruta_caverna_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION asb_dep_abast_agua_a_avoid_multi () RETURNS TRIGGER AS $asb_dep_abast_agua_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.asb_dep_abast_agua_a(nome,nomeabrev,geometriaaproximada,tipodepabast,situacaoagua,construcao,matconstr,finalidade,situacaofisica,operacional,id_complexo_abast_agua,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipodepabast,NEW.situacaoagua,NEW.construcao,NEW.matconstr,NEW.finalidade,NEW.situacaofisica,NEW.operacional,NEW.id_complexo_abast_agua,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$asb_dep_abast_agua_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER asb_dep_abast_agua_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.asb_dep_abast_agua_a
-    FOR EACH ROW EXECUTE PROCEDURE asb_dep_abast_agua_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $rel_descontinuidade_geometrica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_descontinuidade_geometrica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE rel_descontinuidade_geometrica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $rel_descontinuidade_geometrica_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_descontinuidade_geometrica_l(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_descontinuidade_geometrica_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_descontinuidade_geometrica_l
-    FOR EACH ROW EXECUTE PROCEDURE rel_descontinuidade_geometrica_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION veg_caatinga_a_avoid_multi () RETURNS TRIGGER AS $veg_caatinga_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.veg_caatinga_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom,alturamediaindividuos,classificacaoporte) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.alturamediaindividuos,NEW.classificacaoporte ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$veg_caatinga_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER veg_caatinga_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.veg_caatinga_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_caatinga_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $rel_descontinuidade_geometrica_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_descontinuidade_geometrica_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE rel_descontinuidade_geometrica_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION asb_dep_saneamento_a_avoid_multi () RETURNS TRIGGER AS $asb_dep_saneamento_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.asb_dep_saneamento_a(nome,nomeabrev,geometriaaproximada,tipodepsaneam,construcao,matconstr,finalidade,operacional,situacaofisica,residuo,tiporesiduo,id_complexo_saneamento,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipodepsaneam,NEW.construcao,NEW.matconstr,NEW.finalidade,NEW.operacional,NEW.situacaofisica,NEW.residuo,NEW.tiporesiduo,NEW.id_complexo_saneamento,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$asb_dep_saneamento_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER asb_dep_saneamento_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.asb_dep_saneamento_a
-    FOR EACH ROW EXECUTE PROCEDURE asb_dep_saneamento_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION sau_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $sau_descontinuidade_geometrica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.sau_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$sau_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER sau_descontinuidade_geometrica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.sau_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE sau_descontinuidade_geometrica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_edif_habitacional_p_avoid_multi () RETURNS TRIGGER AS $loc_edif_habitacional_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_edif_habitacional_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,id_complexo_habitacional) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_complexo_habitacional ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_edif_habitacional_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_edif_habitacional_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_edif_habitacional_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_edif_habitacional_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_galeria_bueiro_p_avoid_multi () RETURNS TRIGGER AS $tra_galeria_bueiro_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_galeria_bueiro_p(nome,nomeabrev,matconstr,pesosuportmaximo,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.matconstr,NEW.pesosuportmaximo,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_galeria_bueiro_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_galeria_bueiro_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_galeria_bueiro_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_galeria_bueiro_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_area_politico_adm_a_avoid_multi () RETURNS TRIGGER AS $lim_area_politico_adm_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_area_politico_adm_a(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_area_politico_adm_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_area_politico_adm_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_area_politico_adm_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_area_politico_adm_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_edif_habitacional_a_avoid_multi () RETURNS TRIGGER AS $loc_edif_habitacional_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_edif_habitacional_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,id_complexo_habitacional) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_complexo_habitacional ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_edif_habitacional_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_edif_habitacional_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_edif_habitacional_a
-    FOR EACH ROW EXECUTE PROCEDURE loc_edif_habitacional_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION sau_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $sau_descontinuidade_geometrica_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.sau_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$sau_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER sau_descontinuidade_geometrica_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.sau_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE sau_descontinuidade_geometrica_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_area_ensino_a_avoid_multi () RETURNS TRIGGER AS $edu_area_ensino_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_area_ensino_a(geometriaaproximada,geom,id_org_ensino) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_org_ensino ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_area_ensino_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_area_ensino_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_area_ensino_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_area_ensino_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_fundeadouro_p_avoid_multi () RETURNS TRIGGER AS $tra_fundeadouro_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_fundeadouro_p(nome,nomeabrev,geometriaaproximada,destinacaofundeadouro,administracao,id_complexo_portuario,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.destinacaofundeadouro,NEW.administracao,NEW.id_complexo_portuario,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_fundeadouro_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_fundeadouro_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_fundeadouro_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_fundeadouro_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_edif_agrop_ext_veg_pesca_p_avoid_multi () RETURNS TRIGGER AS $eco_edif_agrop_ext_veg_pesca_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_edif_agrop_ext_veg_pesca_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifagropec,id_org_agrop_ext_veg_pesca) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifagropec,NEW.id_org_agrop_ext_veg_pesca ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_edif_agrop_ext_veg_pesca_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_edif_agrop_ext_veg_pesca_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_edif_agrop_ext_veg_pesca_p
-    FOR EACH ROW EXECUTE PROCEDURE eco_edif_agrop_ext_veg_pesca_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_edif_constr_aeroportuaria_a_avoid_multi () RETURNS TRIGGER AS $tra_edif_constr_aeroportuaria_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_edif_constr_aeroportuaria_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifaero,administracao,id_complexo_aeroportuario) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifaero,NEW.administracao,NEW.id_complexo_aeroportuario ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_edif_constr_aeroportuaria_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_edif_constr_aeroportuaria_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_edif_constr_aeroportuaria_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_edif_constr_aeroportuaria_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_area_ruinas_a_avoid_multi () RETURNS TRIGGER AS $edu_area_ruinas_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_area_ruinas_a(geometriaaproximada,geom,id_complexo_lazer) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_complexo_lazer ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_area_ruinas_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_area_ruinas_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_area_ruinas_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_area_ruinas_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_fundeadouro_l_avoid_multi () RETURNS TRIGGER AS $tra_fundeadouro_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_fundeadouro_l(nome,nomeabrev,geometriaaproximada,destinacaofundeadouro,administracao,id_complexo_portuario,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.destinacaofundeadouro,NEW.administracao,NEW.id_complexo_portuario,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_fundeadouro_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_fundeadouro_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_fundeadouro_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_fundeadouro_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_edif_agrop_ext_veg_pesca_a_avoid_multi () RETURNS TRIGGER AS $eco_edif_agrop_ext_veg_pesca_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_edif_agrop_ext_veg_pesca_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifagropec,id_org_agrop_ext_veg_pesca) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifagropec,NEW.id_org_agrop_ext_veg_pesca ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_edif_agrop_ext_veg_pesca_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_edif_agrop_ext_veg_pesca_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_edif_agrop_ext_veg_pesca_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_edif_agrop_ext_veg_pesca_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_fundeadouro_a_avoid_multi () RETURNS TRIGGER AS $tra_fundeadouro_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_fundeadouro_a(nome,nomeabrev,geometriaaproximada,destinacaofundeadouro,administracao,id_complexo_portuario,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.destinacaofundeadouro,NEW.administracao,NEW.id_complexo_portuario,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_fundeadouro_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_fundeadouro_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_fundeadouro_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_fundeadouro_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_edif_constr_aeroportuaria_p_avoid_multi () RETURNS TRIGGER AS $tra_edif_constr_aeroportuaria_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_edif_constr_aeroportuaria_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifaero,administracao,id_complexo_aeroportuario) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifaero,NEW.administracao,NEW.id_complexo_aeroportuario ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_edif_constr_aeroportuaria_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_edif_constr_aeroportuaria_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_edif_constr_aeroportuaria_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_edif_constr_aeroportuaria_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_area_de_litigio_a_avoid_multi () RETURNS TRIGGER AS $lim_area_de_litigio_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_area_de_litigio_a(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_area_de_litigio_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_area_de_litigio_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_area_de_litigio_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_area_de_litigio_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION pto_edif_constr_est_med_fen_p_avoid_multi () RETURNS TRIGGER AS $pto_edif_constr_est_med_fen_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.pto_edif_constr_est_med_fen_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$pto_edif_constr_est_med_fen_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER pto_edif_constr_est_med_fen_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.pto_edif_constr_est_med_fen_p
-    FOR EACH ROW EXECUTE PROCEDURE pto_edif_constr_est_med_fen_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_area_edificada_a_avoid_multi () RETURNS TRIGGER AS $loc_area_edificada_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_area_edificada_a(nome,nomeabrev,geom) SELECT NEW.nome,NEW.nomeabrev,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_area_edificada_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_area_edificada_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_area_edificada_a
-    FOR EACH ROW EXECUTE PROCEDURE loc_area_edificada_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_terra_publica_p_avoid_multi () RETURNS TRIGGER AS $lim_terra_publica_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_terra_publica_p(nome,nomeabrev,geometriaaproximada,geom,classificacao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.classificacao ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_terra_publica_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_terra_publica_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_terra_publica_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_terra_publica_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION asb_dep_saneamento_p_avoid_multi () RETURNS TRIGGER AS $asb_dep_saneamento_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.asb_dep_saneamento_p(nome,nomeabrev,geometriaaproximada,tipodepsaneam,construcao,matconstr,finalidade,operacional,situacaofisica,residuo,tiporesiduo,id_complexo_saneamento,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipodepsaneam,NEW.construcao,NEW.matconstr,NEW.finalidade,NEW.operacional,NEW.situacaofisica,NEW.residuo,NEW.tiporesiduo,NEW.id_complexo_saneamento,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$asb_dep_saneamento_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER asb_dep_saneamento_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.asb_dep_saneamento_p
-    FOR EACH ROW EXECUTE PROCEDURE asb_dep_saneamento_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_caminho_aereo_l_avoid_multi () RETURNS TRIGGER AS $tra_caminho_aereo_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_caminho_aereo_l(nome,nomeabrev,geometriaaproximada,tipocaminhoaereo,tipousocaminhoaer,operacional,situacaofisica,geom,id_org_ext_mineral) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipocaminhoaereo,NEW.tipousocaminhoaer,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_org_ext_mineral ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_caminho_aereo_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_caminho_aereo_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_caminho_aereo_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_caminho_aereo_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_edif_ext_mineral_p_avoid_multi () RETURNS TRIGGER AS $eco_edif_ext_mineral_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_edif_ext_mineral_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipodivisaocnae,id_org_ext_mineral) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipodivisaocnae,NEW.id_org_ext_mineral ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_edif_ext_mineral_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_edif_ext_mineral_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_edif_ext_mineral_p
-    FOR EACH ROW EXECUTE PROCEDURE eco_edif_ext_mineral_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_ciclovia_l_avoid_multi () RETURNS TRIGGER AS $tra_ciclovia_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_ciclovia_l(nome,nomeabrev,geometriaaproximada,administracao,revestimento,operacional,situacaofisica,trafego,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.administracao,NEW.revestimento,NEW.operacional,NEW.situacaofisica,NEW.trafego,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_ciclovia_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_ciclovia_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_ciclovia_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_ciclovia_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_area_urbana_isolada_a_avoid_multi () RETURNS TRIGGER AS $loc_area_urbana_isolada_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_area_urbana_isolada_a(geometriaaproximada,nome,nomeabrev,tipoassociado,geom) SELECT NEW.geometriaaproximada,NEW.nome,NEW.nomeabrev,NEW.tipoassociado,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_area_urbana_isolada_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_area_urbana_isolada_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_area_urbana_isolada_a
-    FOR EACH ROW EXECUTE PROCEDURE loc_area_urbana_isolada_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_ponto_cotado_altimetrico_p_avoid_multi () RETURNS TRIGGER AS $rel_ponto_cotado_altimetrico_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_ponto_cotado_altimetrico_p(geometriaaproximada,cotacomprovada,cota,geom) SELECT NEW.geometriaaproximada,NEW.cotacomprovada,NEW.cota,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_ponto_cotado_altimetrico_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_ponto_cotado_altimetrico_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_ponto_cotado_altimetrico_p
-    FOR EACH ROW EXECUTE PROCEDURE rel_ponto_cotado_altimetrico_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_ponto_duto_p_avoid_multi () RETURNS TRIGGER AS $tra_ponto_duto_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_ponto_duto_p(geom,geometriaaproximada,relacionado) SELECT ST_Multi((ST_Dump(NEW.geom)).geom),NEW.geometriaaproximada,NEW.relacionado ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_ponto_duto_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_ponto_duto_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_ponto_duto_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_ponto_duto_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION adm_area_pub_civil_a_avoid_multi () RETURNS TRIGGER AS $adm_area_pub_civil_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.adm_area_pub_civil_a(geometriaaproximada,geom,id_org_pub_civil) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_org_pub_civil ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$adm_area_pub_civil_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER adm_area_pub_civil_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.adm_area_pub_civil_a
-    FOR EACH ROW EXECUTE PROCEDURE adm_area_pub_civil_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_regiao_administrativa_a_avoid_multi () RETURNS TRIGGER AS $lim_regiao_administrativa_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_regiao_administrativa_a(nome,nomeabrev,geometriaaproximada,geom,anodereferencia) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.anodereferencia ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_regiao_administrativa_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_regiao_administrativa_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_regiao_administrativa_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_regiao_administrativa_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $loc_descontinuidade_geometrica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_descontinuidade_geometrica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE loc_descontinuidade_geometrica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $loc_descontinuidade_geometrica_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_descontinuidade_geometrica_l(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_descontinuidade_geometrica_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_descontinuidade_geometrica_l
-    FOR EACH ROW EXECUTE PROCEDURE loc_descontinuidade_geometrica_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_posto_combustivel_a_avoid_multi () RETURNS TRIGGER AS $tra_posto_combustivel_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_posto_combustivel_a(nome,nomeabrev,geometriaaproximada,administracao,operacional,situacaofisica,matconstr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.administracao,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_posto_combustivel_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_posto_combustivel_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_posto_combustivel_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_posto_combustivel_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_edif_energia_a_avoid_multi () RETURNS TRIGGER AS $enc_edif_energia_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_edif_energia_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifenergia,id_complexo_gerad_energ_eletr,id_subestacao_ener_eletr) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifenergia,NEW.id_complexo_gerad_energ_eletr,NEW.id_subestacao_ener_eletr ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_edif_energia_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_edif_energia_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_edif_energia_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_edif_energia_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $loc_descontinuidade_geometrica_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_descontinuidade_geometrica_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_descontinuidade_geometrica_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_edif_energia_p_avoid_multi () RETURNS TRIGGER AS $enc_edif_energia_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_edif_energia_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifenergia,id_complexo_gerad_energ_eletr,id_subestacao_ener_eletr) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifenergia,NEW.id_complexo_gerad_energ_eletr,NEW.id_subestacao_ener_eletr ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_edif_energia_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_edif_energia_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_edif_energia_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_edif_energia_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_posto_combustivel_p_avoid_multi () RETURNS TRIGGER AS $tra_posto_combustivel_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_posto_combustivel_p(nome,nomeabrev,geometriaaproximada,administracao,operacional,situacaofisica,matconstr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.administracao,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_posto_combustivel_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_posto_combustivel_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_posto_combustivel_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_posto_combustivel_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_bacia_hidrografica_a_avoid_multi () RETURNS TRIGGER AS $hid_bacia_hidrografica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_bacia_hidrografica_a(nome,nomeabrev,geometriaaproximada,codigootto,nivelotto,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.codigootto,NEW.nivelotto,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_bacia_hidrografica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_bacia_hidrografica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_bacia_hidrografica_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_bacia_hidrografica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION veg_veg_area_contato_a_avoid_multi () RETURNS TRIGGER AS $veg_veg_area_contato_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.veg_veg_area_contato_a(nome,nomeabrev,classificacaoporte,denso,alturamediaindividuos,antropizada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.classificacaoporte,NEW.denso,NEW.alturamediaindividuos,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$veg_veg_area_contato_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER veg_veg_area_contato_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.veg_veg_area_contato_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_veg_area_contato_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_area_uso_comunitario_p_avoid_multi () RETURNS TRIGGER AS $lim_area_uso_comunitario_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_area_uso_comunitario_p(nome,nomeabrev,geometriaaproximada,geom,tipoareausocomun) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoareausocomun ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_area_uso_comunitario_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_area_uso_comunitario_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_area_uso_comunitario_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_area_uso_comunitario_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION veg_floresta_a_avoid_multi () RETURNS TRIGGER AS $veg_floresta_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.veg_floresta_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom,especiepredominante,caracteristicafloresta,alturamediaindividuos,classificacaoporte) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.especiepredominante,NEW.caracteristicafloresta,NEW.alturamediaindividuos,NEW.classificacaoporte ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$veg_floresta_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER veg_floresta_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.veg_floresta_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_floresta_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_area_uso_comunitario_a_avoid_multi () RETURNS TRIGGER AS $lim_area_uso_comunitario_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_area_uso_comunitario_a(nome,nomeabrev,geometriaaproximada,geom,tipoareausocomun) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoareausocomun ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_area_uso_comunitario_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_area_uso_comunitario_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_area_uso_comunitario_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_area_uso_comunitario_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION adm_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $adm_descontinuidade_geometrica_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.adm_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$adm_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER adm_descontinuidade_geometrica_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.adm_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE adm_descontinuidade_geometrica_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_area_especial_p_avoid_multi () RETURNS TRIGGER AS $lim_area_especial_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_area_especial_p(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_area_especial_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_area_especial_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_area_especial_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_area_especial_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_travessia_pedestre_l_avoid_multi () RETURNS TRIGGER AS $tra_travessia_pedestre_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_travessia_pedestre_l(nome,nomeabrev,geometriaaproximada,tipotravessiaped,matconstr,operacional,situacaofisica,largura,extensao,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipotravessiaped,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.largura,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_travessia_pedestre_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_travessia_pedestre_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_travessia_pedestre_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_travessia_pedestre_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_area_especial_a_avoid_multi () RETURNS TRIGGER AS $lim_area_especial_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_area_especial_a(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_area_especial_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_area_especial_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_area_especial_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_area_especial_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION adm_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $adm_descontinuidade_geometrica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.adm_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$adm_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER adm_descontinuidade_geometrica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.adm_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE adm_descontinuidade_geometrica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_aglom_rural_de_ext_urbana_p_avoid_multi () RETURNS TRIGGER AS $loc_aglom_rural_de_ext_urbana_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_aglom_rural_de_ext_urbana_p(nome,nomeabrev,geometriaaproximada,geocodigo,identificador,latitude,latitude_gms,longitude,longitude_gms,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.geocodigo,NEW.identificador,NEW.latitude,NEW.latitude_gms,NEW.longitude,NEW.longitude_gms,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_aglom_rural_de_ext_urbana_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_aglom_rural_de_ext_urbana_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_aglom_rural_de_ext_urbana_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_aglom_rural_de_ext_urbana_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_travessia_pedestre_p_avoid_multi () RETURNS TRIGGER AS $tra_travessia_pedestre_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_travessia_pedestre_p(nome,nomeabrev,geometriaaproximada,tipotravessiaped,matconstr,operacional,situacaofisica,largura,extensao,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipotravessiaped,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.largura,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_travessia_pedestre_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_travessia_pedestre_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_travessia_pedestre_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_travessia_pedestre_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_unidade_uso_sustentavel_a_avoid_multi () RETURNS TRIGGER AS $lim_unidade_uso_sustentavel_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_unidade_uso_sustentavel_a(nome,nomeabrev,geometriaaproximada,geom,anocriacao,sigla,areaoficialha,atolegal,administracao,tipounidusosust) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.anocriacao,NEW.sigla,NEW.areaoficialha,NEW.atolegal,NEW.administracao,NEW.tipounidusosust ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_unidade_uso_sustentavel_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_unidade_uso_sustentavel_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_unidade_uso_sustentavel_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_uso_sustentavel_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_ponto_rodoviario_p_avoid_multi () RETURNS TRIGGER AS $tra_ponto_rodoviario_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_ponto_rodoviario_p(geometriaaproximada,relacionado,geom) SELECT NEW.geometriaaproximada,NEW.relacionado,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_ponto_rodoviario_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_ponto_rodoviario_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_ponto_rodoviario_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_ponto_rodoviario_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_unidade_uso_sustentavel_p_avoid_multi () RETURNS TRIGGER AS $lim_unidade_uso_sustentavel_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_unidade_uso_sustentavel_p(nome,nomeabrev,geometriaaproximada,geom,anocriacao,sigla,areaoficialha,atolegal,administracao,tipounidusosust) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.anocriacao,NEW.sigla,NEW.areaoficialha,NEW.atolegal,NEW.administracao,NEW.tipounidusosust ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_unidade_uso_sustentavel_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_unidade_uso_sustentavel_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_unidade_uso_sustentavel_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_uso_sustentavel_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION aux_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $aux_descontinuidade_geometrica_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.aux_descontinuidade_geometrica_l(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$aux_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER aux_descontinuidade_geometrica_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.aux_descontinuidade_geometrica_l
-    FOR EACH ROW EXECUTE PROCEDURE aux_descontinuidade_geometrica_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION aux_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $aux_descontinuidade_geometrica_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.aux_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$aux_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER aux_descontinuidade_geometrica_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.aux_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE aux_descontinuidade_geometrica_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_area_construida_a_avoid_multi () RETURNS TRIGGER AS $loc_area_construida_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_area_construida_a(nome,nomeabrev,geom) SELECT NEW.nome,NEW.nomeabrev,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_area_construida_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_area_construida_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_area_construida_a
-    FOR EACH ROW EXECUTE PROCEDURE loc_area_construida_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION aux_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $aux_descontinuidade_geometrica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.aux_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$aux_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER aux_descontinuidade_geometrica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.aux_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE aux_descontinuidade_geometrica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_unidade_protecao_integral_p_avoid_multi () RETURNS TRIGGER AS $lim_unidade_protecao_integral_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_unidade_protecao_integral_p(nome,nomeabrev,geometriaaproximada,geom,anocriacao,areaoficial,atolegal,administracao,tipounidprotinteg) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.anocriacao,NEW.areaoficial,NEW.atolegal,NEW.administracao,NEW.tipounidprotinteg ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_unidade_protecao_integral_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_unidade_protecao_integral_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_unidade_protecao_integral_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_protecao_integral_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_area_ext_mineral_a_avoid_multi () RETURNS TRIGGER AS $eco_area_ext_mineral_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_area_ext_mineral_a(geom,geometriaaproximada,id_org_ext_mineral) SELECT ST_Multi((ST_Dump(NEW.geom)).geom),NEW.geometriaaproximada,NEW.id_org_ext_mineral ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_area_ext_mineral_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_area_ext_mineral_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_area_ext_mineral_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_area_ext_mineral_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_unidade_protecao_integral_a_avoid_multi () RETURNS TRIGGER AS $lim_unidade_protecao_integral_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_unidade_protecao_integral_a(nome,nomeabrev,geometriaaproximada,geom,anocriacao,areaoficial,atolegal,administracao,tipounidprotinteg) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.anocriacao,NEW.areaoficial,NEW.atolegal,NEW.administracao,NEW.tipounidprotinteg ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_unidade_protecao_integral_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_unidade_protecao_integral_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_unidade_protecao_integral_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_protecao_integral_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_natureza_fundo_p_avoid_multi () RETURNS TRIGGER AS $hid_natureza_fundo_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_natureza_fundo_p(nome,nomeabrev,geometriaaproximada,materialpredominante,espessalgas,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.materialpredominante,NEW.espessalgas,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_natureza_fundo_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_natureza_fundo_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_natureza_fundo_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_natureza_fundo_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_pista_ponto_pouso_a_avoid_multi () RETURNS TRIGGER AS $tra_pista_ponto_pouso_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_pista_ponto_pouso_a(nome,nomeabrev,geometriaaproximada,tipopista,revestimento,usopista,homologacao,operacional,situacaofisica,largura,extensao,id_complexo_aeroportuario,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipopista,NEW.revestimento,NEW.usopista,NEW.homologacao,NEW.operacional,NEW.situacaofisica,NEW.largura,NEW.extensao,NEW.id_complexo_aeroportuario,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_pista_ponto_pouso_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_pista_ponto_pouso_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_pista_ponto_pouso_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_pista_ponto_pouso_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $hid_descontinuidade_geometrica_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_descontinuidade_geometrica_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_descontinuidade_geometrica_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_patio_p_avoid_multi () RETURNS TRIGGER AS $tra_patio_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_patio_p(nome,nomeabrev,geometriaaproximada,modaluso,administracao,operacional,situacaofisica,id_estrut_transporte,id_org_ext_mineral,id_org_comerc_serv,id_org_industrial,id_org_ensino,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.modaluso,NEW.administracao,NEW.operacional,NEW.situacaofisica,NEW.id_estrut_transporte,NEW.id_org_ext_mineral,NEW.id_org_comerc_serv,NEW.id_org_industrial,NEW.id_org_ensino,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_patio_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_patio_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_patio_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_patio_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_dolina_a_avoid_multi () RETURNS TRIGGER AS $rel_dolina_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_dolina_a(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_dolina_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_dolina_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_dolina_a
-    FOR EACH ROW EXECUTE PROCEDURE rel_dolina_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_pista_ponto_pouso_l_avoid_multi () RETURNS TRIGGER AS $tra_pista_ponto_pouso_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_pista_ponto_pouso_l(nome,nomeabrev,geometriaaproximada,tipopista,revestimento,usopista,homologacao,operacional,situacaofisica,largura,extensao,id_complexo_aeroportuario,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipopista,NEW.revestimento,NEW.usopista,NEW.homologacao,NEW.operacional,NEW.situacaofisica,NEW.largura,NEW.extensao,NEW.id_complexo_aeroportuario,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_pista_ponto_pouso_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_pista_ponto_pouso_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_pista_ponto_pouso_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_pista_ponto_pouso_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_natureza_fundo_a_avoid_multi () RETURNS TRIGGER AS $hid_natureza_fundo_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_natureza_fundo_a(nome,nomeabrev,geometriaaproximada,materialpredominante,espessalgas,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.materialpredominante,NEW.espessalgas,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_natureza_fundo_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_natureza_fundo_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_natureza_fundo_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_natureza_fundo_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_pista_ponto_pouso_p_avoid_multi () RETURNS TRIGGER AS $tra_pista_ponto_pouso_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_pista_ponto_pouso_p(nome,nomeabrev,geometriaaproximada,tipopista,revestimento,usopista,homologacao,operacional,situacaofisica,largura,extensao,id_complexo_aeroportuario,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipopista,NEW.revestimento,NEW.usopista,NEW.homologacao,NEW.operacional,NEW.situacaofisica,NEW.largura,NEW.extensao,NEW.id_complexo_aeroportuario,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_pista_ponto_pouso_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_pista_ponto_pouso_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_pista_ponto_pouso_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_pista_ponto_pouso_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_patio_a_avoid_multi () RETURNS TRIGGER AS $tra_patio_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_patio_a(nome,nomeabrev,geometriaaproximada,modaluso,administracao,operacional,situacaofisica,id_estrut_transporte,id_org_ext_mineral,id_org_comerc_serv,id_org_industrial,id_org_ensino,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.modaluso,NEW.administracao,NEW.operacional,NEW.situacaofisica,NEW.id_estrut_transporte,NEW.id_org_ext_mineral,NEW.id_org_comerc_serv,NEW.id_org_industrial,NEW.id_org_ensino,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_patio_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_patio_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_patio_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_patio_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $hid_descontinuidade_geometrica_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_descontinuidade_geometrica_l(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_descontinuidade_geometrica_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_descontinuidade_geometrica_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_descontinuidade_geometrica_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $lim_descontinuidade_geometrica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_descontinuidade_geometrica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_descontinuidade_geometrica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_dolina_p_avoid_multi () RETURNS TRIGGER AS $rel_dolina_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_dolina_p(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_dolina_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_dolina_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_dolina_p
-    FOR EACH ROW EXECUTE PROCEDURE rel_dolina_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_pista_competicao_l_avoid_multi () RETURNS TRIGGER AS $edu_pista_competicao_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_pista_competicao_l(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipopista,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipopista,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_pista_competicao_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_pista_competicao_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_pista_competicao_l
-    FOR EACH ROW EXECUTE PROCEDURE edu_pista_competicao_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_ilha_p_avoid_multi () RETURNS TRIGGER AS $hid_ilha_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_ilha_p(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom,tipoilha) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoilha ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_ilha_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_ilha_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_ilha_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_ilha_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_area_industrial_a_avoid_multi () RETURNS TRIGGER AS $eco_area_industrial_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_area_industrial_a(geometriaaproximada,id_org_industrial,geom) SELECT NEW.geometriaaproximada,NEW.id_org_industrial,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_area_industrial_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_area_industrial_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_area_industrial_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_area_industrial_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_ilha_l_avoid_multi () RETURNS TRIGGER AS $hid_ilha_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_ilha_l(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom,tipoilha) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoilha ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_ilha_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_ilha_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_ilha_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_ilha_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_area_religiosa_a_avoid_multi () RETURNS TRIGGER AS $edu_area_religiosa_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_area_religiosa_a(geometriaaproximada,geom,id_org_religiosa) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_org_religiosa ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_area_religiosa_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_area_religiosa_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_area_religiosa_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_area_religiosa_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_ilha_a_avoid_multi () RETURNS TRIGGER AS $hid_ilha_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_ilha_a(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom,tipoilha) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoilha ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_ilha_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_ilha_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_ilha_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_ilha_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_barragem_a_avoid_multi () RETURNS TRIGGER AS $hid_barragem_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_barragem_a(nome,nomeabrev,geometriaaproximada,matconstr,usoprincipal,operacional,situacaofisica,id_complexo_gerad_energ_eletr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.matconstr,NEW.usoprincipal,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_barragem_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_barragem_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_barragem_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_barragem_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION sau_area_saude_a_avoid_multi () RETURNS TRIGGER AS $sau_area_saude_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.sau_area_saude_a(geometriaaproximada,geom,id_org_saude) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_org_saude ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$sau_area_saude_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER sau_area_saude_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.sau_area_saude_a
-    FOR EACH ROW EXECUTE PROCEDURE sau_area_saude_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_barragem_l_avoid_multi () RETURNS TRIGGER AS $hid_barragem_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_barragem_l(nome,nomeabrev,geometriaaproximada,matconstr,usoprincipal,operacional,situacaofisica,id_complexo_gerad_energ_eletr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.matconstr,NEW.usoprincipal,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_barragem_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_barragem_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_barragem_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_barragem_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_outros_limites_oficiais_l_avoid_multi () RETURNS TRIGGER AS $lim_outros_limites_oficiais_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_outros_limites_oficiais_l(nome,nomeabrev,coincidecomdentrode,geometriaaproximada,extensao,geom,tipooutlimofic,obssituacao) SELECT NEW.nome,NEW.nomeabrev,NEW.coincidecomdentrode,NEW.geometriaaproximada,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipooutlimofic,NEW.obssituacao ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_outros_limites_oficiais_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_outros_limites_oficiais_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_outros_limites_oficiais_l
-    FOR EACH ROW EXECUTE PROCEDURE lim_outros_limites_oficiais_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION adm_edif_pub_militar_a_avoid_multi () RETURNS TRIGGER AS $adm_edif_pub_militar_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.adm_edif_pub_militar_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifmil,tipousoedif,id_org_pub_militar) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifmil,NEW.tipousoedif,NEW.id_org_pub_militar ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$adm_edif_pub_militar_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER adm_edif_pub_militar_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.adm_edif_pub_militar_a
-    FOR EACH ROW EXECUTE PROCEDURE adm_edif_pub_militar_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_area_agrop_ext_veg_pesca_a_avoid_multi () RETURNS TRIGGER AS $eco_area_agrop_ext_veg_pesca_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_area_agrop_ext_veg_pesca_a(geometriaaproximada,destinadoa,id_org_agropec_ext_veg_pesca,geom) SELECT NEW.geometriaaproximada,NEW.destinadoa,NEW.id_org_agropec_ext_veg_pesca,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_area_agrop_ext_veg_pesca_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_area_agrop_ext_veg_pesca_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_area_agrop_ext_veg_pesca_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_area_agrop_ext_veg_pesca_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_eclusa_p_avoid_multi () RETURNS TRIGGER AS $tra_eclusa_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_eclusa_p(nome,nomeabrev,geometriaaproximada,desnivel,largura,extensao,calado,matconstr,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.desnivel,NEW.largura,NEW.extensao,NEW.calado,NEW.matconstr,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_eclusa_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_eclusa_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_eclusa_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_eclusa_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_limite_particular_l_avoid_multi () RETURNS TRIGGER AS $lim_limite_particular_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_limite_particular_l(nome,nomeabrev,coincidecomdentrode,geometriaaproximada,extensao,geom,obssituacao) SELECT NEW.nome,NEW.nomeabrev,NEW.coincidecomdentrode,NEW.geometriaaproximada,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.obssituacao ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_limite_particular_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_limite_particular_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_limite_particular_l
-    FOR EACH ROW EXECUTE PROCEDURE lim_limite_particular_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION adm_edif_pub_militar_p_avoid_multi () RETURNS TRIGGER AS $adm_edif_pub_militar_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.adm_edif_pub_militar_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipousoedif,tipoedifmil,id_org_pub_militar) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipousoedif,NEW.tipoedifmil,NEW.id_org_pub_militar ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$adm_edif_pub_militar_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER adm_edif_pub_militar_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.adm_edif_pub_militar_p
-    FOR EACH ROW EXECUTE PROCEDURE adm_edif_pub_militar_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $enc_descontinuidade_geometrica_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_descontinuidade_geometrica_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_descontinuidade_geometrica_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_trecho_hidroviario_l_avoid_multi () RETURNS TRIGGER AS $tra_trecho_hidroviario_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_trecho_hidroviario_l(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,regime,extensaotrecho,caladomaxseca,geom,id_hidrovia) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.regime,NEW.extensaotrecho,NEW.caladomaxseca,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_hidrovia ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_trecho_hidroviario_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_trecho_hidroviario_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_trecho_hidroviario_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_trecho_hidroviario_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION veg_veg_cultivada_a_avoid_multi () RETURNS TRIGGER AS $veg_veg_cultivada_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.veg_veg_cultivada_a(nome,nomeabrev,geometriaaproximada,tipolavoura,finalidade,terreno,classificacaoporte,espacamentoindividuos,espessuradap,denso,alturamediaindividuos,cultivopredominante,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipolavoura,NEW.finalidade,NEW.terreno,NEW.classificacaoporte,NEW.espacamentoindividuos,NEW.espessuradap,NEW.denso,NEW.alturamediaindividuos,NEW.cultivopredominante,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$veg_veg_cultivada_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER veg_veg_cultivada_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.veg_veg_cultivada_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_veg_cultivada_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_identific_trecho_rod_p_avoid_multi () RETURNS TRIGGER AS $tra_identific_trecho_rod_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_identific_trecho_rod_p(nome,nomeabrev,sigla,geom,id_via_rodoviaria) SELECT NEW.nome,NEW.nomeabrev,NEW.sigla,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_via_rodoviaria ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_identific_trecho_rod_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_identific_trecho_rod_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_identific_trecho_rod_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_identific_trecho_rod_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $enc_descontinuidade_geometrica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_descontinuidade_geometrica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_descontinuidade_geometrica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_curva_nivel_l_avoid_multi () RETURNS TRIGGER AS $rel_curva_nivel_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_curva_nivel_l(geometriaaproximada,cota,depressao,indice,geom) SELECT NEW.geometriaaproximada,NEW.cota,NEW.depressao,NEW.indice,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_curva_nivel_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_curva_nivel_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_curva_nivel_l
-    FOR EACH ROW EXECUTE PROCEDURE rel_curva_nivel_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_trecho_massa_dagua_a_avoid_multi () RETURNS TRIGGER AS $hid_trecho_massa_dagua_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_trecho_massa_dagua_a(nome,nomeabrev,tipotrechomassa,regime,salinidade,id_trecho_curso_dagua,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.tipotrechomassa,NEW.regime,NEW.salinidade,NEW.id_trecho_curso_dagua,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_trecho_massa_dagua_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_trecho_massa_dagua_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_trecho_massa_dagua_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_trecho_massa_dagua_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_reservatorio_hidrico_a_avoid_multi () RETURNS TRIGGER AS $hid_reservatorio_hidrico_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_reservatorio_hidrico_a(nome,nomeabrev,geometriaaproximada,usoprincipal,volumeutil,namaximomaximorum,namaximooperacional,id_complexo_gerad_energ_eletr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.usoprincipal,NEW.volumeutil,NEW.namaximomaximorum,NEW.namaximooperacional,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_reservatorio_hidrico_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_reservatorio_hidrico_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_reservatorio_hidrico_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_reservatorio_hidrico_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_antena_comunic_p_avoid_multi () RETURNS TRIGGER AS $enc_antena_comunic_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_antena_comunic_p(nome,nomeabrev,geometriaaproximada,geom,id_complexo_comunicacao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_complexo_comunicacao ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_antena_comunic_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_antena_comunic_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_antena_comunic_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_antena_comunic_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION sau_edif_servico_social_p_avoid_multi () RETURNS TRIGGER AS $sau_edif_servico_social_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.sau_edif_servico_social_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoclassecnae,id_org_servico_social) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoclassecnae,NEW.id_org_servico_social ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$sau_edif_servico_social_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER sau_edif_servico_social_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.sau_edif_servico_social_p
-    FOR EACH ROW EXECUTE PROCEDURE sau_edif_servico_social_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION sau_edif_servico_social_a_avoid_multi () RETURNS TRIGGER AS $sau_edif_servico_social_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.sau_edif_servico_social_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoclassecnae,id_org_servico_social) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoclassecnae,NEW.id_org_servico_social ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$sau_edif_servico_social_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER sau_edif_servico_social_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.sau_edif_servico_social_a
-    FOR EACH ROW EXECUTE PROCEDURE sau_edif_servico_social_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_entroncamento_p_avoid_multi () RETURNS TRIGGER AS $tra_entroncamento_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_entroncamento_p(nome,nomeabrev,geometriaaproximada,tipoentroncamento,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoentroncamento,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_entroncamento_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_entroncamento_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_entroncamento_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_entroncamento_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_trecho_rodoviario_l_avoid_multi () RETURNS TRIGGER AS $tra_trecho_rodoviario_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_trecho_rodoviario_l(geometriaaproximada,codtrechorodov,tipotrechorod,jurisdicao,administracao,concessionaria,revestimento,operacional,situacaofisica,nrpistas,nrfaixas,trafego,canteirodivisorio,geom,id_via_rodoviaria) SELECT NEW.geometriaaproximada,NEW.codtrechorodov,NEW.tipotrechorod,NEW.jurisdicao,NEW.administracao,NEW.concessionaria,NEW.revestimento,NEW.operacional,NEW.situacaofisica,NEW.nrpistas,NEW.nrfaixas,NEW.trafego,NEW.canteirodivisorio,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_via_rodoviaria ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_trecho_rodoviario_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_trecho_rodoviario_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_trecho_rodoviario_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_trecho_rodoviario_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $tra_descontinuidade_geometrica_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_descontinuidade_geometrica_l(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_descontinuidade_geometrica_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_descontinuidade_geometrica_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_descontinuidade_geometrica_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_trecho_duto_l_avoid_multi () RETURNS TRIGGER AS $tra_trecho_duto_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_trecho_duto_l(nome,nomeabrev,geometriaaproximada,tipotrechoduto,mattransp,setor,posicaorelativa,matconstr,ndutos,situacaoespacial,operacional,situacaofisica,id_duto,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipotrechoduto,NEW.mattransp,NEW.setor,NEW.posicaorelativa,NEW.matconstr,NEW.ndutos,NEW.situacaoespacial,NEW.operacional,NEW.situacaofisica,NEW.id_duto,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_trecho_duto_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_trecho_duto_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_trecho_duto_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_trecho_duto_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_pico_p_avoid_multi () RETURNS TRIGGER AS $rel_pico_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_pico_p(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_pico_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_pico_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_pico_p
-    FOR EACH ROW EXECUTE PROCEDURE rel_pico_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_passag_elevada_viaduto_l_avoid_multi () RETURNS TRIGGER AS $tra_passag_elevada_viaduto_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_passag_elevada_viaduto_l(nome,nomeabrev,geometriaaproximada,tipopassagviad,modaluso,matconstr,operacional,situacaofisica,vaolivrehoriz,vaovertical,gabhorizsup,gabvertsup,cargasuportmaxima,nrpistas,nrfaixas,posicaopista,extensao,largura,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipopassagviad,NEW.modaluso,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.vaolivrehoriz,NEW.vaovertical,NEW.gabhorizsup,NEW.gabvertsup,NEW.cargasuportmaxima,NEW.nrpistas,NEW.nrfaixas,NEW.posicaopista,NEW.extensao,NEW.largura,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_passag_elevada_viaduto_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_passag_elevada_viaduto_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_passag_elevada_viaduto_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_passag_elevada_viaduto_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_cidade_p_avoid_multi () RETURNS TRIGGER AS $loc_cidade_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_cidade_p(nome,nomeabrev,geometriaaproximada,geocodigo,identificador,latitude,latitude_gms,longitude,longitude_gms,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.geocodigo,NEW.identificador,NEW.latitude,NEW.latitude_gms,NEW.longitude,NEW.longitude_gms,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_cidade_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_cidade_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_cidade_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_cidade_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_capital_p_avoid_multi () RETURNS TRIGGER AS $loc_capital_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_capital_p(nome,nomeabrev,geometriaaproximada,geocodigo,identificador,latitude,latitude_gms,longitude,longitude_gms,geom,tipocapital) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.geocodigo,NEW.identificador,NEW.latitude,NEW.latitude_gms,NEW.longitude,NEW.longitude_gms,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipocapital ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_capital_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_capital_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_capital_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_capital_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_edif_ext_mineral_a_avoid_multi () RETURNS TRIGGER AS $eco_edif_ext_mineral_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_edif_ext_mineral_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipodivisaocnae,id_org_ext_mineral) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipodivisaocnae,NEW.id_org_ext_mineral ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_edif_ext_mineral_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_edif_ext_mineral_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_edif_ext_mineral_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_edif_ext_mineral_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_distrito_a_avoid_multi () RETURNS TRIGGER AS $lim_distrito_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_distrito_a(nome,nomeabrev,geometriaaproximada,geom,geocodigo,anodereferencia) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.geocodigo,NEW.anodereferencia ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_distrito_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_distrito_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_distrito_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_distrito_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_passag_elevada_viaduto_p_avoid_multi () RETURNS TRIGGER AS $tra_passag_elevada_viaduto_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_passag_elevada_viaduto_p(nome,nomeabrev,geometriaaproximada,tipopassagviad,modaluso,matconstr,operacional,situacaofisica,vaolivrehoriz,vaovertical,gabhorizsup,gabvertsup,cargasuportmaxima,nrpistas,nrfaixas,posicaopista,extensao,largura,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipopassagviad,NEW.modaluso,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.vaolivrehoriz,NEW.vaovertical,NEW.gabhorizsup,NEW.gabvertsup,NEW.cargasuportmaxima,NEW.nrpistas,NEW.nrfaixas,NEW.posicaopista,NEW.extensao,NEW.largura,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_passag_elevada_viaduto_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_passag_elevada_viaduto_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_passag_elevada_viaduto_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_passag_elevada_viaduto_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_torre_comunic_p_avoid_multi () RETURNS TRIGGER AS $enc_torre_comunic_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_torre_comunic_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,posicaoreledific,ovgd,alturaestimada,id_complexo_comunicacao,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.posicaoreledific,NEW.ovgd,NEW.alturaestimada,NEW.id_complexo_comunicacao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_torre_comunic_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_torre_comunic_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_torre_comunic_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_torre_comunic_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_edif_const_turistica_a_avoid_multi () RETURNS TRIGGER AS $edu_edif_const_turistica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_edif_const_turistica_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifturist,ovgd,id_complexo_lazer) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifturist,NEW.ovgd,NEW.id_complexo_lazer ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_edif_const_turistica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_edif_const_turistica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_edif_const_turistica_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_edif_const_turistica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_terreno_exposto_a_avoid_multi () RETURNS TRIGGER AS $rel_terreno_exposto_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_terreno_exposto_a(geometriaaproximada,tipoterrexp,causaexposicao,geom) SELECT NEW.geometriaaproximada,NEW.tipoterrexp,NEW.causaexposicao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_terreno_exposto_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_terreno_exposto_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_terreno_exposto_a
-    FOR EACH ROW EXECUTE PROCEDURE rel_terreno_exposto_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_girador_ferroviario_p_avoid_multi () RETURNS TRIGGER AS $tra_girador_ferroviario_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_girador_ferroviario_p(nome,nomeabrev,geometriaaproximada,administracao,operacional,situacaofisica,geom,id_estrut_apoio) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.administracao,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_estrut_apoio ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_girador_ferroviario_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_girador_ferroviario_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_girador_ferroviario_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_girador_ferroviario_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_trilha_picada_l_avoid_multi () RETURNS TRIGGER AS $tra_trilha_picada_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_trilha_picada_l(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_trilha_picada_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_trilha_picada_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_trilha_picada_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_trilha_picada_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION pto_area_est_med_fenom_a_avoid_multi () RETURNS TRIGGER AS $pto_area_est_med_fenom_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.pto_area_est_med_fenom_a(geometriaaproximada,id_est_med_fenomenos,geom) SELECT NEW.geometriaaproximada,NEW.id_est_med_fenomenos,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$pto_area_est_med_fenom_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER pto_area_est_med_fenom_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.pto_area_est_med_fenom_a
-    FOR EACH ROW EXECUTE PROCEDURE pto_area_est_med_fenom_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_edif_const_turistica_p_avoid_multi () RETURNS TRIGGER AS $edu_edif_const_turistica_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_edif_const_turistica_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifturist,ovgd,id_complexo_lazer) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifturist,NEW.ovgd,NEW.id_complexo_lazer ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_edif_const_turistica_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_edif_const_turistica_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_edif_const_turistica_p
-    FOR EACH ROW EXECUTE PROCEDURE edu_edif_const_turistica_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION adm_posto_pol_rod_a_avoid_multi () RETURNS TRIGGER AS $adm_posto_pol_rod_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.adm_posto_pol_rod_a(nome,nomeabrev,tipopostopol,geometriaaproximada,operacional,situacaofisica,id_org_pub_militar,id_org_pub_civil,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.tipopostopol,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.id_org_pub_militar,NEW.id_org_pub_civil,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$adm_posto_pol_rod_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER adm_posto_pol_rod_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.adm_posto_pol_rod_a
-    FOR EACH ROW EXECUTE PROCEDURE adm_posto_pol_rod_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_trecho_comunic_l_avoid_multi () RETURNS TRIGGER AS $enc_trecho_comunic_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_trecho_comunic_l(nome,nomeabrev,geometriaaproximada,tipotrechocomunic,posicaorelativa,matconstr,operacional,situacaofisica,emduto,id_org_comerc_serv,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipotrechocomunic,NEW.posicaorelativa,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.emduto,NEW.id_org_comerc_serv,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_trecho_comunic_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_trecho_comunic_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_trecho_comunic_l
-    FOR EACH ROW EXECUTE PROCEDURE enc_trecho_comunic_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_banco_areia_a_avoid_multi () RETURNS TRIGGER AS $hid_banco_areia_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_banco_areia_a(nome,nomeabrev,geometriaaproximada,tipobanco,situacaoemagua,materialpredominante,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipobanco,NEW.situacaoemagua,NEW.materialpredominante,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_banco_areia_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_banco_areia_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_banco_areia_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_banco_areia_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_banco_areia_l_avoid_multi () RETURNS TRIGGER AS $hid_banco_areia_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_banco_areia_l(nome,nomeabrev,geometriaaproximada,tipobanco,situacaoemagua,materialpredominante,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipobanco,NEW.situacaoemagua,NEW.materialpredominante,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_banco_areia_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_banco_areia_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_banco_areia_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_banco_areia_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION adm_posto_pol_rod_p_avoid_multi () RETURNS TRIGGER AS $adm_posto_pol_rod_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.adm_posto_pol_rod_p(nome,nomeabrev,tipopostopol,geometriaaproximada,operacional,situacaofisica,id_org_pub_militar,id_org_pub_civil,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.tipopostopol,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.id_org_pub_militar,NEW.id_org_pub_civil,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$adm_posto_pol_rod_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER adm_posto_pol_rod_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.adm_posto_pol_rod_p
-    FOR EACH ROW EXECUTE PROCEDURE adm_posto_pol_rod_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION veg_veg_restinga_a_avoid_multi () RETURNS TRIGGER AS $veg_veg_restinga_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.veg_veg_restinga_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom,alturamediaindividuos,classificacaoporte) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.alturamediaindividuos,NEW.classificacaoporte ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$veg_veg_restinga_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER veg_veg_restinga_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.veg_veg_restinga_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_veg_restinga_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_corredeira_p_avoid_multi () RETURNS TRIGGER AS $hid_corredeira_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_corredeira_p(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_corredeira_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_corredeira_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_corredeira_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_corredeira_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_faixa_seguranca_a_avoid_multi () RETURNS TRIGGER AS $tra_faixa_seguranca_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_faixa_seguranca_a(geometriaaproximada,largura,extensao,geom) SELECT NEW.geometriaaproximada,NEW.largura,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_faixa_seguranca_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_faixa_seguranca_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_faixa_seguranca_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_faixa_seguranca_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_edif_ensino_a_avoid_multi () RETURNS TRIGGER AS $edu_edif_ensino_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_edif_ensino_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoclassecnae,id_org_ensino) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoclassecnae,NEW.id_org_ensino ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_edif_ensino_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_edif_ensino_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_edif_ensino_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_edif_ensino_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_corredeira_a_avoid_multi () RETURNS TRIGGER AS $hid_corredeira_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_corredeira_a(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_corredeira_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_corredeira_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_corredeira_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_corredeira_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_edif_ensino_p_avoid_multi () RETURNS TRIGGER AS $edu_edif_ensino_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_edif_ensino_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoclassecnae,id_org_ensino) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoclassecnae,NEW.id_org_ensino ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_edif_ensino_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_edif_ensino_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_edif_ensino_p
-    FOR EACH ROW EXECUTE PROCEDURE edu_edif_ensino_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_ponto_trecho_energia_p_avoid_multi () RETURNS TRIGGER AS $enc_ponto_trecho_energia_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_ponto_trecho_energia_p(geometriaaproximada,tipoptoenergia,geom) SELECT NEW.geometriaaproximada,NEW.tipoptoenergia,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_ponto_trecho_energia_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_ponto_trecho_energia_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_ponto_trecho_energia_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_ponto_trecho_energia_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_fonte_dagua_p_avoid_multi () RETURNS TRIGGER AS $hid_fonte_dagua_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_fonte_dagua_p(nome,nomeabrev,geometriaaproximada,tipofontedagua,qualidagua,regime,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipofontedagua,NEW.qualidagua,NEW.regime,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_fonte_dagua_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_fonte_dagua_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_fonte_dagua_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_fonte_dagua_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION veg_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $veg_descontinuidade_geometrica_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.veg_descontinuidade_geometrica_l(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$veg_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER veg_descontinuidade_geometrica_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.veg_descontinuidade_geometrica_l
-    FOR EACH ROW EXECUTE PROCEDURE veg_descontinuidade_geometrica_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_corredeira_l_avoid_multi () RETURNS TRIGGER AS $hid_corredeira_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_corredeira_l(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_corredeira_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_corredeira_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_corredeira_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_corredeira_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_area_desenv_controle_a_avoid_multi () RETURNS TRIGGER AS $lim_area_desenv_controle_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_area_desenv_controle_a(nome,nomeabrev,geometriaaproximada,geom,classificacao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.classificacao ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_area_desenv_controle_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_area_desenv_controle_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_area_desenv_controle_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_area_desenv_controle_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_municipio_a_avoid_multi () RETURNS TRIGGER AS $lim_municipio_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_municipio_a(nome,nomeabrev,geometriaaproximada,geom,geocodigo,anodereferencia) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.geocodigo,NEW.anodereferencia ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_municipio_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_municipio_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_municipio_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_municipio_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_natureza_fundo_l_avoid_multi () RETURNS TRIGGER AS $hid_natureza_fundo_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_natureza_fundo_l(nome,nomeabrev,geometriaaproximada,materialpredominante,espessalgas,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.materialpredominante,NEW.espessalgas,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_natureza_fundo_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_natureza_fundo_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_natureza_fundo_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_natureza_fundo_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_area_desenv_controle_p_avoid_multi () RETURNS TRIGGER AS $lim_area_desenv_controle_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_area_desenv_controle_p(nome,nomeabrev,geometriaaproximada,geom,classificacao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.classificacao ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_area_desenv_controle_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_area_desenv_controle_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_area_desenv_controle_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_area_desenv_controle_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION adm_posto_fiscal_p_avoid_multi () RETURNS TRIGGER AS $adm_posto_fiscal_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.adm_posto_fiscal_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipopostofisc,id_org_pub_civil,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipopostofisc,NEW.id_org_pub_civil,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$adm_posto_fiscal_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER adm_posto_fiscal_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.adm_posto_fiscal_p
-    FOR EACH ROW EXECUTE PROCEDURE adm_posto_fiscal_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_passagem_nivel_p_avoid_multi () RETURNS TRIGGER AS $tra_passagem_nivel_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_passagem_nivel_p(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_passagem_nivel_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_passagem_nivel_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_passagem_nivel_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_passagem_nivel_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_zona_linhas_energia_com_a_avoid_multi () RETURNS TRIGGER AS $enc_zona_linhas_energia_com_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_zona_linhas_energia_com_a(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_zona_linhas_energia_com_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_zona_linhas_energia_com_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_zona_linhas_energia_com_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_zona_linhas_energia_com_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_galeria_bueiro_l_avoid_multi () RETURNS TRIGGER AS $tra_galeria_bueiro_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_galeria_bueiro_l(nome,nomeabrev,matconstr,pesosuportmaximo,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.matconstr,NEW.pesosuportmaximo,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_galeria_bueiro_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_galeria_bueiro_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_galeria_bueiro_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_galeria_bueiro_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_sub_distrito_a_avoid_multi () RETURNS TRIGGER AS $lim_sub_distrito_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_sub_distrito_a(nome,nomeabrev,geometriaaproximada,geom,geocodigo,anodereferencia) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.geocodigo,NEW.anodereferencia ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_sub_distrito_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_sub_distrito_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_sub_distrito_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_sub_distrito_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_rocha_a_avoid_multi () RETURNS TRIGGER AS $rel_rocha_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_rocha_a(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom,tiporocha) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tiporocha ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_rocha_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_rocha_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_rocha_a
-    FOR EACH ROW EXECUTE PROCEDURE rel_rocha_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_area_estrut_transporte_a_avoid_multi () RETURNS TRIGGER AS $tra_area_estrut_transporte_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_area_estrut_transporte_a(geometriaaproximada,id_estrut_transporte,geom) SELECT NEW.geometriaaproximada,NEW.id_estrut_transporte,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_area_estrut_transporte_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_area_estrut_transporte_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_area_estrut_transporte_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_area_estrut_transporte_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_area_umida_a_avoid_multi () RETURNS TRIGGER AS $hid_area_umida_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_area_umida_a(nome,nomeabrev,geometriaaproximada,tipoareaumida,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoareaumida,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_area_umida_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_area_umida_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_area_umida_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_area_umida_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_termeletrica_a_avoid_multi () RETURNS TRIGGER AS $enc_termeletrica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_termeletrica_a(nome,nomeabrev,geometriaaproximada,tipoestgerad,operacional,situacaofisica,destenergelet,codigoestacao,potenciaoutorgada,potenciafiscalizada,id_complexo_gerad_energ_eletr,geom,tipocombustivel,combrenovavel,tipomaqtermica,geracao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoestgerad,NEW.operacional,NEW.situacaofisica,NEW.destenergelet,NEW.codigoestacao,NEW.potenciaoutorgada,NEW.potenciafiscalizada,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipocombustivel,NEW.combrenovavel,NEW.tipomaqtermica,NEW.geracao ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_termeletrica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_termeletrica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_termeletrica_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_termeletrica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_termeletrica_p_avoid_multi () RETURNS TRIGGER AS $enc_termeletrica_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_termeletrica_p(nome,nomeabrev,geometriaaproximada,tipoestgerad,operacional,situacaofisica,destenergelet,codigoestacao,potenciaoutorgada,potenciafiscalizada,id_complexo_gerad_energ_eletr,geom,tipocombustivel,combrenovavel,tipomaqtermica,geracao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoestgerad,NEW.operacional,NEW.situacaofisica,NEW.destenergelet,NEW.codigoestacao,NEW.potenciaoutorgada,NEW.potenciafiscalizada,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipocombustivel,NEW.combrenovavel,NEW.tipomaqtermica,NEW.geracao ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_termeletrica_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_termeletrica_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_termeletrica_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_termeletrica_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_hidreletrica_l_avoid_multi () RETURNS TRIGGER AS $enc_hidreletrica_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_hidreletrica_l(nome,nomeabrev,geometriaaproximada,tipoestgerad,operacional,situacaofisica,destenergelet,codigoestacao,potenciaoutorgada,potenciafiscalizada,id_complexo_gerad_energ_eletr,geom,codigohidreletrica) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoestgerad,NEW.operacional,NEW.situacaofisica,NEW.destenergelet,NEW.codigoestacao,NEW.potenciaoutorgada,NEW.potenciafiscalizada,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.codigohidreletrica ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_hidreletrica_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_hidreletrica_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_hidreletrica_l
-    FOR EACH ROW EXECUTE PROCEDURE enc_hidreletrica_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_area_comerc_serv_a_avoid_multi () RETURNS TRIGGER AS $eco_area_comerc_serv_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_area_comerc_serv_a(geometriaaproximada,geom,id_org_comerc_serv) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_org_comerc_serv ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_area_comerc_serv_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_area_comerc_serv_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_area_comerc_serv_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_area_comerc_serv_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_hidreletrica_a_avoid_multi () RETURNS TRIGGER AS $enc_hidreletrica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_hidreletrica_a(nome,nomeabrev,geometriaaproximada,tipoestgerad,operacional,situacaofisica,destenergelet,codigoestacao,potenciaoutorgada,potenciafiscalizada,id_complexo_gerad_energ_eletr,geom,codigohidreletrica) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoestgerad,NEW.operacional,NEW.situacaofisica,NEW.destenergelet,NEW.codigoestacao,NEW.potenciaoutorgada,NEW.potenciafiscalizada,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.codigohidreletrica ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_hidreletrica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_hidreletrica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_hidreletrica_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_hidreletrica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION veg_campo_a_avoid_multi () RETURNS TRIGGER AS $veg_campo_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.veg_campo_a(nome,nomeabrev,geometriaaproximada,tipocampo,ocorrenciaem,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipocampo,NEW.ocorrenciaem,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$veg_campo_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER veg_campo_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.veg_campo_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_campo_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_hidreletrica_p_avoid_multi () RETURNS TRIGGER AS $enc_hidreletrica_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_hidreletrica_p(nome,nomeabrev,geometriaaproximada,tipoestgerad,operacional,situacaofisica,destenergelet,codigoestacao,potenciaoutorgada,potenciafiscalizada,id_complexo_gerad_energ_eletr,geom,codigohidreletrica) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoestgerad,NEW.operacional,NEW.situacaofisica,NEW.destenergelet,NEW.codigoestacao,NEW.potenciaoutorgada,NEW.potenciafiscalizada,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.codigohidreletrica ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_hidreletrica_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_hidreletrica_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_hidreletrica_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_hidreletrica_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_funicular_p_avoid_multi () RETURNS TRIGGER AS $tra_funicular_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_funicular_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,id_org_ext_mineral,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.id_org_ext_mineral,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_funicular_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_funicular_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_funicular_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_funicular_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION asb_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $asb_descontinuidade_geometrica_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.asb_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$asb_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER asb_descontinuidade_geometrica_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.asb_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE asb_descontinuidade_geometrica_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION veg_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $veg_descontinuidade_geometrica_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.veg_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$veg_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER veg_descontinuidade_geometrica_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.veg_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE veg_descontinuidade_geometrica_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_unidade_federacao_a_avoid_multi () RETURNS TRIGGER AS $lim_unidade_federacao_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_unidade_federacao_a(nome,nomeabrev,geometriaaproximada,geom,sigla,geocodigo) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.sigla,NEW.geocodigo ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_unidade_federacao_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_unidade_federacao_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_unidade_federacao_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_federacao_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION lim_limite_area_especial_l_avoid_multi () RETURNS TRIGGER AS $lim_limite_area_especial_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.lim_limite_area_especial_l(nome,nomeabrev,coincidecomdentrode,geometriaaproximada,extensao,geom,tipolimareaesp,obssituacao) SELECT NEW.nome,NEW.nomeabrev,NEW.coincidecomdentrode,NEW.geometriaaproximada,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipolimareaesp,NEW.obssituacao ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$lim_limite_area_especial_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER lim_limite_area_especial_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.lim_limite_area_especial_l
-    FOR EACH ROW EXECUTE PROCEDURE lim_limite_area_especial_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION asb_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $asb_descontinuidade_geometrica_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.asb_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$asb_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER asb_descontinuidade_geometrica_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.asb_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE asb_descontinuidade_geometrica_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_funicular_l_avoid_multi () RETURNS TRIGGER AS $tra_funicular_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_funicular_l(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,id_org_ext_mineral,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.id_org_ext_mineral,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_funicular_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_funicular_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_funicular_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_funicular_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION asb_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $asb_descontinuidade_geometrica_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.asb_descontinuidade_geometrica_l(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$asb_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER asb_descontinuidade_geometrica_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.asb_descontinuidade_geometrica_l
-    FOR EACH ROW EXECUTE PROCEDURE asb_descontinuidade_geometrica_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION rel_rocha_p_avoid_multi () RETURNS TRIGGER AS $rel_rocha_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.rel_rocha_p(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom,tiporocha) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tiporocha ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$rel_rocha_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER rel_rocha_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.rel_rocha_p
-    FOR EACH ROW EXECUTE PROCEDURE rel_rocha_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_local_critico_p_avoid_multi () RETURNS TRIGGER AS $tra_local_critico_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_local_critico_p(nome,nomeabrev,geometriaaproximada,tipolocalcrit,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipolocalcrit,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_local_critico_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_local_critico_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_local_critico_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_local_critico_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_area_habitacional_a_avoid_multi () RETURNS TRIGGER AS $loc_area_habitacional_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_area_habitacional_a(nome,nomeabrev,id_complexo_habitacional,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.id_complexo_habitacional,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_area_habitacional_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_area_habitacional_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_area_habitacional_a
-    FOR EACH ROW EXECUTE PROCEDURE loc_area_habitacional_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION loc_localidade_p_avoid_multi () RETURNS TRIGGER AS $loc_localidade_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.loc_localidade_p(nome,nomeabrev,geometriaaproximada,geocodigo,identificador,latitude,latitude_gms,longitude,longitude_gms,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.geocodigo,NEW.identificador,NEW.latitude,NEW.latitude_gms,NEW.longitude,NEW.longitude_gms,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$loc_localidade_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER loc_localidade_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.loc_localidade_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_localidade_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_local_critico_a_avoid_multi () RETURNS TRIGGER AS $tra_local_critico_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_local_critico_a(nome,nomeabrev,geometriaaproximada,tipolocalcrit,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipolocalcrit,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_local_critico_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_local_critico_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_local_critico_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_local_critico_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION veg_macega_chavascal_a_avoid_multi () RETURNS TRIGGER AS $veg_macega_chavascal_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.veg_macega_chavascal_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom,tipomacchav,alturamediaindividuos,classificacaoporte) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipomacchav,NEW.alturamediaindividuos,NEW.classificacaoporte ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$veg_macega_chavascal_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER veg_macega_chavascal_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.veg_macega_chavascal_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_macega_chavascal_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_local_critico_l_avoid_multi () RETURNS TRIGGER AS $tra_local_critico_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_local_critico_l(nome,nomeabrev,geometriaaproximada,tipolocalcrit,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipolocalcrit,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_local_critico_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_local_critico_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_local_critico_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_local_critico_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_edif_religiosa_a_avoid_multi () RETURNS TRIGGER AS $edu_edif_religiosa_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_edif_religiosa_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifrelig,ensino,religiao,id_org_religiosa) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifrelig,NEW.ensino,NEW.religiao,NEW.id_org_religiosa ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_edif_religiosa_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_edif_religiosa_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_edif_religiosa_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_edif_religiosa_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_terreno_suj_inundacao_a_avoid_multi () RETURNS TRIGGER AS $hid_terreno_suj_inundacao_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_terreno_suj_inundacao_a(nome,nomeabrev,geometriaaproximada,periodicidadeinunda,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.periodicidadeinunda,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_terreno_suj_inundacao_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_terreno_suj_inundacao_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_terreno_suj_inundacao_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_terreno_suj_inundacao_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_edif_religiosa_p_avoid_multi () RETURNS TRIGGER AS $edu_edif_religiosa_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_edif_religiosa_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifrelig,ensino,religiao,id_org_religiosa) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifrelig,NEW.ensino,NEW.religiao,NEW.id_org_religiosa ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_edif_religiosa_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_edif_religiosa_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_edif_religiosa_p
-    FOR EACH ROW EXECUTE PROCEDURE edu_edif_religiosa_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION adm_edif_pub_civil_p_avoid_multi () RETURNS TRIGGER AS $adm_edif_pub_civil_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.adm_edif_pub_civil_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifcivil,tipousoedif,id_org_pub_civil) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifcivil,NEW.tipousoedif,NEW.id_org_pub_civil ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$adm_edif_pub_civil_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER adm_edif_pub_civil_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.adm_edif_pub_civil_p
-    FOR EACH ROW EXECUTE PROCEDURE adm_edif_pub_civil_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_trecho_energia_l_avoid_multi () RETURNS TRIGGER AS $enc_trecho_energia_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_trecho_energia_l(nome,nomeabrev,geometriaaproximada,especie,posicaorelativa,operacional,situacaofisica,emduto,tensaoeletrica,numcircuitos,id_org_comerc_serv,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.especie,NEW.posicaorelativa,NEW.operacional,NEW.situacaofisica,NEW.emduto,NEW.tensaoeletrica,NEW.numcircuitos,NEW.id_org_comerc_serv,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_trecho_energia_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_trecho_energia_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_trecho_energia_l
-    FOR EACH ROW EXECUTE PROCEDURE enc_trecho_energia_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_edif_metro_ferroviaria_p_avoid_multi () RETURNS TRIGGER AS $tra_edif_metro_ferroviaria_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_edif_metro_ferroviaria_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,funcaoedifmetroferrov,multimodal,administracao,id_estrut_apoio) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.funcaoedifmetroferrov,NEW.multimodal,NEW.administracao,NEW.id_estrut_apoio ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_edif_metro_ferroviaria_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_edif_metro_ferroviaria_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_edif_metro_ferroviaria_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_edif_metro_ferroviaria_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_tunel_l_avoid_multi () RETURNS TRIGGER AS $tra_tunel_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_tunel_l(geometriaaproximada,nome,nomeabrev,tipotunel,modaluso,matconstr,operacional,situacaofisica,nrpistas,nrfaixas,posicaopista,altura,extensao,geom) SELECT NEW.geometriaaproximada,NEW.nome,NEW.nomeabrev,NEW.tipotunel,NEW.modaluso,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.nrpistas,NEW.nrfaixas,NEW.posicaopista,NEW.altura,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_tunel_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_tunel_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_tunel_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_tunel_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION adm_edif_pub_civil_a_avoid_multi () RETURNS TRIGGER AS $adm_edif_pub_civil_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.adm_edif_pub_civil_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifcivil,tipousoedif,id_org_pub_civil) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifcivil,NEW.tipousoedif,NEW.id_org_pub_civil ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$adm_edif_pub_civil_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER adm_edif_pub_civil_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.adm_edif_pub_civil_a
-    FOR EACH ROW EXECUTE PROCEDURE adm_edif_pub_civil_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_edif_metro_ferroviaria_a_avoid_multi () RETURNS TRIGGER AS $tra_edif_metro_ferroviaria_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_edif_metro_ferroviaria_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,funcaoedifmetroferrov,multimodal,administracao,id_estrut_apoio) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.funcaoedifmetroferrov,NEW.multimodal,NEW.administracao,NEW.id_estrut_apoio ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_edif_metro_ferroviaria_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_edif_metro_ferroviaria_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_edif_metro_ferroviaria_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_edif_metro_ferroviaria_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_quebramar_molhe_a_avoid_multi () RETURNS TRIGGER AS $hid_quebramar_molhe_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_quebramar_molhe_a(nome,nomeabrev,geometriaaproximada,tipoquebramolhe,matconstr,situamare,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoquebramolhe,NEW.matconstr,NEW.situamare,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_quebramar_molhe_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_quebramar_molhe_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_quebramar_molhe_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_quebramar_molhe_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_quebramar_molhe_l_avoid_multi () RETURNS TRIGGER AS $hid_quebramar_molhe_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_quebramar_molhe_l(nome,nomeabrev,geometriaaproximada,tipoquebramolhe,matconstr,situamare,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoquebramolhe,NEW.matconstr,NEW.situamare,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_quebramar_molhe_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_quebramar_molhe_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_quebramar_molhe_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_quebramar_molhe_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION veg_mangue_a_avoid_multi () RETURNS TRIGGER AS $veg_mangue_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.veg_mangue_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom,classificacaoporte) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.classificacaoporte ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$veg_mangue_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER veg_mangue_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.veg_mangue_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_mangue_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_queda_dagua_p_avoid_multi () RETURNS TRIGGER AS $hid_queda_dagua_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_queda_dagua_p(nome,nomeabrev,geometriaaproximada,tipoqueda,altura,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoqueda,NEW.altura,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_queda_dagua_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_queda_dagua_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_queda_dagua_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_queda_dagua_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION asb_edif_abast_agua_p_avoid_multi () RETURNS TRIGGER AS $asb_edif_abast_agua_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.asb_edif_abast_agua_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifabast,id_complexo_abast_agua) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifabast,NEW.id_complexo_abast_agua ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$asb_edif_abast_agua_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER asb_edif_abast_agua_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.asb_edif_abast_agua_p
-    FOR EACH ROW EXECUTE PROCEDURE asb_edif_abast_agua_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_queda_dagua_a_avoid_multi () RETURNS TRIGGER AS $hid_queda_dagua_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_queda_dagua_a(nome,nomeabrev,geometriaaproximada,tipoqueda,altura,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoqueda,NEW.altura,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_queda_dagua_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_queda_dagua_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_queda_dagua_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_queda_dagua_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION asb_edif_abast_agua_a_avoid_multi () RETURNS TRIGGER AS $asb_edif_abast_agua_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.asb_edif_abast_agua_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifabast,id_complexo_abast_agua) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifabast,NEW.id_complexo_abast_agua ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$asb_edif_abast_agua_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER asb_edif_abast_agua_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.asb_edif_abast_agua_a
-    FOR EACH ROW EXECUTE PROCEDURE asb_edif_abast_agua_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION hid_queda_dagua_l_avoid_multi () RETURNS TRIGGER AS $hid_queda_dagua_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.hid_queda_dagua_l(nome,nomeabrev,geometriaaproximada,tipoqueda,altura,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoqueda,NEW.altura,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$hid_queda_dagua_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER hid_queda_dagua_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.hid_queda_dagua_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_queda_dagua_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_est_gerad_energia_eletr_p_avoid_multi () RETURNS TRIGGER AS $enc_est_gerad_energia_eletr_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_est_gerad_energia_eletr_p(nome,nomeabrev,geometriaaproximada,tipoestgerad,operacional,situacaofisica,destenergelet,codigoestacao,potenciaoutorgada,potenciafiscalizada,id_complexo_gerad_energ_eletr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoestgerad,NEW.operacional,NEW.situacaofisica,NEW.destenergelet,NEW.codigoestacao,NEW.potenciaoutorgada,NEW.potenciafiscalizada,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_est_gerad_energia_eletr_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_est_gerad_energia_eletr_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_est_gerad_energia_eletr_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_est_gerad_energia_eletr_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_equip_agropec_a_avoid_multi () RETURNS TRIGGER AS $eco_equip_agropec_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_equip_agropec_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipoequipagropec,matconstr,id_org_agrop_ext_veg_pesca,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipoequipagropec,NEW.matconstr,NEW.id_org_agrop_ext_veg_pesca,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_equip_agropec_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_equip_agropec_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_equip_agropec_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_equip_agropec_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_arquibancada_a_avoid_multi () RETURNS TRIGGER AS $edu_arquibancada_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_arquibancada_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_arquibancada_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_arquibancada_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_arquibancada_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_arquibancada_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_cremalheira_p_avoid_multi () RETURNS TRIGGER AS $tra_cremalheira_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_cremalheira_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_cremalheira_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_cremalheira_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_cremalheira_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_cremalheira_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_equip_agropec_l_avoid_multi () RETURNS TRIGGER AS $eco_equip_agropec_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_equip_agropec_l(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipoequipagropec,matconstr,id_org_agrop_ext_veg_pesca,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipoequipagropec,NEW.matconstr,NEW.id_org_agrop_ext_veg_pesca,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_equip_agropec_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_equip_agropec_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_equip_agropec_l
-    FOR EACH ROW EXECUTE PROCEDURE eco_equip_agropec_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION tra_cremalheira_l_avoid_multi () RETURNS TRIGGER AS $tra_cremalheira_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.tra_cremalheira_l(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$tra_cremalheira_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER tra_cremalheira_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.tra_cremalheira_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_cremalheira_l_avoid_multi ();
-CREATE OR REPLACE FUNCTION eco_equip_agropec_p_avoid_multi () RETURNS TRIGGER AS $eco_equip_agropec_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.eco_equip_agropec_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipoequipagropec,matconstr,id_org_agrop_ext_veg_pesca,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipoequipagropec,NEW.matconstr,NEW.id_org_agrop_ext_veg_pesca,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$eco_equip_agropec_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER eco_equip_agropec_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.eco_equip_agropec_p
-    FOR EACH ROW EXECUTE PROCEDURE eco_equip_agropec_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_est_gerad_energia_eletr_a_avoid_multi () RETURNS TRIGGER AS $enc_est_gerad_energia_eletr_a_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_est_gerad_energia_eletr_a(nome,nomeabrev,geometriaaproximada,tipoestgerad,operacional,situacaofisica,destenergelet,codigoestacao,potenciaoutorgada,potenciafiscalizada,id_complexo_gerad_energ_eletr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoestgerad,NEW.operacional,NEW.situacaofisica,NEW.destenergelet,NEW.codigoestacao,NEW.potenciaoutorgada,NEW.potenciafiscalizada,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_est_gerad_energia_eletr_a_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_est_gerad_energia_eletr_a_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_est_gerad_energia_eletr_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_est_gerad_energia_eletr_a_avoid_multi ();
-CREATE OR REPLACE FUNCTION edu_arquibancada_p_avoid_multi () RETURNS TRIGGER AS $edu_arquibancada_p_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.edu_arquibancada_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$edu_arquibancada_p_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER edu_arquibancada_p_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.edu_arquibancada_p
-    FOR EACH ROW EXECUTE PROCEDURE edu_arquibancada_p_avoid_multi ();
-CREATE OR REPLACE FUNCTION enc_est_gerad_energia_eletr_l_avoid_multi () RETURNS TRIGGER AS $enc_est_gerad_energia_eletr_l_avoid_multi_return$
-    DECLARE
-    BEGIN
-        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
-		RETURN NEW;
-	END IF;
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
-		INSERT INTO cb.enc_est_gerad_energia_eletr_l(nome,nomeabrev,geometriaaproximada,tipoestgerad,operacional,situacaofisica,destenergelet,codigoestacao,potenciaoutorgada,potenciafiscalizada,id_complexo_gerad_energ_eletr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoestgerad,NEW.operacional,NEW.situacaofisica,NEW.destenergelet,NEW.codigoestacao,NEW.potenciaoutorgada,NEW.potenciafiscalizada,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-	RETURN NULL;
-    END;
-$enc_est_gerad_energia_eletr_l_avoid_multi_return$ LANGUAGE plpgsql#
-CREATE TRIGGER enc_est_gerad_energia_eletr_l_avoid_multi_return
-BEFORE INSERT OR UPDATE ON cb.enc_est_gerad_energia_eletr_l
-    FOR EACH ROW EXECUTE PROCEDURE enc_est_gerad_energia_eletr_l_avoid_multi ();
+ALTER TABLE cb.edu_edif_ensino_p
+  ADD CONSTRAINT edu_edif_ensino_p_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
+   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_posto_fiscal_p
+  ADD CONSTRAINT adm_posto_fiscal_p_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_area_estrut_transporte_a
+  ADD CONSTRAINT tra_area_estrut_transporte_a_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
+   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_termeletrica_a
+  ADD CONSTRAINT enc_termeletrica_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_termeletrica_p
+  ADD CONSTRAINT enc_termeletrica_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_hidreletrica_l
+  ADD CONSTRAINT enc_hidreletrica_l_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_area_comerc_serv_a
+  ADD CONSTRAINT eco_area_comerc_serv_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_hidreletrica_a
+  ADD CONSTRAINT enc_hidreletrica_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_hidreletrica_p
+  ADD CONSTRAINT enc_hidreletrica_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_funicular_p
+  ADD CONSTRAINT tra_funicular_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_funicular_l
+  ADD CONSTRAINT tra_funicular_l_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.loc_area_habitacional_a
+  ADD CONSTRAINT loc_area_habitacional_a_id_complexo_habitacional_fk FOREIGN KEY (id_complexo_habitacional)
+   REFERENCES complexos.loc_complexo_habitacional (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_religiosa_a
+  ADD CONSTRAINT edu_edif_religiosa_a_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
+   REFERENCES complexos.edu_org_religiosa (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_religiosa_p
+  ADD CONSTRAINT edu_edif_religiosa_p_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
+   REFERENCES complexos.edu_org_religiosa (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_edif_pub_civil_p
+  ADD CONSTRAINT adm_edif_pub_civil_p_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_trecho_energia_l
+  ADD CONSTRAINT enc_trecho_energia_l_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_edif_metro_ferroviaria_p
+  ADD CONSTRAINT tra_edif_metro_ferroviaria_p_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_edif_pub_civil_a
+  ADD CONSTRAINT adm_edif_pub_civil_a_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_edif_metro_ferroviaria_a
+  ADD CONSTRAINT tra_edif_metro_ferroviaria_a_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_edif_abast_agua_p
+  ADD CONSTRAINT asb_edif_abast_agua_p_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
+   REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_edif_abast_agua_a
+  ADD CONSTRAINT asb_edif_abast_agua_a_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
+   REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_est_gerad_energia_eletr_p
+  ADD CONSTRAINT enc_est_gerad_energia_eletr_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_equip_agropec_a
+  ADD CONSTRAINT eco_equip_agropec_a_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_arquibancada_a
+  ADD CONSTRAINT edu_arquibancada_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_equip_agropec_l
+  ADD CONSTRAINT eco_equip_agropec_l_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_equip_agropec_p
+  ADD CONSTRAINT eco_equip_agropec_p_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_est_gerad_energia_eletr_a
+  ADD CONSTRAINT enc_est_gerad_energia_eletr_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_arquibancada_p
+  ADD CONSTRAINT edu_arquibancada_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_est_gerad_energia_eletr_l
+  ADD CONSTRAINT enc_est_gerad_energia_eletr_l_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.eco_org_industrial ALTER COLUMN id set default uuid_generate_v4()#
 ALTER TABLE complexos.eco_madeireira ALTER COLUMN id set default uuid_generate_v4()#
 ALTER TABLE complexos.edu_org_ensino ALTER COLUMN id set default uuid_generate_v4()#
@@ -20893,4 +14819,5962 @@ ALTER TABLE complexos.tra_via_rodoviaria ALTER COLUMN id set default uuid_genera
 ALTER TABLE complexos.tra_via_ferrea ALTER COLUMN id set default uuid_generate_v4()#
 ALTER TABLE complexos.tra_hidrovia ALTER COLUMN id set default uuid_generate_v4()#
 ALTER TABLE complexos.loc_complexo_habitacional ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.loc_aldeia_indigena ALTER COLUMN id set default uuid_generate_v4()
+ALTER TABLE complexos.loc_aldeia_indigena ALTER COLUMN id set default uuid_generate_v4()#
+CREATE OR REPLACE FUNCTION edu_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $edu_descontinuidade_geometrica_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_descontinuidade_geometrica_l(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_descontinuidade_geometrica_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_descontinuidade_geometrica_l
+    FOR EACH ROW EXECUTE PROCEDURE edu_descontinuidade_geometrica_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION asb_area_saneamento_a_avoid_multi () RETURNS TRIGGER AS $asb_area_saneamento_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.asb_area_saneamento_a(geometriaaproximada,id_complexo_saneamento,geom) SELECT NEW.geometriaaproximada,NEW.id_complexo_saneamento,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$asb_area_saneamento_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER asb_area_saneamento_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.asb_area_saneamento_a
+    FOR EACH ROW EXECUTE PROCEDURE asb_area_saneamento_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_edif_comerc_serv_p_avoid_multi () RETURNS TRIGGER AS $eco_edif_comerc_serv_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_edif_comerc_serv_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifcomercserv,finalidade,id_org_comerc_serv) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifcomercserv,NEW.finalidade,NEW.id_org_comerc_serv ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_edif_comerc_serv_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_edif_comerc_serv_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_edif_comerc_serv_p
+    FOR EACH ROW EXECUTE PROCEDURE eco_edif_comerc_serv_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION veg_cerrado_cerradao_a_avoid_multi () RETURNS TRIGGER AS $veg_cerrado_cerradao_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.veg_cerrado_cerradao_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom,tipocerr,classificacaoporte) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipocerr,NEW.classificacaoporte ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$veg_cerrado_cerradao_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER veg_cerrado_cerradao_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.veg_cerrado_cerradao_a
+    FOR EACH ROW EXECUTE PROCEDURE veg_cerrado_cerradao_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_edif_comerc_serv_a_avoid_multi () RETURNS TRIGGER AS $eco_edif_comerc_serv_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_edif_comerc_serv_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifcomercserv,finalidade,id_org_comerc_serv) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifcomercserv,NEW.finalidade,NEW.id_org_comerc_serv ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_edif_comerc_serv_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_edif_comerc_serv_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_edif_comerc_serv_a
+    FOR EACH ROW EXECUTE PROCEDURE eco_edif_comerc_serv_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $edu_descontinuidade_geometrica_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_descontinuidade_geometrica_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_descontinuidade_geometrica_p
+    FOR EACH ROW EXECUTE PROCEDURE edu_descontinuidade_geometrica_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_elemento_fisiog_natural_l_avoid_multi () RETURNS TRIGGER AS $rel_elemento_fisiog_natural_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_elemento_fisiog_natural_l(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_elemento_fisiog_natural_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_elemento_fisiog_natural_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_elemento_fisiog_natural_l
+    FOR EACH ROW EXECUTE PROCEDURE rel_elemento_fisiog_natural_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION adm_area_pub_militar_a_avoid_multi () RETURNS TRIGGER AS $adm_area_pub_militar_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.adm_area_pub_militar_a(geometriaaproximada,geom,id_org_pub_militar) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_org_pub_militar ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$adm_area_pub_militar_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER adm_area_pub_militar_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.adm_area_pub_militar_a
+    FOR EACH ROW EXECUTE PROCEDURE adm_area_pub_militar_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_campo_quadra_p_avoid_multi () RETURNS TRIGGER AS $edu_campo_quadra_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_campo_quadra_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipocampoquadra,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipocampoquadra,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_campo_quadra_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_campo_quadra_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_campo_quadra_p
+    FOR EACH ROW EXECUTE PROCEDURE edu_campo_quadra_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_elemento_fisiog_natural_a_avoid_multi () RETURNS TRIGGER AS $rel_elemento_fisiog_natural_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_elemento_fisiog_natural_a(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_elemento_fisiog_natural_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_elemento_fisiog_natural_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_elemento_fisiog_natural_a
+    FOR EACH ROW EXECUTE PROCEDURE rel_elemento_fisiog_natural_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_area_particular_a_avoid_multi () RETURNS TRIGGER AS $lim_area_particular_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_area_particular_a(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_area_particular_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_area_particular_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_area_particular_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_area_particular_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_campo_quadra_a_avoid_multi () RETURNS TRIGGER AS $edu_campo_quadra_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_campo_quadra_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipocampoquadra,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipocampoquadra,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_campo_quadra_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_campo_quadra_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_campo_quadra_a
+    FOR EACH ROW EXECUTE PROCEDURE edu_campo_quadra_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_elemento_fisiog_natural_p_avoid_multi () RETURNS TRIGGER AS $rel_elemento_fisiog_natural_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_elemento_fisiog_natural_p(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_elemento_fisiog_natural_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_elemento_fisiog_natural_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_elemento_fisiog_natural_p
+    FOR EACH ROW EXECUTE PROCEDURE rel_elemento_fisiog_natural_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_delimitacao_fisica_l_avoid_multi () RETURNS TRIGGER AS $lim_delimitacao_fisica_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_delimitacao_fisica_l(nome,nomeabrev,geometriaaproximada,tipodelimfis,matconstr,eletrificada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipodelimfis,NEW.matconstr,NEW.eletrificada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_delimitacao_fisica_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_delimitacao_fisica_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_delimitacao_fisica_l
+    FOR EACH ROW EXECUTE PROCEDURE lim_delimitacao_fisica_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_hab_indigena_p_avoid_multi () RETURNS TRIGGER AS $loc_hab_indigena_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_hab_indigena_p(nome,nomeabrev,geometriaaproximada,coletiva,isolada,id_aldeia_indigena,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.coletiva,NEW.isolada,NEW.id_aldeia_indigena,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_hab_indigena_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_hab_indigena_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_hab_indigena_p
+    FOR EACH ROW EXECUTE PROCEDURE loc_hab_indigena_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION pto_edif_constr_est_med_fen_a_avoid_multi () RETURNS TRIGGER AS $pto_edif_constr_est_med_fen_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.pto_edif_constr_est_med_fen_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$pto_edif_constr_est_med_fen_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER pto_edif_constr_est_med_fen_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.pto_edif_constr_est_med_fen_a
+    FOR EACH ROW EXECUTE PROCEDURE pto_edif_constr_est_med_fen_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_edif_comunic_p_avoid_multi () RETURNS TRIGGER AS $enc_edif_comunic_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_edif_comunic_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,modalidade,tipoedifcomunic,id_complexo_comunicacao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.modalidade,NEW.tipoedifcomunic,NEW.id_complexo_comunicacao ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_edif_comunic_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_edif_comunic_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_edif_comunic_p
+    FOR EACH ROW EXECUTE PROCEDURE enc_edif_comunic_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_terra_indigena_p_avoid_multi () RETURNS TRIGGER AS $lim_terra_indigena_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_terra_indigena_p(nome,nomeabrev,nomeTi,situacaojuridica,datasituacaojuridica,grupoetnico,areaoficialha,perimetrooficial,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.nomeTi,NEW.situacaojuridica,NEW.datasituacaojuridica,NEW.grupoetnico,NEW.areaoficialha,NEW.perimetrooficial,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_terra_indigena_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_terra_indigena_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_terra_indigena_p
+    FOR EACH ROW EXECUTE PROCEDURE lim_terra_indigena_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $edu_descontinuidade_geometrica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_descontinuidade_geometrica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_descontinuidade_geometrica_a
+    FOR EACH ROW EXECUTE PROCEDURE edu_descontinuidade_geometrica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_hab_indigena_a_avoid_multi () RETURNS TRIGGER AS $loc_hab_indigena_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_hab_indigena_a(nome,nomeabrev,geometriaaproximada,coletiva,isolada,id_aldeia_indigena,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.coletiva,NEW.isolada,NEW.id_aldeia_indigena,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_hab_indigena_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_hab_indigena_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_hab_indigena_a
+    FOR EACH ROW EXECUTE PROCEDURE loc_hab_indigena_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_edif_comunic_a_avoid_multi () RETURNS TRIGGER AS $enc_edif_comunic_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_edif_comunic_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,modalidade,tipoedifcomunic,id_complexo_comunicacao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.modalidade,NEW.tipoedifcomunic,NEW.id_complexo_comunicacao ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_edif_comunic_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_edif_comunic_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_edif_comunic_a
+    FOR EACH ROW EXECUTE PROCEDURE enc_edif_comunic_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_terra_indigena_a_avoid_multi () RETURNS TRIGGER AS $lim_terra_indigena_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_terra_indigena_a(nome,nomeabrev,nomeTi,situacaojuridica,datasituacaojuridica,grupoetnico,areaoficialha,perimetrooficial,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.nomeTi,NEW.situacaojuridica,NEW.datasituacaojuridica,NEW.grupoetnico,NEW.areaoficialha,NEW.perimetrooficial,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_terra_indigena_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_terra_indigena_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_terra_indigena_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_terra_indigena_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_limite_operacional_l_avoid_multi () RETURNS TRIGGER AS $lim_limite_operacional_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_limite_operacional_l(nome,nomeabrev,coincidecomdentrode,geometriaaproximada,extensao,geom,tipolimoper,obssituacao) SELECT NEW.nome,NEW.nomeabrev,NEW.coincidecomdentrode,NEW.geometriaaproximada,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipolimoper,NEW.obssituacao ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_limite_operacional_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_limite_operacional_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_limite_operacional_l
+    FOR EACH ROW EXECUTE PROCEDURE lim_limite_operacional_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_foz_maritima_p_avoid_multi () RETURNS TRIGGER AS $hid_foz_maritima_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_foz_maritima_p(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_foz_maritima_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_foz_maritima_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_foz_maritima_p
+    FOR EACH ROW EXECUTE PROCEDURE hid_foz_maritima_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_foz_maritima_l_avoid_multi () RETURNS TRIGGER AS $hid_foz_maritima_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_foz_maritima_l(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_foz_maritima_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_foz_maritima_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_foz_maritima_l
+    FOR EACH ROW EXECUTE PROCEDURE hid_foz_maritima_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_foz_maritima_a_avoid_multi () RETURNS TRIGGER AS $hid_foz_maritima_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_foz_maritima_a(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_foz_maritima_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_foz_maritima_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_foz_maritima_a
+    FOR EACH ROW EXECUTE PROCEDURE hid_foz_maritima_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_ponte_p_avoid_multi () RETURNS TRIGGER AS $tra_ponte_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_ponte_p(nome,nomeabrev,geometriaaproximada,tipoponte,modaluso,matconstr,operacional,situacaofisica,vaolivrehoriz,vaolivrevertical,cargasuportmaxima,nrfaixas,nrpistas,posicaopista,largura,extensao,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoponte,NEW.modaluso,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.vaolivrehoriz,NEW.vaolivrevertical,NEW.cargasuportmaxima,NEW.nrfaixas,NEW.nrpistas,NEW.posicaopista,NEW.largura,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_ponte_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_ponte_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_ponte_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_ponte_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_ponte_l_avoid_multi () RETURNS TRIGGER AS $tra_ponte_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_ponte_l(nome,nomeabrev,geometriaaproximada,tipoponte,modaluso,matconstr,operacional,situacaofisica,vaolivrehoriz,vaolivrevertical,cargasuportmaxima,nrfaixas,nrpistas,posicaopista,largura,extensao,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoponte,NEW.modaluso,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.vaolivrehoriz,NEW.vaolivrevertical,NEW.cargasuportmaxima,NEW.nrfaixas,NEW.nrpistas,NEW.posicaopista,NEW.largura,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_ponte_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_ponte_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_ponte_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_ponte_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_sinalizacao_p_avoid_multi () RETURNS TRIGGER AS $tra_sinalizacao_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_sinalizacao_p(nome,nomeabrev,geometriaaproximada,tiposinal,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tiposinal,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_sinalizacao_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_sinalizacao_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_sinalizacao_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_sinalizacao_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION pto_pto_controle_p_avoid_multi () RETURNS TRIGGER AS $pto_pto_controle_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.pto_pto_controle_p(nomeabrev,geometriaaproximada,tiporef,latitude,longitude,altitudeortometrica,sistemageodesico,referencialaltim,outrarefalt,orgaoenteresp,codponto,obs,geom,tipoptocontrole,materializado,codprojeto) SELECT NEW.nomeabrev,NEW.geometriaaproximada,NEW.tiporef,NEW.latitude,NEW.longitude,NEW.altitudeortometrica,NEW.sistemageodesico,NEW.referencialaltim,NEW.outrarefalt,NEW.orgaoenteresp,NEW.codponto,NEW.obs,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoptocontrole,NEW.materializado,NEW.codprojeto ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$pto_pto_controle_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER pto_pto_controle_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.pto_pto_controle_p
+    FOR EACH ROW EXECUTE PROCEDURE pto_pto_controle_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_unidade_conserv_nao_snuc_a_avoid_multi () RETURNS TRIGGER AS $lim_unidade_conserv_nao_snuc_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_unidade_conserv_nao_snuc_a(nome,nomeabrev,geometriaaproximada,geom,atolegal,administracao,classificacao,anocriacao,sigla,areaoficial) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.atolegal,NEW.administracao,NEW.classificacao,NEW.anocriacao,NEW.sigla,NEW.areaoficial ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_unidade_conserv_nao_snuc_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_unidade_conserv_nao_snuc_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_unidade_conserv_nao_snuc_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_conserv_nao_snuc_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_aglomerado_rural_isolado_p_avoid_multi () RETURNS TRIGGER AS $loc_aglomerado_rural_isolado_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_aglomerado_rural_isolado_p(nome,nomeabrev,geometriaaproximada,geocodigo,identificador,latitude,latitude_gms,longitude,longitude_gms,geom,tipoaglomrurisol) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.geocodigo,NEW.identificador,NEW.latitude,NEW.latitude_gms,NEW.longitude,NEW.longitude_gms,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoaglomrurisol ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_aglomerado_rural_isolado_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_aglomerado_rural_isolado_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_aglomerado_rural_isolado_p
+    FOR EACH ROW EXECUTE PROCEDURE loc_aglomerado_rural_isolado_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_massa_dagua_a_avoid_multi () RETURNS TRIGGER AS $hid_massa_dagua_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_massa_dagua_a(nome,nomeabrev,geometriaaproximada,tipomassadagua,regime,salinidade,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipomassadagua,NEW.regime,NEW.salinidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_massa_dagua_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_massa_dagua_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_massa_dagua_a
+    FOR EACH ROW EXECUTE PROCEDURE hid_massa_dagua_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_unidade_conserv_nao_snuc_p_avoid_multi () RETURNS TRIGGER AS $lim_unidade_conserv_nao_snuc_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_unidade_conserv_nao_snuc_p(nome,nomeabrev,geometriaaproximada,geom,atolegal,administracao,classificacao,anocriacao,sigla,areaoficial) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.atolegal,NEW.administracao,NEW.classificacao,NEW.anocriacao,NEW.sigla,NEW.areaoficial ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_unidade_conserv_nao_snuc_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_unidade_conserv_nao_snuc_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_unidade_conserv_nao_snuc_p
+    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_conserv_nao_snuc_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_ext_mineral_a_avoid_multi () RETURNS TRIGGER AS $eco_ext_mineral_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_ext_mineral_a(nome,nomeabrev,tiposecaocnae,operacional,situacaofisica,tipoextmin,tipoprodutoresiduo,tipopocomina,procextracao,formaextracao,atividade,id_org_ext_mineral,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.tiposecaocnae,NEW.operacional,NEW.situacaofisica,NEW.tipoextmin,NEW.tipoprodutoresiduo,NEW.tipopocomina,NEW.procextracao,NEW.formaextracao,NEW.atividade,NEW.id_org_ext_mineral,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_ext_mineral_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_ext_mineral_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_ext_mineral_a
+    FOR EACH ROW EXECUTE PROCEDURE eco_ext_mineral_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_ext_mineral_p_avoid_multi () RETURNS TRIGGER AS $eco_ext_mineral_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_ext_mineral_p(nome,nomeabrev,tiposecaocnae,operacional,situacaofisica,tipoextmin,tipoprodutoresiduo,tipopocomina,procextracao,formaextracao,atividade,id_org_ext_mineral,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.tiposecaocnae,NEW.operacional,NEW.situacaofisica,NEW.tipoextmin,NEW.tipoprodutoresiduo,NEW.tipopocomina,NEW.procextracao,NEW.formaextracao,NEW.atividade,NEW.id_org_ext_mineral,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_ext_mineral_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_ext_mineral_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_ext_mineral_p
+    FOR EACH ROW EXECUTE PROCEDURE eco_ext_mineral_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_area_comunicacao_a_avoid_multi () RETURNS TRIGGER AS $enc_area_comunicacao_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_area_comunicacao_a(geometriaaproximada,geom,id_complexo_comunicacao) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_complexo_comunicacao ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_area_comunicacao_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_area_comunicacao_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_area_comunicacao_a
+    FOR EACH ROW EXECUTE PROCEDURE enc_area_comunicacao_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION veg_vegetacao_a_avoid_multi () RETURNS TRIGGER AS $veg_vegetacao_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.veg_vegetacao_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$veg_vegetacao_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER veg_vegetacao_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.veg_vegetacao_a
+    FOR EACH ROW EXECUTE PROCEDURE veg_vegetacao_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_nome_local_p_avoid_multi () RETURNS TRIGGER AS $loc_nome_local_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_nome_local_p(nome,geometriaaproximada,geom) SELECT NEW.nome,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_nome_local_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_nome_local_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_nome_local_p
+    FOR EACH ROW EXECUTE PROCEDURE loc_nome_local_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_aglomerado_rural_p_avoid_multi () RETURNS TRIGGER AS $loc_aglomerado_rural_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_aglomerado_rural_p(nome,nomeabrev,geometriaaproximada,geocodigo,identificador,latitude,latitude_gms,longitude,longitude_gms,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.geocodigo,NEW.identificador,NEW.latitude,NEW.latitude_gms,NEW.longitude,NEW.longitude_gms,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_aglomerado_rural_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_aglomerado_rural_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_aglomerado_rural_p
+    FOR EACH ROW EXECUTE PROCEDURE loc_aglomerado_rural_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_ruina_a_avoid_multi () RETURNS TRIGGER AS $edu_ruina_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_ruina_a(nome,nomeabrev,geometriaaproximada,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_ruina_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_ruina_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_ruina_a
+    FOR EACH ROW EXECUTE PROCEDURE edu_ruina_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_edif_industrial_a_avoid_multi () RETURNS TRIGGER AS $eco_edif_industrial_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_edif_industrial_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,chamine,tipodivisaocnae,id_org_industrial) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.chamine,NEW.tipodivisaocnae,NEW.id_org_industrial ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_edif_industrial_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_edif_industrial_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_edif_industrial_a
+    FOR EACH ROW EXECUTE PROCEDURE eco_edif_industrial_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_ruina_p_avoid_multi () RETURNS TRIGGER AS $edu_ruina_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_ruina_p(nome,nomeabrev,geometriaaproximada,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_ruina_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_ruina_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_ruina_p
+    FOR EACH ROW EXECUTE PROCEDURE edu_ruina_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_edif_industrial_p_avoid_multi () RETURNS TRIGGER AS $eco_edif_industrial_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_edif_industrial_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,chamine,tipodivisaocnae,id_org_industrial) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.chamine,NEW.tipodivisaocnae,NEW.id_org_industrial ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_edif_industrial_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_edif_industrial_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_edif_industrial_p
+    FOR EACH ROW EXECUTE PROCEDURE eco_edif_industrial_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION pto_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $pto_descontinuidade_geometrica_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.pto_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$pto_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER pto_descontinuidade_geometrica_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.pto_descontinuidade_geometrica_p
+    FOR EACH ROW EXECUTE PROCEDURE pto_descontinuidade_geometrica_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_rocha_em_agua_a_avoid_multi () RETURNS TRIGGER AS $hid_rocha_em_agua_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_rocha_em_agua_a(nome,nomeabrev,situacaoemagua,alturalamina,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.situacaoemagua,NEW.alturalamina,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_rocha_em_agua_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_rocha_em_agua_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_rocha_em_agua_a
+    FOR EACH ROW EXECUTE PROCEDURE hid_rocha_em_agua_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION pto_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $pto_descontinuidade_geometrica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.pto_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$pto_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER pto_descontinuidade_geometrica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.pto_descontinuidade_geometrica_a
+    FOR EACH ROW EXECUTE PROCEDURE pto_descontinuidade_geometrica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_rocha_em_agua_p_avoid_multi () RETURNS TRIGGER AS $hid_rocha_em_agua_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_rocha_em_agua_p(nome,nomeabrev,situacaoemagua,alturalamina,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.situacaoemagua,NEW.alturalamina,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_rocha_em_agua_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_rocha_em_agua_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_rocha_em_agua_p
+    FOR EACH ROW EXECUTE PROCEDURE hid_rocha_em_agua_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION veg_estepe_a_avoid_multi () RETURNS TRIGGER AS $veg_estepe_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.veg_estepe_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom,alturamediaindividuos) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.alturamediaindividuos ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$veg_estepe_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER veg_estepe_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.veg_estepe_a
+    FOR EACH ROW EXECUTE PROCEDURE veg_estepe_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_tunel_p_avoid_multi () RETURNS TRIGGER AS $tra_tunel_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_tunel_p(geometriaaproximada,nome,nomeabrev,tipotunel,modaluso,matconstr,operacional,situacaofisica,nrpistas,nrfaixas,posicaopista,altura,extensao,geom) SELECT NEW.geometriaaproximada,NEW.nome,NEW.nomeabrev,NEW.tipotunel,NEW.modaluso,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.nrpistas,NEW.nrfaixas,NEW.posicaopista,NEW.altura,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_tunel_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_tunel_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_tunel_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_tunel_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_obstaculo_navegacao_p_avoid_multi () RETURNS TRIGGER AS $tra_obstaculo_navegacao_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_obstaculo_navegacao_p(nome,nomeabrev,geometriaaproximada,tipoobst,situacaoemagua,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoobst,NEW.situacaoemagua,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_obstaculo_navegacao_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_obstaculo_navegacao_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_obstaculo_navegacao_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_obstaculo_navegacao_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_grupo_transformadores_p_avoid_multi () RETURNS TRIGGER AS $enc_grupo_transformadores_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_grupo_transformadores_p(nome,nomeabrev,geometriaaproximada,id_subestacao_ener_eletr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.id_subestacao_ener_eletr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_grupo_transformadores_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_grupo_transformadores_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_grupo_transformadores_p
+    FOR EACH ROW EXECUTE PROCEDURE enc_grupo_transformadores_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION pto_pto_ref_geod_topo_p_avoid_multi () RETURNS TRIGGER AS $pto_pto_ref_geod_topo_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.pto_pto_ref_geod_topo_p(nomeabrev,geometriaaproximada,tiporef,latitude,longitude,altitudeortometrica,sistemageodesico,referencialaltim,outrarefalt,orgaoenteresp,codponto,obs,geom,nome,proximidade,tipoptorefgeodtopo,rede,referencialgrav,situacaomarco,datavisita) SELECT NEW.nomeabrev,NEW.geometriaaproximada,NEW.tiporef,NEW.latitude,NEW.longitude,NEW.altitudeortometrica,NEW.sistemageodesico,NEW.referencialaltim,NEW.outrarefalt,NEW.orgaoenteresp,NEW.codponto,NEW.obs,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.nome,NEW.proximidade,NEW.tipoptorefgeodtopo,NEW.rede,NEW.referencialgrav,NEW.situacaomarco,NEW.datavisita ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$pto_pto_ref_geod_topo_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER pto_pto_ref_geod_topo_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.pto_pto_ref_geod_topo_p
+    FOR EACH ROW EXECUTE PROCEDURE pto_pto_ref_geod_topo_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_obstaculo_navegacao_a_avoid_multi () RETURNS TRIGGER AS $tra_obstaculo_navegacao_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_obstaculo_navegacao_a(nome,nomeabrev,geometriaaproximada,tipoobst,situacaoemagua,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoobst,NEW.situacaoemagua,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_obstaculo_navegacao_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_obstaculo_navegacao_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_obstaculo_navegacao_a
+    FOR EACH ROW EXECUTE PROCEDURE tra_obstaculo_navegacao_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_grupo_transformadores_a_avoid_multi () RETURNS TRIGGER AS $enc_grupo_transformadores_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_grupo_transformadores_a(nome,nomeabrev,geometriaaproximada,id_subestacao_ener_eletr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.id_subestacao_ener_eletr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_grupo_transformadores_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_grupo_transformadores_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_grupo_transformadores_a
+    FOR EACH ROW EXECUTE PROCEDURE enc_grupo_transformadores_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_obstaculo_navegacao_l_avoid_multi () RETURNS TRIGGER AS $tra_obstaculo_navegacao_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_obstaculo_navegacao_l(nome,nomeabrev,geometriaaproximada,tipoobst,situacaoemagua,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoobst,NEW.situacaoemagua,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_obstaculo_navegacao_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_obstaculo_navegacao_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_obstaculo_navegacao_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_obstaculo_navegacao_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION asb_edif_saneamento_a_avoid_multi () RETURNS TRIGGER AS $asb_edif_saneamento_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.asb_edif_saneamento_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifsaneam,id_complexo_saneamento) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifsaneam,NEW.id_complexo_saneamento ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$asb_edif_saneamento_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER asb_edif_saneamento_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.asb_edif_saneamento_a
+    FOR EACH ROW EXECUTE PROCEDURE asb_edif_saneamento_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION sau_edif_saude_a_avoid_multi () RETURNS TRIGGER AS $sau_edif_saude_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.sau_edif_saude_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoclassecnae,nivelatencao,id_org_saude) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoclassecnae,NEW.nivelatencao,NEW.id_org_saude ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$sau_edif_saude_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER sau_edif_saude_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.sau_edif_saude_a
+    FOR EACH ROW EXECUTE PROCEDURE sau_edif_saude_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION asb_edif_saneamento_p_avoid_multi () RETURNS TRIGGER AS $asb_edif_saneamento_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.asb_edif_saneamento_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifsaneam,id_complexo_saneamento) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifsaneam,NEW.id_complexo_saneamento ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$asb_edif_saneamento_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER asb_edif_saneamento_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.asb_edif_saneamento_p
+    FOR EACH ROW EXECUTE PROCEDURE asb_edif_saneamento_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION sau_edif_saude_p_avoid_multi () RETURNS TRIGGER AS $sau_edif_saude_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.sau_edif_saude_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoclassecnae,nivelatencao,id_org_saude) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoclassecnae,NEW.nivelatencao,NEW.id_org_saude ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$sau_edif_saude_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER sau_edif_saude_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.sau_edif_saude_p
+    FOR EACH ROW EXECUTE PROCEDURE sau_edif_saude_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_area_energia_eletrica_a_avoid_multi () RETURNS TRIGGER AS $enc_area_energia_eletrica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_area_energia_eletrica_a(geometriaaproximada,geom,id_subestacao_ener_eletr,id_complexo_gerad_energ_eletr) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_subestacao_ener_eletr,NEW.id_complexo_gerad_energ_eletr ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_area_energia_eletrica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_area_energia_eletrica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_area_energia_eletrica_a
+    FOR EACH ROW EXECUTE PROCEDURE enc_area_energia_eletrica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_area_lazer_a_avoid_multi () RETURNS TRIGGER AS $edu_area_lazer_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_area_lazer_a(geometriaaproximada,geom,id_complexo_lazer) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_complexo_lazer ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_area_lazer_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_area_lazer_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_area_lazer_a
+    FOR EACH ROW EXECUTE PROCEDURE edu_area_lazer_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION veg_campinarana_a_avoid_multi () RETURNS TRIGGER AS $veg_campinarana_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.veg_campinarana_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom,alturamediaindividuos,classificacaoporte) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.alturamediaindividuos,NEW.classificacaoporte ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$veg_campinarana_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER veg_campinarana_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.veg_campinarana_a
+    FOR EACH ROW EXECUTE PROCEDURE veg_campinarana_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION veg_brejo_pantano_a_avoid_multi () RETURNS TRIGGER AS $veg_brejo_pantano_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.veg_brejo_pantano_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom,tipobrejopantano,alturamediaindividuos,classificacaoporte) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipobrejopantano,NEW.alturamediaindividuos,NEW.classificacaoporte ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$veg_brejo_pantano_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER veg_brejo_pantano_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.veg_brejo_pantano_a
+    FOR EACH ROW EXECUTE PROCEDURE veg_brejo_pantano_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_ponto_drenagem_p_avoid_multi () RETURNS TRIGGER AS $hid_ponto_drenagem_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_ponto_drenagem_p(nome,nomeabrev,geometriaaproximada,relacionado,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.relacionado,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_ponto_drenagem_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_ponto_drenagem_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_ponto_drenagem_p
+    FOR EACH ROW EXECUTE PROCEDURE hid_ponto_drenagem_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_limite_massa_dagua_l_avoid_multi () RETURNS TRIGGER AS $hid_limite_massa_dagua_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_limite_massa_dagua_l(geometriaaproximada,tipolimmassa,materialpredominante,alturamediamargem,nomeabrev,geom) SELECT NEW.geometriaaproximada,NEW.tipolimmassa,NEW.materialpredominante,NEW.alturamediamargem,NEW.nomeabrev,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_limite_massa_dagua_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_limite_massa_dagua_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_limite_massa_dagua_l
+    FOR EACH ROW EXECUTE PROCEDURE hid_limite_massa_dagua_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_coreto_tribuna_a_avoid_multi () RETURNS TRIGGER AS $edu_coreto_tribuna_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_coreto_tribuna_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_coreto_tribuna_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_coreto_tribuna_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_coreto_tribuna_a
+    FOR EACH ROW EXECUTE PROCEDURE edu_coreto_tribuna_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_alter_fisiog_antropica_a_avoid_multi () RETURNS TRIGGER AS $rel_alter_fisiog_antropica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_alter_fisiog_antropica_a(nome,nomeabrev,geometriaaproximada,tipoalterantrop,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoalterantrop,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_alter_fisiog_antropica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_alter_fisiog_antropica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_alter_fisiog_antropica_a
+    FOR EACH ROW EXECUTE PROCEDURE rel_alter_fisiog_antropica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_alter_fisiog_antropica_l_avoid_multi () RETURNS TRIGGER AS $rel_alter_fisiog_antropica_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_alter_fisiog_antropica_l(nome,nomeabrev,geometriaaproximada,tipoalterantrop,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoalterantrop,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_alter_fisiog_antropica_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_alter_fisiog_antropica_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_alter_fisiog_antropica_l
+    FOR EACH ROW EXECUTE PROCEDURE rel_alter_fisiog_antropica_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_coreto_tribuna_p_avoid_multi () RETURNS TRIGGER AS $edu_coreto_tribuna_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_coreto_tribuna_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_coreto_tribuna_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_coreto_tribuna_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_coreto_tribuna_p
+    FOR EACH ROW EXECUTE PROCEDURE edu_coreto_tribuna_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_piscina_a_avoid_multi () RETURNS TRIGGER AS $edu_piscina_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_piscina_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_piscina_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_piscina_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_piscina_a
+    FOR EACH ROW EXECUTE PROCEDURE edu_piscina_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_edificacao_a_avoid_multi () RETURNS TRIGGER AS $loc_edificacao_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_edificacao_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_edificacao_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_edificacao_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_edificacao_a
+    FOR EACH ROW EXECUTE PROCEDURE loc_edificacao_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION pto_pto_geod_topo_controle_p_avoid_multi () RETURNS TRIGGER AS $pto_pto_geod_topo_controle_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.pto_pto_geod_topo_controle_p(nomeabrev,geometriaaproximada,tiporef,latitude,longitude,altitudeortometrica,sistemageodesico,referencialaltim,outrarefalt,orgaoenteresp,codponto,obs,geom) SELECT NEW.nomeabrev,NEW.geometriaaproximada,NEW.tiporef,NEW.latitude,NEW.longitude,NEW.altitudeortometrica,NEW.sistemageodesico,NEW.referencialaltim,NEW.outrarefalt,NEW.orgaoenteresp,NEW.codponto,NEW.obs,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$pto_pto_geod_topo_controle_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER pto_pto_geod_topo_controle_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.pto_pto_geod_topo_controle_p
+    FOR EACH ROW EXECUTE PROCEDURE pto_pto_geod_topo_controle_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_edificacao_p_avoid_multi () RETURNS TRIGGER AS $loc_edificacao_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_edificacao_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_edificacao_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_edificacao_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_edificacao_p
+    FOR EACH ROW EXECUTE PROCEDURE loc_edificacao_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_bairro_a_avoid_multi () RETURNS TRIGGER AS $lim_bairro_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_bairro_a(nome,nomeabrev,geometriaaproximada,geom,anodereferencia) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.anodereferencia ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_bairro_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_bairro_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_bairro_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_bairro_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_terra_publica_a_avoid_multi () RETURNS TRIGGER AS $lim_terra_publica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_terra_publica_a(nome,nomeabrev,geometriaaproximada,geom,classificacao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.classificacao ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_terra_publica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_terra_publica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_terra_publica_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_terra_publica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_limite_intra_munic_adm_l_avoid_multi () RETURNS TRIGGER AS $lim_limite_intra_munic_adm_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_limite_intra_munic_adm_l(nome,nomeabrev,coincidecomdentrode,geometriaaproximada,extensao,geom,tipolimintramun,obssituacao) SELECT NEW.nome,NEW.nomeabrev,NEW.coincidecomdentrode,NEW.geometriaaproximada,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipolimintramun,NEW.obssituacao ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_limite_intra_munic_adm_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_limite_intra_munic_adm_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_limite_intra_munic_adm_l
+    FOR EACH ROW EXECUTE PROCEDURE lim_limite_intra_munic_adm_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_eclusa_l_avoid_multi () RETURNS TRIGGER AS $tra_eclusa_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_eclusa_l(nome,nomeabrev,geometriaaproximada,desnivel,largura,extensao,calado,matconstr,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.desnivel,NEW.largura,NEW.extensao,NEW.calado,NEW.matconstr,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_eclusa_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_eclusa_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_eclusa_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_eclusa_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_atracadouro_l_avoid_multi () RETURNS TRIGGER AS $tra_atracadouro_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_atracadouro_l(nome,nomeabrev,geometriaaproximada,tipoatracad,administracao,matconstr,operacional,situacaofisica,id_complexo_portuario,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoatracad,NEW.administracao,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_portuario,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_atracadouro_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_atracadouro_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_atracadouro_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_atracadouro_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_barragem_p_avoid_multi () RETURNS TRIGGER AS $hid_barragem_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_barragem_p(nome,nomeabrev,geometriaaproximada,matconstr,usoprincipal,operacional,situacaofisica,id_complexo_gerad_energ_eletr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.matconstr,NEW.usoprincipal,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_barragem_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_barragem_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_barragem_p
+    FOR EACH ROW EXECUTE PROCEDURE hid_barragem_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $eco_descontinuidade_geometrica_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_descontinuidade_geometrica_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_descontinuidade_geometrica_p
+    FOR EACH ROW EXECUTE PROCEDURE eco_descontinuidade_geometrica_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_atracadouro_a_avoid_multi () RETURNS TRIGGER AS $tra_atracadouro_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_atracadouro_a(nome,nomeabrev,geometriaaproximada,tipoatracad,administracao,matconstr,operacional,situacaofisica,id_complexo_portuario,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoatracad,NEW.administracao,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_portuario,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_atracadouro_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_atracadouro_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_atracadouro_a
+    FOR EACH ROW EXECUTE PROCEDURE tra_atracadouro_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_eclusa_a_avoid_multi () RETURNS TRIGGER AS $tra_eclusa_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_eclusa_a(nome,nomeabrev,geometriaaproximada,desnivel,largura,extensao,calado,matconstr,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.desnivel,NEW.largura,NEW.extensao,NEW.calado,NEW.matconstr,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_eclusa_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_eclusa_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_eclusa_a
+    FOR EACH ROW EXECUTE PROCEDURE tra_eclusa_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_ponto_inicio_drenagem_p_avoid_multi () RETURNS TRIGGER AS $hid_ponto_inicio_drenagem_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_ponto_inicio_drenagem_p(nome,nomeabrev,geometriaaproximada,relacionado,geom,nascente) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.relacionado,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.nascente ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_ponto_inicio_drenagem_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_ponto_inicio_drenagem_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_ponto_inicio_drenagem_p
+    FOR EACH ROW EXECUTE PROCEDURE hid_ponto_inicio_drenagem_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $eco_descontinuidade_geometrica_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_descontinuidade_geometrica_l(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_descontinuidade_geometrica_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_descontinuidade_geometrica_l
+    FOR EACH ROW EXECUTE PROCEDURE eco_descontinuidade_geometrica_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $eco_descontinuidade_geometrica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_descontinuidade_geometrica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_descontinuidade_geometrica_a
+    FOR EACH ROW EXECUTE PROCEDURE eco_descontinuidade_geometrica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_linha_de_limite_l_avoid_multi () RETURNS TRIGGER AS $lim_linha_de_limite_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_linha_de_limite_l(nome,nomeabrev,coincidecomdentrode,geometriaaproximada,extensao,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.coincidecomdentrode,NEW.geometriaaproximada,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_linha_de_limite_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_linha_de_limite_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_linha_de_limite_l
+    FOR EACH ROW EXECUTE PROCEDURE lim_linha_de_limite_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $lim_descontinuidade_geometrica_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_descontinuidade_geometrica_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_descontinuidade_geometrica_p
+    FOR EACH ROW EXECUTE PROCEDURE lim_descontinuidade_geometrica_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_atracadouro_p_avoid_multi () RETURNS TRIGGER AS $tra_atracadouro_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_atracadouro_p(nome,nomeabrev,geometriaaproximada,tipoatracad,administracao,matconstr,operacional,situacaofisica,id_complexo_portuario,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoatracad,NEW.administracao,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_portuario,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_atracadouro_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_atracadouro_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_atracadouro_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_atracadouro_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_sumidouro_vertedouro_p_avoid_multi () RETURNS TRIGGER AS $hid_sumidouro_vertedouro_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_sumidouro_vertedouro_p(nome,nomeabrev,geometriaaproximada,tiposumvert,causa,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tiposumvert,NEW.causa,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_sumidouro_vertedouro_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_sumidouro_vertedouro_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_sumidouro_vertedouro_p
+    FOR EACH ROW EXECUTE PROCEDURE hid_sumidouro_vertedouro_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $tra_descontinuidade_geometrica_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_descontinuidade_geometrica_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_descontinuidade_geometrica_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_descontinuidade_geometrica_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_limite_politico_adm_l_avoid_multi () RETURNS TRIGGER AS $lim_limite_politico_adm_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_limite_politico_adm_l(nome,nomeabrev,coincidecomdentrode,geometriaaproximada,extensao,geom,tipolimpol,obssituacao) SELECT NEW.nome,NEW.nomeabrev,NEW.coincidecomdentrode,NEW.geometriaaproximada,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipolimpol,NEW.obssituacao ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_limite_politico_adm_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_limite_politico_adm_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_limite_politico_adm_l
+    FOR EACH ROW EXECUTE PROCEDURE lim_limite_politico_adm_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_confluencia_p_avoid_multi () RETURNS TRIGGER AS $hid_confluencia_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_confluencia_p(nome,nomeabrev,geometriaaproximada,relacionado,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.relacionado,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_confluencia_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_confluencia_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_confluencia_p
+    FOR EACH ROW EXECUTE PROCEDURE hid_confluencia_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $tra_descontinuidade_geometrica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_descontinuidade_geometrica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_descontinuidade_geometrica_a
+    FOR EACH ROW EXECUTE PROCEDURE tra_descontinuidade_geometrica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_edif_rodoviaria_p_avoid_multi () RETURNS TRIGGER AS $tra_edif_rodoviaria_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_edif_rodoviaria_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifrod,administracao,id_estrut_apoio) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifrod,NEW.administracao,NEW.id_estrut_apoio ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_edif_rodoviaria_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_edif_rodoviaria_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_edif_rodoviaria_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_edif_rodoviaria_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION asb_area_abast_agua_a_avoid_multi () RETURNS TRIGGER AS $asb_area_abast_agua_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.asb_area_abast_agua_a(geometriaaproximada,geom,id_complexo_abast_agua) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_complexo_abast_agua ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$asb_area_abast_agua_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER asb_area_abast_agua_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.asb_area_abast_agua_a
+    FOR EACH ROW EXECUTE PROCEDURE asb_area_abast_agua_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_condutor_hidrico_l_avoid_multi () RETURNS TRIGGER AS $tra_condutor_hidrico_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_condutor_hidrico_l(nome,nomeabrev,geometriaaproximada,tipotrechoduto,mattransp,setor,posicaorelativa,matconstr,ndutos,situacaoespacial,operacional,situacaofisica,id_duto,geom,tipocondutor,id_complexo_gerad_energ_eletr) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipotrechoduto,NEW.mattransp,NEW.setor,NEW.posicaorelativa,NEW.matconstr,NEW.ndutos,NEW.situacaoespacial,NEW.operacional,NEW.situacaofisica,NEW.id_duto,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipocondutor,NEW.id_complexo_gerad_energ_eletr ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_condutor_hidrico_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_condutor_hidrico_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_condutor_hidrico_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_condutor_hidrico_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION asb_cemiterio_p_avoid_multi () RETURNS TRIGGER AS $asb_cemiterio_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.asb_cemiterio_p(nome,nomeabrev,geometriaaproximada,tipocemiterio,denominacaoassociada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipocemiterio,NEW.denominacaoassociada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$asb_cemiterio_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER asb_cemiterio_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.asb_cemiterio_p
+    FOR EACH ROW EXECUTE PROCEDURE asb_cemiterio_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_outras_unid_protegidas_a_avoid_multi () RETURNS TRIGGER AS $lim_outras_unid_protegidas_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_outras_unid_protegidas_a(nome,nomeabrev,geometriaaproximada,geom,tipooutunidprot,anocriacao,historicomodificacao,sigla,areaoficial,administracao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipooutunidprot,NEW.anocriacao,NEW.historicomodificacao,NEW.sigla,NEW.areaoficial,NEW.administracao ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_outras_unid_protegidas_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_outras_unid_protegidas_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_outras_unid_protegidas_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_outras_unid_protegidas_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_ponto_hidroviario_p_avoid_multi () RETURNS TRIGGER AS $tra_ponto_hidroviario_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_ponto_hidroviario_p(geometriaaproximada,relacionado,geom) SELECT NEW.geometriaaproximada,NEW.relacionado,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_ponto_hidroviario_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_ponto_hidroviario_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_ponto_hidroviario_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_ponto_hidroviario_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_edif_rodoviaria_a_avoid_multi () RETURNS TRIGGER AS $tra_edif_rodoviaria_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_edif_rodoviaria_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifrod,administracao,id_estrut_apoio) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifrod,NEW.administracao,NEW.id_estrut_apoio ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_edif_rodoviaria_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_edif_rodoviaria_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_edif_rodoviaria_a
+    FOR EACH ROW EXECUTE PROCEDURE tra_edif_rodoviaria_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_outras_unid_protegidas_p_avoid_multi () RETURNS TRIGGER AS $lim_outras_unid_protegidas_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_outras_unid_protegidas_p(nome,nomeabrev,geometriaaproximada,geom,tipooutunidprot,anocriacao,historicomodificacao,sigla,areaoficial,administracao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipooutunidprot,NEW.anocriacao,NEW.historicomodificacao,NEW.sigla,NEW.areaoficial,NEW.administracao ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_outras_unid_protegidas_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_outras_unid_protegidas_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_outras_unid_protegidas_p
+    FOR EACH ROW EXECUTE PROCEDURE lim_outras_unid_protegidas_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION asb_cemiterio_a_avoid_multi () RETURNS TRIGGER AS $asb_cemiterio_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.asb_cemiterio_a(nome,nomeabrev,geometriaaproximada,tipocemiterio,denominacaoassociada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipocemiterio,NEW.denominacaoassociada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$asb_cemiterio_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER asb_cemiterio_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.asb_cemiterio_a
+    FOR EACH ROW EXECUTE PROCEDURE asb_cemiterio_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_comporta_p_avoid_multi () RETURNS TRIGGER AS $hid_comporta_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_comporta_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_comporta_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_comporta_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_comporta_p
+    FOR EACH ROW EXECUTE PROCEDURE hid_comporta_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_trecho_ferroviario_l_avoid_multi () RETURNS TRIGGER AS $tra_trecho_ferroviario_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_trecho_ferroviario_l(nome,nomeabrev,geometriaaproximada,codtrechoferrov,posicaorelativa,tipotrechoferrov,bitola,eletrificada,nrlinhas,emarruamento,jurisdicao,administracao,concessionaria,operacional,situacaofisica,cargasuportmaxima,id_via_ferrea,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.codtrechoferrov,NEW.posicaorelativa,NEW.tipotrechoferrov,NEW.bitola,NEW.eletrificada,NEW.nrlinhas,NEW.emarruamento,NEW.jurisdicao,NEW.administracao,NEW.concessionaria,NEW.operacional,NEW.situacaofisica,NEW.cargasuportmaxima,NEW.id_via_ferrea,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_trecho_ferroviario_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_trecho_ferroviario_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_trecho_ferroviario_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_trecho_ferroviario_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_vila_p_avoid_multi () RETURNS TRIGGER AS $loc_vila_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_vila_p(nome,nomeabrev,geometriaaproximada,geocodigo,identificador,latitude,latitude_gms,longitude,longitude_gms,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.geocodigo,NEW.identificador,NEW.latitude,NEW.latitude_gms,NEW.longitude,NEW.longitude_gms,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_vila_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_vila_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_vila_p
+    FOR EACH ROW EXECUTE PROCEDURE loc_vila_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_comporta_l_avoid_multi () RETURNS TRIGGER AS $hid_comporta_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_comporta_l(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_comporta_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_comporta_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_comporta_l
+    FOR EACH ROW EXECUTE PROCEDURE hid_comporta_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_edif_constr_portuaria_a_avoid_multi () RETURNS TRIGGER AS $tra_edif_constr_portuaria_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_edif_constr_portuaria_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifport,administracao,id_complexo_portuario) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifport,NEW.administracao,NEW.id_complexo_portuario ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_edif_constr_portuaria_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_edif_constr_portuaria_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_edif_constr_portuaria_a
+    FOR EACH ROW EXECUTE PROCEDURE tra_edif_constr_portuaria_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_trecho_drenagem_l_avoid_multi () RETURNS TRIGGER AS $hid_trecho_drenagem_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_trecho_drenagem_l(nome,nomeabrev,geometriaaproximada,coincidecomdentrode,dentrodepoligono,compartilhado,eixoprincipal,navegabilidade,caladomax,regime,larguramedia,velocidademedcorrente,profundidademedia,id_trecho_curso_dagua,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.coincidecomdentrode,NEW.dentrodepoligono,NEW.compartilhado,NEW.eixoprincipal,NEW.navegabilidade,NEW.caladomax,NEW.regime,NEW.larguramedia,NEW.velocidademedcorrente,NEW.profundidademedia,NEW.id_trecho_curso_dagua,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_trecho_drenagem_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_trecho_drenagem_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_trecho_drenagem_l
+    FOR EACH ROW EXECUTE PROCEDURE hid_trecho_drenagem_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_edif_constr_portuaria_p_avoid_multi () RETURNS TRIGGER AS $tra_edif_constr_portuaria_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_edif_constr_portuaria_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifport,administracao,id_complexo_portuario) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifport,NEW.administracao,NEW.id_complexo_portuario ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_edif_constr_portuaria_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_edif_constr_portuaria_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_edif_constr_portuaria_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_edif_constr_portuaria_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_travessia_l_avoid_multi () RETURNS TRIGGER AS $tra_travessia_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_travessia_l(nome,nomeabrev,geometriaaproximada,tipotravessia,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipotravessia,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_travessia_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_travessia_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_travessia_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_travessia_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_travessia_p_avoid_multi () RETURNS TRIGGER AS $tra_travessia_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_travessia_p(nome,nomeabrev,geometriaaproximada,tipotravessia,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipotravessia,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_travessia_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_travessia_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_travessia_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_travessia_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_area_duto_a_avoid_multi () RETURNS TRIGGER AS $tra_area_duto_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_area_duto_a(geometriaaproximada,geom) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_area_duto_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_area_duto_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_area_duto_a
+    FOR EACH ROW EXECUTE PROCEDURE tra_area_duto_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_plataforma_a_avoid_multi () RETURNS TRIGGER AS $eco_plataforma_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_plataforma_a(nome,nomeabrev,geometriaaproximada,tipoplataforma,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoplataforma,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_plataforma_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_plataforma_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_plataforma_a
+    FOR EACH ROW EXECUTE PROCEDURE eco_plataforma_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_plataforma_p_avoid_multi () RETURNS TRIGGER AS $eco_plataforma_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_plataforma_p(nome,nomeabrev,geometriaaproximada,tipoplataforma,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoplataforma,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_plataforma_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_plataforma_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_plataforma_p
+    FOR EACH ROW EXECUTE PROCEDURE eco_plataforma_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_torre_energia_p_avoid_multi () RETURNS TRIGGER AS $enc_torre_energia_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_torre_energia_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,ovgd,alturaestimada,tipotorre,arranjofases,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.ovgd,NEW.alturaestimada,NEW.tipotorre,NEW.arranjofases,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_torre_energia_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_torre_energia_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_torre_energia_p
+    FOR EACH ROW EXECUTE PROCEDURE enc_torre_energia_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION pto_pto_est_med_fenomenos_p_avoid_multi () RETURNS TRIGGER AS $pto_pto_est_med_fenomenos_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.pto_pto_est_med_fenomenos_p(nome,geometriaaproximada,tipoptoestmed,codestacao,orgaoenteresp,id_est_med_fenomenos,geom) SELECT NEW.nome,NEW.geometriaaproximada,NEW.tipoptoestmed,NEW.codestacao,NEW.orgaoenteresp,NEW.id_est_med_fenomenos,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$pto_pto_est_med_fenomenos_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER pto_pto_est_med_fenomenos_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.pto_pto_est_med_fenomenos_p
+    FOR EACH ROW EXECUTE PROCEDURE pto_pto_est_med_fenomenos_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_edif_const_lazer_a_avoid_multi () RETURNS TRIGGER AS $edu_edif_const_lazer_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_edif_const_lazer_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoediflazer,id_complexo_lazer) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoediflazer,NEW.id_complexo_lazer ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_edif_const_lazer_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_edif_const_lazer_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_edif_const_lazer_a
+    FOR EACH ROW EXECUTE PROCEDURE edu_edif_const_lazer_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_deposito_geral_a_avoid_multi () RETURNS TRIGGER AS $eco_deposito_geral_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_deposito_geral_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipodepgeral,matconstr,tipoexposicao,tipoprodutoresiduo,tipoconteudo,unidadevolume,valorvolume,tratamento,id_org_comerc_serv,id_org_ext_mineral,id_org_agrop_ext_veg_pesca,id_complexo_gerad_energ_eletr,id_estrut_transporte,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipodepgeral,NEW.matconstr,NEW.tipoexposicao,NEW.tipoprodutoresiduo,NEW.tipoconteudo,NEW.unidadevolume,NEW.valorvolume,NEW.tratamento,NEW.id_org_comerc_serv,NEW.id_org_ext_mineral,NEW.id_org_agrop_ext_veg_pesca,NEW.id_complexo_gerad_energ_eletr,NEW.id_estrut_transporte,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_deposito_geral_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_deposito_geral_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_deposito_geral_a
+    FOR EACH ROW EXECUTE PROCEDURE eco_deposito_geral_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_ponto_ferroviario_p_avoid_multi () RETURNS TRIGGER AS $tra_ponto_ferroviario_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_ponto_ferroviario_p(geometriaaproximada,relacionado,geom) SELECT NEW.geometriaaproximada,NEW.relacionado,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_ponto_ferroviario_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_ponto_ferroviario_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_ponto_ferroviario_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_ponto_ferroviario_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_edif_const_lazer_p_avoid_multi () RETURNS TRIGGER AS $edu_edif_const_lazer_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_edif_const_lazer_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoediflazer,id_complexo_lazer) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoediflazer,NEW.id_complexo_lazer ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_edif_const_lazer_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_edif_const_lazer_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_edif_const_lazer_p
+    FOR EACH ROW EXECUTE PROCEDURE edu_edif_const_lazer_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_deposito_geral_p_avoid_multi () RETURNS TRIGGER AS $eco_deposito_geral_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_deposito_geral_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipodepgeral,matconstr,tipoexposicao,tipoprodutoresiduo,tipoconteudo,unidadevolume,valorvolume,tratamento,id_org_comerc_serv,id_org_ext_mineral,id_org_agrop_ext_veg_pesca,id_complexo_gerad_energ_eletr,id_estrut_transporte,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipodepgeral,NEW.matconstr,NEW.tipoexposicao,NEW.tipoprodutoresiduo,NEW.tipoconteudo,NEW.unidadevolume,NEW.valorvolume,NEW.tratamento,NEW.id_org_comerc_serv,NEW.id_org_ext_mineral,NEW.id_org_agrop_ext_veg_pesca,NEW.id_complexo_gerad_energ_eletr,NEW.id_estrut_transporte,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_deposito_geral_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_deposito_geral_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_deposito_geral_p
+    FOR EACH ROW EXECUTE PROCEDURE eco_deposito_geral_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION sau_area_servico_social_a_avoid_multi () RETURNS TRIGGER AS $sau_area_servico_social_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.sau_area_servico_social_a(geometriaaproximada,id_org_servico_social,geom) SELECT NEW.geometriaaproximada,NEW.id_org_servico_social,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$sau_area_servico_social_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER sau_area_servico_social_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.sau_area_servico_social_a
+    FOR EACH ROW EXECUTE PROCEDURE sau_area_servico_social_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION adm_posto_fiscal_a_avoid_multi () RETURNS TRIGGER AS $adm_posto_fiscal_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.adm_posto_fiscal_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipopostofisc,id_org_pub_civil,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipopostofisc,NEW.id_org_pub_civil,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$adm_posto_fiscal_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER adm_posto_fiscal_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.adm_posto_fiscal_a
+    FOR EACH ROW EXECUTE PROCEDURE adm_posto_fiscal_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_duna_p_avoid_multi () RETURNS TRIGGER AS $rel_duna_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_duna_p(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom,fixa) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.fixa ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_duna_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_duna_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_duna_p
+    FOR EACH ROW EXECUTE PROCEDURE rel_duna_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_marco_de_limite_p_avoid_multi () RETURNS TRIGGER AS $lim_marco_de_limite_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_marco_de_limite_p(nome,nomeabrev,geometriaaproximada,tipomarcolim,latitude_gms,latitude,longitude_gms,longitude,altitudeortometrica,sistemageodesico,outrarefplan,referencialaltim,outrarefalt,orgresp,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipomarcolim,NEW.latitude_gms,NEW.latitude,NEW.longitude_gms,NEW.longitude,NEW.altitudeortometrica,NEW.sistemageodesico,NEW.outrarefplan,NEW.referencialaltim,NEW.outrarefalt,NEW.orgresp,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_marco_de_limite_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_marco_de_limite_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_marco_de_limite_p
+    FOR EACH ROW EXECUTE PROCEDURE lim_marco_de_limite_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_duna_a_avoid_multi () RETURNS TRIGGER AS $rel_duna_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_duna_a(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom,fixa) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.fixa ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_duna_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_duna_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_duna_a
+    FOR EACH ROW EXECUTE PROCEDURE rel_duna_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_arruamento_l_avoid_multi () RETURNS TRIGGER AS $tra_arruamento_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_arruamento_l(nome,nomeabrev,geometriaaproximada,revestimento,operacional,situacaofisica,nrfaixas,trafego,canteirodivisorio,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.revestimento,NEW.operacional,NEW.situacaofisica,NEW.nrfaixas,NEW.trafego,NEW.canteirodivisorio,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_arruamento_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_arruamento_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_arruamento_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_arruamento_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_recife_a_avoid_multi () RETURNS TRIGGER AS $hid_recife_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_recife_a(nome,nomeabrev,geometriaaproximada,tiporecife,situamare,situacaocosta,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tiporecife,NEW.situamare,NEW.situacaocosta,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_recife_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_recife_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_recife_a
+    FOR EACH ROW EXECUTE PROCEDURE hid_recife_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_recife_l_avoid_multi () RETURNS TRIGGER AS $hid_recife_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_recife_l(nome,nomeabrev,geometriaaproximada,tiporecife,situamare,situacaocosta,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tiporecife,NEW.situamare,NEW.situacaocosta,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_recife_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_recife_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_recife_l
+    FOR EACH ROW EXECUTE PROCEDURE hid_recife_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_recife_p_avoid_multi () RETURNS TRIGGER AS $hid_recife_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_recife_p(nome,nomeabrev,geometriaaproximada,tiporecife,situamare,situacaocosta,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tiporecife,NEW.situamare,NEW.situacaocosta,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_recife_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_recife_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_recife_p
+    FOR EACH ROW EXECUTE PROCEDURE hid_recife_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_pais_a_avoid_multi () RETURNS TRIGGER AS $lim_pais_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_pais_a(nome,nomeabrev,geometriaaproximada,geom,sigla,codiso3166) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.sigla,NEW.codiso3166 ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_pais_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_pais_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_pais_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_pais_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_curva_batimetrica_l_avoid_multi () RETURNS TRIGGER AS $rel_curva_batimetrica_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_curva_batimetrica_l(profundidade,geom) SELECT NEW.profundidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_curva_batimetrica_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_curva_batimetrica_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_curva_batimetrica_l
+    FOR EACH ROW EXECUTE PROCEDURE rel_curva_batimetrica_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_ponto_cotado_batimetrico_p_avoid_multi () RETURNS TRIGGER AS $rel_ponto_cotado_batimetrico_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_ponto_cotado_batimetrico_p(profundidade,geom) SELECT NEW.profundidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_ponto_cotado_batimetrico_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_ponto_cotado_batimetrico_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_ponto_cotado_batimetrico_p
+    FOR EACH ROW EXECUTE PROCEDURE rel_ponto_cotado_batimetrico_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION asb_dep_abast_agua_p_avoid_multi () RETURNS TRIGGER AS $asb_dep_abast_agua_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.asb_dep_abast_agua_p(nome,nomeabrev,geometriaaproximada,tipodepabast,situacaoagua,construcao,matconstr,finalidade,situacaofisica,operacional,id_complexo_abast_agua,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipodepabast,NEW.situacaoagua,NEW.construcao,NEW.matconstr,NEW.finalidade,NEW.situacaofisica,NEW.operacional,NEW.id_complexo_abast_agua,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$asb_dep_abast_agua_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER asb_dep_abast_agua_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.asb_dep_abast_agua_p
+    FOR EACH ROW EXECUTE PROCEDURE asb_dep_abast_agua_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_gruta_caverna_p_avoid_multi () RETURNS TRIGGER AS $rel_gruta_caverna_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_gruta_caverna_p(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom,tipogrutacaverna) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipogrutacaverna ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_gruta_caverna_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_gruta_caverna_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_gruta_caverna_p
+    FOR EACH ROW EXECUTE PROCEDURE rel_gruta_caverna_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION asb_dep_abast_agua_a_avoid_multi () RETURNS TRIGGER AS $asb_dep_abast_agua_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.asb_dep_abast_agua_a(nome,nomeabrev,geometriaaproximada,tipodepabast,situacaoagua,construcao,matconstr,finalidade,situacaofisica,operacional,id_complexo_abast_agua,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipodepabast,NEW.situacaoagua,NEW.construcao,NEW.matconstr,NEW.finalidade,NEW.situacaofisica,NEW.operacional,NEW.id_complexo_abast_agua,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$asb_dep_abast_agua_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER asb_dep_abast_agua_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.asb_dep_abast_agua_a
+    FOR EACH ROW EXECUTE PROCEDURE asb_dep_abast_agua_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $rel_descontinuidade_geometrica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_descontinuidade_geometrica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_descontinuidade_geometrica_a
+    FOR EACH ROW EXECUTE PROCEDURE rel_descontinuidade_geometrica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $rel_descontinuidade_geometrica_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_descontinuidade_geometrica_l(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_descontinuidade_geometrica_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_descontinuidade_geometrica_l
+    FOR EACH ROW EXECUTE PROCEDURE rel_descontinuidade_geometrica_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION veg_caatinga_a_avoid_multi () RETURNS TRIGGER AS $veg_caatinga_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.veg_caatinga_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom,alturamediaindividuos,classificacaoporte) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.alturamediaindividuos,NEW.classificacaoporte ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$veg_caatinga_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER veg_caatinga_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.veg_caatinga_a
+    FOR EACH ROW EXECUTE PROCEDURE veg_caatinga_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $rel_descontinuidade_geometrica_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_descontinuidade_geometrica_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_descontinuidade_geometrica_p
+    FOR EACH ROW EXECUTE PROCEDURE rel_descontinuidade_geometrica_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION asb_dep_saneamento_a_avoid_multi () RETURNS TRIGGER AS $asb_dep_saneamento_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.asb_dep_saneamento_a(nome,nomeabrev,geometriaaproximada,tipodepsaneam,construcao,matconstr,finalidade,operacional,situacaofisica,residuo,tiporesiduo,id_complexo_saneamento,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipodepsaneam,NEW.construcao,NEW.matconstr,NEW.finalidade,NEW.operacional,NEW.situacaofisica,NEW.residuo,NEW.tiporesiduo,NEW.id_complexo_saneamento,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$asb_dep_saneamento_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER asb_dep_saneamento_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.asb_dep_saneamento_a
+    FOR EACH ROW EXECUTE PROCEDURE asb_dep_saneamento_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION sau_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $sau_descontinuidade_geometrica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.sau_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$sau_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER sau_descontinuidade_geometrica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.sau_descontinuidade_geometrica_a
+    FOR EACH ROW EXECUTE PROCEDURE sau_descontinuidade_geometrica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_edif_habitacional_p_avoid_multi () RETURNS TRIGGER AS $loc_edif_habitacional_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_edif_habitacional_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,id_complexo_habitacional) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_complexo_habitacional ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_edif_habitacional_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_edif_habitacional_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_edif_habitacional_p
+    FOR EACH ROW EXECUTE PROCEDURE loc_edif_habitacional_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_galeria_bueiro_p_avoid_multi () RETURNS TRIGGER AS $tra_galeria_bueiro_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_galeria_bueiro_p(nome,nomeabrev,matconstr,pesosuportmaximo,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.matconstr,NEW.pesosuportmaximo,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_galeria_bueiro_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_galeria_bueiro_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_galeria_bueiro_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_galeria_bueiro_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_area_politico_adm_a_avoid_multi () RETURNS TRIGGER AS $lim_area_politico_adm_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_area_politico_adm_a(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_area_politico_adm_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_area_politico_adm_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_area_politico_adm_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_area_politico_adm_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_edif_habitacional_a_avoid_multi () RETURNS TRIGGER AS $loc_edif_habitacional_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_edif_habitacional_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,id_complexo_habitacional) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_complexo_habitacional ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_edif_habitacional_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_edif_habitacional_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_edif_habitacional_a
+    FOR EACH ROW EXECUTE PROCEDURE loc_edif_habitacional_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION sau_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $sau_descontinuidade_geometrica_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.sau_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$sau_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER sau_descontinuidade_geometrica_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.sau_descontinuidade_geometrica_p
+    FOR EACH ROW EXECUTE PROCEDURE sau_descontinuidade_geometrica_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_area_ensino_a_avoid_multi () RETURNS TRIGGER AS $edu_area_ensino_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_area_ensino_a(geometriaaproximada,geom,id_org_ensino) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_org_ensino ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_area_ensino_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_area_ensino_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_area_ensino_a
+    FOR EACH ROW EXECUTE PROCEDURE edu_area_ensino_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_fundeadouro_p_avoid_multi () RETURNS TRIGGER AS $tra_fundeadouro_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_fundeadouro_p(nome,nomeabrev,geometriaaproximada,destinacaofundeadouro,administracao,id_complexo_portuario,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.destinacaofundeadouro,NEW.administracao,NEW.id_complexo_portuario,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_fundeadouro_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_fundeadouro_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_fundeadouro_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_fundeadouro_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_edif_agrop_ext_veg_pesca_p_avoid_multi () RETURNS TRIGGER AS $eco_edif_agrop_ext_veg_pesca_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_edif_agrop_ext_veg_pesca_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifagropec,id_org_agrop_ext_veg_pesca) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifagropec,NEW.id_org_agrop_ext_veg_pesca ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_edif_agrop_ext_veg_pesca_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_edif_agrop_ext_veg_pesca_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_edif_agrop_ext_veg_pesca_p
+    FOR EACH ROW EXECUTE PROCEDURE eco_edif_agrop_ext_veg_pesca_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_edif_constr_aeroportuaria_a_avoid_multi () RETURNS TRIGGER AS $tra_edif_constr_aeroportuaria_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_edif_constr_aeroportuaria_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifaero,administracao,id_complexo_aeroportuario) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifaero,NEW.administracao,NEW.id_complexo_aeroportuario ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_edif_constr_aeroportuaria_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_edif_constr_aeroportuaria_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_edif_constr_aeroportuaria_a
+    FOR EACH ROW EXECUTE PROCEDURE tra_edif_constr_aeroportuaria_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_area_ruinas_a_avoid_multi () RETURNS TRIGGER AS $edu_area_ruinas_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_area_ruinas_a(geometriaaproximada,geom,id_complexo_lazer) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_complexo_lazer ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_area_ruinas_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_area_ruinas_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_area_ruinas_a
+    FOR EACH ROW EXECUTE PROCEDURE edu_area_ruinas_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_fundeadouro_l_avoid_multi () RETURNS TRIGGER AS $tra_fundeadouro_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_fundeadouro_l(nome,nomeabrev,geometriaaproximada,destinacaofundeadouro,administracao,id_complexo_portuario,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.destinacaofundeadouro,NEW.administracao,NEW.id_complexo_portuario,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_fundeadouro_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_fundeadouro_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_fundeadouro_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_fundeadouro_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_edif_agrop_ext_veg_pesca_a_avoid_multi () RETURNS TRIGGER AS $eco_edif_agrop_ext_veg_pesca_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_edif_agrop_ext_veg_pesca_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifagropec,id_org_agrop_ext_veg_pesca) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifagropec,NEW.id_org_agrop_ext_veg_pesca ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_edif_agrop_ext_veg_pesca_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_edif_agrop_ext_veg_pesca_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_edif_agrop_ext_veg_pesca_a
+    FOR EACH ROW EXECUTE PROCEDURE eco_edif_agrop_ext_veg_pesca_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_fundeadouro_a_avoid_multi () RETURNS TRIGGER AS $tra_fundeadouro_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_fundeadouro_a(nome,nomeabrev,geometriaaproximada,destinacaofundeadouro,administracao,id_complexo_portuario,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.destinacaofundeadouro,NEW.administracao,NEW.id_complexo_portuario,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_fundeadouro_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_fundeadouro_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_fundeadouro_a
+    FOR EACH ROW EXECUTE PROCEDURE tra_fundeadouro_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_edif_constr_aeroportuaria_p_avoid_multi () RETURNS TRIGGER AS $tra_edif_constr_aeroportuaria_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_edif_constr_aeroportuaria_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifaero,administracao,id_complexo_aeroportuario) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifaero,NEW.administracao,NEW.id_complexo_aeroportuario ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_edif_constr_aeroportuaria_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_edif_constr_aeroportuaria_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_edif_constr_aeroportuaria_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_edif_constr_aeroportuaria_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_area_de_litigio_a_avoid_multi () RETURNS TRIGGER AS $lim_area_de_litigio_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_area_de_litigio_a(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_area_de_litigio_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_area_de_litigio_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_area_de_litigio_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_area_de_litigio_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION pto_edif_constr_est_med_fen_p_avoid_multi () RETURNS TRIGGER AS $pto_edif_constr_est_med_fen_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.pto_edif_constr_est_med_fen_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$pto_edif_constr_est_med_fen_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER pto_edif_constr_est_med_fen_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.pto_edif_constr_est_med_fen_p
+    FOR EACH ROW EXECUTE PROCEDURE pto_edif_constr_est_med_fen_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_area_edificada_a_avoid_multi () RETURNS TRIGGER AS $loc_area_edificada_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_area_edificada_a(nome,nomeabrev,geom) SELECT NEW.nome,NEW.nomeabrev,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_area_edificada_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_area_edificada_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_area_edificada_a
+    FOR EACH ROW EXECUTE PROCEDURE loc_area_edificada_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_terra_publica_p_avoid_multi () RETURNS TRIGGER AS $lim_terra_publica_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_terra_publica_p(nome,nomeabrev,geometriaaproximada,geom,classificacao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.classificacao ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_terra_publica_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_terra_publica_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_terra_publica_p
+    FOR EACH ROW EXECUTE PROCEDURE lim_terra_publica_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION asb_dep_saneamento_p_avoid_multi () RETURNS TRIGGER AS $asb_dep_saneamento_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.asb_dep_saneamento_p(nome,nomeabrev,geometriaaproximada,tipodepsaneam,construcao,matconstr,finalidade,operacional,situacaofisica,residuo,tiporesiduo,id_complexo_saneamento,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipodepsaneam,NEW.construcao,NEW.matconstr,NEW.finalidade,NEW.operacional,NEW.situacaofisica,NEW.residuo,NEW.tiporesiduo,NEW.id_complexo_saneamento,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$asb_dep_saneamento_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER asb_dep_saneamento_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.asb_dep_saneamento_p
+    FOR EACH ROW EXECUTE PROCEDURE asb_dep_saneamento_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_caminho_aereo_l_avoid_multi () RETURNS TRIGGER AS $tra_caminho_aereo_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_caminho_aereo_l(nome,nomeabrev,geometriaaproximada,tipocaminhoaereo,tipousocaminhoaer,operacional,situacaofisica,geom,id_org_ext_mineral) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipocaminhoaereo,NEW.tipousocaminhoaer,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_org_ext_mineral ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_caminho_aereo_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_caminho_aereo_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_caminho_aereo_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_caminho_aereo_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_edif_ext_mineral_p_avoid_multi () RETURNS TRIGGER AS $eco_edif_ext_mineral_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_edif_ext_mineral_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipodivisaocnae,id_org_ext_mineral) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipodivisaocnae,NEW.id_org_ext_mineral ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_edif_ext_mineral_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_edif_ext_mineral_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_edif_ext_mineral_p
+    FOR EACH ROW EXECUTE PROCEDURE eco_edif_ext_mineral_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_ciclovia_l_avoid_multi () RETURNS TRIGGER AS $tra_ciclovia_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_ciclovia_l(nome,nomeabrev,geometriaaproximada,administracao,revestimento,operacional,situacaofisica,trafego,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.administracao,NEW.revestimento,NEW.operacional,NEW.situacaofisica,NEW.trafego,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_ciclovia_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_ciclovia_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_ciclovia_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_ciclovia_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_area_urbana_isolada_a_avoid_multi () RETURNS TRIGGER AS $loc_area_urbana_isolada_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_area_urbana_isolada_a(geometriaaproximada,nome,nomeabrev,tipoassociado,geom) SELECT NEW.geometriaaproximada,NEW.nome,NEW.nomeabrev,NEW.tipoassociado,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_area_urbana_isolada_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_area_urbana_isolada_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_area_urbana_isolada_a
+    FOR EACH ROW EXECUTE PROCEDURE loc_area_urbana_isolada_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_ponto_cotado_altimetrico_p_avoid_multi () RETURNS TRIGGER AS $rel_ponto_cotado_altimetrico_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_ponto_cotado_altimetrico_p(geometriaaproximada,cotacomprovada,cota,geom) SELECT NEW.geometriaaproximada,NEW.cotacomprovada,NEW.cota,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_ponto_cotado_altimetrico_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_ponto_cotado_altimetrico_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_ponto_cotado_altimetrico_p
+    FOR EACH ROW EXECUTE PROCEDURE rel_ponto_cotado_altimetrico_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_ponto_duto_p_avoid_multi () RETURNS TRIGGER AS $tra_ponto_duto_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_ponto_duto_p(geom,geometriaaproximada,relacionado) SELECT ST_Multi((ST_Dump(NEW.geom)).geom),NEW.geometriaaproximada,NEW.relacionado ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_ponto_duto_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_ponto_duto_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_ponto_duto_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_ponto_duto_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION adm_area_pub_civil_a_avoid_multi () RETURNS TRIGGER AS $adm_area_pub_civil_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.adm_area_pub_civil_a(geometriaaproximada,geom,id_org_pub_civil) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_org_pub_civil ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$adm_area_pub_civil_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER adm_area_pub_civil_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.adm_area_pub_civil_a
+    FOR EACH ROW EXECUTE PROCEDURE adm_area_pub_civil_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_regiao_administrativa_a_avoid_multi () RETURNS TRIGGER AS $lim_regiao_administrativa_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_regiao_administrativa_a(nome,nomeabrev,geometriaaproximada,geom,anodereferencia) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.anodereferencia ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_regiao_administrativa_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_regiao_administrativa_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_regiao_administrativa_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_regiao_administrativa_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $loc_descontinuidade_geometrica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_descontinuidade_geometrica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_descontinuidade_geometrica_a
+    FOR EACH ROW EXECUTE PROCEDURE loc_descontinuidade_geometrica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $loc_descontinuidade_geometrica_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_descontinuidade_geometrica_l(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_descontinuidade_geometrica_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_descontinuidade_geometrica_l
+    FOR EACH ROW EXECUTE PROCEDURE loc_descontinuidade_geometrica_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_posto_combustivel_a_avoid_multi () RETURNS TRIGGER AS $tra_posto_combustivel_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_posto_combustivel_a(nome,nomeabrev,geometriaaproximada,administracao,operacional,situacaofisica,matconstr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.administracao,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_posto_combustivel_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_posto_combustivel_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_posto_combustivel_a
+    FOR EACH ROW EXECUTE PROCEDURE tra_posto_combustivel_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_edif_energia_a_avoid_multi () RETURNS TRIGGER AS $enc_edif_energia_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_edif_energia_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifenergia,id_complexo_gerad_energ_eletr,id_subestacao_ener_eletr) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifenergia,NEW.id_complexo_gerad_energ_eletr,NEW.id_subestacao_ener_eletr ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_edif_energia_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_edif_energia_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_edif_energia_a
+    FOR EACH ROW EXECUTE PROCEDURE enc_edif_energia_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $loc_descontinuidade_geometrica_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_descontinuidade_geometrica_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_descontinuidade_geometrica_p
+    FOR EACH ROW EXECUTE PROCEDURE loc_descontinuidade_geometrica_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_edif_energia_p_avoid_multi () RETURNS TRIGGER AS $enc_edif_energia_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_edif_energia_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifenergia,id_complexo_gerad_energ_eletr,id_subestacao_ener_eletr) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifenergia,NEW.id_complexo_gerad_energ_eletr,NEW.id_subestacao_ener_eletr ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_edif_energia_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_edif_energia_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_edif_energia_p
+    FOR EACH ROW EXECUTE PROCEDURE enc_edif_energia_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_posto_combustivel_p_avoid_multi () RETURNS TRIGGER AS $tra_posto_combustivel_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_posto_combustivel_p(nome,nomeabrev,geometriaaproximada,administracao,operacional,situacaofisica,matconstr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.administracao,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_posto_combustivel_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_posto_combustivel_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_posto_combustivel_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_posto_combustivel_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_bacia_hidrografica_a_avoid_multi () RETURNS TRIGGER AS $hid_bacia_hidrografica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_bacia_hidrografica_a(nome,nomeabrev,geometriaaproximada,codigootto,nivelotto,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.codigootto,NEW.nivelotto,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_bacia_hidrografica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_bacia_hidrografica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_bacia_hidrografica_a
+    FOR EACH ROW EXECUTE PROCEDURE hid_bacia_hidrografica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION veg_veg_area_contato_a_avoid_multi () RETURNS TRIGGER AS $veg_veg_area_contato_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.veg_veg_area_contato_a(nome,nomeabrev,classificacaoporte,denso,alturamediaindividuos,antropizada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.classificacaoporte,NEW.denso,NEW.alturamediaindividuos,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$veg_veg_area_contato_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER veg_veg_area_contato_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.veg_veg_area_contato_a
+    FOR EACH ROW EXECUTE PROCEDURE veg_veg_area_contato_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_area_uso_comunitario_p_avoid_multi () RETURNS TRIGGER AS $lim_area_uso_comunitario_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_area_uso_comunitario_p(nome,nomeabrev,geometriaaproximada,geom,tipoareausocomun) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoareausocomun ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_area_uso_comunitario_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_area_uso_comunitario_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_area_uso_comunitario_p
+    FOR EACH ROW EXECUTE PROCEDURE lim_area_uso_comunitario_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION veg_floresta_a_avoid_multi () RETURNS TRIGGER AS $veg_floresta_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.veg_floresta_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom,especiepredominante,caracteristicafloresta,alturamediaindividuos,classificacaoporte) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.especiepredominante,NEW.caracteristicafloresta,NEW.alturamediaindividuos,NEW.classificacaoporte ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$veg_floresta_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER veg_floresta_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.veg_floresta_a
+    FOR EACH ROW EXECUTE PROCEDURE veg_floresta_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_area_uso_comunitario_a_avoid_multi () RETURNS TRIGGER AS $lim_area_uso_comunitario_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_area_uso_comunitario_a(nome,nomeabrev,geometriaaproximada,geom,tipoareausocomun) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoareausocomun ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_area_uso_comunitario_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_area_uso_comunitario_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_area_uso_comunitario_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_area_uso_comunitario_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION adm_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $adm_descontinuidade_geometrica_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.adm_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$adm_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER adm_descontinuidade_geometrica_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.adm_descontinuidade_geometrica_p
+    FOR EACH ROW EXECUTE PROCEDURE adm_descontinuidade_geometrica_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_area_especial_p_avoid_multi () RETURNS TRIGGER AS $lim_area_especial_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_area_especial_p(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_area_especial_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_area_especial_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_area_especial_p
+    FOR EACH ROW EXECUTE PROCEDURE lim_area_especial_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_travessia_pedestre_l_avoid_multi () RETURNS TRIGGER AS $tra_travessia_pedestre_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_travessia_pedestre_l(nome,nomeabrev,geometriaaproximada,tipotravessiaped,matconstr,operacional,situacaofisica,largura,extensao,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipotravessiaped,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.largura,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_travessia_pedestre_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_travessia_pedestre_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_travessia_pedestre_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_travessia_pedestre_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_area_especial_a_avoid_multi () RETURNS TRIGGER AS $lim_area_especial_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_area_especial_a(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_area_especial_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_area_especial_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_area_especial_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_area_especial_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION adm_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $adm_descontinuidade_geometrica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.adm_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$adm_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER adm_descontinuidade_geometrica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.adm_descontinuidade_geometrica_a
+    FOR EACH ROW EXECUTE PROCEDURE adm_descontinuidade_geometrica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_aglom_rural_de_ext_urbana_p_avoid_multi () RETURNS TRIGGER AS $loc_aglom_rural_de_ext_urbana_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_aglom_rural_de_ext_urbana_p(nome,nomeabrev,geometriaaproximada,geocodigo,identificador,latitude,latitude_gms,longitude,longitude_gms,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.geocodigo,NEW.identificador,NEW.latitude,NEW.latitude_gms,NEW.longitude,NEW.longitude_gms,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_aglom_rural_de_ext_urbana_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_aglom_rural_de_ext_urbana_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_aglom_rural_de_ext_urbana_p
+    FOR EACH ROW EXECUTE PROCEDURE loc_aglom_rural_de_ext_urbana_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_travessia_pedestre_p_avoid_multi () RETURNS TRIGGER AS $tra_travessia_pedestre_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_travessia_pedestre_p(nome,nomeabrev,geometriaaproximada,tipotravessiaped,matconstr,operacional,situacaofisica,largura,extensao,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipotravessiaped,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.largura,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_travessia_pedestre_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_travessia_pedestre_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_travessia_pedestre_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_travessia_pedestre_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_unidade_uso_sustentavel_a_avoid_multi () RETURNS TRIGGER AS $lim_unidade_uso_sustentavel_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_unidade_uso_sustentavel_a(nome,nomeabrev,geometriaaproximada,geom,anocriacao,sigla,areaoficialha,atolegal,administracao,tipounidusosust) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.anocriacao,NEW.sigla,NEW.areaoficialha,NEW.atolegal,NEW.administracao,NEW.tipounidusosust ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_unidade_uso_sustentavel_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_unidade_uso_sustentavel_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_unidade_uso_sustentavel_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_uso_sustentavel_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_ponto_rodoviario_p_avoid_multi () RETURNS TRIGGER AS $tra_ponto_rodoviario_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_ponto_rodoviario_p(geometriaaproximada,relacionado,geom) SELECT NEW.geometriaaproximada,NEW.relacionado,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_ponto_rodoviario_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_ponto_rodoviario_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_ponto_rodoviario_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_ponto_rodoviario_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_unidade_uso_sustentavel_p_avoid_multi () RETURNS TRIGGER AS $lim_unidade_uso_sustentavel_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_unidade_uso_sustentavel_p(nome,nomeabrev,geometriaaproximada,geom,anocriacao,sigla,areaoficialha,atolegal,administracao,tipounidusosust) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.anocriacao,NEW.sigla,NEW.areaoficialha,NEW.atolegal,NEW.administracao,NEW.tipounidusosust ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_unidade_uso_sustentavel_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_unidade_uso_sustentavel_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_unidade_uso_sustentavel_p
+    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_uso_sustentavel_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION aux_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $aux_descontinuidade_geometrica_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.aux_descontinuidade_geometrica_l(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$aux_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER aux_descontinuidade_geometrica_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.aux_descontinuidade_geometrica_l
+    FOR EACH ROW EXECUTE PROCEDURE aux_descontinuidade_geometrica_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION aux_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $aux_descontinuidade_geometrica_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.aux_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$aux_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER aux_descontinuidade_geometrica_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.aux_descontinuidade_geometrica_p
+    FOR EACH ROW EXECUTE PROCEDURE aux_descontinuidade_geometrica_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_area_construida_a_avoid_multi () RETURNS TRIGGER AS $loc_area_construida_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_area_construida_a(nome,nomeabrev,geom) SELECT NEW.nome,NEW.nomeabrev,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_area_construida_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_area_construida_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_area_construida_a
+    FOR EACH ROW EXECUTE PROCEDURE loc_area_construida_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION aux_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $aux_descontinuidade_geometrica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.aux_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$aux_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER aux_descontinuidade_geometrica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.aux_descontinuidade_geometrica_a
+    FOR EACH ROW EXECUTE PROCEDURE aux_descontinuidade_geometrica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_unidade_protecao_integral_p_avoid_multi () RETURNS TRIGGER AS $lim_unidade_protecao_integral_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_unidade_protecao_integral_p(nome,nomeabrev,geometriaaproximada,geom,anocriacao,areaoficial,atolegal,administracao,tipounidprotinteg) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.anocriacao,NEW.areaoficial,NEW.atolegal,NEW.administracao,NEW.tipounidprotinteg ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_unidade_protecao_integral_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_unidade_protecao_integral_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_unidade_protecao_integral_p
+    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_protecao_integral_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_area_ext_mineral_a_avoid_multi () RETURNS TRIGGER AS $eco_area_ext_mineral_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_area_ext_mineral_a(geom,geometriaaproximada,id_org_ext_mineral) SELECT ST_Multi((ST_Dump(NEW.geom)).geom),NEW.geometriaaproximada,NEW.id_org_ext_mineral ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_area_ext_mineral_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_area_ext_mineral_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_area_ext_mineral_a
+    FOR EACH ROW EXECUTE PROCEDURE eco_area_ext_mineral_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_unidade_protecao_integral_a_avoid_multi () RETURNS TRIGGER AS $lim_unidade_protecao_integral_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_unidade_protecao_integral_a(nome,nomeabrev,geometriaaproximada,geom,anocriacao,areaoficial,atolegal,administracao,tipounidprotinteg) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.anocriacao,NEW.areaoficial,NEW.atolegal,NEW.administracao,NEW.tipounidprotinteg ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_unidade_protecao_integral_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_unidade_protecao_integral_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_unidade_protecao_integral_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_protecao_integral_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_natureza_fundo_p_avoid_multi () RETURNS TRIGGER AS $hid_natureza_fundo_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_natureza_fundo_p(nome,nomeabrev,geometriaaproximada,materialpredominante,espessalgas,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.materialpredominante,NEW.espessalgas,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_natureza_fundo_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_natureza_fundo_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_natureza_fundo_p
+    FOR EACH ROW EXECUTE PROCEDURE hid_natureza_fundo_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_pista_ponto_pouso_a_avoid_multi () RETURNS TRIGGER AS $tra_pista_ponto_pouso_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_pista_ponto_pouso_a(nome,nomeabrev,geometriaaproximada,tipopista,revestimento,usopista,homologacao,operacional,situacaofisica,largura,extensao,id_complexo_aeroportuario,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipopista,NEW.revestimento,NEW.usopista,NEW.homologacao,NEW.operacional,NEW.situacaofisica,NEW.largura,NEW.extensao,NEW.id_complexo_aeroportuario,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_pista_ponto_pouso_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_pista_ponto_pouso_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_pista_ponto_pouso_a
+    FOR EACH ROW EXECUTE PROCEDURE tra_pista_ponto_pouso_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $hid_descontinuidade_geometrica_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_descontinuidade_geometrica_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_descontinuidade_geometrica_p
+    FOR EACH ROW EXECUTE PROCEDURE hid_descontinuidade_geometrica_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_patio_p_avoid_multi () RETURNS TRIGGER AS $tra_patio_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_patio_p(nome,nomeabrev,geometriaaproximada,modaluso,administracao,operacional,situacaofisica,id_estrut_transporte,id_org_ext_mineral,id_org_comerc_serv,id_org_industrial,id_org_ensino,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.modaluso,NEW.administracao,NEW.operacional,NEW.situacaofisica,NEW.id_estrut_transporte,NEW.id_org_ext_mineral,NEW.id_org_comerc_serv,NEW.id_org_industrial,NEW.id_org_ensino,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_patio_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_patio_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_patio_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_patio_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_dolina_a_avoid_multi () RETURNS TRIGGER AS $rel_dolina_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_dolina_a(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_dolina_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_dolina_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_dolina_a
+    FOR EACH ROW EXECUTE PROCEDURE rel_dolina_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_pista_ponto_pouso_l_avoid_multi () RETURNS TRIGGER AS $tra_pista_ponto_pouso_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_pista_ponto_pouso_l(nome,nomeabrev,geometriaaproximada,tipopista,revestimento,usopista,homologacao,operacional,situacaofisica,largura,extensao,id_complexo_aeroportuario,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipopista,NEW.revestimento,NEW.usopista,NEW.homologacao,NEW.operacional,NEW.situacaofisica,NEW.largura,NEW.extensao,NEW.id_complexo_aeroportuario,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_pista_ponto_pouso_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_pista_ponto_pouso_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_pista_ponto_pouso_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_pista_ponto_pouso_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_natureza_fundo_a_avoid_multi () RETURNS TRIGGER AS $hid_natureza_fundo_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_natureza_fundo_a(nome,nomeabrev,geometriaaproximada,materialpredominante,espessalgas,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.materialpredominante,NEW.espessalgas,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_natureza_fundo_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_natureza_fundo_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_natureza_fundo_a
+    FOR EACH ROW EXECUTE PROCEDURE hid_natureza_fundo_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_pista_ponto_pouso_p_avoid_multi () RETURNS TRIGGER AS $tra_pista_ponto_pouso_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_pista_ponto_pouso_p(nome,nomeabrev,geometriaaproximada,tipopista,revestimento,usopista,homologacao,operacional,situacaofisica,largura,extensao,id_complexo_aeroportuario,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipopista,NEW.revestimento,NEW.usopista,NEW.homologacao,NEW.operacional,NEW.situacaofisica,NEW.largura,NEW.extensao,NEW.id_complexo_aeroportuario,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_pista_ponto_pouso_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_pista_ponto_pouso_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_pista_ponto_pouso_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_pista_ponto_pouso_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_patio_a_avoid_multi () RETURNS TRIGGER AS $tra_patio_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_patio_a(nome,nomeabrev,geometriaaproximada,modaluso,administracao,operacional,situacaofisica,id_estrut_transporte,id_org_ext_mineral,id_org_comerc_serv,id_org_industrial,id_org_ensino,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.modaluso,NEW.administracao,NEW.operacional,NEW.situacaofisica,NEW.id_estrut_transporte,NEW.id_org_ext_mineral,NEW.id_org_comerc_serv,NEW.id_org_industrial,NEW.id_org_ensino,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_patio_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_patio_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_patio_a
+    FOR EACH ROW EXECUTE PROCEDURE tra_patio_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $hid_descontinuidade_geometrica_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_descontinuidade_geometrica_l(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_descontinuidade_geometrica_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_descontinuidade_geometrica_l
+    FOR EACH ROW EXECUTE PROCEDURE hid_descontinuidade_geometrica_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $lim_descontinuidade_geometrica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_descontinuidade_geometrica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_descontinuidade_geometrica_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_descontinuidade_geometrica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_dolina_p_avoid_multi () RETURNS TRIGGER AS $rel_dolina_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_dolina_p(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_dolina_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_dolina_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_dolina_p
+    FOR EACH ROW EXECUTE PROCEDURE rel_dolina_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_pista_competicao_l_avoid_multi () RETURNS TRIGGER AS $edu_pista_competicao_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_pista_competicao_l(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipopista,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipopista,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_pista_competicao_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_pista_competicao_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_pista_competicao_l
+    FOR EACH ROW EXECUTE PROCEDURE edu_pista_competicao_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_ilha_p_avoid_multi () RETURNS TRIGGER AS $hid_ilha_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_ilha_p(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom,tipoilha) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoilha ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_ilha_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_ilha_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_ilha_p
+    FOR EACH ROW EXECUTE PROCEDURE hid_ilha_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_area_industrial_a_avoid_multi () RETURNS TRIGGER AS $eco_area_industrial_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_area_industrial_a(geometriaaproximada,id_org_industrial,geom) SELECT NEW.geometriaaproximada,NEW.id_org_industrial,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_area_industrial_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_area_industrial_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_area_industrial_a
+    FOR EACH ROW EXECUTE PROCEDURE eco_area_industrial_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_ilha_l_avoid_multi () RETURNS TRIGGER AS $hid_ilha_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_ilha_l(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom,tipoilha) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoilha ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_ilha_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_ilha_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_ilha_l
+    FOR EACH ROW EXECUTE PROCEDURE hid_ilha_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_area_religiosa_a_avoid_multi () RETURNS TRIGGER AS $edu_area_religiosa_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_area_religiosa_a(geometriaaproximada,geom,id_org_religiosa) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_org_religiosa ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_area_religiosa_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_area_religiosa_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_area_religiosa_a
+    FOR EACH ROW EXECUTE PROCEDURE edu_area_religiosa_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_ilha_a_avoid_multi () RETURNS TRIGGER AS $hid_ilha_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_ilha_a(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom,tipoilha) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoilha ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_ilha_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_ilha_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_ilha_a
+    FOR EACH ROW EXECUTE PROCEDURE hid_ilha_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_barragem_a_avoid_multi () RETURNS TRIGGER AS $hid_barragem_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_barragem_a(nome,nomeabrev,geometriaaproximada,matconstr,usoprincipal,operacional,situacaofisica,id_complexo_gerad_energ_eletr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.matconstr,NEW.usoprincipal,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_barragem_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_barragem_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_barragem_a
+    FOR EACH ROW EXECUTE PROCEDURE hid_barragem_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION sau_area_saude_a_avoid_multi () RETURNS TRIGGER AS $sau_area_saude_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.sau_area_saude_a(geometriaaproximada,geom,id_org_saude) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_org_saude ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$sau_area_saude_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER sau_area_saude_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.sau_area_saude_a
+    FOR EACH ROW EXECUTE PROCEDURE sau_area_saude_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_barragem_l_avoid_multi () RETURNS TRIGGER AS $hid_barragem_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_barragem_l(nome,nomeabrev,geometriaaproximada,matconstr,usoprincipal,operacional,situacaofisica,id_complexo_gerad_energ_eletr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.matconstr,NEW.usoprincipal,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_barragem_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_barragem_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_barragem_l
+    FOR EACH ROW EXECUTE PROCEDURE hid_barragem_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_outros_limites_oficiais_l_avoid_multi () RETURNS TRIGGER AS $lim_outros_limites_oficiais_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_outros_limites_oficiais_l(nome,nomeabrev,coincidecomdentrode,geometriaaproximada,extensao,geom,tipooutlimofic,obssituacao) SELECT NEW.nome,NEW.nomeabrev,NEW.coincidecomdentrode,NEW.geometriaaproximada,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipooutlimofic,NEW.obssituacao ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_outros_limites_oficiais_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_outros_limites_oficiais_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_outros_limites_oficiais_l
+    FOR EACH ROW EXECUTE PROCEDURE lim_outros_limites_oficiais_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION adm_edif_pub_militar_a_avoid_multi () RETURNS TRIGGER AS $adm_edif_pub_militar_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.adm_edif_pub_militar_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifmil,tipousoedif,id_org_pub_militar) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifmil,NEW.tipousoedif,NEW.id_org_pub_militar ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$adm_edif_pub_militar_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER adm_edif_pub_militar_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.adm_edif_pub_militar_a
+    FOR EACH ROW EXECUTE PROCEDURE adm_edif_pub_militar_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_area_agrop_ext_veg_pesca_a_avoid_multi () RETURNS TRIGGER AS $eco_area_agrop_ext_veg_pesca_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_area_agrop_ext_veg_pesca_a(geometriaaproximada,destinadoa,id_org_agropec_ext_veg_pesca,geom) SELECT NEW.geometriaaproximada,NEW.destinadoa,NEW.id_org_agropec_ext_veg_pesca,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_area_agrop_ext_veg_pesca_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_area_agrop_ext_veg_pesca_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_area_agrop_ext_veg_pesca_a
+    FOR EACH ROW EXECUTE PROCEDURE eco_area_agrop_ext_veg_pesca_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_eclusa_p_avoid_multi () RETURNS TRIGGER AS $tra_eclusa_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_eclusa_p(nome,nomeabrev,geometriaaproximada,desnivel,largura,extensao,calado,matconstr,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.desnivel,NEW.largura,NEW.extensao,NEW.calado,NEW.matconstr,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_eclusa_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_eclusa_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_eclusa_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_eclusa_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_limite_particular_l_avoid_multi () RETURNS TRIGGER AS $lim_limite_particular_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_limite_particular_l(nome,nomeabrev,coincidecomdentrode,geometriaaproximada,extensao,geom,obssituacao) SELECT NEW.nome,NEW.nomeabrev,NEW.coincidecomdentrode,NEW.geometriaaproximada,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.obssituacao ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_limite_particular_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_limite_particular_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_limite_particular_l
+    FOR EACH ROW EXECUTE PROCEDURE lim_limite_particular_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION adm_edif_pub_militar_p_avoid_multi () RETURNS TRIGGER AS $adm_edif_pub_militar_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.adm_edif_pub_militar_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipousoedif,tipoedifmil,id_org_pub_militar) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipousoedif,NEW.tipoedifmil,NEW.id_org_pub_militar ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$adm_edif_pub_militar_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER adm_edif_pub_militar_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.adm_edif_pub_militar_p
+    FOR EACH ROW EXECUTE PROCEDURE adm_edif_pub_militar_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $enc_descontinuidade_geometrica_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_descontinuidade_geometrica_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_descontinuidade_geometrica_p
+    FOR EACH ROW EXECUTE PROCEDURE enc_descontinuidade_geometrica_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_trecho_hidroviario_l_avoid_multi () RETURNS TRIGGER AS $tra_trecho_hidroviario_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_trecho_hidroviario_l(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,regime,extensaotrecho,caladomaxseca,geom,id_hidrovia) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.regime,NEW.extensaotrecho,NEW.caladomaxseca,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_hidrovia ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_trecho_hidroviario_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_trecho_hidroviario_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_trecho_hidroviario_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_trecho_hidroviario_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION veg_veg_cultivada_a_avoid_multi () RETURNS TRIGGER AS $veg_veg_cultivada_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.veg_veg_cultivada_a(nome,nomeabrev,geometriaaproximada,tipolavoura,finalidade,terreno,classificacaoporte,espacamentoindividuos,espessuradap,denso,alturamediaindividuos,cultivopredominante,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipolavoura,NEW.finalidade,NEW.terreno,NEW.classificacaoporte,NEW.espacamentoindividuos,NEW.espessuradap,NEW.denso,NEW.alturamediaindividuos,NEW.cultivopredominante,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$veg_veg_cultivada_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER veg_veg_cultivada_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.veg_veg_cultivada_a
+    FOR EACH ROW EXECUTE PROCEDURE veg_veg_cultivada_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_identific_trecho_rod_p_avoid_multi () RETURNS TRIGGER AS $tra_identific_trecho_rod_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_identific_trecho_rod_p(nome,nomeabrev,sigla,geom,id_via_rodoviaria) SELECT NEW.nome,NEW.nomeabrev,NEW.sigla,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_via_rodoviaria ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_identific_trecho_rod_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_identific_trecho_rod_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_identific_trecho_rod_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_identific_trecho_rod_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $enc_descontinuidade_geometrica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_descontinuidade_geometrica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_descontinuidade_geometrica_a
+    FOR EACH ROW EXECUTE PROCEDURE enc_descontinuidade_geometrica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_curva_nivel_l_avoid_multi () RETURNS TRIGGER AS $rel_curva_nivel_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_curva_nivel_l(geometriaaproximada,cota,depressao,indice,geom) SELECT NEW.geometriaaproximada,NEW.cota,NEW.depressao,NEW.indice,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_curva_nivel_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_curva_nivel_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_curva_nivel_l
+    FOR EACH ROW EXECUTE PROCEDURE rel_curva_nivel_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_trecho_massa_dagua_a_avoid_multi () RETURNS TRIGGER AS $hid_trecho_massa_dagua_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_trecho_massa_dagua_a(nome,nomeabrev,tipotrechomassa,regime,salinidade,id_trecho_curso_dagua,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.tipotrechomassa,NEW.regime,NEW.salinidade,NEW.id_trecho_curso_dagua,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_trecho_massa_dagua_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_trecho_massa_dagua_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_trecho_massa_dagua_a
+    FOR EACH ROW EXECUTE PROCEDURE hid_trecho_massa_dagua_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_reservatorio_hidrico_a_avoid_multi () RETURNS TRIGGER AS $hid_reservatorio_hidrico_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_reservatorio_hidrico_a(nome,nomeabrev,geometriaaproximada,usoprincipal,volumeutil,namaximomaximorum,namaximooperacional,id_complexo_gerad_energ_eletr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.usoprincipal,NEW.volumeutil,NEW.namaximomaximorum,NEW.namaximooperacional,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_reservatorio_hidrico_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_reservatorio_hidrico_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_reservatorio_hidrico_a
+    FOR EACH ROW EXECUTE PROCEDURE hid_reservatorio_hidrico_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_antena_comunic_p_avoid_multi () RETURNS TRIGGER AS $enc_antena_comunic_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_antena_comunic_p(nome,nomeabrev,geometriaaproximada,geom,id_complexo_comunicacao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_complexo_comunicacao ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_antena_comunic_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_antena_comunic_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_antena_comunic_p
+    FOR EACH ROW EXECUTE PROCEDURE enc_antena_comunic_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION sau_edif_servico_social_p_avoid_multi () RETURNS TRIGGER AS $sau_edif_servico_social_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.sau_edif_servico_social_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoclassecnae,id_org_servico_social) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoclassecnae,NEW.id_org_servico_social ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$sau_edif_servico_social_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER sau_edif_servico_social_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.sau_edif_servico_social_p
+    FOR EACH ROW EXECUTE PROCEDURE sau_edif_servico_social_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION sau_edif_servico_social_a_avoid_multi () RETURNS TRIGGER AS $sau_edif_servico_social_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.sau_edif_servico_social_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoclassecnae,id_org_servico_social) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoclassecnae,NEW.id_org_servico_social ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$sau_edif_servico_social_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER sau_edif_servico_social_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.sau_edif_servico_social_a
+    FOR EACH ROW EXECUTE PROCEDURE sau_edif_servico_social_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_entroncamento_p_avoid_multi () RETURNS TRIGGER AS $tra_entroncamento_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_entroncamento_p(nome,nomeabrev,geometriaaproximada,tipoentroncamento,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoentroncamento,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_entroncamento_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_entroncamento_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_entroncamento_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_entroncamento_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_trecho_rodoviario_l_avoid_multi () RETURNS TRIGGER AS $tra_trecho_rodoviario_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_trecho_rodoviario_l(geometriaaproximada,codtrechorodov,tipotrechorod,jurisdicao,administracao,concessionaria,revestimento,operacional,situacaofisica,nrpistas,nrfaixas,trafego,canteirodivisorio,geom,id_via_rodoviaria) SELECT NEW.geometriaaproximada,NEW.codtrechorodov,NEW.tipotrechorod,NEW.jurisdicao,NEW.administracao,NEW.concessionaria,NEW.revestimento,NEW.operacional,NEW.situacaofisica,NEW.nrpistas,NEW.nrfaixas,NEW.trafego,NEW.canteirodivisorio,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_via_rodoviaria ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_trecho_rodoviario_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_trecho_rodoviario_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_trecho_rodoviario_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_trecho_rodoviario_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $tra_descontinuidade_geometrica_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_descontinuidade_geometrica_l(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_descontinuidade_geometrica_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_descontinuidade_geometrica_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_descontinuidade_geometrica_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_trecho_duto_l_avoid_multi () RETURNS TRIGGER AS $tra_trecho_duto_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_trecho_duto_l(nome,nomeabrev,geometriaaproximada,tipotrechoduto,mattransp,setor,posicaorelativa,matconstr,ndutos,situacaoespacial,operacional,situacaofisica,id_duto,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipotrechoduto,NEW.mattransp,NEW.setor,NEW.posicaorelativa,NEW.matconstr,NEW.ndutos,NEW.situacaoespacial,NEW.operacional,NEW.situacaofisica,NEW.id_duto,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_trecho_duto_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_trecho_duto_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_trecho_duto_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_trecho_duto_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_pico_p_avoid_multi () RETURNS TRIGGER AS $rel_pico_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_pico_p(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_pico_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_pico_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_pico_p
+    FOR EACH ROW EXECUTE PROCEDURE rel_pico_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_passag_elevada_viaduto_l_avoid_multi () RETURNS TRIGGER AS $tra_passag_elevada_viaduto_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_passag_elevada_viaduto_l(nome,nomeabrev,geometriaaproximada,tipopassagviad,modaluso,matconstr,operacional,situacaofisica,vaolivrehoriz,vaovertical,gabhorizsup,gabvertsup,cargasuportmaxima,nrpistas,nrfaixas,posicaopista,extensao,largura,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipopassagviad,NEW.modaluso,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.vaolivrehoriz,NEW.vaovertical,NEW.gabhorizsup,NEW.gabvertsup,NEW.cargasuportmaxima,NEW.nrpistas,NEW.nrfaixas,NEW.posicaopista,NEW.extensao,NEW.largura,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_passag_elevada_viaduto_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_passag_elevada_viaduto_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_passag_elevada_viaduto_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_passag_elevada_viaduto_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_cidade_p_avoid_multi () RETURNS TRIGGER AS $loc_cidade_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_cidade_p(nome,nomeabrev,geometriaaproximada,geocodigo,identificador,latitude,latitude_gms,longitude,longitude_gms,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.geocodigo,NEW.identificador,NEW.latitude,NEW.latitude_gms,NEW.longitude,NEW.longitude_gms,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_cidade_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_cidade_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_cidade_p
+    FOR EACH ROW EXECUTE PROCEDURE loc_cidade_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_capital_p_avoid_multi () RETURNS TRIGGER AS $loc_capital_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_capital_p(nome,nomeabrev,geometriaaproximada,geocodigo,identificador,latitude,latitude_gms,longitude,longitude_gms,geom,tipocapital) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.geocodigo,NEW.identificador,NEW.latitude,NEW.latitude_gms,NEW.longitude,NEW.longitude_gms,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipocapital ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_capital_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_capital_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_capital_p
+    FOR EACH ROW EXECUTE PROCEDURE loc_capital_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_edif_ext_mineral_a_avoid_multi () RETURNS TRIGGER AS $eco_edif_ext_mineral_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_edif_ext_mineral_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipodivisaocnae,id_org_ext_mineral) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipodivisaocnae,NEW.id_org_ext_mineral ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_edif_ext_mineral_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_edif_ext_mineral_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_edif_ext_mineral_a
+    FOR EACH ROW EXECUTE PROCEDURE eco_edif_ext_mineral_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_distrito_a_avoid_multi () RETURNS TRIGGER AS $lim_distrito_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_distrito_a(nome,nomeabrev,geometriaaproximada,geom,geocodigo,anodereferencia) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.geocodigo,NEW.anodereferencia ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_distrito_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_distrito_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_distrito_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_distrito_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_passag_elevada_viaduto_p_avoid_multi () RETURNS TRIGGER AS $tra_passag_elevada_viaduto_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_passag_elevada_viaduto_p(nome,nomeabrev,geometriaaproximada,tipopassagviad,modaluso,matconstr,operacional,situacaofisica,vaolivrehoriz,vaovertical,gabhorizsup,gabvertsup,cargasuportmaxima,nrpistas,nrfaixas,posicaopista,extensao,largura,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipopassagviad,NEW.modaluso,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.vaolivrehoriz,NEW.vaovertical,NEW.gabhorizsup,NEW.gabvertsup,NEW.cargasuportmaxima,NEW.nrpistas,NEW.nrfaixas,NEW.posicaopista,NEW.extensao,NEW.largura,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_passag_elevada_viaduto_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_passag_elevada_viaduto_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_passag_elevada_viaduto_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_passag_elevada_viaduto_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_torre_comunic_p_avoid_multi () RETURNS TRIGGER AS $enc_torre_comunic_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_torre_comunic_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,posicaoreledific,ovgd,alturaestimada,id_complexo_comunicacao,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.posicaoreledific,NEW.ovgd,NEW.alturaestimada,NEW.id_complexo_comunicacao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_torre_comunic_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_torre_comunic_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_torre_comunic_p
+    FOR EACH ROW EXECUTE PROCEDURE enc_torre_comunic_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_edif_const_turistica_a_avoid_multi () RETURNS TRIGGER AS $edu_edif_const_turistica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_edif_const_turistica_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifturist,ovgd,id_complexo_lazer) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifturist,NEW.ovgd,NEW.id_complexo_lazer ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_edif_const_turistica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_edif_const_turistica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_edif_const_turistica_a
+    FOR EACH ROW EXECUTE PROCEDURE edu_edif_const_turistica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_terreno_exposto_a_avoid_multi () RETURNS TRIGGER AS $rel_terreno_exposto_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_terreno_exposto_a(geometriaaproximada,tipoterrexp,causaexposicao,geom) SELECT NEW.geometriaaproximada,NEW.tipoterrexp,NEW.causaexposicao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_terreno_exposto_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_terreno_exposto_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_terreno_exposto_a
+    FOR EACH ROW EXECUTE PROCEDURE rel_terreno_exposto_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_girador_ferroviario_p_avoid_multi () RETURNS TRIGGER AS $tra_girador_ferroviario_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_girador_ferroviario_p(nome,nomeabrev,geometriaaproximada,administracao,operacional,situacaofisica,geom,id_estrut_apoio) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.administracao,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_estrut_apoio ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_girador_ferroviario_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_girador_ferroviario_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_girador_ferroviario_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_girador_ferroviario_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_trilha_picada_l_avoid_multi () RETURNS TRIGGER AS $tra_trilha_picada_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_trilha_picada_l(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_trilha_picada_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_trilha_picada_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_trilha_picada_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_trilha_picada_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION pto_area_est_med_fenom_a_avoid_multi () RETURNS TRIGGER AS $pto_area_est_med_fenom_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.pto_area_est_med_fenom_a(geometriaaproximada,id_est_med_fenomenos,geom) SELECT NEW.geometriaaproximada,NEW.id_est_med_fenomenos,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$pto_area_est_med_fenom_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER pto_area_est_med_fenom_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.pto_area_est_med_fenom_a
+    FOR EACH ROW EXECUTE PROCEDURE pto_area_est_med_fenom_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_edif_const_turistica_p_avoid_multi () RETURNS TRIGGER AS $edu_edif_const_turistica_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_edif_const_turistica_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifturist,ovgd,id_complexo_lazer) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifturist,NEW.ovgd,NEW.id_complexo_lazer ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_edif_const_turistica_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_edif_const_turistica_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_edif_const_turistica_p
+    FOR EACH ROW EXECUTE PROCEDURE edu_edif_const_turistica_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION adm_posto_pol_rod_a_avoid_multi () RETURNS TRIGGER AS $adm_posto_pol_rod_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.adm_posto_pol_rod_a(nome,nomeabrev,tipopostopol,geometriaaproximada,operacional,situacaofisica,id_org_pub_militar,id_org_pub_civil,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.tipopostopol,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.id_org_pub_militar,NEW.id_org_pub_civil,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$adm_posto_pol_rod_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER adm_posto_pol_rod_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.adm_posto_pol_rod_a
+    FOR EACH ROW EXECUTE PROCEDURE adm_posto_pol_rod_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_trecho_comunic_l_avoid_multi () RETURNS TRIGGER AS $enc_trecho_comunic_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_trecho_comunic_l(nome,nomeabrev,geometriaaproximada,tipotrechocomunic,posicaorelativa,matconstr,operacional,situacaofisica,emduto,id_org_comerc_serv,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipotrechocomunic,NEW.posicaorelativa,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.emduto,NEW.id_org_comerc_serv,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_trecho_comunic_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_trecho_comunic_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_trecho_comunic_l
+    FOR EACH ROW EXECUTE PROCEDURE enc_trecho_comunic_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_banco_areia_a_avoid_multi () RETURNS TRIGGER AS $hid_banco_areia_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_banco_areia_a(nome,nomeabrev,geometriaaproximada,tipobanco,situacaoemagua,materialpredominante,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipobanco,NEW.situacaoemagua,NEW.materialpredominante,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_banco_areia_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_banco_areia_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_banco_areia_a
+    FOR EACH ROW EXECUTE PROCEDURE hid_banco_areia_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_banco_areia_l_avoid_multi () RETURNS TRIGGER AS $hid_banco_areia_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_banco_areia_l(nome,nomeabrev,geometriaaproximada,tipobanco,situacaoemagua,materialpredominante,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipobanco,NEW.situacaoemagua,NEW.materialpredominante,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_banco_areia_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_banco_areia_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_banco_areia_l
+    FOR EACH ROW EXECUTE PROCEDURE hid_banco_areia_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION adm_posto_pol_rod_p_avoid_multi () RETURNS TRIGGER AS $adm_posto_pol_rod_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.adm_posto_pol_rod_p(nome,nomeabrev,tipopostopol,geometriaaproximada,operacional,situacaofisica,id_org_pub_militar,id_org_pub_civil,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.tipopostopol,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.id_org_pub_militar,NEW.id_org_pub_civil,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$adm_posto_pol_rod_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER adm_posto_pol_rod_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.adm_posto_pol_rod_p
+    FOR EACH ROW EXECUTE PROCEDURE adm_posto_pol_rod_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION veg_veg_restinga_a_avoid_multi () RETURNS TRIGGER AS $veg_veg_restinga_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.veg_veg_restinga_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom,alturamediaindividuos,classificacaoporte) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.alturamediaindividuos,NEW.classificacaoporte ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$veg_veg_restinga_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER veg_veg_restinga_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.veg_veg_restinga_a
+    FOR EACH ROW EXECUTE PROCEDURE veg_veg_restinga_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_corredeira_p_avoid_multi () RETURNS TRIGGER AS $hid_corredeira_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_corredeira_p(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_corredeira_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_corredeira_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_corredeira_p
+    FOR EACH ROW EXECUTE PROCEDURE hid_corredeira_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_faixa_seguranca_a_avoid_multi () RETURNS TRIGGER AS $tra_faixa_seguranca_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_faixa_seguranca_a(geometriaaproximada,largura,extensao,geom) SELECT NEW.geometriaaproximada,NEW.largura,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_faixa_seguranca_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_faixa_seguranca_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_faixa_seguranca_a
+    FOR EACH ROW EXECUTE PROCEDURE tra_faixa_seguranca_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_edif_ensino_a_avoid_multi () RETURNS TRIGGER AS $edu_edif_ensino_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_edif_ensino_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoclassecnae,id_org_ensino) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoclassecnae,NEW.id_org_ensino ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_edif_ensino_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_edif_ensino_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_edif_ensino_a
+    FOR EACH ROW EXECUTE PROCEDURE edu_edif_ensino_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_corredeira_a_avoid_multi () RETURNS TRIGGER AS $hid_corredeira_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_corredeira_a(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_corredeira_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_corredeira_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_corredeira_a
+    FOR EACH ROW EXECUTE PROCEDURE hid_corredeira_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_edif_ensino_p_avoid_multi () RETURNS TRIGGER AS $edu_edif_ensino_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_edif_ensino_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoclassecnae,id_org_ensino) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoclassecnae,NEW.id_org_ensino ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_edif_ensino_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_edif_ensino_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_edif_ensino_p
+    FOR EACH ROW EXECUTE PROCEDURE edu_edif_ensino_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_ponto_trecho_energia_p_avoid_multi () RETURNS TRIGGER AS $enc_ponto_trecho_energia_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_ponto_trecho_energia_p(geometriaaproximada,tipoptoenergia,geom) SELECT NEW.geometriaaproximada,NEW.tipoptoenergia,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_ponto_trecho_energia_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_ponto_trecho_energia_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_ponto_trecho_energia_p
+    FOR EACH ROW EXECUTE PROCEDURE enc_ponto_trecho_energia_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_fonte_dagua_p_avoid_multi () RETURNS TRIGGER AS $hid_fonte_dagua_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_fonte_dagua_p(nome,nomeabrev,geometriaaproximada,tipofontedagua,qualidagua,regime,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipofontedagua,NEW.qualidagua,NEW.regime,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_fonte_dagua_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_fonte_dagua_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_fonte_dagua_p
+    FOR EACH ROW EXECUTE PROCEDURE hid_fonte_dagua_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION veg_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $veg_descontinuidade_geometrica_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.veg_descontinuidade_geometrica_l(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$veg_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER veg_descontinuidade_geometrica_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.veg_descontinuidade_geometrica_l
+    FOR EACH ROW EXECUTE PROCEDURE veg_descontinuidade_geometrica_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_corredeira_l_avoid_multi () RETURNS TRIGGER AS $hid_corredeira_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_corredeira_l(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_corredeira_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_corredeira_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_corredeira_l
+    FOR EACH ROW EXECUTE PROCEDURE hid_corredeira_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_area_desenv_controle_a_avoid_multi () RETURNS TRIGGER AS $lim_area_desenv_controle_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_area_desenv_controle_a(nome,nomeabrev,geometriaaproximada,geom,classificacao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.classificacao ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_area_desenv_controle_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_area_desenv_controle_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_area_desenv_controle_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_area_desenv_controle_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_municipio_a_avoid_multi () RETURNS TRIGGER AS $lim_municipio_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_municipio_a(nome,nomeabrev,geometriaaproximada,geom,geocodigo,anodereferencia) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.geocodigo,NEW.anodereferencia ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_municipio_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_municipio_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_municipio_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_municipio_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_natureza_fundo_l_avoid_multi () RETURNS TRIGGER AS $hid_natureza_fundo_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_natureza_fundo_l(nome,nomeabrev,geometriaaproximada,materialpredominante,espessalgas,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.materialpredominante,NEW.espessalgas,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_natureza_fundo_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_natureza_fundo_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_natureza_fundo_l
+    FOR EACH ROW EXECUTE PROCEDURE hid_natureza_fundo_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_area_desenv_controle_p_avoid_multi () RETURNS TRIGGER AS $lim_area_desenv_controle_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_area_desenv_controle_p(nome,nomeabrev,geometriaaproximada,geom,classificacao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.classificacao ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_area_desenv_controle_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_area_desenv_controle_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_area_desenv_controle_p
+    FOR EACH ROW EXECUTE PROCEDURE lim_area_desenv_controle_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION adm_posto_fiscal_p_avoid_multi () RETURNS TRIGGER AS $adm_posto_fiscal_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.adm_posto_fiscal_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipopostofisc,id_org_pub_civil,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipopostofisc,NEW.id_org_pub_civil,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$adm_posto_fiscal_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER adm_posto_fiscal_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.adm_posto_fiscal_p
+    FOR EACH ROW EXECUTE PROCEDURE adm_posto_fiscal_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_passagem_nivel_p_avoid_multi () RETURNS TRIGGER AS $tra_passagem_nivel_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_passagem_nivel_p(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_passagem_nivel_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_passagem_nivel_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_passagem_nivel_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_passagem_nivel_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_zona_linhas_energia_com_a_avoid_multi () RETURNS TRIGGER AS $enc_zona_linhas_energia_com_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_zona_linhas_energia_com_a(nome,nomeabrev,geometriaaproximada,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_zona_linhas_energia_com_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_zona_linhas_energia_com_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_zona_linhas_energia_com_a
+    FOR EACH ROW EXECUTE PROCEDURE enc_zona_linhas_energia_com_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_galeria_bueiro_l_avoid_multi () RETURNS TRIGGER AS $tra_galeria_bueiro_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_galeria_bueiro_l(nome,nomeabrev,matconstr,pesosuportmaximo,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.matconstr,NEW.pesosuportmaximo,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_galeria_bueiro_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_galeria_bueiro_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_galeria_bueiro_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_galeria_bueiro_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_sub_distrito_a_avoid_multi () RETURNS TRIGGER AS $lim_sub_distrito_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_sub_distrito_a(nome,nomeabrev,geometriaaproximada,geom,geocodigo,anodereferencia) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.geocodigo,NEW.anodereferencia ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_sub_distrito_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_sub_distrito_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_sub_distrito_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_sub_distrito_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_rocha_a_avoid_multi () RETURNS TRIGGER AS $rel_rocha_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_rocha_a(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom,tiporocha) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tiporocha ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_rocha_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_rocha_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_rocha_a
+    FOR EACH ROW EXECUTE PROCEDURE rel_rocha_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_area_estrut_transporte_a_avoid_multi () RETURNS TRIGGER AS $tra_area_estrut_transporte_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_area_estrut_transporte_a(geometriaaproximada,id_estrut_transporte,geom) SELECT NEW.geometriaaproximada,NEW.id_estrut_transporte,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_area_estrut_transporte_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_area_estrut_transporte_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_area_estrut_transporte_a
+    FOR EACH ROW EXECUTE PROCEDURE tra_area_estrut_transporte_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_area_umida_a_avoid_multi () RETURNS TRIGGER AS $hid_area_umida_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_area_umida_a(nome,nomeabrev,geometriaaproximada,tipoareaumida,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoareaumida,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_area_umida_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_area_umida_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_area_umida_a
+    FOR EACH ROW EXECUTE PROCEDURE hid_area_umida_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_termeletrica_a_avoid_multi () RETURNS TRIGGER AS $enc_termeletrica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_termeletrica_a(nome,nomeabrev,geometriaaproximada,tipoestgerad,operacional,situacaofisica,destenergelet,codigoestacao,potenciaoutorgada,potenciafiscalizada,id_complexo_gerad_energ_eletr,geom,tipocombustivel,combrenovavel,tipomaqtermica,geracao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoestgerad,NEW.operacional,NEW.situacaofisica,NEW.destenergelet,NEW.codigoestacao,NEW.potenciaoutorgada,NEW.potenciafiscalizada,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipocombustivel,NEW.combrenovavel,NEW.tipomaqtermica,NEW.geracao ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_termeletrica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_termeletrica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_termeletrica_a
+    FOR EACH ROW EXECUTE PROCEDURE enc_termeletrica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_termeletrica_p_avoid_multi () RETURNS TRIGGER AS $enc_termeletrica_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_termeletrica_p(nome,nomeabrev,geometriaaproximada,tipoestgerad,operacional,situacaofisica,destenergelet,codigoestacao,potenciaoutorgada,potenciafiscalizada,id_complexo_gerad_energ_eletr,geom,tipocombustivel,combrenovavel,tipomaqtermica,geracao) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoestgerad,NEW.operacional,NEW.situacaofisica,NEW.destenergelet,NEW.codigoestacao,NEW.potenciaoutorgada,NEW.potenciafiscalizada,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipocombustivel,NEW.combrenovavel,NEW.tipomaqtermica,NEW.geracao ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_termeletrica_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_termeletrica_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_termeletrica_p
+    FOR EACH ROW EXECUTE PROCEDURE enc_termeletrica_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_hidreletrica_l_avoid_multi () RETURNS TRIGGER AS $enc_hidreletrica_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_hidreletrica_l(nome,nomeabrev,geometriaaproximada,tipoestgerad,operacional,situacaofisica,destenergelet,codigoestacao,potenciaoutorgada,potenciafiscalizada,id_complexo_gerad_energ_eletr,geom,codigohidreletrica) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoestgerad,NEW.operacional,NEW.situacaofisica,NEW.destenergelet,NEW.codigoestacao,NEW.potenciaoutorgada,NEW.potenciafiscalizada,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.codigohidreletrica ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_hidreletrica_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_hidreletrica_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_hidreletrica_l
+    FOR EACH ROW EXECUTE PROCEDURE enc_hidreletrica_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_area_comerc_serv_a_avoid_multi () RETURNS TRIGGER AS $eco_area_comerc_serv_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_area_comerc_serv_a(geometriaaproximada,geom,id_org_comerc_serv) SELECT NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.id_org_comerc_serv ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_area_comerc_serv_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_area_comerc_serv_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_area_comerc_serv_a
+    FOR EACH ROW EXECUTE PROCEDURE eco_area_comerc_serv_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_hidreletrica_a_avoid_multi () RETURNS TRIGGER AS $enc_hidreletrica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_hidreletrica_a(nome,nomeabrev,geometriaaproximada,tipoestgerad,operacional,situacaofisica,destenergelet,codigoestacao,potenciaoutorgada,potenciafiscalizada,id_complexo_gerad_energ_eletr,geom,codigohidreletrica) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoestgerad,NEW.operacional,NEW.situacaofisica,NEW.destenergelet,NEW.codigoestacao,NEW.potenciaoutorgada,NEW.potenciafiscalizada,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.codigohidreletrica ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_hidreletrica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_hidreletrica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_hidreletrica_a
+    FOR EACH ROW EXECUTE PROCEDURE enc_hidreletrica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION veg_campo_a_avoid_multi () RETURNS TRIGGER AS $veg_campo_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.veg_campo_a(nome,nomeabrev,geometriaaproximada,tipocampo,ocorrenciaem,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipocampo,NEW.ocorrenciaem,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$veg_campo_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER veg_campo_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.veg_campo_a
+    FOR EACH ROW EXECUTE PROCEDURE veg_campo_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_hidreletrica_p_avoid_multi () RETURNS TRIGGER AS $enc_hidreletrica_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_hidreletrica_p(nome,nomeabrev,geometriaaproximada,tipoestgerad,operacional,situacaofisica,destenergelet,codigoestacao,potenciaoutorgada,potenciafiscalizada,id_complexo_gerad_energ_eletr,geom,codigohidreletrica) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoestgerad,NEW.operacional,NEW.situacaofisica,NEW.destenergelet,NEW.codigoestacao,NEW.potenciaoutorgada,NEW.potenciafiscalizada,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.codigohidreletrica ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_hidreletrica_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_hidreletrica_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_hidreletrica_p
+    FOR EACH ROW EXECUTE PROCEDURE enc_hidreletrica_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_funicular_p_avoid_multi () RETURNS TRIGGER AS $tra_funicular_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_funicular_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,id_org_ext_mineral,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.id_org_ext_mineral,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_funicular_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_funicular_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_funicular_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_funicular_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION asb_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $asb_descontinuidade_geometrica_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.asb_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$asb_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER asb_descontinuidade_geometrica_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.asb_descontinuidade_geometrica_p
+    FOR EACH ROW EXECUTE PROCEDURE asb_descontinuidade_geometrica_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION veg_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $veg_descontinuidade_geometrica_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.veg_descontinuidade_geometrica_p(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$veg_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER veg_descontinuidade_geometrica_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.veg_descontinuidade_geometrica_p
+    FOR EACH ROW EXECUTE PROCEDURE veg_descontinuidade_geometrica_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_unidade_federacao_a_avoid_multi () RETURNS TRIGGER AS $lim_unidade_federacao_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_unidade_federacao_a(nome,nomeabrev,geometriaaproximada,geom,sigla,geocodigo) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.sigla,NEW.geocodigo ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_unidade_federacao_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_unidade_federacao_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_unidade_federacao_a
+    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_federacao_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION lim_limite_area_especial_l_avoid_multi () RETURNS TRIGGER AS $lim_limite_area_especial_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.lim_limite_area_especial_l(nome,nomeabrev,coincidecomdentrode,geometriaaproximada,extensao,geom,tipolimareaesp,obssituacao) SELECT NEW.nome,NEW.nomeabrev,NEW.coincidecomdentrode,NEW.geometriaaproximada,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipolimareaesp,NEW.obssituacao ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$lim_limite_area_especial_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER lim_limite_area_especial_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.lim_limite_area_especial_l
+    FOR EACH ROW EXECUTE PROCEDURE lim_limite_area_especial_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION asb_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $asb_descontinuidade_geometrica_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.asb_descontinuidade_geometrica_a(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$asb_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER asb_descontinuidade_geometrica_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.asb_descontinuidade_geometrica_a
+    FOR EACH ROW EXECUTE PROCEDURE asb_descontinuidade_geometrica_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_funicular_l_avoid_multi () RETURNS TRIGGER AS $tra_funicular_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_funicular_l(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,id_org_ext_mineral,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.id_org_ext_mineral,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_funicular_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_funicular_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_funicular_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_funicular_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION asb_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $asb_descontinuidade_geometrica_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.asb_descontinuidade_geometrica_l(geometriaaproximada,motivodescontinuidade,geom) SELECT NEW.geometriaaproximada,NEW.motivodescontinuidade,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$asb_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER asb_descontinuidade_geometrica_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.asb_descontinuidade_geometrica_l
+    FOR EACH ROW EXECUTE PROCEDURE asb_descontinuidade_geometrica_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION rel_rocha_p_avoid_multi () RETURNS TRIGGER AS $rel_rocha_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.rel_rocha_p(nome,nomeabrev,geometriaaproximada,tipoelemnat,geom,tiporocha) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoelemnat,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tiporocha ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$rel_rocha_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER rel_rocha_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.rel_rocha_p
+    FOR EACH ROW EXECUTE PROCEDURE rel_rocha_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_local_critico_p_avoid_multi () RETURNS TRIGGER AS $tra_local_critico_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_local_critico_p(nome,nomeabrev,geometriaaproximada,tipolocalcrit,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipolocalcrit,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_local_critico_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_local_critico_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_local_critico_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_local_critico_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_area_habitacional_a_avoid_multi () RETURNS TRIGGER AS $loc_area_habitacional_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_area_habitacional_a(nome,nomeabrev,id_complexo_habitacional,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.id_complexo_habitacional,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_area_habitacional_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_area_habitacional_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_area_habitacional_a
+    FOR EACH ROW EXECUTE PROCEDURE loc_area_habitacional_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION loc_localidade_p_avoid_multi () RETURNS TRIGGER AS $loc_localidade_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.loc_localidade_p(nome,nomeabrev,geometriaaproximada,geocodigo,identificador,latitude,latitude_gms,longitude,longitude_gms,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.geocodigo,NEW.identificador,NEW.latitude,NEW.latitude_gms,NEW.longitude,NEW.longitude_gms,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$loc_localidade_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER loc_localidade_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.loc_localidade_p
+    FOR EACH ROW EXECUTE PROCEDURE loc_localidade_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_local_critico_a_avoid_multi () RETURNS TRIGGER AS $tra_local_critico_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_local_critico_a(nome,nomeabrev,geometriaaproximada,tipolocalcrit,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipolocalcrit,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_local_critico_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_local_critico_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_local_critico_a
+    FOR EACH ROW EXECUTE PROCEDURE tra_local_critico_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION veg_macega_chavascal_a_avoid_multi () RETURNS TRIGGER AS $veg_macega_chavascal_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.veg_macega_chavascal_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom,tipomacchav,alturamediaindividuos,classificacaoporte) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipomacchav,NEW.alturamediaindividuos,NEW.classificacaoporte ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$veg_macega_chavascal_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER veg_macega_chavascal_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.veg_macega_chavascal_a
+    FOR EACH ROW EXECUTE PROCEDURE veg_macega_chavascal_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_local_critico_l_avoid_multi () RETURNS TRIGGER AS $tra_local_critico_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_local_critico_l(nome,nomeabrev,geometriaaproximada,tipolocalcrit,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipolocalcrit,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_local_critico_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_local_critico_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_local_critico_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_local_critico_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_edif_religiosa_a_avoid_multi () RETURNS TRIGGER AS $edu_edif_religiosa_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_edif_religiosa_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifrelig,ensino,religiao,id_org_religiosa) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifrelig,NEW.ensino,NEW.religiao,NEW.id_org_religiosa ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_edif_religiosa_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_edif_religiosa_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_edif_religiosa_a
+    FOR EACH ROW EXECUTE PROCEDURE edu_edif_religiosa_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_terreno_suj_inundacao_a_avoid_multi () RETURNS TRIGGER AS $hid_terreno_suj_inundacao_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_terreno_suj_inundacao_a(nome,nomeabrev,geometriaaproximada,periodicidadeinunda,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.periodicidadeinunda,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_terreno_suj_inundacao_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_terreno_suj_inundacao_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_terreno_suj_inundacao_a
+    FOR EACH ROW EXECUTE PROCEDURE hid_terreno_suj_inundacao_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_edif_religiosa_p_avoid_multi () RETURNS TRIGGER AS $edu_edif_religiosa_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_edif_religiosa_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifrelig,ensino,religiao,id_org_religiosa) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifrelig,NEW.ensino,NEW.religiao,NEW.id_org_religiosa ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_edif_religiosa_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_edif_religiosa_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_edif_religiosa_p
+    FOR EACH ROW EXECUTE PROCEDURE edu_edif_religiosa_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION adm_edif_pub_civil_p_avoid_multi () RETURNS TRIGGER AS $adm_edif_pub_civil_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.adm_edif_pub_civil_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifcivil,tipousoedif,id_org_pub_civil) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifcivil,NEW.tipousoedif,NEW.id_org_pub_civil ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$adm_edif_pub_civil_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER adm_edif_pub_civil_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.adm_edif_pub_civil_p
+    FOR EACH ROW EXECUTE PROCEDURE adm_edif_pub_civil_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_trecho_energia_l_avoid_multi () RETURNS TRIGGER AS $enc_trecho_energia_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_trecho_energia_l(nome,nomeabrev,geometriaaproximada,especie,posicaorelativa,operacional,situacaofisica,emduto,tensaoeletrica,numcircuitos,id_org_comerc_serv,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.especie,NEW.posicaorelativa,NEW.operacional,NEW.situacaofisica,NEW.emduto,NEW.tensaoeletrica,NEW.numcircuitos,NEW.id_org_comerc_serv,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_trecho_energia_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_trecho_energia_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_trecho_energia_l
+    FOR EACH ROW EXECUTE PROCEDURE enc_trecho_energia_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_edif_metro_ferroviaria_p_avoid_multi () RETURNS TRIGGER AS $tra_edif_metro_ferroviaria_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_edif_metro_ferroviaria_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,funcaoedifmetroferrov,multimodal,administracao,id_estrut_apoio) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.funcaoedifmetroferrov,NEW.multimodal,NEW.administracao,NEW.id_estrut_apoio ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_edif_metro_ferroviaria_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_edif_metro_ferroviaria_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_edif_metro_ferroviaria_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_edif_metro_ferroviaria_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_tunel_l_avoid_multi () RETURNS TRIGGER AS $tra_tunel_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_tunel_l(geometriaaproximada,nome,nomeabrev,tipotunel,modaluso,matconstr,operacional,situacaofisica,nrpistas,nrfaixas,posicaopista,altura,extensao,geom) SELECT NEW.geometriaaproximada,NEW.nome,NEW.nomeabrev,NEW.tipotunel,NEW.modaluso,NEW.matconstr,NEW.operacional,NEW.situacaofisica,NEW.nrpistas,NEW.nrfaixas,NEW.posicaopista,NEW.altura,NEW.extensao,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_tunel_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_tunel_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_tunel_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_tunel_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION adm_edif_pub_civil_a_avoid_multi () RETURNS TRIGGER AS $adm_edif_pub_civil_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.adm_edif_pub_civil_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifcivil,tipousoedif,id_org_pub_civil) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifcivil,NEW.tipousoedif,NEW.id_org_pub_civil ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$adm_edif_pub_civil_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER adm_edif_pub_civil_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.adm_edif_pub_civil_a
+    FOR EACH ROW EXECUTE PROCEDURE adm_edif_pub_civil_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_edif_metro_ferroviaria_a_avoid_multi () RETURNS TRIGGER AS $tra_edif_metro_ferroviaria_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_edif_metro_ferroviaria_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,funcaoedifmetroferrov,multimodal,administracao,id_estrut_apoio) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.funcaoedifmetroferrov,NEW.multimodal,NEW.administracao,NEW.id_estrut_apoio ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_edif_metro_ferroviaria_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_edif_metro_ferroviaria_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_edif_metro_ferroviaria_a
+    FOR EACH ROW EXECUTE PROCEDURE tra_edif_metro_ferroviaria_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_quebramar_molhe_a_avoid_multi () RETURNS TRIGGER AS $hid_quebramar_molhe_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_quebramar_molhe_a(nome,nomeabrev,geometriaaproximada,tipoquebramolhe,matconstr,situamare,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoquebramolhe,NEW.matconstr,NEW.situamare,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_quebramar_molhe_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_quebramar_molhe_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_quebramar_molhe_a
+    FOR EACH ROW EXECUTE PROCEDURE hid_quebramar_molhe_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_quebramar_molhe_l_avoid_multi () RETURNS TRIGGER AS $hid_quebramar_molhe_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_quebramar_molhe_l(nome,nomeabrev,geometriaaproximada,tipoquebramolhe,matconstr,situamare,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoquebramolhe,NEW.matconstr,NEW.situamare,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_quebramar_molhe_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_quebramar_molhe_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_quebramar_molhe_l
+    FOR EACH ROW EXECUTE PROCEDURE hid_quebramar_molhe_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION veg_mangue_a_avoid_multi () RETURNS TRIGGER AS $veg_mangue_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.veg_mangue_a(nome,nomeabrev,geometriaaproximada,denso,antropizada,geom,classificacaoporte) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.denso,NEW.antropizada,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.classificacaoporte ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$veg_mangue_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER veg_mangue_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.veg_mangue_a
+    FOR EACH ROW EXECUTE PROCEDURE veg_mangue_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_queda_dagua_p_avoid_multi () RETURNS TRIGGER AS $hid_queda_dagua_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_queda_dagua_p(nome,nomeabrev,geometriaaproximada,tipoqueda,altura,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoqueda,NEW.altura,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_queda_dagua_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_queda_dagua_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_queda_dagua_p
+    FOR EACH ROW EXECUTE PROCEDURE hid_queda_dagua_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION asb_edif_abast_agua_p_avoid_multi () RETURNS TRIGGER AS $asb_edif_abast_agua_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.asb_edif_abast_agua_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifabast,id_complexo_abast_agua) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifabast,NEW.id_complexo_abast_agua ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$asb_edif_abast_agua_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER asb_edif_abast_agua_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.asb_edif_abast_agua_p
+    FOR EACH ROW EXECUTE PROCEDURE asb_edif_abast_agua_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_queda_dagua_a_avoid_multi () RETURNS TRIGGER AS $hid_queda_dagua_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_queda_dagua_a(nome,nomeabrev,geometriaaproximada,tipoqueda,altura,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoqueda,NEW.altura,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_queda_dagua_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_queda_dagua_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_queda_dagua_a
+    FOR EACH ROW EXECUTE PROCEDURE hid_queda_dagua_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION asb_edif_abast_agua_a_avoid_multi () RETURNS TRIGGER AS $asb_edif_abast_agua_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.asb_edif_abast_agua_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,matconstr,geom,tipoedifabast,id_complexo_abast_agua) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.matconstr,ST_Multi((ST_Dump(NEW.geom)).geom),NEW.tipoedifabast,NEW.id_complexo_abast_agua ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$asb_edif_abast_agua_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER asb_edif_abast_agua_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.asb_edif_abast_agua_a
+    FOR EACH ROW EXECUTE PROCEDURE asb_edif_abast_agua_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION hid_queda_dagua_l_avoid_multi () RETURNS TRIGGER AS $hid_queda_dagua_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.hid_queda_dagua_l(nome,nomeabrev,geometriaaproximada,tipoqueda,altura,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoqueda,NEW.altura,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$hid_queda_dagua_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER hid_queda_dagua_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.hid_queda_dagua_l
+    FOR EACH ROW EXECUTE PROCEDURE hid_queda_dagua_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_est_gerad_energia_eletr_p_avoid_multi () RETURNS TRIGGER AS $enc_est_gerad_energia_eletr_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_est_gerad_energia_eletr_p(nome,nomeabrev,geometriaaproximada,tipoestgerad,operacional,situacaofisica,destenergelet,codigoestacao,potenciaoutorgada,potenciafiscalizada,id_complexo_gerad_energ_eletr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoestgerad,NEW.operacional,NEW.situacaofisica,NEW.destenergelet,NEW.codigoestacao,NEW.potenciaoutorgada,NEW.potenciafiscalizada,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_est_gerad_energia_eletr_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_est_gerad_energia_eletr_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_est_gerad_energia_eletr_p
+    FOR EACH ROW EXECUTE PROCEDURE enc_est_gerad_energia_eletr_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_equip_agropec_a_avoid_multi () RETURNS TRIGGER AS $eco_equip_agropec_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_equip_agropec_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipoequipagropec,matconstr,id_org_agrop_ext_veg_pesca,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipoequipagropec,NEW.matconstr,NEW.id_org_agrop_ext_veg_pesca,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_equip_agropec_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_equip_agropec_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_equip_agropec_a
+    FOR EACH ROW EXECUTE PROCEDURE eco_equip_agropec_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_arquibancada_a_avoid_multi () RETURNS TRIGGER AS $edu_arquibancada_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_arquibancada_a(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_arquibancada_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_arquibancada_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_arquibancada_a
+    FOR EACH ROW EXECUTE PROCEDURE edu_arquibancada_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_cremalheira_p_avoid_multi () RETURNS TRIGGER AS $tra_cremalheira_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_cremalheira_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_cremalheira_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_cremalheira_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_cremalheira_p
+    FOR EACH ROW EXECUTE PROCEDURE tra_cremalheira_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_equip_agropec_l_avoid_multi () RETURNS TRIGGER AS $eco_equip_agropec_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_equip_agropec_l(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipoequipagropec,matconstr,id_org_agrop_ext_veg_pesca,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipoequipagropec,NEW.matconstr,NEW.id_org_agrop_ext_veg_pesca,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_equip_agropec_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_equip_agropec_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_equip_agropec_l
+    FOR EACH ROW EXECUTE PROCEDURE eco_equip_agropec_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION tra_cremalheira_l_avoid_multi () RETURNS TRIGGER AS $tra_cremalheira_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.tra_cremalheira_l(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$tra_cremalheira_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER tra_cremalheira_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.tra_cremalheira_l
+    FOR EACH ROW EXECUTE PROCEDURE tra_cremalheira_l_avoid_multi ()#
+CREATE OR REPLACE FUNCTION eco_equip_agropec_p_avoid_multi () RETURNS TRIGGER AS $eco_equip_agropec_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.eco_equip_agropec_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,tipoequipagropec,matconstr,id_org_agrop_ext_veg_pesca,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.tipoequipagropec,NEW.matconstr,NEW.id_org_agrop_ext_veg_pesca,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$eco_equip_agropec_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER eco_equip_agropec_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.eco_equip_agropec_p
+    FOR EACH ROW EXECUTE PROCEDURE eco_equip_agropec_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_est_gerad_energia_eletr_a_avoid_multi () RETURNS TRIGGER AS $enc_est_gerad_energia_eletr_a_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_est_gerad_energia_eletr_a(nome,nomeabrev,geometriaaproximada,tipoestgerad,operacional,situacaofisica,destenergelet,codigoestacao,potenciaoutorgada,potenciafiscalizada,id_complexo_gerad_energ_eletr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoestgerad,NEW.operacional,NEW.situacaofisica,NEW.destenergelet,NEW.codigoestacao,NEW.potenciaoutorgada,NEW.potenciafiscalizada,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_est_gerad_energia_eletr_a_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_est_gerad_energia_eletr_a_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_est_gerad_energia_eletr_a
+    FOR EACH ROW EXECUTE PROCEDURE enc_est_gerad_energia_eletr_a_avoid_multi ()#
+CREATE OR REPLACE FUNCTION edu_arquibancada_p_avoid_multi () RETURNS TRIGGER AS $edu_arquibancada_p_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.edu_arquibancada_p(nome,nomeabrev,geometriaaproximada,operacional,situacaofisica,id_complexo_lazer,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.operacional,NEW.situacaofisica,NEW.id_complexo_lazer,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$edu_arquibancada_p_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER edu_arquibancada_p_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.edu_arquibancada_p
+    FOR EACH ROW EXECUTE PROCEDURE edu_arquibancada_p_avoid_multi ()#
+CREATE OR REPLACE FUNCTION enc_est_gerad_energia_eletr_l_avoid_multi () RETURNS TRIGGER AS $enc_est_gerad_energia_eletr_l_avoid_multi_return$
+    DECLARE
+    BEGIN
+        IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) =1 THEN
+		RETURN NEW;
+	END IF;
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		INSERT INTO cb.enc_est_gerad_energia_eletr_l(nome,nomeabrev,geometriaaproximada,tipoestgerad,operacional,situacaofisica,destenergelet,codigoestacao,potenciaoutorgada,potenciafiscalizada,id_complexo_gerad_energ_eletr,geom) SELECT NEW.nome,NEW.nomeabrev,NEW.geometriaaproximada,NEW.tipoestgerad,NEW.operacional,NEW.situacaofisica,NEW.destenergelet,NEW.codigoestacao,NEW.potenciaoutorgada,NEW.potenciafiscalizada,NEW.id_complexo_gerad_energ_eletr,ST_Multi((ST_Dump(NEW.geom)).geom) ;
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+    END;
+$enc_est_gerad_energia_eletr_l_avoid_multi_return$ LANGUAGE plpgsql#
+CREATE TRIGGER enc_est_gerad_energia_eletr_l_avoid_multi_return
+BEFORE INSERT OR UPDATE ON cb.enc_est_gerad_energia_eletr_l
+    FOR EACH ROW EXECUTE PROCEDURE enc_est_gerad_energia_eletr_l_avoid_multi ()

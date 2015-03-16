@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION edu_descontinuidade_geometrica_l_avoid_multi () RETUR
 $edu_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_descontinuidade_geometrica_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_descontinuidade_geometrica_l
-    FOR EACH ROW EXECUTE PROCEDURE edu_descontinuidade_geometrica_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_descontinuidade_geometrica_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION asb_area_saneamento_a_avoid_multi () RETURNS TRIGGER AS $asb_area_saneamento_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -33,7 +33,7 @@ CREATE OR REPLACE FUNCTION asb_area_saneamento_a_avoid_multi () RETURNS TRIGGER 
 $asb_area_saneamento_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER asb_area_saneamento_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.asb_area_saneamento_a
-    FOR EACH ROW EXECUTE PROCEDURE asb_area_saneamento_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE asb_area_saneamento_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_edif_comerc_serv_p_avoid_multi () RETURNS TRIGGER AS $eco_edif_comerc_serv_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -51,7 +51,7 @@ CREATE OR REPLACE FUNCTION eco_edif_comerc_serv_p_avoid_multi () RETURNS TRIGGER
 $eco_edif_comerc_serv_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_edif_comerc_serv_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_edif_comerc_serv_p
-    FOR EACH ROW EXECUTE PROCEDURE eco_edif_comerc_serv_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_edif_comerc_serv_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION veg_cerrado_cerradao_a_avoid_multi () RETURNS TRIGGER AS $veg_cerrado_cerradao_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -69,7 +69,7 @@ CREATE OR REPLACE FUNCTION veg_cerrado_cerradao_a_avoid_multi () RETURNS TRIGGER
 $veg_cerrado_cerradao_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER veg_cerrado_cerradao_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.veg_cerrado_cerradao_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_cerrado_cerradao_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE veg_cerrado_cerradao_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_edif_comerc_serv_a_avoid_multi () RETURNS TRIGGER AS $eco_edif_comerc_serv_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -87,7 +87,7 @@ CREATE OR REPLACE FUNCTION eco_edif_comerc_serv_a_avoid_multi () RETURNS TRIGGER
 $eco_edif_comerc_serv_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_edif_comerc_serv_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_edif_comerc_serv_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_edif_comerc_serv_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_edif_comerc_serv_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $edu_descontinuidade_geometrica_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -105,7 +105,7 @@ CREATE OR REPLACE FUNCTION edu_descontinuidade_geometrica_p_avoid_multi () RETUR
 $edu_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_descontinuidade_geometrica_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE edu_descontinuidade_geometrica_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_descontinuidade_geometrica_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_elemento_fisiog_natural_l_avoid_multi () RETURNS TRIGGER AS $rel_elemento_fisiog_natural_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -123,7 +123,7 @@ CREATE OR REPLACE FUNCTION rel_elemento_fisiog_natural_l_avoid_multi () RETURNS 
 $rel_elemento_fisiog_natural_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_elemento_fisiog_natural_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_elemento_fisiog_natural_l
-    FOR EACH ROW EXECUTE PROCEDURE rel_elemento_fisiog_natural_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_elemento_fisiog_natural_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION adm_area_pub_militar_a_avoid_multi () RETURNS TRIGGER AS $adm_area_pub_militar_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -141,7 +141,7 @@ CREATE OR REPLACE FUNCTION adm_area_pub_militar_a_avoid_multi () RETURNS TRIGGER
 $adm_area_pub_militar_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER adm_area_pub_militar_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.adm_area_pub_militar_a
-    FOR EACH ROW EXECUTE PROCEDURE adm_area_pub_militar_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE adm_area_pub_militar_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_campo_quadra_p_avoid_multi () RETURNS TRIGGER AS $edu_campo_quadra_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -159,7 +159,7 @@ CREATE OR REPLACE FUNCTION edu_campo_quadra_p_avoid_multi () RETURNS TRIGGER AS 
 $edu_campo_quadra_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_campo_quadra_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_campo_quadra_p
-    FOR EACH ROW EXECUTE PROCEDURE edu_campo_quadra_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_campo_quadra_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_elemento_fisiog_natural_a_avoid_multi () RETURNS TRIGGER AS $rel_elemento_fisiog_natural_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -177,7 +177,7 @@ CREATE OR REPLACE FUNCTION rel_elemento_fisiog_natural_a_avoid_multi () RETURNS 
 $rel_elemento_fisiog_natural_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_elemento_fisiog_natural_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_elemento_fisiog_natural_a
-    FOR EACH ROW EXECUTE PROCEDURE rel_elemento_fisiog_natural_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_elemento_fisiog_natural_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_area_particular_a_avoid_multi () RETURNS TRIGGER AS $lim_area_particular_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -195,7 +195,7 @@ CREATE OR REPLACE FUNCTION lim_area_particular_a_avoid_multi () RETURNS TRIGGER 
 $lim_area_particular_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_area_particular_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_area_particular_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_area_particular_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_area_particular_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_campo_quadra_a_avoid_multi () RETURNS TRIGGER AS $edu_campo_quadra_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -213,7 +213,7 @@ CREATE OR REPLACE FUNCTION edu_campo_quadra_a_avoid_multi () RETURNS TRIGGER AS 
 $edu_campo_quadra_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_campo_quadra_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_campo_quadra_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_campo_quadra_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_campo_quadra_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_elemento_fisiog_natural_p_avoid_multi () RETURNS TRIGGER AS $rel_elemento_fisiog_natural_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -231,7 +231,7 @@ CREATE OR REPLACE FUNCTION rel_elemento_fisiog_natural_p_avoid_multi () RETURNS 
 $rel_elemento_fisiog_natural_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_elemento_fisiog_natural_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_elemento_fisiog_natural_p
-    FOR EACH ROW EXECUTE PROCEDURE rel_elemento_fisiog_natural_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_elemento_fisiog_natural_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_delimitacao_fisica_l_avoid_multi () RETURNS TRIGGER AS $lim_delimitacao_fisica_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -249,7 +249,7 @@ CREATE OR REPLACE FUNCTION lim_delimitacao_fisica_l_avoid_multi () RETURNS TRIGG
 $lim_delimitacao_fisica_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_delimitacao_fisica_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_delimitacao_fisica_l
-    FOR EACH ROW EXECUTE PROCEDURE lim_delimitacao_fisica_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_delimitacao_fisica_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_hab_indigena_p_avoid_multi () RETURNS TRIGGER AS $loc_hab_indigena_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -267,7 +267,7 @@ CREATE OR REPLACE FUNCTION loc_hab_indigena_p_avoid_multi () RETURNS TRIGGER AS 
 $loc_hab_indigena_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_hab_indigena_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_hab_indigena_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_hab_indigena_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_hab_indigena_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION pto_edif_constr_est_med_fen_a_avoid_multi () RETURNS TRIGGER AS $pto_edif_constr_est_med_fen_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -285,7 +285,7 @@ CREATE OR REPLACE FUNCTION pto_edif_constr_est_med_fen_a_avoid_multi () RETURNS 
 $pto_edif_constr_est_med_fen_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER pto_edif_constr_est_med_fen_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.pto_edif_constr_est_med_fen_a
-    FOR EACH ROW EXECUTE PROCEDURE pto_edif_constr_est_med_fen_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE pto_edif_constr_est_med_fen_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_edif_comunic_p_avoid_multi () RETURNS TRIGGER AS $enc_edif_comunic_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -303,7 +303,7 @@ CREATE OR REPLACE FUNCTION enc_edif_comunic_p_avoid_multi () RETURNS TRIGGER AS 
 $enc_edif_comunic_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_edif_comunic_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_edif_comunic_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_edif_comunic_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_edif_comunic_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_terra_indigena_p_avoid_multi () RETURNS TRIGGER AS $lim_terra_indigena_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -321,7 +321,7 @@ CREATE OR REPLACE FUNCTION lim_terra_indigena_p_avoid_multi () RETURNS TRIGGER A
 $lim_terra_indigena_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_terra_indigena_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_terra_indigena_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_terra_indigena_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_terra_indigena_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $edu_descontinuidade_geometrica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -339,7 +339,7 @@ CREATE OR REPLACE FUNCTION edu_descontinuidade_geometrica_a_avoid_multi () RETUR
 $edu_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_descontinuidade_geometrica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_descontinuidade_geometrica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_descontinuidade_geometrica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_hab_indigena_a_avoid_multi () RETURNS TRIGGER AS $loc_hab_indigena_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -357,7 +357,7 @@ CREATE OR REPLACE FUNCTION loc_hab_indigena_a_avoid_multi () RETURNS TRIGGER AS 
 $loc_hab_indigena_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_hab_indigena_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_hab_indigena_a
-    FOR EACH ROW EXECUTE PROCEDURE loc_hab_indigena_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_hab_indigena_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_edif_comunic_a_avoid_multi () RETURNS TRIGGER AS $enc_edif_comunic_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -375,7 +375,7 @@ CREATE OR REPLACE FUNCTION enc_edif_comunic_a_avoid_multi () RETURNS TRIGGER AS 
 $enc_edif_comunic_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_edif_comunic_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_edif_comunic_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_edif_comunic_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_edif_comunic_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_terra_indigena_a_avoid_multi () RETURNS TRIGGER AS $lim_terra_indigena_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -393,7 +393,7 @@ CREATE OR REPLACE FUNCTION lim_terra_indigena_a_avoid_multi () RETURNS TRIGGER A
 $lim_terra_indigena_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_terra_indigena_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_terra_indigena_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_terra_indigena_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_terra_indigena_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_limite_operacional_l_avoid_multi () RETURNS TRIGGER AS $lim_limite_operacional_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -411,7 +411,7 @@ CREATE OR REPLACE FUNCTION lim_limite_operacional_l_avoid_multi () RETURNS TRIGG
 $lim_limite_operacional_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_limite_operacional_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_limite_operacional_l
-    FOR EACH ROW EXECUTE PROCEDURE lim_limite_operacional_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_limite_operacional_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_foz_maritima_p_avoid_multi () RETURNS TRIGGER AS $hid_foz_maritima_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -429,7 +429,7 @@ CREATE OR REPLACE FUNCTION hid_foz_maritima_p_avoid_multi () RETURNS TRIGGER AS 
 $hid_foz_maritima_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_foz_maritima_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_foz_maritima_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_foz_maritima_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_foz_maritima_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_foz_maritima_l_avoid_multi () RETURNS TRIGGER AS $hid_foz_maritima_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -447,7 +447,7 @@ CREATE OR REPLACE FUNCTION hid_foz_maritima_l_avoid_multi () RETURNS TRIGGER AS 
 $hid_foz_maritima_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_foz_maritima_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_foz_maritima_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_foz_maritima_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_foz_maritima_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_foz_maritima_a_avoid_multi () RETURNS TRIGGER AS $hid_foz_maritima_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -465,7 +465,7 @@ CREATE OR REPLACE FUNCTION hid_foz_maritima_a_avoid_multi () RETURNS TRIGGER AS 
 $hid_foz_maritima_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_foz_maritima_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_foz_maritima_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_foz_maritima_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_foz_maritima_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_ponte_p_avoid_multi () RETURNS TRIGGER AS $tra_ponte_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -483,7 +483,7 @@ CREATE OR REPLACE FUNCTION tra_ponte_p_avoid_multi () RETURNS TRIGGER AS $tra_po
 $tra_ponte_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_ponte_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_ponte_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_ponte_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_ponte_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_ponte_l_avoid_multi () RETURNS TRIGGER AS $tra_ponte_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -501,7 +501,7 @@ CREATE OR REPLACE FUNCTION tra_ponte_l_avoid_multi () RETURNS TRIGGER AS $tra_po
 $tra_ponte_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_ponte_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_ponte_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_ponte_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_ponte_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_sinalizacao_p_avoid_multi () RETURNS TRIGGER AS $tra_sinalizacao_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -519,7 +519,7 @@ CREATE OR REPLACE FUNCTION tra_sinalizacao_p_avoid_multi () RETURNS TRIGGER AS $
 $tra_sinalizacao_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_sinalizacao_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_sinalizacao_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_sinalizacao_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_sinalizacao_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION pto_pto_controle_p_avoid_multi () RETURNS TRIGGER AS $pto_pto_controle_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -537,7 +537,7 @@ CREATE OR REPLACE FUNCTION pto_pto_controle_p_avoid_multi () RETURNS TRIGGER AS 
 $pto_pto_controle_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER pto_pto_controle_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.pto_pto_controle_p
-    FOR EACH ROW EXECUTE PROCEDURE pto_pto_controle_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE pto_pto_controle_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_unidade_conserv_nao_snuc_a_avoid_multi () RETURNS TRIGGER AS $lim_unidade_conserv_nao_snuc_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -555,7 +555,7 @@ CREATE OR REPLACE FUNCTION lim_unidade_conserv_nao_snuc_a_avoid_multi () RETURNS
 $lim_unidade_conserv_nao_snuc_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_unidade_conserv_nao_snuc_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_unidade_conserv_nao_snuc_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_conserv_nao_snuc_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_conserv_nao_snuc_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_aglomerado_rural_isolado_p_avoid_multi () RETURNS TRIGGER AS $loc_aglomerado_rural_isolado_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -573,7 +573,7 @@ CREATE OR REPLACE FUNCTION loc_aglomerado_rural_isolado_p_avoid_multi () RETURNS
 $loc_aglomerado_rural_isolado_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_aglomerado_rural_isolado_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_aglomerado_rural_isolado_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_aglomerado_rural_isolado_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_aglomerado_rural_isolado_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_massa_dagua_a_avoid_multi () RETURNS TRIGGER AS $hid_massa_dagua_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -591,7 +591,7 @@ CREATE OR REPLACE FUNCTION hid_massa_dagua_a_avoid_multi () RETURNS TRIGGER AS $
 $hid_massa_dagua_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_massa_dagua_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_massa_dagua_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_massa_dagua_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_massa_dagua_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_unidade_conserv_nao_snuc_p_avoid_multi () RETURNS TRIGGER AS $lim_unidade_conserv_nao_snuc_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -609,7 +609,7 @@ CREATE OR REPLACE FUNCTION lim_unidade_conserv_nao_snuc_p_avoid_multi () RETURNS
 $lim_unidade_conserv_nao_snuc_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_unidade_conserv_nao_snuc_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_unidade_conserv_nao_snuc_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_conserv_nao_snuc_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_conserv_nao_snuc_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_ext_mineral_a_avoid_multi () RETURNS TRIGGER AS $eco_ext_mineral_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -627,7 +627,7 @@ CREATE OR REPLACE FUNCTION eco_ext_mineral_a_avoid_multi () RETURNS TRIGGER AS $
 $eco_ext_mineral_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_ext_mineral_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_ext_mineral_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_ext_mineral_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_ext_mineral_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_ext_mineral_p_avoid_multi () RETURNS TRIGGER AS $eco_ext_mineral_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -645,7 +645,7 @@ CREATE OR REPLACE FUNCTION eco_ext_mineral_p_avoid_multi () RETURNS TRIGGER AS $
 $eco_ext_mineral_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_ext_mineral_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_ext_mineral_p
-    FOR EACH ROW EXECUTE PROCEDURE eco_ext_mineral_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_ext_mineral_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_area_comunicacao_a_avoid_multi () RETURNS TRIGGER AS $enc_area_comunicacao_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -663,7 +663,7 @@ CREATE OR REPLACE FUNCTION enc_area_comunicacao_a_avoid_multi () RETURNS TRIGGER
 $enc_area_comunicacao_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_area_comunicacao_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_area_comunicacao_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_area_comunicacao_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_area_comunicacao_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION veg_vegetacao_a_avoid_multi () RETURNS TRIGGER AS $veg_vegetacao_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -681,7 +681,7 @@ CREATE OR REPLACE FUNCTION veg_vegetacao_a_avoid_multi () RETURNS TRIGGER AS $ve
 $veg_vegetacao_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER veg_vegetacao_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.veg_vegetacao_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_vegetacao_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE veg_vegetacao_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_nome_local_p_avoid_multi () RETURNS TRIGGER AS $loc_nome_local_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -699,7 +699,7 @@ CREATE OR REPLACE FUNCTION loc_nome_local_p_avoid_multi () RETURNS TRIGGER AS $l
 $loc_nome_local_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_nome_local_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_nome_local_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_nome_local_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_nome_local_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_aglomerado_rural_p_avoid_multi () RETURNS TRIGGER AS $loc_aglomerado_rural_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -717,7 +717,7 @@ CREATE OR REPLACE FUNCTION loc_aglomerado_rural_p_avoid_multi () RETURNS TRIGGER
 $loc_aglomerado_rural_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_aglomerado_rural_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_aglomerado_rural_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_aglomerado_rural_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_aglomerado_rural_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_ruina_a_avoid_multi () RETURNS TRIGGER AS $edu_ruina_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -735,7 +735,7 @@ CREATE OR REPLACE FUNCTION edu_ruina_a_avoid_multi () RETURNS TRIGGER AS $edu_ru
 $edu_ruina_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_ruina_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_ruina_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_ruina_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_ruina_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_edif_industrial_a_avoid_multi () RETURNS TRIGGER AS $eco_edif_industrial_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -753,7 +753,7 @@ CREATE OR REPLACE FUNCTION eco_edif_industrial_a_avoid_multi () RETURNS TRIGGER 
 $eco_edif_industrial_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_edif_industrial_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_edif_industrial_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_edif_industrial_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_edif_industrial_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_ruina_p_avoid_multi () RETURNS TRIGGER AS $edu_ruina_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -771,7 +771,7 @@ CREATE OR REPLACE FUNCTION edu_ruina_p_avoid_multi () RETURNS TRIGGER AS $edu_ru
 $edu_ruina_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_ruina_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_ruina_p
-    FOR EACH ROW EXECUTE PROCEDURE edu_ruina_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_ruina_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_edif_industrial_p_avoid_multi () RETURNS TRIGGER AS $eco_edif_industrial_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -789,7 +789,7 @@ CREATE OR REPLACE FUNCTION eco_edif_industrial_p_avoid_multi () RETURNS TRIGGER 
 $eco_edif_industrial_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_edif_industrial_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_edif_industrial_p
-    FOR EACH ROW EXECUTE PROCEDURE eco_edif_industrial_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_edif_industrial_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION pto_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $pto_descontinuidade_geometrica_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -807,7 +807,7 @@ CREATE OR REPLACE FUNCTION pto_descontinuidade_geometrica_p_avoid_multi () RETUR
 $pto_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER pto_descontinuidade_geometrica_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.pto_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE pto_descontinuidade_geometrica_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE pto_descontinuidade_geometrica_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_rocha_em_agua_a_avoid_multi () RETURNS TRIGGER AS $hid_rocha_em_agua_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -825,7 +825,7 @@ CREATE OR REPLACE FUNCTION hid_rocha_em_agua_a_avoid_multi () RETURNS TRIGGER AS
 $hid_rocha_em_agua_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_rocha_em_agua_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_rocha_em_agua_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_rocha_em_agua_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_rocha_em_agua_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION pto_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $pto_descontinuidade_geometrica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -843,7 +843,7 @@ CREATE OR REPLACE FUNCTION pto_descontinuidade_geometrica_a_avoid_multi () RETUR
 $pto_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER pto_descontinuidade_geometrica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.pto_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE pto_descontinuidade_geometrica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE pto_descontinuidade_geometrica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_rocha_em_agua_p_avoid_multi () RETURNS TRIGGER AS $hid_rocha_em_agua_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -861,7 +861,7 @@ CREATE OR REPLACE FUNCTION hid_rocha_em_agua_p_avoid_multi () RETURNS TRIGGER AS
 $hid_rocha_em_agua_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_rocha_em_agua_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_rocha_em_agua_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_rocha_em_agua_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_rocha_em_agua_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION veg_estepe_a_avoid_multi () RETURNS TRIGGER AS $veg_estepe_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -879,7 +879,7 @@ CREATE OR REPLACE FUNCTION veg_estepe_a_avoid_multi () RETURNS TRIGGER AS $veg_e
 $veg_estepe_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER veg_estepe_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.veg_estepe_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_estepe_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE veg_estepe_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_tunel_p_avoid_multi () RETURNS TRIGGER AS $tra_tunel_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -897,7 +897,7 @@ CREATE OR REPLACE FUNCTION tra_tunel_p_avoid_multi () RETURNS TRIGGER AS $tra_tu
 $tra_tunel_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_tunel_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_tunel_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_tunel_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_tunel_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_obstaculo_navegacao_p_avoid_multi () RETURNS TRIGGER AS $tra_obstaculo_navegacao_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -915,7 +915,7 @@ CREATE OR REPLACE FUNCTION tra_obstaculo_navegacao_p_avoid_multi () RETURNS TRIG
 $tra_obstaculo_navegacao_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_obstaculo_navegacao_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_obstaculo_navegacao_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_obstaculo_navegacao_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_obstaculo_navegacao_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_grupo_transformadores_p_avoid_multi () RETURNS TRIGGER AS $enc_grupo_transformadores_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -933,7 +933,7 @@ CREATE OR REPLACE FUNCTION enc_grupo_transformadores_p_avoid_multi () RETURNS TR
 $enc_grupo_transformadores_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_grupo_transformadores_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_grupo_transformadores_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_grupo_transformadores_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_grupo_transformadores_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION pto_pto_ref_geod_topo_p_avoid_multi () RETURNS TRIGGER AS $pto_pto_ref_geod_topo_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -951,7 +951,7 @@ CREATE OR REPLACE FUNCTION pto_pto_ref_geod_topo_p_avoid_multi () RETURNS TRIGGE
 $pto_pto_ref_geod_topo_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER pto_pto_ref_geod_topo_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.pto_pto_ref_geod_topo_p
-    FOR EACH ROW EXECUTE PROCEDURE pto_pto_ref_geod_topo_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE pto_pto_ref_geod_topo_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_obstaculo_navegacao_a_avoid_multi () RETURNS TRIGGER AS $tra_obstaculo_navegacao_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -969,7 +969,7 @@ CREATE OR REPLACE FUNCTION tra_obstaculo_navegacao_a_avoid_multi () RETURNS TRIG
 $tra_obstaculo_navegacao_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_obstaculo_navegacao_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_obstaculo_navegacao_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_obstaculo_navegacao_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_obstaculo_navegacao_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_grupo_transformadores_a_avoid_multi () RETURNS TRIGGER AS $enc_grupo_transformadores_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -987,7 +987,7 @@ CREATE OR REPLACE FUNCTION enc_grupo_transformadores_a_avoid_multi () RETURNS TR
 $enc_grupo_transformadores_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_grupo_transformadores_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_grupo_transformadores_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_grupo_transformadores_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_grupo_transformadores_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_obstaculo_navegacao_l_avoid_multi () RETURNS TRIGGER AS $tra_obstaculo_navegacao_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1005,7 +1005,7 @@ CREATE OR REPLACE FUNCTION tra_obstaculo_navegacao_l_avoid_multi () RETURNS TRIG
 $tra_obstaculo_navegacao_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_obstaculo_navegacao_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_obstaculo_navegacao_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_obstaculo_navegacao_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_obstaculo_navegacao_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION asb_edif_saneamento_a_avoid_multi () RETURNS TRIGGER AS $asb_edif_saneamento_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1023,7 +1023,7 @@ CREATE OR REPLACE FUNCTION asb_edif_saneamento_a_avoid_multi () RETURNS TRIGGER 
 $asb_edif_saneamento_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER asb_edif_saneamento_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.asb_edif_saneamento_a
-    FOR EACH ROW EXECUTE PROCEDURE asb_edif_saneamento_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE asb_edif_saneamento_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION sau_edif_saude_a_avoid_multi () RETURNS TRIGGER AS $sau_edif_saude_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1041,7 +1041,7 @@ CREATE OR REPLACE FUNCTION sau_edif_saude_a_avoid_multi () RETURNS TRIGGER AS $s
 $sau_edif_saude_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER sau_edif_saude_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.sau_edif_saude_a
-    FOR EACH ROW EXECUTE PROCEDURE sau_edif_saude_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE sau_edif_saude_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION asb_edif_saneamento_p_avoid_multi () RETURNS TRIGGER AS $asb_edif_saneamento_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1059,7 +1059,7 @@ CREATE OR REPLACE FUNCTION asb_edif_saneamento_p_avoid_multi () RETURNS TRIGGER 
 $asb_edif_saneamento_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER asb_edif_saneamento_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.asb_edif_saneamento_p
-    FOR EACH ROW EXECUTE PROCEDURE asb_edif_saneamento_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE asb_edif_saneamento_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION sau_edif_saude_p_avoid_multi () RETURNS TRIGGER AS $sau_edif_saude_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1077,7 +1077,7 @@ CREATE OR REPLACE FUNCTION sau_edif_saude_p_avoid_multi () RETURNS TRIGGER AS $s
 $sau_edif_saude_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER sau_edif_saude_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.sau_edif_saude_p
-    FOR EACH ROW EXECUTE PROCEDURE sau_edif_saude_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE sau_edif_saude_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_area_energia_eletrica_a_avoid_multi () RETURNS TRIGGER AS $enc_area_energia_eletrica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1095,7 +1095,7 @@ CREATE OR REPLACE FUNCTION enc_area_energia_eletrica_a_avoid_multi () RETURNS TR
 $enc_area_energia_eletrica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_area_energia_eletrica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_area_energia_eletrica_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_area_energia_eletrica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_area_energia_eletrica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_area_lazer_a_avoid_multi () RETURNS TRIGGER AS $edu_area_lazer_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1113,7 +1113,7 @@ CREATE OR REPLACE FUNCTION edu_area_lazer_a_avoid_multi () RETURNS TRIGGER AS $e
 $edu_area_lazer_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_area_lazer_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_area_lazer_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_area_lazer_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_area_lazer_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION veg_campinarana_a_avoid_multi () RETURNS TRIGGER AS $veg_campinarana_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1131,7 +1131,7 @@ CREATE OR REPLACE FUNCTION veg_campinarana_a_avoid_multi () RETURNS TRIGGER AS $
 $veg_campinarana_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER veg_campinarana_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.veg_campinarana_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_campinarana_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE veg_campinarana_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION veg_brejo_pantano_a_avoid_multi () RETURNS TRIGGER AS $veg_brejo_pantano_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1149,7 +1149,7 @@ CREATE OR REPLACE FUNCTION veg_brejo_pantano_a_avoid_multi () RETURNS TRIGGER AS
 $veg_brejo_pantano_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER veg_brejo_pantano_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.veg_brejo_pantano_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_brejo_pantano_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE veg_brejo_pantano_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_ponto_drenagem_p_avoid_multi () RETURNS TRIGGER AS $hid_ponto_drenagem_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1167,7 +1167,7 @@ CREATE OR REPLACE FUNCTION hid_ponto_drenagem_p_avoid_multi () RETURNS TRIGGER A
 $hid_ponto_drenagem_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_ponto_drenagem_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_ponto_drenagem_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_ponto_drenagem_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_ponto_drenagem_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_limite_massa_dagua_l_avoid_multi () RETURNS TRIGGER AS $hid_limite_massa_dagua_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1185,7 +1185,7 @@ CREATE OR REPLACE FUNCTION hid_limite_massa_dagua_l_avoid_multi () RETURNS TRIGG
 $hid_limite_massa_dagua_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_limite_massa_dagua_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_limite_massa_dagua_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_limite_massa_dagua_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_limite_massa_dagua_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_coreto_tribuna_a_avoid_multi () RETURNS TRIGGER AS $edu_coreto_tribuna_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1203,7 +1203,7 @@ CREATE OR REPLACE FUNCTION edu_coreto_tribuna_a_avoid_multi () RETURNS TRIGGER A
 $edu_coreto_tribuna_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_coreto_tribuna_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_coreto_tribuna_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_coreto_tribuna_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_coreto_tribuna_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_alter_fisiog_antropica_a_avoid_multi () RETURNS TRIGGER AS $rel_alter_fisiog_antropica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1221,7 +1221,7 @@ CREATE OR REPLACE FUNCTION rel_alter_fisiog_antropica_a_avoid_multi () RETURNS T
 $rel_alter_fisiog_antropica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_alter_fisiog_antropica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_alter_fisiog_antropica_a
-    FOR EACH ROW EXECUTE PROCEDURE rel_alter_fisiog_antropica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_alter_fisiog_antropica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_alter_fisiog_antropica_l_avoid_multi () RETURNS TRIGGER AS $rel_alter_fisiog_antropica_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1239,7 +1239,7 @@ CREATE OR REPLACE FUNCTION rel_alter_fisiog_antropica_l_avoid_multi () RETURNS T
 $rel_alter_fisiog_antropica_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_alter_fisiog_antropica_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_alter_fisiog_antropica_l
-    FOR EACH ROW EXECUTE PROCEDURE rel_alter_fisiog_antropica_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_alter_fisiog_antropica_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_coreto_tribuna_p_avoid_multi () RETURNS TRIGGER AS $edu_coreto_tribuna_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1257,7 +1257,7 @@ CREATE OR REPLACE FUNCTION edu_coreto_tribuna_p_avoid_multi () RETURNS TRIGGER A
 $edu_coreto_tribuna_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_coreto_tribuna_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_coreto_tribuna_p
-    FOR EACH ROW EXECUTE PROCEDURE edu_coreto_tribuna_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_coreto_tribuna_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_piscina_a_avoid_multi () RETURNS TRIGGER AS $edu_piscina_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1275,7 +1275,7 @@ CREATE OR REPLACE FUNCTION edu_piscina_a_avoid_multi () RETURNS TRIGGER AS $edu_
 $edu_piscina_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_piscina_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_piscina_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_piscina_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_piscina_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_edificacao_a_avoid_multi () RETURNS TRIGGER AS $loc_edificacao_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1293,7 +1293,7 @@ CREATE OR REPLACE FUNCTION loc_edificacao_a_avoid_multi () RETURNS TRIGGER AS $l
 $loc_edificacao_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_edificacao_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_edificacao_a
-    FOR EACH ROW EXECUTE PROCEDURE loc_edificacao_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_edificacao_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION pto_pto_geod_topo_controle_p_avoid_multi () RETURNS TRIGGER AS $pto_pto_geod_topo_controle_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1311,7 +1311,7 @@ CREATE OR REPLACE FUNCTION pto_pto_geod_topo_controle_p_avoid_multi () RETURNS T
 $pto_pto_geod_topo_controle_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER pto_pto_geod_topo_controle_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.pto_pto_geod_topo_controle_p
-    FOR EACH ROW EXECUTE PROCEDURE pto_pto_geod_topo_controle_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE pto_pto_geod_topo_controle_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_edificacao_p_avoid_multi () RETURNS TRIGGER AS $loc_edificacao_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1329,7 +1329,7 @@ CREATE OR REPLACE FUNCTION loc_edificacao_p_avoid_multi () RETURNS TRIGGER AS $l
 $loc_edificacao_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_edificacao_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_edificacao_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_edificacao_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_edificacao_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_bairro_a_avoid_multi () RETURNS TRIGGER AS $lim_bairro_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1347,7 +1347,7 @@ CREATE OR REPLACE FUNCTION lim_bairro_a_avoid_multi () RETURNS TRIGGER AS $lim_b
 $lim_bairro_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_bairro_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_bairro_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_bairro_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_bairro_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_terra_publica_a_avoid_multi () RETURNS TRIGGER AS $lim_terra_publica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1365,7 +1365,7 @@ CREATE OR REPLACE FUNCTION lim_terra_publica_a_avoid_multi () RETURNS TRIGGER AS
 $lim_terra_publica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_terra_publica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_terra_publica_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_terra_publica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_terra_publica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_limite_intra_munic_adm_l_avoid_multi () RETURNS TRIGGER AS $lim_limite_intra_munic_adm_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1383,7 +1383,7 @@ CREATE OR REPLACE FUNCTION lim_limite_intra_munic_adm_l_avoid_multi () RETURNS T
 $lim_limite_intra_munic_adm_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_limite_intra_munic_adm_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_limite_intra_munic_adm_l
-    FOR EACH ROW EXECUTE PROCEDURE lim_limite_intra_munic_adm_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_limite_intra_munic_adm_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_eclusa_l_avoid_multi () RETURNS TRIGGER AS $tra_eclusa_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1401,7 +1401,7 @@ CREATE OR REPLACE FUNCTION tra_eclusa_l_avoid_multi () RETURNS TRIGGER AS $tra_e
 $tra_eclusa_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_eclusa_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_eclusa_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_eclusa_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_eclusa_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_atracadouro_l_avoid_multi () RETURNS TRIGGER AS $tra_atracadouro_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1419,7 +1419,7 @@ CREATE OR REPLACE FUNCTION tra_atracadouro_l_avoid_multi () RETURNS TRIGGER AS $
 $tra_atracadouro_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_atracadouro_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_atracadouro_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_atracadouro_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_atracadouro_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_barragem_p_avoid_multi () RETURNS TRIGGER AS $hid_barragem_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1437,7 +1437,7 @@ CREATE OR REPLACE FUNCTION hid_barragem_p_avoid_multi () RETURNS TRIGGER AS $hid
 $hid_barragem_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_barragem_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_barragem_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_barragem_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_barragem_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $eco_descontinuidade_geometrica_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1455,7 +1455,7 @@ CREATE OR REPLACE FUNCTION eco_descontinuidade_geometrica_p_avoid_multi () RETUR
 $eco_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_descontinuidade_geometrica_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE eco_descontinuidade_geometrica_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_descontinuidade_geometrica_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_atracadouro_a_avoid_multi () RETURNS TRIGGER AS $tra_atracadouro_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1473,7 +1473,7 @@ CREATE OR REPLACE FUNCTION tra_atracadouro_a_avoid_multi () RETURNS TRIGGER AS $
 $tra_atracadouro_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_atracadouro_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_atracadouro_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_atracadouro_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_atracadouro_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_eclusa_a_avoid_multi () RETURNS TRIGGER AS $tra_eclusa_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1491,7 +1491,7 @@ CREATE OR REPLACE FUNCTION tra_eclusa_a_avoid_multi () RETURNS TRIGGER AS $tra_e
 $tra_eclusa_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_eclusa_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_eclusa_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_eclusa_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_eclusa_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_ponto_inicio_drenagem_p_avoid_multi () RETURNS TRIGGER AS $hid_ponto_inicio_drenagem_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1509,7 +1509,7 @@ CREATE OR REPLACE FUNCTION hid_ponto_inicio_drenagem_p_avoid_multi () RETURNS TR
 $hid_ponto_inicio_drenagem_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_ponto_inicio_drenagem_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_ponto_inicio_drenagem_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_ponto_inicio_drenagem_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_ponto_inicio_drenagem_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $eco_descontinuidade_geometrica_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1527,7 +1527,7 @@ CREATE OR REPLACE FUNCTION eco_descontinuidade_geometrica_l_avoid_multi () RETUR
 $eco_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_descontinuidade_geometrica_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_descontinuidade_geometrica_l
-    FOR EACH ROW EXECUTE PROCEDURE eco_descontinuidade_geometrica_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_descontinuidade_geometrica_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $eco_descontinuidade_geometrica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1545,7 +1545,7 @@ CREATE OR REPLACE FUNCTION eco_descontinuidade_geometrica_a_avoid_multi () RETUR
 $eco_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_descontinuidade_geometrica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_descontinuidade_geometrica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_descontinuidade_geometrica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_linha_de_limite_l_avoid_multi () RETURNS TRIGGER AS $lim_linha_de_limite_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1563,7 +1563,7 @@ CREATE OR REPLACE FUNCTION lim_linha_de_limite_l_avoid_multi () RETURNS TRIGGER 
 $lim_linha_de_limite_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_linha_de_limite_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_linha_de_limite_l
-    FOR EACH ROW EXECUTE PROCEDURE lim_linha_de_limite_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_linha_de_limite_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $lim_descontinuidade_geometrica_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1581,7 +1581,7 @@ CREATE OR REPLACE FUNCTION lim_descontinuidade_geometrica_p_avoid_multi () RETUR
 $lim_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_descontinuidade_geometrica_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_descontinuidade_geometrica_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_descontinuidade_geometrica_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_atracadouro_p_avoid_multi () RETURNS TRIGGER AS $tra_atracadouro_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1599,7 +1599,7 @@ CREATE OR REPLACE FUNCTION tra_atracadouro_p_avoid_multi () RETURNS TRIGGER AS $
 $tra_atracadouro_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_atracadouro_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_atracadouro_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_atracadouro_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_atracadouro_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_sumidouro_vertedouro_p_avoid_multi () RETURNS TRIGGER AS $hid_sumidouro_vertedouro_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1617,7 +1617,7 @@ CREATE OR REPLACE FUNCTION hid_sumidouro_vertedouro_p_avoid_multi () RETURNS TRI
 $hid_sumidouro_vertedouro_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_sumidouro_vertedouro_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_sumidouro_vertedouro_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_sumidouro_vertedouro_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_sumidouro_vertedouro_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $tra_descontinuidade_geometrica_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1635,7 +1635,7 @@ CREATE OR REPLACE FUNCTION tra_descontinuidade_geometrica_p_avoid_multi () RETUR
 $tra_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_descontinuidade_geometrica_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_descontinuidade_geometrica_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_descontinuidade_geometrica_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_limite_politico_adm_l_avoid_multi () RETURNS TRIGGER AS $lim_limite_politico_adm_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1653,7 +1653,7 @@ CREATE OR REPLACE FUNCTION lim_limite_politico_adm_l_avoid_multi () RETURNS TRIG
 $lim_limite_politico_adm_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_limite_politico_adm_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_limite_politico_adm_l
-    FOR EACH ROW EXECUTE PROCEDURE lim_limite_politico_adm_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_limite_politico_adm_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_confluencia_p_avoid_multi () RETURNS TRIGGER AS $hid_confluencia_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1671,7 +1671,7 @@ CREATE OR REPLACE FUNCTION hid_confluencia_p_avoid_multi () RETURNS TRIGGER AS $
 $hid_confluencia_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_confluencia_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_confluencia_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_confluencia_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_confluencia_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $tra_descontinuidade_geometrica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1689,7 +1689,7 @@ CREATE OR REPLACE FUNCTION tra_descontinuidade_geometrica_a_avoid_multi () RETUR
 $tra_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_descontinuidade_geometrica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_descontinuidade_geometrica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_descontinuidade_geometrica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_edif_rodoviaria_p_avoid_multi () RETURNS TRIGGER AS $tra_edif_rodoviaria_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1707,7 +1707,7 @@ CREATE OR REPLACE FUNCTION tra_edif_rodoviaria_p_avoid_multi () RETURNS TRIGGER 
 $tra_edif_rodoviaria_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_edif_rodoviaria_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_edif_rodoviaria_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_edif_rodoviaria_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_edif_rodoviaria_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION asb_area_abast_agua_a_avoid_multi () RETURNS TRIGGER AS $asb_area_abast_agua_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1725,7 +1725,7 @@ CREATE OR REPLACE FUNCTION asb_area_abast_agua_a_avoid_multi () RETURNS TRIGGER 
 $asb_area_abast_agua_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER asb_area_abast_agua_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.asb_area_abast_agua_a
-    FOR EACH ROW EXECUTE PROCEDURE asb_area_abast_agua_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE asb_area_abast_agua_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_condutor_hidrico_l_avoid_multi () RETURNS TRIGGER AS $tra_condutor_hidrico_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1743,7 +1743,7 @@ CREATE OR REPLACE FUNCTION tra_condutor_hidrico_l_avoid_multi () RETURNS TRIGGER
 $tra_condutor_hidrico_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_condutor_hidrico_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_condutor_hidrico_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_condutor_hidrico_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_condutor_hidrico_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION asb_cemiterio_p_avoid_multi () RETURNS TRIGGER AS $asb_cemiterio_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1761,7 +1761,7 @@ CREATE OR REPLACE FUNCTION asb_cemiterio_p_avoid_multi () RETURNS TRIGGER AS $as
 $asb_cemiterio_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER asb_cemiterio_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.asb_cemiterio_p
-    FOR EACH ROW EXECUTE PROCEDURE asb_cemiterio_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE asb_cemiterio_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_outras_unid_protegidas_a_avoid_multi () RETURNS TRIGGER AS $lim_outras_unid_protegidas_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1779,7 +1779,7 @@ CREATE OR REPLACE FUNCTION lim_outras_unid_protegidas_a_avoid_multi () RETURNS T
 $lim_outras_unid_protegidas_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_outras_unid_protegidas_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_outras_unid_protegidas_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_outras_unid_protegidas_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_outras_unid_protegidas_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_ponto_hidroviario_p_avoid_multi () RETURNS TRIGGER AS $tra_ponto_hidroviario_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1797,7 +1797,7 @@ CREATE OR REPLACE FUNCTION tra_ponto_hidroviario_p_avoid_multi () RETURNS TRIGGE
 $tra_ponto_hidroviario_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_ponto_hidroviario_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_ponto_hidroviario_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_ponto_hidroviario_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_ponto_hidroviario_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_edif_rodoviaria_a_avoid_multi () RETURNS TRIGGER AS $tra_edif_rodoviaria_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1815,7 +1815,7 @@ CREATE OR REPLACE FUNCTION tra_edif_rodoviaria_a_avoid_multi () RETURNS TRIGGER 
 $tra_edif_rodoviaria_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_edif_rodoviaria_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_edif_rodoviaria_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_edif_rodoviaria_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_edif_rodoviaria_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_outras_unid_protegidas_p_avoid_multi () RETURNS TRIGGER AS $lim_outras_unid_protegidas_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1833,7 +1833,7 @@ CREATE OR REPLACE FUNCTION lim_outras_unid_protegidas_p_avoid_multi () RETURNS T
 $lim_outras_unid_protegidas_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_outras_unid_protegidas_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_outras_unid_protegidas_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_outras_unid_protegidas_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_outras_unid_protegidas_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION asb_cemiterio_a_avoid_multi () RETURNS TRIGGER AS $asb_cemiterio_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1851,7 +1851,7 @@ CREATE OR REPLACE FUNCTION asb_cemiterio_a_avoid_multi () RETURNS TRIGGER AS $as
 $asb_cemiterio_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER asb_cemiterio_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.asb_cemiterio_a
-    FOR EACH ROW EXECUTE PROCEDURE asb_cemiterio_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE asb_cemiterio_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_comporta_p_avoid_multi () RETURNS TRIGGER AS $hid_comporta_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1869,7 +1869,7 @@ CREATE OR REPLACE FUNCTION hid_comporta_p_avoid_multi () RETURNS TRIGGER AS $hid
 $hid_comporta_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_comporta_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_comporta_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_comporta_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_comporta_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_trecho_ferroviario_l_avoid_multi () RETURNS TRIGGER AS $tra_trecho_ferroviario_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1887,7 +1887,7 @@ CREATE OR REPLACE FUNCTION tra_trecho_ferroviario_l_avoid_multi () RETURNS TRIGG
 $tra_trecho_ferroviario_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_trecho_ferroviario_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_trecho_ferroviario_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_trecho_ferroviario_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_trecho_ferroviario_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_vila_p_avoid_multi () RETURNS TRIGGER AS $loc_vila_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1905,7 +1905,7 @@ CREATE OR REPLACE FUNCTION loc_vila_p_avoid_multi () RETURNS TRIGGER AS $loc_vil
 $loc_vila_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_vila_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_vila_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_vila_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_vila_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_comporta_l_avoid_multi () RETURNS TRIGGER AS $hid_comporta_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1923,7 +1923,7 @@ CREATE OR REPLACE FUNCTION hid_comporta_l_avoid_multi () RETURNS TRIGGER AS $hid
 $hid_comporta_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_comporta_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_comporta_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_comporta_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_comporta_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_edif_constr_portuaria_a_avoid_multi () RETURNS TRIGGER AS $tra_edif_constr_portuaria_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1941,7 +1941,7 @@ CREATE OR REPLACE FUNCTION tra_edif_constr_portuaria_a_avoid_multi () RETURNS TR
 $tra_edif_constr_portuaria_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_edif_constr_portuaria_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_edif_constr_portuaria_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_edif_constr_portuaria_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_edif_constr_portuaria_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_trecho_drenagem_l_avoid_multi () RETURNS TRIGGER AS $hid_trecho_drenagem_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1959,7 +1959,7 @@ CREATE OR REPLACE FUNCTION hid_trecho_drenagem_l_avoid_multi () RETURNS TRIGGER 
 $hid_trecho_drenagem_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_trecho_drenagem_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_trecho_drenagem_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_trecho_drenagem_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_trecho_drenagem_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_edif_constr_portuaria_p_avoid_multi () RETURNS TRIGGER AS $tra_edif_constr_portuaria_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1977,7 +1977,7 @@ CREATE OR REPLACE FUNCTION tra_edif_constr_portuaria_p_avoid_multi () RETURNS TR
 $tra_edif_constr_portuaria_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_edif_constr_portuaria_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_edif_constr_portuaria_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_edif_constr_portuaria_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_edif_constr_portuaria_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_travessia_l_avoid_multi () RETURNS TRIGGER AS $tra_travessia_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -1995,7 +1995,7 @@ CREATE OR REPLACE FUNCTION tra_travessia_l_avoid_multi () RETURNS TRIGGER AS $tr
 $tra_travessia_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_travessia_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_travessia_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_travessia_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_travessia_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_travessia_p_avoid_multi () RETURNS TRIGGER AS $tra_travessia_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2013,7 +2013,7 @@ CREATE OR REPLACE FUNCTION tra_travessia_p_avoid_multi () RETURNS TRIGGER AS $tr
 $tra_travessia_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_travessia_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_travessia_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_travessia_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_travessia_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_area_duto_a_avoid_multi () RETURNS TRIGGER AS $tra_area_duto_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2031,7 +2031,7 @@ CREATE OR REPLACE FUNCTION tra_area_duto_a_avoid_multi () RETURNS TRIGGER AS $tr
 $tra_area_duto_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_area_duto_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_area_duto_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_area_duto_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_area_duto_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_plataforma_a_avoid_multi () RETURNS TRIGGER AS $eco_plataforma_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2049,7 +2049,7 @@ CREATE OR REPLACE FUNCTION eco_plataforma_a_avoid_multi () RETURNS TRIGGER AS $e
 $eco_plataforma_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_plataforma_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_plataforma_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_plataforma_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_plataforma_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_plataforma_p_avoid_multi () RETURNS TRIGGER AS $eco_plataforma_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2067,7 +2067,7 @@ CREATE OR REPLACE FUNCTION eco_plataforma_p_avoid_multi () RETURNS TRIGGER AS $e
 $eco_plataforma_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_plataforma_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_plataforma_p
-    FOR EACH ROW EXECUTE PROCEDURE eco_plataforma_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_plataforma_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_torre_energia_p_avoid_multi () RETURNS TRIGGER AS $enc_torre_energia_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2085,7 +2085,7 @@ CREATE OR REPLACE FUNCTION enc_torre_energia_p_avoid_multi () RETURNS TRIGGER AS
 $enc_torre_energia_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_torre_energia_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_torre_energia_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_torre_energia_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_torre_energia_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION pto_pto_est_med_fenomenos_p_avoid_multi () RETURNS TRIGGER AS $pto_pto_est_med_fenomenos_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2103,7 +2103,7 @@ CREATE OR REPLACE FUNCTION pto_pto_est_med_fenomenos_p_avoid_multi () RETURNS TR
 $pto_pto_est_med_fenomenos_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER pto_pto_est_med_fenomenos_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.pto_pto_est_med_fenomenos_p
-    FOR EACH ROW EXECUTE PROCEDURE pto_pto_est_med_fenomenos_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE pto_pto_est_med_fenomenos_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_edif_const_lazer_a_avoid_multi () RETURNS TRIGGER AS $edu_edif_const_lazer_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2121,7 +2121,7 @@ CREATE OR REPLACE FUNCTION edu_edif_const_lazer_a_avoid_multi () RETURNS TRIGGER
 $edu_edif_const_lazer_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_edif_const_lazer_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_edif_const_lazer_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_edif_const_lazer_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_edif_const_lazer_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_deposito_geral_a_avoid_multi () RETURNS TRIGGER AS $eco_deposito_geral_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2139,7 +2139,7 @@ CREATE OR REPLACE FUNCTION eco_deposito_geral_a_avoid_multi () RETURNS TRIGGER A
 $eco_deposito_geral_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_deposito_geral_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_deposito_geral_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_deposito_geral_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_deposito_geral_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_ponto_ferroviario_p_avoid_multi () RETURNS TRIGGER AS $tra_ponto_ferroviario_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2157,7 +2157,7 @@ CREATE OR REPLACE FUNCTION tra_ponto_ferroviario_p_avoid_multi () RETURNS TRIGGE
 $tra_ponto_ferroviario_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_ponto_ferroviario_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_ponto_ferroviario_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_ponto_ferroviario_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_ponto_ferroviario_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_edif_const_lazer_p_avoid_multi () RETURNS TRIGGER AS $edu_edif_const_lazer_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2175,7 +2175,7 @@ CREATE OR REPLACE FUNCTION edu_edif_const_lazer_p_avoid_multi () RETURNS TRIGGER
 $edu_edif_const_lazer_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_edif_const_lazer_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_edif_const_lazer_p
-    FOR EACH ROW EXECUTE PROCEDURE edu_edif_const_lazer_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_edif_const_lazer_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_deposito_geral_p_avoid_multi () RETURNS TRIGGER AS $eco_deposito_geral_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2193,7 +2193,7 @@ CREATE OR REPLACE FUNCTION eco_deposito_geral_p_avoid_multi () RETURNS TRIGGER A
 $eco_deposito_geral_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_deposito_geral_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_deposito_geral_p
-    FOR EACH ROW EXECUTE PROCEDURE eco_deposito_geral_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_deposito_geral_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION sau_area_servico_social_a_avoid_multi () RETURNS TRIGGER AS $sau_area_servico_social_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2211,7 +2211,7 @@ CREATE OR REPLACE FUNCTION sau_area_servico_social_a_avoid_multi () RETURNS TRIG
 $sau_area_servico_social_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER sau_area_servico_social_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.sau_area_servico_social_a
-    FOR EACH ROW EXECUTE PROCEDURE sau_area_servico_social_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE sau_area_servico_social_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION adm_posto_fiscal_a_avoid_multi () RETURNS TRIGGER AS $adm_posto_fiscal_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2229,7 +2229,7 @@ CREATE OR REPLACE FUNCTION adm_posto_fiscal_a_avoid_multi () RETURNS TRIGGER AS 
 $adm_posto_fiscal_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER adm_posto_fiscal_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.adm_posto_fiscal_a
-    FOR EACH ROW EXECUTE PROCEDURE adm_posto_fiscal_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE adm_posto_fiscal_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_duna_p_avoid_multi () RETURNS TRIGGER AS $rel_duna_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2247,7 +2247,7 @@ CREATE OR REPLACE FUNCTION rel_duna_p_avoid_multi () RETURNS TRIGGER AS $rel_dun
 $rel_duna_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_duna_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_duna_p
-    FOR EACH ROW EXECUTE PROCEDURE rel_duna_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_duna_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_marco_de_limite_p_avoid_multi () RETURNS TRIGGER AS $lim_marco_de_limite_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2265,7 +2265,7 @@ CREATE OR REPLACE FUNCTION lim_marco_de_limite_p_avoid_multi () RETURNS TRIGGER 
 $lim_marco_de_limite_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_marco_de_limite_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_marco_de_limite_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_marco_de_limite_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_marco_de_limite_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_duna_a_avoid_multi () RETURNS TRIGGER AS $rel_duna_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2283,7 +2283,7 @@ CREATE OR REPLACE FUNCTION rel_duna_a_avoid_multi () RETURNS TRIGGER AS $rel_dun
 $rel_duna_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_duna_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_duna_a
-    FOR EACH ROW EXECUTE PROCEDURE rel_duna_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_duna_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_arruamento_l_avoid_multi () RETURNS TRIGGER AS $tra_arruamento_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2301,7 +2301,7 @@ CREATE OR REPLACE FUNCTION tra_arruamento_l_avoid_multi () RETURNS TRIGGER AS $t
 $tra_arruamento_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_arruamento_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_arruamento_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_arruamento_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_arruamento_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_recife_a_avoid_multi () RETURNS TRIGGER AS $hid_recife_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2319,7 +2319,7 @@ CREATE OR REPLACE FUNCTION hid_recife_a_avoid_multi () RETURNS TRIGGER AS $hid_r
 $hid_recife_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_recife_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_recife_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_recife_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_recife_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_recife_l_avoid_multi () RETURNS TRIGGER AS $hid_recife_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2337,7 +2337,7 @@ CREATE OR REPLACE FUNCTION hid_recife_l_avoid_multi () RETURNS TRIGGER AS $hid_r
 $hid_recife_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_recife_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_recife_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_recife_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_recife_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_recife_p_avoid_multi () RETURNS TRIGGER AS $hid_recife_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2355,7 +2355,7 @@ CREATE OR REPLACE FUNCTION hid_recife_p_avoid_multi () RETURNS TRIGGER AS $hid_r
 $hid_recife_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_recife_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_recife_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_recife_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_recife_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_pais_a_avoid_multi () RETURNS TRIGGER AS $lim_pais_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2373,7 +2373,7 @@ CREATE OR REPLACE FUNCTION lim_pais_a_avoid_multi () RETURNS TRIGGER AS $lim_pai
 $lim_pais_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_pais_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_pais_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_pais_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_pais_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_curva_batimetrica_l_avoid_multi () RETURNS TRIGGER AS $rel_curva_batimetrica_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2391,7 +2391,7 @@ CREATE OR REPLACE FUNCTION rel_curva_batimetrica_l_avoid_multi () RETURNS TRIGGE
 $rel_curva_batimetrica_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_curva_batimetrica_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_curva_batimetrica_l
-    FOR EACH ROW EXECUTE PROCEDURE rel_curva_batimetrica_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_curva_batimetrica_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_ponto_cotado_batimetrico_p_avoid_multi () RETURNS TRIGGER AS $rel_ponto_cotado_batimetrico_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2409,7 +2409,7 @@ CREATE OR REPLACE FUNCTION rel_ponto_cotado_batimetrico_p_avoid_multi () RETURNS
 $rel_ponto_cotado_batimetrico_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_ponto_cotado_batimetrico_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_ponto_cotado_batimetrico_p
-    FOR EACH ROW EXECUTE PROCEDURE rel_ponto_cotado_batimetrico_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_ponto_cotado_batimetrico_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION asb_dep_abast_agua_p_avoid_multi () RETURNS TRIGGER AS $asb_dep_abast_agua_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2427,7 +2427,7 @@ CREATE OR REPLACE FUNCTION asb_dep_abast_agua_p_avoid_multi () RETURNS TRIGGER A
 $asb_dep_abast_agua_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER asb_dep_abast_agua_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.asb_dep_abast_agua_p
-    FOR EACH ROW EXECUTE PROCEDURE asb_dep_abast_agua_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE asb_dep_abast_agua_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_gruta_caverna_p_avoid_multi () RETURNS TRIGGER AS $rel_gruta_caverna_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2445,7 +2445,7 @@ CREATE OR REPLACE FUNCTION rel_gruta_caverna_p_avoid_multi () RETURNS TRIGGER AS
 $rel_gruta_caverna_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_gruta_caverna_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_gruta_caverna_p
-    FOR EACH ROW EXECUTE PROCEDURE rel_gruta_caverna_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_gruta_caverna_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION asb_dep_abast_agua_a_avoid_multi () RETURNS TRIGGER AS $asb_dep_abast_agua_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2463,7 +2463,7 @@ CREATE OR REPLACE FUNCTION asb_dep_abast_agua_a_avoid_multi () RETURNS TRIGGER A
 $asb_dep_abast_agua_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER asb_dep_abast_agua_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.asb_dep_abast_agua_a
-    FOR EACH ROW EXECUTE PROCEDURE asb_dep_abast_agua_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE asb_dep_abast_agua_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $rel_descontinuidade_geometrica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2481,7 +2481,7 @@ CREATE OR REPLACE FUNCTION rel_descontinuidade_geometrica_a_avoid_multi () RETUR
 $rel_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_descontinuidade_geometrica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE rel_descontinuidade_geometrica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_descontinuidade_geometrica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $rel_descontinuidade_geometrica_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2499,7 +2499,7 @@ CREATE OR REPLACE FUNCTION rel_descontinuidade_geometrica_l_avoid_multi () RETUR
 $rel_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_descontinuidade_geometrica_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_descontinuidade_geometrica_l
-    FOR EACH ROW EXECUTE PROCEDURE rel_descontinuidade_geometrica_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_descontinuidade_geometrica_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION veg_caatinga_a_avoid_multi () RETURNS TRIGGER AS $veg_caatinga_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2517,7 +2517,7 @@ CREATE OR REPLACE FUNCTION veg_caatinga_a_avoid_multi () RETURNS TRIGGER AS $veg
 $veg_caatinga_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER veg_caatinga_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.veg_caatinga_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_caatinga_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE veg_caatinga_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $rel_descontinuidade_geometrica_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2535,7 +2535,7 @@ CREATE OR REPLACE FUNCTION rel_descontinuidade_geometrica_p_avoid_multi () RETUR
 $rel_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_descontinuidade_geometrica_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE rel_descontinuidade_geometrica_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_descontinuidade_geometrica_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION asb_dep_saneamento_a_avoid_multi () RETURNS TRIGGER AS $asb_dep_saneamento_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2553,7 +2553,7 @@ CREATE OR REPLACE FUNCTION asb_dep_saneamento_a_avoid_multi () RETURNS TRIGGER A
 $asb_dep_saneamento_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER asb_dep_saneamento_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.asb_dep_saneamento_a
-    FOR EACH ROW EXECUTE PROCEDURE asb_dep_saneamento_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE asb_dep_saneamento_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION sau_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $sau_descontinuidade_geometrica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2571,7 +2571,7 @@ CREATE OR REPLACE FUNCTION sau_descontinuidade_geometrica_a_avoid_multi () RETUR
 $sau_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER sau_descontinuidade_geometrica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.sau_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE sau_descontinuidade_geometrica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE sau_descontinuidade_geometrica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_edif_habitacional_p_avoid_multi () RETURNS TRIGGER AS $loc_edif_habitacional_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2589,7 +2589,7 @@ CREATE OR REPLACE FUNCTION loc_edif_habitacional_p_avoid_multi () RETURNS TRIGGE
 $loc_edif_habitacional_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_edif_habitacional_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_edif_habitacional_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_edif_habitacional_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_edif_habitacional_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_galeria_bueiro_p_avoid_multi () RETURNS TRIGGER AS $tra_galeria_bueiro_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2607,7 +2607,7 @@ CREATE OR REPLACE FUNCTION tra_galeria_bueiro_p_avoid_multi () RETURNS TRIGGER A
 $tra_galeria_bueiro_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_galeria_bueiro_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_galeria_bueiro_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_galeria_bueiro_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_galeria_bueiro_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_area_politico_adm_a_avoid_multi () RETURNS TRIGGER AS $lim_area_politico_adm_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2625,7 +2625,7 @@ CREATE OR REPLACE FUNCTION lim_area_politico_adm_a_avoid_multi () RETURNS TRIGGE
 $lim_area_politico_adm_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_area_politico_adm_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_area_politico_adm_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_area_politico_adm_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_area_politico_adm_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_edif_habitacional_a_avoid_multi () RETURNS TRIGGER AS $loc_edif_habitacional_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2643,7 +2643,7 @@ CREATE OR REPLACE FUNCTION loc_edif_habitacional_a_avoid_multi () RETURNS TRIGGE
 $loc_edif_habitacional_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_edif_habitacional_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_edif_habitacional_a
-    FOR EACH ROW EXECUTE PROCEDURE loc_edif_habitacional_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_edif_habitacional_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION sau_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $sau_descontinuidade_geometrica_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2661,7 +2661,7 @@ CREATE OR REPLACE FUNCTION sau_descontinuidade_geometrica_p_avoid_multi () RETUR
 $sau_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER sau_descontinuidade_geometrica_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.sau_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE sau_descontinuidade_geometrica_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE sau_descontinuidade_geometrica_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_area_ensino_a_avoid_multi () RETURNS TRIGGER AS $edu_area_ensino_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2679,7 +2679,7 @@ CREATE OR REPLACE FUNCTION edu_area_ensino_a_avoid_multi () RETURNS TRIGGER AS $
 $edu_area_ensino_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_area_ensino_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_area_ensino_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_area_ensino_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_area_ensino_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_fundeadouro_p_avoid_multi () RETURNS TRIGGER AS $tra_fundeadouro_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2697,7 +2697,7 @@ CREATE OR REPLACE FUNCTION tra_fundeadouro_p_avoid_multi () RETURNS TRIGGER AS $
 $tra_fundeadouro_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_fundeadouro_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_fundeadouro_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_fundeadouro_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_fundeadouro_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_edif_agrop_ext_veg_pesca_p_avoid_multi () RETURNS TRIGGER AS $eco_edif_agrop_ext_veg_pesca_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2715,7 +2715,7 @@ CREATE OR REPLACE FUNCTION eco_edif_agrop_ext_veg_pesca_p_avoid_multi () RETURNS
 $eco_edif_agrop_ext_veg_pesca_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_edif_agrop_ext_veg_pesca_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_edif_agrop_ext_veg_pesca_p
-    FOR EACH ROW EXECUTE PROCEDURE eco_edif_agrop_ext_veg_pesca_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_edif_agrop_ext_veg_pesca_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_edif_constr_aeroportuaria_a_avoid_multi () RETURNS TRIGGER AS $tra_edif_constr_aeroportuaria_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2733,7 +2733,7 @@ CREATE OR REPLACE FUNCTION tra_edif_constr_aeroportuaria_a_avoid_multi () RETURN
 $tra_edif_constr_aeroportuaria_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_edif_constr_aeroportuaria_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_edif_constr_aeroportuaria_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_edif_constr_aeroportuaria_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_edif_constr_aeroportuaria_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_area_ruinas_a_avoid_multi () RETURNS TRIGGER AS $edu_area_ruinas_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2751,7 +2751,7 @@ CREATE OR REPLACE FUNCTION edu_area_ruinas_a_avoid_multi () RETURNS TRIGGER AS $
 $edu_area_ruinas_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_area_ruinas_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_area_ruinas_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_area_ruinas_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_area_ruinas_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_fundeadouro_l_avoid_multi () RETURNS TRIGGER AS $tra_fundeadouro_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2769,7 +2769,7 @@ CREATE OR REPLACE FUNCTION tra_fundeadouro_l_avoid_multi () RETURNS TRIGGER AS $
 $tra_fundeadouro_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_fundeadouro_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_fundeadouro_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_fundeadouro_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_fundeadouro_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_edif_agrop_ext_veg_pesca_a_avoid_multi () RETURNS TRIGGER AS $eco_edif_agrop_ext_veg_pesca_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2787,7 +2787,7 @@ CREATE OR REPLACE FUNCTION eco_edif_agrop_ext_veg_pesca_a_avoid_multi () RETURNS
 $eco_edif_agrop_ext_veg_pesca_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_edif_agrop_ext_veg_pesca_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_edif_agrop_ext_veg_pesca_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_edif_agrop_ext_veg_pesca_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_edif_agrop_ext_veg_pesca_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_fundeadouro_a_avoid_multi () RETURNS TRIGGER AS $tra_fundeadouro_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2805,7 +2805,7 @@ CREATE OR REPLACE FUNCTION tra_fundeadouro_a_avoid_multi () RETURNS TRIGGER AS $
 $tra_fundeadouro_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_fundeadouro_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_fundeadouro_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_fundeadouro_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_fundeadouro_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_edif_constr_aeroportuaria_p_avoid_multi () RETURNS TRIGGER AS $tra_edif_constr_aeroportuaria_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2823,7 +2823,7 @@ CREATE OR REPLACE FUNCTION tra_edif_constr_aeroportuaria_p_avoid_multi () RETURN
 $tra_edif_constr_aeroportuaria_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_edif_constr_aeroportuaria_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_edif_constr_aeroportuaria_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_edif_constr_aeroportuaria_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_edif_constr_aeroportuaria_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_area_de_litigio_a_avoid_multi () RETURNS TRIGGER AS $lim_area_de_litigio_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2841,7 +2841,7 @@ CREATE OR REPLACE FUNCTION lim_area_de_litigio_a_avoid_multi () RETURNS TRIGGER 
 $lim_area_de_litigio_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_area_de_litigio_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_area_de_litigio_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_area_de_litigio_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_area_de_litigio_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION pto_edif_constr_est_med_fen_p_avoid_multi () RETURNS TRIGGER AS $pto_edif_constr_est_med_fen_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2859,7 +2859,7 @@ CREATE OR REPLACE FUNCTION pto_edif_constr_est_med_fen_p_avoid_multi () RETURNS 
 $pto_edif_constr_est_med_fen_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER pto_edif_constr_est_med_fen_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.pto_edif_constr_est_med_fen_p
-    FOR EACH ROW EXECUTE PROCEDURE pto_edif_constr_est_med_fen_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE pto_edif_constr_est_med_fen_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_area_edificada_a_avoid_multi () RETURNS TRIGGER AS $loc_area_edificada_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2877,7 +2877,7 @@ CREATE OR REPLACE FUNCTION loc_area_edificada_a_avoid_multi () RETURNS TRIGGER A
 $loc_area_edificada_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_area_edificada_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_area_edificada_a
-    FOR EACH ROW EXECUTE PROCEDURE loc_area_edificada_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_area_edificada_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_terra_publica_p_avoid_multi () RETURNS TRIGGER AS $lim_terra_publica_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2895,7 +2895,7 @@ CREATE OR REPLACE FUNCTION lim_terra_publica_p_avoid_multi () RETURNS TRIGGER AS
 $lim_terra_publica_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_terra_publica_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_terra_publica_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_terra_publica_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_terra_publica_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION asb_dep_saneamento_p_avoid_multi () RETURNS TRIGGER AS $asb_dep_saneamento_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2913,7 +2913,7 @@ CREATE OR REPLACE FUNCTION asb_dep_saneamento_p_avoid_multi () RETURNS TRIGGER A
 $asb_dep_saneamento_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER asb_dep_saneamento_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.asb_dep_saneamento_p
-    FOR EACH ROW EXECUTE PROCEDURE asb_dep_saneamento_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE asb_dep_saneamento_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_caminho_aereo_l_avoid_multi () RETURNS TRIGGER AS $tra_caminho_aereo_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2931,7 +2931,7 @@ CREATE OR REPLACE FUNCTION tra_caminho_aereo_l_avoid_multi () RETURNS TRIGGER AS
 $tra_caminho_aereo_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_caminho_aereo_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_caminho_aereo_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_caminho_aereo_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_caminho_aereo_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_edif_ext_mineral_p_avoid_multi () RETURNS TRIGGER AS $eco_edif_ext_mineral_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2949,7 +2949,7 @@ CREATE OR REPLACE FUNCTION eco_edif_ext_mineral_p_avoid_multi () RETURNS TRIGGER
 $eco_edif_ext_mineral_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_edif_ext_mineral_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_edif_ext_mineral_p
-    FOR EACH ROW EXECUTE PROCEDURE eco_edif_ext_mineral_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_edif_ext_mineral_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_ciclovia_l_avoid_multi () RETURNS TRIGGER AS $tra_ciclovia_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2967,7 +2967,7 @@ CREATE OR REPLACE FUNCTION tra_ciclovia_l_avoid_multi () RETURNS TRIGGER AS $tra
 $tra_ciclovia_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_ciclovia_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_ciclovia_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_ciclovia_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_ciclovia_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_area_urbana_isolada_a_avoid_multi () RETURNS TRIGGER AS $loc_area_urbana_isolada_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -2985,7 +2985,7 @@ CREATE OR REPLACE FUNCTION loc_area_urbana_isolada_a_avoid_multi () RETURNS TRIG
 $loc_area_urbana_isolada_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_area_urbana_isolada_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_area_urbana_isolada_a
-    FOR EACH ROW EXECUTE PROCEDURE loc_area_urbana_isolada_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_area_urbana_isolada_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_ponto_cotado_altimetrico_p_avoid_multi () RETURNS TRIGGER AS $rel_ponto_cotado_altimetrico_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3003,7 +3003,7 @@ CREATE OR REPLACE FUNCTION rel_ponto_cotado_altimetrico_p_avoid_multi () RETURNS
 $rel_ponto_cotado_altimetrico_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_ponto_cotado_altimetrico_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_ponto_cotado_altimetrico_p
-    FOR EACH ROW EXECUTE PROCEDURE rel_ponto_cotado_altimetrico_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_ponto_cotado_altimetrico_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_ponto_duto_p_avoid_multi () RETURNS TRIGGER AS $tra_ponto_duto_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3021,7 +3021,7 @@ CREATE OR REPLACE FUNCTION tra_ponto_duto_p_avoid_multi () RETURNS TRIGGER AS $t
 $tra_ponto_duto_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_ponto_duto_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_ponto_duto_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_ponto_duto_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_ponto_duto_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION adm_area_pub_civil_a_avoid_multi () RETURNS TRIGGER AS $adm_area_pub_civil_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3039,7 +3039,7 @@ CREATE OR REPLACE FUNCTION adm_area_pub_civil_a_avoid_multi () RETURNS TRIGGER A
 $adm_area_pub_civil_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER adm_area_pub_civil_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.adm_area_pub_civil_a
-    FOR EACH ROW EXECUTE PROCEDURE adm_area_pub_civil_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE adm_area_pub_civil_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_regiao_administrativa_a_avoid_multi () RETURNS TRIGGER AS $lim_regiao_administrativa_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3057,7 +3057,7 @@ CREATE OR REPLACE FUNCTION lim_regiao_administrativa_a_avoid_multi () RETURNS TR
 $lim_regiao_administrativa_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_regiao_administrativa_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_regiao_administrativa_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_regiao_administrativa_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_regiao_administrativa_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $loc_descontinuidade_geometrica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3075,7 +3075,7 @@ CREATE OR REPLACE FUNCTION loc_descontinuidade_geometrica_a_avoid_multi () RETUR
 $loc_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_descontinuidade_geometrica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE loc_descontinuidade_geometrica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_descontinuidade_geometrica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $loc_descontinuidade_geometrica_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3093,7 +3093,7 @@ CREATE OR REPLACE FUNCTION loc_descontinuidade_geometrica_l_avoid_multi () RETUR
 $loc_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_descontinuidade_geometrica_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_descontinuidade_geometrica_l
-    FOR EACH ROW EXECUTE PROCEDURE loc_descontinuidade_geometrica_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_descontinuidade_geometrica_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_posto_combustivel_a_avoid_multi () RETURNS TRIGGER AS $tra_posto_combustivel_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3111,7 +3111,7 @@ CREATE OR REPLACE FUNCTION tra_posto_combustivel_a_avoid_multi () RETURNS TRIGGE
 $tra_posto_combustivel_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_posto_combustivel_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_posto_combustivel_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_posto_combustivel_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_posto_combustivel_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_edif_energia_a_avoid_multi () RETURNS TRIGGER AS $enc_edif_energia_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3129,7 +3129,7 @@ CREATE OR REPLACE FUNCTION enc_edif_energia_a_avoid_multi () RETURNS TRIGGER AS 
 $enc_edif_energia_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_edif_energia_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_edif_energia_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_edif_energia_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_edif_energia_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $loc_descontinuidade_geometrica_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3147,7 +3147,7 @@ CREATE OR REPLACE FUNCTION loc_descontinuidade_geometrica_p_avoid_multi () RETUR
 $loc_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_descontinuidade_geometrica_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_descontinuidade_geometrica_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_descontinuidade_geometrica_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_edif_energia_p_avoid_multi () RETURNS TRIGGER AS $enc_edif_energia_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3165,7 +3165,7 @@ CREATE OR REPLACE FUNCTION enc_edif_energia_p_avoid_multi () RETURNS TRIGGER AS 
 $enc_edif_energia_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_edif_energia_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_edif_energia_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_edif_energia_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_edif_energia_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_posto_combustivel_p_avoid_multi () RETURNS TRIGGER AS $tra_posto_combustivel_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3183,7 +3183,7 @@ CREATE OR REPLACE FUNCTION tra_posto_combustivel_p_avoid_multi () RETURNS TRIGGE
 $tra_posto_combustivel_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_posto_combustivel_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_posto_combustivel_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_posto_combustivel_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_posto_combustivel_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_bacia_hidrografica_a_avoid_multi () RETURNS TRIGGER AS $hid_bacia_hidrografica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3201,7 +3201,7 @@ CREATE OR REPLACE FUNCTION hid_bacia_hidrografica_a_avoid_multi () RETURNS TRIGG
 $hid_bacia_hidrografica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_bacia_hidrografica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_bacia_hidrografica_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_bacia_hidrografica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_bacia_hidrografica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION veg_veg_area_contato_a_avoid_multi () RETURNS TRIGGER AS $veg_veg_area_contato_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3219,7 +3219,7 @@ CREATE OR REPLACE FUNCTION veg_veg_area_contato_a_avoid_multi () RETURNS TRIGGER
 $veg_veg_area_contato_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER veg_veg_area_contato_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.veg_veg_area_contato_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_veg_area_contato_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE veg_veg_area_contato_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_area_uso_comunitario_p_avoid_multi () RETURNS TRIGGER AS $lim_area_uso_comunitario_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3237,7 +3237,7 @@ CREATE OR REPLACE FUNCTION lim_area_uso_comunitario_p_avoid_multi () RETURNS TRI
 $lim_area_uso_comunitario_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_area_uso_comunitario_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_area_uso_comunitario_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_area_uso_comunitario_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_area_uso_comunitario_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION veg_floresta_a_avoid_multi () RETURNS TRIGGER AS $veg_floresta_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3255,7 +3255,7 @@ CREATE OR REPLACE FUNCTION veg_floresta_a_avoid_multi () RETURNS TRIGGER AS $veg
 $veg_floresta_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER veg_floresta_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.veg_floresta_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_floresta_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE veg_floresta_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_area_uso_comunitario_a_avoid_multi () RETURNS TRIGGER AS $lim_area_uso_comunitario_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3273,7 +3273,7 @@ CREATE OR REPLACE FUNCTION lim_area_uso_comunitario_a_avoid_multi () RETURNS TRI
 $lim_area_uso_comunitario_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_area_uso_comunitario_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_area_uso_comunitario_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_area_uso_comunitario_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_area_uso_comunitario_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION adm_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $adm_descontinuidade_geometrica_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3291,7 +3291,7 @@ CREATE OR REPLACE FUNCTION adm_descontinuidade_geometrica_p_avoid_multi () RETUR
 $adm_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER adm_descontinuidade_geometrica_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.adm_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE adm_descontinuidade_geometrica_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE adm_descontinuidade_geometrica_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_area_especial_p_avoid_multi () RETURNS TRIGGER AS $lim_area_especial_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3309,7 +3309,7 @@ CREATE OR REPLACE FUNCTION lim_area_especial_p_avoid_multi () RETURNS TRIGGER AS
 $lim_area_especial_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_area_especial_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_area_especial_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_area_especial_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_area_especial_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_travessia_pedestre_l_avoid_multi () RETURNS TRIGGER AS $tra_travessia_pedestre_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3327,7 +3327,7 @@ CREATE OR REPLACE FUNCTION tra_travessia_pedestre_l_avoid_multi () RETURNS TRIGG
 $tra_travessia_pedestre_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_travessia_pedestre_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_travessia_pedestre_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_travessia_pedestre_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_travessia_pedestre_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_area_especial_a_avoid_multi () RETURNS TRIGGER AS $lim_area_especial_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3345,7 +3345,7 @@ CREATE OR REPLACE FUNCTION lim_area_especial_a_avoid_multi () RETURNS TRIGGER AS
 $lim_area_especial_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_area_especial_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_area_especial_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_area_especial_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_area_especial_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION adm_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $adm_descontinuidade_geometrica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3363,7 +3363,7 @@ CREATE OR REPLACE FUNCTION adm_descontinuidade_geometrica_a_avoid_multi () RETUR
 $adm_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER adm_descontinuidade_geometrica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.adm_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE adm_descontinuidade_geometrica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE adm_descontinuidade_geometrica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_aglom_rural_de_ext_urbana_p_avoid_multi () RETURNS TRIGGER AS $loc_aglom_rural_de_ext_urbana_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3381,7 +3381,7 @@ CREATE OR REPLACE FUNCTION loc_aglom_rural_de_ext_urbana_p_avoid_multi () RETURN
 $loc_aglom_rural_de_ext_urbana_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_aglom_rural_de_ext_urbana_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_aglom_rural_de_ext_urbana_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_aglom_rural_de_ext_urbana_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_aglom_rural_de_ext_urbana_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_travessia_pedestre_p_avoid_multi () RETURNS TRIGGER AS $tra_travessia_pedestre_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3399,7 +3399,7 @@ CREATE OR REPLACE FUNCTION tra_travessia_pedestre_p_avoid_multi () RETURNS TRIGG
 $tra_travessia_pedestre_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_travessia_pedestre_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_travessia_pedestre_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_travessia_pedestre_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_travessia_pedestre_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_unidade_uso_sustentavel_a_avoid_multi () RETURNS TRIGGER AS $lim_unidade_uso_sustentavel_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3417,7 +3417,7 @@ CREATE OR REPLACE FUNCTION lim_unidade_uso_sustentavel_a_avoid_multi () RETURNS 
 $lim_unidade_uso_sustentavel_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_unidade_uso_sustentavel_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_unidade_uso_sustentavel_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_uso_sustentavel_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_uso_sustentavel_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_ponto_rodoviario_p_avoid_multi () RETURNS TRIGGER AS $tra_ponto_rodoviario_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3435,7 +3435,7 @@ CREATE OR REPLACE FUNCTION tra_ponto_rodoviario_p_avoid_multi () RETURNS TRIGGER
 $tra_ponto_rodoviario_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_ponto_rodoviario_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_ponto_rodoviario_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_ponto_rodoviario_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_ponto_rodoviario_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_unidade_uso_sustentavel_p_avoid_multi () RETURNS TRIGGER AS $lim_unidade_uso_sustentavel_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3453,7 +3453,7 @@ CREATE OR REPLACE FUNCTION lim_unidade_uso_sustentavel_p_avoid_multi () RETURNS 
 $lim_unidade_uso_sustentavel_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_unidade_uso_sustentavel_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_unidade_uso_sustentavel_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_uso_sustentavel_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_uso_sustentavel_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION aux_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $aux_descontinuidade_geometrica_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3471,7 +3471,7 @@ CREATE OR REPLACE FUNCTION aux_descontinuidade_geometrica_l_avoid_multi () RETUR
 $aux_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER aux_descontinuidade_geometrica_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.aux_descontinuidade_geometrica_l
-    FOR EACH ROW EXECUTE PROCEDURE aux_descontinuidade_geometrica_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE aux_descontinuidade_geometrica_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION aux_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $aux_descontinuidade_geometrica_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3489,7 +3489,7 @@ CREATE OR REPLACE FUNCTION aux_descontinuidade_geometrica_p_avoid_multi () RETUR
 $aux_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER aux_descontinuidade_geometrica_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.aux_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE aux_descontinuidade_geometrica_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE aux_descontinuidade_geometrica_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_area_construida_a_avoid_multi () RETURNS TRIGGER AS $loc_area_construida_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3507,7 +3507,7 @@ CREATE OR REPLACE FUNCTION loc_area_construida_a_avoid_multi () RETURNS TRIGGER 
 $loc_area_construida_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_area_construida_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_area_construida_a
-    FOR EACH ROW EXECUTE PROCEDURE loc_area_construida_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_area_construida_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION aux_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $aux_descontinuidade_geometrica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3525,7 +3525,7 @@ CREATE OR REPLACE FUNCTION aux_descontinuidade_geometrica_a_avoid_multi () RETUR
 $aux_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER aux_descontinuidade_geometrica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.aux_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE aux_descontinuidade_geometrica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE aux_descontinuidade_geometrica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_unidade_protecao_integral_p_avoid_multi () RETURNS TRIGGER AS $lim_unidade_protecao_integral_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3543,7 +3543,7 @@ CREATE OR REPLACE FUNCTION lim_unidade_protecao_integral_p_avoid_multi () RETURN
 $lim_unidade_protecao_integral_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_unidade_protecao_integral_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_unidade_protecao_integral_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_protecao_integral_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_protecao_integral_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_area_ext_mineral_a_avoid_multi () RETURNS TRIGGER AS $eco_area_ext_mineral_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3561,7 +3561,7 @@ CREATE OR REPLACE FUNCTION eco_area_ext_mineral_a_avoid_multi () RETURNS TRIGGER
 $eco_area_ext_mineral_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_area_ext_mineral_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_area_ext_mineral_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_area_ext_mineral_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_area_ext_mineral_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_unidade_protecao_integral_a_avoid_multi () RETURNS TRIGGER AS $lim_unidade_protecao_integral_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3579,7 +3579,7 @@ CREATE OR REPLACE FUNCTION lim_unidade_protecao_integral_a_avoid_multi () RETURN
 $lim_unidade_protecao_integral_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_unidade_protecao_integral_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_unidade_protecao_integral_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_protecao_integral_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_protecao_integral_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_natureza_fundo_p_avoid_multi () RETURNS TRIGGER AS $hid_natureza_fundo_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3597,7 +3597,7 @@ CREATE OR REPLACE FUNCTION hid_natureza_fundo_p_avoid_multi () RETURNS TRIGGER A
 $hid_natureza_fundo_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_natureza_fundo_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_natureza_fundo_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_natureza_fundo_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_natureza_fundo_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_pista_ponto_pouso_a_avoid_multi () RETURNS TRIGGER AS $tra_pista_ponto_pouso_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3615,7 +3615,7 @@ CREATE OR REPLACE FUNCTION tra_pista_ponto_pouso_a_avoid_multi () RETURNS TRIGGE
 $tra_pista_ponto_pouso_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_pista_ponto_pouso_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_pista_ponto_pouso_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_pista_ponto_pouso_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_pista_ponto_pouso_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $hid_descontinuidade_geometrica_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3633,7 +3633,7 @@ CREATE OR REPLACE FUNCTION hid_descontinuidade_geometrica_p_avoid_multi () RETUR
 $hid_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_descontinuidade_geometrica_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_descontinuidade_geometrica_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_descontinuidade_geometrica_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_patio_p_avoid_multi () RETURNS TRIGGER AS $tra_patio_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3651,7 +3651,7 @@ CREATE OR REPLACE FUNCTION tra_patio_p_avoid_multi () RETURNS TRIGGER AS $tra_pa
 $tra_patio_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_patio_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_patio_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_patio_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_patio_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_dolina_a_avoid_multi () RETURNS TRIGGER AS $rel_dolina_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3669,7 +3669,7 @@ CREATE OR REPLACE FUNCTION rel_dolina_a_avoid_multi () RETURNS TRIGGER AS $rel_d
 $rel_dolina_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_dolina_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_dolina_a
-    FOR EACH ROW EXECUTE PROCEDURE rel_dolina_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_dolina_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_pista_ponto_pouso_l_avoid_multi () RETURNS TRIGGER AS $tra_pista_ponto_pouso_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3687,7 +3687,7 @@ CREATE OR REPLACE FUNCTION tra_pista_ponto_pouso_l_avoid_multi () RETURNS TRIGGE
 $tra_pista_ponto_pouso_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_pista_ponto_pouso_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_pista_ponto_pouso_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_pista_ponto_pouso_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_pista_ponto_pouso_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_natureza_fundo_a_avoid_multi () RETURNS TRIGGER AS $hid_natureza_fundo_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3705,7 +3705,7 @@ CREATE OR REPLACE FUNCTION hid_natureza_fundo_a_avoid_multi () RETURNS TRIGGER A
 $hid_natureza_fundo_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_natureza_fundo_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_natureza_fundo_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_natureza_fundo_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_natureza_fundo_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_pista_ponto_pouso_p_avoid_multi () RETURNS TRIGGER AS $tra_pista_ponto_pouso_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3723,7 +3723,7 @@ CREATE OR REPLACE FUNCTION tra_pista_ponto_pouso_p_avoid_multi () RETURNS TRIGGE
 $tra_pista_ponto_pouso_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_pista_ponto_pouso_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_pista_ponto_pouso_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_pista_ponto_pouso_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_pista_ponto_pouso_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_patio_a_avoid_multi () RETURNS TRIGGER AS $tra_patio_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3741,7 +3741,7 @@ CREATE OR REPLACE FUNCTION tra_patio_a_avoid_multi () RETURNS TRIGGER AS $tra_pa
 $tra_patio_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_patio_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_patio_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_patio_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_patio_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $hid_descontinuidade_geometrica_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3759,7 +3759,7 @@ CREATE OR REPLACE FUNCTION hid_descontinuidade_geometrica_l_avoid_multi () RETUR
 $hid_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_descontinuidade_geometrica_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_descontinuidade_geometrica_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_descontinuidade_geometrica_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_descontinuidade_geometrica_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $lim_descontinuidade_geometrica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3777,7 +3777,7 @@ CREATE OR REPLACE FUNCTION lim_descontinuidade_geometrica_a_avoid_multi () RETUR
 $lim_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_descontinuidade_geometrica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_descontinuidade_geometrica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_descontinuidade_geometrica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_dolina_p_avoid_multi () RETURNS TRIGGER AS $rel_dolina_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3795,7 +3795,7 @@ CREATE OR REPLACE FUNCTION rel_dolina_p_avoid_multi () RETURNS TRIGGER AS $rel_d
 $rel_dolina_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_dolina_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_dolina_p
-    FOR EACH ROW EXECUTE PROCEDURE rel_dolina_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_dolina_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_pista_competicao_l_avoid_multi () RETURNS TRIGGER AS $edu_pista_competicao_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3813,7 +3813,7 @@ CREATE OR REPLACE FUNCTION edu_pista_competicao_l_avoid_multi () RETURNS TRIGGER
 $edu_pista_competicao_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_pista_competicao_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_pista_competicao_l
-    FOR EACH ROW EXECUTE PROCEDURE edu_pista_competicao_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_pista_competicao_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_ilha_p_avoid_multi () RETURNS TRIGGER AS $hid_ilha_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3831,7 +3831,7 @@ CREATE OR REPLACE FUNCTION hid_ilha_p_avoid_multi () RETURNS TRIGGER AS $hid_ilh
 $hid_ilha_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_ilha_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_ilha_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_ilha_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_ilha_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_area_industrial_a_avoid_multi () RETURNS TRIGGER AS $eco_area_industrial_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3849,7 +3849,7 @@ CREATE OR REPLACE FUNCTION eco_area_industrial_a_avoid_multi () RETURNS TRIGGER 
 $eco_area_industrial_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_area_industrial_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_area_industrial_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_area_industrial_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_area_industrial_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_ilha_l_avoid_multi () RETURNS TRIGGER AS $hid_ilha_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3867,7 +3867,7 @@ CREATE OR REPLACE FUNCTION hid_ilha_l_avoid_multi () RETURNS TRIGGER AS $hid_ilh
 $hid_ilha_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_ilha_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_ilha_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_ilha_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_ilha_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_area_religiosa_a_avoid_multi () RETURNS TRIGGER AS $edu_area_religiosa_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3885,7 +3885,7 @@ CREATE OR REPLACE FUNCTION edu_area_religiosa_a_avoid_multi () RETURNS TRIGGER A
 $edu_area_religiosa_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_area_religiosa_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_area_religiosa_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_area_religiosa_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_area_religiosa_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_ilha_a_avoid_multi () RETURNS TRIGGER AS $hid_ilha_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3903,7 +3903,7 @@ CREATE OR REPLACE FUNCTION hid_ilha_a_avoid_multi () RETURNS TRIGGER AS $hid_ilh
 $hid_ilha_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_ilha_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_ilha_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_ilha_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_ilha_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_barragem_a_avoid_multi () RETURNS TRIGGER AS $hid_barragem_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3921,7 +3921,7 @@ CREATE OR REPLACE FUNCTION hid_barragem_a_avoid_multi () RETURNS TRIGGER AS $hid
 $hid_barragem_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_barragem_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_barragem_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_barragem_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_barragem_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION sau_area_saude_a_avoid_multi () RETURNS TRIGGER AS $sau_area_saude_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3939,7 +3939,7 @@ CREATE OR REPLACE FUNCTION sau_area_saude_a_avoid_multi () RETURNS TRIGGER AS $s
 $sau_area_saude_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER sau_area_saude_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.sau_area_saude_a
-    FOR EACH ROW EXECUTE PROCEDURE sau_area_saude_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE sau_area_saude_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_barragem_l_avoid_multi () RETURNS TRIGGER AS $hid_barragem_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3957,7 +3957,7 @@ CREATE OR REPLACE FUNCTION hid_barragem_l_avoid_multi () RETURNS TRIGGER AS $hid
 $hid_barragem_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_barragem_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_barragem_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_barragem_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_barragem_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_outros_limites_oficiais_l_avoid_multi () RETURNS TRIGGER AS $lim_outros_limites_oficiais_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3975,7 +3975,7 @@ CREATE OR REPLACE FUNCTION lim_outros_limites_oficiais_l_avoid_multi () RETURNS 
 $lim_outros_limites_oficiais_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_outros_limites_oficiais_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_outros_limites_oficiais_l
-    FOR EACH ROW EXECUTE PROCEDURE lim_outros_limites_oficiais_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_outros_limites_oficiais_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION adm_edif_pub_militar_a_avoid_multi () RETURNS TRIGGER AS $adm_edif_pub_militar_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -3993,7 +3993,7 @@ CREATE OR REPLACE FUNCTION adm_edif_pub_militar_a_avoid_multi () RETURNS TRIGGER
 $adm_edif_pub_militar_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER adm_edif_pub_militar_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.adm_edif_pub_militar_a
-    FOR EACH ROW EXECUTE PROCEDURE adm_edif_pub_militar_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE adm_edif_pub_militar_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_area_agrop_ext_veg_pesca_a_avoid_multi () RETURNS TRIGGER AS $eco_area_agrop_ext_veg_pesca_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4011,7 +4011,7 @@ CREATE OR REPLACE FUNCTION eco_area_agrop_ext_veg_pesca_a_avoid_multi () RETURNS
 $eco_area_agrop_ext_veg_pesca_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_area_agrop_ext_veg_pesca_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_area_agrop_ext_veg_pesca_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_area_agrop_ext_veg_pesca_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_area_agrop_ext_veg_pesca_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_eclusa_p_avoid_multi () RETURNS TRIGGER AS $tra_eclusa_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4029,7 +4029,7 @@ CREATE OR REPLACE FUNCTION tra_eclusa_p_avoid_multi () RETURNS TRIGGER AS $tra_e
 $tra_eclusa_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_eclusa_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_eclusa_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_eclusa_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_eclusa_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_limite_particular_l_avoid_multi () RETURNS TRIGGER AS $lim_limite_particular_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4047,7 +4047,7 @@ CREATE OR REPLACE FUNCTION lim_limite_particular_l_avoid_multi () RETURNS TRIGGE
 $lim_limite_particular_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_limite_particular_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_limite_particular_l
-    FOR EACH ROW EXECUTE PROCEDURE lim_limite_particular_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_limite_particular_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION adm_edif_pub_militar_p_avoid_multi () RETURNS TRIGGER AS $adm_edif_pub_militar_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4065,7 +4065,7 @@ CREATE OR REPLACE FUNCTION adm_edif_pub_militar_p_avoid_multi () RETURNS TRIGGER
 $adm_edif_pub_militar_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER adm_edif_pub_militar_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.adm_edif_pub_militar_p
-    FOR EACH ROW EXECUTE PROCEDURE adm_edif_pub_militar_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE adm_edif_pub_militar_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $enc_descontinuidade_geometrica_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4083,7 +4083,7 @@ CREATE OR REPLACE FUNCTION enc_descontinuidade_geometrica_p_avoid_multi () RETUR
 $enc_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_descontinuidade_geometrica_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_descontinuidade_geometrica_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_descontinuidade_geometrica_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_trecho_hidroviario_l_avoid_multi () RETURNS TRIGGER AS $tra_trecho_hidroviario_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4101,7 +4101,7 @@ CREATE OR REPLACE FUNCTION tra_trecho_hidroviario_l_avoid_multi () RETURNS TRIGG
 $tra_trecho_hidroviario_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_trecho_hidroviario_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_trecho_hidroviario_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_trecho_hidroviario_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_trecho_hidroviario_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION veg_veg_cultivada_a_avoid_multi () RETURNS TRIGGER AS $veg_veg_cultivada_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4119,7 +4119,7 @@ CREATE OR REPLACE FUNCTION veg_veg_cultivada_a_avoid_multi () RETURNS TRIGGER AS
 $veg_veg_cultivada_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER veg_veg_cultivada_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.veg_veg_cultivada_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_veg_cultivada_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE veg_veg_cultivada_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_identific_trecho_rod_p_avoid_multi () RETURNS TRIGGER AS $tra_identific_trecho_rod_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4137,7 +4137,7 @@ CREATE OR REPLACE FUNCTION tra_identific_trecho_rod_p_avoid_multi () RETURNS TRI
 $tra_identific_trecho_rod_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_identific_trecho_rod_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_identific_trecho_rod_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_identific_trecho_rod_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_identific_trecho_rod_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $enc_descontinuidade_geometrica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4155,7 +4155,7 @@ CREATE OR REPLACE FUNCTION enc_descontinuidade_geometrica_a_avoid_multi () RETUR
 $enc_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_descontinuidade_geometrica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_descontinuidade_geometrica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_descontinuidade_geometrica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_curva_nivel_l_avoid_multi () RETURNS TRIGGER AS $rel_curva_nivel_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4173,7 +4173,7 @@ CREATE OR REPLACE FUNCTION rel_curva_nivel_l_avoid_multi () RETURNS TRIGGER AS $
 $rel_curva_nivel_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_curva_nivel_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_curva_nivel_l
-    FOR EACH ROW EXECUTE PROCEDURE rel_curva_nivel_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_curva_nivel_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_trecho_massa_dagua_a_avoid_multi () RETURNS TRIGGER AS $hid_trecho_massa_dagua_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4191,7 +4191,7 @@ CREATE OR REPLACE FUNCTION hid_trecho_massa_dagua_a_avoid_multi () RETURNS TRIGG
 $hid_trecho_massa_dagua_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_trecho_massa_dagua_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_trecho_massa_dagua_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_trecho_massa_dagua_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_trecho_massa_dagua_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_reservatorio_hidrico_a_avoid_multi () RETURNS TRIGGER AS $hid_reservatorio_hidrico_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4209,7 +4209,7 @@ CREATE OR REPLACE FUNCTION hid_reservatorio_hidrico_a_avoid_multi () RETURNS TRI
 $hid_reservatorio_hidrico_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_reservatorio_hidrico_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_reservatorio_hidrico_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_reservatorio_hidrico_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_reservatorio_hidrico_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_antena_comunic_p_avoid_multi () RETURNS TRIGGER AS $enc_antena_comunic_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4227,7 +4227,7 @@ CREATE OR REPLACE FUNCTION enc_antena_comunic_p_avoid_multi () RETURNS TRIGGER A
 $enc_antena_comunic_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_antena_comunic_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_antena_comunic_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_antena_comunic_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_antena_comunic_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION sau_edif_servico_social_p_avoid_multi () RETURNS TRIGGER AS $sau_edif_servico_social_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4245,7 +4245,7 @@ CREATE OR REPLACE FUNCTION sau_edif_servico_social_p_avoid_multi () RETURNS TRIG
 $sau_edif_servico_social_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER sau_edif_servico_social_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.sau_edif_servico_social_p
-    FOR EACH ROW EXECUTE PROCEDURE sau_edif_servico_social_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE sau_edif_servico_social_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION sau_edif_servico_social_a_avoid_multi () RETURNS TRIGGER AS $sau_edif_servico_social_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4263,7 +4263,7 @@ CREATE OR REPLACE FUNCTION sau_edif_servico_social_a_avoid_multi () RETURNS TRIG
 $sau_edif_servico_social_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER sau_edif_servico_social_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.sau_edif_servico_social_a
-    FOR EACH ROW EXECUTE PROCEDURE sau_edif_servico_social_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE sau_edif_servico_social_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_entroncamento_p_avoid_multi () RETURNS TRIGGER AS $tra_entroncamento_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4281,7 +4281,7 @@ CREATE OR REPLACE FUNCTION tra_entroncamento_p_avoid_multi () RETURNS TRIGGER AS
 $tra_entroncamento_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_entroncamento_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_entroncamento_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_entroncamento_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_entroncamento_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_trecho_rodoviario_l_avoid_multi () RETURNS TRIGGER AS $tra_trecho_rodoviario_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4299,7 +4299,7 @@ CREATE OR REPLACE FUNCTION tra_trecho_rodoviario_l_avoid_multi () RETURNS TRIGGE
 $tra_trecho_rodoviario_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_trecho_rodoviario_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_trecho_rodoviario_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_trecho_rodoviario_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_trecho_rodoviario_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $tra_descontinuidade_geometrica_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4317,7 +4317,7 @@ CREATE OR REPLACE FUNCTION tra_descontinuidade_geometrica_l_avoid_multi () RETUR
 $tra_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_descontinuidade_geometrica_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_descontinuidade_geometrica_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_descontinuidade_geometrica_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_descontinuidade_geometrica_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_trecho_duto_l_avoid_multi () RETURNS TRIGGER AS $tra_trecho_duto_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4335,7 +4335,7 @@ CREATE OR REPLACE FUNCTION tra_trecho_duto_l_avoid_multi () RETURNS TRIGGER AS $
 $tra_trecho_duto_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_trecho_duto_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_trecho_duto_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_trecho_duto_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_trecho_duto_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_pico_p_avoid_multi () RETURNS TRIGGER AS $rel_pico_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4353,7 +4353,7 @@ CREATE OR REPLACE FUNCTION rel_pico_p_avoid_multi () RETURNS TRIGGER AS $rel_pic
 $rel_pico_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_pico_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_pico_p
-    FOR EACH ROW EXECUTE PROCEDURE rel_pico_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_pico_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_passag_elevada_viaduto_l_avoid_multi () RETURNS TRIGGER AS $tra_passag_elevada_viaduto_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4371,7 +4371,7 @@ CREATE OR REPLACE FUNCTION tra_passag_elevada_viaduto_l_avoid_multi () RETURNS T
 $tra_passag_elevada_viaduto_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_passag_elevada_viaduto_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_passag_elevada_viaduto_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_passag_elevada_viaduto_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_passag_elevada_viaduto_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_cidade_p_avoid_multi () RETURNS TRIGGER AS $loc_cidade_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4389,7 +4389,7 @@ CREATE OR REPLACE FUNCTION loc_cidade_p_avoid_multi () RETURNS TRIGGER AS $loc_c
 $loc_cidade_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_cidade_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_cidade_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_cidade_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_cidade_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_capital_p_avoid_multi () RETURNS TRIGGER AS $loc_capital_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4407,7 +4407,7 @@ CREATE OR REPLACE FUNCTION loc_capital_p_avoid_multi () RETURNS TRIGGER AS $loc_
 $loc_capital_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_capital_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_capital_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_capital_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_capital_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_edif_ext_mineral_a_avoid_multi () RETURNS TRIGGER AS $eco_edif_ext_mineral_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4425,7 +4425,7 @@ CREATE OR REPLACE FUNCTION eco_edif_ext_mineral_a_avoid_multi () RETURNS TRIGGER
 $eco_edif_ext_mineral_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_edif_ext_mineral_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_edif_ext_mineral_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_edif_ext_mineral_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_edif_ext_mineral_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_distrito_a_avoid_multi () RETURNS TRIGGER AS $lim_distrito_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4443,7 +4443,7 @@ CREATE OR REPLACE FUNCTION lim_distrito_a_avoid_multi () RETURNS TRIGGER AS $lim
 $lim_distrito_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_distrito_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_distrito_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_distrito_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_distrito_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_passag_elevada_viaduto_p_avoid_multi () RETURNS TRIGGER AS $tra_passag_elevada_viaduto_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4461,7 +4461,7 @@ CREATE OR REPLACE FUNCTION tra_passag_elevada_viaduto_p_avoid_multi () RETURNS T
 $tra_passag_elevada_viaduto_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_passag_elevada_viaduto_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_passag_elevada_viaduto_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_passag_elevada_viaduto_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_passag_elevada_viaduto_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_torre_comunic_p_avoid_multi () RETURNS TRIGGER AS $enc_torre_comunic_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4479,7 +4479,7 @@ CREATE OR REPLACE FUNCTION enc_torre_comunic_p_avoid_multi () RETURNS TRIGGER AS
 $enc_torre_comunic_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_torre_comunic_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_torre_comunic_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_torre_comunic_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_torre_comunic_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_edif_const_turistica_a_avoid_multi () RETURNS TRIGGER AS $edu_edif_const_turistica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4497,7 +4497,7 @@ CREATE OR REPLACE FUNCTION edu_edif_const_turistica_a_avoid_multi () RETURNS TRI
 $edu_edif_const_turistica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_edif_const_turistica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_edif_const_turistica_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_edif_const_turistica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_edif_const_turistica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_terreno_exposto_a_avoid_multi () RETURNS TRIGGER AS $rel_terreno_exposto_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4515,7 +4515,7 @@ CREATE OR REPLACE FUNCTION rel_terreno_exposto_a_avoid_multi () RETURNS TRIGGER 
 $rel_terreno_exposto_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_terreno_exposto_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_terreno_exposto_a
-    FOR EACH ROW EXECUTE PROCEDURE rel_terreno_exposto_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_terreno_exposto_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_girador_ferroviario_p_avoid_multi () RETURNS TRIGGER AS $tra_girador_ferroviario_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4533,7 +4533,7 @@ CREATE OR REPLACE FUNCTION tra_girador_ferroviario_p_avoid_multi () RETURNS TRIG
 $tra_girador_ferroviario_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_girador_ferroviario_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_girador_ferroviario_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_girador_ferroviario_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_girador_ferroviario_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_trilha_picada_l_avoid_multi () RETURNS TRIGGER AS $tra_trilha_picada_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4551,7 +4551,7 @@ CREATE OR REPLACE FUNCTION tra_trilha_picada_l_avoid_multi () RETURNS TRIGGER AS
 $tra_trilha_picada_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_trilha_picada_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_trilha_picada_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_trilha_picada_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_trilha_picada_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION pto_area_est_med_fenom_a_avoid_multi () RETURNS TRIGGER AS $pto_area_est_med_fenom_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4569,7 +4569,7 @@ CREATE OR REPLACE FUNCTION pto_area_est_med_fenom_a_avoid_multi () RETURNS TRIGG
 $pto_area_est_med_fenom_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER pto_area_est_med_fenom_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.pto_area_est_med_fenom_a
-    FOR EACH ROW EXECUTE PROCEDURE pto_area_est_med_fenom_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE pto_area_est_med_fenom_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_edif_const_turistica_p_avoid_multi () RETURNS TRIGGER AS $edu_edif_const_turistica_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4587,7 +4587,7 @@ CREATE OR REPLACE FUNCTION edu_edif_const_turistica_p_avoid_multi () RETURNS TRI
 $edu_edif_const_turistica_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_edif_const_turistica_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_edif_const_turistica_p
-    FOR EACH ROW EXECUTE PROCEDURE edu_edif_const_turistica_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_edif_const_turistica_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION adm_posto_pol_rod_a_avoid_multi () RETURNS TRIGGER AS $adm_posto_pol_rod_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4605,7 +4605,7 @@ CREATE OR REPLACE FUNCTION adm_posto_pol_rod_a_avoid_multi () RETURNS TRIGGER AS
 $adm_posto_pol_rod_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER adm_posto_pol_rod_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.adm_posto_pol_rod_a
-    FOR EACH ROW EXECUTE PROCEDURE adm_posto_pol_rod_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE adm_posto_pol_rod_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_trecho_comunic_l_avoid_multi () RETURNS TRIGGER AS $enc_trecho_comunic_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4623,7 +4623,7 @@ CREATE OR REPLACE FUNCTION enc_trecho_comunic_l_avoid_multi () RETURNS TRIGGER A
 $enc_trecho_comunic_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_trecho_comunic_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_trecho_comunic_l
-    FOR EACH ROW EXECUTE PROCEDURE enc_trecho_comunic_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_trecho_comunic_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_banco_areia_a_avoid_multi () RETURNS TRIGGER AS $hid_banco_areia_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4641,7 +4641,7 @@ CREATE OR REPLACE FUNCTION hid_banco_areia_a_avoid_multi () RETURNS TRIGGER AS $
 $hid_banco_areia_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_banco_areia_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_banco_areia_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_banco_areia_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_banco_areia_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_banco_areia_l_avoid_multi () RETURNS TRIGGER AS $hid_banco_areia_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4659,7 +4659,7 @@ CREATE OR REPLACE FUNCTION hid_banco_areia_l_avoid_multi () RETURNS TRIGGER AS $
 $hid_banco_areia_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_banco_areia_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_banco_areia_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_banco_areia_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_banco_areia_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION adm_posto_pol_rod_p_avoid_multi () RETURNS TRIGGER AS $adm_posto_pol_rod_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4677,7 +4677,7 @@ CREATE OR REPLACE FUNCTION adm_posto_pol_rod_p_avoid_multi () RETURNS TRIGGER AS
 $adm_posto_pol_rod_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER adm_posto_pol_rod_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.adm_posto_pol_rod_p
-    FOR EACH ROW EXECUTE PROCEDURE adm_posto_pol_rod_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE adm_posto_pol_rod_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION veg_veg_restinga_a_avoid_multi () RETURNS TRIGGER AS $veg_veg_restinga_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4695,7 +4695,7 @@ CREATE OR REPLACE FUNCTION veg_veg_restinga_a_avoid_multi () RETURNS TRIGGER AS 
 $veg_veg_restinga_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER veg_veg_restinga_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.veg_veg_restinga_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_veg_restinga_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE veg_veg_restinga_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_corredeira_p_avoid_multi () RETURNS TRIGGER AS $hid_corredeira_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4713,7 +4713,7 @@ CREATE OR REPLACE FUNCTION hid_corredeira_p_avoid_multi () RETURNS TRIGGER AS $h
 $hid_corredeira_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_corredeira_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_corredeira_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_corredeira_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_corredeira_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_faixa_seguranca_a_avoid_multi () RETURNS TRIGGER AS $tra_faixa_seguranca_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4731,7 +4731,7 @@ CREATE OR REPLACE FUNCTION tra_faixa_seguranca_a_avoid_multi () RETURNS TRIGGER 
 $tra_faixa_seguranca_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_faixa_seguranca_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_faixa_seguranca_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_faixa_seguranca_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_faixa_seguranca_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_edif_ensino_a_avoid_multi () RETURNS TRIGGER AS $edu_edif_ensino_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4749,7 +4749,7 @@ CREATE OR REPLACE FUNCTION edu_edif_ensino_a_avoid_multi () RETURNS TRIGGER AS $
 $edu_edif_ensino_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_edif_ensino_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_edif_ensino_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_edif_ensino_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_edif_ensino_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_corredeira_a_avoid_multi () RETURNS TRIGGER AS $hid_corredeira_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4767,7 +4767,7 @@ CREATE OR REPLACE FUNCTION hid_corredeira_a_avoid_multi () RETURNS TRIGGER AS $h
 $hid_corredeira_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_corredeira_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_corredeira_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_corredeira_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_corredeira_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_edif_ensino_p_avoid_multi () RETURNS TRIGGER AS $edu_edif_ensino_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4785,7 +4785,7 @@ CREATE OR REPLACE FUNCTION edu_edif_ensino_p_avoid_multi () RETURNS TRIGGER AS $
 $edu_edif_ensino_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_edif_ensino_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_edif_ensino_p
-    FOR EACH ROW EXECUTE PROCEDURE edu_edif_ensino_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_edif_ensino_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_ponto_trecho_energia_p_avoid_multi () RETURNS TRIGGER AS $enc_ponto_trecho_energia_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4803,7 +4803,7 @@ CREATE OR REPLACE FUNCTION enc_ponto_trecho_energia_p_avoid_multi () RETURNS TRI
 $enc_ponto_trecho_energia_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_ponto_trecho_energia_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_ponto_trecho_energia_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_ponto_trecho_energia_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_ponto_trecho_energia_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_fonte_dagua_p_avoid_multi () RETURNS TRIGGER AS $hid_fonte_dagua_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4821,7 +4821,7 @@ CREATE OR REPLACE FUNCTION hid_fonte_dagua_p_avoid_multi () RETURNS TRIGGER AS $
 $hid_fonte_dagua_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_fonte_dagua_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_fonte_dagua_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_fonte_dagua_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_fonte_dagua_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION veg_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $veg_descontinuidade_geometrica_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4839,7 +4839,7 @@ CREATE OR REPLACE FUNCTION veg_descontinuidade_geometrica_l_avoid_multi () RETUR
 $veg_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER veg_descontinuidade_geometrica_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.veg_descontinuidade_geometrica_l
-    FOR EACH ROW EXECUTE PROCEDURE veg_descontinuidade_geometrica_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE veg_descontinuidade_geometrica_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_corredeira_l_avoid_multi () RETURNS TRIGGER AS $hid_corredeira_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4857,7 +4857,7 @@ CREATE OR REPLACE FUNCTION hid_corredeira_l_avoid_multi () RETURNS TRIGGER AS $h
 $hid_corredeira_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_corredeira_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_corredeira_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_corredeira_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_corredeira_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_area_desenv_controle_a_avoid_multi () RETURNS TRIGGER AS $lim_area_desenv_controle_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4875,7 +4875,7 @@ CREATE OR REPLACE FUNCTION lim_area_desenv_controle_a_avoid_multi () RETURNS TRI
 $lim_area_desenv_controle_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_area_desenv_controle_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_area_desenv_controle_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_area_desenv_controle_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_area_desenv_controle_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_municipio_a_avoid_multi () RETURNS TRIGGER AS $lim_municipio_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4893,7 +4893,7 @@ CREATE OR REPLACE FUNCTION lim_municipio_a_avoid_multi () RETURNS TRIGGER AS $li
 $lim_municipio_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_municipio_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_municipio_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_municipio_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_municipio_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_natureza_fundo_l_avoid_multi () RETURNS TRIGGER AS $hid_natureza_fundo_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4911,7 +4911,7 @@ CREATE OR REPLACE FUNCTION hid_natureza_fundo_l_avoid_multi () RETURNS TRIGGER A
 $hid_natureza_fundo_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_natureza_fundo_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_natureza_fundo_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_natureza_fundo_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_natureza_fundo_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_area_desenv_controle_p_avoid_multi () RETURNS TRIGGER AS $lim_area_desenv_controle_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4929,7 +4929,7 @@ CREATE OR REPLACE FUNCTION lim_area_desenv_controle_p_avoid_multi () RETURNS TRI
 $lim_area_desenv_controle_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_area_desenv_controle_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_area_desenv_controle_p
-    FOR EACH ROW EXECUTE PROCEDURE lim_area_desenv_controle_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_area_desenv_controle_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION adm_posto_fiscal_p_avoid_multi () RETURNS TRIGGER AS $adm_posto_fiscal_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4947,7 +4947,7 @@ CREATE OR REPLACE FUNCTION adm_posto_fiscal_p_avoid_multi () RETURNS TRIGGER AS 
 $adm_posto_fiscal_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER adm_posto_fiscal_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.adm_posto_fiscal_p
-    FOR EACH ROW EXECUTE PROCEDURE adm_posto_fiscal_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE adm_posto_fiscal_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_passagem_nivel_p_avoid_multi () RETURNS TRIGGER AS $tra_passagem_nivel_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4965,7 +4965,7 @@ CREATE OR REPLACE FUNCTION tra_passagem_nivel_p_avoid_multi () RETURNS TRIGGER A
 $tra_passagem_nivel_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_passagem_nivel_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_passagem_nivel_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_passagem_nivel_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_passagem_nivel_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_zona_linhas_energia_com_a_avoid_multi () RETURNS TRIGGER AS $enc_zona_linhas_energia_com_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -4983,7 +4983,7 @@ CREATE OR REPLACE FUNCTION enc_zona_linhas_energia_com_a_avoid_multi () RETURNS 
 $enc_zona_linhas_energia_com_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_zona_linhas_energia_com_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_zona_linhas_energia_com_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_zona_linhas_energia_com_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_zona_linhas_energia_com_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_galeria_bueiro_l_avoid_multi () RETURNS TRIGGER AS $tra_galeria_bueiro_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5001,7 +5001,7 @@ CREATE OR REPLACE FUNCTION tra_galeria_bueiro_l_avoid_multi () RETURNS TRIGGER A
 $tra_galeria_bueiro_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_galeria_bueiro_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_galeria_bueiro_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_galeria_bueiro_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_galeria_bueiro_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_sub_distrito_a_avoid_multi () RETURNS TRIGGER AS $lim_sub_distrito_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5019,7 +5019,7 @@ CREATE OR REPLACE FUNCTION lim_sub_distrito_a_avoid_multi () RETURNS TRIGGER AS 
 $lim_sub_distrito_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_sub_distrito_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_sub_distrito_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_sub_distrito_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_sub_distrito_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_rocha_a_avoid_multi () RETURNS TRIGGER AS $rel_rocha_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5037,7 +5037,7 @@ CREATE OR REPLACE FUNCTION rel_rocha_a_avoid_multi () RETURNS TRIGGER AS $rel_ro
 $rel_rocha_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_rocha_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_rocha_a
-    FOR EACH ROW EXECUTE PROCEDURE rel_rocha_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_rocha_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_area_estrut_transporte_a_avoid_multi () RETURNS TRIGGER AS $tra_area_estrut_transporte_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5055,7 +5055,7 @@ CREATE OR REPLACE FUNCTION tra_area_estrut_transporte_a_avoid_multi () RETURNS T
 $tra_area_estrut_transporte_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_area_estrut_transporte_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_area_estrut_transporte_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_area_estrut_transporte_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_area_estrut_transporte_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_area_umida_a_avoid_multi () RETURNS TRIGGER AS $hid_area_umida_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5073,7 +5073,7 @@ CREATE OR REPLACE FUNCTION hid_area_umida_a_avoid_multi () RETURNS TRIGGER AS $h
 $hid_area_umida_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_area_umida_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_area_umida_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_area_umida_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_area_umida_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_termeletrica_a_avoid_multi () RETURNS TRIGGER AS $enc_termeletrica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5091,7 +5091,7 @@ CREATE OR REPLACE FUNCTION enc_termeletrica_a_avoid_multi () RETURNS TRIGGER AS 
 $enc_termeletrica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_termeletrica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_termeletrica_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_termeletrica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_termeletrica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_termeletrica_p_avoid_multi () RETURNS TRIGGER AS $enc_termeletrica_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5109,7 +5109,7 @@ CREATE OR REPLACE FUNCTION enc_termeletrica_p_avoid_multi () RETURNS TRIGGER AS 
 $enc_termeletrica_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_termeletrica_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_termeletrica_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_termeletrica_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_termeletrica_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_hidreletrica_l_avoid_multi () RETURNS TRIGGER AS $enc_hidreletrica_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5127,7 +5127,7 @@ CREATE OR REPLACE FUNCTION enc_hidreletrica_l_avoid_multi () RETURNS TRIGGER AS 
 $enc_hidreletrica_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_hidreletrica_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_hidreletrica_l
-    FOR EACH ROW EXECUTE PROCEDURE enc_hidreletrica_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_hidreletrica_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_area_comerc_serv_a_avoid_multi () RETURNS TRIGGER AS $eco_area_comerc_serv_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5145,7 +5145,7 @@ CREATE OR REPLACE FUNCTION eco_area_comerc_serv_a_avoid_multi () RETURNS TRIGGER
 $eco_area_comerc_serv_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_area_comerc_serv_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_area_comerc_serv_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_area_comerc_serv_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_area_comerc_serv_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_hidreletrica_a_avoid_multi () RETURNS TRIGGER AS $enc_hidreletrica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5163,7 +5163,7 @@ CREATE OR REPLACE FUNCTION enc_hidreletrica_a_avoid_multi () RETURNS TRIGGER AS 
 $enc_hidreletrica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_hidreletrica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_hidreletrica_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_hidreletrica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_hidreletrica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION veg_campo_a_avoid_multi () RETURNS TRIGGER AS $veg_campo_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5181,7 +5181,7 @@ CREATE OR REPLACE FUNCTION veg_campo_a_avoid_multi () RETURNS TRIGGER AS $veg_ca
 $veg_campo_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER veg_campo_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.veg_campo_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_campo_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE veg_campo_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_hidreletrica_p_avoid_multi () RETURNS TRIGGER AS $enc_hidreletrica_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5199,7 +5199,7 @@ CREATE OR REPLACE FUNCTION enc_hidreletrica_p_avoid_multi () RETURNS TRIGGER AS 
 $enc_hidreletrica_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_hidreletrica_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_hidreletrica_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_hidreletrica_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_hidreletrica_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_funicular_p_avoid_multi () RETURNS TRIGGER AS $tra_funicular_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5217,7 +5217,7 @@ CREATE OR REPLACE FUNCTION tra_funicular_p_avoid_multi () RETURNS TRIGGER AS $tr
 $tra_funicular_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_funicular_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_funicular_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_funicular_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_funicular_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION asb_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $asb_descontinuidade_geometrica_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5235,7 +5235,7 @@ CREATE OR REPLACE FUNCTION asb_descontinuidade_geometrica_p_avoid_multi () RETUR
 $asb_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER asb_descontinuidade_geometrica_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.asb_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE asb_descontinuidade_geometrica_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE asb_descontinuidade_geometrica_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION veg_descontinuidade_geometrica_p_avoid_multi () RETURNS TRIGGER AS $veg_descontinuidade_geometrica_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5253,7 +5253,7 @@ CREATE OR REPLACE FUNCTION veg_descontinuidade_geometrica_p_avoid_multi () RETUR
 $veg_descontinuidade_geometrica_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER veg_descontinuidade_geometrica_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.veg_descontinuidade_geometrica_p
-    FOR EACH ROW EXECUTE PROCEDURE veg_descontinuidade_geometrica_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE veg_descontinuidade_geometrica_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_unidade_federacao_a_avoid_multi () RETURNS TRIGGER AS $lim_unidade_federacao_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5271,7 +5271,7 @@ CREATE OR REPLACE FUNCTION lim_unidade_federacao_a_avoid_multi () RETURNS TRIGGE
 $lim_unidade_federacao_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_unidade_federacao_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_unidade_federacao_a
-    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_federacao_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_unidade_federacao_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION lim_limite_area_especial_l_avoid_multi () RETURNS TRIGGER AS $lim_limite_area_especial_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5289,7 +5289,7 @@ CREATE OR REPLACE FUNCTION lim_limite_area_especial_l_avoid_multi () RETURNS TRI
 $lim_limite_area_especial_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER lim_limite_area_especial_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.lim_limite_area_especial_l
-    FOR EACH ROW EXECUTE PROCEDURE lim_limite_area_especial_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE lim_limite_area_especial_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION asb_descontinuidade_geometrica_a_avoid_multi () RETURNS TRIGGER AS $asb_descontinuidade_geometrica_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5307,7 +5307,7 @@ CREATE OR REPLACE FUNCTION asb_descontinuidade_geometrica_a_avoid_multi () RETUR
 $asb_descontinuidade_geometrica_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER asb_descontinuidade_geometrica_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.asb_descontinuidade_geometrica_a
-    FOR EACH ROW EXECUTE PROCEDURE asb_descontinuidade_geometrica_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE asb_descontinuidade_geometrica_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_funicular_l_avoid_multi () RETURNS TRIGGER AS $tra_funicular_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5325,7 +5325,7 @@ CREATE OR REPLACE FUNCTION tra_funicular_l_avoid_multi () RETURNS TRIGGER AS $tr
 $tra_funicular_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_funicular_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_funicular_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_funicular_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_funicular_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION asb_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $asb_descontinuidade_geometrica_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5343,7 +5343,7 @@ CREATE OR REPLACE FUNCTION asb_descontinuidade_geometrica_l_avoid_multi () RETUR
 $asb_descontinuidade_geometrica_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER asb_descontinuidade_geometrica_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.asb_descontinuidade_geometrica_l
-    FOR EACH ROW EXECUTE PROCEDURE asb_descontinuidade_geometrica_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE asb_descontinuidade_geometrica_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION rel_rocha_p_avoid_multi () RETURNS TRIGGER AS $rel_rocha_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5361,7 +5361,7 @@ CREATE OR REPLACE FUNCTION rel_rocha_p_avoid_multi () RETURNS TRIGGER AS $rel_ro
 $rel_rocha_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER rel_rocha_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.rel_rocha_p
-    FOR EACH ROW EXECUTE PROCEDURE rel_rocha_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE rel_rocha_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_local_critico_p_avoid_multi () RETURNS TRIGGER AS $tra_local_critico_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5379,7 +5379,7 @@ CREATE OR REPLACE FUNCTION tra_local_critico_p_avoid_multi () RETURNS TRIGGER AS
 $tra_local_critico_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_local_critico_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_local_critico_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_local_critico_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_local_critico_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_area_habitacional_a_avoid_multi () RETURNS TRIGGER AS $loc_area_habitacional_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5397,7 +5397,7 @@ CREATE OR REPLACE FUNCTION loc_area_habitacional_a_avoid_multi () RETURNS TRIGGE
 $loc_area_habitacional_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_area_habitacional_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_area_habitacional_a
-    FOR EACH ROW EXECUTE PROCEDURE loc_area_habitacional_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_area_habitacional_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION loc_localidade_p_avoid_multi () RETURNS TRIGGER AS $loc_localidade_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5415,7 +5415,7 @@ CREATE OR REPLACE FUNCTION loc_localidade_p_avoid_multi () RETURNS TRIGGER AS $l
 $loc_localidade_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER loc_localidade_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.loc_localidade_p
-    FOR EACH ROW EXECUTE PROCEDURE loc_localidade_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE loc_localidade_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_local_critico_a_avoid_multi () RETURNS TRIGGER AS $tra_local_critico_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5433,7 +5433,7 @@ CREATE OR REPLACE FUNCTION tra_local_critico_a_avoid_multi () RETURNS TRIGGER AS
 $tra_local_critico_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_local_critico_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_local_critico_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_local_critico_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_local_critico_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION veg_macega_chavascal_a_avoid_multi () RETURNS TRIGGER AS $veg_macega_chavascal_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5451,7 +5451,7 @@ CREATE OR REPLACE FUNCTION veg_macega_chavascal_a_avoid_multi () RETURNS TRIGGER
 $veg_macega_chavascal_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER veg_macega_chavascal_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.veg_macega_chavascal_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_macega_chavascal_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE veg_macega_chavascal_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_local_critico_l_avoid_multi () RETURNS TRIGGER AS $tra_local_critico_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5469,7 +5469,7 @@ CREATE OR REPLACE FUNCTION tra_local_critico_l_avoid_multi () RETURNS TRIGGER AS
 $tra_local_critico_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_local_critico_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_local_critico_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_local_critico_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_local_critico_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_edif_religiosa_a_avoid_multi () RETURNS TRIGGER AS $edu_edif_religiosa_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5487,7 +5487,7 @@ CREATE OR REPLACE FUNCTION edu_edif_religiosa_a_avoid_multi () RETURNS TRIGGER A
 $edu_edif_religiosa_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_edif_religiosa_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_edif_religiosa_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_edif_religiosa_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_edif_religiosa_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_terreno_suj_inundacao_a_avoid_multi () RETURNS TRIGGER AS $hid_terreno_suj_inundacao_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5505,7 +5505,7 @@ CREATE OR REPLACE FUNCTION hid_terreno_suj_inundacao_a_avoid_multi () RETURNS TR
 $hid_terreno_suj_inundacao_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_terreno_suj_inundacao_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_terreno_suj_inundacao_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_terreno_suj_inundacao_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_terreno_suj_inundacao_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_edif_religiosa_p_avoid_multi () RETURNS TRIGGER AS $edu_edif_religiosa_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5523,7 +5523,7 @@ CREATE OR REPLACE FUNCTION edu_edif_religiosa_p_avoid_multi () RETURNS TRIGGER A
 $edu_edif_religiosa_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_edif_religiosa_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_edif_religiosa_p
-    FOR EACH ROW EXECUTE PROCEDURE edu_edif_religiosa_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_edif_religiosa_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION adm_edif_pub_civil_p_avoid_multi () RETURNS TRIGGER AS $adm_edif_pub_civil_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5541,7 +5541,7 @@ CREATE OR REPLACE FUNCTION adm_edif_pub_civil_p_avoid_multi () RETURNS TRIGGER A
 $adm_edif_pub_civil_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER adm_edif_pub_civil_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.adm_edif_pub_civil_p
-    FOR EACH ROW EXECUTE PROCEDURE adm_edif_pub_civil_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE adm_edif_pub_civil_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_trecho_energia_l_avoid_multi () RETURNS TRIGGER AS $enc_trecho_energia_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5559,7 +5559,7 @@ CREATE OR REPLACE FUNCTION enc_trecho_energia_l_avoid_multi () RETURNS TRIGGER A
 $enc_trecho_energia_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_trecho_energia_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_trecho_energia_l
-    FOR EACH ROW EXECUTE PROCEDURE enc_trecho_energia_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_trecho_energia_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_edif_metro_ferroviaria_p_avoid_multi () RETURNS TRIGGER AS $tra_edif_metro_ferroviaria_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5577,7 +5577,7 @@ CREATE OR REPLACE FUNCTION tra_edif_metro_ferroviaria_p_avoid_multi () RETURNS T
 $tra_edif_metro_ferroviaria_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_edif_metro_ferroviaria_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_edif_metro_ferroviaria_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_edif_metro_ferroviaria_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_edif_metro_ferroviaria_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_tunel_l_avoid_multi () RETURNS TRIGGER AS $tra_tunel_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5595,7 +5595,7 @@ CREATE OR REPLACE FUNCTION tra_tunel_l_avoid_multi () RETURNS TRIGGER AS $tra_tu
 $tra_tunel_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_tunel_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_tunel_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_tunel_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_tunel_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION adm_edif_pub_civil_a_avoid_multi () RETURNS TRIGGER AS $adm_edif_pub_civil_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5613,7 +5613,7 @@ CREATE OR REPLACE FUNCTION adm_edif_pub_civil_a_avoid_multi () RETURNS TRIGGER A
 $adm_edif_pub_civil_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER adm_edif_pub_civil_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.adm_edif_pub_civil_a
-    FOR EACH ROW EXECUTE PROCEDURE adm_edif_pub_civil_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE adm_edif_pub_civil_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_edif_metro_ferroviaria_a_avoid_multi () RETURNS TRIGGER AS $tra_edif_metro_ferroviaria_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5631,7 +5631,7 @@ CREATE OR REPLACE FUNCTION tra_edif_metro_ferroviaria_a_avoid_multi () RETURNS T
 $tra_edif_metro_ferroviaria_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_edif_metro_ferroviaria_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_edif_metro_ferroviaria_a
-    FOR EACH ROW EXECUTE PROCEDURE tra_edif_metro_ferroviaria_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_edif_metro_ferroviaria_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_quebramar_molhe_a_avoid_multi () RETURNS TRIGGER AS $hid_quebramar_molhe_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5649,7 +5649,7 @@ CREATE OR REPLACE FUNCTION hid_quebramar_molhe_a_avoid_multi () RETURNS TRIGGER 
 $hid_quebramar_molhe_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_quebramar_molhe_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_quebramar_molhe_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_quebramar_molhe_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_quebramar_molhe_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_quebramar_molhe_l_avoid_multi () RETURNS TRIGGER AS $hid_quebramar_molhe_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5667,7 +5667,7 @@ CREATE OR REPLACE FUNCTION hid_quebramar_molhe_l_avoid_multi () RETURNS TRIGGER 
 $hid_quebramar_molhe_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_quebramar_molhe_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_quebramar_molhe_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_quebramar_molhe_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_quebramar_molhe_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION veg_mangue_a_avoid_multi () RETURNS TRIGGER AS $veg_mangue_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5685,7 +5685,7 @@ CREATE OR REPLACE FUNCTION veg_mangue_a_avoid_multi () RETURNS TRIGGER AS $veg_m
 $veg_mangue_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER veg_mangue_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.veg_mangue_a
-    FOR EACH ROW EXECUTE PROCEDURE veg_mangue_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE veg_mangue_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_queda_dagua_p_avoid_multi () RETURNS TRIGGER AS $hid_queda_dagua_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5703,7 +5703,7 @@ CREATE OR REPLACE FUNCTION hid_queda_dagua_p_avoid_multi () RETURNS TRIGGER AS $
 $hid_queda_dagua_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_queda_dagua_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_queda_dagua_p
-    FOR EACH ROW EXECUTE PROCEDURE hid_queda_dagua_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_queda_dagua_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION asb_edif_abast_agua_p_avoid_multi () RETURNS TRIGGER AS $asb_edif_abast_agua_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5721,7 +5721,7 @@ CREATE OR REPLACE FUNCTION asb_edif_abast_agua_p_avoid_multi () RETURNS TRIGGER 
 $asb_edif_abast_agua_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER asb_edif_abast_agua_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.asb_edif_abast_agua_p
-    FOR EACH ROW EXECUTE PROCEDURE asb_edif_abast_agua_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE asb_edif_abast_agua_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_queda_dagua_a_avoid_multi () RETURNS TRIGGER AS $hid_queda_dagua_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5739,7 +5739,7 @@ CREATE OR REPLACE FUNCTION hid_queda_dagua_a_avoid_multi () RETURNS TRIGGER AS $
 $hid_queda_dagua_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_queda_dagua_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_queda_dagua_a
-    FOR EACH ROW EXECUTE PROCEDURE hid_queda_dagua_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_queda_dagua_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION asb_edif_abast_agua_a_avoid_multi () RETURNS TRIGGER AS $asb_edif_abast_agua_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5757,7 +5757,7 @@ CREATE OR REPLACE FUNCTION asb_edif_abast_agua_a_avoid_multi () RETURNS TRIGGER 
 $asb_edif_abast_agua_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER asb_edif_abast_agua_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.asb_edif_abast_agua_a
-    FOR EACH ROW EXECUTE PROCEDURE asb_edif_abast_agua_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE asb_edif_abast_agua_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION hid_queda_dagua_l_avoid_multi () RETURNS TRIGGER AS $hid_queda_dagua_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5775,7 +5775,7 @@ CREATE OR REPLACE FUNCTION hid_queda_dagua_l_avoid_multi () RETURNS TRIGGER AS $
 $hid_queda_dagua_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER hid_queda_dagua_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.hid_queda_dagua_l
-    FOR EACH ROW EXECUTE PROCEDURE hid_queda_dagua_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE hid_queda_dagua_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_est_gerad_energia_eletr_p_avoid_multi () RETURNS TRIGGER AS $enc_est_gerad_energia_eletr_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5793,7 +5793,7 @@ CREATE OR REPLACE FUNCTION enc_est_gerad_energia_eletr_p_avoid_multi () RETURNS 
 $enc_est_gerad_energia_eletr_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_est_gerad_energia_eletr_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_est_gerad_energia_eletr_p
-    FOR EACH ROW EXECUTE PROCEDURE enc_est_gerad_energia_eletr_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_est_gerad_energia_eletr_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_equip_agropec_a_avoid_multi () RETURNS TRIGGER AS $eco_equip_agropec_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5811,7 +5811,7 @@ CREATE OR REPLACE FUNCTION eco_equip_agropec_a_avoid_multi () RETURNS TRIGGER AS
 $eco_equip_agropec_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_equip_agropec_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_equip_agropec_a
-    FOR EACH ROW EXECUTE PROCEDURE eco_equip_agropec_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_equip_agropec_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_arquibancada_a_avoid_multi () RETURNS TRIGGER AS $edu_arquibancada_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5829,7 +5829,7 @@ CREATE OR REPLACE FUNCTION edu_arquibancada_a_avoid_multi () RETURNS TRIGGER AS 
 $edu_arquibancada_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_arquibancada_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_arquibancada_a
-    FOR EACH ROW EXECUTE PROCEDURE edu_arquibancada_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_arquibancada_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_cremalheira_p_avoid_multi () RETURNS TRIGGER AS $tra_cremalheira_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5847,7 +5847,7 @@ CREATE OR REPLACE FUNCTION tra_cremalheira_p_avoid_multi () RETURNS TRIGGER AS $
 $tra_cremalheira_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_cremalheira_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_cremalheira_p
-    FOR EACH ROW EXECUTE PROCEDURE tra_cremalheira_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_cremalheira_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_equip_agropec_l_avoid_multi () RETURNS TRIGGER AS $eco_equip_agropec_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5865,7 +5865,7 @@ CREATE OR REPLACE FUNCTION eco_equip_agropec_l_avoid_multi () RETURNS TRIGGER AS
 $eco_equip_agropec_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_equip_agropec_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_equip_agropec_l
-    FOR EACH ROW EXECUTE PROCEDURE eco_equip_agropec_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_equip_agropec_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION tra_cremalheira_l_avoid_multi () RETURNS TRIGGER AS $tra_cremalheira_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5883,7 +5883,7 @@ CREATE OR REPLACE FUNCTION tra_cremalheira_l_avoid_multi () RETURNS TRIGGER AS $
 $tra_cremalheira_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER tra_cremalheira_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.tra_cremalheira_l
-    FOR EACH ROW EXECUTE PROCEDURE tra_cremalheira_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE tra_cremalheira_l_avoid_multi ()#
 CREATE OR REPLACE FUNCTION eco_equip_agropec_p_avoid_multi () RETURNS TRIGGER AS $eco_equip_agropec_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5901,7 +5901,7 @@ CREATE OR REPLACE FUNCTION eco_equip_agropec_p_avoid_multi () RETURNS TRIGGER AS
 $eco_equip_agropec_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER eco_equip_agropec_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.eco_equip_agropec_p
-    FOR EACH ROW EXECUTE PROCEDURE eco_equip_agropec_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE eco_equip_agropec_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_est_gerad_energia_eletr_a_avoid_multi () RETURNS TRIGGER AS $enc_est_gerad_energia_eletr_a_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5919,7 +5919,7 @@ CREATE OR REPLACE FUNCTION enc_est_gerad_energia_eletr_a_avoid_multi () RETURNS 
 $enc_est_gerad_energia_eletr_a_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_est_gerad_energia_eletr_a_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_est_gerad_energia_eletr_a
-    FOR EACH ROW EXECUTE PROCEDURE enc_est_gerad_energia_eletr_a_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_est_gerad_energia_eletr_a_avoid_multi ()#
 CREATE OR REPLACE FUNCTION edu_arquibancada_p_avoid_multi () RETURNS TRIGGER AS $edu_arquibancada_p_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5937,7 +5937,7 @@ CREATE OR REPLACE FUNCTION edu_arquibancada_p_avoid_multi () RETURNS TRIGGER AS 
 $edu_arquibancada_p_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER edu_arquibancada_p_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.edu_arquibancada_p
-    FOR EACH ROW EXECUTE PROCEDURE edu_arquibancada_p_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE edu_arquibancada_p_avoid_multi ()#
 CREATE OR REPLACE FUNCTION enc_est_gerad_energia_eletr_l_avoid_multi () RETURNS TRIGGER AS $enc_est_gerad_energia_eletr_l_avoid_multi_return$
     DECLARE
     BEGIN
@@ -5955,4 +5955,4 @@ CREATE OR REPLACE FUNCTION enc_est_gerad_energia_eletr_l_avoid_multi () RETURNS 
 $enc_est_gerad_energia_eletr_l_avoid_multi_return$ LANGUAGE plpgsql#
 CREATE TRIGGER enc_est_gerad_energia_eletr_l_avoid_multi_return
 BEFORE INSERT OR UPDATE ON cb.enc_est_gerad_energia_eletr_l
-    FOR EACH ROW EXECUTE PROCEDURE enc_est_gerad_energia_eletr_l_avoid_multi ();
+    FOR EACH ROW EXECUTE PROCEDURE enc_est_gerad_energia_eletr_l_avoid_multi ()#
