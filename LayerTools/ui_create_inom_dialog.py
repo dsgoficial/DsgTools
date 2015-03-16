@@ -115,11 +115,11 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         print self.crs.geographicCRSAuthId(),self.epsg
         crsSrc = QgsCoordinateReferenceSystem(self.crs.geographicCRSAuthId())
         coordinateTransformer = QgsCoordinateTransform(crsSrc, self.crs)
-        polyline = poly.asPolygon()[0]
+        polyline = poly.asMultiPolygon()[0][0]
         newPolyline = []
         for point in polyline:
             newPolyline.append(coordinateTransformer.transform(point))
-        qgsPolygon = QgsGeometry.fromPolygon([newPolyline])
+        qgsPolygon = QgsGeometry.fromMultiPolygon([[newPolyline]])
         return qgsPolygon
            
     def closeDatabase(self):

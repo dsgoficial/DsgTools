@@ -142,7 +142,7 @@ class UtmGrid:
         point = QgsPoint(xmin, ymin)
         polyline.append(point)
 
-        qgsPolygon = QgsGeometry.fromPolygon([polyline])
+        qgsPolygon = QgsGeometry.fromMultiPolygon([[polyline]])
         return qgsPolygon
         
     def getHemisphereMultiplier(self,inomen):

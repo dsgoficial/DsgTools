@@ -22,15 +22,15 @@
  ***************************************************************************/
 """
 import load_by_class_base
-import sqlite3, os
 
 from qgis.core import QgsCoordinateReferenceSystem,QgsDataSourceURI,QgsVectorLayer,QgsMapLayerRegistry,QgsMessageLog
 from qgis.gui import QgsGenericProjectionSelector,QgsMessageBar
 import qgis as qgis
 
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import QFileInfo,QSettings,pyqtSlot
+from PyQt4.QtCore import QFileInfo,QSettings,pyqtSlot, Qt
 from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
+from PyQt4.QtGui import QApplication, QCursor
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Factories', 'SqlFactory'))
