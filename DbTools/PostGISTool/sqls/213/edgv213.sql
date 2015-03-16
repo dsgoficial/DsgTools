@@ -1299,7 +1299,7 @@ CREATE TABLE complexos.asb_complexo_saneamento(
 	nome varchar(80) NOT NULL,
 	tipoclassecnae smallint NOT NULL,
 	administracao smallint NOT NULL,
-	organizacao smallint NOT NULL,
+	organizacao varchar(50),
 	id_org_comerc_serv uuid,
 	CONSTRAINT asb_complexo_saneamento_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
