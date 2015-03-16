@@ -487,8 +487,6 @@ class DsgTools:
 
             # Startin the processing
             self.thread.start()
-        elif result == 0:
-            QMessageBox.information(self.iface.mainWindow(), 'DSG Tools',self.tr('Problem creating the Database!'))
 
     def loadByCategory(self):
         try:
