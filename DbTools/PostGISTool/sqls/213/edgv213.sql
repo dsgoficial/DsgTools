@@ -4305,10 +4305,19 @@ CREATE TABLE cb.sau_descontinuidade_geometrica_p(
 #
 ALTER TABLE cb.sau_descontinuidade_geometrica_p OWNER TO postgres#
 create view public.complex_schema as
-select nsp.nspname as complex_schema, COALESCE(inheritancetree.child,t2.relname) as complex, npsagreg.nspname as aggregated_schema, t.relname as aggregated_class, at1.attname as column_name from pg_constraint c
+select distinct * from (select nsp.nspname as complex_schema, t2.relname as complex, npsagreg.nspname as aggregated_schema, t.relname as aggregated_class, at1.attname as column_name 
+from pg_constraint c
 	left join pg_class t on c.conrelid = t.oid left join pg_class t2 on c.confrelid = t2.oid
-	join pg_namespace nsp on t2.relnamespace = nsp.oid 
-	left join 
+	left join pg_namespace nsp on t2.relnamespace = nsp.oid 
+	left join pg_attribute as at1 on (at1.attnum=c.conkey[1]) and (at1.attrelid=c.conrelid)
+	left join pg_namespace npsagreg on t.relnamespace = npsagreg.oid
+	where contype = 'f' and (nsp.nspname = 'complexos') 
+	UNION 
+select nsp.nspname as complex_schema, COALESCE(inheritancetree.child,t2.relname) as complex, npsagreg.nspname as aggregated_schema, t.relname as aggregated_class, at1.attname as column_name 
+from pg_constraint c
+	left join pg_class t on c.conrelid = t.oid left join pg_class t2 on c.confrelid = t2.oid
+	left join pg_namespace nsp on t2.relnamespace = nsp.oid 
+	join 
 		(SELECT tier1.*,c.relname AS child, c.oid as childoid, p.relname AS parent, tier2p.relname as grandpa, tier3p.relname as grandgrandpa, tier4p.relname as gggpa, COALESCE(tier4p.relname,tier3p.relname,tier2p.relname,p.relname) as ancestral,COALESCE(tier4p.oid,tier3p.oid,tier2p.oid,p.oid) as ancestralOid
 		FROM
 		    pg_inherits as tier1
@@ -4325,7 +4334,7 @@ select nsp.nspname as complex_schema, COALESCE(inheritancetree.child,t2.relname)
 	left join pg_attribute as at1 on (at1.attnum=c.conkey[1]) and (at1.attrelid=c.conrelid)
 	left join pg_namespace npsagreg on t.relnamespace = npsagreg.oid
 	where contype = 'f' and (nsp.nspname = 'complexos')
-	order by t2.relname#
+	order by complex asc) as foo#
 CREATE TABLE dominios.geracao (
  code smallint NOT NULL,
  code_name text NOT NULL, CONSTRAINT
