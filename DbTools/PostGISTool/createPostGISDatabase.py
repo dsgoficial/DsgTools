@@ -27,7 +27,7 @@ from sqlGeneratorFactory import SqlGeneratorFactory
 
 from qgis.core import QgsMessageLog
 
-import sys, os
+import sys, os, codecs
 
 class CreatePostGISDatabase(QThread):
     def __init__(self, db, version, epsg):
@@ -75,13 +75,13 @@ class CreatePostGISDatabase(QThread):
     def loadDatabaseStructure(self, edgvPath):
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            
-            file = open(edgvPath, "r")
+
+            file = codecs.open(edgvPath, encoding='utf-8', mode="r")
             sql = file.read()
             sql = sql.replace('[epsg]', str(self.epsg))
             file.close()
             commands = sql.split('#')
-            
+
             QApplication.restoreOverrideCursor()
         except:
             QApplication.restoreOverrideCursor()
