@@ -254,7 +254,6 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
     def setCRS(self):
         try:
             self.epsg = self.utils.findEPSG(self.db)
-            print self.epsg
             if self.epsg == -1:
                 self.bar.pushMessage("", self.tr("Coordinate Reference System not set or invalid!"), level=QgsMessageBar.WARNING)
             else:
@@ -284,7 +283,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             self.db = self.utils.getPostGISDatabase(self.comboBoxPostgis.currentText())
         try:
             if not self.db.open():
-                print self.db.lastError().text()
+                QgsMessageLog.logMessage(self.db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
                 self.dbLoaded = True
                 self.listCategoriesFromDatabase()
@@ -392,9 +391,6 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             query = QSqlQuery(sql,self.db)
             query.next()
             number = query.value(0)
-            if number > 0:
-                print sql
-                print number
             if not query.exec_(sql):
                 QgsMessageLog.logMessage(self.tr("Problem counting elements: ")+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             listaQuantidades.append([layer, number])
@@ -430,7 +426,6 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             name = layer_name.replace(schema+'.','')
             if category == categoria:
                 sql = self.gen.loadLayerFromDatabase(layer_name)
-                print schema,name,geom_column,sql
                 uri.setDataSource(schema, name, geom_column, sql,'id')
                 uri.disableSelectAtId(True)
                 self.loadEDGVLayer(uri, name, schema, 'postgres', idSubgrupo)
@@ -481,4 +476,4 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         QgsMapLayerRegistry.instance().addMapLayer(vlayer)
         qgis.utils.iface.legendInterface().moveLayer(vlayer, idSubgrupo)
         if not vlayer.isValid():
-            print vlayer.error().summary()
+            QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

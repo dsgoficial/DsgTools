@@ -178,7 +178,7 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
             self.db = self.utils.getPostGISDatabase(self.comboBoxPostgis.currentText())
         try:
             if not self.db.open():
-                print self.db.lastError().text()
+                QgsMessageLog.logMessage(self.db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
                 self.dbLoaded = True
                 self.listClassesFromDatabase()
@@ -279,4 +279,4 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         vlayer.loadNamedStyle(vlayerQml,False)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer)
         if not vlayer.isValid():
-            print vlayer.error().summary()
+            QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
