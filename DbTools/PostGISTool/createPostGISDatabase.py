@@ -73,18 +73,11 @@ class CreatePostGISDatabase(QThread):
         return self.loadDatabaseStructure(edgvPath)
 
     def loadDatabaseStructure(self, edgvPath):
-        try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-
-            file = codecs.open(edgvPath, encoding='utf-8', mode="r")
-            sql = file.read()
-            sql = sql.replace('[epsg]', str(self.epsg))
-            file.close()
-            commands = sql.split('#')
-
-            QApplication.restoreOverrideCursor()
-        except:
-            QApplication.restoreOverrideCursor()
+        file = codecs.open(edgvPath, encoding='utf-8', mode="r")
+        sql = file.read()
+        sql = sql.replace('[epsg]', str(self.epsg))
+        file.close()
+        commands = sql.split('#')
 
         # Progress bar steps calculated
         self.emit( SIGNAL( "rangeCalculated( PyQt_PyObject )" ), len(commands))
