@@ -444,7 +444,6 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             else:
                 category = split[0]
             if category == categoria:
-                print category,layer_name,geom_column
                 uri.setDataSource('', layer_name, geom_column)
                 self.loadEDGVLayer(uri, layer_name, '', 'spatialite', idSubgrupo)
 
