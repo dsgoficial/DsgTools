@@ -54,50 +54,58 @@ class CreateFeatureTest():
         provider = layer.dataProvider()
         fields = provider.fields()
         
+        #getting all attributes that are valueMaps
         combinationlist = []
         mapIndexes = []
         for field in fields:
             if field.name() in domainDict.keys():
                 print layer.fieldNameIndex(field.name()),field.name()
                 valueMap = domainDict[field.name()]
+                #storing the valueMaps
                 combinationlist.append(valueMap.values())
+                #storing the indexes
                 mapIndexes.append(layer.fieldNameIndex(field.name()))
         
+        #calculate all possible combinations between attributes that are valueMaps
         allcombinations = list(itertools.product(*combinationlist))
+        #checking the combinations
         print 'combinations',allcombinations
               
+        #getting the normal attributes
         normalIndexes = dict()        
         for field in fields:
             print 'tipos geral: ',field.type(), field.typeName()
             if field.name() not in domainDict.keys():
+                #defining a dummy value to store with the field index
                 if field.name() != 'id' and field.type() == 2:
                     normalIndexes[layer.fieldNameIndex(field.name())] = 0
                 elif field.typeName() != 'uuid' and field.type() == 10:
                     normalIndexes[layer.fieldNameIndex(field.name())] = 'teste'
                     
+        #just checking the normal indexes
         print 'normal: ',normalIndexes
                     
-        count = 0
-        layer.startEditing()
         for combination in allcombinations:
-            feat = QgsFeature()
+            layer.startEditing()
+            feat = QgsFeature()            
             geom = self.createGeom(layer)
             feat.setGeometry(geom)
-                
+            
+            #inserting the dummy values in the feature
             for key in normalIndexes.keys():
                 feat.setAttributes([key, normalIndexes[key]])
-                
-            size = len(combination)
-            print 'tamanho: ',size
-            for i in range(size):
-                print 'i: ',i
+
+            #inserting the combination values in the feature
+            for i in range(len(combination)):
                 idx = mapIndexes[i]
                 print 'field ID = ',idx,'||field Value = ',combination[i]
                 feat.setAttributes([idx, combination[i]])
-                
+            
+            print 'feature with combination: ', combination
+        
+            #actual layer editing
             layer.dataProvider().addFeatures([feat])
-            print 'feature created with combination: ', combination
-        layer.commitChanges()
+            layer.commitChanges()        
             
     def createGeom(self, layer):
         if layer.name().split('_')[-1] == 'p':
