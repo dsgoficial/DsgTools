@@ -22,6 +22,7 @@
 """
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4.QtSql import *
 
 from qgis.core import *
 
@@ -37,6 +38,16 @@ import unittest, itertools
 # class CreateFeatureTest(unittest.TestCase):
 class CreateFeatureTest():
     def __init__(self, layers):
+        self.db = QSqlDatabase("QPSQL")
+        self.db.setDatabaseName('edgv213')
+        self.db.setHostName('localhost')
+        self.db.setPort(5432)
+        self.db.setUserName('postgres')
+        self.db.setPassword('postgres')
+        if not self.db.open():
+            print self.db.lastError().text()
+
+
         #obtaining the qml file path
         qmlVersionPath = os.path.join(currentPath, 'Qmls', 'qgis_26')
 
@@ -86,10 +97,19 @@ class CreateFeatureTest():
         print 'normal: ',normalIndexes
                     
         for combination in allcombinations:
-            layer.startEditing()
             feat = QgsFeature()            
             geom = self.createGeom(layer)
             feat.setGeometry(geom)
+
+            #getting the nextval for the layer
+            sql = 'select nextval(\'cb.'+layer.name()+'_id_seq\'::regclass)'
+            query = QSqlQuery(sql, self.db)
+            print 'query: ',sql
+            while query.next():
+                nextval = query.value(0)
+                print 'nextval: ',nextval
+                feat.setFeatureId(nextval)
+                feat.setAttributes([0,nextval])
             
             #inserting the dummy values in the feature
             for key in normalIndexes.keys():
@@ -101,11 +121,12 @@ class CreateFeatureTest():
                 print 'field ID = ',idx,'||field Value = ',combination[i]
                 feat.setAttributes([idx, combination[i]])
             
-            print 'feature with combination: ', combination
+            print 'feature ID: ',feat.id(),'feature with combination: ', combination
         
             #actual layer editing
-            layer.dataProvider().addFeatures([feat])
-            layer.commitChanges()        
+            print layer.dataProvider().addFeatures([feat])
+            for error in layer.dataProvider().errors():
+                QgsMessageLog.logMessage(error, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             
     def createGeom(self, layer):
         if layer.name().split('_')[-1] == 'p':
