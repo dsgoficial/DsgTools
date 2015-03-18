@@ -92,10 +92,13 @@ class CreateFeatureTest():
                     normalIndexes[layer.fieldNameIndex(field.name())] = 0
                 elif field.typeName() != 'uuid' and field.type() == 10:
                     normalIndexes[layer.fieldNameIndex(field.name())] = 'teste'
+                elif field.name() == 'id' and field.type() == 2:
+                    normalIndexes[layer.fieldNameIndex(field.name())] = 0
                     
         #just checking the normal indexes
         print 'normal: ',normalIndexes
-                    
+        
+        layer.startEditing()
         for combination in allcombinations:
             feat = QgsFeature()            
             geom = self.createGeom(layer)
@@ -109,11 +112,13 @@ class CreateFeatureTest():
                 nextval = query.value(0)
                 print 'nextval: ',nextval
                 feat.setFeatureId(nextval)
-                feat.setAttributes([0,nextval])
             
             #inserting the dummy values in the feature
             for key in normalIndexes.keys():
-                feat.setAttributes([key, normalIndexes[key]])
+                if key == 'id':
+                    feat.setAttributes([key, nextval])
+                else:
+                    feat.setAttributes([key, normalIndexes[key]])
 
             #inserting the combination values in the feature
             for i in range(len(combination)):
@@ -125,8 +130,9 @@ class CreateFeatureTest():
         
             #actual layer editing
             print layer.dataProvider().addFeatures([feat])
-            for error in layer.dataProvider().errors():
-                QgsMessageLog.logMessage(error, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        layer.commitChanges()
+        for error in layer.dataProvider().errors():
+            QgsMessageLog.logMessage('Error: '+error, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             
     def createGeom(self, layer):
         if layer.name().split('_')[-1] == 'p':
