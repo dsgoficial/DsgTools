@@ -115,9 +115,6 @@ class CreateFeatureTest():
             
             #inserting the dummy values in the feature
             for key in normalIndexes.keys():
-                if key == 'id':
-                    feat.setAttributes([key, nextval])
-                else:
                     feat.setAttributes([key, normalIndexes[key]])
 
             #inserting the combination values in the feature
@@ -127,6 +124,11 @@ class CreateFeatureTest():
                 feat.setAttributes([idx, combination[i]])
             
             print 'feature ID: ',feat.id(),'feature with combination: ', combination
+            
+            idx = layer.fieldNameIndex('id')
+            attrs = { idx : nextval }
+            layer.dataProvider().changeAttributeValues({ feat.id() : attrs })
+            print 'id......',idx,'valor....',feat.attributes()[idx]
         
             #actual layer editing
             print layer.dataProvider().addFeatures([feat])
