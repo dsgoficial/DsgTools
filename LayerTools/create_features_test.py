@@ -52,6 +52,8 @@ class CreateFeatureTest():
         #obtaining the qml file path
         qmlVersionPath = os.path.join(currentPath, 'Qmls', 'qgis_26')
 
+        size = len(layers)
+        count = 1
         for layer in layers:
             layerName = layer.name()
             fileName = layerName+'.qml'
@@ -61,6 +63,8 @@ class CreateFeatureTest():
             domainDict = parser.getDomainDict()
 
             self.createFeatures(layer, domainDict)
+            print str(count),'de',size,'Camada ',layer.name()
+            count += 1
 
     def createFeatures(self, layer, domainDict):
         provider = layer.dataProvider()
@@ -71,7 +75,6 @@ class CreateFeatureTest():
         mapIndexes = []
         for field in fields:
             if field.name() in domainDict.keys():
-                print layer.fieldNameIndex(field.name()),field.name()
                 valueMap = domainDict[field.name()]
                 #storing the valueMaps
                 combinationlist.append(valueMap.values())
@@ -81,12 +84,12 @@ class CreateFeatureTest():
         #calculate all possible combinations between attributes that are valueMaps
         allcombinations = list(itertools.product(*combinationlist))
         #checking the combinations
-        print 'combinations',allcombinations
+#         print 'combinations',allcombinations
 
         #getting the normal attributes
         normalIndexes = dict()
         for field in fields:
-            print 'tipos geral: ',field.type(), field.typeName()
+#             print 'tipos geral: ',field.type(), field.typeName()
             if field.name() not in domainDict.keys():
                 #defining a dummy value to store with the field index
                 if field.name() != 'id' and field.type() == 2:
@@ -95,11 +98,11 @@ class CreateFeatureTest():
                     normalIndexes[field.name()] = '\'teste\''
 
         #just checking the normal indexes
-        print 'normal: ',normalIndexes
+#         print 'normal: ',normalIndexes
 
         for combination in allcombinations:
             geom = self.createGeom(layer)
-            ewkt = '\''+geom.exportToWkt()+'\','+str(4326)
+            ewkt = '\''+geom.exportToWkt()+'\','+str(31983)
             sql = 'INSERT INTO cb.'+layer.name()
             columns = '(geom'
             values = ' VALUES(ST_GeomFromText('+ewkt+')'
@@ -115,16 +118,22 @@ class CreateFeatureTest():
                 fieldName = mapIndexes[i]
                 columns += ','+fieldName
                 values += ','+combination[i]
-                print 'field ID = ',fieldName,'||field Value = ',combination[i]
+#                 print 'field ID = ',fieldName,'||field Value = ',combination[i]
 
             columns += ')'
             values += ')'
 
             sql += columns+values
-            print sql
+#             print sql
             query = QSqlQuery(self.db)
+            file = open('/home/dsgdev/.qgis2/python/plugins/DsgTools/LayerTools/'+layer.name()+'_relatorio_banco_2015_03_18.txt','w')
+            filetext = ''
             if not query.exec_(sql):
                 QgsMessageLog.logMessage('Deu merda: '+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                filetext += 'SQL rodada: '+sql+'\n'
+                filetext += 'Erro obtido: '+query.lastError().text()+'\n'
+            file.write(filetext)
+            file.close()
 
     def createGeom(self, layer):
         if layer.name().split('_')[-1] == 'p':
