@@ -27,7 +27,8 @@ from PyQt4.QtSql import *
 from qgis.core import *
 
 import sys, os
-currentPath = 'C:/Users/luiz/.qgis2/python/plugins/DsgTools'
+# currentPath = 'C:/Users/luiz/.qgis2/python/plugins/DsgTools'
+currentPath = '/home/dsgdev/.qgis2/python/plugins/DsgTools'
 sys.path.append(os.path.join(currentPath, 'QmlTools'))
 sys.path.append(os.path.join(currentPath, 'Utils'))
 from qmlParser import QmlParser
@@ -58,13 +59,13 @@ class CreateFeatureTest():
             qmlPath = os.path.join(qmlVersionPath, 'edgv_213', fileName)
             parser = QmlParser(qmlPath)
             domainDict = parser.getDomainDict()
-            
+
             self.createFeatures(layer, domainDict)
-            
+
     def createFeatures(self, layer, domainDict):
         provider = layer.dataProvider()
         fields = provider.fields()
-        
+
         #getting all attributes that are valueMaps
         combinationlist = []
         mapIndexes = []
@@ -75,73 +76,62 @@ class CreateFeatureTest():
                 #storing the valueMaps
                 combinationlist.append(valueMap.values())
                 #storing the indexes
-                mapIndexes.append(layer.fieldNameIndex(field.name()))
-        
+                mapIndexes.append(field.name())
+
         #calculate all possible combinations between attributes that are valueMaps
         allcombinations = list(itertools.product(*combinationlist))
         #checking the combinations
         print 'combinations',allcombinations
-              
+
         #getting the normal attributes
-        normalIndexes = dict()        
+        normalIndexes = dict()
         for field in fields:
             print 'tipos geral: ',field.type(), field.typeName()
             if field.name() not in domainDict.keys():
                 #defining a dummy value to store with the field index
                 if field.name() != 'id' and field.type() == 2:
-                    normalIndexes[layer.fieldNameIndex(field.name())] = 0
+                    normalIndexes[field.name()] = 0
                 elif field.typeName() != 'uuid' and field.type() == 10:
-                    normalIndexes[layer.fieldNameIndex(field.name())] = 'teste'
-                elif field.name() == 'id' and field.type() == 2:
-                    normalIndexes[layer.fieldNameIndex(field.name())] = 0
-                    
+                    normalIndexes[field.name()] = '\'teste\''
+
         #just checking the normal indexes
         print 'normal: ',normalIndexes
-        
-        layer.startEditing()
-        for combination in allcombinations:
-            feat = QgsFeature()            
-            geom = self.createGeom(layer)
-            feat.setGeometry(geom)
 
-            #getting the nextval for the layer
-            sql = 'select nextval(\'cb.'+layer.name()+'_id_seq\'::regclass)'
-            query = QSqlQuery(sql, self.db)
-            print 'query: ',sql
-            while query.next():
-                nextval = query.value(0)
-                print 'nextval: ',nextval
-                feat.setFeatureId(nextval)
-            
+        for combination in allcombinations:
+            geom = self.createGeom(layer)
+            ewkt = '\''+geom.exportToWkt()+'\','+str(4326)
+            sql = 'INSERT INTO cb.'+layer.name()
+            columns = '(geom'
+            values = ' VALUES(ST_GeomFromText('+ewkt+')'
+
             #inserting the dummy values in the feature
             for key in normalIndexes.keys():
-                    feat.setAttributes([key, normalIndexes[key]])
+                fieldName = key
+                columns += ','+fieldName
+                values += ','+normalIndexes[key]
 
             #inserting the combination values in the feature
             for i in range(len(combination)):
-                idx = mapIndexes[i]
-                print 'field ID = ',idx,'||field Value = ',combination[i]
-                feat.setAttributes([idx, combination[i]])
-            
-            print 'feature ID: ',feat.id(),'feature with combination: ', combination
-            
-            idx = layer.fieldNameIndex('id')
-            attrs = { idx : nextval }
-            layer.dataProvider().changeAttributeValues({ feat.id() : attrs })
-            print 'id......',idx,'valor....',feat.attributes()[idx]
-        
-            #actual layer editing
-            print layer.dataProvider().addFeatures([feat])
-        layer.commitChanges()
-        for error in layer.dataProvider().errors():
-            QgsMessageLog.logMessage('Error: '+error, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            
+                fieldName = mapIndexes[i]
+                columns += ','+fieldName
+                values += ','+combination[i]
+                print 'field ID = ',fieldName,'||field Value = ',combination[i]
+
+            columns += ')'
+            values += ')'
+
+            sql += columns+values
+            print sql
+            query = QSqlQuery(self.db)
+            if not query.exec_(sql):
+                QgsMessageLog.logMessage('Deu merda: '+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+
     def createGeom(self, layer):
         if layer.name().split('_')[-1] == 'p':
             geom = QgsGeometry.fromMultiPoint([QgsPoint(50,50)])
         if layer.name().split('_')[-1] == 'l':
             polyline = []
-    
+
             point = QgsPoint(0, 0)
             polyline.append(point)
             point = QgsPoint(50, 50)
@@ -150,19 +140,19 @@ class CreateFeatureTest():
             geom = QgsGeometry.fromMultiPolyline([polyline])
         if layer.name().split('_')[-1] == 'a':
             polyline = []
-    
+
             point = QgsPoint(0, 0)
             polyline.append(point)
             point = QgsPoint(50, 0)
             polyline.append(point)
-            point = QgsPoint(50, 50) 
+            point = QgsPoint(50, 50)
             polyline.append(point)
             point = QgsPoint(0, 0)
             polyline.append(point)
 
             geom = QgsGeometry.fromMultiPolygon([[polyline]])
-            
+
         return geom
-    
+
 layers = iface.mapCanvas().layers()
 creator = CreateFeatureTest(layers)
