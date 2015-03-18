@@ -83,11 +83,9 @@ class CreateFeatureTest():
             feat = QgsFeature()
             geom = self.createGeom(layer)
             feat.setGeometry(geom)
-            feat.setAttribute(0, count)
-            count += 1
                 
             for key in normalIndexes.keys():
-                feat.setAttribute(key, normalIndexes[key])
+                feat.setAttributes([key, normalIndexes[key]])
                 
             size = len(combination)
             print 'tamanho: ',size
@@ -95,7 +93,7 @@ class CreateFeatureTest():
                 print 'i: ',i
                 idx = mapIndexes[i]
                 print 'field ID = ',idx,'||field Value = ',combination[i]
-                feat.setAttribute(idx, combination[i])
+                feat.setAttributes([idx, combination[i]])
                 
             layer.dataProvider().addFeatures([feat])
             print 'feature created with combination: ', combination
