@@ -28,8 +28,8 @@ from qgis.core import *
 
 import sys, os
 from uuid import uuid4
-# currentPath = 'C:/Users/luiz/.qgis2/python/plugins/DsgTools'
-currentPath = '/home/dsgdev/.qgis2/python/plugins/DsgTools'
+currentPath = 'C:/Users/luiz/.qgis2/python/plugins/DsgTools'
+# currentPath = '/home/dsgdev/.qgis2/python/plugins/DsgTools'
 sys.path.append(os.path.join(currentPath, 'QmlTools'))
 sys.path.append(os.path.join(currentPath, 'Utils'))
 from qmlParser import QmlParser
@@ -48,7 +48,6 @@ class CreateFeatureTest():
         self.db.setPassword('postgres')
         if not self.db.open():
             print self.db.lastError().text()
-
 
         #obtaining the qml file path
         qmlVersionPath = os.path.join(currentPath, 'Qmls', 'qgis_26')
@@ -71,70 +70,29 @@ class CreateFeatureTest():
         provider = layer.dataProvider()
         fields = provider.fields()
 
-        #getting all attributes that are valueMaps
-        combinationlist = []
-        mapIndexes = []
+#         file = open('/home/dsgdev/.qgis2/python/plugins/DsgTools/LayerTools/'+layer.name()+'_relatorio_banco_2015_03_18.txt','w')
+        file = open('C:/Users/luiz/.qgis2/python/plugins/DsgTools/LayerTools/'+layer.name()+'_relatorio_banco_2015_03_18.txt','w')
+        filetext = ''
         for field in fields:
             if field.name() in domainDict.keys():
                 valueMap = domainDict[field.name()]
-                #storing the valueMaps
-                combinationlist.append(valueMap.values())
-                #storing the indexes
-                mapIndexes.append(field.name())
-
-        #calculate all possible combinations between attributes that are valueMaps
-        allcombinations = list(itertools.product(*combinationlist))
-        #checking the combinations
-#         print 'combinations',allcombinations
-
-        #getting the normal attributes
-        normalIndexes = dict()
-        for field in fields:
-#             print 'tipos geral: ',field.type(), field.typeName()
-            if field.name() not in domainDict.keys():
-                #defining a dummy value to store with the field index
-                if field.name() != 'id' and field.type() == 2:
-                    normalIndexes[field.name()] = 0
-                elif field.typeName() != 'uuid' and field.type() == 10:
-                    normalIndexes[field.name()] = '\'teste\''
-
-        #just checking the normal indexes
-#         print 'normal: ',normalIndexes
-
-        for combination in allcombinations:
-            geom = self.createGeom(layer)
-            ewkt = '\''+geom.exportToWkt()+'\','+str(31983)
-            sql = 'INSERT INTO cb.'+layer.name()
-            columns = '(geom'
-            values = ' VALUES(ST_GeomFromText('+ewkt+')'
-
-            #inserting the dummy values in the feature
-            for key in normalIndexes.keys():
-                fieldName = key
-                columns += ','+fieldName
-                values += ','+normalIndexes[key]
-
-            #inserting the combination values in the feature
-            for i in range(len(combination)):
-                fieldName = mapIndexes[i]
-                columns += ','+fieldName
-                values += ','+combination[i]
-#                 print 'field ID = ',fieldName,'||field Value = ',combination[i]
-
-            columns += ')'
-            values += ')'
-
-            sql += columns+values
-#             print sql
-            query = QSqlQuery(self.db)
-            file = open('/home/dsgdev/.qgis2/python/plugins/DsgTools/LayerTools/'+layer.name()+'_relatorio_banco_2015_03_18.txt','w')
-            filetext = ''
-            if not query.exec_(sql):
-                QgsMessageLog.logMessage('Deu merda: '+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                filetext += 'SQL rodada: '+sql+'\n'
-                filetext += 'Erro obtido: '+query.lastError().text()+'\n'
-            file.write(filetext)
-            file.close()
+                for value in valueMap.values():
+                    geom = self.createGeom(layer)
+                    ewkt = '\''+geom.exportToWkt()+'\','+str(31982)
+                    sql = 'INSERT INTO cb.'+layer.name()
+                    columns = '(geom,'+field.name()+')'
+                    values = ' VALUES(ST_GeomFromText('+ewkt+'),'+value+')'
+                    sql += columns+values
+#                     print sql
+                    query = QSqlQuery(self.db)
+                    if not query.exec_(sql):
+                        filetext += 'SQL rodada: '+sql+'\n'
+                        filetext += 'Erro obtido: '+query.lastError().text()+'\n'
+                        aux = filetext
+                        QgsMessageLog.logMessage('Deu merda: '+aux, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        filetext += '-------------------------------------------\n'
+        file.write(filetext)
+        file.close()
 
     def createGeom(self, layer):
         if layer.name().split('_')[-1] == 'p':
@@ -167,7 +125,7 @@ class CreateFeatureTest():
 class CreateComplexTest():
     def __init__(self, layers):
         self.db = QSqlDatabase("QPSQL")
-        self.db.setDatabaseName('complexos')
+        self.db.setDatabaseName('edgv213')
         self.db.setHostName('localhost')
         self.db.setPort(5432)
         self.db.setUserName('postgres')
@@ -198,69 +156,28 @@ class CreateComplexTest():
         provider = layer.dataProvider()
         fields = provider.fields()
 
-        #getting all attributes that are valueMaps
-        combinationlist = []
-        mapIndexes = []
+#         file = open('/home/dsgdev/.qgis2/python/plugins/DsgTools/LayerTools/'+layer.name()+'_relatorio_banco_2015_03_18.txt','w')
+        file = open('C:/Users/luiz/.qgis2/python/plugins/DsgTools/LayerTools/'+layer.name()+'_relatorio_banco_2015_03_18.txt','w')
+        filetext = ''
         for field in fields:
             if field.name() in domainDict.keys():
                 valueMap = domainDict[field.name()]
-                #storing the valueMaps
-                combinationlist.append(valueMap.values())
-                #storing the indexes
-                mapIndexes.append(field.name())
-
-        #calculate all possible combinations between attributes that are valueMaps
-        allcombinations = list(itertools.product(*combinationlist))
-        #checking the combinations
-#         print 'combinations',allcombinations
-
-        #getting the normal attributes
-        normalIndexes = dict()
-        for field in fields:
-#             print 'tipos geral: ',field.type(), field.typeName()
-            if field.name() not in domainDict.keys():
-                #defining a dummy value to store with the field index
-                if field.name() != 'id' and field.type() == 2:
-                    normalIndexes[field.name()] = 0
-                elif field.typeName() != 'uuid' and field.type() == 10:
-                    normalIndexes[field.name()] = '\'teste\''
-
-        #just checking the normal indexes
-#         print 'normal: ',normalIndexes
-
-        for combination in allcombinations:
-            sql = 'INSERT INTO complexos.'+layer.name()
-            columns = '(id'
-            values = ' VALUES('+'\''+str(uuid4())+'\''
-
-            #inserting the dummy values in the feature
-            for key in normalIndexes.keys():
-                fieldName = key
-                columns += ','+fieldName
-                values += ','+normalIndexes[key]
-
-            #inserting the combination values in the feature
-            for i in range(len(combination)):
-                fieldName = mapIndexes[i]
-                columns += ','+fieldName
-                values += ','+combination[i]
-#                 print 'field ID = ',fieldName,'||field Value = ',combination[i]
-
-            columns += ')'
-            values += ')'
-
-            sql += columns+values
-#            print sql
-            query = QSqlQuery(self.db)
-            file = open('/home/dsgdev/.qgis2/python/plugins/DsgTools/LayerTools/'+layer.name()+'_relatorio_banco_2015_03_18.txt','w')
-            filetext = ''
-            if not query.exec_(sql):
-                QgsMessageLog.logMessage('Deu merda: '+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                filetext += 'SQL rodada: '+sql+'\n'
-                filetext += 'Erro obtido: '+query.lastError().text()+'\n'
-            file.write(filetext)
-            file.close()
+                for value in valueMap.values():
+                    sql = 'INSERT INTO cb.'+layer.name()
+                    columns = '('+field.name()+')'
+                    values = ' VALUES('+value+')'
+                    sql += columns+values
+#                     print sql
+                    query = QSqlQuery(self.db)
+                    if not query.exec_(sql):
+                        filetext += 'SQL rodada: '+sql+'\n'
+                        filetext += 'Erro obtido: '+query.lastError().text()+'\n'
+                        aux = filetext
+                        QgsMessageLog.logMessage('Deu merda: '+aux, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        filetext += '-------------------------------------------\n'
+        file.write(filetext)
+        file.close()
 
 layers = iface.mapCanvas().layers()
-#creator = CreateFeatureTest(layers)
-creator = CreateComplexTest(layers)
+creator = CreateFeatureTest(layers)
+# creator = CreateComplexTest(layers)
