@@ -163,8 +163,8 @@ class CreateComplexTest():
                 valueMap = domainDict[field.name()]
                 for value in valueMap.values():
                     sql = 'INSERT INTO complexos.'+layer.name()
-                    columns = '('+field.name()+')'
-                    values = ' VALUES('+value+')'
+                    columns = '(nome,'+field.name()+')'
+                    values = ' VALUES(\'teste\','+value+')'
                     sql += columns+values
 #                     print sql
                     query = QSqlQuery(self.db)
