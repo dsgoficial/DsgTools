@@ -28,8 +28,8 @@ from qgis.core import *
 
 import sys, os
 from uuid import uuid4
-currentPath = 'C:/Users/luiz/.qgis2/python/plugins/DsgTools'
-# currentPath = '/home/dsgdev/.qgis2/python/plugins/DsgTools'
+# currentPath = 'C:/Users/luiz/.qgis2/python/plugins/DsgTools'
+currentPath = '/home/dsgdev/.qgis2/python/plugins/DsgTools'
 sys.path.append(os.path.join(currentPath, 'QmlTools'))
 sys.path.append(os.path.join(currentPath, 'Utils'))
 from qmlParser import QmlParser
@@ -39,7 +39,9 @@ import unittest, itertools
 
 # class CreateFeatureTest(unittest.TestCase):
 class CreateFeatureTest():
-    def __init__(self, layers):
+    def __init__(self, layers, geomClass = True):
+        self.geomClass = geomClass
+
         self.db = QSqlDatabase("QPSQL")
         self.db.setDatabaseName('edgv213')
         self.db.setHostName('localhost')
@@ -70,20 +72,25 @@ class CreateFeatureTest():
         provider = layer.dataProvider()
         fields = provider.fields()
 
-#         file = open('/home/dsgdev/.qgis2/python/plugins/DsgTools/LayerTools/'+layer.name()+'_relatorio_banco_2015_03_18.txt','w')
-        file = open('C:/Users/luiz/.qgis2/python/plugins/DsgTools/LayerTools/'+layer.name()+'_relatorio_banco_2015_03_18.txt','w')
+        file = open(os.path.join(currentPath, 'LayerTools', 'Problemas', layer.name()+'_relatorio_banco_2015_03_19.txt'), 'w')
         filetext = ''
         for field in fields:
             if field.name() in domainDict.keys():
                 valueMap = domainDict[field.name()]
                 for value in valueMap.values():
-                    geom = self.createGeom(layer)
-                    ewkt = '\''+geom.exportToWkt()+'\','+str(31982)
-                    sql = 'INSERT INTO cb.'+layer.name()
-                    columns = '(geom,'+field.name()+')'
-                    values = ' VALUES(ST_GeomFromText('+ewkt+'),'+value+')'
-                    sql += columns+values
-#                     print sql
+                    sql = ''
+                    if self.geomClass:
+                        geom = self.createGeom(layer)
+                        ewkt = '\''+geom.exportToWkt()+'\','+str(31982)
+                        sql += 'INSERT INTO cb.'+layer.name()
+                        columns = '(geom,'+field.name()+')'
+                        values = ' VALUES(ST_GeomFromText('+ewkt+'),'+value+')'
+                        sql += columns+values
+                    else:
+                        sql += 'INSERT INTO complexos.'+layer.name()
+                        columns = '(nome,'+field.name()+')'
+                        values = ' VALUES(\'teste\','+value+')'
+                        sql += columns+values
                     query = QSqlQuery(self.db)
                     if not query.exec_(sql):
                         filetext += 'SQL rodada: '+sql+'\n'
@@ -122,61 +129,5 @@ class CreateFeatureTest():
 
         return geom
 
-class CreateComplexTest():
-    def __init__(self, layers):
-        self.db = QSqlDatabase("QPSQL")
-        self.db.setDatabaseName('edgv213')
-        self.db.setHostName('localhost')
-        self.db.setPort(5432)
-        self.db.setUserName('postgres')
-        self.db.setPassword('postgres')
-        if not self.db.open():
-            print self.db.lastError().text()
-
-
-        #obtaining the qml file path
-        qmlVersionPath = os.path.join(currentPath, 'Qmls', 'qgis_26')
-
-        size = len(layers)
-        count = 1
-        for layer in layers:
-            layerName = layer.name()
-            fileName = layerName+'.qml'
-
-            qmlPath = os.path.join(qmlVersionPath, 'edgv_213', fileName)
-            parser = QmlParser(qmlPath)
-            domainDict = parser.getDomainDict()
-
-            self.createFeatures(layer, domainDict)
-            print str(count),'de',size,'Camada ',layer.name()
-            count += 1
-
-    def createFeatures(self, layer, domainDict):
-        provider = layer.dataProvider()
-        fields = provider.fields()
-
-#         file = open('/home/dsgdev/.qgis2/python/plugins/DsgTools/LayerTools/'+layer.name()+'_relatorio_banco_2015_03_18.txt','w')
-        file = open('C:/Users/luiz/.qgis2/python/plugins/DsgTools/LayerTools/'+layer.name()+'_relatorio_banco_2015_03_18.txt','w')
-        filetext = ''
-        for field in fields:
-            if field.name() in domainDict.keys():
-                valueMap = domainDict[field.name()]
-                for value in valueMap.values():
-                    sql = 'INSERT INTO complexos.'+layer.name()
-                    columns = '(nome,'+field.name()+')'
-                    values = ' VALUES(\'teste\','+value+')'
-                    sql += columns+values
-#                     print sql
-                    query = QSqlQuery(self.db)
-                    if not query.exec_(sql):
-                        filetext += 'SQL rodada: '+sql+'\n'
-                        filetext += 'Erro obtido: '+query.lastError().text()+'\n'
-                        aux = filetext
-                        QgsMessageLog.logMessage('Deu merda: '+aux, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                        filetext += '-------------------------------------------\n'
-        file.write(filetext)
-        file.close()
-
 layers = iface.mapCanvas().layers()
-# creator = CreateFeatureTest(layers)
-creator = CreateComplexTest(layers)
+creator = CreateFeatureTest(layers)
