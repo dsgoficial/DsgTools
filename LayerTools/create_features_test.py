@@ -144,7 +144,6 @@ class CreateComplexTest():
             fileName = layerName+'.qml'
 
             qmlPath = os.path.join(qmlVersionPath, 'edgv_213', fileName)
-            print qmlPath
             parser = QmlParser(qmlPath)
             domainDict = parser.getDomainDict()
 
@@ -163,7 +162,7 @@ class CreateComplexTest():
             if field.name() in domainDict.keys():
                 valueMap = domainDict[field.name()]
                 for value in valueMap.values():
-                    sql = 'INSERT INTO cb.'+layer.name()
+                    sql = 'INSERT INTO complexos.'+layer.name()
                     columns = '('+field.name()+')'
                     values = ' VALUES('+value+')'
                     sql += columns+values
@@ -179,5 +178,5 @@ class CreateComplexTest():
         file.close()
 
 layers = iface.mapCanvas().layers()
-creator = CreateFeatureTest(layers)
-# creator = CreateComplexTest(layers)
+# creator = CreateFeatureTest(layers)
+creator = CreateComplexTest(layers)
