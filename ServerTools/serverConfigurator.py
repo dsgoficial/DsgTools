@@ -53,9 +53,9 @@ class ServerConfigurator(QDialog, Ui_Dialog):
             password = self.passwordEdit.text()
             self.storeServerConfiguration(name, host, port, user, password)
             self.populateServersCombo()
-            QMessageBox.warning(self.iface.mainWindow(), self.tr("Info!"), self.tr("Server stored."))
+            QMessageBox.warning(self, self.tr("Info!"), self.tr("Server stored."))
         else:
-            QMessageBox.warning(self.iface.mainWindow(), self.tr("Warning!"), self.tr("Fill all parameters."))
+            QMessageBox.warning(self, self.tr("Warning!"), self.tr("Fill all parameters."))
 
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
@@ -65,7 +65,7 @@ class ServerConfigurator(QDialog, Ui_Dialog):
     def on_removeButton_clicked(self):
         self.removeServerConfiguration()
         self.populateServersCombo()
-        QMessageBox.warning(self.iface.mainWindow(), self.tr("Info!"), self.tr("Server removed."))
+        QMessageBox.warning(self, self.tr("Info!"), self.tr("Server removed."))
 
     def on_serversCombo_currentIndexChanged(self, index):
         self.getServerConfiguration(self.serversCombo.currentText())
