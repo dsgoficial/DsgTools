@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_serverConfigurator.ui'
 #
-# Created: Sun Dec 21 00:49:32 2014
+# Created: Thu Mar 19 21:58:21 2015
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(246, 209)
+        Dialog.resize(263, 185)
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.horizontalLayout = QtGui.QHBoxLayout()
@@ -82,6 +82,9 @@ class Ui_Dialog(object):
         self.cancelButton = QtGui.QPushButton(Dialog)
         self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
         self.horizontalLayout_6.addWidget(self.cancelButton)
+        self.removeButton = QtGui.QPushButton(Dialog)
+        self.removeButton.setObjectName(_fromUtf8("removeButton"))
+        self.horizontalLayout_6.addWidget(self.removeButton)
         self.gridLayout.addLayout(self.horizontalLayout_6, 5, 0, 1, 1)
 
         self.retranslateUi(Dialog)
@@ -96,4 +99,5 @@ class Ui_Dialog(object):
         self.label_5.setText(QtGui.QApplication.translate("Dialog", "Password:", None, QtGui.QApplication.UnicodeUTF8))
         self.saveButton.setText(QtGui.QApplication.translate("Dialog", "Save", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelButton.setText(QtGui.QApplication.translate("Dialog", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+        self.removeButton.setText(QtGui.QApplication.translate("Dialog", "Remove", None, QtGui.QApplication.UnicodeUTF8))
 

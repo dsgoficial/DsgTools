@@ -61,6 +61,12 @@ class ServerConfigurator(QDialog, Ui_Dialog):
     def on_cancelButton_clicked(self):
         self.done(0)
 
+    @pyqtSlot(bool)
+    def on_removeButton_clicked(self):
+        self.removeServerConfiguration()
+        self.populateServersCombo()
+        QMessageBox.warning(self.iface.mainWindow(), self.tr("Info!"), self.tr("Server removed."))
+
     def on_serversCombo_currentIndexChanged(self, index):
         self.getServerConfiguration(self.serversCombo.currentText())
 
@@ -77,6 +83,12 @@ class ServerConfigurator(QDialog, Ui_Dialog):
         settings.setValue('port', port)
         settings.setValue('username', user)
         settings.setValue('password', password)
+        settings.endGroup()
+
+    def removeServerConfiguration(self):
+        settings = QSettings()
+        settings.beginGroup('PostgreSQL/servers/'+self.serversCombo.currentText())
+        settings.remove('')
         settings.endGroup()
 
     def getServerConfiguration(self, name):
