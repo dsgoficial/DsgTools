@@ -43,7 +43,7 @@ class CreateFeatureTest():
         self.geomClass = geomClass
 
         self.db = QSqlDatabase("QPSQL")
-        self.db.setDatabaseName('edgv213')
+        self.db.setDatabaseName('teste213')
         self.db.setHostName('localhost')
         self.db.setPort(5432)
         self.db.setUserName('postgres')

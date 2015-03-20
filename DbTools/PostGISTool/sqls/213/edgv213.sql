@@ -4352,7 +4352,7 @@ from pg_constraint c
         left join pg_attribute as at1 on (at1.attnum=c.conkey[1]) and (at1.attrelid=c.conrelid)
         left join pg_namespace npsagreg on t.relnamespace = npsagreg.oid
         where contype = 'f' and (nsp.nspname = 'complexos')
-        order by complex asc) as foo
+        order by complex asc) as foo#
 CREATE TABLE dominios.geracao (
  code smallint NOT NULL,
  code_name text NOT NULL, CONSTRAINT
