@@ -15,7 +15,7 @@ CREATE TABLE cb.hid_area_umida_a(
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
 	tipoareaumida smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_area_umida_a_pkey PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -97,7 +97,7 @@ CREATE TABLE cb.hid_fonte_dagua_p(
 	tipofontedagua smallint NOT NULL,
 	qualidagua smallint NOT NULL,
 	regime smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_fonte_dagua_p_pkey PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -126,7 +126,7 @@ CREATE TABLE cb.hid_limite_massa_dagua_l(
 	materialpredominante smallint NOT NULL,
 	alturamediamargem real,
 	nomeabrev varchar(50),
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_limite_massa_dagua_l_pkey PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -139,7 +139,7 @@ CREATE TABLE cb.hid_massa_dagua_a(
 	tipomassadagua smallint NOT NULL,
 	regime smallint NOT NULL,
 	salinidade smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_massa_dagua_a_pkey PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -150,7 +150,7 @@ CREATE TABLE cb.hid_ponto_drenagem_p(
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
 	relacionado smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_ponto_drenagem_p_pkey PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -170,18 +170,18 @@ CREATE TABLE cb.hid_quebramar_molhe(
 )#
 ALTER TABLE cb.hid_quebramar_molhe OWNER TO postgres#
 CREATE TABLE cb.hid_quebramar_molhe_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_quebramar_molhe_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_quebramar_molhe)
 #
 ALTER TABLE cb.hid_quebramar_molhe_l OWNER TO postgres#
 CREATE TABLE cb.hid_queda_dagua_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_queda_dagua_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_queda_dagua)
 #
 CREATE TABLE cb.hid_recife_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_recife_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_recife)
 #
@@ -199,8 +199,8 @@ CREATE TABLE cb.hid_reservatorio_hidrico_a(
 	volumeutil integer,
 	namaximomaximorum integer,
 	namaximooperacional integer,
-	id_complexo_gerad_energ_eletr uuid NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	id_complexo_gerad_energ_eletr uuid,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_reservatorio_hidrico_a_pkey PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -213,23 +213,23 @@ CREATE TABLE cb.hid_trecho_massa_dagua_a(
 	regime smallint NOT NULL,
 	salinidade smallint NOT NULL,
 	id_trecho_curso_dagua uuid,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_trecho_massa_dagua_a_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.hid_trecho_massa_dagua_a OWNER TO postgres#
 CREATE TABLE cb.hid_barragem_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_barragem_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_barragem)
 #
 CREATE TABLE cb.hid_sumidouro_vertedouro_p(
 	id serial NOT NULL,
-	nome varchar(80) NOT NULL,
+	nome varchar(80),
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
 	tiposumvert smallint NOT NULL,
 	causa smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_sumidouro_vertedouro_p_pkey PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )WITH ( OIDS = TRUE )#
@@ -240,7 +240,7 @@ CREATE TABLE cb.hid_terreno_suj_inundacao_a(
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
 	periodicidadeinunda character(20),
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_terreno_sujeito_inundacao_a_pkey PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -261,47 +261,47 @@ CREATE TABLE cb.hid_trecho_drenagem_l(
 	velocidademedcorrente real,
 	profundidademedia real,
 	id_trecho_curso_dagua uuid,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_trecho_drenagem_l_pkey PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
 ALTER TABLE cb.hid_trecho_drenagem_l OWNER TO postgres#
 CREATE TABLE cb.hid_quebramar_molhe_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_quebramar_molhe_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_quebramar_molhe)
 #
 ALTER TABLE cb.hid_quebramar_molhe_a OWNER TO postgres#
 CREATE TABLE cb.hid_banco_areia_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_banco_areia_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_banco_areia)
 #
 CREATE TABLE cb.hid_banco_areia_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_banco_areia_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_banco_areia)
 #
 ALTER TABLE cb.hid_banco_areia_a OWNER TO postgres#
 CREATE TABLE cb.hid_barragem_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_barragem_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_barragem)
 #
 CREATE TABLE cb.hid_recife_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_recife_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_recife)
 #
 ALTER TABLE cb.hid_recife_l OWNER TO postgres#
 CREATE TABLE cb.hid_recife_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_recife_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_recife)
 #
 ALTER TABLE cb.hid_recife_a OWNER TO postgres#
 CREATE TABLE cb.hid_barragem_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_barragem_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_barragem)
 #
@@ -311,43 +311,43 @@ CREATE TABLE cb.rel_alter_fisiog_antropica(
 ) INHERITS(cb.rel_elemento_fisiografico)
 #
 CREATE TABLE cb.rel_elemento_fisiog_natural_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT rel_elemento_fisiog_natural_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_elemento_fisiog_natural)
 #
 CREATE TABLE cb.hid_comporta_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_comporta_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_comporta)
 WITH ( OIDS = TRUE )#
 CREATE TABLE cb.hid_queda_dagua_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_queda_dagua_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_queda_dagua)
 #
 CREATE TABLE cb.hid_queda_dagua_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_queda_dagua_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_queda_dagua)
 #
 CREATE TABLE cb.hid_corredeira_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_corredeira_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_corredeira)
 #
 CREATE TABLE cb.hid_corredeira_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_corredeira_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_corredeira)
 #
 CREATE TABLE cb.hid_comporta_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_comporta_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_comporta)
 WITH ( OIDS = TRUE )#
 ALTER TABLE cb.hid_comporta_l OWNER TO postgres#
 CREATE TABLE cb.hid_corredeira_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_corredeira_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_corredeira)
 #
@@ -361,17 +361,17 @@ CREATE TABLE cb.hid_confluencia_p(
 ) INHERITS(cb.hid_ponto_drenagem_p)
 #
 CREATE TABLE cb.hid_foz_maritima_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_foz_maritima_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_foz_maritima)
 #
 CREATE TABLE cb.hid_foz_maritima_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_foz_maritima_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_foz_maritima)
 #
 CREATE TABLE cb.hid_foz_maritima_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_foz_maritima_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_foz_maritima)
 #
@@ -382,7 +382,7 @@ CREATE TABLE cb.veg_vegetacao_a(
 	geometriaaproximada smallint NOT NULL,
 	denso smallint NOT NULL,
 	antropizada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT veg_vegetacao_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -400,7 +400,7 @@ CREATE TABLE cb.veg_veg_cultivada_a(
 	denso smallint NOT NULL,
 	alturamediaindividuos real,
 	cultivopredominante smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT veg_veg_cultivada_a_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.veg_veg_area_contato_a(
@@ -411,7 +411,7 @@ CREATE TABLE cb.veg_veg_area_contato_a(
 	denso smallint NOT NULL,
 	alturamediaindividuos real,
 	antropizada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT veg_veg_area_contato_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.veg_campo_a(
@@ -421,7 +421,7 @@ CREATE TABLE cb.veg_campo_a(
 	geometriaaproximada smallint NOT NULL,
 	tipocampo smallint NOT NULL,
 	ocorrenciaem smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT veg_campo_a_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.veg_cerrado_cerradao_a(
@@ -478,13 +478,13 @@ CREATE TABLE cb.rel_curva_nivel_l(
 	cota integer NOT NULL,
 	depressao smallint NOT NULL,
 	indice smallint NOT NULL,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT rel_curva_nivel_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_isolinha_hipsometrica)
 #
 CREATE TABLE cb.rel_curva_batimetrica_l(
 	profundidade integer,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT rel_curva_batimetrica_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_isolinha_hipsometrica)
 #
@@ -493,7 +493,7 @@ CREATE TABLE cb.rel_terreno_exposto_a(
 	geometriaaproximada smallint NOT NULL DEFAULT 1,
 	tipoterrexp smallint NOT NULL DEFAULT 0,
 	causaexposicao smallint NOT NULL DEFAULT 0,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT rel_terreno_exposto_a_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.rel_ponto_hipsometrico(
@@ -503,7 +503,7 @@ CREATE TABLE cb.rel_ponto_hipsometrico(
 )#
 CREATE TABLE cb.rel_ponto_cotado_batimetrico_p(
 	profundidade float,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT rel_ponto_cotado_batimetrico_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_ponto_hipsometrico)
 #
@@ -511,12 +511,12 @@ CREATE TABLE cb.rel_ponto_cotado_altimetrico_p(
 	geometriaaproximada smallint NOT NULL,
 	cotacomprovada smallint NOT NULL,
 	cota float,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT rel_ponto_cotado_altimetrico_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_ponto_hipsometrico)
 #
 CREATE TABLE cb.rel_elemento_fisiog_natural_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT rel_elemento_fisiog_natural_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_elemento_fisiog_natural)
 #
@@ -537,12 +537,12 @@ CREATE TABLE cb.loc_edificacao(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.rel_alter_fisiog_antropica_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT rel_alter_fisiog_antropica_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_alter_fisiog_antropica)
 #
 CREATE TABLE cb.rel_alter_fisiog_antropica_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT rel_alter_fisiog_antropica_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_alter_fisiog_antropica)
 #
@@ -563,7 +563,7 @@ CREATE TABLE cb.eco_ext_mineral(
 	CONSTRAINT eco_ext_mineral_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.loc_edificacao_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT loc_edificacao_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_edificacao)
 #
@@ -573,12 +573,12 @@ CREATE TABLE cb.rel_duna_p(
 ) INHERITS(cb.rel_elemento_fisiog_natural_p)
 #
 CREATE TABLE cb.loc_edificacao_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT loc_edificacao_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_edificacao)
 #
 CREATE TABLE cb.rel_elemento_fisiog_natural_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT rel_elemento_fisiog_natural_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.rel_elemento_fisiog_natural)
 #
@@ -749,7 +749,7 @@ CREATE TABLE cb.hid_rocha_em_agua(
 	 WITH (FILLFACTOR = 100)
 )#
 CREATE TABLE cb.hid_rocha_em_agua_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_rocha_em_agua_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_rocha_em_agua)
 #
@@ -807,7 +807,7 @@ CREATE TABLE cb.asb_dep_abast_agua(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.asb_dep_abast_agua_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT asb_dep_abast_agua_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.asb_dep_abast_agua)
 #
@@ -829,7 +829,7 @@ CREATE TABLE cb.asb_dep_saneamento(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.asb_dep_saneamento_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT asb_dep_saneamento_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.asb_dep_saneamento)
 #
@@ -850,14 +850,14 @@ CREATE TABLE cb.eco_deposito_geral(
 	tratamento smallint NOT NULL,
 	id_org_comerc_serv uuid,
 	id_org_ext_mineral uuid,
-	id_org_agrop_ext_veg_pesca uuid,
+	id_org_agropec_ext_veg_pesca uuid,
 	id_complexo_gerad_energ_eletr uuid,
 	id_estrut_transporte uuid,
 	CONSTRAINT eco_deposito_geral_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.eco_deposito_geral_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT eco_deposito_geral_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_deposito_geral)
 #
@@ -872,7 +872,7 @@ CREATE TABLE complexos.eco_org_industrial(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE complexos.eco_madeireira(
-	id_org_agrop_ext_veg_pesca uuid,
+	id_org_agropec_ext_veg_pesca uuid,
 	CONSTRAINT eco_madeireira_pk PRIMARY KEY (id)
 ) INHERITS(complexos.eco_org_industrial)
 #
@@ -885,17 +885,17 @@ CREATE TABLE cb.eco_equip_agropec(
 	situacaofisica smallint NOT NULL,
 	tipoequipagropec smallint NOT NULL,
 	matconstr smallint NOT NULL,
-	id_org_agrop_ext_veg_pesca uuid,
+	id_org_agropec_ext_veg_pesca uuid,
 	CONSTRAINT eco_equip_agropec_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.eco_equip_agropec_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT eco_equip_agropec_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_equip_agropec)
 #
 CREATE TABLE cb.eco_equip_agropec_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT eco_equip_agropec_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_equip_agropec)
 #
@@ -909,7 +909,7 @@ CREATE TABLE cb.eco_plataforma(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.eco_plataforma_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT eco_plataforma_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_plataforma)
 #
@@ -965,7 +965,7 @@ CREATE TABLE cb.enc_grupo_transformadores(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.enc_grupo_transformadores_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT enc_grupo_transformadores_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.enc_grupo_transformadores)
 #
@@ -986,12 +986,12 @@ CREATE TABLE cb.enc_est_gerad_energia_eletr(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.enc_est_gerad_energia_eletr_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT enc_est_gerad_energia_eletr_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.enc_est_gerad_energia_eletr)
 #
 CREATE TABLE cb.enc_est_gerad_energia_eletr_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT enc_est_gerad_energia_eletr_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.enc_est_gerad_energia_eletr)
 #
@@ -1004,7 +1004,7 @@ CREATE TABLE cb.enc_termeletrica_a(
 ) INHERITS(cb.enc_est_gerad_energia_eletr_a)
 #
 CREATE TABLE cb.enc_est_gerad_energia_eletr_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT enc_est_gerad_energia_eletr_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.enc_est_gerad_energia_eletr)
 #
@@ -1044,7 +1044,7 @@ CREATE TABLE cb.pto_pto_geod_topo_controle_p(
 	orgaoenteresp varchar(80),
 	codponto varchar(80),
 	obs varchar(255),
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT pto_pto_geod_topo_controle_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -1094,7 +1094,7 @@ CREATE TABLE cb.enc_edif_comunic_a(
 ) INHERITS(cb.loc_edificacao_a)
 #
 CREATE TABLE cb.tra_pista_ponto_pouso_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_pista_ponto_pouso_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_pista_ponto_pouso)
 #
@@ -1106,7 +1106,7 @@ CREATE TABLE cb.tra_edif_constr_aeroportuaria_p(
 ) INHERITS(cb.loc_edificacao_p)
 #
 CREATE TABLE cb.tra_pista_ponto_pouso_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_pista_ponto_pouso_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_pista_ponto_pouso)
 #
@@ -1132,7 +1132,7 @@ CREATE TABLE cb.tra_trecho_duto_l(
 	operacional smallint NOT NULL DEFAULT 0,
 	situacaofisica smallint NOT NULL DEFAULT 0,
 	id_duto uuid,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_trecho_duto_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -1217,18 +1217,18 @@ CREATE TABLE complexos.tra_complexo_aeroportuario(
 #
 CREATE TABLE cb.eco_edif_agrop_ext_veg_pesca_p(
 	tipoedifagropec smallint NOT NULL,
-	id_org_agrop_ext_veg_pesca uuid,
+	id_org_agropec_ext_veg_pesca uuid,
 	CONSTRAINT eco_edif_agrop_ext_veg_pesca_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_edificacao_p)
 #
 CREATE TABLE cb.asb_dep_abast_agua_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT asb_dep_abast_agua_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.asb_dep_abast_agua)
 #
 CREATE TABLE cb.eco_edif_agrop_ext_veg_pesca_a(
 	tipoedifagropec smallint NOT NULL,
-	id_org_agrop_ext_veg_pesca uuid,
+	id_org_agropec_ext_veg_pesca uuid,
 	CONSTRAINT eco_edif_agrop_ext_veg_pesca_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_edificacao_a)
 #
@@ -1240,7 +1240,7 @@ CREATE TABLE cb.eco_edif_industrial_p(
 ) INHERITS(cb.loc_edificacao_p)
 #
 CREATE TABLE cb.asb_dep_saneamento_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT asb_dep_saneamento_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.asb_dep_saneamento)
 #
@@ -1252,7 +1252,7 @@ CREATE TABLE cb.eco_edif_industrial_a(
 ) INHERITS(cb.loc_edificacao_a)
 #
 CREATE TABLE cb.eco_deposito_geral_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT eco_deposito_geral_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_deposito_geral)
 #
@@ -1275,22 +1275,22 @@ CREATE TABLE cb.tra_patio(
 )#
 CREATE TABLE complexos.eco_frigorifico_matadouro(
 	frigorifico smallint NOT NULL,
-	id_org_agrop_ext_veg_pesca uuid,
+	id_org_agropec_ext_veg_pesca uuid,
 	CONSTRAINT eco_frigorifico_matadouro_pk PRIMARY KEY (id)
 ) INHERITS(complexos.eco_org_industrial)
 #
 CREATE TABLE cb.tra_patio_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_patio_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_patio)
 #
 CREATE TABLE cb.eco_equip_agropec_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT eco_equip_agropec_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_equip_agropec)
 #
 CREATE TABLE cb.tra_patio_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_patio_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_patio)
 #
@@ -1299,7 +1299,7 @@ CREATE TABLE complexos.asb_complexo_saneamento(
 	nome varchar(80) NOT NULL,
 	tipoclassecnae smallint NOT NULL,
 	administracao smallint NOT NULL,
-	organizacao varchar(50),
+	organizacao smallint NOT NULL,
 	id_org_comerc_serv uuid,
 	CONSTRAINT asb_complexo_saneamento_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -1315,7 +1315,7 @@ CREATE TABLE complexos.asb_complexo_abast_agua(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.eco_plataforma_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT eco_plataforma_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_plataforma)
 #
@@ -1340,17 +1340,24 @@ CREATE TABLE complexos.adm_org_comerc_serv(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.tra_funicular_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_funicular_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_funicular)
 #
 CREATE TABLE complexos.edu_org_ensino_militar(
+	tipoclassecnae smallint NOT NULL,
+	instituicao smallint NOT NULL,
+	classificsigiloso smallint NOT NULL,
+	id_org_pub_militar uuid,
 	CONSTRAINT edu_org_ensino_militar_pk PRIMARY KEY (id)
-) INHERITS(complexos.edu_org_ensino,complexos.adm_org_pub_militar)
+) INHERITS(complexos.edu_org_ensino)
 #
 CREATE TABLE complexos.edu_org_ensino_pub(
+	tipoclassecnae smallint NOT NULL,
+	poderpublico smallint NOT NULL,
+	id_org_pub_civil uuid,
 	CONSTRAINT edu_org_ensino_pub_pk PRIMARY KEY (id)
-) INHERITS(complexos.edu_org_ensino,complexos.adm_org_pub_civil)
+) INHERITS(complexos.edu_org_ensino)
 #
 CREATE TABLE cb.tra_passag_elevada_viaduto(
 	id serial NOT NULL,
@@ -1395,16 +1402,18 @@ CREATE TABLE cb.eco_area_agrop_ext_veg_pesca_a(
 	geometriaaproximada smallint NOT NULL,
 	destinadoa smallint NOT NULL,
 	id_org_agropec_ext_veg_pesca uuid,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT eco_area_agropec_ext_vegetal_pesca_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE complexos.edu_org_ensino_religioso(
+	tipoclassecnae smallint NOT NULL,
+	id_org_religiosa uuid,
 	CONSTRAINT edu_org_ensino_religioso_pk PRIMARY KEY (id)
-) INHERITS(complexos.edu_org_ensino,complexos.edu_org_religiosa)
+) INHERITS(complexos.edu_org_ensino)
 #
 CREATE TABLE cb.enc_grupo_transformadores_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT enc_grupo_transformadores_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.enc_grupo_transformadores)
 #
@@ -1430,15 +1439,15 @@ CREATE TABLE cb.tra_ponte(
 	 WITH (FILLFACTOR = 100)
 )#
 CREATE TABLE cb.tra_ponte_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_ponte_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_ponte)
 #
 CREATE TABLE cb.tra_tunel(
 	id serial NOT NULL,
-	geometriaaproximada smallint NOT NULL,
 	nome varchar(80),
 	nomeabrev varchar(50),
+	geometriaaproximada smallint NOT NULL,
 	tipotunel smallint NOT NULL,
 	modaluso smallint NOT NULL,
 	matconstr smallint NOT NULL,
@@ -1452,18 +1461,18 @@ CREATE TABLE cb.tra_tunel(
 	CONSTRAINT tra_tunel_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.tra_tunel_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
-	CONSTRAINT tra_tunel_p_pk PRIMARY KEY (nome)
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
+	CONSTRAINT tra_tunel_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_tunel)
 #
 CREATE TABLE cb.tra_tunel_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
-	CONSTRAINT tra_tunel_l_pk PRIMARY KEY (nome)
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
+	CONSTRAINT tra_tunel_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_tunel)
 #
 CREATE TABLE cb.eco_area_ext_mineral_a(
 	id serial NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	id_org_ext_mineral uuid,
 	CONSTRAINT eco_ext_mineral_a_pk_1 PRIMARY KEY (id)
@@ -1491,8 +1500,8 @@ CREATE TABLE cb.tra_travessia_pedestre(
 	CONSTRAINT tra_travessia_pedestre_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.tra_travessia_pedestre_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
-	CONSTRAINT tra_travessia_pedestre_p_pk PRIMARY KEY (tipotravessiaped)
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
+	CONSTRAINT tra_travessia_pedestre_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_travessia_pedestre)
 #
 CREATE TABLE complexos.enc_complexo_gerad_energ_eletr(
@@ -1523,8 +1532,8 @@ CREATE TABLE complexos.enc_complexo_comunicacao(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.tra_travessia_pedestre_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
-	CONSTRAINT tra_travessia_pedestre_l_pk PRIMARY KEY (tipotravessiaped)
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
+	CONSTRAINT tra_travessia_pedestre_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_travessia_pedestre)
 #
 CREATE TABLE cb.pto_pto_ref_geod_topo_p(
@@ -1550,7 +1559,7 @@ CREATE TABLE cb.tra_travessia(
 CREATE TABLE cb.enc_area_energia_eletrica_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_subestacao_ener_eletr uuid,
 	id_complexo_gerad_energ_eletr uuid,
 	CONSTRAINT enc_area_energia_eletrica_a_pk PRIMARY KEY (id)
@@ -1561,7 +1570,7 @@ CREATE TABLE cb.enc_zona_linhas_energia_com_a(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT enc_zona_lin_energ_comunic_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -1576,7 +1585,7 @@ CREATE TABLE cb.enc_torre_energia_p(
 	alturaestimada float,
 	tipotorre smallint NOT NULL,
 	arranjofases varchar(80),
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT enc_torre_energia_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -1585,7 +1594,7 @@ CREATE TABLE cb.enc_antena_comunic_p(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	id_complexo_comunicacao uuid,
 	CONSTRAINT enc_antena_comunic_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -1601,7 +1610,7 @@ CREATE TABLE cb.enc_torre_comunic_p(
 	ovgd smallint NOT NULL,
 	alturaestimada float,
 	id_complexo_comunicacao uuid,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT enc_torre_comunic_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -1618,7 +1627,7 @@ CREATE TABLE cb.enc_trecho_energia_l(
 	tensaoeletrica float,
 	numcircuitos integer,
 	id_org_comerc_serv uuid,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT enc_trecho_comunic_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -1634,17 +1643,17 @@ CREATE TABLE cb.enc_trecho_comunic_l(
 	situacaofisica smallint NOT NULL,
 	emduto smallint NOT NULL,
 	id_org_comerc_serv uuid,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT enc_trecho_comunic_l_pk_1 PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.tra_travessia_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_travessia_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_travessia)
 #
 CREATE TABLE cb.tra_pista_ponto_pouso_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_pista_ponto_pouso_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_pista_ponto_pouso)
 #
@@ -1663,7 +1672,7 @@ CREATE TABLE cb.tra_trecho_rodoviario_l(
 	nrfaixas integer,
 	trafego smallint NOT NULL,
 	canteirodivisorio smallint NOT NULL,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	id_via_rodoviaria uuid,
 	CONSTRAINT tra_trecho_rodoviario_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
@@ -1679,7 +1688,7 @@ CREATE TABLE cb.tra_cremalheira(
 	 WITH (FILLFACTOR = 100)
 )#
 CREATE TABLE cb.tra_cremalheira_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_cremalheira_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_cremalheira)
 #
@@ -1710,12 +1719,12 @@ CREATE TABLE complexos.tra_complexo_portuario(
 ) INHERITS(complexos.tra_estrut_transporte)
 #
 CREATE TABLE cb.tra_atracadouro_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_atracadouro_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_atracadouro)
 #
 CREATE TABLE cb.tra_atracadouro_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_atracadouro_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_atracadouro)
 #
@@ -1731,12 +1740,12 @@ CREATE TABLE cb.tra_fundeadouro(
 	 WITH (FILLFACTOR = 100)
 )#
 CREATE TABLE cb.tra_fundeadouro_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_fundeadouro_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_fundeadouro)
 #
 CREATE TABLE cb.tra_fundeadouro_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_fundeadouro_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_fundeadouro)
 #
@@ -1769,17 +1778,17 @@ CREATE TABLE cb.pto_pto_est_med_fenomenos_p(
 	codestacao varchar(80),
 	orgaoenteresp varchar(15),
 	id_est_med_fenomenos uuid,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT pto_est_med_fenomenos_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.tra_obstaculo_navegacao_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_obstaculo_navegacao_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_obstaculo_navegacao)
 #
 CREATE TABLE cb.tra_obstaculo_navegacao_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_obstaculo_navegacao_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_obstaculo_navegacao)
 #
@@ -1799,7 +1808,7 @@ CREATE TABLE cb.tra_eclusa(
 	 WITH (FILLFACTOR = 100)
 )#
 CREATE TABLE cb.tra_eclusa_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_eclusa_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_eclusa)
 #
@@ -1808,7 +1817,7 @@ CREATE TABLE cb.tra_faixa_seguranca_a(
 	geometriaaproximada smallint NOT NULL,
 	largura float,
 	extensao float,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_faixa_seguranca_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -1819,18 +1828,18 @@ CREATE TABLE complexos.tra_duto(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.tra_eclusa_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_eclusa_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_eclusa)
 #
 CREATE TABLE cb.tra_funicular_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_funicular_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_funicular)
 #
 CREATE TABLE cb.tra_ponto_duto_p(
 	id serial NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	relacionado smallint NOT NULL,
 	CONSTRAINT tra_ponto_duto_p_pk PRIMARY KEY (id)
@@ -1843,7 +1852,7 @@ CREATE TABLE cb.lim_linha_de_limite_l(
 	coincidecomdentrode smallint NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	extensao float,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT lim_linha_de_limite_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -1860,7 +1869,7 @@ CREATE TABLE cb.lim_limite_operacional_l(
 ) INHERITS(cb.lim_linha_de_limite_l)
 #
 CREATE TABLE cb.tra_passag_elevada_viaduto_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_passag_elevada_viaduto_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_passag_elevada_viaduto)
 #
@@ -1886,7 +1895,7 @@ CREATE TABLE cb.lim_area_politico_adm_a(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT lim_area_politico_adm_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -1921,7 +1930,7 @@ CREATE TABLE cb.tra_caminho_aereo_l(
 	tipousocaminhoaer smallint NOT NULL,
 	operacional smallint NOT NULL,
 	situacaofisica smallint NOT NULL,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	id_org_ext_mineral uuid,
 	CONSTRAINT tra_caminho_aereo_l_pk PRIMARY KEY (id)
 )#
@@ -1931,7 +1940,7 @@ CREATE TABLE cb.tra_entroncamento_p(
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	tipoentroncamento smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_entroncamento_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -1956,7 +1965,7 @@ CREATE TABLE cb.lim_area_especial(
 )#
 ALTER TABLE cb.lim_area_especial OWNER TO postgres#
 CREATE TABLE cb.lim_area_especial_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT lim_area_especial_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.lim_area_especial)
 #
@@ -1971,12 +1980,12 @@ CREATE TABLE cb.loc_localidade_p(
 	latitude_gms real,
 	longitude varchar(15),
 	longitude_gms real,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT loc_localidade_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.tra_travessia_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_travessia_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_travessia)
 #
@@ -1990,26 +1999,26 @@ CREATE TABLE cb.loc_cidade_p(
 #
 CREATE TABLE cb.loc_capital_p(
 	tipocapital smallint NOT NULL,
-	CONSTRAINT loc_capital_p_pk PRIMARY KEY (nome)
+	CONSTRAINT loc_capital_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_cidade_p)
 #
 CREATE TABLE cb.tra_cremalheira_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_cremalheira_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_cremalheira)
 #
 CREATE TABLE cb.tra_atracadouro_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_atracadouro_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_atracadouro)
 #
 CREATE TABLE cb.tra_fundeadouro_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_fundeadouro_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_fundeadouro)
 #
 CREATE TABLE cb.tra_obstaculo_navegacao_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_obstaculo_navegacao_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_obstaculo_navegacao)
 #
@@ -2038,7 +2047,7 @@ CREATE TABLE cb.tra_passagem_nivel_p(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_passagem_nivel_p_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.tra_girador_ferroviario_p(
@@ -2049,7 +2058,7 @@ CREATE TABLE cb.tra_girador_ferroviario_p(
 	administracao smallint NOT NULL DEFAULT 0,
 	operacional smallint NOT NULL DEFAULT 0,
 	situacaofisica smallint NOT NULL DEFAULT 0,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	id_estrut_apoio uuid,
 	CONSTRAINT tra_girador_ferroviario_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
@@ -2073,12 +2082,12 @@ CREATE TABLE cb.tra_trecho_ferroviario_l(
 	situacaofisica smallint NOT NULL,
 	cargasuportmaxima float,
 	id_via_ferrea uuid,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_trecho_ferroviario_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
 CREATE TABLE cb.tra_eclusa_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_eclusa_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_eclusa)
 #
@@ -2096,7 +2105,7 @@ CREATE TABLE cb.tra_sinalizacao_p(
 	tiposinal smallint NOT NULL,
 	operacional smallint NOT NULL,
 	situacaofisica smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_sinalizacao_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -2119,7 +2128,7 @@ CREATE TABLE cb.edu_arquibancada(
 )#
 CREATE TABLE cb.lim_area_desenv_controle_a(
 	classificacao varchar(80),
-	CONSTRAINT lim_area_desenv_controle_a_pk PRIMARY KEY (geom)
+	CONSTRAINT lim_area_desenv_controle_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.lim_area_especial_a)
 #
 CREATE TABLE cb.lim_area_uso_comunitario_a(
@@ -2128,7 +2137,7 @@ CREATE TABLE cb.lim_area_uso_comunitario_a(
 ) INHERITS(cb.lim_area_especial_a)
 #
 CREATE TABLE cb.edu_arquibancada_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT edu_arquibancada_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.edu_arquibancada)
 #
@@ -2156,7 +2165,7 @@ CREATE TABLE cb.lim_delimitacao_fisica_l(
 	tipodelimfis smallint NOT NULL,
 	matconstr smallint NOT NULL,
 	eletrificada smallint NOT NULL,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT lim_delimitacao_fisica_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -2176,7 +2185,7 @@ CREATE TABLE cb.lim_marco_de_limite_p(
 	referencialaltim smallint NOT NULL,
 	outrarefalt varchar(80),
 	orgresp varchar(80),
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT lim_marco_de_limite_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -2185,11 +2194,11 @@ CREATE TABLE cb.lim_area_de_litigio_a(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT lim_area_de_litigio_a_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.edu_campo_quadra_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT edu_campo_quadra_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.edu_campo_quadra)
 #
@@ -2202,7 +2211,7 @@ CREATE TABLE cb.edu_pista_competicao_l(
 	situacaofisica smallint NOT NULL,
 	tipopista smallint NOT NULL,
 	id_complexo_lazer uuid,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT edu_pista_competicao_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -2216,7 +2225,7 @@ CREATE TABLE cb.edu_ruina(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.edu_ruina_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT edu_ruina_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.edu_ruina)
 #
@@ -2224,7 +2233,7 @@ CREATE TABLE cb.loc_area_construida_a(
 	id serial NOT NULL,
 	nome varchar(80),
 	nomeabrev varchar(50),
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT loc_area_construida_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -2232,17 +2241,17 @@ CREATE TABLE cb.loc_nome_local_p(
 	id serial NOT NULL,
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT loc_nome_local_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.edu_arquibancada_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT edu_arquibancada_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.edu_arquibancada)
 #
 CREATE TABLE cb.edu_campo_quadra_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT edu_campo_quadra_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.edu_campo_quadra)
 #
@@ -2257,12 +2266,12 @@ CREATE TABLE cb.tra_arruamento_l(
 	nrfaixas integer,
 	trafego smallint NOT NULL,
 	canteirodivisorio smallint NOT NULL,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_arruamento_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.edu_ruina_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT edu_ruina_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.edu_ruina)
 #
@@ -2277,7 +2286,7 @@ CREATE TABLE cb.asb_cemiterio(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.asb_cemiterio_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT asb_cemiterio_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.asb_cemiterio)
 #
@@ -2291,8 +2300,10 @@ CREATE TABLE complexos.sau_org_saude(
 	 WITH (FILLFACTOR = 100)
 )#
 CREATE TABLE complexos.sau_org_saude_pub(
+	tipoclassecnae smallint NOT NULL,
+	id_org_pub_civil uuid,
 	CONSTRAINT sau_org_saude_pub_pk PRIMARY KEY (id)
-) INHERITS(complexos.sau_org_saude,complexos.adm_org_pub_civil)
+) INHERITS(complexos.sau_org_saude)
 #
 CREATE TABLE complexos.sau_org_servico_social(
 	id uuid NOT NULL,
@@ -2306,7 +2317,7 @@ CREATE TABLE complexos.sau_org_servico_social(
 CREATE TABLE cb.enc_area_comunicacao_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_complexo_comunicacao uuid,
 	CONSTRAINT cbc_area_comunicacao_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -2314,7 +2325,7 @@ CREATE TABLE cb.enc_area_comunicacao_a(
 CREATE TABLE cb.asb_area_abast_agua_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_complexo_abast_agua uuid,
 	CONSTRAINT cbc_area_abast_agua_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -2323,14 +2334,14 @@ CREATE TABLE cb.asb_area_saneamento_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	id_complexo_saneamento uuid,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT cbc_area_saneamento_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.tra_area_duto_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_area_duto_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -2338,13 +2349,13 @@ CREATE TABLE cb.sau_area_servico_social_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	id_org_servico_social uuid,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT sau_area_servico_social_a_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.sau_area_saude_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_org_saude uuid,
 	CONSTRAINT sau_area_saude_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -2352,7 +2363,7 @@ CREATE TABLE cb.sau_area_saude_a(
 CREATE TABLE cb.edu_area_ruinas_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_complexo_lazer uuid,
 	CONSTRAINT cbc_area_ruinas_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -2360,7 +2371,7 @@ CREATE TABLE cb.edu_area_ruinas_a(
 CREATE TABLE cb.edu_area_lazer_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_complexo_lazer uuid,
 	CONSTRAINT edu_area_lazer_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -2368,7 +2379,7 @@ CREATE TABLE cb.edu_area_lazer_a(
 CREATE TABLE cb.eco_area_comerc_serv_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_org_comerc_serv uuid,
 	CONSTRAINT eco_area_comerc_serv_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -2376,7 +2387,7 @@ CREATE TABLE cb.eco_area_comerc_serv_a(
 CREATE TABLE cb.edu_area_ensino_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_org_ensino uuid,
 	CONSTRAINT cbc_area_ensino_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -2384,23 +2395,23 @@ CREATE TABLE cb.edu_area_ensino_a(
 CREATE TABLE cb.edu_area_religiosa_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_org_religiosa uuid,
 	CONSTRAINT cbc_area_religiosa_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE cb.tra_ponto_ferroviario_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_ponto_ferroviario_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_ponto_rodoviario_ferrov)
 #
 CREATE TABLE cb.tra_ponto_rodoviario_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_ponto_rodoviario_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_ponto_rodoviario_ferrov)
 #
 CREATE TABLE cb.asb_cemiterio_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT asb_cemiterio_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.asb_cemiterio)
 #
@@ -2411,12 +2422,18 @@ CREATE TABLE cb.edu_edif_ensino_p(
 ) INHERITS(cb.loc_edificacao_p)
 #
 CREATE TABLE complexos.sau_org_saude_militar(
+	tipoclassecnae smallint NOT NULL,
+	instituicao smallint NOT NULL,
+	classificsigiloso smallint NOT NULL,
+	id_org_pub_militar uuid,
 	CONSTRAINT sau_org_saude_militar_pk PRIMARY KEY (id)
-) INHERITS(complexos.sau_org_saude,complexos.adm_org_pub_militar)
+) INHERITS(complexos.sau_org_saude)
 #
 CREATE TABLE complexos.sau_org_servico_social_pub(
+	tipoclassecnae smallint NOT NULL,
+	id_org_pub_civil uuid,
 	CONSTRAINT sau_org_servico_social_pub_pk PRIMARY KEY (id)
-) INHERITS(complexos.sau_org_servico_social,complexos.adm_org_pub_civil)
+) INHERITS(complexos.sau_org_servico_social)
 #
 CREATE EXTENSION "uuid-ossp"
       WITH SCHEMA public#
@@ -2433,7 +2450,7 @@ CREATE TABLE cb.eco_area_industrial_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	id_org_industrial uuid,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT eco_area_industrial_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -2441,7 +2458,7 @@ CREATE TABLE cb.tra_area_estrut_transporte_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	id_estrut_transporte uuid,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT cbc_area_estrut_transporte_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -2458,7 +2475,7 @@ CREATE TABLE cb.pto_area_est_med_fenom_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	id_est_med_fenomenos uuid,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT cbc_area_est_med_fenom_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -2476,38 +2493,38 @@ CREATE TABLE public.aux_objeto_desconhecido(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE public.aux_objeto_desconhecido_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT aux_objeto_desconhecido_l_pk PRIMARY KEY (id)
 ) INHERITS(public.aux_objeto_desconhecido)
 #
 CREATE TABLE public.aux_ponto_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT aux_ponto_p_pk PRIMARY KEY (id)
 ) INHERITS(public.aux_geometria)
 #
 CREATE TABLE public.aux_linha_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT aux_linha_l_pk PRIMARY KEY (id)
 ) INHERITS(public.aux_geometria)
 #
 CREATE TABLE public.aux_area_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT aux_area_a_pk PRIMARY KEY (id)
 ) INHERITS(public.aux_geometria)
 #
 CREATE TABLE public.aux_objeto_desconhecido_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT aux_objeto_desconhecido_p_pk PRIMARY KEY (id)
 ) INHERITS(public.aux_objeto_desconhecido)
 #
 CREATE TABLE public.aux_objeto_desconhecido_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT aux_objeto_desconhecido_a_pk PRIMARY KEY (id)
 ) INHERITS(public.aux_objeto_desconhecido)
 #
 CREATE TABLE public.aux_moldura_a(
 	id serial NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	mi varchar(80),
 	inom varchar(80),
 	escala varchar(80),
@@ -2544,9 +2561,10 @@ CREATE TABLE public.aux_moldura_a(
 )#
 CREATE TABLE public.db_metadata(
 	edgvversion varchar(6) NOT NULL DEFAULT '2.1.3',
+	dbimplversion varchar(50) NOT NULL DEFAULT 1,
 	CONSTRAINT edgvversioncheck CHECK (edgvversion = '2.1.3')
 )#
-INSERT INTO public.db_metadata (edgvversion) VALUES ('2.1.3')#
+INSERT INTO public.db_metadata (edgvversion,dbimplversion) VALUES ('2.1.3','1')#
 CREATE TABLE complexos.hid_curso_dagua(
 	id uuid NOT NULL,
 	nome varchar(80),
@@ -2573,22 +2591,22 @@ CREATE TABLE cb.hid_natureza_fundo(
 	 WITH (FILLFACTOR = 100)
 )#
 CREATE TABLE cb.hid_natureza_fundo_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_natureza_fundo_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_natureza_fundo)
 #
 CREATE TABLE cb.hid_natureza_fundo_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT hid_natureza_fundo_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_natureza_fundo)
 #
 CREATE TABLE cb.hid_natureza_fundo_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_natureza_fundo_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_natureza_fundo)
 #
 CREATE TABLE cb.hid_rocha_em_agua_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT hid_rocha_em_agua_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.hid_rocha_em_agua)
 #
@@ -2600,7 +2618,7 @@ CREATE TABLE cb.hid_bacia_hidrografica_a(
 	geometriaaproximada smallint NOT NULL,
 	codigootto integer NOT NULL,
 	nivelotto integer NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT hid_bacia_hidrografica_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -3355,7 +3373,7 @@ CREATE INDEX hid_bacia_hidrografica_a_gist ON cb.hid_bacia_hidrografica_a
 	  geom
 	)#
 CREATE TABLE cb.eco_ext_mineral_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT eco_ext_mineral_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_ext_mineral)
 #
@@ -3366,7 +3384,7 @@ CREATE INDEX eco_ext_mineral_p_gist ON cb.eco_ext_mineral_p
 	  geom
 	)#
 CREATE TABLE cb.eco_ext_mineral_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT eco_ext_mineral_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.eco_ext_mineral)
 #
@@ -3428,7 +3446,7 @@ CREATE TABLE cb.tra_identific_trecho_rod_p(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	sigla varchar(6) NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	id_via_rodoviaria uuid,
 	CONSTRAINT tra_identific_trecho_rod_p_pk PRIMARY KEY (id)
 )#
@@ -3450,7 +3468,7 @@ CREATE TABLE cb.tra_galeria_bueiro(
 )#
 ALTER TABLE cb.tra_galeria_bueiro OWNER TO postgres#
 CREATE TABLE cb.tra_galeria_bueiro_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_galeria_bueiro_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_galeria_bueiro)
 #
@@ -3461,7 +3479,7 @@ CREATE INDEX tra_galeria_bueiro_p_gist ON cb.tra_galeria_bueiro_p
 	  geom
 	)#
 CREATE TABLE cb.tra_galeria_bueiro_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_galeria_bueiro_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_galeria_bueiro)
 #
@@ -3472,12 +3490,12 @@ CREATE INDEX tra_galeria_bueiro_l_gist ON cb.tra_galeria_bueiro_l
 	  geom
 	)#
 CREATE TABLE cb.tra_ponte_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_ponte_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_ponte)
 #
 CREATE TABLE cb.tra_passag_elevada_viaduto_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_passag_elevada_viaduto_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_passag_elevada_viaduto)
 #
@@ -3486,7 +3504,7 @@ CREATE TABLE cb.tra_trilha_picada_l(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_trilha_picada_l_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.tra_trilha_picada_l OWNER TO postgres#
@@ -3505,7 +3523,7 @@ CREATE TABLE cb.tra_ciclovia_l(
 	operacional smallint NOT NULL,
 	situacaofisica smallint NOT NULL,
 	trafego smallint NOT NULL,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL
+	geom geometry(MULTILINESTRING, 4326) NOT NULL
 )#
 ALTER TABLE cb.tra_ciclovia_l OWNER TO postgres#
 CREATE INDEX tra_ciclovia_l_gist ON cb.tra_ciclovia_l
@@ -3535,7 +3553,7 @@ CREATE TABLE cb.tra_local_critico(
 )#
 ALTER TABLE cb.tra_local_critico OWNER TO postgres#
 CREATE TABLE cb.tra_local_critico_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_local_critico_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_local_critico)
 #
@@ -3546,7 +3564,7 @@ CREATE INDEX tra_local_critico_p_gist ON cb.tra_local_critico_p
 	  geom
 	)#
 CREATE TABLE cb.tra_local_critico_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT tra_local_critico_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_local_critico)
 #
@@ -3557,7 +3575,7 @@ CREATE INDEX tra_local_critico_l_gist ON cb.tra_local_critico_l
 	  geom
 	)#
 CREATE TABLE cb.tra_local_critico_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_local_critico_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_local_critico)
 #
@@ -3586,7 +3604,7 @@ CREATE TABLE cb.tra_trecho_hidroviario_l(
 	regime smallint NOT NULL,
 	extensaotrecho real,
 	caladomaxseca real,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	id_hidrovia uuid,
 	CONSTRAINT tra_trecho_hidroviario_l_pk PRIMARY KEY (id)
 )#
@@ -3600,7 +3618,7 @@ CREATE TABLE cb.tra_ponto_hidroviario_p(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	relacionado smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL
+	geom geometry(MULTIPOINT, 4326) NOT NULL
 )#
 ALTER TABLE cb.tra_ponto_hidroviario_p OWNER TO postgres#
 CREATE INDEX tra_ponto_hidroviario_p_gist ON cb.tra_ponto_hidroviario_p
@@ -3631,7 +3649,7 @@ CREATE TABLE cb.tra_posto_combustivel(
 )#
 ALTER TABLE cb.tra_posto_combustivel OWNER TO postgres#
 CREATE TABLE cb.tra_posto_combustivel_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT tra_posto_combustivel_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_posto_combustivel)
 #
@@ -3642,7 +3660,7 @@ CREATE INDEX tra_posto_combustivel_p_gist ON cb.tra_posto_combustivel_p
 	  geom
 	)#
 CREATE TABLE cb.tra_posto_combustivel_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT tra_posto_combustivel_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.tra_posto_combustivel)
 #
@@ -3656,7 +3674,7 @@ CREATE TABLE cb.enc_ponto_trecho_energia_p(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	tipoptoenergia smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT enc_ponto_trecho_energia_p_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.enc_ponto_trecho_energia_p OWNER TO postgres#
@@ -3673,7 +3691,7 @@ CREATE TABLE cb.edu_piscina_a(
 	operacional smallint NOT NULL,
 	situacaofisica smallint NOT NULL,
 	id_complexo_lazer uuid,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT edu_piscina_a_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.edu_piscina_a OWNER TO postgres#
@@ -3699,7 +3717,7 @@ CREATE TABLE cb.edu_coreto_tribuna(
 )#
 ALTER TABLE cb.edu_coreto_tribuna OWNER TO postgres#
 CREATE TABLE cb.edu_coreto_tribuna_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT edu_coreto_tribuna_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.edu_coreto_tribuna)
 #
@@ -3710,7 +3728,7 @@ CREATE INDEX edu_coreto_tribuna_p_gist ON cb.edu_coreto_tribuna_p
 	  geom
 	)#
 CREATE TABLE cb.edu_coreto_tribuna_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT edu_coreto_tribuna_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.edu_coreto_tribuna)
 #
@@ -3728,7 +3746,7 @@ CREATE INDEX eco_area_agrop_ext_veg_pesca_a_gist ON cb.eco_area_agrop_ext_veg_pe
 CREATE TABLE cb.adm_area_pub_civil_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_org_pub_civil uuid,
 	CONSTRAINT adm_area_pub_civil_a_pk PRIMARY KEY (id)
 )#
@@ -3746,7 +3764,7 @@ CREATE TABLE cb.adm_posto_fiscal(
 )#
 ALTER TABLE cb.adm_posto_fiscal OWNER TO postgres#
 CREATE TABLE cb.adm_posto_fiscal_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT adm_posto_fiscal_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.adm_posto_fiscal)
 #
@@ -3754,7 +3772,7 @@ ALTER TABLE cb.adm_posto_fiscal_p OWNER TO postgres#
 CREATE TABLE cb.adm_area_pub_militar_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	id_org_pub_militar uuid,
 	CONSTRAINT adm_area_pub_militar_a_pk PRIMARY KEY (id)
 )#
@@ -3773,7 +3791,7 @@ CREATE TABLE cb.adm_posto_pol_rod(
 )#
 ALTER TABLE cb.adm_posto_pol_rod OWNER TO postgres#
 CREATE TABLE cb.adm_posto_pol_rod_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT adm_posto_pol_rod_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.adm_posto_pol_rod)
 #
@@ -3817,7 +3835,7 @@ CREATE TABLE cb.loc_edif_habitacional_a(
 #
 ALTER TABLE cb.loc_edif_habitacional_a OWNER TO postgres#
 CREATE TABLE cb.loc_hab_indigena_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT loc_hab_indigena_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_hab_indigena)
 #
@@ -3827,7 +3845,7 @@ CREATE TABLE cb.loc_area_habitacional_a(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	id_complexo_habitacional uuid,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT loc_area_habitacional_a_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.loc_area_habitacional_a OWNER TO postgres#
@@ -3840,7 +3858,7 @@ CREATE TABLE cb.loc_area_edificada_a(
 	id serial NOT NULL,
 	nome varchar(80),
 	nomeabrev varchar(50),
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT loc_area_edificada_a_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.loc_area_edificada_a OWNER TO postgres#
@@ -3864,7 +3882,7 @@ CREATE TABLE cb.lim_terra_indigena(
 )#
 ALTER TABLE cb.lim_terra_indigena OWNER TO postgres#
 CREATE TABLE cb.lim_terra_indigena_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT lim_terra_indigena_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.lim_terra_indigena)
 #
@@ -3885,7 +3903,7 @@ CREATE INDEX adm_area_pub_militar_a_gist ON cb.adm_area_pub_militar_a
 	  geom
 	)#
 CREATE TABLE cb.lim_terra_indigena_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT lim_terra_indigena_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.lim_terra_indigena)
 #
@@ -3939,7 +3957,7 @@ CREATE TABLE cb.lim_unidade_uso_sustentavel_a(
 #
 ALTER TABLE cb.lim_unidade_uso_sustentavel_a OWNER TO postgres#
 CREATE TABLE cb.lim_area_especial_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT lim_area_especial_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.lim_area_especial)
 #
@@ -4017,7 +4035,7 @@ CREATE TABLE cb.lim_area_particular_a(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT lim_area_particular_a_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.lim_area_particular_a OWNER TO postgres#
@@ -4032,7 +4050,7 @@ CREATE INDEX adm_posto_pol_rod_p_gist ON cb.adm_posto_pol_rod_p
 	  geom
 	)#
 CREATE TABLE cb.adm_posto_pol_rod_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT adm_posto_pol_rod_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.adm_posto_pol_rod)
 #
@@ -4048,7 +4066,7 @@ CREATE INDEX adm_posto_fiscal_p_gist ON cb.adm_posto_fiscal_p
 	  geom
 	)#
 CREATE TABLE cb.adm_posto_fiscal_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT adm_posto_fiscal_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.adm_posto_fiscal)
 #
@@ -4074,7 +4092,7 @@ CREATE INDEX hid_trecho_massa_dagua_a_gist ON cb.hid_trecho_massa_dagua_a
 	  geom
 	)#
 CREATE TABLE cb.loc_hab_indigena_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT loc_hab_indigena_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_hab_indigena)
 #
@@ -4095,7 +4113,7 @@ CREATE TABLE cb.loc_area_urbana_isolada_a(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	tipoassociado smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT loc_area_urbana_isolada_a_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.loc_area_urbana_isolada_a OWNER TO postgres#
@@ -4112,7 +4130,7 @@ CREATE TABLE cb.aux_descontinuidade_geometrica(
 )#
 ALTER TABLE cb.aux_descontinuidade_geometrica OWNER TO postgres#
 CREATE TABLE cb.aux_descontinuidade_geometrica_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	geom geometry(MULTIPOINT, 4326) NOT NULL,
 	CONSTRAINT aux_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.aux_descontinuidade_geometrica)
 #
@@ -4123,7 +4141,7 @@ CREATE INDEX aux_descontinuidade_geometrica_p_gist ON cb.aux_descontinuidade_geo
 	  geom
 	)#
 CREATE TABLE cb.aux_descontinuidade_geometrica_l(
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	geom geometry(MULTILINESTRING, 4326) NOT NULL,
 	CONSTRAINT aux_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
 ) INHERITS(cb.aux_descontinuidade_geometrica)
 #
@@ -4134,7 +4152,7 @@ CREATE INDEX aux_descontinuidade_geom_l_gist ON cb.aux_descontinuidade_geometric
 	  geom
 	)#
 CREATE TABLE cb.aux_descontinuidade_geometrica_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
+	geom geometry(MULTIPOLYGON, 4326) NOT NULL,
 	CONSTRAINT aux_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.aux_descontinuidade_geometrica)
 #
@@ -4305,36 +4323,36 @@ CREATE TABLE cb.sau_descontinuidade_geometrica_p(
 #
 ALTER TABLE cb.sau_descontinuidade_geometrica_p OWNER TO postgres#
 create view public.complex_schema as
-select distinct * from (select nsp.nspname as complex_schema, t2.relname as complex, npsagreg.nspname as aggregated_schema, t.relname as aggregated_class, at1.attname as column_name 
+select distinct * from (select nsp.nspname as complex_schema, t2.relname as complex, npsagreg.nspname as aggregated_schema, t.relname as aggregated_class, at1.attname as column_name
 from pg_constraint c
-	left join pg_class t on c.conrelid = t.oid left join pg_class t2 on c.confrelid = t2.oid
-	left join pg_namespace nsp on t2.relnamespace = nsp.oid 
-	left join pg_attribute as at1 on (at1.attnum=c.conkey[1]) and (at1.attrelid=c.conrelid)
-	left join pg_namespace npsagreg on t.relnamespace = npsagreg.oid
-	where contype = 'f' and (nsp.nspname = 'complexos') 
-	UNION 
-select nsp.nspname as complex_schema, COALESCE(inheritancetree.child,t2.relname) as complex, npsagreg.nspname as aggregated_schema, t.relname as aggregated_class, at1.attname as column_name 
+        left join pg_class t on c.conrelid = t.oid left join pg_class t2 on c.confrelid = t2.oid
+        left join pg_namespace nsp on t2.relnamespace = nsp.oid
+        left join pg_attribute as at1 on (at1.attnum=c.conkey[1]) and (at1.attrelid=c.conrelid)
+        left join pg_namespace npsagreg on t.relnamespace = npsagreg.oid
+        where contype = 'f' and (nsp.nspname = 'complexos')
+        UNION
+select nsp.nspname as complex_schema, COALESCE(inheritancetree.child,t2.relname) as complex, npsagreg.nspname as aggregated_schema, t.relname as aggregated_class, at1.attname as column_name
 from pg_constraint c
-	left join pg_class t on c.conrelid = t.oid left join pg_class t2 on c.confrelid = t2.oid
-	left join pg_namespace nsp on t2.relnamespace = nsp.oid 
-	join 
-		(SELECT tier1.*,c.relname AS child, c.oid as childoid, p.relname AS parent, tier2p.relname as grandpa, tier3p.relname as grandgrandpa, tier4p.relname as gggpa, COALESCE(tier4p.relname,tier3p.relname,tier2p.relname,p.relname) as ancestral,COALESCE(tier4p.oid,tier3p.oid,tier2p.oid,p.oid) as ancestralOid
-		FROM
-		    pg_inherits as tier1
-		    left JOIN pg_class AS c ON (inhrelid=c.oid)
-		    left JOIN pg_class as p ON (inhparent=p.oid)
-		    left join pg_inherits as tier2 on tier2.inhrelid=tier1.inhparent
-		    left JOIN pg_class as tier2p ON (tier2.inhparent=tier2p.oid)
-		    left join pg_inherits as tier3 on tier3.inhrelid=tier2.inhparent
-		    left JOIN pg_class as tier3p ON (tier3.inhparent=tier3p.oid)
-		    left join pg_inherits as tier4 on tier4.inhrelid=tier3.inhparent
-		    left JOIN pg_class as tier4p ON (tier4.inhparent=tier4p.oid) 
-		    ) as inheritancetree
-		on t2.oid=ancestralOid
-	left join pg_attribute as at1 on (at1.attnum=c.conkey[1]) and (at1.attrelid=c.conrelid)
-	left join pg_namespace npsagreg on t.relnamespace = npsagreg.oid
-	where contype = 'f' and (nsp.nspname = 'complexos')
-	order by complex asc) as foo#
+        left join pg_class t on c.conrelid = t.oid left join pg_class t2 on c.confrelid = t2.oid
+        left join pg_namespace nsp on t2.relnamespace = nsp.oid
+        join
+                (SELECT tier1.*,c.relname AS child, c.oid as childoid, p.relname AS parent, tier2p.relname as grandpa, tier3p.relname as grandgrandpa, tier4p.relname as gggpa, COALESCE(tier4p.relname,tier3p.relname,tier2p.relname,p.relname) as ancestral,COALESCE(tier4p.oid,tier3p.oid,tier2p.oid,p.oid) as ancestralOid
+                FROM
+                    pg_inherits as tier1
+                    left JOIN pg_class AS c ON (inhrelid=c.oid)
+                    left JOIN pg_class as p ON (inhparent=p.oid)
+                    left join pg_inherits as tier2 on tier2.inhrelid=tier1.inhparent
+                    left JOIN pg_class as tier2p ON (tier2.inhparent=tier2p.oid)
+                    left join pg_inherits as tier3 on tier3.inhrelid=tier2.inhparent
+                    left JOIN pg_class as tier3p ON (tier3.inhparent=tier3p.oid)
+                    left join pg_inherits as tier4 on tier4.inhrelid=tier3.inhparent
+                    left JOIN pg_class as tier4p ON (tier4.inhparent=tier4p.oid)
+                    ) as inheritancetree
+                on t2.oid=ancestralOid
+        left join pg_attribute as at1 on (at1.attnum=c.conkey[1]) and (at1.attrelid=c.conrelid)
+        left join pg_namespace npsagreg on t.relnamespace = npsagreg.oid
+        where contype = 'f' and (nsp.nspname = 'complexos')
+        order by complex asc) as foo
 CREATE TABLE dominios.geracao (
  code smallint NOT NULL,
  code_name text NOT NULL, CONSTRAINT
@@ -5360,1315 +5378,6 @@ CREATE TABLE dominios.tipopassagviad (
  code_name text NOT NULL, CONSTRAINT
  tipopassagviad_pk PRIMARY KEY (code)
 )#
-INSERT INTO dominios.geracao (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.geracao (code,code_name) VALUES (1,'Eletricidade - GER 0')#
-INSERT INTO dominios.geracao (code,code_name) VALUES (2,'CoGeração')#
-INSERT INTO dominios.tipoplataforma (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoplataforma (code,code_name) VALUES (3,'Petróleo')#
-INSERT INTO dominios.tipoplataforma (code,code_name) VALUES (98,'Misto')#
-INSERT INTO dominios.tipoplataforma (code,code_name) VALUES (5,'Gás')#
-INSERT INTO dominios.posicaoreledific (code,code_name) VALUES (17,'Adjacente a edificação')#
-INSERT INTO dominios.posicaoreledific (code,code_name) VALUES (18,'Sobre edificação')#
-INSERT INTO dominios.posicaoreledific (code,code_name) VALUES (14,'Isolado')#
-INSERT INTO dominios.tipoextmin (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoextmin (code,code_name) VALUES (5,'Garimpo')#
-INSERT INTO dominios.tipoextmin (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoextmin (code,code_name) VALUES (97,'Não aplicável')#
-INSERT INTO dominios.tipoextmin (code,code_name) VALUES (4,'Mina')#
-INSERT INTO dominios.tipoextmin (code,code_name) VALUES (6,'Salina')#
-INSERT INTO dominios.tipoextmin (code,code_name) VALUES (3,'Vertical')#
-INSERT INTO dominios.tipoextmin (code,code_name) VALUES (2,'Horizontal')#
-INSERT INTO dominios.tipoextmin (code,code_name) VALUES (7,'Pedreira')#
-INSERT INTO dominios.tipoextmin (code,code_name) VALUES (1,'Poço')#
-INSERT INTO dominios.canteirodivisorio (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.canteirodivisorio (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.tipolocalcrit (code,code_name) VALUES (7,'Outras interferências')#
-INSERT INTO dominios.tipolocalcrit (code,code_name) VALUES (2,'Risco geotécnico')#
-INSERT INTO dominios.tipolocalcrit (code,code_name) VALUES (4,'Interferência com hidrografia')#
-INSERT INTO dominios.tipolocalcrit (code,code_name) VALUES (5,'Interferência com áreas especiais')#
-INSERT INTO dominios.tipolocalcrit (code,code_name) VALUES (6,'Interferência com vias')#
-INSERT INTO dominios.tipolocalcrit (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipolocalcrit (code,code_name) VALUES (3,'Interferência com localidades')#
-INSERT INTO dominios.tipolocalcrit (code,code_name) VALUES (1,'Subestação de válvulas e/ou bombas')#
-INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (13,'Camping')#
-INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (6,'Parque aquático')#
-INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (7,'Parque temático')#
-INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (14,'Complexo desportivo')#
-INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (4,'Parque de diversões')#
-INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (12,'Parque de eventos culturais')#
-INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (9,'Hípica')#
-INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (11,'Campo de golfe')#
-INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (8,'Hipódromo')#
-INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (1,'Complexo recreativo')#
-INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (3,'Autódromo')#
-INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (16,'Jardim botânico')#
-INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (5,'Parque urbano')#
-INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (15,'Zoológico')#
-INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (10,'Estande de tiro')#
-INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (2,'Clube')#
-INSERT INTO dominios.indice (code,code_name) VALUES (1,'Mestra')#
-INSERT INTO dominios.indice (code,code_name) VALUES (2,'Normal')#
-INSERT INTO dominios.indice (code,code_name) VALUES (3,'Auxiliar')#
-INSERT INTO dominios.tipoaglomrurisol (code,code_name) VALUES (7,'Outros Aglomerados Rurais Isolados')#
-INSERT INTO dominios.tipoaglomrurisol (code,code_name) VALUES (5,'Aglomerado Rural Isolado - Povoado')#
-INSERT INTO dominios.tipoaglomrurisol (code,code_name) VALUES (6,'Aglomerado Rural Isolado - Núcleo')#
-INSERT INTO dominios.denso (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.denso (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.denso (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.tipodepgeral (code,code_name) VALUES (9,'Silo')#
-INSERT INTO dominios.tipodepgeral (code,code_name) VALUES (11,'Depósito frigorífico')#
-INSERT INTO dominios.tipodepgeral (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipodepgeral (code,code_name) VALUES (32,'Armazém')#
-INSERT INTO dominios.tipodepgeral (code,code_name) VALUES (19,'Reservatório de Combustível')#
-INSERT INTO dominios.tipodepgeral (code,code_name) VALUES (8,'Galpão')#
-INSERT INTO dominios.tipodepgeral (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipodepgeral (code,code_name) VALUES (10,'Composteira')#
-INSERT INTO dominios.materializado (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.materializado (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.materializado (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.referencialgrav (code,code_name) VALUES (4,'Local')#
-INSERT INTO dominios.referencialgrav (code,code_name) VALUES (1,'Postdam 1930')#
-INSERT INTO dominios.referencialgrav (code,code_name) VALUES (2,'IGSN71')#
-INSERT INTO dominios.referencialgrav (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.referencialgrav (code,code_name) VALUES (3,'Absoluto')#
-INSERT INTO dominios.referencialgrav (code,code_name) VALUES (97,'Não Aplicável')#
-INSERT INTO dominios.nrlinhas (code,code_name) VALUES (1,'Simples')#
-INSERT INTO dominios.nrlinhas (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.nrlinhas (code,code_name) VALUES (3,'Múltipla')#
-INSERT INTO dominios.nrlinhas (code,code_name) VALUES (2,'Dupla')#
-INSERT INTO dominios.tipoareaumida (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoareaumida (code,code_name) VALUES (4,'Arenoso')#
-INSERT INTO dominios.tipoareaumida (code,code_name) VALUES (3,'Lamacento')#
-INSERT INTO dominios.destenergelet (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.destenergelet (code,code_name) VALUES (3,'Comercialização de Energia (COM)')#
-INSERT INTO dominios.destenergelet (code,code_name) VALUES (1,'Auto-Produção de Energia (APE)')#
-INSERT INTO dominios.destenergelet (code,code_name) VALUES (4,'Produção Independente de Energia (PIE)')#
-INSERT INTO dominios.destenergelet (code,code_name) VALUES (5,'Serviço Público (SP)')#
-INSERT INTO dominios.destenergelet (code,code_name) VALUES (2,'Auto-Produção com Comercialização de Excedente (APE-COM)')#
-INSERT INTO dominios.tiporef (code,code_name) VALUES (2,'Planimétrico')#
-INSERT INTO dominios.tiporef (code,code_name) VALUES (1,'Altimétrico')#
-INSERT INTO dominios.tiporef (code,code_name) VALUES (4,'Gravimétrico')#
-INSERT INTO dominios.tiporef (code,code_name) VALUES (3,'Planialtimétrico')#
-INSERT INTO dominios.coletiva (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.coletiva (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.coletiva (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.tipocaminhoaereo (code,code_name) VALUES (12,'Teleférico')#
-INSERT INTO dominios.tipocaminhoaereo (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.situacaofisica (code,code_name) VALUES (4,'Planejada')#
-INSERT INTO dominios.situacaofisica (code,code_name) VALUES (1,'Abandonada')#
-INSERT INTO dominios.situacaofisica (code,code_name) VALUES (5,'Construída')#
-INSERT INTO dominios.situacaofisica (code,code_name) VALUES (0,'Desconhecida')#
-INSERT INTO dominios.situacaofisica (code,code_name) VALUES (3,'Em Construção')#
-INSERT INTO dominios.situacaofisica (code,code_name) VALUES (2,'Destruída')#
-INSERT INTO dominios.tipotrechocomunic (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipotrechocomunic (code,code_name) VALUES (4,'Dados')#
-INSERT INTO dominios.tipotrechocomunic (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipotrechocomunic (code,code_name) VALUES (6,'Telegráfica')#
-INSERT INTO dominios.tipotrechocomunic (code,code_name) VALUES (7,'Telefônica')#
-INSERT INTO dominios.destinadoa (code,code_name) VALUES (40,'Palmito')#
-INSERT INTO dominios.destinadoa (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.destinadoa (code,code_name) VALUES (38,'Coco')#
-INSERT INTO dominios.destinadoa (code,code_name) VALUES (39,'Jaborandi')#
-INSERT INTO dominios.destinadoa (code,code_name) VALUES (37,'Carnaúba')#
-INSERT INTO dominios.destinadoa (code,code_name) VALUES (18,'Açaí')#
-INSERT INTO dominios.destinadoa (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.destinadoa (code,code_name) VALUES (44,'Pesca')#
-INSERT INTO dominios.destinadoa (code,code_name) VALUES (34,'Turfa')#
-INSERT INTO dominios.destinadoa (code,code_name) VALUES (36,'Castanha')#
-INSERT INTO dominios.destinadoa (code,code_name) VALUES (5,'Madeira')#
-INSERT INTO dominios.destinadoa (code,code_name) VALUES (41,'Babaçu')#
-INSERT INTO dominios.destinadoa (code,code_name) VALUES (43,'Pecuária')#
-INSERT INTO dominios.destinadoa (code,code_name) VALUES (35,'Látex')#
-INSERT INTO dominios.tipomacchav (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipomacchav (code,code_name) VALUES (1,'Macega')#
-INSERT INTO dominios.tipomacchav (code,code_name) VALUES (2,'Chavascal')#
-INSERT INTO dominios.motivodescontinuidade (code,code_name) VALUES (5,'Descontinuidade por diferente interpretação das classes')#
-INSERT INTO dominios.motivodescontinuidade (code,code_name) VALUES (4,'Descontinuidade por falta de acurácia')#
-INSERT INTO dominios.motivodescontinuidade (code,code_name) VALUES (3,'Descontinuidade por escala de insumo')#
-INSERT INTO dominios.motivodescontinuidade (code,code_name) VALUES (7,'Descontinuidade por excesso')#
-INSERT INTO dominios.motivodescontinuidade (code,code_name) VALUES (6,'Descontinuidade por omissão')#
-INSERT INTO dominios.motivodescontinuidade (code,code_name) VALUES (2,'Descontinuidade devido a transformação')#
-INSERT INTO dominios.motivodescontinuidade (code,code_name) VALUES (1,'Descontinuidade Temporal')#
-INSERT INTO dominios.tipoponte (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoponte (code,code_name) VALUES (1,'Móvel')#
-INSERT INTO dominios.tipoponte (code,code_name) VALUES (3,'Fixa')#
-INSERT INTO dominios.tipoponte (code,code_name) VALUES (2,'Pênsil')#
-INSERT INTO dominios.tipoptocontrole (code,code_name) VALUES (9,'Ponto de Controle')#
-INSERT INTO dominios.tipoptocontrole (code,code_name) VALUES (12,'Ponto Perspectivo')#
-INSERT INTO dominios.tipoptocontrole (code,code_name) VALUES (13,'Ponto Fotogramétrico')#
-INSERT INTO dominios.tipoptocontrole (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.mattransp (code,code_name) VALUES (29,'Gasolina')#
-INSERT INTO dominios.mattransp (code,code_name) VALUES (4,'Nafta')#
-INSERT INTO dominios.mattransp (code,code_name) VALUES (8,'Efluentes')#
-INSERT INTO dominios.mattransp (code,code_name) VALUES (3,'Petróleo')#
-INSERT INTO dominios.mattransp (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.mattransp (code,code_name) VALUES (5,'Gás')#
-INSERT INTO dominios.mattransp (code,code_name) VALUES (30,'Álcool')#
-INSERT INTO dominios.mattransp (code,code_name) VALUES (31,'Querosene')#
-INSERT INTO dominios.mattransp (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.mattransp (code,code_name) VALUES (7,'Minério')#
-INSERT INTO dominios.mattransp (code,code_name) VALUES (1,'Água')#
-INSERT INTO dominios.mattransp (code,code_name) VALUES (2,'Óleo')#
-INSERT INTO dominios.mattransp (code,code_name) VALUES (6,'Grãos')#
-INSERT INTO dominios.mattransp (code,code_name) VALUES (9,'Esgoto')#
-INSERT INTO dominios.tipolavoura (code,code_name) VALUES (2,'Semi-perene')#
-INSERT INTO dominios.tipolavoura (code,code_name) VALUES (3,'Anual')#
-INSERT INTO dominios.tipolavoura (code,code_name) VALUES (1,'Perene')#
-INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (3,'Cartorial')#
-INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (7,'Seguridade Social')#
-INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (22,'Prefeitura')#
-INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (5,'Eleitoral')#
-INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (2,'Prisional')#
-INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (6,'Produção e/ou pesquisa')#
-INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (9,'Assembléia Legislativa')#
-INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (4,'Gestão')#
-INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (1,'Policial')#
-INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (8,'Câmara Municipal')#
-INSERT INTO dominios.tiposecaocnae (code,code_name) VALUES (1,'C - Indústrias Extrativas')#
-INSERT INTO dominios.tiposecaocnae (code,code_name) VALUES (2,'D - Indústrias de Transformação')#
-INSERT INTO dominios.tiposecaocnae (code,code_name) VALUES (3,'F - Construção')#
-INSERT INTO dominios.tiposecaocnae (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tiposecaocnae (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.emduto (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.emduto (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.tipolimpol (code,code_name) VALUES (1,'Internacional')#
-INSERT INTO dominios.tipolimpol (code,code_name) VALUES (2,'Estadual')#
-INSERT INTO dominios.tipolimpol (code,code_name) VALUES (3,'Municipal')#
-INSERT INTO dominios.salinidade (code,code_name) VALUES (1,'Doce')#
-INSERT INTO dominios.salinidade (code,code_name) VALUES (0,'Desconhecida')#
-INSERT INTO dominios.salinidade (code,code_name) VALUES (2,'Salgada')#
-INSERT INTO dominios.tipoconteudo (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoconteudo (code,code_name) VALUES (3,'Resíduo')#
-INSERT INTO dominios.tipoconteudo (code,code_name) VALUES (1,'Insumo')#
-INSERT INTO dominios.tipoconteudo (code,code_name) VALUES (2,'Produto')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (6,'Grãos')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (36,'Escória')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (41,'Forragem')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (34,'Sal')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (24,'Mármore')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (19,'Semente')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (21,'Folhagens')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (40,'Pedras preciosas')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (28,'Óleo diesel')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (35,'Ferro')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (33,'Carvão')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (22,'Pedra')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (39,'Prata')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (3,'Petróleo')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (32,'Cobre')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (16,'Vinhoto')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (25,'Bauxita')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (42,'Areia')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (23,'Granito')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (5,'Gás')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (30,'Álcool')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (26,'Manganês')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (31,'Querosene')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (27,'Talco')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (38,'Diamante')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (37,'Ouro')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (20,'Inseticida')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (98,'Misto')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (44,'Piçarra')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (18,'Cascalho')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (17,'Estrume')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (43,'Saibro')#
-INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (29,'Gasolina')#
-INSERT INTO dominios.tipoedifabast (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoedifabast (code,code_name) VALUES (2,'Tratamento')#
-INSERT INTO dominios.tipoedifabast (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoedifabast (code,code_name) VALUES (1,'Captação')#
-INSERT INTO dominios.tipoedifabast (code,code_name) VALUES (3,'Recalque')#
-INSERT INTO dominios.tipoedifabast (code,code_name) VALUES (98,'Misto')#
-INSERT INTO dominios.posicaopista (code,code_name) VALUES (12,'Adjacentes')#
-INSERT INTO dominios.posicaopista (code,code_name) VALUES (0,'Desconhecida')#
-INSERT INTO dominios.posicaopista (code,code_name) VALUES (13,'Superpostas')#
-INSERT INTO dominios.posicaopista (code,code_name) VALUES (97,'Não Aplicável')#
-INSERT INTO dominios.especie (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.especie (code,code_name) VALUES (2,'Transmissão')#
-INSERT INTO dominios.especie (code,code_name) VALUES (3,'Distribuição')#
-INSERT INTO dominios.tipoestgerad (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoestgerad (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoestgerad (code,code_name) VALUES (5,'Eólica')#
-INSERT INTO dominios.tipoestgerad (code,code_name) VALUES (7,'Maré-motriz')#
-INSERT INTO dominios.tipoestgerad (code,code_name) VALUES (6,'Solar')#
-INSERT INTO dominios.tiporesiduo (code,code_name) VALUES (14,'Lixo séptico')#
-INSERT INTO dominios.tiporesiduo (code,code_name) VALUES (15,'Chorume')#
-INSERT INTO dominios.tiporesiduo (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tiporesiduo (code,code_name) VALUES (9,'Esgoto')#
-INSERT INTO dominios.tiporesiduo (code,code_name) VALUES (12,'Lixo domiciliar e comercial')#
-INSERT INTO dominios.tiporesiduo (code,code_name) VALUES (98,'Misto')#
-INSERT INTO dominios.tiporesiduo (code,code_name) VALUES (13,'Lixo tóxico')#
-INSERT INTO dominios.tiporesiduo (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tiporesiduo (code,code_name) VALUES (16,'Vinhoto')#
-INSERT INTO dominios.tipoedifenergia (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoedifenergia (code,code_name) VALUES (3,'Segurança')#
-INSERT INTO dominios.tipoedifenergia (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoedifenergia (code,code_name) VALUES (1,'Administração')#
-INSERT INTO dominios.tipoedifenergia (code,code_name) VALUES (2,'Oficinas')#
-INSERT INTO dominios.tipoedifenergia (code,code_name) VALUES (4,'Depósito')#
-INSERT INTO dominios.bitola (code,code_name) VALUES (1,'Métrica')#
-INSERT INTO dominios.bitola (code,code_name) VALUES (3,'Larga')#
-INSERT INTO dominios.bitola (code,code_name) VALUES (6,'Mista Internacional Larga')#
-INSERT INTO dominios.bitola (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.bitola (code,code_name) VALUES (2,'Internacional')#
-INSERT INTO dominios.bitola (code,code_name) VALUES (4,'Mista Métrica Internacional')#
-INSERT INTO dominios.bitola (code,code_name) VALUES (5,'Mista Métrica Larga')#
-INSERT INTO dominios.tipotravessiaped (code,code_name) VALUES (7,'Passagem subterrânea')#
-INSERT INTO dominios.tipotravessiaped (code,code_name) VALUES (8,'Passarela')#
-INSERT INTO dominios.tipotravessiaped (code,code_name) VALUES (0,'Desconhecida')#
-INSERT INTO dominios.tipotravessiaped (code,code_name) VALUES (9,'Pinguela')#
-INSERT INTO dominios.tipoedifaero (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoedifaero (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoedifaero (code,code_name) VALUES (29,'Hangar')#
-INSERT INTO dominios.tipoedifaero (code,code_name) VALUES (27,'Terminal de cargas')#
-INSERT INTO dominios.tipoedifaero (code,code_name) VALUES (28,'Torre de controle')#
-INSERT INTO dominios.tipoedifaero (code,code_name) VALUES (15,'Administrativa')#
-INSERT INTO dominios.tipoedifaero (code,code_name) VALUES (26,'Terminal de passageiros')#
-INSERT INTO dominios.funcaoedifmetroferrov (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.funcaoedifmetroferrov (code,code_name) VALUES (15,'Administrativa')#
-INSERT INTO dominios.funcaoedifmetroferrov (code,code_name) VALUES (20,'Oficina de manutenção')#
-INSERT INTO dominios.funcaoedifmetroferrov (code,code_name) VALUES (17,'Estação metroviária')#
-INSERT INTO dominios.funcaoedifmetroferrov (code,code_name) VALUES (18,'Terminal ferroviário de cargas')#
-INSERT INTO dominios.funcaoedifmetroferrov (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.funcaoedifmetroferrov (code,code_name) VALUES (16,'Estação ferroviária de passageiros')#
-INSERT INTO dominios.funcaoedifmetroferrov (code,code_name) VALUES (19,'Terminal ferroviário de passageiros e cargas')#
-INSERT INTO dominios.tipopostopol (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipopostopol (code,code_name) VALUES (21,'Posto PRF')#
-INSERT INTO dominios.tipopostopol (code,code_name) VALUES (20,'Posto PM')#
-INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (13,'Falésia')#
-INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (8,'Escarpa')#
-INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (9,'Península')#
-INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (5,'Maciço')#
-INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (3,'Montanha')#
-INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (11,'Cabo')#
-INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (14,'Talude')#
-INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (10,'Ponta')#
-INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (4,'Chapada')#
-INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (7,'Planície')#
-INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (12,'Praia')#
-INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (6,'Planalto')#
-INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (2,'Morro')#
-INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (1,'Serra')#
-INSERT INTO dominios.tipocombustivel (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipocombustivel (code,code_name) VALUES (5,'Gás')#
-INSERT INTO dominios.tipocombustivel (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipocombustivel (code,code_name) VALUES (3,'Diesel')#
-INSERT INTO dominios.tipocombustivel (code,code_name) VALUES (33,'Carvão')#
-INSERT INTO dominios.tipocombustivel (code,code_name) VALUES (1,'Nuclear')#
-INSERT INTO dominios.tipocombustivel (code,code_name) VALUES (98,'Misto')#
-INSERT INTO dominios.tipoalterantrop (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoalterantrop (code,code_name) VALUES (27,'Aterro')#
-INSERT INTO dominios.tipoalterantrop (code,code_name) VALUES (28,'Resíduo de bota-fora')#
-INSERT INTO dominios.tipoalterantrop (code,code_name) VALUES (25,'Área aterrada')#
-INSERT INTO dominios.tipoalterantrop (code,code_name) VALUES (26,'Corte')#
-INSERT INTO dominios.tipoalterantrop (code,code_name) VALUES (29,'Resíduo sólido em geral')#
-INSERT INTO dominios.tipoalterantrop (code,code_name) VALUES (24,'Caixa de empréstimo')#
-INSERT INTO dominios.especiepredominante (code,code_name) VALUES (96,'Não identificado')#
-INSERT INTO dominios.especiepredominante (code,code_name) VALUES (10,'Cipó')#
-INSERT INTO dominios.especiepredominante (code,code_name) VALUES (11,'Bambu')#
-INSERT INTO dominios.especiepredominante (code,code_name) VALUES (17,'Palmeira')#
-INSERT INTO dominios.especiepredominante (code,code_name) VALUES (27,'Araucária')#
-INSERT INTO dominios.especiepredominante (code,code_name) VALUES (98,'Misto')#
-INSERT INTO dominios.especiepredominante (code,code_name) VALUES (41,'Babaçu')#
-INSERT INTO dominios.especiepredominante (code,code_name) VALUES (12,'Sororoca')#
-INSERT INTO dominios.tipotrechoferrov (code,code_name) VALUES (6,'Aeromóvel')#
-INSERT INTO dominios.tipotrechoferrov (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipotrechoferrov (code,code_name) VALUES (7,'Ferrovia')#
-INSERT INTO dominios.tipotrechoferrov (code,code_name) VALUES (8,'Metrovia')#
-INSERT INTO dominios.tipotrechoferrov (code,code_name) VALUES (5,'Bonde')#
-INSERT INTO dominios.tipocampo (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipocampo (code,code_name) VALUES (1,'Sujo')#
-INSERT INTO dominios.tipocampo (code,code_name) VALUES (2,'Limpo')#
-INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (1,'Estação Climatológica Principal - CP')#
-INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (11,'Estação Maregráfica - MA')#
-INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (2,'Estação Climatológica Auxiliar - CA')#
-INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (9,'Estação de Radiossonda - RS')#
-INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (4,'Estação Pluviométrica - PL')#
-INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (8,'Estação de Radar Meteorológico - RD')#
-INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (5,'Estação Eólica - EO')#
-INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (7,'Estação Solarimétrica - SL')#
-INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (6,'Estação Evaporimétrica - EV')#
-INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (10,'Estação Fluviométrica - FL')#
-INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (3,'Estação Agroclimatológica - AC')#
-INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (12,'Estação de Marés Terrestres - Crosta')#
-INSERT INTO dominios.referencialaltim (code,code_name) VALUES (2,'Imbituba')#
-INSERT INTO dominios.referencialaltim (code,code_name) VALUES (4,'Local')#
-INSERT INTO dominios.referencialaltim (code,code_name) VALUES (5,'Outra referência')#
-INSERT INTO dominios.referencialaltim (code,code_name) VALUES (1,'Torres')#
-INSERT INTO dominios.referencialaltim (code,code_name) VALUES (3,'Santana')#
-INSERT INTO dominios.caracteristicafloresta (code,code_name) VALUES (3,'Bosque')#
-INSERT INTO dominios.caracteristicafloresta (code,code_name) VALUES (1,'Floresta')#
-INSERT INTO dominios.caracteristicafloresta (code,code_name) VALUES (2,'Mata')#
-INSERT INTO dominios.caracteristicafloresta (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (2,'Barragem')#
-INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (13,'Entre trechos de drenagem')#
-INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (4,'Queda d’água')#
-INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (15,'Confluência')#
-INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (5,'Corredeira')#
-INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (7,'Sumidouro')#
-INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (14,'Ponto início de drenagem')#
-INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (3,'Comporta')#
-INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (19,'Ramificação')#
-INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (9,'Lago / Lagoa')#
-INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (6,'Foz marítima')#
-INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (17,'Interrupção à Jusante')#
-INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (11,'Laguna')#
-INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (16,'Vertedouro')#
-INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (8,'Meandro abandonado')#
-INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (12,'Represa/ açude')#
-INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (1,'Eclusa')#
-INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (18,'Interrupção à Montante')#
-INSERT INTO dominios.tipoqueda (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoqueda (code,code_name) VALUES (2,'Salto')#
-INSERT INTO dominios.tipoqueda (code,code_name) VALUES (1,'Cachoeira')#
-INSERT INTO dominios.tipoqueda (code,code_name) VALUES (3,'Catarata')#
-INSERT INTO dominios.poderpublico (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.poderpublico (code,code_name) VALUES (2,'Legislativo')#
-INSERT INTO dominios.poderpublico (code,code_name) VALUES (1,'Executivo')#
-INSERT INTO dominios.poderpublico (code,code_name) VALUES (3,'Judiciário')#
-INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (1,'Estádio')#
-INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (7,'Centro cultural')#
-INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (8,'Plataforma de pesca')#
-INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (2,'Ginásio')#
-INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (4,'Teatro')#
-INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (5,'Anfiteatro')#
-INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (6,'Cinema')#
-INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (3,'Museu')#
-INSERT INTO dominios.administracao (code,code_name) VALUES (15,'Privada')#
-INSERT INTO dominios.administracao (code,code_name) VALUES (12,'Federal/Estadual/Municipal')#
-INSERT INTO dominios.administracao (code,code_name) VALUES (3,'Municipal')#
-INSERT INTO dominios.administracao (code,code_name) VALUES (11,'Estadual/Municipal')#
-INSERT INTO dominios.administracao (code,code_name) VALUES (5,'Distrital')#
-INSERT INTO dominios.administracao (code,code_name) VALUES (2,'Estadual')#
-INSERT INTO dominios.administracao (code,code_name) VALUES (98,'Mista')#
-INSERT INTO dominios.administracao (code,code_name) VALUES (6,'Particular')#
-INSERT INTO dominios.administracao (code,code_name) VALUES (10,'Federal/Municipal')#
-INSERT INTO dominios.administracao (code,code_name) VALUES (4,'Estadual/Municipal')#
-INSERT INTO dominios.administracao (code,code_name) VALUES (1,'Federal')#
-INSERT INTO dominios.administracao (code,code_name) VALUES (0,'Desconhecida')#
-INSERT INTO dominios.administracao (code,code_name) VALUES (7,'Concessionada')#
-INSERT INTO dominios.administracao (code,code_name) VALUES (97,'Não aplicável')#
-INSERT INTO dominios.administracao (code,code_name) VALUES (9,'Federal/Estadual')#
-INSERT INTO dominios.tipoedifturist (code,code_name) VALUES (10,'Estátua')#
-INSERT INTO dominios.tipoedifturist (code,code_name) VALUES (13,'Panteão')#
-INSERT INTO dominios.tipoedifturist (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoedifturist (code,code_name) VALUES (11,'Mirante')#
-INSERT INTO dominios.tipoedifturist (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoedifturist (code,code_name) VALUES (9,'Cruzeiro')#
-INSERT INTO dominios.tipoedifturist (code,code_name) VALUES (12,'Monumento')#
-INSERT INTO dominios.usoprincipal (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.usoprincipal (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.usoprincipal (code,code_name) VALUES (3,'Energia')#
-INSERT INTO dominios.usoprincipal (code,code_name) VALUES (1,'Irrigação')#
-INSERT INTO dominios.usoprincipal (code,code_name) VALUES (97,'Não aplicável')#
-INSERT INTO dominios.usoprincipal (code,code_name) VALUES (2,'Abastecimento')#
-INSERT INTO dominios.tipoilha (code,code_name) VALUES (1,'Fluvial')#
-INSERT INTO dominios.tipoilha (code,code_name) VALUES (2,'Marítima')#
-INSERT INTO dominios.tipoilha (code,code_name) VALUES (98,'Mista')#
-INSERT INTO dominios.tipoilha (code,code_name) VALUES (3,'Lacustre')#
-INSERT INTO dominios.tipousocaminhoaer (code,code_name) VALUES (22,'Cargas')#
-INSERT INTO dominios.tipousocaminhoaer (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipousocaminhoaer (code,code_name) VALUES (98,'Misto')#
-INSERT INTO dominios.tipousocaminhoaer (code,code_name) VALUES (21,'Passageiros')#
-INSERT INTO dominios.residuo (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.residuo (code,code_name) VALUES (1,'Líquido')#
-INSERT INTO dominios.residuo (code,code_name) VALUES (2,'Sólido')#
-INSERT INTO dominios.jurisdicao (code,code_name) VALUES (9,'Federal/Estadual')#
-INSERT INTO dominios.jurisdicao (code,code_name) VALUES (3,'Municipal')#
-INSERT INTO dominios.jurisdicao (code,code_name) VALUES (11,'Estadual/Municipal')#
-INSERT INTO dominios.jurisdicao (code,code_name) VALUES (12,'Federal/Estadual/Municipal')#
-INSERT INTO dominios.jurisdicao (code,code_name) VALUES (10,'Federal/Municipal')#
-INSERT INTO dominios.jurisdicao (code,code_name) VALUES (1,'Federal')#
-INSERT INTO dominios.jurisdicao (code,code_name) VALUES (0,'Desconhecida')#
-INSERT INTO dominios.jurisdicao (code,code_name) VALUES (2,'Estadual')#
-INSERT INTO dominios.jurisdicao (code,code_name) VALUES (6,'Particular')#
-INSERT INTO dominios.jurisdicao (code,code_name) VALUES (8,'Propriedade particular')#
-INSERT INTO dominios.tipobanco (code,code_name) VALUES (2,'Marítimo')#
-INSERT INTO dominios.tipobanco (code,code_name) VALUES (1,'Fluvial')#
-INSERT INTO dominios.tipobanco (code,code_name) VALUES (3,'Lacustre')#
-INSERT INTO dominios.tipobanco (code,code_name) VALUES (4,'Cordão Arenoso')#
-INSERT INTO dominios.nascente (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.nascente (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.construcao (code,code_name) VALUES (97,'Não aplicável')#
-INSERT INTO dominios.construcao (code,code_name) VALUES (2,'Aberta')#
-INSERT INTO dominios.construcao (code,code_name) VALUES (1,'Fechada')#
-INSERT INTO dominios.tipocemiterio (code,code_name) VALUES (1,'Crematório')#
-INSERT INTO dominios.tipocemiterio (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipocemiterio (code,code_name) VALUES (5,'Túmulo Isolado')#
-INSERT INTO dominios.tipocemiterio (code,code_name) VALUES (2,'Parque')#
-INSERT INTO dominios.tipocemiterio (code,code_name) VALUES (3,'Vertical')#
-INSERT INTO dominios.tipocemiterio (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipocemiterio (code,code_name) VALUES (98,'Misto')#
-INSERT INTO dominios.tipocemiterio (code,code_name) VALUES (4,'Comum')#
-INSERT INTO dominios.tipofontedagua (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipofontedagua (code,code_name) VALUES (2,'Poço Artesiano')#
-INSERT INTO dominios.tipofontedagua (code,code_name) VALUES (3,'Olho d`água')#
-INSERT INTO dominios.tipofontedagua (code,code_name) VALUES (1,'Poço')#
-INSERT INTO dominios.tipopostofisc (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipopostofisc (code,code_name) VALUES (11,'Fiscalização')#
-INSERT INTO dominios.tipopostofisc (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipopostofisc (code,code_name) VALUES (98,'Mista')#
-INSERT INTO dominios.tipopostofisc (code,code_name) VALUES (10,'Tributação')#
-INSERT INTO dominios.causa (code,code_name) VALUES (3,'Absorção')#
-INSERT INTO dominios.causa (code,code_name) VALUES (1,'Canalização')#
-INSERT INTO dominios.causa (code,code_name) VALUES (0,'Desconhecida')#
-INSERT INTO dominios.causa (code,code_name) VALUES (2,'Gruta ou Fenda')#
-INSERT INTO dominios.tratamento (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.tratamento (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tratamento (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.tratamento (code,code_name) VALUES (97,'Não aplicável')#
-INSERT INTO dominios.proximidade (code,code_name) VALUES (15,'Adjacente')#
-INSERT INTO dominios.proximidade (code,code_name) VALUES (16,'Coincidente')#
-INSERT INTO dominios.proximidade (code,code_name) VALUES (0,'Desconhecida')#
-INSERT INTO dominios.proximidade (code,code_name) VALUES (14,'Isolado')#
-INSERT INTO dominios.tipocondutor (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipocondutor (code,code_name) VALUES (4,'Tubulação')#
-INSERT INTO dominios.tipocondutor (code,code_name) VALUES (2,'Calha')#
-INSERT INTO dominios.situacaomarco (code,code_name) VALUES (5,'Não encontrado')#
-INSERT INTO dominios.situacaomarco (code,code_name) VALUES (2,'Destruído')#
-INSERT INTO dominios.situacaomarco (code,code_name) VALUES (6,'Não visitado')#
-INSERT INTO dominios.situacaomarco (code,code_name) VALUES (3,'Destruído sem chapa')#
-INSERT INTO dominios.situacaomarco (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.situacaomarco (code,code_name) VALUES (7,'Não construído')#
-INSERT INTO dominios.situacaomarco (code,code_name) VALUES (4,'Destruído com chapa danificada')#
-INSERT INTO dominios.situacaomarco (code,code_name) VALUES (1,'Bom')#
-INSERT INTO dominios.tipoentroncamento (code,code_name) VALUES (5,'Entroncamento ferroviário')#
-INSERT INTO dominios.tipoentroncamento (code,code_name) VALUES (1,'Cruzamento rodoviário')#
-INSERT INTO dominios.tipoentroncamento (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoentroncamento (code,code_name) VALUES (4,'Rótula')#
-INSERT INTO dominios.tipoentroncamento (code,code_name) VALUES (3,'Trevo rodoviário')#
-INSERT INTO dominios.tipoentroncamento (code,code_name) VALUES (2,'Círculo rodoviário')#
-INSERT INTO dominios.tipoestmed (code,code_name) VALUES (1,'Estação Climatológica Principal - CP')#
-INSERT INTO dominios.tipoestmed (code,code_name) VALUES (11,'Estação Maregráfica - MA')#
-INSERT INTO dominios.tipoestmed (code,code_name) VALUES (2,'Estação Climatológica Auxiliar - CA')#
-INSERT INTO dominios.tipoestmed (code,code_name) VALUES (9,'Estação de Radiossonda - RS')#
-INSERT INTO dominios.tipoestmed (code,code_name) VALUES (4,'Estação Pluviométrica - PL')#
-INSERT INTO dominios.tipoestmed (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoestmed (code,code_name) VALUES (8,'Estação de Radar Meteorológico - RD')#
-INSERT INTO dominios.tipoestmed (code,code_name) VALUES (5,'Estação Eólica - EO')#
-INSERT INTO dominios.tipoestmed (code,code_name) VALUES (7,'Estação Solarimétrica - SL')#
-INSERT INTO dominios.tipoestmed (code,code_name) VALUES (6,'Estação Evaporimétrica - EV')#
-INSERT INTO dominios.tipoestmed (code,code_name) VALUES (10,'Estação Fluviométrica - FL')#
-INSERT INTO dominios.tipoestmed (code,code_name) VALUES (3,'Estação Agroclimatológica - AC')#
-INSERT INTO dominios.tipoestmed (code,code_name) VALUES (12,'Estação de Marés Terrestres - Crosta')#
-INSERT INTO dominios.tipooutunidprot (code,code_name) VALUES (5,'Corredor ecológico')#
-INSERT INTO dominios.tipooutunidprot (code,code_name) VALUES (4,'Distrito florestal')#
-INSERT INTO dominios.tipooutunidprot (code,code_name) VALUES (8,'Sítios do patrimônio')#
-INSERT INTO dominios.tipooutunidprot (code,code_name) VALUES (2,'Reserva legal')#
-INSERT INTO dominios.tipooutunidprot (code,code_name) VALUES (9,'Reserva da biosfera')#
-INSERT INTO dominios.tipooutunidprot (code,code_name) VALUES (6,'Floresta pública')#
-INSERT INTO dominios.tipooutunidprot (code,code_name) VALUES (3,'Mosaico')#
-INSERT INTO dominios.tipooutunidprot (code,code_name) VALUES (1,'Área de preservação permanente')#
-INSERT INTO dominios.tipooutunidprot (code,code_name) VALUES (7,'Sítios RAMSAR')#
-INSERT INTO dominios.tipodepsaneam (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipodepsaneam (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipodepsaneam (code,code_name) VALUES (1,'Tanque')#
-INSERT INTO dominios.tipodepsaneam (code,code_name) VALUES (5,'Aterro sanitário')#
-INSERT INTO dominios.tipodepsaneam (code,code_name) VALUES (6,'Aterro controlado')#
-INSERT INTO dominios.tipodepsaneam (code,code_name) VALUES (4,'Depósito de lixo')#
-INSERT INTO dominios.tipounidprotinteg (code,code_name) VALUES (3,'Monumento batural - MONA')#
-INSERT INTO dominios.tipounidprotinteg (code,code_name) VALUES (2,'Parque - PAR')#
-INSERT INTO dominios.tipounidprotinteg (code,code_name) VALUES (1,'Estação Ecológica - ESEC')#
-INSERT INTO dominios.tipounidprotinteg (code,code_name) VALUES (5,'Refúgio de Vida Silvestre - RVS')#
-INSERT INTO dominios.tipounidprotinteg (code,code_name) VALUES (4,'Reserva Biológica - REBIO')#
-INSERT INTO dominios.eletrificada (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.eletrificada (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.eletrificada (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.frigorifico (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.frigorifico (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.frigorifico (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.classficsigiloso (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.classficsigiloso (code,code_name) VALUES (2,'Ostensivo')#
-INSERT INTO dominios.classficsigiloso (code,code_name) VALUES (1,'Sigiloso')#
-INSERT INTO dominios.tipolimmassa (code,code_name) VALUES (2,'Margem de massa d`água')#
-INSERT INTO dominios.tipolimmassa (code,code_name) VALUES (5,'Limite interno entre massas e/ou trechos')#
-INSERT INTO dominios.tipolimmassa (code,code_name) VALUES (1,'Costa visível da carta')#
-INSERT INTO dominios.tipolimmassa (code,code_name) VALUES (4,'Margem direita de trechos de massa d`água')#
-INSERT INTO dominios.tipolimmassa (code,code_name) VALUES (7,'Limite interno com foz marítima')#
-INSERT INTO dominios.tipolimmassa (code,code_name) VALUES (6,'Limite com elemento artificial')#
-INSERT INTO dominios.tipolimmassa (code,code_name) VALUES (3,'Margem esquerda de trechos de massa d`água')#
-INSERT INTO dominios.tipotransporte (code,code_name) VALUES (22,'Cargas')#
-INSERT INTO dominios.tipotransporte (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipotransporte (code,code_name) VALUES (98,'Misto')#
-INSERT INTO dominios.tipotransporte (code,code_name) VALUES (21,'Passageiros')#
-INSERT INTO dominios.navegabilidade (code,code_name) VALUES (0,'Desconhecida')#
-INSERT INTO dominios.navegabilidade (code,code_name) VALUES (2,'Não navegável')#
-INSERT INTO dominios.navegabilidade (code,code_name) VALUES (1,'Navegável')#
-INSERT INTO dominios.tipogrutacaverna (code,code_name) VALUES (20,'Caverna')#
-INSERT INTO dominios.tipogrutacaverna (code,code_name) VALUES (19,'Gruta')#
-INSERT INTO dominios.fixa (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.fixa (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.fixa (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.instituicao_edu (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.instituicao_edu (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.instituicao_edu (code,code_name) VALUES (97,'Não Aplicável')#
-INSERT INTO dominios.terreno (code,code_name) VALUES (1,'Seco')#
-INSERT INTO dominios.terreno (code,code_name) VALUES (2,'Irrigado')#
-INSERT INTO dominios.terreno (code,code_name) VALUES (3,'Inundado')#
-INSERT INTO dominios.tipocomplexoportuario (code,code_name) VALUES (31,'Instalação portuária')#
-INSERT INTO dominios.tipocomplexoportuario (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipocomplexoportuario (code,code_name) VALUES (30,'Porto organizado')#
-INSERT INTO dominios.tipotorre (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipotorre (code,code_name) VALUES (1,'Autoportante')#
-INSERT INTO dominios.tipotorre (code,code_name) VALUES (2,'Estaiada')#
-INSERT INTO dominios.tipoedifagropec (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoedifagropec (code,code_name) VALUES (14,'Apiário')#
-INSERT INTO dominios.tipoedifagropec (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoedifagropec (code,code_name) VALUES (18,'Curral')#
-INSERT INTO dominios.tipoedifagropec (code,code_name) VALUES (12,'Sede operacional de fazenda')#
-INSERT INTO dominios.tipoedifagropec (code,code_name) VALUES (17,'Pocilga')#
-INSERT INTO dominios.tipoedifagropec (code,code_name) VALUES (13,'Aviário')#
-INSERT INTO dominios.tipoedifagropec (code,code_name) VALUES (15,'Viveiro de plantas')#
-INSERT INTO dominios.tipoedifagropec (code,code_name) VALUES (16,'Viveiro para acquicultura')#
-INSERT INTO dominios.classificacaoporte (code,code_name) VALUES (1,'Arbórea')#
-INSERT INTO dominios.classificacaoporte (code,code_name) VALUES (98,'Misto')#
-INSERT INTO dominios.classificacaoporte (code,code_name) VALUES (2,'Arbustiva')#
-INSERT INTO dominios.classificacaoporte (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.classificacaoporte (code,code_name) VALUES (3,'Herbácea')#
-INSERT INTO dominios.finalidade_asb (code,code_name) VALUES (8,'Armazenamento')#
-INSERT INTO dominios.finalidade_asb (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.finalidade_asb (code,code_name) VALUES (2,'Tratamento')#
-INSERT INTO dominios.finalidade_asb (code,code_name) VALUES (3,'Recalque')#
-INSERT INTO dominios.finalidade_asb (code,code_name) VALUES (4,'Distribuição')#
-INSERT INTO dominios.tipomassadagua (code,code_name) VALUES (10,'Represa/Açude')#
-INSERT INTO dominios.tipomassadagua (code,code_name) VALUES (5,'Enseada')#
-INSERT INTO dominios.tipomassadagua (code,code_name) VALUES (3,'Oceano')#
-INSERT INTO dominios.tipomassadagua (code,code_name) VALUES (7,'Lago/Lagoa')#
-INSERT INTO dominios.tipomassadagua (code,code_name) VALUES (4,'Baía')#
-INSERT INTO dominios.tipomassadagua (code,code_name) VALUES (6,'Meandro Abandonado')#
-INSERT INTO dominios.tipomassadagua (code,code_name) VALUES (0,'Desconhecida')#
-INSERT INTO dominios.tipomarcolim (code,code_name) VALUES (1,'Internacional')#
-INSERT INTO dominios.tipomarcolim (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipomarcolim (code,code_name) VALUES (2,'Estadual')#
-INSERT INTO dominios.tipomarcolim (code,code_name) VALUES (3,'Municipal')#
-INSERT INTO dominios.instituicao (code,code_name) VALUES (6,'Aeronáutica')#
-INSERT INTO dominios.instituicao (code,code_name) VALUES (8,'Corpo de bombeiros')#
-INSERT INTO dominios.instituicao (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.instituicao (code,code_name) VALUES (5,'Exército')#
-INSERT INTO dominios.instituicao (code,code_name) VALUES (4,'Marinha')#
-INSERT INTO dominios.instituicao (code,code_name) VALUES (7,'Polícia militar')#
-INSERT INTO dominios.instituicao (code,code_name) VALUES (0,'Desconhecida')#
-INSERT INTO dominios.tipoedifport (code,code_name) VALUES (34,'Dique de estaleiro')#
-INSERT INTO dominios.tipoedifport (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoedifport (code,code_name) VALUES (32,'Armazém')#
-INSERT INTO dominios.tipoedifport (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoedifport (code,code_name) VALUES (37,'Terminal privativo')#
-INSERT INTO dominios.tipoedifport (code,code_name) VALUES (15,'Administrativa')#
-INSERT INTO dominios.tipoedifport (code,code_name) VALUES (36,'Carreira')#
-INSERT INTO dominios.tipoedifport (code,code_name) VALUES (27,'Terminal de cargas')#
-INSERT INTO dominios.tipoedifport (code,code_name) VALUES (35,'Rampa')#
-INSERT INTO dominios.tipoedifport (code,code_name) VALUES (33,'Estaleiro')#
-INSERT INTO dominios.tipoedifport (code,code_name) VALUES (26,'Terminal de passageiros')#
-INSERT INTO dominios.tipoptoenergia (code,code_name) VALUES (3,'Subestação de  distribuição')#
-INSERT INTO dominios.tipoptoenergia (code,code_name) VALUES (4,'Ponto de ramificação')#
-INSERT INTO dominios.tipoptoenergia (code,code_name) VALUES (1,'Estação geradora de energia')#
-INSERT INTO dominios.tipoptoenergia (code,code_name) VALUES (2,'Subestação de transmissão')#
-INSERT INTO dominios.tipoptoenergia (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.antropizada (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.antropizada (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.antropizada (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.tipomaqtermica (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipomaqtermica (code,code_name) VALUES (2,'Turbina à vapor (TBVP)')#
-INSERT INTO dominios.tipomaqtermica (code,code_name) VALUES (4,'Motor de Combustão Interna (NCIA)')#
-INSERT INTO dominios.tipomaqtermica (code,code_name) VALUES (1,'Turbina à gás (TBGS)')#
-INSERT INTO dominios.tipomaqtermica (code,code_name) VALUES (3,'Ciclo combinado (CLCB)')#
-INSERT INTO dominios.tipounidusosust (code,code_name) VALUES (5,'Reserva Extrativista - RESEX')#
-INSERT INTO dominios.tipounidusosust (code,code_name) VALUES (3,'Floresta - FLO')#
-INSERT INTO dominios.tipounidusosust (code,code_name) VALUES (7,'Reserva Particular do Patrimônio Natural - RPPN')#
-INSERT INTO dominios.tipounidusosust (code,code_name) VALUES (6,'Reserva de Fauna - REFAU')#
-INSERT INTO dominios.tipounidusosust (code,code_name) VALUES (1,'Área de Proteção Ambiental - APA')#
-INSERT INTO dominios.tipounidusosust (code,code_name) VALUES (2,'Área de Relevante Interesse Ecológico - ARIE')#
-INSERT INTO dominios.tipounidusosust (code,code_name) VALUES (4,'Reserva de Desenvolvimento Sustentável - RDS')#
-INSERT INTO dominios.situacaocosta (code,code_name) VALUES (11,'Afastado')#
-INSERT INTO dominios.situacaocosta (code,code_name) VALUES (10,'Contíguo')#
-INSERT INTO dominios.operacional (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.operacional (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.operacional (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.tipolimintramun (code,code_name) VALUES (5,'Bairro')#
-INSERT INTO dominios.tipolimintramun (code,code_name) VALUES (2,'Sub-distrital')#
-INSERT INTO dominios.tipolimintramun (code,code_name) VALUES (1,'Distrital')#
-INSERT INTO dominios.tipolimintramun (code,code_name) VALUES (4,'Região administrativa')#
-INSERT INTO dominios.tipolimintramun (code,code_name) VALUES (3,'Perímetro urbano legal')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (35,'91.91-0 - Atividades de Organizações Religiosas')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (16,'80.13-6 - Educação Infantil - Creche')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (32,'85.31-6 - Serviços Sociais com alojamento')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (21,'80.32-2 - Educação Superior - Graduação e Pós-Graduação')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (28,'85.13-8 Atenção Ambulatorial (Posto e Centro de Saúde)')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (7,'75.12-4 - Regulação das Atividades Sociais e Culturais')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (8,'75.13-2 - Regulação das Atividades Econômicas')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (19,'80.20-9 - Ensino Médio')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (3,'40.14-2 - Distribuição de Energia Elétrica')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (13,'75.24-8 - Segurança e Ordem Pública')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (18,'80.15-2 - Ensino Fundamental')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (14,'75.25-6 - Defesa Civil')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (17,'80.14-4 - Educação Infantil - Pré-Escola')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (10,'75.21-3 - Relações Exteriores')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (12,'75.23-0 - Justiça')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (27,'85.12-0 Atendimento a Urgência e Emergências (Pronto Socorro)')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (34,'90.00-0 - Limpeza Urbana e Esgoto e Atividades Relacionadas')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (97,'Não Aplicável')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (30,'85.16-2 Outras Atividades Relacionadas com a Atenção à Saúde (Instituto de Pesquisa)')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (24,'80.97-7 - Educação Profissional de Nível Tecnológico')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (11,'75.22-1 - Defesa')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (6,'75.11-6 - Administração Pública em Geral')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (15,'75.30-2 - Seguridade Social')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (5,'64.20-3 - Telecomunicações')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (26,'85.11-1 Atendimento Hospitalar (Hospital)')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (9,'75.14-0 - Atividades de Apoio à Administração Pública')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (25,'80.99-3 - Outras Atividades de Ensino')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (33,'85.32-4 - Serviços Sociais sem alojamento')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (4,'41.00-9 - Captação Tratamento e Distribuição de Água')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (98,'Misto')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (1,'40.11-8 - Produção de Energia Elétrica')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (20,'80.31-4 - Educação Superior - Graduação')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (2,'40.12-6 - Transmissão de Energia Elétrica')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (23,'80.96-9 - Educação Profissional de Nível Técnico')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (22,'80.33-0 - Educação Superior - Pós-Graduação e Extensão')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (31,'85.20-0 Serviços Veterinários')#
-INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (29,'85.14-6 Serviços de Complementação Diagnóstica ou Terapêutica')#
-INSERT INTO dominios.tiposinal (code,code_name) VALUES (5,'Barca farol')#
-INSERT INTO dominios.tiposinal (code,code_name) VALUES (6,'Sinalização de margem')#
-INSERT INTO dominios.tiposinal (code,code_name) VALUES (2,'Bóia cega')#
-INSERT INTO dominios.tiposinal (code,code_name) VALUES (1,'Bóia luminosa')#
-INSERT INTO dominios.tiposinal (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tiposinal (code,code_name) VALUES (4,'Farol ou farolete')#
-INSERT INTO dominios.tiposinal (code,code_name) VALUES (3,'Bóia de amarração')#
-INSERT INTO dominios.modaluso (code,code_name) VALUES (14,'Portuário')#
-INSERT INTO dominios.modaluso (code,code_name) VALUES (9,'Aeroportuário')#
-INSERT INTO dominios.modaluso (code,code_name) VALUES (5,'Ferroviário')#
-INSERT INTO dominios.modaluso (code,code_name) VALUES (98,'Misto')#
-INSERT INTO dominios.modaluso (code,code_name) VALUES (7,'Dutos')#
-INSERT INTO dominios.modaluso (code,code_name) VALUES (8,'Rodoferroviário')#
-INSERT INTO dominios.modaluso (code,code_name) VALUES (4,'Rodoviário')#
-INSERT INTO dominios.modaluso (code,code_name) VALUES (6,'Metroviário')#
-INSERT INTO dominios.situacaoemagua (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.situacaoemagua (code,code_name) VALUES (4,'Emerso')#
-INSERT INTO dominios.situacaoemagua (code,code_name) VALUES (7,'Cobre e Descobre')#
-INSERT INTO dominios.situacaoemagua (code,code_name) VALUES (5,'Submerso')#
-INSERT INTO dominios.tiporecife (code,code_name) VALUES (20,'Coral')#
-INSERT INTO dominios.tiporecife (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tiporecife (code,code_name) VALUES (1,'Arenito')#
-INSERT INTO dominios.tiporecife (code,code_name) VALUES (2,'Rochoso')#
-INSERT INTO dominios.rede (code,code_name) VALUES (15,'Privada')#
-INSERT INTO dominios.rede (code,code_name) VALUES (2,'Estadual')#
-INSERT INTO dominios.rede (code,code_name) VALUES (0,'Desconhecida')#
-INSERT INTO dominios.rede (code,code_name) VALUES (3,'Municipal')#
-INSERT INTO dominios.rede (code,code_name) VALUES (14,'Nacional')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (26,'Bracatinga')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (96,'Não identificado')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (42,'Videira')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (33,'Cebola')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (13,'Arroz')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (4,'Trigo')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (32,'Juta')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (15,'Cacau')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (6,'Algodão herbáceo')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (18,'Açaí')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (27,'Araucária')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (22,'Algaroba')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (30,'Maçã')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (10,'Batata inglesa')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (25,'Hortaliças')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (12,'Feijão')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (23,'Pinus')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (31,'Pêssego')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (2,'Banana')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (17,'Palmeira')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (24,'Pastagem cultivada')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (20,'Eucalipto')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (3,'Laranja')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (16,'Erva-mate')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (1,'Milho')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (21,'Acácia')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (28,'Carnauba')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (29,'Pera')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (19,'Seringueira')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (98,'Misto')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (7,'Cana-de-Açúcar')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (9,'Soja')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (14,'Café')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (8,'Fumo')#
-INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (11,'Mandioca')#
-INSERT INTO dominios.tipoassociado (code,code_name) VALUES (4,'Vila')#
-INSERT INTO dominios.tipoassociado (code,code_name) VALUES (1,'Cidade')#
-INSERT INTO dominios.tipoequipagropec (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoequipagropec (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoequipagropec (code,code_name) VALUES (1,'Pivô central')#
-INSERT INTO dominios.tipotunel (code,code_name) VALUES (1,'Túnel')#
-INSERT INTO dominios.tipotunel (code,code_name) VALUES (2,'Passagem subterrânea sob via')#
-INSERT INTO dominios.dentrodepoligono (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.dentrodepoligono (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.tipotrechomassa (code,code_name) VALUES (2,'Canal')#
-INSERT INTO dominios.tipotrechomassa (code,code_name) VALUES (1,'Rio')#
-INSERT INTO dominios.tipotrechomassa (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipotrechomassa (code,code_name) VALUES (9,'Laguna')#
-INSERT INTO dominios.tipotrechomassa (code,code_name) VALUES (10,'Represa/açude')#
-INSERT INTO dominios.unidadevolume (code,code_name) VALUES (2,'metro cúbico')#
-INSERT INTO dominios.unidadevolume (code,code_name) VALUES (1,'litro')#
-INSERT INTO dominios.tipoedifrelig (code,code_name) VALUES (4,'Mosteiro')#
-INSERT INTO dominios.tipoedifrelig (code,code_name) VALUES (5,'Convento')#
-INSERT INTO dominios.tipoedifrelig (code,code_name) VALUES (1,'Igreja')#
-INSERT INTO dominios.tipoedifrelig (code,code_name) VALUES (6,'Mesquita')#
-INSERT INTO dominios.tipoedifrelig (code,code_name) VALUES (2,'Templo')#
-INSERT INTO dominios.tipoedifrelig (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoedifrelig (code,code_name) VALUES (3,'Centro')#
-INSERT INTO dominios.tipoedifrelig (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoedifrelig (code,code_name) VALUES (7,'Sinagoga')#
-INSERT INTO dominios.trafego (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.trafego (code,code_name) VALUES (1,'Permanente')#
-INSERT INTO dominios.trafego (code,code_name) VALUES (2,'Periódico')#
-INSERT INTO dominios.tipooutlimofic (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipooutlimofic (code,code_name) VALUES (3,'Zona econômica exclusiva')#
-INSERT INTO dominios.tipooutlimofic (code,code_name) VALUES (5,'Faixa de fronteira')#
-INSERT INTO dominios.tipooutlimofic (code,code_name) VALUES (1,'Mar territorial')#
-INSERT INTO dominios.tipooutlimofic (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipooutlimofic (code,code_name) VALUES (2,'Zona contígua')#
-INSERT INTO dominios.tipooutlimofic (code,code_name) VALUES (6,'Plataforma continental jurídica')#
-INSERT INTO dominios.tipooutlimofic (code,code_name) VALUES (4,'Lateral marítima')#
-INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (10,'Represa/açude')#
-INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (14,'Eclusa')#
-INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (2,'Canal')#
-INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (9,'Laguna')#
-INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (11,'Vala')#
-INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (19,'Barragem')#
-INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (15,'Terreno sujeito a inundação')#
-INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (1,'Rio')#
-INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (97,'Não aplicável')#
-INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (12,'Queda d´água')#
-INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (13,'Corredeira')#
-INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (16,'Foz marítima')#
-INSERT INTO dominios.tipoestrut (code,code_name) VALUES (4,'Porto seco')#
-INSERT INTO dominios.tipoestrut (code,code_name) VALUES (5,'Terminal rodoviário')#
-INSERT INTO dominios.tipoestrut (code,code_name) VALUES (3,'Fiscalização')#
-INSERT INTO dominios.tipoestrut (code,code_name) VALUES (1,'Estação')#
-INSERT INTO dominios.tipoestrut (code,code_name) VALUES (2,'Comércio e serviços')#
-INSERT INTO dominios.tipoestrut (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoestrut (code,code_name) VALUES (7,'Terminal multimodal')#
-INSERT INTO dominios.tipoestrut (code,code_name) VALUES (6,'Terminal urbano')#
-INSERT INTO dominios.destinacaofundeadouro (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.destinacaofundeadouro (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.destinacaofundeadouro (code,code_name) VALUES (12,'Áreas de fundeio com limite definido')#
-INSERT INTO dominios.destinacaofundeadouro (code,code_name) VALUES (11,'Fundeadouro com designação alfanumérica')#
-INSERT INTO dominios.destinacaofundeadouro (code,code_name) VALUES (13,'Áreas de fundeio proibido')#
-INSERT INTO dominios.destinacaofundeadouro (code,code_name) VALUES (10,'Fundeadouro recomendado sem limite definido')#
-INSERT INTO dominios.formaextracao (code,code_name) VALUES (0,'Desconhecida')#
-INSERT INTO dominios.formaextracao (code,code_name) VALUES (5,'Céu aberto')#
-INSERT INTO dominios.formaextracao (code,code_name) VALUES (6,'Subterrâneo')#
-INSERT INTO dominios.tipoquebramolhe (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoquebramolhe (code,code_name) VALUES (2,'Molhe')#
-INSERT INTO dominios.tipoquebramolhe (code,code_name) VALUES (1,'Quebramar')#
-INSERT INTO dominios.revestimento (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.revestimento (code,code_name) VALUES (4,'Calçado')#
-INSERT INTO dominios.revestimento (code,code_name) VALUES (1,'Leito natural')#
-INSERT INTO dominios.revestimento (code,code_name) VALUES (2,'Revestimento primário')#
-INSERT INTO dominios.revestimento (code,code_name) VALUES (3,'Pavimentado')#
-INSERT INTO dominios.ocorrenciaem (code,code_name) VALUES (96,'Não Identificado')#
-INSERT INTO dominios.ocorrenciaem (code,code_name) VALUES (14,'Macega ou chavascal')#
-INSERT INTO dominios.ocorrenciaem (code,code_name) VALUES (7,'Estepe')#
-INSERT INTO dominios.ocorrenciaem (code,code_name) VALUES (5,'Brejo ou Pântano')#
-INSERT INTO dominios.ocorrenciaem (code,code_name) VALUES (13,'Cerrado ou cerradão')#
-INSERT INTO dominios.ocorrenciaem (code,code_name) VALUES (8,'Pastagem')#
-INSERT INTO dominios.ocorrenciaem (code,code_name) VALUES (19,'Campinarana')#
-INSERT INTO dominios.ocorrenciaem (code,code_name) VALUES (6,'Caatinga')#
-INSERT INTO dominios.ocorrenciaem (code,code_name) VALUES (15,'Floresta')#
-INSERT INTO dominios.denominacaoassociada (code,code_name) VALUES (5,'Cristã')#
-INSERT INTO dominios.denominacaoassociada (code,code_name) VALUES (99,'Outras')#
-INSERT INTO dominios.denominacaoassociada (code,code_name) VALUES (6,'Israelita')#
-INSERT INTO dominios.denominacaoassociada (code,code_name) VALUES (7,'Muçulmana')#
-INSERT INTO dominios.coincidecomdentrode_lim (code,code_name) VALUES (96,'Não Identificado')#
-INSERT INTO dominios.coincidecomdentrode_lim (code,code_name) VALUES (4,'Linha Seca')#
-INSERT INTO dominios.coincidecomdentrode_lim (code,code_name) VALUES (3,'Cumeada')#
-INSERT INTO dominios.coincidecomdentrode_lim (code,code_name) VALUES (6,'Rodovia')#
-INSERT INTO dominios.coincidecomdentrode_lim (code,code_name) VALUES (9,'Massa D`Água')#
-INSERT INTO dominios.coincidecomdentrode_lim (code,code_name) VALUES (5,'Costa Visível da Carta')#
-INSERT INTO dominios.coincidecomdentrode_lim (code,code_name) VALUES (7,'Ferrovia')#
-INSERT INTO dominios.coincidecomdentrode_lim (code,code_name) VALUES (2,'Contorno Massa D`Água')#
-INSERT INTO dominios.coincidecomdentrode_lim (code,code_name) VALUES (8,'Trecho de Drenagem')#
-INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (1,'Vértice de Triangulação - VT')#
-INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (6,'Ponto barométrico - B')#
-INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (8,'Ponto de Satélite - SAT')#
-INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (7,'Ponto Trigonométrico - RV')#
-INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (2,'Referência de Nível - RN')#
-INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (5,'Ponto Astronômico - PA')#
-INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (4,'Estação de Poligonal - EP')#
-INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (3,'Estação Gravimétrica - EG')#
-INSERT INTO dominios.tipoedifrod (code,code_name) VALUES (13,'Posto de pedágio')#
-INSERT INTO dominios.tipoedifrod (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoedifrod (code,code_name) VALUES (10,'Parada interestadual')#
-INSERT INTO dominios.tipoedifrod (code,code_name) VALUES (9,'Terminal urbano')#
-INSERT INTO dominios.tipoedifrod (code,code_name) VALUES (14,'Posto de fiscalização')#
-INSERT INTO dominios.tipoedifrod (code,code_name) VALUES (15,'Administrativa')#
-INSERT INTO dominios.tipoedifrod (code,code_name) VALUES (8,'Terminal interestadual')#
-INSERT INTO dominios.tipoedifrod (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoedifrod (code,code_name) VALUES (12,'Posto de pesagem')#
-INSERT INTO dominios.finalidade_eco (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.finalidade_eco (code,code_name) VALUES (98,'Mista')#
-INSERT INTO dominios.finalidade_eco (code,code_name) VALUES (1,'Comercial')#
-INSERT INTO dominios.finalidade_eco (code,code_name) VALUES (2,'Serviço')#
-INSERT INTO dominios.tipopocomina (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipopocomina (code,code_name) VALUES (3,'Vertical')#
-INSERT INTO dominios.tipopocomina (code,code_name) VALUES (97,'Não aplicável')#
-INSERT INTO dominios.tipopocomina (code,code_name) VALUES (2,'Horizontal')#
-INSERT INTO dominios.modalidade (code,code_name) VALUES (99,'Outras')#
-INSERT INTO dominios.modalidade (code,code_name) VALUES (2,'Radiodifusão/som e imagem')#
-INSERT INTO dominios.modalidade (code,code_name) VALUES (3,'Telefonia')#
-INSERT INTO dominios.modalidade (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.modalidade (code,code_name) VALUES (5,'Radiodifusão/som')#
-INSERT INTO dominios.modalidade (code,code_name) VALUES (4,'Dados')#
-INSERT INTO dominios.modalidade (code,code_name) VALUES (1,'Radiocomunicação')#
-INSERT INTO dominios.tipotravessia (code,code_name) VALUES (1,'Vau natural')#
-INSERT INTO dominios.tipotravessia (code,code_name) VALUES (2,'Vau construída')#
-INSERT INTO dominios.tipotravessia (code,code_name) VALUES (0,'Desconhecida')#
-INSERT INTO dominios.tipotravessia (code,code_name) VALUES (3,'Bote transportador')#
-INSERT INTO dominios.tipotravessia (code,code_name) VALUES (4,'Balsa')#
-INSERT INTO dominios.tipoedifsaneam (code,code_name) VALUES (5,'Tratamento de esgoto')#
-INSERT INTO dominios.tipoedifsaneam (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoedifsaneam (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoedifsaneam (code,code_name) VALUES (3,'Recalque')#
-INSERT INTO dominios.tipoedifsaneam (code,code_name) VALUES (6,'Usina de reciclagem')#
-INSERT INTO dominios.tipoedifsaneam (code,code_name) VALUES (7,'Incinerador')#
-INSERT INTO dominios.ovgd (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.ovgd (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.ovgd (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (10,'Edificação Metro Ferroviária')#
-INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (8,'Entroncamento')#
-INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (3,'Ponte')#
-INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (1,'Túnel')#
-INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (2,'Passagem elevada ou viaduto')#
-INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (7,'Mudança de atributo')#
-INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (19,'Barragem')#
-INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (17,'Interrupção com a Moldura')#
-INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (5,'Edificação rodoviária')#
-INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (11,'Localidade')#
-INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (6,'Galeria ou bueiro')#
-INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (12,'Patio')#
-INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (13,'Passagem de nível')#
-INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (4,'Travessia')#
-INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (9,'Início ou fim de trecho')#
-INSERT INTO dominios.qualidagua (code,code_name) VALUES (0,'Desconhecida')#
-INSERT INTO dominios.qualidagua (code,code_name) VALUES (4,'Salobra')#
-INSERT INTO dominios.qualidagua (code,code_name) VALUES (2,'Não potável')#
-INSERT INTO dominios.qualidagua (code,code_name) VALUES (1,'Potável')#
-INSERT INTO dominios.qualidagua (code,code_name) VALUES (3,'Mineral')#
-INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (14,'Campo de tiro')#
-INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (19,'Posto')#
-INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (15,'Base aérea')#
-INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (12,'Aquartelamento')#
-INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (18,'Delegacia serviço militar')#
-INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (16,'Distrito naval')#
-INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (13,'Campo de instrução')#
-INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (17,'Hotel de trânsito')#
-INSERT INTO dominios.cotacomprovada (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.cotacomprovada (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.tipooperativo (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipooperativo (code,code_name) VALUES (1,'Elevadora')#
-INSERT INTO dominios.tipooperativo (code,code_name) VALUES (2,'Abaixadora')#
-INSERT INTO dominios.procextracao (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.procextracao (code,code_name) VALUES (2,'Manual')#
-INSERT INTO dominios.procextracao (code,code_name) VALUES (1,'Mecanizado')#
-INSERT INTO dominios.matconstr (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.matconstr (code,code_name) VALUES (1,'Alvenaria')#
-INSERT INTO dominios.matconstr (code,code_name) VALUES (26,'Fio Metálico')#
-INSERT INTO dominios.matconstr (code,code_name) VALUES (4,'Rocha')#
-INSERT INTO dominios.matconstr (code,code_name) VALUES (23,'Terra')#
-INSERT INTO dominios.matconstr (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.matconstr (code,code_name) VALUES (3,'Metal')#
-INSERT INTO dominios.matconstr (code,code_name) VALUES (97,'Não Aplicável')#
-INSERT INTO dominios.matconstr (code,code_name) VALUES (7,'Tela ou Alambrado')#
-INSERT INTO dominios.matconstr (code,code_name) VALUES (6,'Arame')#
-INSERT INTO dominios.matconstr (code,code_name) VALUES (5,'Madeira')#
-INSERT INTO dominios.matconstr (code,code_name) VALUES (8,'Cerca viva')#
-INSERT INTO dominios.matconstr (code,code_name) VALUES (25,'Fibra ótica')#
-INSERT INTO dominios.matconstr (code,code_name) VALUES (2,'Concreto')#
-INSERT INTO dominios.materialpredominante (code,code_name) VALUES (24,'Saibro')#
-INSERT INTO dominios.materialpredominante (code,code_name) VALUES (14,'Lama')#
-INSERT INTO dominios.materialpredominante (code,code_name) VALUES (21,'Concha')#
-INSERT INTO dominios.materialpredominante (code,code_name) VALUES (15,'Argila')#
-INSERT INTO dominios.materialpredominante (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.materialpredominante (code,code_name) VALUES (20,'Coral')#
-INSERT INTO dominios.materialpredominante (code,code_name) VALUES (13,'Areia Fina')#
-INSERT INTO dominios.materialpredominante (code,code_name) VALUES (4,'Rocha')#
-INSERT INTO dominios.materialpredominante (code,code_name) VALUES (50,'Pedra')#
-INSERT INTO dominios.materialpredominante (code,code_name) VALUES (18,'Cascalho')#
-INSERT INTO dominios.materialpredominante (code,code_name) VALUES (16,'Lodo')#
-INSERT INTO dominios.materialpredominante (code,code_name) VALUES (19,'Seixo')#
-INSERT INTO dominios.materialpredominante (code,code_name) VALUES (12,'Areia')#
-INSERT INTO dominios.materialpredominante (code,code_name) VALUES (98,'Misto')#
-INSERT INTO dominios.materialpredominante (code,code_name) VALUES (97,'Não Aplicável')#
-INSERT INTO dominios.finalidade_veg (code,code_name) VALUES (2,'Subistência')#
-INSERT INTO dominios.finalidade_veg (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.finalidade_veg (code,code_name) VALUES (3,'Conservação ambiental')#
-INSERT INTO dominios.finalidade_veg (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.finalidade_veg (code,code_name) VALUES (1,'Exploração econômica')#
-INSERT INTO dominios.classificacao (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.classificacao (code,code_name) VALUES (9,'Internacional')#
-INSERT INTO dominios.classificacao (code,code_name) VALUES (10,'Doméstico')#
-INSERT INTO dominios.tipoterrexp (code,code_name) VALUES (24,'Saibro')#
-INSERT INTO dominios.tipoterrexp (code,code_name) VALUES (4,'Pedregoso')#
-INSERT INTO dominios.tipoterrexp (code,code_name) VALUES (23,'Terra')#
-INSERT INTO dominios.tipoterrexp (code,code_name) VALUES (18,'Cascalho')#
-INSERT INTO dominios.tipoterrexp (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoterrexp (code,code_name) VALUES (12,'Areia')#
-INSERT INTO dominios.chamine (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.chamine (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.situacaojuridica (code,code_name) VALUES (1,'Delimitada')#
-INSERT INTO dominios.situacaojuridica (code,code_name) VALUES (0,'Desconhecida')#
-INSERT INTO dominios.situacaojuridica (code,code_name) VALUES (4,'Regularizada')#
-INSERT INTO dominios.situacaojuridica (code,code_name) VALUES (3,'Homologada ou demarcada')#
-INSERT INTO dominios.situacaojuridica (code,code_name) VALUES (2,'Declarada')#
-INSERT INTO dominios.situamare (code,code_name) VALUES (8,'Sempre fora d´água')#
-INSERT INTO dominios.situamare (code,code_name) VALUES (9,'Sempre submerso')#
-INSERT INTO dominios.situamare (code,code_name) VALUES (7,'Cobre e descobre')#
-INSERT INTO dominios.situamare (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.homologacao (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.homologacao (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.homologacao (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.multimodal (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.multimodal (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.multimodal (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (4,'80.9 - Educação Profissional e Outras Atividades de Ensino')#
-INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (3,'80.3 - Ensino Superior')#
-INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (10,'85-3 - Serviço Social')#
-INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (98,'Misto')#
-INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (8,'85.1 Atividades de Atenção à Saúde')#
-INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (13,'75.24-8 Segurança e Ordem Pública')#
-INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (1,'80.1 - Educação Infantil e Ensino Fundamental')#
-INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (9,'85.2 Serviços Veterinários')#
-INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (6,'75-2 - Serviços Coletivos Prestados pela Administração Pública')#
-INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (5,'75-1 - Administração do Estado e da Política Econômica e Social')#
-INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (19,'80.2 - Ensino Médio')#
-INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (7,'75-3 - Seguridade Social')#
-INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (11,'75.22-1 Defesa')#
-INSERT INTO dominios.situacaoagua (code,code_name) VALUES (7,'Não tratada')#
-INSERT INTO dominios.situacaoagua (code,code_name) VALUES (6,'Tratada')#
-INSERT INTO dominios.situacaoagua (code,code_name) VALUES (0,'Desconhecida')#
-INSERT INTO dominios.emarruamento (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.emarruamento (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.emarruamento (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.relacionado_dut (code,code_name) VALUES (5,'Ponto de ramificação')#
-INSERT INTO dominios.relacionado_dut (code,code_name) VALUES (4,'Depósito geral')#
-INSERT INTO dominios.relacionado_dut (code,code_name) VALUES (3,'Local crítico')#
-INSERT INTO dominios.relacionado_dut (code,code_name) VALUES (1,'Ponto inicial')#
-INSERT INTO dominios.relacionado_dut (code,code_name) VALUES (17,'Interrupção com a Moldura')#
-INSERT INTO dominios.relacionado_dut (code,code_name) VALUES (2,'Ponto final')#
-INSERT INTO dominios.tipobrejopantano (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipobrejopantano (code,code_name) VALUES (1,'Brejo')#
-INSERT INTO dominios.tipobrejopantano (code,code_name) VALUES (2,'Pântano')#
-INSERT INTO dominios.regime (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.regime (code,code_name) VALUES (1,'Permanente')#
-INSERT INTO dominios.regime (code,code_name) VALUES (6,'Sazonal')#
-INSERT INTO dominios.regime (code,code_name) VALUES (4,'Temporário com leito permanente')#
-INSERT INTO dominios.regime (code,code_name) VALUES (3,'Temporário')#
-INSERT INTO dominios.regime (code,code_name) VALUES (2,'Permanente com grande variação')#
-INSERT INTO dominios.regime (code,code_name) VALUES (5,'Seco')#
-INSERT INTO dominios.tipoexposicao (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoexposicao (code,code_name) VALUES (5,'Céu aberto')#
-INSERT INTO dominios.tipoexposicao (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoexposicao (code,code_name) VALUES (4,'Coberto')#
-INSERT INTO dominios.tipoexposicao (code,code_name) VALUES (3,'Fechado')#
-INSERT INTO dominios.tipocapital (code,code_name) VALUES (2,'Capital Federal')#
-INSERT INTO dominios.tipocapital (code,code_name) VALUES (3,'Capital Estadual')#
-INSERT INTO dominios.atividade (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.atividade (code,code_name) VALUES (10,'Produção')#
-INSERT INTO dominios.atividade (code,code_name) VALUES (9,'Prospecção')#
-INSERT INTO dominios.situacaoespacial (code,code_name) VALUES (12,'Adjacentes')#
-INSERT INTO dominios.situacaoespacial (code,code_name) VALUES (13,'Superpostos')#
-INSERT INTO dominios.situacaoespacial (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipocomplexoaero (code,code_name) VALUES (25,'Heliporto')#
-INSERT INTO dominios.tipocomplexoaero (code,code_name) VALUES (24,'Aeroporto')#
-INSERT INTO dominios.tipocomplexoaero (code,code_name) VALUES (23,'Aeródromo')#
-INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (14,'Eclusa')#
-INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (12,'Queda dágua')#
-INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (19,'Barragem')#
-INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (22,'Complexo portuário')#
-INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (24,'Atracadouro')#
-INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (21,'Confluência')#
-INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (17,'Interrupção com a Moldura')#
-INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (13,'Corredeira')#
-INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (23,'Entre trechos hidroviários')#
-INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (16,'Foz marítima')#
-INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (10,'Edificação Metro Ferroviária')#
-INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (8,'Entroncamento')#
-INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (3,'Ponte')#
-INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (1,'Túnel')#
-INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (2,'Passagem elevada ou viaduto')#
-INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (7,'Mudança de atributo')#
-INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (19,'Barragem')#
-INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (17,'Interrupção com a Moldura')#
-INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (5,'Edificação rodoviária')#
-INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (11,'Localidade')#
-INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (6,'Galeria ou bueiro')#
-INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (12,'Patio')#
-INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (13,'Passagem de nível')#
-INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (4,'Travessia')#
-INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (9,'Início ou fim de trecho')#
-INSERT INTO dominios.tipoobst (code,code_name) VALUES (4,'Natural')#
-INSERT INTO dominios.tipoobst (code,code_name) VALUES (5,'Artificial')#
-INSERT INTO dominios.tipoatracad (code,code_name) VALUES (43,'Dolfim')#
-INSERT INTO dominios.tipoatracad (code,code_name) VALUES (41,'Molhe de atracação')#
-INSERT INTO dominios.tipoatracad (code,code_name) VALUES (40,'Trapiche')#
-INSERT INTO dominios.tipoatracad (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoatracad (code,code_name) VALUES (42,'Pier')#
-INSERT INTO dominios.tipoatracad (code,code_name) VALUES (44,'Desembarcadouro')#
-INSERT INTO dominios.tipoatracad (code,code_name) VALUES (39,'Cais flutuante')#
-INSERT INTO dominios.tipoatracad (code,code_name) VALUES (38,'Cais')#
-INSERT INTO dominios.tipolimoper (code,code_name) VALUES (6,'Linha média de enchente-ORD')#
-INSERT INTO dominios.tipolimoper (code,code_name) VALUES (5,'Linha preamar média - 1831')#
-INSERT INTO dominios.tipolimoper (code,code_name) VALUES (1,'Setor censitário')#
-INSERT INTO dominios.tipolimoper (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipolimoper (code,code_name) VALUES (4,'Costa visível da carta(interpretada)')#
-INSERT INTO dominios.tipolimoper (code,code_name) VALUES (2,'Linha de base normal')#
-INSERT INTO dominios.tipolimoper (code,code_name) VALUES (3,'Linha de base reta')#
-INSERT INTO dominios.depressao (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.depressao (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.tipodepabast (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipodepabast (code,code_name) VALUES (3,'Cisterna')#
-INSERT INTO dominios.tipodepabast (code,code_name) VALUES (1,'Tanque')#
-INSERT INTO dominios.tipodepabast (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipodepabast (code,code_name) VALUES (2,'Caixa d`água')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (92,'Atividades Recreativas Culturais e Desportivas')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (21,'Fabricação de Celulose Papel e Produtos de Papel')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (45,'Construção')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (19,'Preparação de couros e Fabricação de Artefatos de Couro Artigos de Viagem e Calçados')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (30,'Fabricação de Máquinas de Escritório e Equipamentos de Informática')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (32,'Fabricação de Material Eletrônicode Aparelhos e Equipamentos de Comunicações')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (36,'Fabricação de Móveis e Industrias Diversas')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (24,'Fabricação de Produtos Químicos')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (33,'Fabricação de Equipamentos de Instrumentação Médico-Hospitalares Instumentos de Precisão e Ópticos Equipamentos para Automação Industrial Cronômetros e Relógios')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (52,'Comércio Varejista e Reparação de Objetos Pessoais e Domésticos.')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (14,'Extração de Minerais Não-Metálicos')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (1,'Agricultura Pecuária e Serviços Relacionados')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (26,'Fabricação de Produtos de Minerais Não-Metálicos')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (31,'Fabricação de Máquinas Aparelhos e Materiais Elétricos')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (28,'Fabricação de Produtos de Metal Exclusive Máquinas e Equipamentos')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (22,'Edição Impressão e Reprodução de Gravações')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (27,'Metalurgia Básica')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (55,'Alojamento e Alimentação')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (50,'Comércio e Reparação de Veículos Automotores e Motocicletas e Comércio a Varejo de Combustíveis.')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (16,'Fabricação de Produtos do Fumo')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (23,'Fabricação de Coque Refino de Petróleo Elaboração de Combustíveis Nucleares e Produção de Álcool')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (11,'Extração de Petróleo e Serviços Relacionados')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (20,'Fabricação de produtos de Madeira e Celulose')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (37,'Reciclagem')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (5,'Pesca Aquicultura e Serviços Relacionados')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (35,'Fabricação de Outros Equipamentos de Transporte')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (15,'Fabricação Alimentícia e Bebidas')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (51,'Comércio por Atacado e Representantes Comerciais. E agentes do comércio')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (74,'Serviços Prestados Principalmente às Empresas (organizações).')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (13,'Extração de Minerais Metálicos')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (17,'Fabricação de Produtos Têxteis')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (25,'Fabricação de Artigos de Borracha e Material Plástico')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (34,'Fabricação e Montagem de Veículos Automotores Reboques e Carrocerias')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (29,'Fabricação de Máquinas e Equipamentos')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (18,'Confecção de Artigos do Vestuário e Acessórios')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (10,'Extração de Carvão Mineral')#
-INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (2,'Silvicultura Exploração Florestal e Serviços Relacionados')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (16,'PR')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (4,'AM')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (1,'AC')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (24,'SC')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (10,'MA')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (27,'TO')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (23,'RR')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (20,'RN')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (7,'DF')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (22,'RO')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (21,'RS')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (17,'PE')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (8,'ES')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (19,'RJ')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (26,'SE')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (3,'AP')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (18,'PI')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (15,'PB')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (13,'MG')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (9,'GO')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (5,'BA')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (25,'SP')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (14,'PA')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (6,'CE')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (11,'MT')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (2,'AL')#
-INSERT INTO dominios.sigla (code,code_name) VALUES (12,'MS')#
-INSERT INTO dominios.usopista (code,code_name) VALUES (12,'Militar')#
-INSERT INTO dominios.usopista (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.usopista (code,code_name) VALUES (11,'Público')#
-INSERT INTO dominios.usopista (code,code_name) VALUES (13,'Público/Militar')#
-INSERT INTO dominios.usopista (code,code_name) VALUES (6,'Particular')#
-INSERT INTO dominios.espessalgas (code,code_name) VALUES (1,'Finas')#
-INSERT INTO dominios.espessalgas (code,code_name) VALUES (2,'Médias')#
-INSERT INTO dominios.espessalgas (code,code_name) VALUES (3,'Grossas')#
-INSERT INTO dominios.tipoedifcomercserv (code,code_name) VALUES (8,'Restaurante')#
-INSERT INTO dominios.tipoedifcomercserv (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipoedifcomercserv (code,code_name) VALUES (6,'Feira')#
-INSERT INTO dominios.tipoedifcomercserv (code,code_name) VALUES (5,'Centro de convenções')#
-INSERT INTO dominios.tipoedifcomercserv (code,code_name) VALUES (3,'Centro comercial')#
-INSERT INTO dominios.tipoedifcomercserv (code,code_name) VALUES (4,'Mercado')#
-INSERT INTO dominios.tipoedifcomercserv (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoedifcomercserv (code,code_name) VALUES (7,'Hotel/motel/pousada')#
-INSERT INTO dominios.tiposumvert (code,code_name) VALUES (1,'Sumidouro')#
-INSERT INTO dominios.tiposumvert (code,code_name) VALUES (2,'Vertedouro')#
-INSERT INTO dominios.tipoareausocomun (code,code_name) VALUES (1,'Quilombo')#
-INSERT INTO dominios.tipoareausocomun (code,code_name) VALUES (2,'Assentamento rural')#
-INSERT INTO dominios.nivelatencao (code,code_name) VALUES (6,'Secundário')#
-INSERT INTO dominios.nivelatencao (code,code_name) VALUES (7,'Terciário')#
-INSERT INTO dominios.nivelatencao (code,code_name) VALUES (5,'Primário')#
-INSERT INTO dominios.compartilhado (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.compartilhado (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.tipopista (code,code_name) VALUES (1,'Atletismo')#
-INSERT INTO dominios.tipopista (code,code_name) VALUES (2,'Ciclismo')#
-INSERT INTO dominios.tipopista (code,code_name) VALUES (98,'Misto')#
-INSERT INTO dominios.tipopista (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipopista (code,code_name) VALUES (3,'Motociclismo')#
-INSERT INTO dominios.tipopista (code,code_name) VALUES (9,'Pista de pouso')#
-INSERT INTO dominios.tipopista (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipopista (code,code_name) VALUES (4,'Automobilismo')#
-INSERT INTO dominios.tipopista (code,code_name) VALUES (5,'Corrida de cavalos')#
-INSERT INTO dominios.tipopista (code,code_name) VALUES (11,'Heliporto')#
-INSERT INTO dominios.tipopista (code,code_name) VALUES (10,'Pista de táxi')#
-INSERT INTO dominios.tiporocha (code,code_name) VALUES (21,'Matacão - pedra')#
-INSERT INTO dominios.tiporocha (code,code_name) VALUES (23,'Área Rochosa - lajedo')#
-INSERT INTO dominios.tiporocha (code,code_name) VALUES (22,'Penedo - isolado')#
-INSERT INTO dominios.tipotrechoduto (code,code_name) VALUES (1,'Duto')#
-INSERT INTO dominios.tipotrechoduto (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipotrechoduto (code,code_name) VALUES (3,'Correia transportadora')#
-INSERT INTO dominios.tipotrechoduto (code,code_name) VALUES (2,'Calha')#
-INSERT INTO dominios.tipousoedif (code,code_name) VALUES (1,'Próprio nacional')#
-INSERT INTO dominios.tipousoedif (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipousoedif (code,code_name) VALUES (2,'Uso especial da União')#
-INSERT INTO dominios.tipocerr (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipocerr (code,code_name) VALUES (2,'Cerradão')#
-INSERT INTO dominios.tipocerr (code,code_name) VALUES (1,'Cerrado')#
-INSERT INTO dominios.sistemageodesico (code,code_name) VALUES (5,'Astro Chuá')#
-INSERT INTO dominios.sistemageodesico (code,code_name) VALUES (2,'SIRGAS')#
-INSERT INTO dominios.sistemageodesico (code,code_name) VALUES (4,'Córrego Alegre')#
-INSERT INTO dominios.sistemageodesico (code,code_name) VALUES (3,'WGS-84')#
-INSERT INTO dominios.sistemageodesico (code,code_name) VALUES (1,'SAD-69')#
-INSERT INTO dominios.sistemageodesico (code,code_name) VALUES (6,'Outra referência')#
-INSERT INTO dominios.tipocampoquadra (code,code_name) VALUES (1,'Futebol')#
-INSERT INTO dominios.tipocampoquadra (code,code_name) VALUES (4,'Pólo')#
-INSERT INTO dominios.tipocampoquadra (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipocampoquadra (code,code_name) VALUES (7,'Tênis')#
-INSERT INTO dominios.tipocampoquadra (code,code_name) VALUES (3,'Vôlei')#
-INSERT INTO dominios.tipocampoquadra (code,code_name) VALUES (6,'Poliesportiva')#
-INSERT INTO dominios.tipocampoquadra (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipocampoquadra (code,code_name) VALUES (2,'Basquete')#
-INSERT INTO dominios.tipocampoquadra (code,code_name) VALUES (5,'Hipismo')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (31,'Estação Ecológica - ESEC')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (5,'Amazônia legal')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (17,'Reserva florestal')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (23,'Floresta Extrativista')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (2,'Terra indígena')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (8,'Área de preservação permanente')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (18,'Reserva ecológica')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (29,'Reserva de Fauna - REFAU')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (22,'Floresta de rendimento sustentável')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (4,'Assentamento rural')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (28,'Reserva Extrativista - RESEX')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (14,'Sítios RAMSAR')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (16,'Reserva da biosfera')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (21,'Estrada parque')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (3,'Quilombo')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (32,'Parque - PAR')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (11,'Distrito florestal')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (7,'Polígono das secas')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (10,'Mosaico')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (24,'Área de proteção ambiental - APA')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (30,'Reserva Particular do Patrimônio Natural - RPPN')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (15,'Sítios do patrimônio')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (36,'Area Militar')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (12,'Corredor ecológico')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (99,'Outros')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (34,'Reserva Biológica - REBIO')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (33,'Monumento Natural - MONA')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (1,'Terra pública')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (6,'Faixa de fronteira')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (35,'Refúgio de Vida Silvestre - RVS')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (13,'Floresta pública')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (9,'Reserva legal')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (20,'Horto florestal')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (19,'Estação biológica')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (27,'Reserva de Desenvolvimento Sustentável - RDS')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (26,'Floresta - FLO')#
-INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (25,'Área de Relevante Interesse Ecológico - ARIE')#
-INSERT INTO dominios.ensino (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.ensino (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.ensino (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.combrenovavel (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.combrenovavel (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.eixoprincipal (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.eixoprincipal (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.posicaorelativa (code,code_name) VALUES (5,'Submerso')#
-INSERT INTO dominios.posicaorelativa (code,code_name) VALUES (3,'Elevado')#
-INSERT INTO dominios.posicaorelativa (code,code_name) VALUES (2,'Superfície')#
-INSERT INTO dominios.posicaorelativa (code,code_name) VALUES (0,'Desconhecida')#
-INSERT INTO dominios.posicaorelativa (code,code_name) VALUES (4,'Emerso')#
-INSERT INTO dominios.posicaorelativa (code,code_name) VALUES (6,'Subterrâneo')#
-INSERT INTO dominios.geometriaaproximada (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.geometriaaproximada (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.relacionado (code,code_name) VALUES (10,'Edificação Metro Ferroviária')#
-INSERT INTO dominios.relacionado (code,code_name) VALUES (8,'Entroncamento')#
-INSERT INTO dominios.relacionado (code,code_name) VALUES (3,'Ponte')#
-INSERT INTO dominios.relacionado (code,code_name) VALUES (1,'Túnel')#
-INSERT INTO dominios.relacionado (code,code_name) VALUES (2,'Passagem elevada ou viaduto')#
-INSERT INTO dominios.relacionado (code,code_name) VALUES (7,'Mudança de atributo')#
-INSERT INTO dominios.relacionado (code,code_name) VALUES (19,'Barragem')#
-INSERT INTO dominios.relacionado (code,code_name) VALUES (17,'Interrupção com a Moldura')#
-INSERT INTO dominios.relacionado (code,code_name) VALUES (5,'Edificação rodoviária')#
-INSERT INTO dominios.relacionado (code,code_name) VALUES (11,'Localidade')#
-INSERT INTO dominios.relacionado (code,code_name) VALUES (6,'Galeria ou bueiro')#
-INSERT INTO dominios.relacionado (code,code_name) VALUES (12,'Patio')#
-INSERT INTO dominios.relacionado (code,code_name) VALUES (13,'Passagem de nível')#
-INSERT INTO dominios.relacionado (code,code_name) VALUES (4,'Travessia')#
-INSERT INTO dominios.relacionado (code,code_name) VALUES (9,'Início ou fim de trecho')#
-INSERT INTO dominios.tipodelimfis (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipodelimfis (code,code_name) VALUES (2,'Muro')#
-INSERT INTO dominios.tipodelimfis (code,code_name) VALUES (1,'Cerca')#
-INSERT INTO dominios.isolada (code,code_name) VALUES (1,'Sim')#
-INSERT INTO dominios.isolada (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.isolada (code,code_name) VALUES (2,'Não')#
-INSERT INTO dominios.tipoedifcomunic (code,code_name) VALUES (1,'Centro de operações')#
-INSERT INTO dominios.tipoedifcomunic (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.tipoedifcomunic (code,code_name) VALUES (4,'Estação repetidora')#
-INSERT INTO dominios.tipoedifcomunic (code,code_name) VALUES (2,'Central comutação e transmissão')#
-INSERT INTO dominios.tipoedifcomunic (code,code_name) VALUES (3,'Estação radio-base')#
-INSERT INTO dominios.setor (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.setor (code,code_name) VALUES (1,'Energético')#
-INSERT INTO dominios.setor (code,code_name) VALUES (2,'Econômico')#
-INSERT INTO dominios.setor (code,code_name) VALUES (4,'Saneamento básico')#
-INSERT INTO dominios.setor (code,code_name) VALUES (3,'Abastecimento de água')#
-INSERT INTO dominios.tipotrechorod (code,code_name) VALUES (4,'Auto-estrada')#
-INSERT INTO dominios.tipotrechorod (code,code_name) VALUES (2,'Rodovia')#
-INSERT INTO dominios.tipotrechorod (code,code_name) VALUES (1,'Acesso')#
-INSERT INTO dominios.tipotrechorod (code,code_name) VALUES (3,'Caminho carroçável')#
-INSERT INTO dominios.causaexposicao (code,code_name) VALUES (0,'Desconhecido')#
-INSERT INTO dominios.causaexposicao (code,code_name) VALUES (4,'Natural')#
-INSERT INTO dominios.causaexposicao (code,code_name) VALUES (5,'Artificial')#
-INSERT INTO dominios.tipopassagviad (code,code_name) VALUES (6,'Viaduto')#
-INSERT INTO dominios.tipopassagviad (code,code_name) VALUES (5,'Passagem elevada')#
 ALTER TABLE cb.adm_area_pub_civil_a
   ADD CONSTRAINT adm_area_pub_civil_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
    REFERENCES dominios.geometriaaproximada (code) MATCH FULL
@@ -12237,6 +10946,1312 @@ ALTER TABLE cb.sau_descontinuidade_geometrica_p
   ADD CONSTRAINT sau_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade)
    REFERENCES dominios.motivodescontinuidade (code) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
+INSERT INTO dominios.geracao (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.geracao (code,code_name) VALUES (1,'Eletricidade - GER 0')#
+INSERT INTO dominios.geracao (code,code_name) VALUES (2,'CoGeração')#
+INSERT INTO dominios.tipoplataforma (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoplataforma (code,code_name) VALUES (3,'Petróleo')#
+INSERT INTO dominios.tipoplataforma (code,code_name) VALUES (98,'Misto')#
+INSERT INTO dominios.tipoplataforma (code,code_name) VALUES (5,'Gás')#
+INSERT INTO dominios.posicaoreledific (code,code_name) VALUES (17,'Adjacente a edificação')#
+INSERT INTO dominios.posicaoreledific (code,code_name) VALUES (18,'Sobre edificação')#
+INSERT INTO dominios.posicaoreledific (code,code_name) VALUES (14,'Isolado')#
+INSERT INTO dominios.tipoextmin (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoextmin (code,code_name) VALUES (5,'Garimpo')#
+INSERT INTO dominios.tipoextmin (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoextmin (code,code_name) VALUES (4,'Mina')#
+INSERT INTO dominios.tipoextmin (code,code_name) VALUES (6,'Salina')#
+INSERT INTO dominios.tipoextmin (code,code_name) VALUES (7,'Pedreira')#
+INSERT INTO dominios.tipoextmin (code,code_name) VALUES (1,'Poço')#
+INSERT INTO dominios.canteirodivisorio (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.canteirodivisorio (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.tipolocalcrit (code,code_name) VALUES (7,'Outras interferências')#
+INSERT INTO dominios.tipolocalcrit (code,code_name) VALUES (2,'Risco geotécnico')#
+INSERT INTO dominios.tipolocalcrit (code,code_name) VALUES (4,'Interferência com hidrografia')#
+INSERT INTO dominios.tipolocalcrit (code,code_name) VALUES (5,'Interferência com áreas especiais')#
+INSERT INTO dominios.tipolocalcrit (code,code_name) VALUES (6,'Interferência com vias')#
+INSERT INTO dominios.tipolocalcrit (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipolocalcrit (code,code_name) VALUES (3,'Interferência com localidades')#
+INSERT INTO dominios.tipolocalcrit (code,code_name) VALUES (1,'Subestação de válvulas e/ou bombas')#
+INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (13,'Camping')#
+INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (6,'Parque aquático')#
+INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (7,'Parque temático')#
+INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (14,'Complexo desportivo')#
+INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (4,'Parque de diversões')#
+INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (12,'Parque de eventos culturais')#
+INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (9,'Hípica')#
+INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (11,'Campo de golfe')#
+INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (8,'Hipódromo')#
+INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (1,'Complexo recreativo')#
+INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (3,'Autódromo')#
+INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (16,'Jardim botânico')#
+INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (5,'Parque urbano')#
+INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (15,'Zoológico')#
+INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (10,'Estande de tiro')#
+INSERT INTO dominios.tipocomplexolazer (code,code_name) VALUES (2,'Clube')#
+INSERT INTO dominios.indice (code,code_name) VALUES (1,'Mestra')#
+INSERT INTO dominios.indice (code,code_name) VALUES (2,'Normal')#
+INSERT INTO dominios.indice (code,code_name) VALUES (3,'Auxiliar')#
+INSERT INTO dominios.tipoaglomrurisol (code,code_name) VALUES (7,'Outros Aglomerados Rurais Isolados')#
+INSERT INTO dominios.tipoaglomrurisol (code,code_name) VALUES (5,'Aglomerado Rural Isolado - Povoado')#
+INSERT INTO dominios.tipoaglomrurisol (code,code_name) VALUES (6,'Aglomerado Rural Isolado - Núcleo')#
+INSERT INTO dominios.denso (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.denso (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.denso (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.tipodepgeral (code,code_name) VALUES (9,'Silo')#
+INSERT INTO dominios.tipodepgeral (code,code_name) VALUES (11,'Depósito frigorífico')#
+INSERT INTO dominios.tipodepgeral (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipodepgeral (code,code_name) VALUES (32,'Armazém')#
+INSERT INTO dominios.tipodepgeral (code,code_name) VALUES (19,'Reservatório de Combustível')#
+INSERT INTO dominios.tipodepgeral (code,code_name) VALUES (8,'Galpão')#
+INSERT INTO dominios.tipodepgeral (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipodepgeral (code,code_name) VALUES (10,'Composteira')#
+INSERT INTO dominios.materializado (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.materializado (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.materializado (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.referencialgrav (code,code_name) VALUES (4,'Local')#
+INSERT INTO dominios.referencialgrav (code,code_name) VALUES (1,'Postdam 1930')#
+INSERT INTO dominios.referencialgrav (code,code_name) VALUES (2,'IGSN71')#
+INSERT INTO dominios.referencialgrav (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.referencialgrav (code,code_name) VALUES (3,'Absoluto')#
+INSERT INTO dominios.referencialgrav (code,code_name) VALUES (97,'Não Aplicável')#
+INSERT INTO dominios.nrlinhas (code,code_name) VALUES (1,'Simples')#
+INSERT INTO dominios.nrlinhas (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.nrlinhas (code,code_name) VALUES (3,'Múltipla')#
+INSERT INTO dominios.nrlinhas (code,code_name) VALUES (2,'Dupla')#
+INSERT INTO dominios.tipoareaumida (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoareaumida (code,code_name) VALUES (4,'Arenoso')#
+INSERT INTO dominios.tipoareaumida (code,code_name) VALUES (3,'Lamacento')#
+INSERT INTO dominios.destenergelet (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.destenergelet (code,code_name) VALUES (3,'Comercialização de Energia (COM)')#
+INSERT INTO dominios.destenergelet (code,code_name) VALUES (1,'Auto-Produção de Energia (APE)')#
+INSERT INTO dominios.destenergelet (code,code_name) VALUES (4,'Produção Independente de Energia (PIE)')#
+INSERT INTO dominios.destenergelet (code,code_name) VALUES (5,'Serviço Público (SP)')#
+INSERT INTO dominios.destenergelet (code,code_name) VALUES (2,'Auto-Produção com Comercialização de Excedente (APE-COM)')#
+INSERT INTO dominios.tiporef (code,code_name) VALUES (2,'Planimétrico')#
+INSERT INTO dominios.tiporef (code,code_name) VALUES (1,'Altimétrico')#
+INSERT INTO dominios.tiporef (code,code_name) VALUES (4,'Gravimétrico')#
+INSERT INTO dominios.tiporef (code,code_name) VALUES (3,'Planialtimétrico')#
+INSERT INTO dominios.coletiva (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.coletiva (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.coletiva (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.tipocaminhoaereo (code,code_name) VALUES (12,'Teleférico')#
+INSERT INTO dominios.tipocaminhoaereo (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.situacaofisica (code,code_name) VALUES (4,'Planejada')#
+INSERT INTO dominios.situacaofisica (code,code_name) VALUES (1,'Abandonada')#
+INSERT INTO dominios.situacaofisica (code,code_name) VALUES (5,'Construída')#
+INSERT INTO dominios.situacaofisica (code,code_name) VALUES (0,'Desconhecida')#
+INSERT INTO dominios.situacaofisica (code,code_name) VALUES (3,'Em Construção')#
+INSERT INTO dominios.situacaofisica (code,code_name) VALUES (2,'Destruída')#
+INSERT INTO dominios.tipotrechocomunic (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipotrechocomunic (code,code_name) VALUES (4,'Dados')#
+INSERT INTO dominios.tipotrechocomunic (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipotrechocomunic (code,code_name) VALUES (6,'Telegráfica')#
+INSERT INTO dominios.tipotrechocomunic (code,code_name) VALUES (7,'Telefônica')#
+INSERT INTO dominios.destinadoa (code,code_name) VALUES (40,'Palmito')#
+INSERT INTO dominios.destinadoa (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.destinadoa (code,code_name) VALUES (38,'Coco')#
+INSERT INTO dominios.destinadoa (code,code_name) VALUES (39,'Jaborandi')#
+INSERT INTO dominios.destinadoa (code,code_name) VALUES (37,'Carnaúba')#
+INSERT INTO dominios.destinadoa (code,code_name) VALUES (18,'Açaí')#
+INSERT INTO dominios.destinadoa (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.destinadoa (code,code_name) VALUES (44,'Pesca')#
+INSERT INTO dominios.destinadoa (code,code_name) VALUES (34,'Turfa')#
+INSERT INTO dominios.destinadoa (code,code_name) VALUES (36,'Castanha')#
+INSERT INTO dominios.destinadoa (code,code_name) VALUES (5,'Madeira')#
+INSERT INTO dominios.destinadoa (code,code_name) VALUES (41,'Babaçu')#
+INSERT INTO dominios.destinadoa (code,code_name) VALUES (43,'Pecuária')#
+INSERT INTO dominios.destinadoa (code,code_name) VALUES (35,'Látex')#
+INSERT INTO dominios.tipomacchav (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipomacchav (code,code_name) VALUES (1,'Macega')#
+INSERT INTO dominios.tipomacchav (code,code_name) VALUES (2,'Chavascal')#
+INSERT INTO dominios.motivodescontinuidade (code,code_name) VALUES (5,'Descontinuidade por diferente interpretação das classes')#
+INSERT INTO dominios.motivodescontinuidade (code,code_name) VALUES (4,'Descontinuidade por falta de acurácia')#
+INSERT INTO dominios.motivodescontinuidade (code,code_name) VALUES (3,'Descontinuidade por escala de insumo')#
+INSERT INTO dominios.motivodescontinuidade (code,code_name) VALUES (7,'Descontinuidade por excesso')#
+INSERT INTO dominios.motivodescontinuidade (code,code_name) VALUES (6,'Descontinuidade por omissão')#
+INSERT INTO dominios.motivodescontinuidade (code,code_name) VALUES (2,'Descontinuidade devido a transformação')#
+INSERT INTO dominios.motivodescontinuidade (code,code_name) VALUES (1,'Descontinuidade Temporal')#
+INSERT INTO dominios.tipoponte (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoponte (code,code_name) VALUES (1,'Móvel')#
+INSERT INTO dominios.tipoponte (code,code_name) VALUES (3,'Fixa')#
+INSERT INTO dominios.tipoponte (code,code_name) VALUES (2,'Pênsil')#
+INSERT INTO dominios.tipoptocontrole (code,code_name) VALUES (9,'Ponto de Controle')#
+INSERT INTO dominios.tipoptocontrole (code,code_name) VALUES (12,'Ponto Perspectivo')#
+INSERT INTO dominios.tipoptocontrole (code,code_name) VALUES (13,'Ponto Fotogramétrico')#
+INSERT INTO dominios.tipoptocontrole (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.mattransp (code,code_name) VALUES (29,'Gasolina')#
+INSERT INTO dominios.mattransp (code,code_name) VALUES (4,'Nafta')#
+INSERT INTO dominios.mattransp (code,code_name) VALUES (8,'Efluentes')#
+INSERT INTO dominios.mattransp (code,code_name) VALUES (3,'Petróleo')#
+INSERT INTO dominios.mattransp (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.mattransp (code,code_name) VALUES (5,'Gás')#
+INSERT INTO dominios.mattransp (code,code_name) VALUES (30,'Álcool')#
+INSERT INTO dominios.mattransp (code,code_name) VALUES (31,'Querosene')#
+INSERT INTO dominios.mattransp (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.mattransp (code,code_name) VALUES (7,'Minério')#
+INSERT INTO dominios.mattransp (code,code_name) VALUES (1,'Água')#
+INSERT INTO dominios.mattransp (code,code_name) VALUES (2,'Óleo')#
+INSERT INTO dominios.mattransp (code,code_name) VALUES (6,'Grãos')#
+INSERT INTO dominios.mattransp (code,code_name) VALUES (9,'Esgoto')#
+INSERT INTO dominios.tipolavoura (code,code_name) VALUES (2,'Semi-perene')#
+INSERT INTO dominios.tipolavoura (code,code_name) VALUES (3,'Anual')#
+INSERT INTO dominios.tipolavoura (code,code_name) VALUES (1,'Perene')#
+INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (3,'Cartorial')#
+INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (7,'Seguridade Social')#
+INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (22,'Prefeitura')#
+INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (5,'Eleitoral')#
+INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (2,'Prisional')#
+INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (6,'Produção e/ou pesquisa')#
+INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (9,'Assembléia Legislativa')#
+INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (4,'Gestão')#
+INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (1,'Policial')#
+INSERT INTO dominios.tipoedifcivil (code,code_name) VALUES (8,'Câmara Municipal')#
+INSERT INTO dominios.tiposecaocnae (code,code_name) VALUES (1,'C - Indústrias Extrativas')#
+INSERT INTO dominios.tiposecaocnae (code,code_name) VALUES (2,'D - Indústrias de Transformação')#
+INSERT INTO dominios.tiposecaocnae (code,code_name) VALUES (3,'F - Construção')#
+INSERT INTO dominios.tiposecaocnae (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tiposecaocnae (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.emduto (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.emduto (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.tipolimpol (code,code_name) VALUES (1,'Internacional')#
+INSERT INTO dominios.tipolimpol (code,code_name) VALUES (2,'Estadual')#
+INSERT INTO dominios.tipolimpol (code,code_name) VALUES (3,'Municipal')#
+INSERT INTO dominios.salinidade (code,code_name) VALUES (1,'Doce')#
+INSERT INTO dominios.salinidade (code,code_name) VALUES (0,'Desconhecida')#
+INSERT INTO dominios.salinidade (code,code_name) VALUES (2,'Salgada')#
+INSERT INTO dominios.tipoconteudo (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoconteudo (code,code_name) VALUES (3,'Resíduo')#
+INSERT INTO dominios.tipoconteudo (code,code_name) VALUES (1,'Insumo')#
+INSERT INTO dominios.tipoconteudo (code,code_name) VALUES (2,'Produto')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (6,'Grãos')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (36,'Escória')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (41,'Forragem')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (34,'Sal')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (24,'Mármore')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (19,'Semente')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (21,'Folhagens')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (40,'Pedras preciosas')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (28,'Óleo diesel')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (35,'Ferro')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (33,'Carvão')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (22,'Pedra')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (39,'Prata')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (3,'Petróleo')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (32,'Cobre')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (16,'Vinhoto')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (25,'Bauxita')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (42,'Areia')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (23,'Granito')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (5,'Gás')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (30,'Álcool')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (26,'Manganês')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (31,'Querosene')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (27,'Talco')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (38,'Diamante')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (37,'Ouro')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (20,'Inseticida')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (98,'Misto')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (44,'Piçarra')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (18,'Cascalho')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (17,'Estrume')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (43,'Saibro')#
+INSERT INTO dominios.tipoprodutoresiduo (code,code_name) VALUES (29,'Gasolina')#
+INSERT INTO dominios.tipoedifabast (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoedifabast (code,code_name) VALUES (2,'Tratamento')#
+INSERT INTO dominios.tipoedifabast (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoedifabast (code,code_name) VALUES (1,'Captação')#
+INSERT INTO dominios.tipoedifabast (code,code_name) VALUES (3,'Recalque')#
+INSERT INTO dominios.tipoedifabast (code,code_name) VALUES (98,'Misto')#
+INSERT INTO dominios.posicaopista (code,code_name) VALUES (12,'Adjacentes')#
+INSERT INTO dominios.posicaopista (code,code_name) VALUES (0,'Desconhecida')#
+INSERT INTO dominios.posicaopista (code,code_name) VALUES (13,'Superpostas')#
+INSERT INTO dominios.posicaopista (code,code_name) VALUES (97,'Não Aplicável')#
+INSERT INTO dominios.especie (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.especie (code,code_name) VALUES (2,'Transmissão')#
+INSERT INTO dominios.especie (code,code_name) VALUES (3,'Distribuição')#
+INSERT INTO dominios.tipoestgerad (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoestgerad (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoestgerad (code,code_name) VALUES (5,'Eólica')#
+INSERT INTO dominios.tipoestgerad (code,code_name) VALUES (7,'Maré-motriz')#
+INSERT INTO dominios.tipoestgerad (code,code_name) VALUES (6,'Solar')#
+INSERT INTO dominios.tiporesiduo (code,code_name) VALUES (14,'Lixo séptico')#
+INSERT INTO dominios.tiporesiduo (code,code_name) VALUES (15,'Chorume')#
+INSERT INTO dominios.tiporesiduo (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tiporesiduo (code,code_name) VALUES (9,'Esgoto')#
+INSERT INTO dominios.tiporesiduo (code,code_name) VALUES (12,'Lixo domiciliar e comercial')#
+INSERT INTO dominios.tiporesiduo (code,code_name) VALUES (98,'Misto')#
+INSERT INTO dominios.tiporesiduo (code,code_name) VALUES (13,'Lixo tóxico')#
+INSERT INTO dominios.tiporesiduo (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tiporesiduo (code,code_name) VALUES (16,'Vinhoto')#
+INSERT INTO dominios.tipoedifenergia (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoedifenergia (code,code_name) VALUES (3,'Segurança')#
+INSERT INTO dominios.tipoedifenergia (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoedifenergia (code,code_name) VALUES (1,'Administração')#
+INSERT INTO dominios.tipoedifenergia (code,code_name) VALUES (2,'Oficinas')#
+INSERT INTO dominios.tipoedifenergia (code,code_name) VALUES (4,'Depósito')#
+INSERT INTO dominios.bitola (code,code_name) VALUES (1,'Métrica')#
+INSERT INTO dominios.bitola (code,code_name) VALUES (3,'Larga')#
+INSERT INTO dominios.bitola (code,code_name) VALUES (6,'Mista Internacional Larga')#
+INSERT INTO dominios.bitola (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.bitola (code,code_name) VALUES (2,'Internacional')#
+INSERT INTO dominios.bitola (code,code_name) VALUES (4,'Mista Métrica Internacional')#
+INSERT INTO dominios.bitola (code,code_name) VALUES (5,'Mista Métrica Larga')#
+INSERT INTO dominios.tipotravessiaped (code,code_name) VALUES (7,'Passagem subterrânea')#
+INSERT INTO dominios.tipotravessiaped (code,code_name) VALUES (8,'Passarela')#
+INSERT INTO dominios.tipotravessiaped (code,code_name) VALUES (0,'Desconhecida')#
+INSERT INTO dominios.tipotravessiaped (code,code_name) VALUES (9,'Pinguela')#
+INSERT INTO dominios.tipoedifaero (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoedifaero (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoedifaero (code,code_name) VALUES (29,'Hangar')#
+INSERT INTO dominios.tipoedifaero (code,code_name) VALUES (27,'Terminal de cargas')#
+INSERT INTO dominios.tipoedifaero (code,code_name) VALUES (28,'Torre de controle')#
+INSERT INTO dominios.tipoedifaero (code,code_name) VALUES (15,'Administrativa')#
+INSERT INTO dominios.tipoedifaero (code,code_name) VALUES (26,'Terminal de passageiros')#
+INSERT INTO dominios.funcaoedifmetroferrov (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.funcaoedifmetroferrov (code,code_name) VALUES (15,'Administrativa')#
+INSERT INTO dominios.funcaoedifmetroferrov (code,code_name) VALUES (20,'Oficina de manutenção')#
+INSERT INTO dominios.funcaoedifmetroferrov (code,code_name) VALUES (17,'Estação metroviária')#
+INSERT INTO dominios.funcaoedifmetroferrov (code,code_name) VALUES (18,'Terminal ferroviário de cargas')#
+INSERT INTO dominios.funcaoedifmetroferrov (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.funcaoedifmetroferrov (code,code_name) VALUES (16,'Estação ferroviária de passageiros')#
+INSERT INTO dominios.funcaoedifmetroferrov (code,code_name) VALUES (19,'Terminal ferroviário de passageiros e cargas')#
+INSERT INTO dominios.tipopostopol (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipopostopol (code,code_name) VALUES (21,'Posto PRF')#
+INSERT INTO dominios.tipopostopol (code,code_name) VALUES (20,'Posto PM')#
+INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (13,'Falésia')#
+INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (8,'Escarpa')#
+INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (9,'Península')#
+INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (5,'Maciço')#
+INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (3,'Montanha')#
+INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (11,'Cabo')#
+INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (14,'Talude')#
+INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (10,'Ponta')#
+INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (4,'Chapada')#
+INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (7,'Planície')#
+INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (12,'Praia')#
+INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (6,'Planalto')#
+INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (2,'Morro')#
+INSERT INTO dominios.tipoelemnat (code,code_name) VALUES (1,'Serra')#
+INSERT INTO dominios.tipocombustivel (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipocombustivel (code,code_name) VALUES (5,'Gás')#
+INSERT INTO dominios.tipocombustivel (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipocombustivel (code,code_name) VALUES (3,'Diesel')#
+INSERT INTO dominios.tipocombustivel (code,code_name) VALUES (33,'Carvão')#
+INSERT INTO dominios.tipocombustivel (code,code_name) VALUES (1,'Nuclear')#
+INSERT INTO dominios.tipocombustivel (code,code_name) VALUES (98,'Misto')#
+INSERT INTO dominios.tipoalterantrop (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoalterantrop (code,code_name) VALUES (27,'Aterro')#
+INSERT INTO dominios.tipoalterantrop (code,code_name) VALUES (28,'Resíduo de bota-fora')#
+INSERT INTO dominios.tipoalterantrop (code,code_name) VALUES (25,'Área aterrada')#
+INSERT INTO dominios.tipoalterantrop (code,code_name) VALUES (26,'Corte')#
+INSERT INTO dominios.tipoalterantrop (code,code_name) VALUES (29,'Resíduo sólido em geral')#
+INSERT INTO dominios.tipoalterantrop (code,code_name) VALUES (24,'Caixa de empréstimo')#
+INSERT INTO dominios.especiepredominante (code,code_name) VALUES (96,'Não identificado')#
+INSERT INTO dominios.especiepredominante (code,code_name) VALUES (10,'Cipó')#
+INSERT INTO dominios.especiepredominante (code,code_name) VALUES (11,'Bambu')#
+INSERT INTO dominios.especiepredominante (code,code_name) VALUES (17,'Palmeira')#
+INSERT INTO dominios.especiepredominante (code,code_name) VALUES (27,'Araucária')#
+INSERT INTO dominios.especiepredominante (code,code_name) VALUES (98,'Misto')#
+INSERT INTO dominios.especiepredominante (code,code_name) VALUES (41,'Babaçu')#
+INSERT INTO dominios.especiepredominante (code,code_name) VALUES (12,'Sororoca')#
+INSERT INTO dominios.tipotrechoferrov (code,code_name) VALUES (6,'Aeromóvel')#
+INSERT INTO dominios.tipotrechoferrov (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipotrechoferrov (code,code_name) VALUES (7,'Ferrovia')#
+INSERT INTO dominios.tipotrechoferrov (code,code_name) VALUES (8,'Metrovia')#
+INSERT INTO dominios.tipotrechoferrov (code,code_name) VALUES (5,'Bonde')#
+INSERT INTO dominios.tipocampo (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipocampo (code,code_name) VALUES (1,'Sujo')#
+INSERT INTO dominios.tipocampo (code,code_name) VALUES (2,'Limpo')#
+INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (1,'Estação Climatológica Principal - CP')#
+INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (11,'Estação Maregráfica - MA')#
+INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (2,'Estação Climatológica Auxiliar - CA')#
+INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (9,'Estação de Radiossonda - RS')#
+INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (4,'Estação Pluviométrica - PL')#
+INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (8,'Estação de Radar Meteorológico - RD')#
+INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (5,'Estação Eólica - EO')#
+INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (7,'Estação Solarimétrica - SL')#
+INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (6,'Estação Evaporimétrica - EV')#
+INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (10,'Estação Fluviométrica - FL')#
+INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (3,'Estação Agroclimatológica - AC')#
+INSERT INTO dominios.tipoptoestmed (code,code_name) VALUES (12,'Estação de Marés Terrestres - Crosta')#
+INSERT INTO dominios.referencialaltim (code,code_name) VALUES (2,'Imbituba')#
+INSERT INTO dominios.referencialaltim (code,code_name) VALUES (4,'Local')#
+INSERT INTO dominios.referencialaltim (code,code_name) VALUES (5,'Outra referência')#
+INSERT INTO dominios.referencialaltim (code,code_name) VALUES (1,'Torres')#
+INSERT INTO dominios.referencialaltim (code,code_name) VALUES (3,'Santana')#
+INSERT INTO dominios.caracteristicafloresta (code,code_name) VALUES (3,'Bosque')#
+INSERT INTO dominios.caracteristicafloresta (code,code_name) VALUES (1,'Floresta')#
+INSERT INTO dominios.caracteristicafloresta (code,code_name) VALUES (2,'Mata')#
+INSERT INTO dominios.caracteristicafloresta (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (2,'Barragem')#
+INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (13,'Entre trechos de drenagem')#
+INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (4,'Queda d’água')#
+INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (15,'Confluência')#
+INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (5,'Corredeira')#
+INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (7,'Sumidouro')#
+INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (14,'Ponto início de drenagem')#
+INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (3,'Comporta')#
+INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (19,'Ramificação')#
+INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (9,'Lago / Lagoa')#
+INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (6,'Foz marítima')#
+INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (17,'Interrupção à Jusante')#
+INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (11,'Laguna')#
+INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (16,'Vertedouro')#
+INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (8,'Meandro abandonado')#
+INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (12,'Represa/ açude')#
+INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (1,'Eclusa')#
+INSERT INTO dominios.relacionado_hid (code,code_name) VALUES (18,'Interrupção à Montante')#
+INSERT INTO dominios.tipoqueda (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoqueda (code,code_name) VALUES (2,'Salto')#
+INSERT INTO dominios.tipoqueda (code,code_name) VALUES (1,'Cachoeira')#
+INSERT INTO dominios.tipoqueda (code,code_name) VALUES (3,'Catarata')#
+INSERT INTO dominios.poderpublico (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.poderpublico (code,code_name) VALUES (2,'Legislativo')#
+INSERT INTO dominios.poderpublico (code,code_name) VALUES (1,'Executivo')#
+INSERT INTO dominios.poderpublico (code,code_name) VALUES (3,'Judiciário')#
+INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (1,'Estádio')#
+INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (7,'Centro cultural')#
+INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (8,'Plataforma de pesca')#
+INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (2,'Ginásio')#
+INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (4,'Teatro')#
+INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (5,'Anfiteatro')#
+INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (6,'Cinema')#
+INSERT INTO dominios.tipoediflazer (code,code_name) VALUES (3,'Museu')#
+INSERT INTO dominios.administracao (code,code_name) VALUES (15,'Privada')#
+INSERT INTO dominios.administracao (code,code_name) VALUES (12,'Federal/Estadual/Municipal')#
+INSERT INTO dominios.administracao (code,code_name) VALUES (3,'Municipal')#
+INSERT INTO dominios.administracao (code,code_name) VALUES (11,'Estadual/Municipal')#
+INSERT INTO dominios.administracao (code,code_name) VALUES (5,'Distrital')#
+INSERT INTO dominios.administracao (code,code_name) VALUES (2,'Estadual')#
+INSERT INTO dominios.administracao (code,code_name) VALUES (98,'Mista')#
+INSERT INTO dominios.administracao (code,code_name) VALUES (6,'Particular')#
+INSERT INTO dominios.administracao (code,code_name) VALUES (10,'Federal/Municipal')#
+INSERT INTO dominios.administracao (code,code_name) VALUES (4,'Estadual/Municipal')#
+INSERT INTO dominios.administracao (code,code_name) VALUES (1,'Federal')#
+INSERT INTO dominios.administracao (code,code_name) VALUES (0,'Desconhecida')#
+INSERT INTO dominios.administracao (code,code_name) VALUES (7,'Concessionada')#
+INSERT INTO dominios.administracao (code,code_name) VALUES (97,'Não aplicável')#
+INSERT INTO dominios.administracao (code,code_name) VALUES (9,'Federal/Estadual')#
+INSERT INTO dominios.tipoedifturist (code,code_name) VALUES (10,'Estátua')#
+INSERT INTO dominios.tipoedifturist (code,code_name) VALUES (13,'Panteão')#
+INSERT INTO dominios.tipoedifturist (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoedifturist (code,code_name) VALUES (11,'Mirante')#
+INSERT INTO dominios.tipoedifturist (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoedifturist (code,code_name) VALUES (9,'Cruzeiro')#
+INSERT INTO dominios.tipoedifturist (code,code_name) VALUES (12,'Monumento')#
+INSERT INTO dominios.usoprincipal (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.usoprincipal (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.usoprincipal (code,code_name) VALUES (3,'Energia')#
+INSERT INTO dominios.usoprincipal (code,code_name) VALUES (1,'Irrigação')#
+INSERT INTO dominios.usoprincipal (code,code_name) VALUES (97,'Não aplicável')#
+INSERT INTO dominios.usoprincipal (code,code_name) VALUES (2,'Abastecimento')#
+INSERT INTO dominios.tipoilha (code,code_name) VALUES (1,'Fluvial')#
+INSERT INTO dominios.tipoilha (code,code_name) VALUES (2,'Marítima')#
+INSERT INTO dominios.tipoilha (code,code_name) VALUES (98,'Mista')#
+INSERT INTO dominios.tipoilha (code,code_name) VALUES (3,'Lacustre')#
+INSERT INTO dominios.tipousocaminhoaer (code,code_name) VALUES (22,'Cargas')#
+INSERT INTO dominios.tipousocaminhoaer (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipousocaminhoaer (code,code_name) VALUES (98,'Misto')#
+INSERT INTO dominios.tipousocaminhoaer (code,code_name) VALUES (21,'Passageiros')#
+INSERT INTO dominios.residuo (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.residuo (code,code_name) VALUES (1,'Líquido')#
+INSERT INTO dominios.residuo (code,code_name) VALUES (2,'Sólido')#
+INSERT INTO dominios.jurisdicao (code,code_name) VALUES (9,'Federal/Estadual')#
+INSERT INTO dominios.jurisdicao (code,code_name) VALUES (3,'Municipal')#
+INSERT INTO dominios.jurisdicao (code,code_name) VALUES (11,'Estadual/Municipal')#
+INSERT INTO dominios.jurisdicao (code,code_name) VALUES (12,'Federal/Estadual/Municipal')#
+INSERT INTO dominios.jurisdicao (code,code_name) VALUES (10,'Federal/Municipal')#
+INSERT INTO dominios.jurisdicao (code,code_name) VALUES (1,'Federal')#
+INSERT INTO dominios.jurisdicao (code,code_name) VALUES (0,'Desconhecida')#
+INSERT INTO dominios.jurisdicao (code,code_name) VALUES (2,'Estadual')#
+INSERT INTO dominios.jurisdicao (code,code_name) VALUES (6,'Particular')#
+INSERT INTO dominios.jurisdicao (code,code_name) VALUES (8,'Propriedade particular')#
+INSERT INTO dominios.tipobanco (code,code_name) VALUES (2,'Marítimo')#
+INSERT INTO dominios.tipobanco (code,code_name) VALUES (1,'Fluvial')#
+INSERT INTO dominios.tipobanco (code,code_name) VALUES (3,'Lacustre')#
+INSERT INTO dominios.tipobanco (code,code_name) VALUES (4,'Cordão Arenoso')#
+INSERT INTO dominios.nascente (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.nascente (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.construcao (code,code_name) VALUES (97,'Não aplicável')#
+INSERT INTO dominios.construcao (code,code_name) VALUES (2,'Aberta')#
+INSERT INTO dominios.construcao (code,code_name) VALUES (1,'Fechada')#
+INSERT INTO dominios.tipocemiterio (code,code_name) VALUES (1,'Crematório')#
+INSERT INTO dominios.tipocemiterio (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipocemiterio (code,code_name) VALUES (5,'Túmulo Isolado')#
+INSERT INTO dominios.tipocemiterio (code,code_name) VALUES (2,'Parque')#
+INSERT INTO dominios.tipocemiterio (code,code_name) VALUES (3,'Vertical')#
+INSERT INTO dominios.tipocemiterio (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipocemiterio (code,code_name) VALUES (98,'Misto')#
+INSERT INTO dominios.tipocemiterio (code,code_name) VALUES (4,'Comum')#
+INSERT INTO dominios.tipofontedagua (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipofontedagua (code,code_name) VALUES (2,'Poço Artesiano')#
+INSERT INTO dominios.tipofontedagua (code,code_name) VALUES (3,'Olho d`água')#
+INSERT INTO dominios.tipofontedagua (code,code_name) VALUES (1,'Poço')#
+INSERT INTO dominios.tipopostofisc (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipopostofisc (code,code_name) VALUES (11,'Fiscalização')#
+INSERT INTO dominios.tipopostofisc (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipopostofisc (code,code_name) VALUES (98,'Mista')#
+INSERT INTO dominios.tipopostofisc (code,code_name) VALUES (10,'Tributação')#
+INSERT INTO dominios.causa (code,code_name) VALUES (3,'Absorção')#
+INSERT INTO dominios.causa (code,code_name) VALUES (1,'Canalização')#
+INSERT INTO dominios.causa (code,code_name) VALUES (0,'Desconhecida')#
+INSERT INTO dominios.causa (code,code_name) VALUES (2,'Gruta ou Fenda')#
+INSERT INTO dominios.tratamento (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.tratamento (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tratamento (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.tratamento (code,code_name) VALUES (97,'Não aplicável')#
+INSERT INTO dominios.proximidade (code,code_name) VALUES (15,'Adjacente')#
+INSERT INTO dominios.proximidade (code,code_name) VALUES (16,'Coincidente')#
+INSERT INTO dominios.proximidade (code,code_name) VALUES (0,'Desconhecida')#
+INSERT INTO dominios.proximidade (code,code_name) VALUES (14,'Isolado')#
+INSERT INTO dominios.tipocondutor (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipocondutor (code,code_name) VALUES (4,'Tubulação')#
+INSERT INTO dominios.tipocondutor (code,code_name) VALUES (2,'Calha')#
+INSERT INTO dominios.situacaomarco (code,code_name) VALUES (5,'Não encontrado')#
+INSERT INTO dominios.situacaomarco (code,code_name) VALUES (2,'Destruído')#
+INSERT INTO dominios.situacaomarco (code,code_name) VALUES (6,'Não visitado')#
+INSERT INTO dominios.situacaomarco (code,code_name) VALUES (3,'Destruído sem chapa')#
+INSERT INTO dominios.situacaomarco (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.situacaomarco (code,code_name) VALUES (7,'Não construído')#
+INSERT INTO dominios.situacaomarco (code,code_name) VALUES (4,'Destruído com chapa danificada')#
+INSERT INTO dominios.situacaomarco (code,code_name) VALUES (1,'Bom')#
+INSERT INTO dominios.tipoentroncamento (code,code_name) VALUES (5,'Entroncamento ferroviário')#
+INSERT INTO dominios.tipoentroncamento (code,code_name) VALUES (1,'Cruzamento rodoviário')#
+INSERT INTO dominios.tipoentroncamento (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoentroncamento (code,code_name) VALUES (4,'Rótula')#
+INSERT INTO dominios.tipoentroncamento (code,code_name) VALUES (3,'Trevo rodoviário')#
+INSERT INTO dominios.tipoentroncamento (code,code_name) VALUES (2,'Círculo rodoviário')#
+INSERT INTO dominios.tipoestmed (code,code_name) VALUES (1,'Estação Climatológica Principal - CP')#
+INSERT INTO dominios.tipoestmed (code,code_name) VALUES (11,'Estação Maregráfica - MA')#
+INSERT INTO dominios.tipoestmed (code,code_name) VALUES (2,'Estação Climatológica Auxiliar - CA')#
+INSERT INTO dominios.tipoestmed (code,code_name) VALUES (9,'Estação de Radiossonda - RS')#
+INSERT INTO dominios.tipoestmed (code,code_name) VALUES (4,'Estação Pluviométrica - PL')#
+INSERT INTO dominios.tipoestmed (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoestmed (code,code_name) VALUES (8,'Estação de Radar Meteorológico - RD')#
+INSERT INTO dominios.tipoestmed (code,code_name) VALUES (5,'Estação Eólica - EO')#
+INSERT INTO dominios.tipoestmed (code,code_name) VALUES (7,'Estação Solarimétrica - SL')#
+INSERT INTO dominios.tipoestmed (code,code_name) VALUES (6,'Estação Evaporimétrica - EV')#
+INSERT INTO dominios.tipoestmed (code,code_name) VALUES (10,'Estação Fluviométrica - FL')#
+INSERT INTO dominios.tipoestmed (code,code_name) VALUES (3,'Estação Agroclimatológica - AC')#
+INSERT INTO dominios.tipoestmed (code,code_name) VALUES (12,'Estação de Marés Terrestres - Crosta')#
+INSERT INTO dominios.tipooutunidprot (code,code_name) VALUES (5,'Corredor ecológico')#
+INSERT INTO dominios.tipooutunidprot (code,code_name) VALUES (4,'Distrito florestal')#
+INSERT INTO dominios.tipooutunidprot (code,code_name) VALUES (8,'Sítios do patrimônio')#
+INSERT INTO dominios.tipooutunidprot (code,code_name) VALUES (2,'Reserva legal')#
+INSERT INTO dominios.tipooutunidprot (code,code_name) VALUES (9,'Reserva da biosfera')#
+INSERT INTO dominios.tipooutunidprot (code,code_name) VALUES (6,'Floresta pública')#
+INSERT INTO dominios.tipooutunidprot (code,code_name) VALUES (3,'Mosaico')#
+INSERT INTO dominios.tipooutunidprot (code,code_name) VALUES (1,'Área de preservação permanente')#
+INSERT INTO dominios.tipooutunidprot (code,code_name) VALUES (7,'Sítios RAMSAR')#
+INSERT INTO dominios.tipodepsaneam (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipodepsaneam (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipodepsaneam (code,code_name) VALUES (1,'Tanque')#
+INSERT INTO dominios.tipodepsaneam (code,code_name) VALUES (5,'Aterro sanitário')#
+INSERT INTO dominios.tipodepsaneam (code,code_name) VALUES (6,'Aterro controlado')#
+INSERT INTO dominios.tipodepsaneam (code,code_name) VALUES (4,'Depósito de lixo')#
+INSERT INTO dominios.tipounidprotinteg (code,code_name) VALUES (3,'Monumento batural - MONA')#
+INSERT INTO dominios.tipounidprotinteg (code,code_name) VALUES (2,'Parque - PAR')#
+INSERT INTO dominios.tipounidprotinteg (code,code_name) VALUES (1,'Estação Ecológica - ESEC')#
+INSERT INTO dominios.tipounidprotinteg (code,code_name) VALUES (5,'Refúgio de Vida Silvestre - RVS')#
+INSERT INTO dominios.tipounidprotinteg (code,code_name) VALUES (4,'Reserva Biológica - REBIO')#
+INSERT INTO dominios.eletrificada (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.eletrificada (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.eletrificada (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.frigorifico (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.frigorifico (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.frigorifico (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.classficsigiloso (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.classficsigiloso (code,code_name) VALUES (2,'Ostensivo')#
+INSERT INTO dominios.classficsigiloso (code,code_name) VALUES (1,'Sigiloso')#
+INSERT INTO dominios.tipolimmassa (code,code_name) VALUES (2,'Margem de massa d`água')#
+INSERT INTO dominios.tipolimmassa (code,code_name) VALUES (5,'Limite interno entre massas e/ou trechos')#
+INSERT INTO dominios.tipolimmassa (code,code_name) VALUES (1,'Costa visível da carta')#
+INSERT INTO dominios.tipolimmassa (code,code_name) VALUES (4,'Margem direita de trechos de massa d`água')#
+INSERT INTO dominios.tipolimmassa (code,code_name) VALUES (7,'Limite interno com foz marítima')#
+INSERT INTO dominios.tipolimmassa (code,code_name) VALUES (6,'Limite com elemento artificial')#
+INSERT INTO dominios.tipolimmassa (code,code_name) VALUES (3,'Margem esquerda de trechos de massa d`água')#
+INSERT INTO dominios.tipotransporte (code,code_name) VALUES (22,'Cargas')#
+INSERT INTO dominios.tipotransporte (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipotransporte (code,code_name) VALUES (98,'Misto')#
+INSERT INTO dominios.tipotransporte (code,code_name) VALUES (21,'Passageiros')#
+INSERT INTO dominios.navegabilidade (code,code_name) VALUES (0,'Desconhecida')#
+INSERT INTO dominios.navegabilidade (code,code_name) VALUES (2,'Não navegável')#
+INSERT INTO dominios.navegabilidade (code,code_name) VALUES (1,'Navegável')#
+INSERT INTO dominios.tipogrutacaverna (code,code_name) VALUES (20,'Caverna')#
+INSERT INTO dominios.tipogrutacaverna (code,code_name) VALUES (19,'Gruta')#
+INSERT INTO dominios.fixa (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.fixa (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.fixa (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.instituicao_edu (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.instituicao_edu (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.instituicao_edu (code,code_name) VALUES (97,'Não Aplicável')#
+INSERT INTO dominios.terreno (code,code_name) VALUES (1,'Seco')#
+INSERT INTO dominios.terreno (code,code_name) VALUES (2,'Irrigado')#
+INSERT INTO dominios.terreno (code,code_name) VALUES (3,'Inundado')#
+INSERT INTO dominios.tipocomplexoportuario (code,code_name) VALUES (31,'Instalação portuária')#
+INSERT INTO dominios.tipocomplexoportuario (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipocomplexoportuario (code,code_name) VALUES (30,'Porto organizado')#
+INSERT INTO dominios.tipotorre (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipotorre (code,code_name) VALUES (1,'Autoportante')#
+INSERT INTO dominios.tipotorre (code,code_name) VALUES (2,'Estaiada')#
+INSERT INTO dominios.tipoedifagropec (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoedifagropec (code,code_name) VALUES (14,'Apiário')#
+INSERT INTO dominios.tipoedifagropec (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoedifagropec (code,code_name) VALUES (18,'Curral')#
+INSERT INTO dominios.tipoedifagropec (code,code_name) VALUES (12,'Sede operacional de fazenda')#
+INSERT INTO dominios.tipoedifagropec (code,code_name) VALUES (17,'Pocilga')#
+INSERT INTO dominios.tipoedifagropec (code,code_name) VALUES (13,'Aviário')#
+INSERT INTO dominios.tipoedifagropec (code,code_name) VALUES (15,'Viveiro de plantas')#
+INSERT INTO dominios.tipoedifagropec (code,code_name) VALUES (16,'Viveiro para acquicultura')#
+INSERT INTO dominios.classificacaoporte (code,code_name) VALUES (1,'Arbórea')#
+INSERT INTO dominios.classificacaoporte (code,code_name) VALUES (98,'Misto')#
+INSERT INTO dominios.classificacaoporte (code,code_name) VALUES (2,'Arbustiva')#
+INSERT INTO dominios.classificacaoporte (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.classificacaoporte (code,code_name) VALUES (3,'Herbácea')#
+INSERT INTO dominios.finalidade_asb (code,code_name) VALUES (8,'Armazenamento')#
+INSERT INTO dominios.finalidade_asb (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.finalidade_asb (code,code_name) VALUES (2,'Tratamento')#
+INSERT INTO dominios.finalidade_asb (code,code_name) VALUES (3,'Recalque')#
+INSERT INTO dominios.finalidade_asb (code,code_name) VALUES (4,'Distribuição')#
+INSERT INTO dominios.tipomassadagua (code,code_name) VALUES (10,'Represa/Açude')#
+INSERT INTO dominios.tipomassadagua (code,code_name) VALUES (5,'Enseada')#
+INSERT INTO dominios.tipomassadagua (code,code_name) VALUES (3,'Oceano')#
+INSERT INTO dominios.tipomassadagua (code,code_name) VALUES (7,'Lago/Lagoa')#
+INSERT INTO dominios.tipomassadagua (code,code_name) VALUES (4,'Baía')#
+INSERT INTO dominios.tipomassadagua (code,code_name) VALUES (6,'Meandro Abandonado')#
+INSERT INTO dominios.tipomassadagua (code,code_name) VALUES (0,'Desconhecida')#
+INSERT INTO dominios.tipomarcolim (code,code_name) VALUES (1,'Internacional')#
+INSERT INTO dominios.tipomarcolim (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipomarcolim (code,code_name) VALUES (2,'Estadual')#
+INSERT INTO dominios.tipomarcolim (code,code_name) VALUES (3,'Municipal')#
+INSERT INTO dominios.instituicao (code,code_name) VALUES (6,'Aeronáutica')#
+INSERT INTO dominios.instituicao (code,code_name) VALUES (8,'Corpo de bombeiros')#
+INSERT INTO dominios.instituicao (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.instituicao (code,code_name) VALUES (5,'Exército')#
+INSERT INTO dominios.instituicao (code,code_name) VALUES (4,'Marinha')#
+INSERT INTO dominios.instituicao (code,code_name) VALUES (7,'Polícia militar')#
+INSERT INTO dominios.instituicao (code,code_name) VALUES (0,'Desconhecida')#
+INSERT INTO dominios.tipoedifport (code,code_name) VALUES (34,'Dique de estaleiro')#
+INSERT INTO dominios.tipoedifport (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoedifport (code,code_name) VALUES (32,'Armazém')#
+INSERT INTO dominios.tipoedifport (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoedifport (code,code_name) VALUES (37,'Terminal privativo')#
+INSERT INTO dominios.tipoedifport (code,code_name) VALUES (15,'Administrativa')#
+INSERT INTO dominios.tipoedifport (code,code_name) VALUES (36,'Carreira')#
+INSERT INTO dominios.tipoedifport (code,code_name) VALUES (27,'Terminal de cargas')#
+INSERT INTO dominios.tipoedifport (code,code_name) VALUES (35,'Rampa')#
+INSERT INTO dominios.tipoedifport (code,code_name) VALUES (33,'Estaleiro')#
+INSERT INTO dominios.tipoedifport (code,code_name) VALUES (26,'Terminal de passageiros')#
+INSERT INTO dominios.tipoptoenergia (code,code_name) VALUES (3,'Subestação de  distribuição')#
+INSERT INTO dominios.tipoptoenergia (code,code_name) VALUES (4,'Ponto de ramificação')#
+INSERT INTO dominios.tipoptoenergia (code,code_name) VALUES (1,'Estação geradora de energia')#
+INSERT INTO dominios.tipoptoenergia (code,code_name) VALUES (2,'Subestação de transmissão')#
+INSERT INTO dominios.tipoptoenergia (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.antropizada (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.antropizada (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.antropizada (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.tipomaqtermica (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipomaqtermica (code,code_name) VALUES (2,'Turbina à vapor (TBVP)')#
+INSERT INTO dominios.tipomaqtermica (code,code_name) VALUES (4,'Motor de Combustão Interna (NCIA)')#
+INSERT INTO dominios.tipomaqtermica (code,code_name) VALUES (1,'Turbina à gás (TBGS)')#
+INSERT INTO dominios.tipomaqtermica (code,code_name) VALUES (3,'Ciclo combinado (CLCB)')#
+INSERT INTO dominios.tipounidusosust (code,code_name) VALUES (5,'Reserva Extrativista - RESEX')#
+INSERT INTO dominios.tipounidusosust (code,code_name) VALUES (3,'Floresta - FLO')#
+INSERT INTO dominios.tipounidusosust (code,code_name) VALUES (7,'Reserva Particular do Patrimônio Natural - RPPN')#
+INSERT INTO dominios.tipounidusosust (code,code_name) VALUES (6,'Reserva de Fauna - REFAU')#
+INSERT INTO dominios.tipounidusosust (code,code_name) VALUES (1,'Área de Proteção Ambiental - APA')#
+INSERT INTO dominios.tipounidusosust (code,code_name) VALUES (2,'Área de Relevante Interesse Ecológico - ARIE')#
+INSERT INTO dominios.tipounidusosust (code,code_name) VALUES (4,'Reserva de Desenvolvimento Sustentável - RDS')#
+INSERT INTO dominios.situacaocosta (code,code_name) VALUES (11,'Afastado')#
+INSERT INTO dominios.situacaocosta (code,code_name) VALUES (10,'Contíguo')#
+INSERT INTO dominios.operacional (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.operacional (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.operacional (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.tipolimintramun (code,code_name) VALUES (5,'Bairro')#
+INSERT INTO dominios.tipolimintramun (code,code_name) VALUES (2,'Sub-distrital')#
+INSERT INTO dominios.tipolimintramun (code,code_name) VALUES (1,'Distrital')#
+INSERT INTO dominios.tipolimintramun (code,code_name) VALUES (4,'Região administrativa')#
+INSERT INTO dominios.tipolimintramun (code,code_name) VALUES (3,'Perímetro urbano legal')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (35,'91.91-0 - Atividades de Organizações Religiosas')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (16,'80.13-6 - Educação Infantil - Creche')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (32,'85.31-6 - Serviços Sociais com alojamento')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (21,'80.32-2 - Educação Superior - Graduação e Pós-Graduação')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (28,'85.13-8 Atenção Ambulatorial (Posto e Centro de Saúde)')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (7,'75.12-4 - Regulação das Atividades Sociais e Culturais')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (8,'75.13-2 - Regulação das Atividades Econômicas')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (19,'80.20-9 - Ensino Médio')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (3,'40.14-2 - Distribuição de Energia Elétrica')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (13,'75.24-8 - Segurança e Ordem Pública')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (18,'80.15-2 - Ensino Fundamental')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (14,'75.25-6 - Defesa Civil')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (17,'80.14-4 - Educação Infantil - Pré-Escola')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (10,'75.21-3 - Relações Exteriores')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (12,'75.23-0 - Justiça')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (27,'85.12-0 Atendimento a Urgência e Emergências (Pronto Socorro)')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (34,'90.00-0 - Limpeza Urbana e Esgoto e Atividades Relacionadas')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (97,'Não Aplicável')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (30,'85.16-2 Outras Atividades Relacionadas com a Atenção à Saúde (Instituto de Pesquisa)')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (24,'80.97-7 - Educação Profissional de Nível Tecnológico')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (11,'75.22-1 - Defesa')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (6,'75.11-6 - Administração Pública em Geral')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (15,'75.30-2 - Seguridade Social')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (5,'64.20-3 - Telecomunicações')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (26,'85.11-1 Atendimento Hospitalar (Hospital)')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (9,'75.14-0 - Atividades de Apoio à Administração Pública')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (25,'80.99-3 - Outras Atividades de Ensino')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (33,'85.32-4 - Serviços Sociais sem alojamento')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (4,'41.00-9 - Captação Tratamento e Distribuição de Água')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (98,'Misto')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (1,'40.11-8 - Produção de Energia Elétrica')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (20,'80.31-4 - Educação Superior - Graduação')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (2,'40.12-6 - Transmissão de Energia Elétrica')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (23,'80.96-9 - Educação Profissional de Nível Técnico')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (22,'80.33-0 - Educação Superior - Pós-Graduação e Extensão')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (31,'85.20-0 Serviços Veterinários')#
+INSERT INTO dominios.tipoclassecnae (code,code_name) VALUES (29,'85.14-6 Serviços de Complementação Diagnóstica ou Terapêutica')#
+INSERT INTO dominios.tiposinal (code,code_name) VALUES (5,'Barca farol')#
+INSERT INTO dominios.tiposinal (code,code_name) VALUES (6,'Sinalização de margem')#
+INSERT INTO dominios.tiposinal (code,code_name) VALUES (2,'Bóia cega')#
+INSERT INTO dominios.tiposinal (code,code_name) VALUES (1,'Bóia luminosa')#
+INSERT INTO dominios.tiposinal (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tiposinal (code,code_name) VALUES (4,'Farol ou farolete')#
+INSERT INTO dominios.tiposinal (code,code_name) VALUES (3,'Bóia de amarração')#
+INSERT INTO dominios.modaluso (code,code_name) VALUES (14,'Portuário')#
+INSERT INTO dominios.modaluso (code,code_name) VALUES (9,'Aeroportuário')#
+INSERT INTO dominios.modaluso (code,code_name) VALUES (5,'Ferroviário')#
+INSERT INTO dominios.modaluso (code,code_name) VALUES (98,'Misto')#
+INSERT INTO dominios.modaluso (code,code_name) VALUES (7,'Dutos')#
+INSERT INTO dominios.modaluso (code,code_name) VALUES (8,'Rodoferroviário')#
+INSERT INTO dominios.modaluso (code,code_name) VALUES (4,'Rodoviário')#
+INSERT INTO dominios.modaluso (code,code_name) VALUES (6,'Metroviário')#
+INSERT INTO dominios.situacaoemagua (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.situacaoemagua (code,code_name) VALUES (4,'Emerso')#
+INSERT INTO dominios.situacaoemagua (code,code_name) VALUES (7,'Cobre e Descobre')#
+INSERT INTO dominios.situacaoemagua (code,code_name) VALUES (5,'Submerso')#
+INSERT INTO dominios.tiporecife (code,code_name) VALUES (20,'Coral')#
+INSERT INTO dominios.tiporecife (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tiporecife (code,code_name) VALUES (1,'Arenito')#
+INSERT INTO dominios.tiporecife (code,code_name) VALUES (2,'Rochoso')#
+INSERT INTO dominios.rede (code,code_name) VALUES (15,'Privada')#
+INSERT INTO dominios.rede (code,code_name) VALUES (2,'Estadual')#
+INSERT INTO dominios.rede (code,code_name) VALUES (0,'Desconhecida')#
+INSERT INTO dominios.rede (code,code_name) VALUES (3,'Municipal')#
+INSERT INTO dominios.rede (code,code_name) VALUES (14,'Nacional')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (26,'Bracatinga')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (96,'Não identificado')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (42,'Videira')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (33,'Cebola')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (13,'Arroz')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (4,'Trigo')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (32,'Juta')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (15,'Cacau')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (6,'Algodão herbáceo')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (18,'Açaí')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (27,'Araucária')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (22,'Algaroba')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (30,'Maçã')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (10,'Batata inglesa')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (25,'Hortaliças')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (12,'Feijão')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (23,'Pinus')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (31,'Pêssego')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (2,'Banana')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (17,'Palmeira')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (24,'Pastagem cultivada')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (20,'Eucalipto')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (3,'Laranja')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (16,'Erva-mate')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (1,'Milho')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (21,'Acácia')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (28,'Carnauba')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (29,'Pera')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (19,'Seringueira')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (98,'Misto')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (7,'Cana-de-Açúcar')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (9,'Soja')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (14,'Café')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (8,'Fumo')#
+INSERT INTO dominios.cultivopredominante (code,code_name) VALUES (11,'Mandioca')#
+INSERT INTO dominios.tipoassociado (code,code_name) VALUES (4,'Vila')#
+INSERT INTO dominios.tipoassociado (code,code_name) VALUES (1,'Cidade')#
+INSERT INTO dominios.tipoequipagropec (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoequipagropec (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoequipagropec (code,code_name) VALUES (1,'Pivô central')#
+INSERT INTO dominios.tipotunel (code,code_name) VALUES (1,'Túnel')#
+INSERT INTO dominios.tipotunel (code,code_name) VALUES (2,'Passagem subterrânea sob via')#
+INSERT INTO dominios.dentrodepoligono (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.dentrodepoligono (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.tipotrechomassa (code,code_name) VALUES (2,'Canal')#
+INSERT INTO dominios.tipotrechomassa (code,code_name) VALUES (1,'Rio')#
+INSERT INTO dominios.tipotrechomassa (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipotrechomassa (code,code_name) VALUES (9,'Laguna')#
+INSERT INTO dominios.tipotrechomassa (code,code_name) VALUES (10,'Represa/açude')#
+INSERT INTO dominios.unidadevolume (code,code_name) VALUES (2,'metro cúbico')#
+INSERT INTO dominios.unidadevolume (code,code_name) VALUES (1,'litro')#
+INSERT INTO dominios.tipoedifrelig (code,code_name) VALUES (4,'Mosteiro')#
+INSERT INTO dominios.tipoedifrelig (code,code_name) VALUES (5,'Convento')#
+INSERT INTO dominios.tipoedifrelig (code,code_name) VALUES (1,'Igreja')#
+INSERT INTO dominios.tipoedifrelig (code,code_name) VALUES (6,'Mesquita')#
+INSERT INTO dominios.tipoedifrelig (code,code_name) VALUES (2,'Templo')#
+INSERT INTO dominios.tipoedifrelig (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoedifrelig (code,code_name) VALUES (3,'Centro')#
+INSERT INTO dominios.tipoedifrelig (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoedifrelig (code,code_name) VALUES (7,'Sinagoga')#
+INSERT INTO dominios.trafego (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.trafego (code,code_name) VALUES (1,'Permanente')#
+INSERT INTO dominios.trafego (code,code_name) VALUES (2,'Periódico')#
+INSERT INTO dominios.tipooutlimofic (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipooutlimofic (code,code_name) VALUES (3,'Zona econômica exclusiva')#
+INSERT INTO dominios.tipooutlimofic (code,code_name) VALUES (5,'Faixa de fronteira')#
+INSERT INTO dominios.tipooutlimofic (code,code_name) VALUES (1,'Mar territorial')#
+INSERT INTO dominios.tipooutlimofic (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipooutlimofic (code,code_name) VALUES (2,'Zona contígua')#
+INSERT INTO dominios.tipooutlimofic (code,code_name) VALUES (6,'Plataforma continental jurídica')#
+INSERT INTO dominios.tipooutlimofic (code,code_name) VALUES (4,'Lateral marítima')#
+INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (10,'Represa/açude')#
+INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (14,'Eclusa')#
+INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (2,'Canal')#
+INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (9,'Laguna')#
+INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (11,'Vala')#
+INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (19,'Barragem')#
+INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (15,'Terreno sujeito a inundação')#
+INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (1,'Rio')#
+INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (97,'Não aplicável')#
+INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (12,'Queda d´água')#
+INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (13,'Corredeira')#
+INSERT INTO dominios.coincidecomdentrode_hid (code,code_name) VALUES (16,'Foz marítima')#
+INSERT INTO dominios.tipoestrut (code,code_name) VALUES (4,'Porto seco')#
+INSERT INTO dominios.tipoestrut (code,code_name) VALUES (5,'Terminal rodoviário')#
+INSERT INTO dominios.tipoestrut (code,code_name) VALUES (3,'Fiscalização')#
+INSERT INTO dominios.tipoestrut (code,code_name) VALUES (1,'Estação')#
+INSERT INTO dominios.tipoestrut (code,code_name) VALUES (2,'Comércio e serviços')#
+INSERT INTO dominios.tipoestrut (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoestrut (code,code_name) VALUES (7,'Terminal multimodal')#
+INSERT INTO dominios.tipoestrut (code,code_name) VALUES (6,'Terminal urbano')#
+INSERT INTO dominios.destinacaofundeadouro (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.destinacaofundeadouro (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.destinacaofundeadouro (code,code_name) VALUES (12,'Áreas de fundeio com limite definido')#
+INSERT INTO dominios.destinacaofundeadouro (code,code_name) VALUES (11,'Fundeadouro com designação alfanumérica')#
+INSERT INTO dominios.destinacaofundeadouro (code,code_name) VALUES (13,'Áreas de fundeio proibido')#
+INSERT INTO dominios.destinacaofundeadouro (code,code_name) VALUES (10,'Fundeadouro recomendado sem limite definido')#
+INSERT INTO dominios.formaextracao (code,code_name) VALUES (0,'Desconhecida')#
+INSERT INTO dominios.formaextracao (code,code_name) VALUES (5,'Céu aberto')#
+INSERT INTO dominios.formaextracao (code,code_name) VALUES (6,'Subterrâneo')#
+INSERT INTO dominios.tipoquebramolhe (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoquebramolhe (code,code_name) VALUES (2,'Molhe')#
+INSERT INTO dominios.tipoquebramolhe (code,code_name) VALUES (1,'Quebramar')#
+INSERT INTO dominios.revestimento (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.revestimento (code,code_name) VALUES (4,'Calçado')#
+INSERT INTO dominios.revestimento (code,code_name) VALUES (1,'Leito natural')#
+INSERT INTO dominios.revestimento (code,code_name) VALUES (2,'Revestimento primário')#
+INSERT INTO dominios.revestimento (code,code_name) VALUES (3,'Pavimentado')#
+INSERT INTO dominios.ocorrenciaem (code,code_name) VALUES (96,'Não Identificado')#
+INSERT INTO dominios.ocorrenciaem (code,code_name) VALUES (14,'Macega ou chavascal')#
+INSERT INTO dominios.ocorrenciaem (code,code_name) VALUES (7,'Estepe')#
+INSERT INTO dominios.ocorrenciaem (code,code_name) VALUES (5,'Brejo ou Pântano')#
+INSERT INTO dominios.ocorrenciaem (code,code_name) VALUES (13,'Cerrado ou cerradão')#
+INSERT INTO dominios.ocorrenciaem (code,code_name) VALUES (8,'Pastagem')#
+INSERT INTO dominios.ocorrenciaem (code,code_name) VALUES (19,'Campinarana')#
+INSERT INTO dominios.ocorrenciaem (code,code_name) VALUES (6,'Caatinga')#
+INSERT INTO dominios.ocorrenciaem (code,code_name) VALUES (15,'Floresta')#
+INSERT INTO dominios.denominacaoassociada (code,code_name) VALUES (5,'Cristã')#
+INSERT INTO dominios.denominacaoassociada (code,code_name) VALUES (99,'Outras')#
+INSERT INTO dominios.denominacaoassociada (code,code_name) VALUES (6,'Israelita')#
+INSERT INTO dominios.denominacaoassociada (code,code_name) VALUES (7,'Muçulmana')#
+INSERT INTO dominios.coincidecomdentrode_lim (code,code_name) VALUES (96,'Não Identificado')#
+INSERT INTO dominios.coincidecomdentrode_lim (code,code_name) VALUES (4,'Linha Seca')#
+INSERT INTO dominios.coincidecomdentrode_lim (code,code_name) VALUES (3,'Cumeada')#
+INSERT INTO dominios.coincidecomdentrode_lim (code,code_name) VALUES (6,'Rodovia')#
+INSERT INTO dominios.coincidecomdentrode_lim (code,code_name) VALUES (9,'Massa D`Água')#
+INSERT INTO dominios.coincidecomdentrode_lim (code,code_name) VALUES (5,'Costa Visível da Carta')#
+INSERT INTO dominios.coincidecomdentrode_lim (code,code_name) VALUES (7,'Ferrovia')#
+INSERT INTO dominios.coincidecomdentrode_lim (code,code_name) VALUES (2,'Contorno Massa D`Água')#
+INSERT INTO dominios.coincidecomdentrode_lim (code,code_name) VALUES (8,'Trecho de Drenagem')#
+INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (1,'Vértice de Triangulação - VT')#
+INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (6,'Ponto barométrico - B')#
+INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (8,'Ponto de Satélite - SAT')#
+INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (7,'Ponto Trigonométrico - RV')#
+INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (2,'Referência de Nível - RN')#
+INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (5,'Ponto Astronômico - PA')#
+INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (4,'Estação de Poligonal - EP')#
+INSERT INTO dominios.tipoptorefgeodtopo (code,code_name) VALUES (3,'Estação Gravimétrica - EG')#
+INSERT INTO dominios.tipoedifrod (code,code_name) VALUES (13,'Posto de pedágio')#
+INSERT INTO dominios.tipoedifrod (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoedifrod (code,code_name) VALUES (10,'Parada interestadual')#
+INSERT INTO dominios.tipoedifrod (code,code_name) VALUES (9,'Terminal urbano')#
+INSERT INTO dominios.tipoedifrod (code,code_name) VALUES (14,'Posto de fiscalização')#
+INSERT INTO dominios.tipoedifrod (code,code_name) VALUES (15,'Administrativa')#
+INSERT INTO dominios.tipoedifrod (code,code_name) VALUES (8,'Terminal interestadual')#
+INSERT INTO dominios.tipoedifrod (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoedifrod (code,code_name) VALUES (12,'Posto de pesagem')#
+INSERT INTO dominios.finalidade_eco (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.finalidade_eco (code,code_name) VALUES (98,'Mista')#
+INSERT INTO dominios.finalidade_eco (code,code_name) VALUES (1,'Comercial')#
+INSERT INTO dominios.finalidade_eco (code,code_name) VALUES (2,'Serviço')#
+INSERT INTO dominios.tipopocomina (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipopocomina (code,code_name) VALUES (3,'Vertical')#
+INSERT INTO dominios.tipopocomina (code,code_name) VALUES (97,'Não aplicável')#
+INSERT INTO dominios.tipopocomina (code,code_name) VALUES (2,'Horizontal')#
+INSERT INTO dominios.modalidade (code,code_name) VALUES (99,'Outras')#
+INSERT INTO dominios.modalidade (code,code_name) VALUES (2,'Radiodifusão/som e imagem')#
+INSERT INTO dominios.modalidade (code,code_name) VALUES (3,'Telefonia')#
+INSERT INTO dominios.modalidade (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.modalidade (code,code_name) VALUES (5,'Radiodifusão/som')#
+INSERT INTO dominios.modalidade (code,code_name) VALUES (4,'Dados')#
+INSERT INTO dominios.modalidade (code,code_name) VALUES (1,'Radiocomunicação')#
+INSERT INTO dominios.tipotravessia (code,code_name) VALUES (1,'Vau natural')#
+INSERT INTO dominios.tipotravessia (code,code_name) VALUES (2,'Vau construída')#
+INSERT INTO dominios.tipotravessia (code,code_name) VALUES (0,'Desconhecida')#
+INSERT INTO dominios.tipotravessia (code,code_name) VALUES (3,'Bote transportador')#
+INSERT INTO dominios.tipotravessia (code,code_name) VALUES (4,'Balsa')#
+INSERT INTO dominios.tipoedifsaneam (code,code_name) VALUES (5,'Tratamento de esgoto')#
+INSERT INTO dominios.tipoedifsaneam (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoedifsaneam (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoedifsaneam (code,code_name) VALUES (3,'Recalque')#
+INSERT INTO dominios.tipoedifsaneam (code,code_name) VALUES (6,'Usina de reciclagem')#
+INSERT INTO dominios.tipoedifsaneam (code,code_name) VALUES (7,'Incinerador')#
+INSERT INTO dominios.ovgd (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.ovgd (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.ovgd (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (10,'Edificação Metro Ferroviária')#
+INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (8,'Entroncamento')#
+INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (3,'Ponte')#
+INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (1,'Túnel')#
+INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (2,'Passagem elevada ou viaduto')#
+INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (7,'Mudança de atributo')#
+INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (19,'Barragem')#
+INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (17,'Interrupção com a Moldura')#
+INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (5,'Edificação rodoviária')#
+INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (11,'Localidade')#
+INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (6,'Galeria ou bueiro')#
+INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (12,'Patio')#
+INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (13,'Passagem de nível')#
+INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (4,'Travessia')#
+INSERT INTO dominios.relacionado_fer (code,code_name) VALUES (9,'Início ou fim de trecho')#
+INSERT INTO dominios.qualidagua (code,code_name) VALUES (0,'Desconhecida')#
+INSERT INTO dominios.qualidagua (code,code_name) VALUES (4,'Salobra')#
+INSERT INTO dominios.qualidagua (code,code_name) VALUES (2,'Não potável')#
+INSERT INTO dominios.qualidagua (code,code_name) VALUES (1,'Potável')#
+INSERT INTO dominios.qualidagua (code,code_name) VALUES (3,'Mineral')#
+INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (14,'Campo de tiro')#
+INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (19,'Posto')#
+INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (15,'Base aérea')#
+INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (12,'Aquartelamento')#
+INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (18,'Delegacia serviço militar')#
+INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (16,'Distrito naval')#
+INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (13,'Campo de instrução')#
+INSERT INTO dominios.tipoedifmil (code,code_name) VALUES (17,'Hotel de trânsito')#
+INSERT INTO dominios.cotacomprovada (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.cotacomprovada (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.tipooperativo (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipooperativo (code,code_name) VALUES (1,'Elevadora')#
+INSERT INTO dominios.tipooperativo (code,code_name) VALUES (2,'Abaixadora')#
+INSERT INTO dominios.procextracao (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.procextracao (code,code_name) VALUES (2,'Manual')#
+INSERT INTO dominios.procextracao (code,code_name) VALUES (1,'Mecanizado')#
+INSERT INTO dominios.matconstr (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.matconstr (code,code_name) VALUES (1,'Alvenaria')#
+INSERT INTO dominios.matconstr (code,code_name) VALUES (26,'Fio Metálico')#
+INSERT INTO dominios.matconstr (code,code_name) VALUES (4,'Rocha')#
+INSERT INTO dominios.matconstr (code,code_name) VALUES (23,'Terra')#
+INSERT INTO dominios.matconstr (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.matconstr (code,code_name) VALUES (3,'Metal')#
+INSERT INTO dominios.matconstr (code,code_name) VALUES (97,'Não Aplicável')#
+INSERT INTO dominios.matconstr (code,code_name) VALUES (7,'Tela ou Alambrado')#
+INSERT INTO dominios.matconstr (code,code_name) VALUES (6,'Arame')#
+INSERT INTO dominios.matconstr (code,code_name) VALUES (5,'Madeira')#
+INSERT INTO dominios.matconstr (code,code_name) VALUES (8,'Cerca viva')#
+INSERT INTO dominios.matconstr (code,code_name) VALUES (25,'Fibra ótica')#
+INSERT INTO dominios.matconstr (code,code_name) VALUES (2,'Concreto')#
+INSERT INTO dominios.materialpredominante (code,code_name) VALUES (24,'Saibro')#
+INSERT INTO dominios.materialpredominante (code,code_name) VALUES (14,'Lama')#
+INSERT INTO dominios.materialpredominante (code,code_name) VALUES (21,'Concha')#
+INSERT INTO dominios.materialpredominante (code,code_name) VALUES (15,'Argila')#
+INSERT INTO dominios.materialpredominante (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.materialpredominante (code,code_name) VALUES (20,'Coral')#
+INSERT INTO dominios.materialpredominante (code,code_name) VALUES (13,'Areia Fina')#
+INSERT INTO dominios.materialpredominante (code,code_name) VALUES (4,'Rocha')#
+INSERT INTO dominios.materialpredominante (code,code_name) VALUES (50,'Pedra')#
+INSERT INTO dominios.materialpredominante (code,code_name) VALUES (18,'Cascalho')#
+INSERT INTO dominios.materialpredominante (code,code_name) VALUES (16,'Lodo')#
+INSERT INTO dominios.materialpredominante (code,code_name) VALUES (19,'Seixo')#
+INSERT INTO dominios.materialpredominante (code,code_name) VALUES (12,'Areia')#
+INSERT INTO dominios.materialpredominante (code,code_name) VALUES (98,'Misto')#
+INSERT INTO dominios.materialpredominante (code,code_name) VALUES (97,'Não Aplicável')#
+INSERT INTO dominios.finalidade_veg (code,code_name) VALUES (2,'Subistência')#
+INSERT INTO dominios.finalidade_veg (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.finalidade_veg (code,code_name) VALUES (3,'Conservação ambiental')#
+INSERT INTO dominios.finalidade_veg (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.finalidade_veg (code,code_name) VALUES (1,'Exploração econômica')#
+INSERT INTO dominios.classificacao (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.classificacao (code,code_name) VALUES (9,'Internacional')#
+INSERT INTO dominios.classificacao (code,code_name) VALUES (10,'Doméstico')#
+INSERT INTO dominios.tipoterrexp (code,code_name) VALUES (24,'Saibro')#
+INSERT INTO dominios.tipoterrexp (code,code_name) VALUES (4,'Pedregoso')#
+INSERT INTO dominios.tipoterrexp (code,code_name) VALUES (23,'Terra')#
+INSERT INTO dominios.tipoterrexp (code,code_name) VALUES (18,'Cascalho')#
+INSERT INTO dominios.tipoterrexp (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoterrexp (code,code_name) VALUES (12,'Areia')#
+INSERT INTO dominios.chamine (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.chamine (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.situacaojuridica (code,code_name) VALUES (1,'Delimitada')#
+INSERT INTO dominios.situacaojuridica (code,code_name) VALUES (0,'Desconhecida')#
+INSERT INTO dominios.situacaojuridica (code,code_name) VALUES (4,'Regularizada')#
+INSERT INTO dominios.situacaojuridica (code,code_name) VALUES (3,'Homologada ou demarcada')#
+INSERT INTO dominios.situacaojuridica (code,code_name) VALUES (2,'Declarada')#
+INSERT INTO dominios.situamare (code,code_name) VALUES (8,'Sempre fora d´água')#
+INSERT INTO dominios.situamare (code,code_name) VALUES (9,'Sempre submerso')#
+INSERT INTO dominios.situamare (code,code_name) VALUES (7,'Cobre e descobre')#
+INSERT INTO dominios.situamare (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.homologacao (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.homologacao (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.homologacao (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.multimodal (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.multimodal (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.multimodal (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (4,'80.9 - Educação Profissional e Outras Atividades de Ensino')#
+INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (3,'80.3 - Ensino Superior')#
+INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (10,'85-3 - Serviço Social')#
+INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (98,'Misto')#
+INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (8,'85.1 Atividades de Atenção à Saúde')#
+INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (13,'75.24-8 Segurança e Ordem Pública')#
+INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (1,'80.1 - Educação Infantil e Ensino Fundamental')#
+INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (9,'85.2 Serviços Veterinários')#
+INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (6,'75-2 - Serviços Coletivos Prestados pela Administração Pública')#
+INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (5,'75-1 - Administração do Estado e da Política Econômica e Social')#
+INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (19,'80.2 - Ensino Médio')#
+INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (7,'75-3 - Seguridade Social')#
+INSERT INTO dominios.tipogrupocnae (code,code_name) VALUES (11,'75.22-1 Defesa')#
+INSERT INTO dominios.situacaoagua (code,code_name) VALUES (7,'Não tratada')#
+INSERT INTO dominios.situacaoagua (code,code_name) VALUES (6,'Tratada')#
+INSERT INTO dominios.situacaoagua (code,code_name) VALUES (0,'Desconhecida')#
+INSERT INTO dominios.emarruamento (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.emarruamento (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.emarruamento (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.relacionado_dut (code,code_name) VALUES (5,'Ponto de ramificação')#
+INSERT INTO dominios.relacionado_dut (code,code_name) VALUES (4,'Depósito geral')#
+INSERT INTO dominios.relacionado_dut (code,code_name) VALUES (3,'Local crítico')#
+INSERT INTO dominios.relacionado_dut (code,code_name) VALUES (1,'Ponto inicial')#
+INSERT INTO dominios.relacionado_dut (code,code_name) VALUES (17,'Interrupção com a Moldura')#
+INSERT INTO dominios.relacionado_dut (code,code_name) VALUES (2,'Ponto final')#
+INSERT INTO dominios.tipobrejopantano (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipobrejopantano (code,code_name) VALUES (1,'Brejo')#
+INSERT INTO dominios.tipobrejopantano (code,code_name) VALUES (2,'Pântano')#
+INSERT INTO dominios.regime (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.regime (code,code_name) VALUES (1,'Permanente')#
+INSERT INTO dominios.regime (code,code_name) VALUES (6,'Sazonal')#
+INSERT INTO dominios.regime (code,code_name) VALUES (4,'Temporário com leito permanente')#
+INSERT INTO dominios.regime (code,code_name) VALUES (3,'Temporário')#
+INSERT INTO dominios.regime (code,code_name) VALUES (2,'Permanente com grande variação')#
+INSERT INTO dominios.regime (code,code_name) VALUES (5,'Seco')#
+INSERT INTO dominios.tipoexposicao (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoexposicao (code,code_name) VALUES (5,'Céu aberto')#
+INSERT INTO dominios.tipoexposicao (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoexposicao (code,code_name) VALUES (4,'Coberto')#
+INSERT INTO dominios.tipoexposicao (code,code_name) VALUES (3,'Fechado')#
+INSERT INTO dominios.tipocapital (code,code_name) VALUES (2,'Capital Federal')#
+INSERT INTO dominios.tipocapital (code,code_name) VALUES (3,'Capital Estadual')#
+INSERT INTO dominios.atividade (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.atividade (code,code_name) VALUES (10,'Produção')#
+INSERT INTO dominios.atividade (code,code_name) VALUES (9,'Prospecção')#
+INSERT INTO dominios.situacaoespacial (code,code_name) VALUES (12,'Adjacentes')#
+INSERT INTO dominios.situacaoespacial (code,code_name) VALUES (13,'Superpostos')#
+INSERT INTO dominios.situacaoespacial (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipocomplexoaero (code,code_name) VALUES (25,'Heliporto')#
+INSERT INTO dominios.tipocomplexoaero (code,code_name) VALUES (24,'Aeroporto')#
+INSERT INTO dominios.tipocomplexoaero (code,code_name) VALUES (23,'Aeródromo')#
+INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (14,'Eclusa')#
+INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (12,'Queda dágua')#
+INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (19,'Barragem')#
+INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (22,'Complexo portuário')#
+INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (24,'Atracadouro')#
+INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (21,'Confluência')#
+INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (17,'Interrupção com a Moldura')#
+INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (13,'Corredeira')#
+INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (23,'Entre trechos hidroviários')#
+INSERT INTO dominios.relacionado_hdr (code,code_name) VALUES (16,'Foz marítima')#
+INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (10,'Edificação Metro Ferroviária')#
+INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (8,'Entroncamento')#
+INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (3,'Ponte')#
+INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (1,'Túnel')#
+INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (2,'Passagem elevada ou viaduto')#
+INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (7,'Mudança de atributo')#
+INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (19,'Barragem')#
+INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (17,'Interrupção com a Moldura')#
+INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (5,'Edificação rodoviária')#
+INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (11,'Localidade')#
+INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (6,'Galeria ou bueiro')#
+INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (12,'Patio')#
+INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (13,'Passagem de nível')#
+INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (4,'Travessia')#
+INSERT INTO dominios.relacionado_rod (code,code_name) VALUES (9,'Início ou fim de trecho')#
+INSERT INTO dominios.tipoobst (code,code_name) VALUES (4,'Natural')#
+INSERT INTO dominios.tipoobst (code,code_name) VALUES (5,'Artificial')#
+INSERT INTO dominios.tipoatracad (code,code_name) VALUES (43,'Dolfim')#
+INSERT INTO dominios.tipoatracad (code,code_name) VALUES (41,'Molhe de atracação')#
+INSERT INTO dominios.tipoatracad (code,code_name) VALUES (40,'Trapiche')#
+INSERT INTO dominios.tipoatracad (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoatracad (code,code_name) VALUES (42,'Pier')#
+INSERT INTO dominios.tipoatracad (code,code_name) VALUES (44,'Desembarcadouro')#
+INSERT INTO dominios.tipoatracad (code,code_name) VALUES (39,'Cais flutuante')#
+INSERT INTO dominios.tipoatracad (code,code_name) VALUES (38,'Cais')#
+INSERT INTO dominios.tipolimoper (code,code_name) VALUES (6,'Linha média de enchente-ORD')#
+INSERT INTO dominios.tipolimoper (code,code_name) VALUES (5,'Linha preamar média - 1831')#
+INSERT INTO dominios.tipolimoper (code,code_name) VALUES (1,'Setor censitário')#
+INSERT INTO dominios.tipolimoper (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipolimoper (code,code_name) VALUES (4,'Costa visível da carta(interpretada)')#
+INSERT INTO dominios.tipolimoper (code,code_name) VALUES (2,'Linha de base normal')#
+INSERT INTO dominios.tipolimoper (code,code_name) VALUES (3,'Linha de base reta')#
+INSERT INTO dominios.depressao (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.depressao (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.tipodepabast (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipodepabast (code,code_name) VALUES (3,'Cisterna')#
+INSERT INTO dominios.tipodepabast (code,code_name) VALUES (1,'Tanque')#
+INSERT INTO dominios.tipodepabast (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipodepabast (code,code_name) VALUES (2,'Caixa d`água')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (92,'Atividades Recreativas Culturais e Desportivas')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (21,'Fabricação de Celulose Papel e Produtos de Papel')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (45,'Construção')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (19,'Preparação de couros e Fabricação de Artefatos de Couro Artigos de Viagem e Calçados')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (30,'Fabricação de Máquinas de Escritório e Equipamentos de Informática')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (32,'Fabricação de Material Eletrônicode Aparelhos e Equipamentos de Comunicações')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (36,'Fabricação de Móveis e Industrias Diversas')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (24,'Fabricação de Produtos Químicos')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (33,'Fabricação de Equipamentos de Instrumentação Médico-Hospitalares Instumentos de Precisão e Ópticos Equipamentos para Automação Industrial Cronômetros e Relógios')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (52,'Comércio Varejista e Reparação de Objetos Pessoais e Domésticos.')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (14,'Extração de Minerais Não-Metálicos')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (1,'Agricultura Pecuária e Serviços Relacionados')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (26,'Fabricação de Produtos de Minerais Não-Metálicos')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (31,'Fabricação de Máquinas Aparelhos e Materiais Elétricos')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (28,'Fabricação de Produtos de Metal Exclusive Máquinas e Equipamentos')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (22,'Edição Impressão e Reprodução de Gravações')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (27,'Metalurgia Básica')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (55,'Alojamento e Alimentação')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (50,'Comércio e Reparação de Veículos Automotores e Motocicletas e Comércio a Varejo de Combustíveis.')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (16,'Fabricação de Produtos do Fumo')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (23,'Fabricação de Coque Refino de Petróleo Elaboração de Combustíveis Nucleares e Produção de Álcool')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (11,'Extração de Petróleo e Serviços Relacionados')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (20,'Fabricação de produtos de Madeira e Celulose')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (37,'Reciclagem')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (5,'Pesca Aquicultura e Serviços Relacionados')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (35,'Fabricação de Outros Equipamentos de Transporte')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (15,'Fabricação Alimentícia e Bebidas')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (51,'Comércio por Atacado e Representantes Comerciais. E agentes do comércio')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (74,'Serviços Prestados Principalmente às Empresas (organizações).')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (13,'Extração de Minerais Metálicos')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (17,'Fabricação de Produtos Têxteis')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (25,'Fabricação de Artigos de Borracha e Material Plástico')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (34,'Fabricação e Montagem de Veículos Automotores Reboques e Carrocerias')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (29,'Fabricação de Máquinas e Equipamentos')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (18,'Confecção de Artigos do Vestuário e Acessórios')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (10,'Extração de Carvão Mineral')#
+INSERT INTO dominios.tipodivisaocnae (code,code_name) VALUES (2,'Silvicultura Exploração Florestal e Serviços Relacionados')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (16,'PR')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (4,'AM')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (1,'AC')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (24,'SC')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (10,'MA')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (27,'TO')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (23,'RR')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (20,'RN')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (7,'DF')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (22,'RO')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (21,'RS')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (17,'PE')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (8,'ES')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (19,'RJ')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (26,'SE')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (3,'AP')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (18,'PI')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (15,'PB')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (13,'MG')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (9,'GO')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (5,'BA')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (25,'SP')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (14,'PA')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (6,'CE')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (11,'MT')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (2,'AL')#
+INSERT INTO dominios.sigla (code,code_name) VALUES (12,'MS')#
+INSERT INTO dominios.usopista (code,code_name) VALUES (12,'Militar')#
+INSERT INTO dominios.usopista (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.usopista (code,code_name) VALUES (11,'Público')#
+INSERT INTO dominios.usopista (code,code_name) VALUES (13,'Público/Militar')#
+INSERT INTO dominios.usopista (code,code_name) VALUES (6,'Particular')#
+INSERT INTO dominios.espessalgas (code,code_name) VALUES (1,'Finas')#
+INSERT INTO dominios.espessalgas (code,code_name) VALUES (2,'Médias')#
+INSERT INTO dominios.espessalgas (code,code_name) VALUES (3,'Grossas')#
+INSERT INTO dominios.tipoedifcomercserv (code,code_name) VALUES (8,'Restaurante')#
+INSERT INTO dominios.tipoedifcomercserv (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipoedifcomercserv (code,code_name) VALUES (6,'Feira')#
+INSERT INTO dominios.tipoedifcomercserv (code,code_name) VALUES (5,'Centro de convenções')#
+INSERT INTO dominios.tipoedifcomercserv (code,code_name) VALUES (3,'Centro comercial')#
+INSERT INTO dominios.tipoedifcomercserv (code,code_name) VALUES (4,'Mercado')#
+INSERT INTO dominios.tipoedifcomercserv (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoedifcomercserv (code,code_name) VALUES (7,'Hotel/motel/pousada')#
+INSERT INTO dominios.tiposumvert (code,code_name) VALUES (1,'Sumidouro')#
+INSERT INTO dominios.tiposumvert (code,code_name) VALUES (2,'Vertedouro')#
+INSERT INTO dominios.tipoareausocomun (code,code_name) VALUES (1,'Quilombo')#
+INSERT INTO dominios.tipoareausocomun (code,code_name) VALUES (2,'Assentamento rural')#
+INSERT INTO dominios.nivelatencao (code,code_name) VALUES (6,'Secundário')#
+INSERT INTO dominios.nivelatencao (code,code_name) VALUES (7,'Terciário')#
+INSERT INTO dominios.nivelatencao (code,code_name) VALUES (5,'Primário')#
+INSERT INTO dominios.compartilhado (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.compartilhado (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.tipopista (code,code_name) VALUES (1,'Atletismo')#
+INSERT INTO dominios.tipopista (code,code_name) VALUES (2,'Ciclismo')#
+INSERT INTO dominios.tipopista (code,code_name) VALUES (98,'Misto')#
+INSERT INTO dominios.tipopista (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipopista (code,code_name) VALUES (3,'Motociclismo')#
+INSERT INTO dominios.tipopista (code,code_name) VALUES (9,'Pista de pouso')#
+INSERT INTO dominios.tipopista (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipopista (code,code_name) VALUES (4,'Automobilismo')#
+INSERT INTO dominios.tipopista (code,code_name) VALUES (5,'Corrida de cavalos')#
+INSERT INTO dominios.tipopista (code,code_name) VALUES (11,'Heliporto')#
+INSERT INTO dominios.tipopista (code,code_name) VALUES (10,'Pista de táxi')#
+INSERT INTO dominios.tiporocha (code,code_name) VALUES (21,'Matacão - pedra')#
+INSERT INTO dominios.tiporocha (code,code_name) VALUES (23,'Área Rochosa - lajedo')#
+INSERT INTO dominios.tiporocha (code,code_name) VALUES (22,'Penedo - isolado')#
+INSERT INTO dominios.tipotrechoduto (code,code_name) VALUES (1,'Duto')#
+INSERT INTO dominios.tipotrechoduto (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipotrechoduto (code,code_name) VALUES (3,'Correia transportadora')#
+INSERT INTO dominios.tipotrechoduto (code,code_name) VALUES (2,'Calha')#
+INSERT INTO dominios.tipousoedif (code,code_name) VALUES (1,'Próprio nacional')#
+INSERT INTO dominios.tipousoedif (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipousoedif (code,code_name) VALUES (2,'Uso especial da União')#
+INSERT INTO dominios.tipocerr (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipocerr (code,code_name) VALUES (2,'Cerradão')#
+INSERT INTO dominios.tipocerr (code,code_name) VALUES (1,'Cerrado')#
+INSERT INTO dominios.sistemageodesico (code,code_name) VALUES (5,'Astro Chuá')#
+INSERT INTO dominios.sistemageodesico (code,code_name) VALUES (2,'SIRGAS')#
+INSERT INTO dominios.sistemageodesico (code,code_name) VALUES (4,'Córrego Alegre')#
+INSERT INTO dominios.sistemageodesico (code,code_name) VALUES (3,'WGS-84')#
+INSERT INTO dominios.sistemageodesico (code,code_name) VALUES (1,'SAD-69')#
+INSERT INTO dominios.sistemageodesico (code,code_name) VALUES (6,'Outra referência')#
+INSERT INTO dominios.tipocampoquadra (code,code_name) VALUES (1,'Futebol')#
+INSERT INTO dominios.tipocampoquadra (code,code_name) VALUES (4,'Pólo')#
+INSERT INTO dominios.tipocampoquadra (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipocampoquadra (code,code_name) VALUES (7,'Tênis')#
+INSERT INTO dominios.tipocampoquadra (code,code_name) VALUES (3,'Vôlei')#
+INSERT INTO dominios.tipocampoquadra (code,code_name) VALUES (6,'Poliesportiva')#
+INSERT INTO dominios.tipocampoquadra (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipocampoquadra (code,code_name) VALUES (2,'Basquete')#
+INSERT INTO dominios.tipocampoquadra (code,code_name) VALUES (5,'Hipismo')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (31,'Estação Ecológica - ESEC')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (5,'Amazônia legal')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (17,'Reserva florestal')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (23,'Floresta Extrativista')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (2,'Terra indígena')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (8,'Área de preservação permanente')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (18,'Reserva ecológica')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (29,'Reserva de Fauna - REFAU')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (22,'Floresta de rendimento sustentável')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (4,'Assentamento rural')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (28,'Reserva Extrativista - RESEX')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (14,'Sítios RAMSAR')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (16,'Reserva da biosfera')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (21,'Estrada parque')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (3,'Quilombo')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (32,'Parque - PAR')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (11,'Distrito florestal')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (7,'Polígono das secas')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (10,'Mosaico')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (24,'Área de proteção ambiental - APA')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (30,'Reserva Particular do Patrimônio Natural - RPPN')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (15,'Sítios do patrimônio')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (36,'Area Militar')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (12,'Corredor ecológico')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (99,'Outros')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (34,'Reserva Biológica - REBIO')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (33,'Monumento Natural - MONA')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (1,'Terra pública')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (6,'Faixa de fronteira')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (35,'Refúgio de Vida Silvestre - RVS')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (13,'Floresta pública')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (9,'Reserva legal')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (20,'Horto florestal')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (19,'Estação biológica')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (27,'Reserva de Desenvolvimento Sustentável - RDS')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (26,'Floresta - FLO')#
+INSERT INTO dominios.tipolimareaesp (code,code_name) VALUES (25,'Área de Relevante Interesse Ecológico - ARIE')#
+INSERT INTO dominios.ensino (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.ensino (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.ensino (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.combrenovavel (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.combrenovavel (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.eixoprincipal (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.eixoprincipal (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.posicaorelativa (code,code_name) VALUES (5,'Submerso')#
+INSERT INTO dominios.posicaorelativa (code,code_name) VALUES (3,'Elevado')#
+INSERT INTO dominios.posicaorelativa (code,code_name) VALUES (2,'Superfície')#
+INSERT INTO dominios.posicaorelativa (code,code_name) VALUES (0,'Desconhecida')#
+INSERT INTO dominios.posicaorelativa (code,code_name) VALUES (4,'Emerso')#
+INSERT INTO dominios.posicaorelativa (code,code_name) VALUES (6,'Subterrâneo')#
+INSERT INTO dominios.geometriaaproximada (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.geometriaaproximada (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.relacionado (code,code_name) VALUES (10,'Edificação Metro Ferroviária')#
+INSERT INTO dominios.relacionado (code,code_name) VALUES (8,'Entroncamento')#
+INSERT INTO dominios.relacionado (code,code_name) VALUES (3,'Ponte')#
+INSERT INTO dominios.relacionado (code,code_name) VALUES (1,'Túnel')#
+INSERT INTO dominios.relacionado (code,code_name) VALUES (2,'Passagem elevada ou viaduto')#
+INSERT INTO dominios.relacionado (code,code_name) VALUES (7,'Mudança de atributo')#
+INSERT INTO dominios.relacionado (code,code_name) VALUES (19,'Barragem')#
+INSERT INTO dominios.relacionado (code,code_name) VALUES (17,'Interrupção com a Moldura')#
+INSERT INTO dominios.relacionado (code,code_name) VALUES (5,'Edificação rodoviária')#
+INSERT INTO dominios.relacionado (code,code_name) VALUES (11,'Localidade')#
+INSERT INTO dominios.relacionado (code,code_name) VALUES (6,'Galeria ou bueiro')#
+INSERT INTO dominios.relacionado (code,code_name) VALUES (12,'Patio')#
+INSERT INTO dominios.relacionado (code,code_name) VALUES (13,'Passagem de nível')#
+INSERT INTO dominios.relacionado (code,code_name) VALUES (4,'Travessia')#
+INSERT INTO dominios.relacionado (code,code_name) VALUES (9,'Início ou fim de trecho')#
+INSERT INTO dominios.tipodelimfis (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipodelimfis (code,code_name) VALUES (2,'Muro')#
+INSERT INTO dominios.tipodelimfis (code,code_name) VALUES (1,'Cerca')#
+INSERT INTO dominios.isolada (code,code_name) VALUES (1,'Sim')#
+INSERT INTO dominios.isolada (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.isolada (code,code_name) VALUES (2,'Não')#
+INSERT INTO dominios.tipoedifcomunic (code,code_name) VALUES (1,'Centro de operações')#
+INSERT INTO dominios.tipoedifcomunic (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.tipoedifcomunic (code,code_name) VALUES (4,'Estação repetidora')#
+INSERT INTO dominios.tipoedifcomunic (code,code_name) VALUES (2,'Central comutação e transmissão')#
+INSERT INTO dominios.tipoedifcomunic (code,code_name) VALUES (3,'Estação radio-base')#
+INSERT INTO dominios.setor (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.setor (code,code_name) VALUES (1,'Energético')#
+INSERT INTO dominios.setor (code,code_name) VALUES (2,'Econômico')#
+INSERT INTO dominios.setor (code,code_name) VALUES (4,'Saneamento básico')#
+INSERT INTO dominios.setor (code,code_name) VALUES (3,'Abastecimento de água')#
+INSERT INTO dominios.tipotrechorod (code,code_name) VALUES (4,'Auto-estrada')#
+INSERT INTO dominios.tipotrechorod (code,code_name) VALUES (2,'Rodovia')#
+INSERT INTO dominios.tipotrechorod (code,code_name) VALUES (1,'Acesso')#
+INSERT INTO dominios.tipotrechorod (code,code_name) VALUES (3,'Caminho carroçável')#
+INSERT INTO dominios.causaexposicao (code,code_name) VALUES (0,'Desconhecido')#
+INSERT INTO dominios.causaexposicao (code,code_name) VALUES (4,'Natural')#
+INSERT INTO dominios.causaexposicao (code,code_name) VALUES (5,'Artificial')#
+INSERT INTO dominios.tipopassagviad (code,code_name) VALUES (6,'Viaduto')#
+INSERT INTO dominios.tipopassagviad (code,code_name) VALUES (5,'Passagem elevada')#
 ALTER TABLE cb.adm_area_pub_civil_a ALTER COLUMN geometriaaproximada SET DEFAULT 2#
 ALTER TABLE cb.adm_area_pub_militar_a ALTER COLUMN geometriaaproximada SET DEFAULT 2#
 ALTER TABLE cb.adm_edif_pub_civil_a ALTER COLUMN geometriaaproximada SET DEFAULT 2#
@@ -12300,13 +12315,13 @@ ALTER TABLE cb.adm_posto_pol_rod_p ALTER COLUMN situacaofisica SET DEFAULT 5#
 ALTER TABLE cb.adm_posto_pol_rod_p ALTER COLUMN tipopostopol SET DEFAULT 0#
 ALTER TABLE cb.asb_area_abast_agua_a ALTER COLUMN geometriaaproximada SET DEFAULT 2#
 ALTER TABLE cb.asb_area_saneamento_a ALTER COLUMN geometriaaproximada SET DEFAULT 2#
-ALTER TABLE cb.asb_cemiterio ALTER COLUMN denominacaoassociada SET DEFAULT 0#
+ALTER TABLE cb.asb_cemiterio ALTER COLUMN denominacaoassociada SET DEFAULT 99#
 ALTER TABLE cb.asb_cemiterio ALTER COLUMN geometriaaproximada SET DEFAULT 2#
 ALTER TABLE cb.asb_cemiterio ALTER COLUMN tipocemiterio SET DEFAULT 4#
-ALTER TABLE cb.asb_cemiterio_a ALTER COLUMN denominacaoassociada SET DEFAULT 0#
+ALTER TABLE cb.asb_cemiterio_a ALTER COLUMN denominacaoassociada SET DEFAULT 99#
 ALTER TABLE cb.asb_cemiterio_a ALTER COLUMN geometriaaproximada SET DEFAULT 2#
 ALTER TABLE cb.asb_cemiterio_a ALTER COLUMN tipocemiterio SET DEFAULT 4#
-ALTER TABLE cb.asb_cemiterio_p ALTER COLUMN denominacaoassociada SET DEFAULT 0#
+ALTER TABLE cb.asb_cemiterio_p ALTER COLUMN denominacaoassociada SET DEFAULT 99#
 ALTER TABLE cb.asb_cemiterio_p ALTER COLUMN geometriaaproximada SET DEFAULT 2#
 ALTER TABLE cb.asb_cemiterio_p ALTER COLUMN tipocemiterio SET DEFAULT 4#
 ALTER TABLE complexos.asb_complexo_abast_agua ALTER COLUMN tipoclassecnae SET DEFAULT 4#
@@ -12490,7 +12505,7 @@ ALTER TABLE cb.eco_ext_mineral ALTER COLUMN situacaofisica SET DEFAULT 0#
 ALTER TABLE cb.eco_ext_mineral ALTER COLUMN tipoextmin SET DEFAULT 0#
 ALTER TABLE cb.eco_ext_mineral ALTER COLUMN tipopocomina SET DEFAULT 0#
 ALTER TABLE cb.eco_ext_mineral ALTER COLUMN tipoprodutoresiduo SET DEFAULT 33#
-ALTER TABLE cb.eco_ext_mineral ALTER COLUMN tiposecaocnae SET DEFAULT 2#
+ALTER TABLE cb.eco_ext_mineral ALTER COLUMN tiposecaocnae SET DEFAULT 0#
 ALTER TABLE cb.eco_ext_mineral_a ALTER COLUMN atividade SET DEFAULT 0#
 ALTER TABLE cb.eco_ext_mineral_a ALTER COLUMN formaextracao SET DEFAULT 0#
 ALTER TABLE cb.eco_ext_mineral_a ALTER COLUMN operacional SET DEFAULT 1#
@@ -12499,7 +12514,7 @@ ALTER TABLE cb.eco_ext_mineral_a ALTER COLUMN situacaofisica SET DEFAULT 5#
 ALTER TABLE cb.eco_ext_mineral_a ALTER COLUMN tipoextmin SET DEFAULT 0#
 ALTER TABLE cb.eco_ext_mineral_a ALTER COLUMN tipopocomina SET DEFAULT 0#
 ALTER TABLE cb.eco_ext_mineral_a ALTER COLUMN tipoprodutoresiduo SET DEFAULT 0#
-ALTER TABLE cb.eco_ext_mineral_a ALTER COLUMN tiposecaocnae SET DEFAULT 2#
+ALTER TABLE cb.eco_ext_mineral_a ALTER COLUMN tiposecaocnae SET DEFAULT 0#
 ALTER TABLE cb.eco_ext_mineral_p ALTER COLUMN atividade SET DEFAULT 0#
 ALTER TABLE cb.eco_ext_mineral_p ALTER COLUMN formaextracao SET DEFAULT 0#
 ALTER TABLE cb.eco_ext_mineral_p ALTER COLUMN operacional SET DEFAULT 1#
@@ -12508,7 +12523,7 @@ ALTER TABLE cb.eco_ext_mineral_p ALTER COLUMN situacaofisica SET DEFAULT 5#
 ALTER TABLE cb.eco_ext_mineral_p ALTER COLUMN tipoextmin SET DEFAULT 0#
 ALTER TABLE cb.eco_ext_mineral_p ALTER COLUMN tipopocomina SET DEFAULT 0#
 ALTER TABLE cb.eco_ext_mineral_p ALTER COLUMN tipoprodutoresiduo SET DEFAULT 0#
-ALTER TABLE cb.eco_ext_mineral_p ALTER COLUMN tiposecaocnae SET DEFAULT 2#
+ALTER TABLE cb.eco_ext_mineral_p ALTER COLUMN tiposecaocnae SET DEFAULT 0#
 ALTER TABLE complexos.eco_frigorifico_matadouro ALTER COLUMN frigorifico SET DEFAULT 0#
 ALTER TABLE complexos.eco_frigorifico_matadouro ALTER COLUMN tiposecaocnae SET DEFAULT 2#
 ALTER TABLE complexos.eco_madeireira ALTER COLUMN tiposecaocnae SET DEFAULT 0#
@@ -13629,1206 +13644,1666 @@ ALTER TABLE cb.sau_descontinuidade_geometrica_a ALTER COLUMN geometriaaproximada
 ALTER TABLE cb.sau_descontinuidade_geometrica_a ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE cb.sau_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE cb.sau_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE cb.adm_edif_pub_civil_a ADD CONSTRAINT adm_edif_pub_civil_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.adm_edif_pub_civil_a ADD CONSTRAINT adm_edif_pub_civil_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.adm_edif_pub_civil_p ADD CONSTRAINT adm_edif_pub_civil_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.adm_edif_pub_civil_p ADD CONSTRAINT adm_edif_pub_civil_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.adm_edif_pub_militar_a ADD CONSTRAINT adm_edif_pub_militar_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.adm_edif_pub_militar_a ADD CONSTRAINT adm_edif_pub_militar_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.adm_edif_pub_militar_p ADD CONSTRAINT adm_edif_pub_militar_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.adm_edif_pub_militar_p ADD CONSTRAINT adm_edif_pub_militar_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE complexos.adm_instituicao_publica ADD CONSTRAINT adm_instituicao_publica_tipogrupocnae_ks CHECK (tipogrupocnae = 5 OR tipogrupocnae = 6 OR tipogrupocnae = 7 OR tipogrupocnae = 99 OR tipogrupocnae = 0)#
-ALTER TABLE complexos.adm_org_comerc_serv ADD CONSTRAINT adm_org_comerc_serv_tipodivisaocnae_ks CHECK (tipodivisaocnae = 50 OR tipodivisaocnae = 51 OR tipodivisaocnae = 52 OR tipodivisaocnae = 55 OR tipodivisaocnae = 74 OR tipodivisaocnae = 99 OR tipodivisaocnae = 0)#
-ALTER TABLE complexos.adm_org_ext_mineral ADD CONSTRAINT adm_org_ext_mineral_tiposecaocnae_ks CHECK (tiposecaocnae = 1 OR tiposecaocnae = 99 OR tiposecaocnae = 0)#
-ALTER TABLE complexos.adm_org_pub_civil ADD CONSTRAINT adm_org_pub_civil_administracao_ks CHECK (administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 0)#
-ALTER TABLE complexos.adm_org_pub_civil ADD CONSTRAINT adm_org_pub_civil_tipoclassecnae_ks CHECK (tipoclassecnae = 0 OR tipoclassecnae = 6 OR tipoclassecnae = 7 OR tipoclassecnae = 8 OR tipoclassecnae = 9 OR tipoclassecnae = 10 OR tipoclassecnae = 12 OR tipoclassecnae = 13 OR tipoclassecnae = 14 OR tipoclassecnae = 15 OR tipoclassecnae = 99)#
-ALTER TABLE complexos.adm_org_pub_militar ADD CONSTRAINT adm_org_pub_militar_administracao_ks CHECK (administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 0)#
-ALTER TABLE complexos.adm_org_pub_militar ADD CONSTRAINT adm_org_pub_militar_tipoclassecnae_ks CHECK (tipoclassecnae = 11 OR tipoclassecnae = 13 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
-ALTER TABLE cb.adm_posto_fiscal ADD CONSTRAINT adm_posto_fiscal_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.adm_posto_fiscal_a ADD CONSTRAINT adm_posto_fiscal_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.adm_posto_fiscal_p ADD CONSTRAINT adm_posto_fiscal_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.adm_posto_pol_rod ADD CONSTRAINT adm_posto_pol_rod_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.adm_posto_pol_rod_a ADD CONSTRAINT adm_posto_pol_rod_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.adm_posto_pol_rod_p ADD CONSTRAINT adm_posto_pol_rod_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE complexos.asb_complexo_abast_agua ADD CONSTRAINT asb_complexo_abast_agua_tipoclassecnae_ks CHECK (tipoclassecnae = 4 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
-ALTER TABLE complexos.asb_complexo_saneamento ADD CONSTRAINT asb_complexo_saneamento_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7)#
-ALTER TABLE complexos.asb_complexo_saneamento ADD CONSTRAINT asb_complexo_saneamento_tipoclassecnae_ks CHECK (tipoclassecnae = 34 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
-ALTER TABLE cb.asb_dep_abast_agua ADD CONSTRAINT asb_dep_abast_agua_construcao_ks CHECK (construcao = 1 OR construcao = 2)#
-ALTER TABLE cb.asb_dep_abast_agua ADD CONSTRAINT asb_dep_abast_agua_finalidade_ks CHECK (finalidade = 2 OR finalidade = 3 OR finalidade = 4)#
-ALTER TABLE cb.asb_dep_abast_agua ADD CONSTRAINT asb_dep_abast_agua_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97)#
-ALTER TABLE cb.asb_dep_abast_agua ADD CONSTRAINT asb_dep_abast_agua_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.asb_dep_abast_agua_a ADD CONSTRAINT asb_dep_abast_agua_a_construcao_ks CHECK (construcao = 1 OR construcao = 2)#
-ALTER TABLE cb.asb_dep_abast_agua_a ADD CONSTRAINT asb_dep_abast_agua_a_finalidade_ks CHECK (finalidade = 2 OR finalidade = 3 OR finalidade = 4)#
-ALTER TABLE cb.asb_dep_abast_agua_a ADD CONSTRAINT asb_dep_abast_agua_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97)#
-ALTER TABLE cb.asb_dep_abast_agua_a ADD CONSTRAINT asb_dep_abast_agua_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.asb_dep_abast_agua_p ADD CONSTRAINT asb_dep_abast_agua_p_construcao_ks CHECK (construcao = 1 OR construcao = 2)#
-ALTER TABLE cb.asb_dep_abast_agua_p ADD CONSTRAINT asb_dep_abast_agua_p_finalidade_ks CHECK (finalidade = 2 OR finalidade = 3 OR finalidade = 4)#
-ALTER TABLE cb.asb_dep_abast_agua_p ADD CONSTRAINT asb_dep_abast_agua_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97)#
-ALTER TABLE cb.asb_dep_abast_agua_p ADD CONSTRAINT asb_dep_abast_agua_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.asb_dep_saneamento ADD CONSTRAINT asb_dep_saneamento_finalidade_ks CHECK (finalidade = 0 OR finalidade = 2 OR finalidade = 8)#
-ALTER TABLE cb.asb_dep_saneamento ADD CONSTRAINT asb_dep_saneamento_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97)#
-ALTER TABLE cb.asb_dep_saneamento ADD CONSTRAINT asb_dep_saneamento_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.asb_dep_saneamento_a ADD CONSTRAINT asb_dep_saneamento_a_finalidade_ks CHECK (finalidade = 0 OR finalidade = 2 OR finalidade = 8)#
-ALTER TABLE cb.asb_dep_saneamento_a ADD CONSTRAINT asb_dep_saneamento_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97)#
-ALTER TABLE cb.asb_dep_saneamento_a ADD CONSTRAINT asb_dep_saneamento_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.asb_dep_saneamento_p ADD CONSTRAINT asb_dep_saneamento_p_finalidade_ks CHECK (finalidade = 0 OR finalidade = 2 OR finalidade = 8)#
-ALTER TABLE cb.asb_dep_saneamento_p ADD CONSTRAINT asb_dep_saneamento_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97)#
-ALTER TABLE cb.asb_dep_saneamento_p ADD CONSTRAINT asb_dep_saneamento_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.asb_edif_abast_agua_a ADD CONSTRAINT asb_edif_abast_agua_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.asb_edif_abast_agua_p ADD CONSTRAINT asb_edif_abast_agua_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.asb_edif_saneamento_a ADD CONSTRAINT asb_edif_saneamento_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.asb_edif_saneamento_p ADD CONSTRAINT asb_edif_saneamento_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99 OR matconstr = 97)#
-ALTER TABLE cb.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_tipoprodutoresiduo_ks CHECK (tipoprodutoresiduo = 0 OR tipoprodutoresiduo = 3 OR tipoprodutoresiduo = 5 OR tipoprodutoresiduo = 6 OR tipoprodutoresiduo = 16 OR tipoprodutoresiduo = 17 OR tipoprodutoresiduo = 18 OR tipoprodutoresiduo = 19 OR tipoprodutoresiduo = 20 OR tipoprodutoresiduo = 21 OR tipoprodutoresiduo = 22 OR tipoprodutoresiduo = 23 OR tipoprodutoresiduo = 24 OR tipoprodutoresiduo = 25 OR tipoprodutoresiduo = 26 OR tipoprodutoresiduo = 27 OR tipoprodutoresiduo = 28 OR tipoprodutoresiduo = 29 OR tipoprodutoresiduo = 30 OR tipoprodutoresiduo = 31 OR tipoprodutoresiduo = 32 OR tipoprodutoresiduo = 33 OR tipoprodutoresiduo = 34 OR tipoprodutoresiduo = 35 OR tipoprodutoresiduo = 36 OR tipoprodutoresiduo = 41 OR tipoprodutoresiduo = 98 OR tipoprodutoresiduo = 99)#
-ALTER TABLE cb.eco_deposito_geral_a ADD CONSTRAINT eco_deposito_geral_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99 OR matconstr = 97)#
-ALTER TABLE cb.eco_deposito_geral_a ADD CONSTRAINT eco_deposito_geral_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.eco_deposito_geral_a ADD CONSTRAINT eco_deposito_geral_a_tipoprodutoresiduo_ks CHECK (tipoprodutoresiduo = 0 OR tipoprodutoresiduo = 3 OR tipoprodutoresiduo = 5 OR tipoprodutoresiduo = 6 OR tipoprodutoresiduo = 16 OR tipoprodutoresiduo = 17 OR tipoprodutoresiduo = 18 OR tipoprodutoresiduo = 19 OR tipoprodutoresiduo = 20 OR tipoprodutoresiduo = 21 OR tipoprodutoresiduo = 22 OR tipoprodutoresiduo = 23 OR tipoprodutoresiduo = 24 OR tipoprodutoresiduo = 25 OR tipoprodutoresiduo = 26 OR tipoprodutoresiduo = 27 OR tipoprodutoresiduo = 28 OR tipoprodutoresiduo = 29 OR tipoprodutoresiduo = 30 OR tipoprodutoresiduo = 31 OR tipoprodutoresiduo = 32 OR tipoprodutoresiduo = 33 OR tipoprodutoresiduo = 34 OR tipoprodutoresiduo = 35 OR tipoprodutoresiduo = 36 OR tipoprodutoresiduo = 41 OR tipoprodutoresiduo = 98 OR tipoprodutoresiduo = 99)#
-ALTER TABLE cb.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99 OR matconstr = 97)#
-ALTER TABLE cb.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_tipoprodutoresiduo_ks CHECK (tipoprodutoresiduo = 0 OR tipoprodutoresiduo = 3 OR tipoprodutoresiduo = 5 OR tipoprodutoresiduo = 6 OR tipoprodutoresiduo = 16 OR tipoprodutoresiduo = 17 OR tipoprodutoresiduo = 18 OR tipoprodutoresiduo = 19 OR tipoprodutoresiduo = 20 OR tipoprodutoresiduo = 21 OR tipoprodutoresiduo = 22 OR tipoprodutoresiduo = 23 OR tipoprodutoresiduo = 24 OR tipoprodutoresiduo = 25 OR tipoprodutoresiduo = 26 OR tipoprodutoresiduo = 27 OR tipoprodutoresiduo = 28 OR tipoprodutoresiduo = 29 OR tipoprodutoresiduo = 30 OR tipoprodutoresiduo = 31 OR tipoprodutoresiduo = 32 OR tipoprodutoresiduo = 33 OR tipoprodutoresiduo = 34 OR tipoprodutoresiduo = 35 OR tipoprodutoresiduo = 36 OR tipoprodutoresiduo = 41 OR tipoprodutoresiduo = 98 OR tipoprodutoresiduo = 99)#
-ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_a ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99 OR matconstr = 1 OR matconstr = 4)#
-ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_a ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_p ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99 OR matconstr = 1 OR matconstr = 4)#
-ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_p ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.eco_edif_comerc_serv_a ADD CONSTRAINT eco_edif_comerc_serv_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99 OR matconstr = 97)#
-ALTER TABLE cb.eco_edif_comerc_serv_a ADD CONSTRAINT eco_edif_comerc_serv_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.eco_edif_comerc_serv_p ADD CONSTRAINT eco_edif_comerc_serv_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99 OR matconstr = 97)#
-ALTER TABLE cb.eco_edif_comerc_serv_p ADD CONSTRAINT eco_edif_comerc_serv_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.eco_edif_ext_mineral_a ADD CONSTRAINT eco_edif_ext_mineral_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99 OR matconstr = 97)#
-ALTER TABLE cb.eco_edif_ext_mineral_a ADD CONSTRAINT eco_edif_ext_mineral_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.eco_edif_ext_mineral_a ADD CONSTRAINT eco_edif_ext_mineral_a_tipodivisaocnae_ks CHECK (tipodivisaocnae = 0 OR tipodivisaocnae = 10 OR tipodivisaocnae = 11 OR tipodivisaocnae = 14 OR tipodivisaocnae = 13 OR tipodivisaocnae = 99)#
-ALTER TABLE cb.eco_edif_ext_mineral_p ADD CONSTRAINT eco_edif_ext_mineral_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99 OR matconstr = 97)#
-ALTER TABLE cb.eco_edif_ext_mineral_p ADD CONSTRAINT eco_edif_ext_mineral_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.eco_edif_ext_mineral_p ADD CONSTRAINT eco_edif_ext_mineral_p_tipodivisaocnae_ks CHECK (tipodivisaocnae = 0 OR tipodivisaocnae = 10 OR tipodivisaocnae = 11 OR tipodivisaocnae = 99 OR tipodivisaocnae = 13 OR tipodivisaocnae = 14)#
-ALTER TABLE cb.eco_edif_industrial_a ADD CONSTRAINT eco_edif_industrial_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99 OR matconstr = 97)#
-ALTER TABLE cb.eco_edif_industrial_a ADD CONSTRAINT eco_edif_industrial_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.eco_edif_industrial_a ADD CONSTRAINT eco_edif_industrial_a_tipodivisaocnae_ks CHECK (tipodivisaocnae = 15 OR tipodivisaocnae = 16 OR tipodivisaocnae = 17 OR tipodivisaocnae = 18 OR tipodivisaocnae = 19 OR tipodivisaocnae = 20 OR tipodivisaocnae = 21 OR tipodivisaocnae = 22 OR tipodivisaocnae = 23 OR tipodivisaocnae = 24 OR tipodivisaocnae = 25 OR tipodivisaocnae = 26 OR tipodivisaocnae = 27 OR tipodivisaocnae = 28 OR tipodivisaocnae = 29 OR tipodivisaocnae = 30 OR tipodivisaocnae = 31 OR tipodivisaocnae = 32 OR tipodivisaocnae = 33 OR tipodivisaocnae = 34 OR tipodivisaocnae = 35 OR tipodivisaocnae = 36 OR tipodivisaocnae = 37 OR tipodivisaocnae = 45 OR tipodivisaocnae = 99 OR tipodivisaocnae = 0)#
-ALTER TABLE cb.eco_edif_industrial_p ADD CONSTRAINT eco_edif_industrial_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99 OR matconstr = 97)#
-ALTER TABLE cb.eco_edif_industrial_p ADD CONSTRAINT eco_edif_industrial_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.eco_edif_industrial_p ADD CONSTRAINT eco_edif_industrial_p_tipodivisaocnae_ks CHECK (tipodivisaocnae = 15 OR tipodivisaocnae = 16 OR tipodivisaocnae = 17 OR tipodivisaocnae = 18 OR tipodivisaocnae = 19 OR tipodivisaocnae = 20 OR tipodivisaocnae = 21 OR tipodivisaocnae = 22 OR tipodivisaocnae = 23 OR tipodivisaocnae = 24 OR tipodivisaocnae = 25 OR tipodivisaocnae = 26 OR tipodivisaocnae = 27 OR tipodivisaocnae = 28 OR tipodivisaocnae = 29 OR tipodivisaocnae = 30 OR tipodivisaocnae = 31 OR tipodivisaocnae = 32 OR tipodivisaocnae = 33 OR tipodivisaocnae = 34 OR tipodivisaocnae = 35 OR tipodivisaocnae = 36 OR tipodivisaocnae = 37 OR tipodivisaocnae = 45 OR tipodivisaocnae = 99 OR tipodivisaocnae = 0)#
-ALTER TABLE cb.eco_equip_agropec ADD CONSTRAINT eco_equip_agropec_matconstr_ks CHECK (matconstr = 0 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.eco_equip_agropec ADD CONSTRAINT eco_equip_agropec_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.eco_equip_agropec_a ADD CONSTRAINT eco_equip_agropec_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.eco_equip_agropec_a ADD CONSTRAINT eco_equip_agropec_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.eco_equip_agropec_l ADD CONSTRAINT eco_equip_agropec_l_matconstr_ks CHECK (matconstr = 0 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.eco_equip_agropec_l ADD CONSTRAINT eco_equip_agropec_l_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.eco_equip_agropec_p ADD CONSTRAINT eco_equip_agropec_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.eco_equip_agropec_p ADD CONSTRAINT eco_equip_agropec_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.eco_ext_mineral ADD CONSTRAINT eco_ext_mineral_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.eco_ext_mineral ADD CONSTRAINT eco_ext_mineral_tipoextmin_ks CHECK (tipoextmin = 0 OR tipoextmin = 1 OR tipoextmin = 4 OR tipoextmin = 5 OR tipoextmin = 6 OR tipoextmin = 7 OR tipoextmin = 99)#
-ALTER TABLE cb.eco_ext_mineral ADD CONSTRAINT eco_ext_mineral_tipoprodutoresiduo_ks CHECK (tipoprodutoresiduo = 0 OR tipoprodutoresiduo = 3 OR tipoprodutoresiduo = 5 OR tipoprodutoresiduo = 18 OR tipoprodutoresiduo = 22 OR tipoprodutoresiduo = 23 OR tipoprodutoresiduo = 24 OR tipoprodutoresiduo = 25 OR tipoprodutoresiduo = 26 OR tipoprodutoresiduo = 27 OR tipoprodutoresiduo = 32 OR tipoprodutoresiduo = 33 OR tipoprodutoresiduo = 34 OR tipoprodutoresiduo = 35 OR tipoprodutoresiduo = 37 OR tipoprodutoresiduo = 38 OR tipoprodutoresiduo = 39 OR tipoprodutoresiduo = 40 OR tipoprodutoresiduo = 98 OR tipoprodutoresiduo = 99 OR tipoprodutoresiduo = 42 OR tipoprodutoresiduo = 43 OR tipoprodutoresiduo = 44)#
-ALTER TABLE cb.eco_ext_mineral ADD CONSTRAINT eco_ext_mineral_tiposecaocnae_ks CHECK (tiposecaocnae = 0 OR tiposecaocnae = 1 OR tiposecaocnae = 99)#
-ALTER TABLE cb.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoextmin_ks CHECK (tipoextmin = 0 OR tipoextmin = 1 OR tipoextmin = 4 OR tipoextmin = 5 OR tipoextmin = 6 OR tipoextmin = 7 OR tipoextmin = 99)#
-ALTER TABLE cb.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoprodutoresiduo_ks CHECK (tipoprodutoresiduo = 0 OR tipoprodutoresiduo = 3 OR tipoprodutoresiduo = 5 OR tipoprodutoresiduo = 18 OR tipoprodutoresiduo = 22 OR tipoprodutoresiduo = 23 OR tipoprodutoresiduo = 24 OR tipoprodutoresiduo = 25 OR tipoprodutoresiduo = 26 OR tipoprodutoresiduo = 27 OR tipoprodutoresiduo = 32 OR tipoprodutoresiduo = 33 OR tipoprodutoresiduo = 34 OR tipoprodutoresiduo = 35 OR tipoprodutoresiduo = 37 OR tipoprodutoresiduo = 38 OR tipoprodutoresiduo = 39 OR tipoprodutoresiduo = 40 OR tipoprodutoresiduo = 98 OR tipoprodutoresiduo = 99 OR tipoprodutoresiduo = 42 OR tipoprodutoresiduo = 43 OR tipoprodutoresiduo = 44)#
-ALTER TABLE cb.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tiposecaocnae_ks CHECK (tiposecaocnae = 1 OR tiposecaocnae = 99 OR tiposecaocnae = 0)#
-ALTER TABLE cb.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_tipoextmin_ks CHECK (tipoextmin = 0 OR tipoextmin = 2 OR tipoextmin = 3 OR tipoextmin = 97)#
-ALTER TABLE cb.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_tipoprodutoresiduo_ks CHECK (tipoprodutoresiduo = 0 OR tipoprodutoresiduo = 3 OR tipoprodutoresiduo = 5 OR tipoprodutoresiduo = 18 OR tipoprodutoresiduo = 22 OR tipoprodutoresiduo = 23 OR tipoprodutoresiduo = 24 OR tipoprodutoresiduo = 25 OR tipoprodutoresiduo = 26 OR tipoprodutoresiduo = 27 OR tipoprodutoresiduo = 32 OR tipoprodutoresiduo = 33 OR tipoprodutoresiduo = 34 OR tipoprodutoresiduo = 35 OR tipoprodutoresiduo = 37 OR tipoprodutoresiduo = 38 OR tipoprodutoresiduo = 39 OR tipoprodutoresiduo = 40 OR tipoprodutoresiduo = 98 OR tipoprodutoresiduo = 99 OR tipoprodutoresiduo = 42 OR tipoprodutoresiduo = 43 OR tipoprodutoresiduo = 44)#
-ALTER TABLE cb.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_tiposecaocnae_ks CHECK (tiposecaocnae = 0 OR tiposecaocnae = 1 OR tiposecaocnae = 99)#
-ALTER TABLE complexos.eco_frigorifico_matadouro ADD CONSTRAINT eco_frigorifico_matadouro_tiposecaocnae_ks CHECK (tiposecaocnae = 2 OR tiposecaocnae = 99 OR tiposecaocnae = 0)#
-ALTER TABLE complexos.eco_madeireira ADD CONSTRAINT eco_madeireira_tiposecaocnae_ks CHECK (tiposecaocnae = 2 OR tiposecaocnae = 3 OR tiposecaocnae = 99 OR tiposecaocnae = 0)#
-ALTER TABLE complexos.eco_org_agrop_ext_veg_pesca ADD CONSTRAINT eco_org_agrop_ext_veg_pesca_tipodivisaocnae_ks CHECK (tipodivisaocnae = 1 OR tipodivisaocnae = 2 OR tipodivisaocnae = 5 OR tipodivisaocnae = 99 OR tipodivisaocnae = 0)#
-ALTER TABLE complexos.eco_org_industrial ADD CONSTRAINT eco_org_industrial_tiposecaocnae_ks CHECK (tiposecaocnae = 2 OR tiposecaocnae = 3 OR tiposecaocnae = 99 OR tiposecaocnae = 0)#
-ALTER TABLE cb.edu_arquibancada ADD CONSTRAINT edu_arquibancada_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.edu_arquibancada_a ADD CONSTRAINT edu_arquibancada_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.edu_arquibancada_p ADD CONSTRAINT edu_arquibancada_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.edu_campo_quadra ADD CONSTRAINT edu_campo_quadra_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.edu_campo_quadra_a ADD CONSTRAINT edu_campo_quadra_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.edu_campo_quadra_p ADD CONSTRAINT edu_campo_quadra_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE complexos.edu_complexo_lazer ADD CONSTRAINT edu_complexo_lazer_administracao_ks CHECK (administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15 OR administracao = 98 OR administracao = 0)#
-ALTER TABLE complexos.edu_complexo_lazer ADD CONSTRAINT edu_complexo_lazer_tipodivisaocnae_ks CHECK (tipodivisaocnae = 92 OR tipodivisaocnae = 99 OR tipodivisaocnae = 0)#
-ALTER TABLE cb.edu_coreto_tribuna ADD CONSTRAINT edu_coreto_tribuna_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.edu_coreto_tribuna_a ADD CONSTRAINT edu_coreto_tribuna_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.edu_coreto_tribuna_p ADD CONSTRAINT edu_coreto_tribuna_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.edu_edif_const_lazer_a ADD CONSTRAINT edu_edif_const_lazer_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.edu_edif_const_lazer_a ADD CONSTRAINT edu_edif_const_lazer_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.edu_edif_const_lazer_p ADD CONSTRAINT edu_edif_const_lazer_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.edu_edif_const_lazer_p ADD CONSTRAINT edu_edif_const_lazer_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.edu_edif_const_turistica_a ADD CONSTRAINT edu_edif_const_turistica_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.edu_edif_const_turistica_a ADD CONSTRAINT edu_edif_const_turistica_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.edu_edif_const_turistica_p ADD CONSTRAINT edu_edif_const_turistica_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.edu_edif_const_turistica_p ADD CONSTRAINT edu_edif_const_turistica_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.edu_edif_ensino_a ADD CONSTRAINT edu_edif_ensino_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.edu_edif_ensino_a ADD CONSTRAINT edu_edif_ensino_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.edu_edif_ensino_a ADD CONSTRAINT edu_edif_ensino_a_tipoclassecnae_ks CHECK (tipoclassecnae = 0 OR tipoclassecnae = 16 OR tipoclassecnae = 17 OR tipoclassecnae = 18 OR tipoclassecnae = 19 OR tipoclassecnae = 20 OR tipoclassecnae = 21 OR tipoclassecnae = 22 OR tipoclassecnae = 23 OR tipoclassecnae = 24 OR tipoclassecnae = 25 OR tipoclassecnae = 98)#
-ALTER TABLE cb.edu_edif_ensino_p ADD CONSTRAINT edu_edif_ensino_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.edu_edif_ensino_p ADD CONSTRAINT edu_edif_ensino_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.edu_edif_ensino_p ADD CONSTRAINT edu_edif_ensino_p_tipoclassecnae_ks CHECK (tipoclassecnae = 0 OR tipoclassecnae = 16 OR tipoclassecnae = 17 OR tipoclassecnae = 18 OR tipoclassecnae = 19 OR tipoclassecnae = 20 OR tipoclassecnae = 21 OR tipoclassecnae = 22 OR tipoclassecnae = 23 OR tipoclassecnae = 24 OR tipoclassecnae = 25 OR tipoclassecnae = 98)#
-ALTER TABLE cb.edu_edif_religiosa_a ADD CONSTRAINT edu_edif_religiosa_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.edu_edif_religiosa_a ADD CONSTRAINT edu_edif_religiosa_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.edu_edif_religiosa_p ADD CONSTRAINT edu_edif_religiosa_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.edu_edif_religiosa_p ADD CONSTRAINT edu_edif_religiosa_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE complexos.edu_org_ensino ADD CONSTRAINT edu_org_ensino_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15)#
-ALTER TABLE complexos.edu_org_ensino ADD CONSTRAINT edu_org_ensino_tipogrupocnae_ks CHECK (tipogrupocnae = 1 OR tipogrupocnae = 19 OR tipogrupocnae = 3 OR tipogrupocnae = 4 OR tipogrupocnae = 98 OR tipogrupocnae = 0 OR tipogrupocnae = 99)#
-ALTER TABLE complexos.edu_org_ensino_militar ADD CONSTRAINT edu_org_ensino_militar_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15)#
-ALTER TABLE complexos.edu_org_ensino_militar ADD CONSTRAINT edu_org_ensino_militar_tipoclassecnae_ks CHECK (tipoclassecnae = 11 OR tipoclassecnae = 13 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
-ALTER TABLE complexos.edu_org_ensino_militar ADD CONSTRAINT edu_org_ensino_militar_tipogrupocnae_ks CHECK (tipogrupocnae = 1 OR tipogrupocnae = 19 OR tipogrupocnae = 3 OR tipogrupocnae = 4 OR tipogrupocnae = 98 OR tipogrupocnae = 0 OR tipogrupocnae = 99)#
-ALTER TABLE complexos.edu_org_ensino_pub ADD CONSTRAINT edu_org_ensino_pub_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15)#
-ALTER TABLE complexos.edu_org_ensino_pub ADD CONSTRAINT edu_org_ensino_pub_poderpublico_ks CHECK (poderpublico = 1)#
-ALTER TABLE complexos.edu_org_ensino_pub ADD CONSTRAINT edu_org_ensino_pub_tipoclassecnae_ks CHECK (tipoclassecnae = 7 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
-ALTER TABLE complexos.edu_org_ensino_pub ADD CONSTRAINT edu_org_ensino_pub_tipogrupocnae_ks CHECK (tipogrupocnae = 1 OR tipogrupocnae = 19 OR tipogrupocnae = 3 OR tipogrupocnae = 4 OR tipogrupocnae = 98 OR tipogrupocnae = 0 OR tipogrupocnae = 99)#
-ALTER TABLE complexos.edu_org_ensino_religioso ADD CONSTRAINT edu_org_ensino_religioso_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15)#
-ALTER TABLE complexos.edu_org_ensino_religioso ADD CONSTRAINT edu_org_ensino_religioso_tipoclassecnae_ks CHECK (tipoclassecnae = 35 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
-ALTER TABLE complexos.edu_org_ensino_religioso ADD CONSTRAINT edu_org_ensino_religioso_tipogrupocnae_ks CHECK (tipogrupocnae = 1 OR tipogrupocnae = 19 OR tipogrupocnae = 3 OR tipogrupocnae = 4 OR tipogrupocnae = 98 OR tipogrupocnae = 0 OR tipogrupocnae = 99)#
-ALTER TABLE complexos.edu_org_religiosa ADD CONSTRAINT edu_org_religiosa_tipoclassecnae_ks CHECK (tipoclassecnae = 35 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
-ALTER TABLE cb.edu_piscina_a ADD CONSTRAINT edu_piscina_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.edu_pista_competicao_l ADD CONSTRAINT edu_pista_competicao_l_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.edu_pista_competicao_l ADD CONSTRAINT edu_pista_competicao_l_tipopista_ks CHECK (tipopista = 0 OR tipopista = 1 OR tipopista = 2 OR tipopista = 3 OR tipopista = 4 OR tipopista = 5 OR tipopista = 98 OR tipopista = 99)#
-ALTER TABLE complexos.enc_complexo_comunicacao ADD CONSTRAINT enc_complexo_comunicacao_tipoclassecnae_ks CHECK (tipoclassecnae = 5 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
-ALTER TABLE complexos.enc_complexo_gerad_energ_eletr ADD CONSTRAINT enc_complexo_gerad_energ_eletr_tipoclassecnae_ks CHECK (tipoclassecnae = 1 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
-ALTER TABLE cb.enc_edif_comunic_a ADD CONSTRAINT enc_edif_comunic_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 99 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97)#
-ALTER TABLE cb.enc_edif_comunic_a ADD CONSTRAINT enc_edif_comunic_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.enc_edif_comunic_p ADD CONSTRAINT enc_edif_comunic_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 99 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97)#
-ALTER TABLE cb.enc_edif_comunic_p ADD CONSTRAINT enc_edif_comunic_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.enc_edif_energia_a ADD CONSTRAINT enc_edif_energia_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 99 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97)#
-ALTER TABLE cb.enc_edif_energia_a ADD CONSTRAINT enc_edif_energia_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.enc_edif_energia_p ADD CONSTRAINT enc_edif_energia_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 99 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97)#
-ALTER TABLE cb.enc_edif_energia_p ADD CONSTRAINT enc_edif_energia_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.enc_est_gerad_energia_eletr ADD CONSTRAINT enc_est_gerad_energia_eletr_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.enc_est_gerad_energia_eletr_a ADD CONSTRAINT enc_est_gerad_energia_eletr_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.enc_est_gerad_energia_eletr_l ADD CONSTRAINT enc_est_gerad_energia_eletr_l_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.enc_est_gerad_energia_eletr_p ADD CONSTRAINT enc_est_gerad_energia_eletr_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.enc_hidreletrica_a ADD CONSTRAINT enc_hidreletrica_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.enc_hidreletrica_l ADD CONSTRAINT enc_hidreletrica_l_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE complexos.enc_subestacao_ener_eletr ADD CONSTRAINT enc_subestacao_ener_eletr_tipoclassecnae_ks CHECK (tipoclassecnae = 0 OR tipoclassecnae = 2 OR tipoclassecnae = 3 OR tipoclassecnae = 99)#
-ALTER TABLE cb.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.enc_termeletrica_p ADD CONSTRAINT enc_termeletrica_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.enc_torre_comunic_p ADD CONSTRAINT enc_torre_comunic_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.enc_torre_energia_p ADD CONSTRAINT enc_torre_energia_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.enc_trecho_comunic_l ADD CONSTRAINT enc_trecho_comunic_l_matconstr_ks CHECK (matconstr = 0 OR matconstr = 25 OR matconstr = 26 OR matconstr = 99)#
-ALTER TABLE cb.enc_trecho_comunic_l ADD CONSTRAINT enc_trecho_comunic_l_posicaorelativa_ks CHECK (posicaorelativa = 2 OR posicaorelativa = 3 OR posicaorelativa = 4 OR posicaorelativa = 5 OR posicaorelativa = 6)#
-ALTER TABLE cb.enc_trecho_comunic_l ADD CONSTRAINT enc_trecho_comunic_l_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.enc_trecho_energia_l ADD CONSTRAINT enc_trecho_energia_l_posicaorelativa_ks CHECK (posicaorelativa = 2 OR posicaorelativa = 3 OR posicaorelativa = 4 OR posicaorelativa = 5 OR posicaorelativa = 6)#
-ALTER TABLE cb.enc_trecho_energia_l ADD CONSTRAINT enc_trecho_energia_l_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.hid_banco_areia ADD CONSTRAINT hid_banco_areia_materialpredominante_ks CHECK (materialpredominante = 0 OR materialpredominante = 98 OR materialpredominante = 18 OR materialpredominante = 19 OR materialpredominante = 24 OR materialpredominante = 12)#
-ALTER TABLE cb.hid_banco_areia_a ADD CONSTRAINT hid_banco_areia_a_materialpredominante_ks CHECK (materialpredominante = 0 OR materialpredominante = 98 OR materialpredominante = 18 OR materialpredominante = 19 OR materialpredominante = 24 OR materialpredominante = 12)#
-ALTER TABLE cb.hid_banco_areia_l ADD CONSTRAINT hid_banco_areia_l_materialpredominante_ks CHECK (materialpredominante = 0 OR materialpredominante = 98 OR materialpredominante = 18 OR materialpredominante = 19 OR materialpredominante = 24 OR materialpredominante = 12)#
-ALTER TABLE cb.hid_barragem ADD CONSTRAINT hid_barragem_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 4 OR matconstr = 23 OR matconstr = 99)#
-ALTER TABLE cb.hid_barragem ADD CONSTRAINT hid_barragem_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.hid_barragem_a ADD CONSTRAINT hid_barragem_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 4 OR matconstr = 23 OR matconstr = 99)#
-ALTER TABLE cb.hid_barragem_a ADD CONSTRAINT hid_barragem_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.hid_barragem_l ADD CONSTRAINT hid_barragem_l_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 4 OR matconstr = 23 OR matconstr = 99)#
-ALTER TABLE cb.hid_barragem_l ADD CONSTRAINT hid_barragem_l_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.hid_barragem_p ADD CONSTRAINT hid_barragem_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 4 OR matconstr = 23 OR matconstr = 99)#
-ALTER TABLE cb.hid_barragem_p ADD CONSTRAINT hid_barragem_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.hid_comporta ADD CONSTRAINT hid_comporta_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.hid_comporta_l ADD CONSTRAINT hid_comporta_l_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.hid_comporta_p ADD CONSTRAINT hid_comporta_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.hid_confluencia_p ADD CONSTRAINT hid_confluencia_p_relacionado_ks CHECK (relacionado = 15)#
-ALTER TABLE cb.hid_fonte_dagua_p ADD CONSTRAINT hid_fonte_dagua_p_regime_ks CHECK (regime = 1 OR regime = 3 OR regime = 0)#
-ALTER TABLE cb.hid_ilha_a ADD CONSTRAINT hid_ilha_a_tipoelemnat_ks CHECK (tipoelemnat = 0 OR tipoelemnat = 1 OR tipoelemnat = 2 OR tipoelemnat = 3 OR tipoelemnat = 4 OR tipoelemnat = 5 OR tipoelemnat = 6 OR tipoelemnat = 7 OR tipoelemnat = 8 OR tipoelemnat = 9 OR tipoelemnat = 10 OR tipoelemnat = 11 OR tipoelemnat = 12 OR tipoelemnat = 99)#
-ALTER TABLE cb.hid_ilha_l ADD CONSTRAINT hid_ilha_l_tipoelemnat_ks CHECK (tipoelemnat = 0 OR tipoelemnat = 1 OR tipoelemnat = 2 OR tipoelemnat = 3 OR tipoelemnat = 4 OR tipoelemnat = 5 OR tipoelemnat = 6 OR tipoelemnat = 7 OR tipoelemnat = 8 OR tipoelemnat = 9 OR tipoelemnat = 10 OR tipoelemnat = 11 OR tipoelemnat = 12 OR tipoelemnat = 99)#
-ALTER TABLE cb.hid_ilha_p ADD CONSTRAINT hid_ilha_p_tipoelemnat_ks CHECK (tipoelemnat = 0 OR tipoelemnat = 1 OR tipoelemnat = 2 OR tipoelemnat = 3 OR tipoelemnat = 4 OR tipoelemnat = 5 OR tipoelemnat = 6 OR tipoelemnat = 7 OR tipoelemnat = 8 OR tipoelemnat = 9 OR tipoelemnat = 10 OR tipoelemnat = 11 OR tipoelemnat = 12 OR tipoelemnat = 99)#
-ALTER TABLE cb.hid_limite_massa_dagua_l ADD CONSTRAINT hid_limite_massa_dagua_l_materialpredominante_ks CHECK (materialpredominante = 0 OR materialpredominante = 98 OR materialpredominante = 12 OR materialpredominante = 13 OR materialpredominante = 14 OR materialpredominante = 15 OR materialpredominante = 16 OR materialpredominante = 18 OR materialpredominante = 19 OR materialpredominante = 20 OR materialpredominante = 21 OR materialpredominante = 4 OR materialpredominante = 50 OR materialpredominante = 97)#
-ALTER TABLE cb.hid_massa_dagua_a ADD CONSTRAINT hid_massa_dagua_a_regime_ks CHECK (regime = 1 OR regime = 2 OR regime = 3 OR regime = 4 OR regime = 5)#
-ALTER TABLE cb.hid_natureza_fundo ADD CONSTRAINT hid_natureza_fundo_materialpredominante_ks CHECK (materialpredominante = 0 OR materialpredominante = 98 OR materialpredominante = 12 OR materialpredominante = 13 OR materialpredominante = 14 OR materialpredominante = 15 OR materialpredominante = 16 OR materialpredominante = 18 OR materialpredominante = 19 OR materialpredominante = 20 OR materialpredominante = 21 OR materialpredominante = 4 OR materialpredominante = 50 OR materialpredominante = 97)#
-ALTER TABLE cb.hid_natureza_fundo_a ADD CONSTRAINT hid_natureza_fundo_a_materialpredominante_ks CHECK (materialpredominante = 0 OR materialpredominante = 98 OR materialpredominante = 12 OR materialpredominante = 13 OR materialpredominante = 14 OR materialpredominante = 15 OR materialpredominante = 16 OR materialpredominante = 18 OR materialpredominante = 19 OR materialpredominante = 20 OR materialpredominante = 21 OR materialpredominante = 4 OR materialpredominante = 50 OR materialpredominante = 97)#
-ALTER TABLE cb.hid_natureza_fundo_l ADD CONSTRAINT hid_natureza_fundo_l_materialpredominante_ks CHECK (materialpredominante = 0 OR materialpredominante = 98 OR materialpredominante = 12 OR materialpredominante = 13 OR materialpredominante = 14 OR materialpredominante = 15 OR materialpredominante = 16 OR materialpredominante = 18 OR materialpredominante = 19 OR materialpredominante = 20 OR materialpredominante = 21 OR materialpredominante = 4 OR materialpredominante = 50 OR materialpredominante = 97)#
-ALTER TABLE cb.hid_natureza_fundo_p ADD CONSTRAINT hid_natureza_fundo_p_materialpredominante_ks CHECK (materialpredominante = 0 OR materialpredominante = 98 OR materialpredominante = 12 OR materialpredominante = 13 OR materialpredominante = 14 OR materialpredominante = 15 OR materialpredominante = 16 OR materialpredominante = 18 OR materialpredominante = 19 OR materialpredominante = 20 OR materialpredominante = 21 OR materialpredominante = 4 OR materialpredominante = 50 OR materialpredominante = 97)#
-ALTER TABLE cb.hid_ponto_inicio_drenagem_p ADD CONSTRAINT hid_ponto_inicio_drenagem_p_relacionado_ks CHECK (relacionado = 14)#
-ALTER TABLE cb.hid_quebramar_molhe ADD CONSTRAINT hid_quebramar_molhe_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 4 OR matconstr = 99)#
-ALTER TABLE cb.hid_quebramar_molhe ADD CONSTRAINT hid_quebramar_molhe_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.hid_quebramar_molhe ADD CONSTRAINT hid_quebramar_molhe_situamare_ks CHECK (situamare = 7 OR situamare = 8 OR situamare = 9)#
-ALTER TABLE cb.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 4 OR matconstr = 99)#
-ALTER TABLE cb.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_situamare_ks CHECK (situamare = 7 OR situamare = 8 OR situamare = 9)#
-ALTER TABLE cb.hid_quebramar_molhe_l ADD CONSTRAINT hid_quebramar_molhe_l_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 4 OR matconstr = 99)#
-ALTER TABLE cb.hid_quebramar_molhe_l ADD CONSTRAINT hid_quebramar_molhe_l_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.hid_quebramar_molhe_l ADD CONSTRAINT hid_quebramar_molhe_l_situamare_ks CHECK (situamare = 7 OR situamare = 8 OR situamare = 9)#
-ALTER TABLE cb.hid_trecho_drenagem_l ADD CONSTRAINT hid_trecho_drenagem_l_regime_ks CHECK (regime = 1 OR regime = 2 OR regime = 3 OR regime = 4 OR regime = 5)#
-ALTER TABLE cb.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_regime_ks CHECK (regime = 1 OR regime = 2 OR regime = 3 OR regime = 4 OR regime = 5)#
-ALTER TABLE cb.lim_delimitacao_fisica_l ADD CONSTRAINT lim_delimitacao_fisica_l_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 4 OR matconstr = 99 OR matconstr = 6 OR matconstr = 5 OR matconstr = 7 OR matconstr = 8)#
-ALTER TABLE cb.lim_outras_unid_protegidas_a ADD CONSTRAINT lim_outras_unid_protegidas_a_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 5)#
-ALTER TABLE cb.lim_outras_unid_protegidas_p ADD CONSTRAINT lim_outras_unid_protegidas_p_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 5)#
-ALTER TABLE cb.lim_unidade_conserv_nao_snuc_a ADD CONSTRAINT lim_unidade_conserv_nao_snuc_a_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 5)#
-ALTER TABLE cb.lim_unidade_conserv_nao_snuc_p ADD CONSTRAINT lim_unidade_conserv_nao_snuc_p_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 5)#
-ALTER TABLE cb.lim_unidade_protecao_integral_a ADD CONSTRAINT lim_unidade_protecao_integral_a_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 5)#
-ALTER TABLE cb.lim_unidade_protecao_integral_p ADD CONSTRAINT lim_unidade_protecao_integral_p_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 5)#
-ALTER TABLE cb.lim_unidade_uso_sustentavel_a ADD CONSTRAINT lim_unidade_uso_sustentavel_a_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 5)#
-ALTER TABLE cb.lim_unidade_uso_sustentavel_p ADD CONSTRAINT lim_unidade_uso_sustentavel_p_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 5)#
-ALTER TABLE cb.loc_edif_habitacional_a ADD CONSTRAINT loc_edif_habitacional_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 5 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97 OR matconstr = 7 OR matconstr = 8)#
-ALTER TABLE cb.loc_edif_habitacional_a ADD CONSTRAINT loc_edif_habitacional_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.loc_edif_habitacional_p ADD CONSTRAINT loc_edif_habitacional_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 5 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97 OR matconstr = 7 OR matconstr = 8)#
-ALTER TABLE cb.loc_edif_habitacional_p ADD CONSTRAINT loc_edif_habitacional_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.loc_edificacao ADD CONSTRAINT loc_edificacao_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 5 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97 OR matconstr = 7 OR matconstr = 8)#
-ALTER TABLE cb.loc_edificacao_a ADD CONSTRAINT loc_edificacao_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 5 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97 OR matconstr = 7 OR matconstr = 8)#
-ALTER TABLE cb.loc_edificacao_p ADD CONSTRAINT loc_edificacao_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 5 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97 OR matconstr = 7 OR matconstr = 8)#
-ALTER TABLE cb.pto_edif_constr_est_med_fen_a ADD CONSTRAINT pto_edif_constr_est_med_fen_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.pto_edif_constr_est_med_fen_a ADD CONSTRAINT pto_edif_constr_est_med_fen_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.pto_edif_constr_est_med_fen_p ADD CONSTRAINT pto_edif_constr_est_med_fen_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.pto_edif_constr_est_med_fen_p ADD CONSTRAINT pto_edif_constr_est_med_fen_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.pto_pto_controle_p ADD CONSTRAINT pto_pto_controle_p_tiporef_ks CHECK (tiporef = 1 OR tiporef = 2 OR tiporef = 3)#
-ALTER TABLE cb.pto_pto_geod_topo_controle_p ADD CONSTRAINT pto_pto_geod_topo_controle_p_tiporef_ks CHECK (tiporef = 1 OR tiporef = 2 OR tiporef = 3)#
-ALTER TABLE cb.rel_dolina_a ADD CONSTRAINT rel_dolina_a_tipoelemnat_ks CHECK (tipoelemnat = 99)#
-ALTER TABLE cb.rel_dolina_p ADD CONSTRAINT rel_dolina_p_tipoelemnat_ks CHECK (tipoelemnat = 99)#
-ALTER TABLE cb.rel_duna_a ADD CONSTRAINT rel_duna_a_tipoelemnat_ks CHECK (tipoelemnat = 99)#
-ALTER TABLE cb.rel_duna_p ADD CONSTRAINT rel_duna_p_tipoelemnat_ks CHECK (tipoelemnat = 99)#
-ALTER TABLE cb.rel_elemento_fisiog_natural ADD CONSTRAINT rel_elemento_fisiog_natural_tipoelemnat_ks CHECK (tipoelemnat = 0 OR tipoelemnat = 1 OR tipoelemnat = 2 OR tipoelemnat = 3 OR tipoelemnat = 4 OR tipoelemnat = 5 OR tipoelemnat = 6 OR tipoelemnat = 7 OR tipoelemnat = 8 OR tipoelemnat = 9 OR tipoelemnat = 10 OR tipoelemnat = 11 OR tipoelemnat = 12 OR tipoelemnat = 99)#
-ALTER TABLE cb.rel_elemento_fisiog_natural_a ADD CONSTRAINT rel_elemento_fisiog_natural_a_tipoelemnat_ks CHECK (tipoelemnat = 0 OR tipoelemnat = 1 OR tipoelemnat = 2 OR tipoelemnat = 3 OR tipoelemnat = 4 OR tipoelemnat = 5 OR tipoelemnat = 6 OR tipoelemnat = 7 OR tipoelemnat = 8 OR tipoelemnat = 9 OR tipoelemnat = 10 OR tipoelemnat = 11 OR tipoelemnat = 12 OR tipoelemnat = 99)#
-ALTER TABLE cb.rel_gruta_caverna_p ADD CONSTRAINT rel_gruta_caverna_p_tipoelemnat_ks CHECK (tipoelemnat = 99)#
-ALTER TABLE cb.rel_pico_p ADD CONSTRAINT rel_pico_p_tipoelemnat_ks CHECK (tipoelemnat = 99)#
-ALTER TABLE cb.rel_rocha_a ADD CONSTRAINT rel_rocha_a_tipoelemnat_ks CHECK (tipoelemnat = 99)#
-ALTER TABLE cb.rel_rocha_p ADD CONSTRAINT rel_rocha_p_tipoelemnat_ks CHECK (tipoelemnat = 99)#
-ALTER TABLE cb.sau_edif_saude_a ADD CONSTRAINT sau_edif_saude_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.sau_edif_saude_a ADD CONSTRAINT sau_edif_saude_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.sau_edif_saude_a ADD CONSTRAINT sau_edif_saude_a_tipoclassecnae_ks CHECK (tipoclassecnae = 26 OR tipoclassecnae = 27 OR tipoclassecnae = 28 OR tipoclassecnae = 29 OR tipoclassecnae = 31 OR tipoclassecnae = 98 OR tipoclassecnae = 30 OR tipoclassecnae = 0)#
-ALTER TABLE cb.sau_edif_saude_p ADD CONSTRAINT sau_edif_saude_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.sau_edif_saude_p ADD CONSTRAINT sau_edif_saude_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.sau_edif_saude_p ADD CONSTRAINT sau_edif_saude_p_tipoclassecnae_ks CHECK (tipoclassecnae = 26 OR tipoclassecnae = 27 OR tipoclassecnae = 28 OR tipoclassecnae = 29 OR tipoclassecnae = 31 OR tipoclassecnae = 98 OR tipoclassecnae = 30 OR tipoclassecnae = 0)#
-ALTER TABLE cb.sau_edif_servico_social_a ADD CONSTRAINT sau_edif_servico_social_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.sau_edif_servico_social_a ADD CONSTRAINT sau_edif_servico_social_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.sau_edif_servico_social_a ADD CONSTRAINT sau_edif_servico_social_a_tipoclassecnae_ks CHECK (tipoclassecnae = 32 OR tipoclassecnae = 33 OR tipoclassecnae = 98 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
-ALTER TABLE cb.sau_edif_servico_social_p ADD CONSTRAINT sau_edif_servico_social_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
-ALTER TABLE cb.sau_edif_servico_social_p ADD CONSTRAINT sau_edif_servico_social_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
-ALTER TABLE cb.sau_edif_servico_social_p ADD CONSTRAINT sau_edif_servico_social_p_tipoclassecnae_ks CHECK (tipoclassecnae = 32 OR tipoclassecnae = 33 OR tipoclassecnae = 98 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
-ALTER TABLE complexos.sau_org_saude ADD CONSTRAINT sau_org_saude_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15)#
-ALTER TABLE complexos.sau_org_saude ADD CONSTRAINT sau_org_saude_tipogrupocnae_ks CHECK (tipogrupocnae = 8 OR tipogrupocnae = 9 OR tipogrupocnae = 99 OR tipogrupocnae = 0)#
-ALTER TABLE complexos.sau_org_saude_militar ADD CONSTRAINT sau_org_saude_militar_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15)#
-ALTER TABLE complexos.sau_org_saude_militar ADD CONSTRAINT sau_org_saude_militar_tipoclassecnae_ks CHECK (tipoclassecnae = 97 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
-ALTER TABLE complexos.sau_org_saude_militar ADD CONSTRAINT sau_org_saude_militar_tipogrupocnae_ks CHECK (tipogrupocnae = 11 OR tipogrupocnae = 13 OR tipogrupocnae = 99 OR tipogrupocnae = 0)#
-ALTER TABLE complexos.sau_org_saude_pub ADD CONSTRAINT sau_org_saude_pub_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15)#
-ALTER TABLE complexos.sau_org_saude_pub ADD CONSTRAINT sau_org_saude_pub_tipoclassecnae_ks CHECK (tipoclassecnae = 97 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
-ALTER TABLE complexos.sau_org_saude_pub ADD CONSTRAINT sau_org_saude_pub_tipogrupocnae_ks CHECK (tipogrupocnae = 8 OR tipogrupocnae = 9 OR tipogrupocnae = 99 OR tipogrupocnae = 0)#
-ALTER TABLE complexos.sau_org_servico_social ADD CONSTRAINT sau_org_servico_social_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15)#
-ALTER TABLE complexos.sau_org_servico_social ADD CONSTRAINT sau_org_servico_social_tipogrupocnae_ks CHECK (tipogrupocnae = 10 OR tipogrupocnae = 99 OR tipogrupocnae = 0)#
-ALTER TABLE complexos.sau_org_servico_social_pub ADD CONSTRAINT sau_org_servico_social_pub_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15)#
-ALTER TABLE complexos.sau_org_servico_social_pub ADD CONSTRAINT sau_org_servico_social_pub_tipoclassecnae_ks CHECK (tipoclassecnae = 7 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
-ALTER TABLE complexos.sau_org_servico_social_pub ADD CONSTRAINT sau_org_servico_social_pub_tipogrupocnae_ks CHECK (tipogrupocnae = 8 OR tipogrupocnae = 9 OR tipogrupocnae = 99 OR tipogrupocnae = 0)#
-ALTER TABLE cb.tra_atracadouro ADD CONSTRAINT tra_atracadouro_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_atracadouro ADD CONSTRAINT tra_atracadouro_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_atracadouro_a ADD CONSTRAINT tra_atracadouro_a_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_atracadouro_a ADD CONSTRAINT tra_atracadouro_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_atracadouro_l ADD CONSTRAINT tra_atracadouro_l_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_atracadouro_l ADD CONSTRAINT tra_atracadouro_l_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_atracadouro_p ADD CONSTRAINT tra_atracadouro_p_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_atracadouro_p ADD CONSTRAINT tra_atracadouro_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_caminho_aereo_l ADD CONSTRAINT tra_caminho_aereo_l_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.tra_ciclovia_l ADD CONSTRAINT tra_ciclovia_l_administracao_ks CHECK (administracao = 0 OR administracao = 2 OR administracao = 3 OR administracao = 4 OR administracao = 6)#
-ALTER TABLE cb.tra_condutor_hidrico_l ADD CONSTRAINT tra_condutor_hidrico_l_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99)#
-ALTER TABLE cb.tra_eclusa ADD CONSTRAINT tra_eclusa_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_eclusa ADD CONSTRAINT tra_eclusa_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.tra_eclusa_a ADD CONSTRAINT tra_eclusa_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_eclusa_a ADD CONSTRAINT tra_eclusa_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.tra_eclusa_l ADD CONSTRAINT tra_eclusa_l_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_eclusa_l ADD CONSTRAINT tra_eclusa_l_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.tra_eclusa_p ADD CONSTRAINT tra_eclusa_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_eclusa_p ADD CONSTRAINT tra_eclusa_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.tra_edif_constr_aeroportuaria_a ADD CONSTRAINT tra_edif_constr_aeroportuaria_a_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6)#
-ALTER TABLE cb.tra_edif_constr_aeroportuaria_a ADD CONSTRAINT tra_edif_constr_aeroportuaria_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_edif_constr_aeroportuaria_p ADD CONSTRAINT tra_edif_constr_aeroportuaria_p_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6)#
-ALTER TABLE cb.tra_edif_constr_aeroportuaria_p ADD CONSTRAINT tra_edif_constr_aeroportuaria_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_edif_constr_portuaria_a ADD CONSTRAINT tra_edif_constr_portuaria_a_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_edif_constr_portuaria_a ADD CONSTRAINT tra_edif_constr_portuaria_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_edif_constr_portuaria_p ADD CONSTRAINT tra_edif_constr_portuaria_p_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_edif_constr_portuaria_p ADD CONSTRAINT tra_edif_constr_portuaria_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_edif_metro_ferroviaria_a ADD CONSTRAINT tra_edif_metro_ferroviaria_a_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_edif_metro_ferroviaria_a ADD CONSTRAINT tra_edif_metro_ferroviaria_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_edif_metro_ferroviaria_p ADD CONSTRAINT tra_edif_metro_ferroviaria_p_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_edif_metro_ferroviaria_p ADD CONSTRAINT tra_edif_metro_ferroviaria_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_edif_rodoviaria_a ADD CONSTRAINT tra_edif_rodoviaria_a_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_edif_rodoviaria_a ADD CONSTRAINT tra_edif_rodoviaria_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_edif_rodoviaria_a ADD CONSTRAINT tra_edif_rodoviaria_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.tra_edif_rodoviaria_p ADD CONSTRAINT tra_edif_rodoviaria_p_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_edif_rodoviaria_p ADD CONSTRAINT tra_edif_rodoviaria_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_edif_rodoviaria_p ADD CONSTRAINT tra_edif_rodoviaria_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.tra_fundeadouro ADD CONSTRAINT tra_fundeadouro_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_fundeadouro_a ADD CONSTRAINT tra_fundeadouro_a_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_fundeadouro_l ADD CONSTRAINT tra_fundeadouro_l_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_fundeadouro_p ADD CONSTRAINT tra_fundeadouro_p_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_galeria_bueiro ADD CONSTRAINT tra_galeria_bueiro_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99)#
-ALTER TABLE cb.tra_galeria_bueiro_l ADD CONSTRAINT tra_galeria_bueiro_l_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99)#
-ALTER TABLE cb.tra_galeria_bueiro_p ADD CONSTRAINT tra_galeria_bueiro_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99)#
-ALTER TABLE cb.tra_girador_ferroviario_p ADD CONSTRAINT tra_girador_ferroviario_p_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE complexos.tra_hidrovia ADD CONSTRAINT tra_hidrovia_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_passag_elevada_viaduto ADD CONSTRAINT tra_passag_elevada_viaduto_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_passag_elevada_viaduto ADD CONSTRAINT tra_passag_elevada_viaduto_modaluso_ks CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 8 OR modaluso = 9)#
-ALTER TABLE cb.tra_passag_elevada_viaduto_l ADD CONSTRAINT tra_passag_elevada_viaduto_l_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_passag_elevada_viaduto_l ADD CONSTRAINT tra_passag_elevada_viaduto_l_modaluso_ks CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 8 OR modaluso = 9)#
-ALTER TABLE cb.tra_passag_elevada_viaduto_p ADD CONSTRAINT tra_passag_elevada_viaduto_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_passag_elevada_viaduto_p ADD CONSTRAINT tra_passag_elevada_viaduto_p_modaluso_ks CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 8 OR modaluso = 9)#
-ALTER TABLE cb.tra_patio ADD CONSTRAINT tra_patio_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_patio ADD CONSTRAINT tra_patio_modaluso_ks CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 6 OR modaluso = 9 OR modaluso = 14 OR modaluso = 98)#
-ALTER TABLE cb.tra_patio_a ADD CONSTRAINT tra_patio_a_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_patio_a ADD CONSTRAINT tra_patio_a_modaluso_ks CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 6 OR modaluso = 9 OR modaluso = 14 OR modaluso = 98)#
-ALTER TABLE cb.tra_patio_p ADD CONSTRAINT tra_patio_p_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_patio_p ADD CONSTRAINT tra_patio_p_modaluso_ks CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 6 OR modaluso = 9 OR modaluso = 14 OR modaluso = 98)#
-ALTER TABLE cb.tra_pista_ponto_pouso ADD CONSTRAINT tra_pista_ponto_pouso_tipopista_ks CHECK (tipopista = 9 OR tipopista = 10 OR tipopista = 11)#
-ALTER TABLE cb.tra_pista_ponto_pouso_a ADD CONSTRAINT tra_pista_ponto_pouso_a_tipopista_ks CHECK (tipopista = 9 OR tipopista = 10 OR tipopista = 11)#
-ALTER TABLE cb.tra_pista_ponto_pouso_l ADD CONSTRAINT tra_pista_ponto_pouso_l_tipopista_ks CHECK (tipopista = 9 OR tipopista = 10 OR tipopista = 11)#
-ALTER TABLE cb.tra_pista_ponto_pouso_p ADD CONSTRAINT tra_pista_ponto_pouso_p_tipopista_ks CHECK (tipopista = 9 OR tipopista = 10 OR tipopista = 11)#
-ALTER TABLE cb.tra_ponte ADD CONSTRAINT tra_ponte_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_ponte ADD CONSTRAINT tra_ponte_modaluso_ks CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 8 OR modaluso = 9)#
-ALTER TABLE cb.tra_ponte_l ADD CONSTRAINT tra_ponte_l_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_ponte_l ADD CONSTRAINT tra_ponte_l_modaluso_ks CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 8 OR modaluso = 9)#
-ALTER TABLE cb.tra_ponte_p ADD CONSTRAINT tra_ponte_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_ponte_p ADD CONSTRAINT tra_ponte_p_modaluso_ks CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 8 OR modaluso = 9)#
-ALTER TABLE cb.tra_posto_combustivel ADD CONSTRAINT tra_posto_combustivel_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_posto_combustivel ADD CONSTRAINT tra_posto_combustivel_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_posto_combustivel ADD CONSTRAINT tra_posto_combustivel_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.tra_posto_combustivel_a ADD CONSTRAINT tra_posto_combustivel_a_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_posto_combustivel_a ADD CONSTRAINT tra_posto_combustivel_a_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_posto_combustivel_a ADD CONSTRAINT tra_posto_combustivel_a_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.tra_posto_combustivel_p ADD CONSTRAINT tra_posto_combustivel_p_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_posto_combustivel_p ADD CONSTRAINT tra_posto_combustivel_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_posto_combustivel_p ADD CONSTRAINT tra_posto_combustivel_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.tra_travessia_pedestre ADD CONSTRAINT tra_travessia_pedestre_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_travessia_pedestre ADD CONSTRAINT tra_travessia_pedestre_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.tra_travessia_pedestre_l ADD CONSTRAINT tra_travessia_pedestre_l_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_travessia_pedestre_l ADD CONSTRAINT tra_travessia_pedestre_l_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.tra_trecho_duto_l ADD CONSTRAINT tra_trecho_duto_l_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99)#
-ALTER TABLE cb.tra_trecho_duto_l ADD CONSTRAINT tra_trecho_duto_l_situacaofisica_ks CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
-ALTER TABLE cb.tra_trecho_ferroviario_l ADD CONSTRAINT tra_trecho_ferroviario_l_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 7 OR administracao = 6 OR administracao = 97)#
-ALTER TABLE cb.tra_trecho_ferroviario_l ADD CONSTRAINT tra_trecho_ferroviario_l_jurisdicao_ks CHECK (jurisdicao = 0 OR jurisdicao = 1 OR jurisdicao = 2 OR jurisdicao = 3 OR jurisdicao = 6)#
-ALTER TABLE cb.tra_trecho_ferroviario_l ADD CONSTRAINT tra_trecho_ferroviario_l_posicaorelativa_ks CHECK (posicaorelativa = 0 OR posicaorelativa = 6 OR posicaorelativa = 3 OR posicaorelativa = 2)#
-ALTER TABLE cb.tra_trecho_hidroviario_l ADD CONSTRAINT tra_trecho_hidroviario_l_regime_ks CHECK (regime = 0 OR regime = 1 OR regime = 6)#
-ALTER TABLE cb.tra_trecho_rodoviario_l ADD CONSTRAINT tra_trecho_rodoviario_l_administracao_ks CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
-ALTER TABLE cb.tra_trecho_rodoviario_l ADD CONSTRAINT tra_trecho_rodoviario_l_jurisdicao_ks CHECK (jurisdicao = 0 OR jurisdicao = 1 OR jurisdicao = 2 OR jurisdicao = 3 OR jurisdicao = 8 OR jurisdicao = 9 OR jurisdicao = 10 OR jurisdicao = 11 OR jurisdicao = 12)#
-ALTER TABLE cb.tra_tunel ADD CONSTRAINT tra_tunel_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_tunel ADD CONSTRAINT tra_tunel_modaluso_ks CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 6 OR modaluso = 7 OR modaluso = 8)#
-ALTER TABLE cb.tra_tunel_l ADD CONSTRAINT tra_tunel_l_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_tunel_l ADD CONSTRAINT tra_tunel_l_modaluso_ks CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 6 OR modaluso = 7 OR modaluso = 8)#
-ALTER TABLE cb.tra_tunel_p ADD CONSTRAINT tra_tunel_p_matconstr_ks CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
-ALTER TABLE cb.tra_tunel_p ADD CONSTRAINT tra_tunel_p_modaluso_ks CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 6 OR modaluso = 7 OR modaluso = 8)#
-ALTER TABLE cb.veg_brejo_pantano_a ADD CONSTRAINT veg_brejo_pantano_a_classificacaoporte_ks CHECK (classificacaoporte = 1 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 0)#
-ALTER TABLE cb.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_classificacaoporte_ks CHECK (classificacaoporte = 1 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 0)#
-ALTER TABLE cb.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_classificacaoporte_ks CHECK (classificacaoporte = 1 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 0)#
-ALTER TABLE cb.veg_cerrado_cerradao_a ADD CONSTRAINT veg_cerrado_cerradao_a_classificacaoporte_ks CHECK (classificacaoporte = 1 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 0)#
-ALTER TABLE cb.veg_floresta_a ADD CONSTRAINT veg_floresta_a_classificacaoporte_ks CHECK (classificacaoporte = 1 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 0)#
-ALTER TABLE cb.veg_macega_chavascal_a ADD CONSTRAINT veg_macega_chavascal_a_classificacaoporte_ks CHECK (classificacaoporte = 1 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 0)#
-ALTER TABLE cb.veg_mangue_a ADD CONSTRAINT veg_mangue_a_classificacaoporte_ks CHECK (classificacaoporte = 1 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 0)#
-ALTER TABLE cb.veg_veg_area_contato_a ADD CONSTRAINT veg_veg_area_contato_a_classificacaoporte_ks CHECK (classificacaoporte = 1 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 0)#
-ALTER TABLE cb.veg_veg_cultivada_a ADD CONSTRAINT veg_veg_cultivada_a_classificacaoporte_ks CHECK (classificacaoporte = 0 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 3)#
-ALTER TABLE cb.veg_veg_restinga_a ADD CONSTRAINT veg_veg_restinga_a_classificacaoporte_ks CHECK (classificacaoporte = 1 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 0)#
-ALTER TABLE cb.aux_descontinuidade_geometrica ADD CONSTRAINT aux_descontinuidade_geometrica_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.aux_descontinuidade_geometrica_p ADD CONSTRAINT aux_descontinuidade_geometrica_p_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.hid_descontinuidade_geometrica_p ADD CONSTRAINT hid_descontinuidade_geometrica_p_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.aux_descontinuidade_geometrica_l ADD CONSTRAINT aux_descontinuidade_geometrica_l_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.hid_descontinuidade_geometrica_l ADD CONSTRAINT hid_descontinuidade_geometrica_l_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.rel_descontinuidade_geometrica_p ADD CONSTRAINT rel_descontinuidade_geometrica_p_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.rel_descontinuidade_geometrica_l ADD CONSTRAINT rel_descontinuidade_geometrica_l_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.aux_descontinuidade_geometrica_a ADD CONSTRAINT aux_descontinuidade_geometrica_a_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.rel_descontinuidade_geometrica_a ADD CONSTRAINT rel_descontinuidade_geometrica_a_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.veg_descontinuidade_geometrica_p ADD CONSTRAINT veg_descontinuidade_geometrica_p_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.veg_descontinuidade_geometrica_l ADD CONSTRAINT veg_descontinuidade_geometrica_l_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.tra_descontinuidade_geometrica_p ADD CONSTRAINT tra_descontinuidade_geometrica_p_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.tra_descontinuidade_geometrica_l ADD CONSTRAINT tra_descontinuidade_geometrica_l_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.tra_descontinuidade_geometrica_a ADD CONSTRAINT tra_descontinuidade_geometrica_a_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.enc_descontinuidade_geometrica_a ADD CONSTRAINT enc_descontinuidade_geometrica_a_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.enc_descontinuidade_geometrica_p ADD CONSTRAINT enc_descontinuidade_geometrica_p_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.asb_descontinuidade_geometrica_p ADD CONSTRAINT asb_descontinuidade_geometrica_p_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.asb_descontinuidade_geometrica_l ADD CONSTRAINT asb_descontinuidade_geometrica_l_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.asb_descontinuidade_geometrica_a ADD CONSTRAINT asb_descontinuidade_geometrica_a_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.edu_descontinuidade_geometrica_a ADD CONSTRAINT edu_descontinuidade_geometrica_a_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.edu_descontinuidade_geometrica_l ADD CONSTRAINT edu_descontinuidade_geometrica_l_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.edu_descontinuidade_geometrica_p ADD CONSTRAINT edu_descontinuidade_geometrica_p_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.eco_descontinuidade_geometrica_p ADD CONSTRAINT eco_descontinuidade_geometrica_p_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.eco_descontinuidade_geometrica_l ADD CONSTRAINT eco_descontinuidade_geometrica_l_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.eco_descontinuidade_geometrica_a ADD CONSTRAINT eco_descontinuidade_geometrica_a_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.loc_descontinuidade_geometrica_a ADD CONSTRAINT loc_descontinuidade_geometrica_a_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.loc_descontinuidade_geometrica_l ADD CONSTRAINT loc_descontinuidade_geometrica_l_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.loc_descontinuidade_geometrica_p ADD CONSTRAINT loc_descontinuidade_geometrica_p_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.pto_descontinuidade_geometrica_p ADD CONSTRAINT pto_descontinuidade_geometrica_p_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.pto_descontinuidade_geometrica_a ADD CONSTRAINT pto_descontinuidade_geometrica_a_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.lim_descontinuidade_geometrica_p ADD CONSTRAINT lim_descontinuidade_geometrica_p_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.lim_descontinuidade_geometrica_a ADD CONSTRAINT lim_descontinuidade_geometrica_a_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.adm_descontinuidade_geometrica_p ADD CONSTRAINT adm_descontinuidade_geometrica_p_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.adm_descontinuidade_geometrica_a ADD CONSTRAINT adm_descontinuidade_geometrica_a_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.sau_descontinuidade_geometrica_a ADD CONSTRAINT sau_descontinuidade_geometrica_a_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE cb.sau_descontinuidade_geometrica_p ADD CONSTRAINT sau_descontinuidade_geometrica_p_geometriaaproximada_ks CHECK (geometriaaproximada = 1)#
-ALTER TABLE complexos.eco_madeireira
-  ADD CONSTRAINT eco_madeireira_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.eco_madeireira
-  ADD CONSTRAINT eco_madeireira_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.eco_madeireira
-  ADD CONSTRAINT eco_madeireira_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.eco_frigorifico_matadouro
-  ADD CONSTRAINT eco_frigorifico_matadouro_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.eco_frigorifico_matadouro
-  ADD CONSTRAINT eco_frigorifico_matadouro_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.eco_frigorifico_matadouro
-  ADD CONSTRAINT eco_frigorifico_matadouro_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.edu_org_ensino_militar
-  ADD CONSTRAINT edu_org_ensino_militar_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.edu_org_ensino_militar
-  ADD CONSTRAINT edu_org_ensino_militar_id_instituicao_publica_fk FOREIGN KEY (id_instituicao_publica)
-   REFERENCES complexos.adm_instituicao_publica (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.edu_org_ensino_pub
-  ADD CONSTRAINT edu_org_ensino_pub_id_instituicao_publica_fk FOREIGN KEY (id_instituicao_publica)
-   REFERENCES complexos.adm_instituicao_publica (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.edu_org_ensino_pub
-  ADD CONSTRAINT edu_org_ensino_pub_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.enc_subestacao_ener_eletr
-  ADD CONSTRAINT enc_subestacao_ener_eletr_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.enc_complexo_gerad_energ_eletr
-  ADD CONSTRAINT enc_complexo_gerad_energ_eletr_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.sau_org_saude_pub
-  ADD CONSTRAINT sau_org_saude_pub_id_instituicao_publica_fk FOREIGN KEY (id_instituicao_publica)
-   REFERENCES complexos.adm_instituicao_publica (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.sau_org_saude_pub
-  ADD CONSTRAINT sau_org_saude_pub_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.enc_complexo_comunicacao
-  ADD CONSTRAINT enc_complexo_comunicacao_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.asb_complexo_abast_agua
-  ADD CONSTRAINT asb_complexo_abast_agua_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.asb_complexo_saneamento
-  ADD CONSTRAINT asb_complexo_saneamento_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.sau_org_saude_militar
-  ADD CONSTRAINT sau_org_saude_militar_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.sau_org_saude_militar
-  ADD CONSTRAINT sau_org_saude_militar_id_instituicao_publica_fk FOREIGN KEY (id_instituicao_publica)
-   REFERENCES complexos.adm_instituicao_publica (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.sau_org_servico_social_pub
-  ADD CONSTRAINT sau_org_servico_social_pub_id_instituicao_publica_fk FOREIGN KEY (id_instituicao_publica)
-   REFERENCES complexos.adm_instituicao_publica (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.sau_org_servico_social_pub
-  ADD CONSTRAINT sau_org_servico_social_pub_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.adm_instituicao_publica
-  ADD CONSTRAINT adm_instituicao_publica_id_instituicao_publica_fk FOREIGN KEY (id_instituicao_publica)
-   REFERENCES complexos.adm_instituicao_publica (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.eco_org_industrial
-  ADD CONSTRAINT eco_org_industrial_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.eco_org_industrial
-  ADD CONSTRAINT eco_org_industrial_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.pto_est_med_fenomenos
-  ADD CONSTRAINT pto_est_med_fenomenos_id_est_med_fenomenos_fk FOREIGN KEY (id_est_med_fenomenos)
-   REFERENCES complexos.pto_est_med_fenomenos (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.hid_trecho_curso_dagua
-  ADD CONSTRAINT hid_trecho_curso_dagua_id_curso_dagua_fk FOREIGN KEY (id_curso_dagua)
-   REFERENCES complexos.hid_curso_dagua (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.edu_complexo_lazer
-  ADD CONSTRAINT edu_complexo_lazer_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
-   REFERENCES complexos.edu_org_religiosa (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.edu_complexo_lazer
-  ADD CONSTRAINT edu_complexo_lazer_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.edu_complexo_lazer
-  ADD CONSTRAINT edu_complexo_lazer_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
-   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.edu_complexo_lazer
-  ADD CONSTRAINT edu_complexo_lazer_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.adm_org_pub_militar
-  ADD CONSTRAINT adm_org_pub_militar_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.adm_org_pub_militar
-  ADD CONSTRAINT adm_org_pub_militar_id_instituicao_publica_fk FOREIGN KEY (id_instituicao_publica)
-   REFERENCES complexos.adm_instituicao_publica (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.adm_org_pub_civil
-  ADD CONSTRAINT adm_org_pub_civil_id_instituicao_publica_fk FOREIGN KEY (id_instituicao_publica)
-   REFERENCES complexos.adm_instituicao_publica (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.adm_org_pub_civil
-  ADD CONSTRAINT adm_org_pub_civil_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_area_saneamento_a
-  ADD CONSTRAINT asb_area_saneamento_a_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
-   REFERENCES complexos.asb_complexo_saneamento (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_edif_comerc_serv_p
-  ADD CONSTRAINT eco_edif_comerc_serv_p_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_edif_comerc_serv_a
-  ADD CONSTRAINT eco_edif_comerc_serv_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
+ALTER TABLE cb.adm_edif_pub_civil_a ADD CONSTRAINT adm_edif_pub_civil_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.adm_edif_pub_civil_a ADD CONSTRAINT adm_edif_pub_civil_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.adm_edif_pub_civil_p ADD CONSTRAINT adm_edif_pub_civil_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.adm_edif_pub_civil_p ADD CONSTRAINT adm_edif_pub_civil_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.adm_edif_pub_militar_a ADD CONSTRAINT adm_edif_pub_militar_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.adm_edif_pub_militar_a ADD CONSTRAINT adm_edif_pub_militar_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.adm_edif_pub_militar_p ADD CONSTRAINT adm_edif_pub_militar_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.adm_edif_pub_militar_p ADD CONSTRAINT adm_edif_pub_militar_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE complexos.adm_instituicao_publica ADD CONSTRAINT adm_instituicao_publica_tipogrupocnae_ks
+ CHECK (tipogrupocnae = 5 OR tipogrupocnae = 6 OR tipogrupocnae = 7 OR tipogrupocnae = 99 OR tipogrupocnae = 0)#
+ALTER TABLE complexos.adm_org_comerc_serv ADD CONSTRAINT adm_org_comerc_serv_tipodivisaocnae_ks
+ CHECK (tipodivisaocnae = 50 OR tipodivisaocnae = 51 OR tipodivisaocnae = 52 OR tipodivisaocnae = 55 OR tipodivisaocnae = 74 OR tipodivisaocnae = 99 OR tipodivisaocnae = 0)#
+ALTER TABLE complexos.adm_org_ext_mineral ADD CONSTRAINT adm_org_ext_mineral_tiposecaocnae_ks
+ CHECK (tiposecaocnae = 1 OR tiposecaocnae = 99 OR tiposecaocnae = 0)#
+ALTER TABLE complexos.adm_org_pub_civil ADD CONSTRAINT adm_org_pub_civil_administracao_ks
+ CHECK (administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 0)#
+ALTER TABLE complexos.adm_org_pub_civil ADD CONSTRAINT adm_org_pub_civil_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 0 OR tipoclassecnae = 6 OR tipoclassecnae = 7 OR tipoclassecnae = 8 OR tipoclassecnae = 9 OR tipoclassecnae = 10 OR tipoclassecnae = 12 OR tipoclassecnae = 13 OR tipoclassecnae = 14 OR tipoclassecnae = 15 OR tipoclassecnae = 99)#
+ALTER TABLE complexos.adm_org_pub_militar ADD CONSTRAINT adm_org_pub_militar_administracao_ks
+ CHECK (administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 0)#
+ALTER TABLE complexos.adm_org_pub_militar ADD CONSTRAINT adm_org_pub_militar_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 11 OR tipoclassecnae = 13 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
+ALTER TABLE cb.adm_posto_fiscal ADD CONSTRAINT adm_posto_fiscal_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.adm_posto_fiscal_a ADD CONSTRAINT adm_posto_fiscal_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.adm_posto_fiscal_p ADD CONSTRAINT adm_posto_fiscal_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.adm_posto_pol_rod ADD CONSTRAINT adm_posto_pol_rod_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.adm_posto_pol_rod_a ADD CONSTRAINT adm_posto_pol_rod_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.adm_posto_pol_rod_p ADD CONSTRAINT adm_posto_pol_rod_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE complexos.asb_complexo_abast_agua ADD CONSTRAINT asb_complexo_abast_agua_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 4 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
+ALTER TABLE complexos.asb_complexo_saneamento ADD CONSTRAINT asb_complexo_saneamento_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7)#
+ALTER TABLE complexos.asb_complexo_saneamento ADD CONSTRAINT asb_complexo_saneamento_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 34 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
+ALTER TABLE cb.asb_dep_abast_agua ADD CONSTRAINT asb_dep_abast_agua_construcao_ks
+ CHECK (construcao = 1 OR construcao = 2)#
+ALTER TABLE cb.asb_dep_abast_agua ADD CONSTRAINT asb_dep_abast_agua_finalidade_ks
+ CHECK (finalidade = 2 OR finalidade = 3 OR finalidade = 4)#
+ALTER TABLE cb.asb_dep_abast_agua ADD CONSTRAINT asb_dep_abast_agua_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97)#
+ALTER TABLE cb.asb_dep_abast_agua ADD CONSTRAINT asb_dep_abast_agua_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.asb_dep_abast_agua_a ADD CONSTRAINT asb_dep_abast_agua_a_construcao_ks
+ CHECK (construcao = 1 OR construcao = 2)#
+ALTER TABLE cb.asb_dep_abast_agua_a ADD CONSTRAINT asb_dep_abast_agua_a_finalidade_ks
+ CHECK (finalidade = 2 OR finalidade = 3 OR finalidade = 4)#
+ALTER TABLE cb.asb_dep_abast_agua_a ADD CONSTRAINT asb_dep_abast_agua_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97)#
+ALTER TABLE cb.asb_dep_abast_agua_a ADD CONSTRAINT asb_dep_abast_agua_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.asb_dep_abast_agua_p ADD CONSTRAINT asb_dep_abast_agua_p_construcao_ks
+ CHECK (construcao = 1 OR construcao = 2)#
+ALTER TABLE cb.asb_dep_abast_agua_p ADD CONSTRAINT asb_dep_abast_agua_p_finalidade_ks
+ CHECK (finalidade = 2 OR finalidade = 3 OR finalidade = 4)#
+ALTER TABLE cb.asb_dep_abast_agua_p ADD CONSTRAINT asb_dep_abast_agua_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97)#
+ALTER TABLE cb.asb_dep_abast_agua_p ADD CONSTRAINT asb_dep_abast_agua_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.asb_dep_saneamento ADD CONSTRAINT asb_dep_saneamento_finalidade_ks
+ CHECK (finalidade = 0 OR finalidade = 2 OR finalidade = 8)#
+ALTER TABLE cb.asb_dep_saneamento ADD CONSTRAINT asb_dep_saneamento_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97)#
+ALTER TABLE cb.asb_dep_saneamento ADD CONSTRAINT asb_dep_saneamento_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.asb_dep_saneamento_a ADD CONSTRAINT asb_dep_saneamento_a_finalidade_ks
+ CHECK (finalidade = 0 OR finalidade = 2 OR finalidade = 8)#
+ALTER TABLE cb.asb_dep_saneamento_a ADD CONSTRAINT asb_dep_saneamento_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97)#
+ALTER TABLE cb.asb_dep_saneamento_a ADD CONSTRAINT asb_dep_saneamento_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.asb_dep_saneamento_p ADD CONSTRAINT asb_dep_saneamento_p_finalidade_ks
+ CHECK (finalidade = 0 OR finalidade = 2 OR finalidade = 8)#
+ALTER TABLE cb.asb_dep_saneamento_p ADD CONSTRAINT asb_dep_saneamento_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97)#
+ALTER TABLE cb.asb_dep_saneamento_p ADD CONSTRAINT asb_dep_saneamento_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.asb_edif_abast_agua_a ADD CONSTRAINT asb_edif_abast_agua_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.asb_edif_abast_agua_p ADD CONSTRAINT asb_edif_abast_agua_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.asb_edif_saneamento_a ADD CONSTRAINT asb_edif_saneamento_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.asb_edif_saneamento_p ADD CONSTRAINT asb_edif_saneamento_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99 OR matconstr = 97)#
+ALTER TABLE cb.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_tipoprodutoresiduo_ks
+ CHECK (tipoprodutoresiduo = 0 OR tipoprodutoresiduo = 3 OR tipoprodutoresiduo = 5 OR tipoprodutoresiduo = 6 OR tipoprodutoresiduo = 16 OR tipoprodutoresiduo = 17 OR tipoprodutoresiduo = 18 OR tipoprodutoresiduo = 19 OR tipoprodutoresiduo = 20 OR tipoprodutoresiduo = 21 OR tipoprodutoresiduo = 22 OR tipoprodutoresiduo = 23 OR tipoprodutoresiduo = 24 OR tipoprodutoresiduo = 25 OR tipoprodutoresiduo = 26 OR tipoprodutoresiduo = 27 OR tipoprodutoresiduo = 28 OR tipoprodutoresiduo = 29 OR tipoprodutoresiduo = 30 OR tipoprodutoresiduo = 31 OR tipoprodutoresiduo = 32 OR tipoprodutoresiduo = 33 OR tipoprodutoresiduo = 34 OR tipoprodutoresiduo = 35 OR tipoprodutoresiduo = 36 OR tipoprodutoresiduo = 41 OR tipoprodutoresiduo = 98 OR tipoprodutoresiduo = 99)#
+ALTER TABLE cb.eco_deposito_geral_a ADD CONSTRAINT eco_deposito_geral_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99 OR matconstr = 97)#
+ALTER TABLE cb.eco_deposito_geral_a ADD CONSTRAINT eco_deposito_geral_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.eco_deposito_geral_a ADD CONSTRAINT eco_deposito_geral_a_tipoprodutoresiduo_ks
+ CHECK (tipoprodutoresiduo = 0 OR tipoprodutoresiduo = 3 OR tipoprodutoresiduo = 5 OR tipoprodutoresiduo = 6 OR tipoprodutoresiduo = 16 OR tipoprodutoresiduo = 17 OR tipoprodutoresiduo = 18 OR tipoprodutoresiduo = 19 OR tipoprodutoresiduo = 20 OR tipoprodutoresiduo = 21 OR tipoprodutoresiduo = 22 OR tipoprodutoresiduo = 23 OR tipoprodutoresiduo = 24 OR tipoprodutoresiduo = 25 OR tipoprodutoresiduo = 26 OR tipoprodutoresiduo = 27 OR tipoprodutoresiduo = 28 OR tipoprodutoresiduo = 29 OR tipoprodutoresiduo = 30 OR tipoprodutoresiduo = 31 OR tipoprodutoresiduo = 32 OR tipoprodutoresiduo = 33 OR tipoprodutoresiduo = 34 OR tipoprodutoresiduo = 35 OR tipoprodutoresiduo = 36 OR tipoprodutoresiduo = 41 OR tipoprodutoresiduo = 98 OR tipoprodutoresiduo = 99)#
+ALTER TABLE cb.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99 OR matconstr = 97)#
+ALTER TABLE cb.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_tipoprodutoresiduo_ks
+ CHECK (tipoprodutoresiduo = 0 OR tipoprodutoresiduo = 3 OR tipoprodutoresiduo = 5 OR tipoprodutoresiduo = 6 OR tipoprodutoresiduo = 16 OR tipoprodutoresiduo = 17 OR tipoprodutoresiduo = 18 OR tipoprodutoresiduo = 19 OR tipoprodutoresiduo = 20 OR tipoprodutoresiduo = 21 OR tipoprodutoresiduo = 22 OR tipoprodutoresiduo = 23 OR tipoprodutoresiduo = 24 OR tipoprodutoresiduo = 25 OR tipoprodutoresiduo = 26 OR tipoprodutoresiduo = 27 OR tipoprodutoresiduo = 28 OR tipoprodutoresiduo = 29 OR tipoprodutoresiduo = 30 OR tipoprodutoresiduo = 31 OR tipoprodutoresiduo = 32 OR tipoprodutoresiduo = 33 OR tipoprodutoresiduo = 34 OR tipoprodutoresiduo = 35 OR tipoprodutoresiduo = 36 OR tipoprodutoresiduo = 41 OR tipoprodutoresiduo = 98 OR tipoprodutoresiduo = 99)#
+ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_a ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99 OR matconstr = 1 OR matconstr = 4)#
+ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_a ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_p ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99 OR matconstr = 1 OR matconstr = 4)#
+ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_p ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.eco_edif_comerc_serv_a ADD CONSTRAINT eco_edif_comerc_serv_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99 OR matconstr = 97)#
+ALTER TABLE cb.eco_edif_comerc_serv_a ADD CONSTRAINT eco_edif_comerc_serv_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.eco_edif_comerc_serv_p ADD CONSTRAINT eco_edif_comerc_serv_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99 OR matconstr = 97)#
+ALTER TABLE cb.eco_edif_comerc_serv_p ADD CONSTRAINT eco_edif_comerc_serv_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.eco_edif_ext_mineral_a ADD CONSTRAINT eco_edif_ext_mineral_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99 OR matconstr = 97)#
+ALTER TABLE cb.eco_edif_ext_mineral_a ADD CONSTRAINT eco_edif_ext_mineral_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.eco_edif_ext_mineral_a ADD CONSTRAINT eco_edif_ext_mineral_a_tipodivisaocnae_ks
+ CHECK (tipodivisaocnae = 0 OR tipodivisaocnae = 10 OR tipodivisaocnae = 11 OR tipodivisaocnae = 14 OR tipodivisaocnae = 13 OR tipodivisaocnae = 99)#
+ALTER TABLE cb.eco_edif_ext_mineral_p ADD CONSTRAINT eco_edif_ext_mineral_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99 OR matconstr = 97)#
+ALTER TABLE cb.eco_edif_ext_mineral_p ADD CONSTRAINT eco_edif_ext_mineral_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.eco_edif_ext_mineral_p ADD CONSTRAINT eco_edif_ext_mineral_p_tipodivisaocnae_ks
+ CHECK (tipodivisaocnae = 0 OR tipodivisaocnae = 10 OR tipodivisaocnae = 11 OR tipodivisaocnae = 99 OR tipodivisaocnae = 13 OR tipodivisaocnae = 14)#
+ALTER TABLE cb.eco_edif_industrial_a ADD CONSTRAINT eco_edif_industrial_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99 OR matconstr = 97)#
+ALTER TABLE cb.eco_edif_industrial_a ADD CONSTRAINT eco_edif_industrial_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.eco_edif_industrial_a ADD CONSTRAINT eco_edif_industrial_a_tipodivisaocnae_ks
+ CHECK (tipodivisaocnae = 15 OR tipodivisaocnae = 16 OR tipodivisaocnae = 17 OR tipodivisaocnae = 18 OR tipodivisaocnae = 19 OR tipodivisaocnae = 20 OR tipodivisaocnae = 21 OR tipodivisaocnae = 22 OR tipodivisaocnae = 23 OR tipodivisaocnae = 24 OR tipodivisaocnae = 25 OR tipodivisaocnae = 26 OR tipodivisaocnae = 27 OR tipodivisaocnae = 28 OR tipodivisaocnae = 29 OR tipodivisaocnae = 30 OR tipodivisaocnae = 31 OR tipodivisaocnae = 32 OR tipodivisaocnae = 33 OR tipodivisaocnae = 34 OR tipodivisaocnae = 35 OR tipodivisaocnae = 36 OR tipodivisaocnae = 37 OR tipodivisaocnae = 45 OR tipodivisaocnae = 99 OR tipodivisaocnae = 0)#
+ALTER TABLE cb.eco_edif_industrial_p ADD CONSTRAINT eco_edif_industrial_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99 OR matconstr = 97)#
+ALTER TABLE cb.eco_edif_industrial_p ADD CONSTRAINT eco_edif_industrial_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.eco_edif_industrial_p ADD CONSTRAINT eco_edif_industrial_p_tipodivisaocnae_ks
+ CHECK (tipodivisaocnae = 15 OR tipodivisaocnae = 16 OR tipodivisaocnae = 17 OR tipodivisaocnae = 18 OR tipodivisaocnae = 19 OR tipodivisaocnae = 20 OR tipodivisaocnae = 21 OR tipodivisaocnae = 22 OR tipodivisaocnae = 23 OR tipodivisaocnae = 24 OR tipodivisaocnae = 25 OR tipodivisaocnae = 26 OR tipodivisaocnae = 27 OR tipodivisaocnae = 28 OR tipodivisaocnae = 29 OR tipodivisaocnae = 30 OR tipodivisaocnae = 31 OR tipodivisaocnae = 32 OR tipodivisaocnae = 33 OR tipodivisaocnae = 34 OR tipodivisaocnae = 35 OR tipodivisaocnae = 36 OR tipodivisaocnae = 37 OR tipodivisaocnae = 45 OR tipodivisaocnae = 99 OR tipodivisaocnae = 0)#
+ALTER TABLE cb.eco_equip_agropec ADD CONSTRAINT eco_equip_agropec_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.eco_equip_agropec ADD CONSTRAINT eco_equip_agropec_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.eco_equip_agropec_a ADD CONSTRAINT eco_equip_agropec_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.eco_equip_agropec_a ADD CONSTRAINT eco_equip_agropec_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.eco_equip_agropec_l ADD CONSTRAINT eco_equip_agropec_l_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.eco_equip_agropec_l ADD CONSTRAINT eco_equip_agropec_l_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.eco_equip_agropec_p ADD CONSTRAINT eco_equip_agropec_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.eco_equip_agropec_p ADD CONSTRAINT eco_equip_agropec_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.eco_ext_mineral ADD CONSTRAINT eco_ext_mineral_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.eco_ext_mineral ADD CONSTRAINT eco_ext_mineral_tipoprodutoresiduo_ks
+ CHECK (tipoprodutoresiduo = 0 OR tipoprodutoresiduo = 3 OR tipoprodutoresiduo = 5 OR tipoprodutoresiduo = 18 OR tipoprodutoresiduo = 22 OR tipoprodutoresiduo = 23 OR tipoprodutoresiduo = 24 OR tipoprodutoresiduo = 25 OR tipoprodutoresiduo = 26 OR tipoprodutoresiduo = 27 OR tipoprodutoresiduo = 32 OR tipoprodutoresiduo = 33 OR tipoprodutoresiduo = 34 OR tipoprodutoresiduo = 35 OR tipoprodutoresiduo = 37 OR tipoprodutoresiduo = 38 OR tipoprodutoresiduo = 39 OR tipoprodutoresiduo = 40 OR tipoprodutoresiduo = 98 OR tipoprodutoresiduo = 99 OR tipoprodutoresiduo = 42 OR tipoprodutoresiduo = 43 OR tipoprodutoresiduo = 44)#
+ALTER TABLE cb.eco_ext_mineral ADD CONSTRAINT eco_ext_mineral_tiposecaocnae_ks
+ CHECK (tiposecaocnae = 0 OR tiposecaocnae = 1 OR tiposecaocnae = 99)#
+ALTER TABLE cb.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoprodutoresiduo_ks
+ CHECK (tipoprodutoresiduo = 0 OR tipoprodutoresiduo = 3 OR tipoprodutoresiduo = 5 OR tipoprodutoresiduo = 18 OR tipoprodutoresiduo = 22 OR tipoprodutoresiduo = 23 OR tipoprodutoresiduo = 24 OR tipoprodutoresiduo = 25 OR tipoprodutoresiduo = 26 OR tipoprodutoresiduo = 27 OR tipoprodutoresiduo = 32 OR tipoprodutoresiduo = 33 OR tipoprodutoresiduo = 34 OR tipoprodutoresiduo = 35 OR tipoprodutoresiduo = 37 OR tipoprodutoresiduo = 38 OR tipoprodutoresiduo = 39 OR tipoprodutoresiduo = 40 OR tipoprodutoresiduo = 98 OR tipoprodutoresiduo = 99 OR tipoprodutoresiduo = 42 OR tipoprodutoresiduo = 43 OR tipoprodutoresiduo = 44)#
+ALTER TABLE cb.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tiposecaocnae_ks
+ CHECK (tiposecaocnae = 1 OR tiposecaocnae = 99 OR tiposecaocnae = 0)#
+ALTER TABLE cb.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_tipoprodutoresiduo_ks
+ CHECK (tipoprodutoresiduo = 0 OR tipoprodutoresiduo = 3 OR tipoprodutoresiduo = 5 OR tipoprodutoresiduo = 18 OR tipoprodutoresiduo = 22 OR tipoprodutoresiduo = 23 OR tipoprodutoresiduo = 24 OR tipoprodutoresiduo = 25 OR tipoprodutoresiduo = 26 OR tipoprodutoresiduo = 27 OR tipoprodutoresiduo = 32 OR tipoprodutoresiduo = 33 OR tipoprodutoresiduo = 34 OR tipoprodutoresiduo = 35 OR tipoprodutoresiduo = 37 OR tipoprodutoresiduo = 38 OR tipoprodutoresiduo = 39 OR tipoprodutoresiduo = 40 OR tipoprodutoresiduo = 98 OR tipoprodutoresiduo = 99 OR tipoprodutoresiduo = 42 OR tipoprodutoresiduo = 43 OR tipoprodutoresiduo = 44)#
+ALTER TABLE cb.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_tiposecaocnae_ks
+ CHECK (tiposecaocnae = 0 OR tiposecaocnae = 1 OR tiposecaocnae = 99)#
+ALTER TABLE complexos.eco_frigorifico_matadouro ADD CONSTRAINT eco_frigorifico_matadouro_tiposecaocnae_ks
+ CHECK (tiposecaocnae = 2 OR tiposecaocnae = 99 OR tiposecaocnae = 0)#
+ALTER TABLE complexos.eco_madeireira ADD CONSTRAINT eco_madeireira_tiposecaocnae_ks
+ CHECK (tiposecaocnae = 2 OR tiposecaocnae = 3 OR tiposecaocnae = 99 OR tiposecaocnae = 0)#
+ALTER TABLE complexos.eco_org_agrop_ext_veg_pesca ADD CONSTRAINT eco_org_agrop_ext_veg_pesca_tipodivisaocnae_ks
+ CHECK (tipodivisaocnae = 1 OR tipodivisaocnae = 2 OR tipodivisaocnae = 5 OR tipodivisaocnae = 99 OR tipodivisaocnae = 0)#
+ALTER TABLE complexos.eco_org_industrial ADD CONSTRAINT eco_org_industrial_tiposecaocnae_ks
+ CHECK (tiposecaocnae = 2 OR tiposecaocnae = 3 OR tiposecaocnae = 99 OR tiposecaocnae = 0)#
+ALTER TABLE cb.edu_arquibancada ADD CONSTRAINT edu_arquibancada_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.edu_arquibancada_a ADD CONSTRAINT edu_arquibancada_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.edu_arquibancada_p ADD CONSTRAINT edu_arquibancada_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.edu_campo_quadra ADD CONSTRAINT edu_campo_quadra_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.edu_campo_quadra_a ADD CONSTRAINT edu_campo_quadra_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.edu_campo_quadra_p ADD CONSTRAINT edu_campo_quadra_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE complexos.edu_complexo_lazer ADD CONSTRAINT edu_complexo_lazer_administracao_ks
+ CHECK (administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15 OR administracao = 98 OR administracao = 0)#
+ALTER TABLE complexos.edu_complexo_lazer ADD CONSTRAINT edu_complexo_lazer_tipodivisaocnae_ks
+ CHECK (tipodivisaocnae = 92 OR tipodivisaocnae = 99 OR tipodivisaocnae = 0)#
+ALTER TABLE cb.edu_coreto_tribuna ADD CONSTRAINT edu_coreto_tribuna_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.edu_coreto_tribuna_a ADD CONSTRAINT edu_coreto_tribuna_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.edu_coreto_tribuna_p ADD CONSTRAINT edu_coreto_tribuna_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.edu_edif_const_lazer_a ADD CONSTRAINT edu_edif_const_lazer_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.edu_edif_const_lazer_a ADD CONSTRAINT edu_edif_const_lazer_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.edu_edif_const_lazer_p ADD CONSTRAINT edu_edif_const_lazer_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.edu_edif_const_lazer_p ADD CONSTRAINT edu_edif_const_lazer_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.edu_edif_const_turistica_a ADD CONSTRAINT edu_edif_const_turistica_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.edu_edif_const_turistica_a ADD CONSTRAINT edu_edif_const_turistica_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.edu_edif_const_turistica_p ADD CONSTRAINT edu_edif_const_turistica_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.edu_edif_const_turistica_p ADD CONSTRAINT edu_edif_const_turistica_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.edu_edif_ensino_a ADD CONSTRAINT edu_edif_ensino_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.edu_edif_ensino_a ADD CONSTRAINT edu_edif_ensino_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.edu_edif_ensino_a ADD CONSTRAINT edu_edif_ensino_a_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 0 OR tipoclassecnae = 16 OR tipoclassecnae = 17 OR tipoclassecnae = 18 OR tipoclassecnae = 19 OR tipoclassecnae = 20 OR tipoclassecnae = 21 OR tipoclassecnae = 22 OR tipoclassecnae = 23 OR tipoclassecnae = 24 OR tipoclassecnae = 25 OR tipoclassecnae = 98)#
+ALTER TABLE cb.edu_edif_ensino_p ADD CONSTRAINT edu_edif_ensino_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.edu_edif_ensino_p ADD CONSTRAINT edu_edif_ensino_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.edu_edif_ensino_p ADD CONSTRAINT edu_edif_ensino_p_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 0 OR tipoclassecnae = 16 OR tipoclassecnae = 17 OR tipoclassecnae = 18 OR tipoclassecnae = 19 OR tipoclassecnae = 20 OR tipoclassecnae = 21 OR tipoclassecnae = 22 OR tipoclassecnae = 23 OR tipoclassecnae = 24 OR tipoclassecnae = 25 OR tipoclassecnae = 98)#
+ALTER TABLE cb.edu_edif_religiosa_a ADD CONSTRAINT edu_edif_religiosa_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.edu_edif_religiosa_a ADD CONSTRAINT edu_edif_religiosa_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.edu_edif_religiosa_p ADD CONSTRAINT edu_edif_religiosa_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.edu_edif_religiosa_p ADD CONSTRAINT edu_edif_religiosa_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE complexos.edu_org_ensino ADD CONSTRAINT edu_org_ensino_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15)#
+ALTER TABLE complexos.edu_org_ensino ADD CONSTRAINT edu_org_ensino_tipogrupocnae_ks
+ CHECK (tipogrupocnae = 1 OR tipogrupocnae = 19 OR tipogrupocnae = 3 OR tipogrupocnae = 4 OR tipogrupocnae = 98 OR tipogrupocnae = 0 OR tipogrupocnae = 99)#
+ALTER TABLE complexos.edu_org_ensino_militar ADD CONSTRAINT edu_org_ensino_militar_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15)#
+ALTER TABLE complexos.edu_org_ensino_militar ADD CONSTRAINT edu_org_ensino_militar_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 11 OR tipoclassecnae = 13 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
+ALTER TABLE complexos.edu_org_ensino_militar ADD CONSTRAINT edu_org_ensino_militar_tipogrupocnae_ks
+ CHECK (tipogrupocnae = 1 OR tipogrupocnae = 19 OR tipogrupocnae = 3 OR tipogrupocnae = 4 OR tipogrupocnae = 98 OR tipogrupocnae = 0 OR tipogrupocnae = 99)#
+ALTER TABLE complexos.edu_org_ensino_pub ADD CONSTRAINT edu_org_ensino_pub_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15)#
+ALTER TABLE complexos.edu_org_ensino_pub ADD CONSTRAINT edu_org_ensino_pub_poderpublico_ks
+ CHECK (poderpublico = 1)#
+ALTER TABLE complexos.edu_org_ensino_pub ADD CONSTRAINT edu_org_ensino_pub_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 7 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
+ALTER TABLE complexos.edu_org_ensino_pub ADD CONSTRAINT edu_org_ensino_pub_tipogrupocnae_ks
+ CHECK (tipogrupocnae = 1 OR tipogrupocnae = 19 OR tipogrupocnae = 3 OR tipogrupocnae = 4 OR tipogrupocnae = 98 OR tipogrupocnae = 0 OR tipogrupocnae = 99)#
+ALTER TABLE complexos.edu_org_ensino_religioso ADD CONSTRAINT edu_org_ensino_religioso_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15)#
+ALTER TABLE complexos.edu_org_ensino_religioso ADD CONSTRAINT edu_org_ensino_religioso_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 35 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
+ALTER TABLE complexos.edu_org_ensino_religioso ADD CONSTRAINT edu_org_ensino_religioso_tipogrupocnae_ks
+ CHECK (tipogrupocnae = 1 OR tipogrupocnae = 19 OR tipogrupocnae = 3 OR tipogrupocnae = 4 OR tipogrupocnae = 98 OR tipogrupocnae = 0 OR tipogrupocnae = 99)#
+ALTER TABLE complexos.edu_org_religiosa ADD CONSTRAINT edu_org_religiosa_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 35 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
+ALTER TABLE cb.edu_piscina_a ADD CONSTRAINT edu_piscina_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.edu_pista_competicao_l ADD CONSTRAINT edu_pista_competicao_l_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.edu_pista_competicao_l ADD CONSTRAINT edu_pista_competicao_l_tipopista_ks
+ CHECK (tipopista = 0 OR tipopista = 1 OR tipopista = 2 OR tipopista = 3 OR tipopista = 4 OR tipopista = 5 OR tipopista = 98 OR tipopista = 99)#
+ALTER TABLE complexos.enc_complexo_comunicacao ADD CONSTRAINT enc_complexo_comunicacao_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 5 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
+ALTER TABLE complexos.enc_complexo_gerad_energ_eletr ADD CONSTRAINT enc_complexo_gerad_energ_eletr_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 1 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
+ALTER TABLE cb.enc_edif_comunic_a ADD CONSTRAINT enc_edif_comunic_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 99 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97)#
+ALTER TABLE cb.enc_edif_comunic_a ADD CONSTRAINT enc_edif_comunic_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.enc_edif_comunic_p ADD CONSTRAINT enc_edif_comunic_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 99 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97)#
+ALTER TABLE cb.enc_edif_comunic_p ADD CONSTRAINT enc_edif_comunic_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.enc_edif_energia_a ADD CONSTRAINT enc_edif_energia_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 99 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97)#
+ALTER TABLE cb.enc_edif_energia_a ADD CONSTRAINT enc_edif_energia_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.enc_edif_energia_p ADD CONSTRAINT enc_edif_energia_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 99 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97)#
+ALTER TABLE cb.enc_edif_energia_p ADD CONSTRAINT enc_edif_energia_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.enc_est_gerad_energia_eletr ADD CONSTRAINT enc_est_gerad_energia_eletr_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.enc_est_gerad_energia_eletr_a ADD CONSTRAINT enc_est_gerad_energia_eletr_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.enc_est_gerad_energia_eletr_l ADD CONSTRAINT enc_est_gerad_energia_eletr_l_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.enc_est_gerad_energia_eletr_p ADD CONSTRAINT enc_est_gerad_energia_eletr_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.enc_hidreletrica_a ADD CONSTRAINT enc_hidreletrica_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.enc_hidreletrica_l ADD CONSTRAINT enc_hidreletrica_l_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE complexos.enc_subestacao_ener_eletr ADD CONSTRAINT enc_subestacao_ener_eletr_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 0 OR tipoclassecnae = 2 OR tipoclassecnae = 3 OR tipoclassecnae = 99)#
+ALTER TABLE cb.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.enc_termeletrica_p ADD CONSTRAINT enc_termeletrica_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.enc_torre_comunic_p ADD CONSTRAINT enc_torre_comunic_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.enc_torre_energia_p ADD CONSTRAINT enc_torre_energia_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.enc_trecho_comunic_l ADD CONSTRAINT enc_trecho_comunic_l_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 25 OR matconstr = 26 OR matconstr = 99)#
+ALTER TABLE cb.enc_trecho_comunic_l ADD CONSTRAINT enc_trecho_comunic_l_posicaorelativa_ks
+ CHECK (posicaorelativa = 2 OR posicaorelativa = 3 OR posicaorelativa = 4 OR posicaorelativa = 5 OR posicaorelativa = 6)#
+ALTER TABLE cb.enc_trecho_comunic_l ADD CONSTRAINT enc_trecho_comunic_l_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.enc_trecho_energia_l ADD CONSTRAINT enc_trecho_energia_l_posicaorelativa_ks
+ CHECK (posicaorelativa = 2 OR posicaorelativa = 3 OR posicaorelativa = 4 OR posicaorelativa = 5 OR posicaorelativa = 6)#
+ALTER TABLE cb.enc_trecho_energia_l ADD CONSTRAINT enc_trecho_energia_l_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.hid_banco_areia ADD CONSTRAINT hid_banco_areia_materialpredominante_ks
+ CHECK (materialpredominante = 0 OR materialpredominante = 98 OR materialpredominante = 18 OR materialpredominante = 19 OR materialpredominante = 24 OR materialpredominante = 12)#
+ALTER TABLE cb.hid_banco_areia_a ADD CONSTRAINT hid_banco_areia_a_materialpredominante_ks
+ CHECK (materialpredominante = 0 OR materialpredominante = 98 OR materialpredominante = 18 OR materialpredominante = 19 OR materialpredominante = 24 OR materialpredominante = 12)#
+ALTER TABLE cb.hid_banco_areia_l ADD CONSTRAINT hid_banco_areia_l_materialpredominante_ks
+ CHECK (materialpredominante = 0 OR materialpredominante = 98 OR materialpredominante = 18 OR materialpredominante = 19 OR materialpredominante = 24 OR materialpredominante = 12)#
+ALTER TABLE cb.hid_barragem ADD CONSTRAINT hid_barragem_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 4 OR matconstr = 23 OR matconstr = 99)#
+ALTER TABLE cb.hid_barragem ADD CONSTRAINT hid_barragem_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.hid_barragem_a ADD CONSTRAINT hid_barragem_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 4 OR matconstr = 23 OR matconstr = 99)#
+ALTER TABLE cb.hid_barragem_a ADD CONSTRAINT hid_barragem_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.hid_barragem_l ADD CONSTRAINT hid_barragem_l_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 4 OR matconstr = 23 OR matconstr = 99)#
+ALTER TABLE cb.hid_barragem_l ADD CONSTRAINT hid_barragem_l_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.hid_barragem_p ADD CONSTRAINT hid_barragem_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 4 OR matconstr = 23 OR matconstr = 99)#
+ALTER TABLE cb.hid_barragem_p ADD CONSTRAINT hid_barragem_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.hid_comporta ADD CONSTRAINT hid_comporta_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.hid_comporta_l ADD CONSTRAINT hid_comporta_l_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.hid_comporta_p ADD CONSTRAINT hid_comporta_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.hid_confluencia_p ADD CONSTRAINT hid_confluencia_p_relacionado_ks
+ CHECK (relacionado = 15)#
+ALTER TABLE cb.hid_fonte_dagua_p ADD CONSTRAINT hid_fonte_dagua_p_regime_ks
+ CHECK (regime = 1 OR regime = 3 OR regime = 0)#
+ALTER TABLE cb.hid_ilha_a ADD CONSTRAINT hid_ilha_a_tipoelemnat_ks
+ CHECK (tipoelemnat = 0 OR tipoelemnat = 1 OR tipoelemnat = 2 OR tipoelemnat = 3 OR tipoelemnat = 4 OR tipoelemnat = 5 OR tipoelemnat = 6 OR tipoelemnat = 7 OR tipoelemnat = 8 OR tipoelemnat = 9 OR tipoelemnat = 10 OR tipoelemnat = 11 OR tipoelemnat = 12 OR tipoelemnat = 99)#
+ALTER TABLE cb.hid_ilha_l ADD CONSTRAINT hid_ilha_l_tipoelemnat_ks
+ CHECK (tipoelemnat = 0 OR tipoelemnat = 1 OR tipoelemnat = 2 OR tipoelemnat = 3 OR tipoelemnat = 4 OR tipoelemnat = 5 OR tipoelemnat = 6 OR tipoelemnat = 7 OR tipoelemnat = 8 OR tipoelemnat = 9 OR tipoelemnat = 10 OR tipoelemnat = 11 OR tipoelemnat = 12 OR tipoelemnat = 99)#
+ALTER TABLE cb.hid_ilha_p ADD CONSTRAINT hid_ilha_p_tipoelemnat_ks
+ CHECK (tipoelemnat = 0 OR tipoelemnat = 1 OR tipoelemnat = 2 OR tipoelemnat = 3 OR tipoelemnat = 4 OR tipoelemnat = 5 OR tipoelemnat = 6 OR tipoelemnat = 7 OR tipoelemnat = 8 OR tipoelemnat = 9 OR tipoelemnat = 10 OR tipoelemnat = 11 OR tipoelemnat = 12 OR tipoelemnat = 99)#
+ALTER TABLE cb.hid_limite_massa_dagua_l ADD CONSTRAINT hid_limite_massa_dagua_l_materialpredominante_ks
+ CHECK (materialpredominante = 0 OR materialpredominante = 98 OR materialpredominante = 12 OR materialpredominante = 13 OR materialpredominante = 14 OR materialpredominante = 15 OR materialpredominante = 16 OR materialpredominante = 18 OR materialpredominante = 19 OR materialpredominante = 20 OR materialpredominante = 21 OR materialpredominante = 4 OR materialpredominante = 50 OR materialpredominante = 97)#
+ALTER TABLE cb.hid_massa_dagua_a ADD CONSTRAINT hid_massa_dagua_a_regime_ks
+ CHECK (regime = 1 OR regime = 2 OR regime = 3 OR regime = 4 OR regime = 5)#
+ALTER TABLE cb.hid_natureza_fundo ADD CONSTRAINT hid_natureza_fundo_materialpredominante_ks
+ CHECK (materialpredominante = 0 OR materialpredominante = 98 OR materialpredominante = 12 OR materialpredominante = 13 OR materialpredominante = 14 OR materialpredominante = 15 OR materialpredominante = 16 OR materialpredominante = 18 OR materialpredominante = 19 OR materialpredominante = 20 OR materialpredominante = 21 OR materialpredominante = 4 OR materialpredominante = 50 OR materialpredominante = 97)#
+ALTER TABLE cb.hid_natureza_fundo_a ADD CONSTRAINT hid_natureza_fundo_a_materialpredominante_ks
+ CHECK (materialpredominante = 0 OR materialpredominante = 98 OR materialpredominante = 12 OR materialpredominante = 13 OR materialpredominante = 14 OR materialpredominante = 15 OR materialpredominante = 16 OR materialpredominante = 18 OR materialpredominante = 19 OR materialpredominante = 20 OR materialpredominante = 21 OR materialpredominante = 4 OR materialpredominante = 50 OR materialpredominante = 97)#
+ALTER TABLE cb.hid_natureza_fundo_l ADD CONSTRAINT hid_natureza_fundo_l_materialpredominante_ks
+ CHECK (materialpredominante = 0 OR materialpredominante = 98 OR materialpredominante = 12 OR materialpredominante = 13 OR materialpredominante = 14 OR materialpredominante = 15 OR materialpredominante = 16 OR materialpredominante = 18 OR materialpredominante = 19 OR materialpredominante = 20 OR materialpredominante = 21 OR materialpredominante = 4 OR materialpredominante = 50 OR materialpredominante = 97)#
+ALTER TABLE cb.hid_natureza_fundo_p ADD CONSTRAINT hid_natureza_fundo_p_materialpredominante_ks
+ CHECK (materialpredominante = 0 OR materialpredominante = 98 OR materialpredominante = 12 OR materialpredominante = 13 OR materialpredominante = 14 OR materialpredominante = 15 OR materialpredominante = 16 OR materialpredominante = 18 OR materialpredominante = 19 OR materialpredominante = 20 OR materialpredominante = 21 OR materialpredominante = 4 OR materialpredominante = 50 OR materialpredominante = 97)#
+ALTER TABLE cb.hid_ponto_inicio_drenagem_p ADD CONSTRAINT hid_ponto_inicio_drenagem_p_relacionado_ks
+ CHECK (relacionado = 14)#
+ALTER TABLE cb.hid_quebramar_molhe ADD CONSTRAINT hid_quebramar_molhe_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 4 OR matconstr = 99)#
+ALTER TABLE cb.hid_quebramar_molhe ADD CONSTRAINT hid_quebramar_molhe_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.hid_quebramar_molhe ADD CONSTRAINT hid_quebramar_molhe_situamare_ks
+ CHECK (situamare = 7 OR situamare = 8 OR situamare = 9)#
+ALTER TABLE cb.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 4 OR matconstr = 99)#
+ALTER TABLE cb.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_situamare_ks
+ CHECK (situamare = 7 OR situamare = 8 OR situamare = 9)#
+ALTER TABLE cb.hid_quebramar_molhe_l ADD CONSTRAINT hid_quebramar_molhe_l_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 4 OR matconstr = 99)#
+ALTER TABLE cb.hid_quebramar_molhe_l ADD CONSTRAINT hid_quebramar_molhe_l_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.hid_quebramar_molhe_l ADD CONSTRAINT hid_quebramar_molhe_l_situamare_ks
+ CHECK (situamare = 7 OR situamare = 8 OR situamare = 9)#
+ALTER TABLE cb.hid_trecho_drenagem_l ADD CONSTRAINT hid_trecho_drenagem_l_regime_ks
+ CHECK (regime = 1 OR regime = 2 OR regime = 3 OR regime = 4 OR regime = 5)#
+ALTER TABLE cb.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_regime_ks
+ CHECK (regime = 1 OR regime = 2 OR regime = 3 OR regime = 4 OR regime = 5)#
+ALTER TABLE cb.lim_delimitacao_fisica_l ADD CONSTRAINT lim_delimitacao_fisica_l_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 4 OR matconstr = 99 OR matconstr = 6 OR matconstr = 5 OR matconstr = 7 OR matconstr = 8)#
+ALTER TABLE cb.lim_outras_unid_protegidas_a ADD CONSTRAINT lim_outras_unid_protegidas_a_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 5)#
+ALTER TABLE cb.lim_outras_unid_protegidas_p ADD CONSTRAINT lim_outras_unid_protegidas_p_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 5)#
+ALTER TABLE cb.lim_unidade_conserv_nao_snuc_a ADD CONSTRAINT lim_unidade_conserv_nao_snuc_a_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 5)#
+ALTER TABLE cb.lim_unidade_conserv_nao_snuc_p ADD CONSTRAINT lim_unidade_conserv_nao_snuc_p_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 5)#
+ALTER TABLE cb.lim_unidade_protecao_integral_a ADD CONSTRAINT lim_unidade_protecao_integral_a_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 5)#
+ALTER TABLE cb.lim_unidade_protecao_integral_p ADD CONSTRAINT lim_unidade_protecao_integral_p_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 5)#
+ALTER TABLE cb.lim_unidade_uso_sustentavel_a ADD CONSTRAINT lim_unidade_uso_sustentavel_a_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 5)#
+ALTER TABLE cb.lim_unidade_uso_sustentavel_p ADD CONSTRAINT lim_unidade_uso_sustentavel_p_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 5)#
+ALTER TABLE cb.loc_edif_habitacional_a ADD CONSTRAINT loc_edif_habitacional_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 5 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97 OR matconstr = 7 OR matconstr = 8)#
+ALTER TABLE cb.loc_edif_habitacional_a ADD CONSTRAINT loc_edif_habitacional_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.loc_edif_habitacional_p ADD CONSTRAINT loc_edif_habitacional_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 5 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97 OR matconstr = 7 OR matconstr = 8)#
+ALTER TABLE cb.loc_edif_habitacional_p ADD CONSTRAINT loc_edif_habitacional_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.loc_edificacao ADD CONSTRAINT loc_edificacao_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 5 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97 OR matconstr = 7 OR matconstr = 8)#
+ALTER TABLE cb.loc_edificacao_a ADD CONSTRAINT loc_edificacao_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 5 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97 OR matconstr = 7 OR matconstr = 8)#
+ALTER TABLE cb.loc_edificacao_p ADD CONSTRAINT loc_edificacao_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 5 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99 OR matconstr = 97 OR matconstr = 7 OR matconstr = 8)#
+ALTER TABLE cb.pto_edif_constr_est_med_fen_a ADD CONSTRAINT pto_edif_constr_est_med_fen_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.pto_edif_constr_est_med_fen_a ADD CONSTRAINT pto_edif_constr_est_med_fen_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.pto_edif_constr_est_med_fen_p ADD CONSTRAINT pto_edif_constr_est_med_fen_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.pto_edif_constr_est_med_fen_p ADD CONSTRAINT pto_edif_constr_est_med_fen_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.pto_pto_controle_p ADD CONSTRAINT pto_pto_controle_p_tiporef_ks
+ CHECK (tiporef = 1 OR tiporef = 2 OR tiporef = 3)#
+ALTER TABLE cb.pto_pto_geod_topo_controle_p ADD CONSTRAINT pto_pto_geod_topo_controle_p_tiporef_ks
+ CHECK (tiporef = 1 OR tiporef = 2 OR tiporef = 3)#
+ALTER TABLE cb.rel_dolina_a ADD CONSTRAINT rel_dolina_a_tipoelemnat_ks
+ CHECK (tipoelemnat = 99)#
+ALTER TABLE cb.rel_dolina_p ADD CONSTRAINT rel_dolina_p_tipoelemnat_ks
+ CHECK (tipoelemnat = 99)#
+ALTER TABLE cb.rel_duna_a ADD CONSTRAINT rel_duna_a_tipoelemnat_ks
+ CHECK (tipoelemnat = 99)#
+ALTER TABLE cb.rel_duna_p ADD CONSTRAINT rel_duna_p_tipoelemnat_ks
+ CHECK (tipoelemnat = 99)#
+ALTER TABLE cb.rel_elemento_fisiog_natural ADD CONSTRAINT rel_elemento_fisiog_natural_tipoelemnat_ks
+ CHECK (tipoelemnat = 0 OR tipoelemnat = 1 OR tipoelemnat = 2 OR tipoelemnat = 3 OR tipoelemnat = 4 OR tipoelemnat = 5 OR tipoelemnat = 6 OR tipoelemnat = 7 OR tipoelemnat = 8 OR tipoelemnat = 9 OR tipoelemnat = 10 OR tipoelemnat = 11 OR tipoelemnat = 12 OR tipoelemnat = 99)#
+ALTER TABLE cb.rel_elemento_fisiog_natural_a ADD CONSTRAINT rel_elemento_fisiog_natural_a_tipoelemnat_ks
+ CHECK (tipoelemnat = 0 OR tipoelemnat = 1 OR tipoelemnat = 2 OR tipoelemnat = 3 OR tipoelemnat = 4 OR tipoelemnat = 5 OR tipoelemnat = 6 OR tipoelemnat = 7 OR tipoelemnat = 8 OR tipoelemnat = 9 OR tipoelemnat = 10 OR tipoelemnat = 11 OR tipoelemnat = 12 OR tipoelemnat = 99)#
+ALTER TABLE cb.rel_gruta_caverna_p ADD CONSTRAINT rel_gruta_caverna_p_tipoelemnat_ks
+ CHECK (tipoelemnat = 99)#
+ALTER TABLE cb.rel_pico_p ADD CONSTRAINT rel_pico_p_tipoelemnat_ks
+ CHECK (tipoelemnat = 99)#
+ALTER TABLE cb.rel_rocha_a ADD CONSTRAINT rel_rocha_a_tipoelemnat_ks
+ CHECK (tipoelemnat = 99)#
+ALTER TABLE cb.rel_rocha_p ADD CONSTRAINT rel_rocha_p_tipoelemnat_ks
+ CHECK (tipoelemnat = 99)#
+ALTER TABLE cb.sau_edif_saude_a ADD CONSTRAINT sau_edif_saude_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.sau_edif_saude_a ADD CONSTRAINT sau_edif_saude_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.sau_edif_saude_a ADD CONSTRAINT sau_edif_saude_a_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 26 OR tipoclassecnae = 27 OR tipoclassecnae = 28 OR tipoclassecnae = 29 OR tipoclassecnae = 31 OR tipoclassecnae = 98 OR tipoclassecnae = 30 OR tipoclassecnae = 0)#
+ALTER TABLE cb.sau_edif_saude_p ADD CONSTRAINT sau_edif_saude_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.sau_edif_saude_p ADD CONSTRAINT sau_edif_saude_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.sau_edif_saude_p ADD CONSTRAINT sau_edif_saude_p_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 26 OR tipoclassecnae = 27 OR tipoclassecnae = 28 OR tipoclassecnae = 29 OR tipoclassecnae = 31 OR tipoclassecnae = 98 OR tipoclassecnae = 30 OR tipoclassecnae = 0)#
+ALTER TABLE cb.sau_edif_servico_social_a ADD CONSTRAINT sau_edif_servico_social_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.sau_edif_servico_social_a ADD CONSTRAINT sau_edif_servico_social_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.sau_edif_servico_social_a ADD CONSTRAINT sau_edif_servico_social_a_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 32 OR tipoclassecnae = 33 OR tipoclassecnae = 98 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
+ALTER TABLE cb.sau_edif_servico_social_p ADD CONSTRAINT sau_edif_servico_social_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 97 OR matconstr = 99)#
+ALTER TABLE cb.sau_edif_servico_social_p ADD CONSTRAINT sau_edif_servico_social_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 3 OR situacaofisica = 5)#
+ALTER TABLE cb.sau_edif_servico_social_p ADD CONSTRAINT sau_edif_servico_social_p_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 32 OR tipoclassecnae = 33 OR tipoclassecnae = 98 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
+ALTER TABLE complexos.sau_org_saude ADD CONSTRAINT sau_org_saude_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15)#
+ALTER TABLE complexos.sau_org_saude ADD CONSTRAINT sau_org_saude_tipogrupocnae_ks
+ CHECK (tipogrupocnae = 8 OR tipogrupocnae = 9 OR tipogrupocnae = 99 OR tipogrupocnae = 0)#
+ALTER TABLE complexos.sau_org_saude_militar ADD CONSTRAINT sau_org_saude_militar_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15)#
+ALTER TABLE complexos.sau_org_saude_militar ADD CONSTRAINT sau_org_saude_militar_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 97 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
+ALTER TABLE complexos.sau_org_saude_militar ADD CONSTRAINT sau_org_saude_militar_tipogrupocnae_ks
+ CHECK (tipogrupocnae = 11 OR tipogrupocnae = 13 OR tipogrupocnae = 99 OR tipogrupocnae = 0)#
+ALTER TABLE complexos.sau_org_saude_pub ADD CONSTRAINT sau_org_saude_pub_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15)#
+ALTER TABLE complexos.sau_org_saude_pub ADD CONSTRAINT sau_org_saude_pub_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 97 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
+ALTER TABLE complexos.sau_org_saude_pub ADD CONSTRAINT sau_org_saude_pub_tipogrupocnae_ks
+ CHECK (tipogrupocnae = 8 OR tipogrupocnae = 9 OR tipogrupocnae = 99 OR tipogrupocnae = 0)#
+ALTER TABLE complexos.sau_org_servico_social ADD CONSTRAINT sau_org_servico_social_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15)#
+ALTER TABLE complexos.sau_org_servico_social ADD CONSTRAINT sau_org_servico_social_tipogrupocnae_ks
+ CHECK (tipogrupocnae = 10 OR tipogrupocnae = 99 OR tipogrupocnae = 0)#
+ALTER TABLE complexos.sau_org_servico_social_pub ADD CONSTRAINT sau_org_servico_social_pub_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 15)#
+ALTER TABLE complexos.sau_org_servico_social_pub ADD CONSTRAINT sau_org_servico_social_pub_tipoclassecnae_ks
+ CHECK (tipoclassecnae = 7 OR tipoclassecnae = 99 OR tipoclassecnae = 0)#
+ALTER TABLE complexos.sau_org_servico_social_pub ADD CONSTRAINT sau_org_servico_social_pub_tipogrupocnae_ks
+ CHECK (tipogrupocnae = 8 OR tipogrupocnae = 9 OR tipogrupocnae = 99 OR tipogrupocnae = 0)#
+ALTER TABLE cb.tra_atracadouro ADD CONSTRAINT tra_atracadouro_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_atracadouro ADD CONSTRAINT tra_atracadouro_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_atracadouro_a ADD CONSTRAINT tra_atracadouro_a_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_atracadouro_a ADD CONSTRAINT tra_atracadouro_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_atracadouro_l ADD CONSTRAINT tra_atracadouro_l_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_atracadouro_l ADD CONSTRAINT tra_atracadouro_l_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_atracadouro_p ADD CONSTRAINT tra_atracadouro_p_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_atracadouro_p ADD CONSTRAINT tra_atracadouro_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_caminho_aereo_l ADD CONSTRAINT tra_caminho_aereo_l_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.tra_ciclovia_l ADD CONSTRAINT tra_ciclovia_l_administracao_ks
+ CHECK (administracao = 0 OR administracao = 2 OR administracao = 3 OR administracao = 4 OR administracao = 6)#
+ALTER TABLE cb.tra_condutor_hidrico_l ADD CONSTRAINT tra_condutor_hidrico_l_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99)#
+ALTER TABLE cb.tra_eclusa ADD CONSTRAINT tra_eclusa_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_eclusa ADD CONSTRAINT tra_eclusa_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.tra_eclusa_a ADD CONSTRAINT tra_eclusa_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_eclusa_a ADD CONSTRAINT tra_eclusa_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.tra_eclusa_l ADD CONSTRAINT tra_eclusa_l_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_eclusa_l ADD CONSTRAINT tra_eclusa_l_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.tra_eclusa_p ADD CONSTRAINT tra_eclusa_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_eclusa_p ADD CONSTRAINT tra_eclusa_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.tra_edif_constr_aeroportuaria_a ADD CONSTRAINT tra_edif_constr_aeroportuaria_a_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6)#
+ALTER TABLE cb.tra_edif_constr_aeroportuaria_a ADD CONSTRAINT tra_edif_constr_aeroportuaria_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_edif_constr_aeroportuaria_p ADD CONSTRAINT tra_edif_constr_aeroportuaria_p_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6)#
+ALTER TABLE cb.tra_edif_constr_aeroportuaria_p ADD CONSTRAINT tra_edif_constr_aeroportuaria_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_edif_constr_portuaria_a ADD CONSTRAINT tra_edif_constr_portuaria_a_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_edif_constr_portuaria_a ADD CONSTRAINT tra_edif_constr_portuaria_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_edif_constr_portuaria_p ADD CONSTRAINT tra_edif_constr_portuaria_p_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_edif_constr_portuaria_p ADD CONSTRAINT tra_edif_constr_portuaria_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_edif_metro_ferroviaria_a ADD CONSTRAINT tra_edif_metro_ferroviaria_a_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_edif_metro_ferroviaria_a ADD CONSTRAINT tra_edif_metro_ferroviaria_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_edif_metro_ferroviaria_p ADD CONSTRAINT tra_edif_metro_ferroviaria_p_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_edif_metro_ferroviaria_p ADD CONSTRAINT tra_edif_metro_ferroviaria_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_edif_rodoviaria_a ADD CONSTRAINT tra_edif_rodoviaria_a_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_edif_rodoviaria_a ADD CONSTRAINT tra_edif_rodoviaria_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_edif_rodoviaria_a ADD CONSTRAINT tra_edif_rodoviaria_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.tra_edif_rodoviaria_p ADD CONSTRAINT tra_edif_rodoviaria_p_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_edif_rodoviaria_p ADD CONSTRAINT tra_edif_rodoviaria_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_edif_rodoviaria_p ADD CONSTRAINT tra_edif_rodoviaria_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.tra_fundeadouro ADD CONSTRAINT tra_fundeadouro_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_fundeadouro_a ADD CONSTRAINT tra_fundeadouro_a_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_fundeadouro_l ADD CONSTRAINT tra_fundeadouro_l_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_fundeadouro_p ADD CONSTRAINT tra_fundeadouro_p_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_galeria_bueiro ADD CONSTRAINT tra_galeria_bueiro_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99)#
+ALTER TABLE cb.tra_galeria_bueiro_l ADD CONSTRAINT tra_galeria_bueiro_l_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99)#
+ALTER TABLE cb.tra_galeria_bueiro_p ADD CONSTRAINT tra_galeria_bueiro_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99)#
+ALTER TABLE cb.tra_girador_ferroviario_p ADD CONSTRAINT tra_girador_ferroviario_p_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE complexos.tra_hidrovia ADD CONSTRAINT tra_hidrovia_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_passag_elevada_viaduto ADD CONSTRAINT tra_passag_elevada_viaduto_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_passag_elevada_viaduto ADD CONSTRAINT tra_passag_elevada_viaduto_modaluso_ks
+ CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 8 OR modaluso = 9)#
+ALTER TABLE cb.tra_passag_elevada_viaduto_l ADD CONSTRAINT tra_passag_elevada_viaduto_l_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_passag_elevada_viaduto_l ADD CONSTRAINT tra_passag_elevada_viaduto_l_modaluso_ks
+ CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 8 OR modaluso = 9)#
+ALTER TABLE cb.tra_passag_elevada_viaduto_p ADD CONSTRAINT tra_passag_elevada_viaduto_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_passag_elevada_viaduto_p ADD CONSTRAINT tra_passag_elevada_viaduto_p_modaluso_ks
+ CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 8 OR modaluso = 9)#
+ALTER TABLE cb.tra_patio ADD CONSTRAINT tra_patio_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_patio ADD CONSTRAINT tra_patio_modaluso_ks
+ CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 6 OR modaluso = 9 OR modaluso = 14 OR modaluso = 98)#
+ALTER TABLE cb.tra_patio_a ADD CONSTRAINT tra_patio_a_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_patio_a ADD CONSTRAINT tra_patio_a_modaluso_ks
+ CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 6 OR modaluso = 9 OR modaluso = 14 OR modaluso = 98)#
+ALTER TABLE cb.tra_patio_p ADD CONSTRAINT tra_patio_p_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_patio_p ADD CONSTRAINT tra_patio_p_modaluso_ks
+ CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 6 OR modaluso = 9 OR modaluso = 14 OR modaluso = 98)#
+ALTER TABLE cb.tra_pista_ponto_pouso ADD CONSTRAINT tra_pista_ponto_pouso_tipopista_ks
+ CHECK (tipopista = 9 OR tipopista = 10 OR tipopista = 11)#
+ALTER TABLE cb.tra_pista_ponto_pouso_a ADD CONSTRAINT tra_pista_ponto_pouso_a_tipopista_ks
+ CHECK (tipopista = 9 OR tipopista = 10 OR tipopista = 11)#
+ALTER TABLE cb.tra_pista_ponto_pouso_l ADD CONSTRAINT tra_pista_ponto_pouso_l_tipopista_ks
+ CHECK (tipopista = 9 OR tipopista = 10 OR tipopista = 11)#
+ALTER TABLE cb.tra_pista_ponto_pouso_p ADD CONSTRAINT tra_pista_ponto_pouso_p_tipopista_ks
+ CHECK (tipopista = 9 OR tipopista = 10 OR tipopista = 11)#
+ALTER TABLE cb.tra_ponte ADD CONSTRAINT tra_ponte_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_ponte ADD CONSTRAINT tra_ponte_modaluso_ks
+ CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 8 OR modaluso = 9)#
+ALTER TABLE cb.tra_ponte_l ADD CONSTRAINT tra_ponte_l_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_ponte_l ADD CONSTRAINT tra_ponte_l_modaluso_ks
+ CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 8 OR modaluso = 9)#
+ALTER TABLE cb.tra_ponte_p ADD CONSTRAINT tra_ponte_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_ponte_p ADD CONSTRAINT tra_ponte_p_modaluso_ks
+ CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 8 OR modaluso = 9)#
+ALTER TABLE cb.tra_posto_combustivel ADD CONSTRAINT tra_posto_combustivel_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_posto_combustivel ADD CONSTRAINT tra_posto_combustivel_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_posto_combustivel ADD CONSTRAINT tra_posto_combustivel_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.tra_posto_combustivel_a ADD CONSTRAINT tra_posto_combustivel_a_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_posto_combustivel_a ADD CONSTRAINT tra_posto_combustivel_a_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_posto_combustivel_a ADD CONSTRAINT tra_posto_combustivel_a_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.tra_posto_combustivel_p ADD CONSTRAINT tra_posto_combustivel_p_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_posto_combustivel_p ADD CONSTRAINT tra_posto_combustivel_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_posto_combustivel_p ADD CONSTRAINT tra_posto_combustivel_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.tra_travessia_pedestre ADD CONSTRAINT tra_travessia_pedestre_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_travessia_pedestre ADD CONSTRAINT tra_travessia_pedestre_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.tra_travessia_pedestre_l ADD CONSTRAINT tra_travessia_pedestre_l_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_travessia_pedestre_l ADD CONSTRAINT tra_travessia_pedestre_l_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.tra_trecho_duto_l ADD CONSTRAINT tra_trecho_duto_l_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 4 OR matconstr = 99)#
+ALTER TABLE cb.tra_trecho_duto_l ADD CONSTRAINT tra_trecho_duto_l_situacaofisica_ks
+ CHECK (situacaofisica = 0 OR situacaofisica = 1 OR situacaofisica = 2 OR situacaofisica = 5 OR situacaofisica = 3)#
+ALTER TABLE cb.tra_trecho_ferroviario_l ADD CONSTRAINT tra_trecho_ferroviario_l_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 7 OR administracao = 6 OR administracao = 97)#
+ALTER TABLE cb.tra_trecho_ferroviario_l ADD CONSTRAINT tra_trecho_ferroviario_l_jurisdicao_ks
+ CHECK (jurisdicao = 0 OR jurisdicao = 1 OR jurisdicao = 2 OR jurisdicao = 3 OR jurisdicao = 6)#
+ALTER TABLE cb.tra_trecho_ferroviario_l ADD CONSTRAINT tra_trecho_ferroviario_l_posicaorelativa_ks
+ CHECK (posicaorelativa = 0 OR posicaorelativa = 6 OR posicaorelativa = 3 OR posicaorelativa = 2)#
+ALTER TABLE cb.tra_trecho_hidroviario_l ADD CONSTRAINT tra_trecho_hidroviario_l_regime_ks
+ CHECK (regime = 0 OR regime = 1 OR regime = 6)#
+ALTER TABLE cb.tra_trecho_rodoviario_l ADD CONSTRAINT tra_trecho_rodoviario_l_administracao_ks
+ CHECK (administracao = 0 OR administracao = 1 OR administracao = 2 OR administracao = 3 OR administracao = 6 OR administracao = 7 OR administracao = 9 OR administracao = 10 OR administracao = 11 OR administracao = 12)#
+ALTER TABLE cb.tra_trecho_rodoviario_l ADD CONSTRAINT tra_trecho_rodoviario_l_jurisdicao_ks
+ CHECK (jurisdicao = 0 OR jurisdicao = 1 OR jurisdicao = 2 OR jurisdicao = 3 OR jurisdicao = 8 OR jurisdicao = 9 OR jurisdicao = 10 OR jurisdicao = 11 OR jurisdicao = 12)#
+ALTER TABLE cb.tra_tunel ADD CONSTRAINT tra_tunel_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_tunel ADD CONSTRAINT tra_tunel_modaluso_ks
+ CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 6 OR modaluso = 7 OR modaluso = 8)#
+ALTER TABLE cb.tra_tunel_l ADD CONSTRAINT tra_tunel_l_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_tunel_l ADD CONSTRAINT tra_tunel_l_modaluso_ks
+ CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 6 OR modaluso = 7 OR modaluso = 8)#
+ALTER TABLE cb.tra_tunel_p ADD CONSTRAINT tra_tunel_p_matconstr_ks
+ CHECK (matconstr = 0 OR matconstr = 1 OR matconstr = 2 OR matconstr = 3 OR matconstr = 5 OR matconstr = 99)#
+ALTER TABLE cb.tra_tunel_p ADD CONSTRAINT tra_tunel_p_modaluso_ks
+ CHECK (modaluso = 4 OR modaluso = 5 OR modaluso = 6 OR modaluso = 7 OR modaluso = 8)#
+ALTER TABLE cb.veg_brejo_pantano_a ADD CONSTRAINT veg_brejo_pantano_a_classificacaoporte_ks
+ CHECK (classificacaoporte = 1 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 0)#
+ALTER TABLE cb.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_classificacaoporte_ks
+ CHECK (classificacaoporte = 1 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 0)#
+ALTER TABLE cb.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_classificacaoporte_ks
+ CHECK (classificacaoporte = 1 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 0)#
+ALTER TABLE cb.veg_cerrado_cerradao_a ADD CONSTRAINT veg_cerrado_cerradao_a_classificacaoporte_ks
+ CHECK (classificacaoporte = 1 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 0)#
+ALTER TABLE cb.veg_floresta_a ADD CONSTRAINT veg_floresta_a_classificacaoporte_ks
+ CHECK (classificacaoporte = 1 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 0)#
+ALTER TABLE cb.veg_macega_chavascal_a ADD CONSTRAINT veg_macega_chavascal_a_classificacaoporte_ks
+ CHECK (classificacaoporte = 1 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 0)#
+ALTER TABLE cb.veg_mangue_a ADD CONSTRAINT veg_mangue_a_classificacaoporte_ks
+ CHECK (classificacaoporte = 1 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 0)#
+ALTER TABLE cb.veg_veg_area_contato_a ADD CONSTRAINT veg_veg_area_contato_a_classificacaoporte_ks
+ CHECK (classificacaoporte = 1 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 0)#
+ALTER TABLE cb.veg_veg_cultivada_a ADD CONSTRAINT veg_veg_cultivada_a_classificacaoporte_ks
+ CHECK (classificacaoporte = 0 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 3)#
+ALTER TABLE cb.veg_veg_restinga_a ADD CONSTRAINT veg_veg_restinga_a_classificacaoporte_ks
+ CHECK (classificacaoporte = 1 OR classificacaoporte = 2 OR classificacaoporte = 98 OR classificacaoporte = 0)#
+ALTER TABLE cb.aux_descontinuidade_geometrica ADD CONSTRAINT aux_descontinuidade_geometrica_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.aux_descontinuidade_geometrica_p ADD CONSTRAINT aux_descontinuidade_geometrica_p_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.hid_descontinuidade_geometrica_p ADD CONSTRAINT hid_descontinuidade_geometrica_p_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.aux_descontinuidade_geometrica_l ADD CONSTRAINT aux_descontinuidade_geometrica_l_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.hid_descontinuidade_geometrica_l ADD CONSTRAINT hid_descontinuidade_geometrica_l_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.rel_descontinuidade_geometrica_p ADD CONSTRAINT rel_descontinuidade_geometrica_p_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.rel_descontinuidade_geometrica_l ADD CONSTRAINT rel_descontinuidade_geometrica_l_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.aux_descontinuidade_geometrica_a ADD CONSTRAINT aux_descontinuidade_geometrica_a_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.rel_descontinuidade_geometrica_a ADD CONSTRAINT rel_descontinuidade_geometrica_a_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.veg_descontinuidade_geometrica_p ADD CONSTRAINT veg_descontinuidade_geometrica_p_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.veg_descontinuidade_geometrica_l ADD CONSTRAINT veg_descontinuidade_geometrica_l_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.tra_descontinuidade_geometrica_p ADD CONSTRAINT tra_descontinuidade_geometrica_p_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.tra_descontinuidade_geometrica_l ADD CONSTRAINT tra_descontinuidade_geometrica_l_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.tra_descontinuidade_geometrica_a ADD CONSTRAINT tra_descontinuidade_geometrica_a_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.enc_descontinuidade_geometrica_a ADD CONSTRAINT enc_descontinuidade_geometrica_a_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.enc_descontinuidade_geometrica_p ADD CONSTRAINT enc_descontinuidade_geometrica_p_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.asb_descontinuidade_geometrica_p ADD CONSTRAINT asb_descontinuidade_geometrica_p_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.asb_descontinuidade_geometrica_l ADD CONSTRAINT asb_descontinuidade_geometrica_l_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.asb_descontinuidade_geometrica_a ADD CONSTRAINT asb_descontinuidade_geometrica_a_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.edu_descontinuidade_geometrica_a ADD CONSTRAINT edu_descontinuidade_geometrica_a_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.edu_descontinuidade_geometrica_l ADD CONSTRAINT edu_descontinuidade_geometrica_l_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.edu_descontinuidade_geometrica_p ADD CONSTRAINT edu_descontinuidade_geometrica_p_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.eco_descontinuidade_geometrica_p ADD CONSTRAINT eco_descontinuidade_geometrica_p_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.eco_descontinuidade_geometrica_l ADD CONSTRAINT eco_descontinuidade_geometrica_l_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.eco_descontinuidade_geometrica_a ADD CONSTRAINT eco_descontinuidade_geometrica_a_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.loc_descontinuidade_geometrica_a ADD CONSTRAINT loc_descontinuidade_geometrica_a_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.loc_descontinuidade_geometrica_l ADD CONSTRAINT loc_descontinuidade_geometrica_l_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.loc_descontinuidade_geometrica_p ADD CONSTRAINT loc_descontinuidade_geometrica_p_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.pto_descontinuidade_geometrica_p ADD CONSTRAINT pto_descontinuidade_geometrica_p_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.pto_descontinuidade_geometrica_a ADD CONSTRAINT pto_descontinuidade_geometrica_a_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.lim_descontinuidade_geometrica_p ADD CONSTRAINT lim_descontinuidade_geometrica_p_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.lim_descontinuidade_geometrica_a ADD CONSTRAINT lim_descontinuidade_geometrica_a_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.adm_descontinuidade_geometrica_p ADD CONSTRAINT adm_descontinuidade_geometrica_p_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.adm_descontinuidade_geometrica_a ADD CONSTRAINT adm_descontinuidade_geometrica_a_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.sau_descontinuidade_geometrica_a ADD CONSTRAINT sau_descontinuidade_geometrica_a_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.sau_descontinuidade_geometrica_p ADD CONSTRAINT sau_descontinuidade_geometrica_p_geometriaaproximada_ks
+ CHECK (geometriaaproximada = 1)#
+ALTER TABLE cb.adm_area_pub_civil_a
+  ADD CONSTRAINT adm_area_pub_civil_a_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (code) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_area_pub_militar_a
   ADD CONSTRAINT adm_area_pub_militar_a_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_campo_quadra_p
-  ADD CONSTRAINT edu_campo_quadra_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_campo_quadra_a
-  ADD CONSTRAINT edu_campo_quadra_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.loc_hab_indigena_p
-  ADD CONSTRAINT loc_hab_indigena_p_id_aldeia_indigena_fk FOREIGN KEY (id_aldeia_indigena)
-   REFERENCES complexos.loc_aldeia_indigena (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_edif_comunic_p
-  ADD CONSTRAINT enc_edif_comunic_p_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
-   REFERENCES complexos.enc_complexo_comunicacao (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.loc_hab_indigena_a
-  ADD CONSTRAINT loc_hab_indigena_a_id_aldeia_indigena_fk FOREIGN KEY (id_aldeia_indigena)
-   REFERENCES complexos.loc_aldeia_indigena (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_edif_comunic_a
-  ADD CONSTRAINT enc_edif_comunic_a_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
-   REFERENCES complexos.enc_complexo_comunicacao (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_ext_mineral_a
-  ADD CONSTRAINT eco_ext_mineral_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_ext_mineral_p
-  ADD CONSTRAINT eco_ext_mineral_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_area_comunicacao_a
-  ADD CONSTRAINT enc_area_comunicacao_a_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
-   REFERENCES complexos.enc_complexo_comunicacao (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_ruina_a
-  ADD CONSTRAINT edu_ruina_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_edif_industrial_a
-  ADD CONSTRAINT eco_edif_industrial_a_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
-   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_ruina_p
-  ADD CONSTRAINT edu_ruina_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_edif_industrial_p
-  ADD CONSTRAINT eco_edif_industrial_p_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
-   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_grupo_transformadores_p
-  ADD CONSTRAINT enc_grupo_transformadores_p_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
-   REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_grupo_transformadores_a
-  ADD CONSTRAINT enc_grupo_transformadores_a_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
-   REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_edif_saneamento_a
-  ADD CONSTRAINT asb_edif_saneamento_a_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
-   REFERENCES complexos.asb_complexo_saneamento (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.sau_edif_saude_a
-  ADD CONSTRAINT sau_edif_saude_a_id_org_saude_fk FOREIGN KEY (id_org_saude)
-   REFERENCES complexos.sau_org_saude (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_edif_saneamento_p
-  ADD CONSTRAINT asb_edif_saneamento_p_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
-   REFERENCES complexos.asb_complexo_saneamento (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.sau_edif_saude_p
-  ADD CONSTRAINT sau_edif_saude_p_id_org_saude_fk FOREIGN KEY (id_org_saude)
-   REFERENCES complexos.sau_org_saude (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_area_energia_eletrica_a
-  ADD CONSTRAINT enc_area_energia_eletrica_a_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
-   REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_area_energia_eletrica_a
-  ADD CONSTRAINT enc_area_energia_eletrica_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_area_lazer_a
-  ADD CONSTRAINT edu_area_lazer_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_coreto_tribuna_a
-  ADD CONSTRAINT edu_coreto_tribuna_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_coreto_tribuna_p
-  ADD CONSTRAINT edu_coreto_tribuna_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_piscina_a
-  ADD CONSTRAINT edu_piscina_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_atracadouro_l
-  ADD CONSTRAINT tra_atracadouro_l_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.hid_barragem_p
-  ADD CONSTRAINT hid_barragem_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_atracadouro_a
-  ADD CONSTRAINT tra_atracadouro_a_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_atracadouro_p
-  ADD CONSTRAINT tra_atracadouro_p_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_edif_rodoviaria_p
-  ADD CONSTRAINT tra_edif_rodoviaria_p_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
-   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_area_abast_agua_a
-  ADD CONSTRAINT asb_area_abast_agua_a_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
-   REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_condutor_hidrico_l
-  ADD CONSTRAINT tra_condutor_hidrico_l_id_duto_fk FOREIGN KEY (id_duto)
-   REFERENCES complexos.tra_duto (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_condutor_hidrico_l
-  ADD CONSTRAINT tra_condutor_hidrico_l_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_edif_rodoviaria_a
-  ADD CONSTRAINT tra_edif_rodoviaria_a_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
-   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_trecho_ferroviario_l
-  ADD CONSTRAINT tra_trecho_ferroviario_l_id_via_ferrea_fk FOREIGN KEY (id_via_ferrea)
-   REFERENCES complexos.tra_via_ferrea (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_edif_constr_portuaria_a
-  ADD CONSTRAINT tra_edif_constr_portuaria_a_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.hid_trecho_drenagem_l
-  ADD CONSTRAINT hid_trecho_drenagem_l_id_trecho_curso_dagua_fk FOREIGN KEY (id_trecho_curso_dagua)
-   REFERENCES complexos.hid_trecho_curso_dagua (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_edif_constr_portuaria_p
-  ADD CONSTRAINT tra_edif_constr_portuaria_p_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.pto_pto_est_med_fenomenos_p
-  ADD CONSTRAINT pto_pto_est_med_fenomenos_p_id_est_med_fenomenos_fk FOREIGN KEY (id_est_med_fenomenos)
-   REFERENCES complexos.pto_est_med_fenomenos (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_edif_const_lazer_a
-  ADD CONSTRAINT edu_edif_const_lazer_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_a
-  ADD CONSTRAINT eco_deposito_geral_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_a
-  ADD CONSTRAINT eco_deposito_geral_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_a
-  ADD CONSTRAINT eco_deposito_geral_a_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_a
-  ADD CONSTRAINT eco_deposito_geral_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_a
-  ADD CONSTRAINT eco_deposito_geral_a_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_edif_const_lazer_p
-  ADD CONSTRAINT edu_edif_const_lazer_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_p
-  ADD CONSTRAINT eco_deposito_geral_p_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_p
-  ADD CONSTRAINT eco_deposito_geral_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_p
-  ADD CONSTRAINT eco_deposito_geral_p_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_p
-  ADD CONSTRAINT eco_deposito_geral_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_p
-  ADD CONSTRAINT eco_deposito_geral_p_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.sau_area_servico_social_a
-  ADD CONSTRAINT sau_area_servico_social_a_id_org_servico_social_fk FOREIGN KEY (id_org_servico_social)
-   REFERENCES complexos.sau_org_servico_social (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_posto_fiscal_a
-  ADD CONSTRAINT adm_posto_fiscal_a_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_dep_abast_agua_p
-  ADD CONSTRAINT asb_dep_abast_agua_p_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
-   REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_dep_abast_agua_a
-  ADD CONSTRAINT asb_dep_abast_agua_a_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
-   REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_dep_saneamento_a
-  ADD CONSTRAINT asb_dep_saneamento_a_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
-   REFERENCES complexos.asb_complexo_saneamento (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.loc_edif_habitacional_p
-  ADD CONSTRAINT loc_edif_habitacional_p_id_complexo_habitacional_fk FOREIGN KEY (id_complexo_habitacional)
-   REFERENCES complexos.loc_complexo_habitacional (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.loc_edif_habitacional_a
-  ADD CONSTRAINT loc_edif_habitacional_a_id_complexo_habitacional_fk FOREIGN KEY (id_complexo_habitacional)
-   REFERENCES complexos.loc_complexo_habitacional (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_area_ensino_a
-  ADD CONSTRAINT edu_area_ensino_a_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
-   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_fundeadouro_p
-  ADD CONSTRAINT tra_fundeadouro_p_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_p
-  ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_p_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_edif_constr_aeroportuaria_a
-  ADD CONSTRAINT tra_edif_constr_aeroportuaria_a_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_area_ruinas_a
-  ADD CONSTRAINT edu_area_ruinas_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_fundeadouro_l
-  ADD CONSTRAINT tra_fundeadouro_l_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_a
-  ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_a_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_fundeadouro_a
-  ADD CONSTRAINT tra_fundeadouro_a_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_edif_constr_aeroportuaria_p
-  ADD CONSTRAINT tra_edif_constr_aeroportuaria_p_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_dep_saneamento_p
-  ADD CONSTRAINT asb_dep_saneamento_p_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
-   REFERENCES complexos.asb_complexo_saneamento (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_caminho_aereo_l
-  ADD CONSTRAINT tra_caminho_aereo_l_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_edif_ext_mineral_p
-  ADD CONSTRAINT eco_edif_ext_mineral_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_area_pub_civil_a
-  ADD CONSTRAINT adm_area_pub_civil_a_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_edif_energia_a
-  ADD CONSTRAINT enc_edif_energia_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_edif_energia_a
-  ADD CONSTRAINT enc_edif_energia_a_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
-   REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_edif_energia_p
-  ADD CONSTRAINT enc_edif_energia_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_edif_energia_p
-  ADD CONSTRAINT enc_edif_energia_p_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
-   REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_area_ext_mineral_a
-  ADD CONSTRAINT eco_area_ext_mineral_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_pista_ponto_pouso_a
-  ADD CONSTRAINT tra_pista_ponto_pouso_a_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_p
-  ADD CONSTRAINT tra_patio_p_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_p
-  ADD CONSTRAINT tra_patio_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_p
-  ADD CONSTRAINT tra_patio_p_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_p
-  ADD CONSTRAINT tra_patio_p_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
-   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_p
-  ADD CONSTRAINT tra_patio_p_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
-   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_pista_ponto_pouso_l
-  ADD CONSTRAINT tra_pista_ponto_pouso_l_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_pista_ponto_pouso_p
-  ADD CONSTRAINT tra_pista_ponto_pouso_p_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
-   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_a
-  ADD CONSTRAINT tra_patio_a_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_a
-  ADD CONSTRAINT tra_patio_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_a
-  ADD CONSTRAINT tra_patio_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_a
-  ADD CONSTRAINT tra_patio_a_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
-   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_a
-  ADD CONSTRAINT tra_patio_a_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
-   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_pista_competicao_l
-  ADD CONSTRAINT edu_pista_competicao_l_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_area_industrial_a
-  ADD CONSTRAINT eco_area_industrial_a_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
-   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_area_religiosa_a
-  ADD CONSTRAINT edu_area_religiosa_a_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
-   REFERENCES complexos.edu_org_religiosa (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.hid_barragem_a
-  ADD CONSTRAINT hid_barragem_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.sau_area_saude_a
-  ADD CONSTRAINT sau_area_saude_a_id_org_saude_fk FOREIGN KEY (id_org_saude)
-   REFERENCES complexos.sau_org_saude (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.hid_barragem_l
-  ADD CONSTRAINT hid_barragem_l_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_edif_pub_militar_a
-  ADD CONSTRAINT adm_edif_pub_militar_a_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_area_agrop_ext_veg_pesca_a
-  ADD CONSTRAINT eco_area_agrop_ext_veg_pesca_a_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_edif_pub_militar_p
-  ADD CONSTRAINT adm_edif_pub_militar_p_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_trecho_hidroviario_l
-  ADD CONSTRAINT tra_trecho_hidroviario_l_id_hidrovia_fk FOREIGN KEY (id_hidrovia)
-   REFERENCES complexos.tra_hidrovia (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_identific_trecho_rod_p
-  ADD CONSTRAINT tra_identific_trecho_rod_p_id_via_rodoviaria_fk FOREIGN KEY (id_via_rodoviaria)
-   REFERENCES complexos.tra_via_rodoviaria (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.hid_trecho_massa_dagua_a
-  ADD CONSTRAINT hid_trecho_massa_dagua_a_id_trecho_curso_dagua_fk FOREIGN KEY (id_trecho_curso_dagua)
-   REFERENCES complexos.hid_trecho_curso_dagua (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.hid_reservatorio_hidrico_a
-  ADD CONSTRAINT hid_reservatorio_hidrico_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_antena_comunic_p
-  ADD CONSTRAINT enc_antena_comunic_p_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
-   REFERENCES complexos.enc_complexo_comunicacao (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.sau_edif_servico_social_p
-  ADD CONSTRAINT sau_edif_servico_social_p_id_org_servico_social_fk FOREIGN KEY (id_org_servico_social)
-   REFERENCES complexos.sau_org_servico_social (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.sau_edif_servico_social_a
-  ADD CONSTRAINT sau_edif_servico_social_a_id_org_servico_social_fk FOREIGN KEY (id_org_servico_social)
-   REFERENCES complexos.sau_org_servico_social (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_trecho_rodoviario_l
-  ADD CONSTRAINT tra_trecho_rodoviario_l_id_via_rodoviaria_fk FOREIGN KEY (id_via_rodoviaria)
-   REFERENCES complexos.tra_via_rodoviaria (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_trecho_duto_l
-  ADD CONSTRAINT tra_trecho_duto_l_id_duto_fk FOREIGN KEY (id_duto)
-   REFERENCES complexos.tra_duto (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_edif_ext_mineral_a
-  ADD CONSTRAINT eco_edif_ext_mineral_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_torre_comunic_p
-  ADD CONSTRAINT enc_torre_comunic_p_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
-   REFERENCES complexos.enc_complexo_comunicacao (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_edif_const_turistica_a
-  ADD CONSTRAINT edu_edif_const_turistica_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_girador_ferroviario_p
-  ADD CONSTRAINT tra_girador_ferroviario_p_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
-   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.pto_area_est_med_fenom_a
-  ADD CONSTRAINT pto_area_est_med_fenom_a_id_est_med_fenomenos_fk FOREIGN KEY (id_est_med_fenomenos)
-   REFERENCES complexos.pto_est_med_fenomenos (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_edif_const_turistica_p
-  ADD CONSTRAINT edu_edif_const_turistica_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_posto_pol_rod_a
-  ADD CONSTRAINT adm_posto_pol_rod_a_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_posto_pol_rod_a
-  ADD CONSTRAINT adm_posto_pol_rod_a_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_trecho_comunic_l
-  ADD CONSTRAINT enc_trecho_comunic_l_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_posto_pol_rod_p
-  ADD CONSTRAINT adm_posto_pol_rod_p_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_posto_pol_rod_p
-  ADD CONSTRAINT adm_posto_pol_rod_p_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_edif_ensino_a
-  ADD CONSTRAINT edu_edif_ensino_a_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
-   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_edif_ensino_p
-  ADD CONSTRAINT edu_edif_ensino_p_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
-   REFERENCES complexos.edu_org_ensino (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_posto_fiscal_p
-  ADD CONSTRAINT adm_posto_fiscal_p_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_area_estrut_transporte_a
-  ADD CONSTRAINT tra_area_estrut_transporte_a_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_termeletrica_a
-  ADD CONSTRAINT enc_termeletrica_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_termeletrica_p
-  ADD CONSTRAINT enc_termeletrica_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_hidreletrica_l
-  ADD CONSTRAINT enc_hidreletrica_l_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_area_comerc_serv_a
-  ADD CONSTRAINT eco_area_comerc_serv_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_hidreletrica_a
-  ADD CONSTRAINT enc_hidreletrica_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_hidreletrica_p
-  ADD CONSTRAINT enc_hidreletrica_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_funicular_p
-  ADD CONSTRAINT tra_funicular_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_funicular_l
-  ADD CONSTRAINT tra_funicular_l_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.loc_area_habitacional_a
-  ADD CONSTRAINT loc_area_habitacional_a_id_complexo_habitacional_fk FOREIGN KEY (id_complexo_habitacional)
-   REFERENCES complexos.loc_complexo_habitacional (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_edif_religiosa_a
-  ADD CONSTRAINT edu_edif_religiosa_a_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
-   REFERENCES complexos.edu_org_religiosa (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.edu_edif_religiosa_p
-  ADD CONSTRAINT edu_edif_religiosa_p_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
-   REFERENCES complexos.edu_org_religiosa (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_edif_pub_civil_p
-  ADD CONSTRAINT adm_edif_pub_civil_p_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_trecho_energia_l
-  ADD CONSTRAINT enc_trecho_energia_l_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_edif_metro_ferroviaria_p
-  ADD CONSTRAINT tra_edif_metro_ferroviaria_p_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
-   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
+   REFERENCES complexos.adm_org_pub_militar (code) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_edif_pub_civil_a
   ADD CONSTRAINT adm_edif_pub_civil_a_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
+   REFERENCES complexos.adm_org_pub_civil (code) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_edif_metro_ferroviaria_a
-  ADD CONSTRAINT tra_edif_metro_ferroviaria_a_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
-   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
+ALTER TABLE cb.adm_edif_pub_civil_p
+  ADD CONSTRAINT adm_edif_pub_civil_p_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (code) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.asb_edif_abast_agua_p
-  ADD CONSTRAINT asb_edif_abast_agua_p_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
-   REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
+ALTER TABLE cb.adm_edif_pub_militar_a
+  ADD CONSTRAINT adm_edif_pub_militar_a_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_edif_pub_militar_p
+  ADD CONSTRAINT adm_edif_pub_militar_p_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.adm_instituicao_publica
+  ADD CONSTRAINT adm_instituicao_publica_id_instituicao_publica_fk FOREIGN KEY (id_instituicao_publica)
+   REFERENCES complexos.adm_instituicao_publica (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.adm_org_pub_civil
+  ADD CONSTRAINT adm_org_pub_civil_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.adm_org_pub_civil
+  ADD CONSTRAINT adm_org_pub_civil_id_instituicao_publica_fk FOREIGN KEY (id_instituicao_publica)
+   REFERENCES complexos.adm_instituicao_publica (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.adm_org_pub_militar
+  ADD CONSTRAINT adm_org_pub_militar_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.adm_org_pub_militar
+  ADD CONSTRAINT adm_org_pub_militar_id_instituicao_publica_fk FOREIGN KEY (id_instituicao_publica)
+   REFERENCES complexos.adm_instituicao_publica (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_posto_fiscal
+  ADD CONSTRAINT adm_posto_fiscal_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_posto_fiscal_a
+  ADD CONSTRAINT adm_posto_fiscal_a_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_posto_fiscal_p
+  ADD CONSTRAINT adm_posto_fiscal_p_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_posto_pol_rod
+  ADD CONSTRAINT adm_posto_pol_rod_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_posto_pol_rod
+  ADD CONSTRAINT adm_posto_pol_rod_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_posto_pol_rod_a
+  ADD CONSTRAINT adm_posto_pol_rod_a_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_posto_pol_rod_a
+  ADD CONSTRAINT adm_posto_pol_rod_a_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_posto_pol_rod_p
+  ADD CONSTRAINT adm_posto_pol_rod_p_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_posto_pol_rod_p
+  ADD CONSTRAINT adm_posto_pol_rod_p_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_area_abast_agua_a
+  ADD CONSTRAINT asb_area_abast_agua_a_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
+   REFERENCES complexos.asb_complexo_abast_agua (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_area_saneamento_a
+  ADD CONSTRAINT asb_area_saneamento_a_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
+   REFERENCES complexos.asb_complexo_saneamento (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.asb_complexo_abast_agua
+  ADD CONSTRAINT asb_complexo_abast_agua_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.asb_complexo_saneamento
+  ADD CONSTRAINT asb_complexo_saneamento_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_abast_agua
+  ADD CONSTRAINT asb_dep_abast_agua_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
+   REFERENCES complexos.asb_complexo_abast_agua (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_abast_agua_a
+  ADD CONSTRAINT asb_dep_abast_agua_a_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
+   REFERENCES complexos.asb_complexo_abast_agua (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_abast_agua_p
+  ADD CONSTRAINT asb_dep_abast_agua_p_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
+   REFERENCES complexos.asb_complexo_abast_agua (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_saneamento
+  ADD CONSTRAINT asb_dep_saneamento_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
+   REFERENCES complexos.asb_complexo_saneamento (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_saneamento_a
+  ADD CONSTRAINT asb_dep_saneamento_a_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
+   REFERENCES complexos.asb_complexo_saneamento (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_saneamento_p
+  ADD CONSTRAINT asb_dep_saneamento_p_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
+   REFERENCES complexos.asb_complexo_saneamento (code) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_edif_abast_agua_a
   ADD CONSTRAINT asb_edif_abast_agua_a_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
-   REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
+   REFERENCES complexos.asb_complexo_abast_agua (code) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_est_gerad_energia_eletr_p
-  ADD CONSTRAINT enc_est_gerad_energia_eletr_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+ALTER TABLE cb.asb_edif_abast_agua_p
+  ADD CONSTRAINT asb_edif_abast_agua_p_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
+   REFERENCES complexos.asb_complexo_abast_agua (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_edif_saneamento_a
+  ADD CONSTRAINT asb_edif_saneamento_a_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
+   REFERENCES complexos.asb_complexo_saneamento (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_edif_saneamento_p
+  ADD CONSTRAINT asb_edif_saneamento_p_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
+   REFERENCES complexos.asb_complexo_saneamento (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_area_agrop_ext_veg_pesca_a
+  ADD CONSTRAINT eco_area_agrop_ext_veg_pesca_a_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_area_comerc_serv_a
+  ADD CONSTRAINT eco_area_comerc_serv_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_area_ext_mineral_a
+  ADD CONSTRAINT eco_area_ext_mineral_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_area_industrial_a
+  ADD CONSTRAINT eco_area_industrial_a_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
+   REFERENCES complexos.adm_org_industrial (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral
+  ADD CONSTRAINT eco_deposito_geral_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral
+  ADD CONSTRAINT eco_deposito_geral_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral
+  ADD CONSTRAINT eco_deposito_geral_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral
+  ADD CONSTRAINT eco_deposito_geral_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral
+  ADD CONSTRAINT eco_deposito_geral_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
+   REFERENCES complexos.tra_estrut_transporte (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_a
+  ADD CONSTRAINT eco_deposito_geral_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_a
+  ADD CONSTRAINT eco_deposito_geral_a_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
+   REFERENCES complexos.tra_estrut_transporte (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_a
+  ADD CONSTRAINT eco_deposito_geral_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_a
+  ADD CONSTRAINT eco_deposito_geral_a_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_a
+  ADD CONSTRAINT eco_deposito_geral_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_p
+  ADD CONSTRAINT eco_deposito_geral_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_p
+  ADD CONSTRAINT eco_deposito_geral_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_p
+  ADD CONSTRAINT eco_deposito_geral_p_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
+   REFERENCES complexos.tra_estrut_transporte (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_p
+  ADD CONSTRAINT eco_deposito_geral_p_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_p
+  ADD CONSTRAINT eco_deposito_geral_p_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_a
+  ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_a_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_p
+  ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_p_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_edif_comerc_serv_a
+  ADD CONSTRAINT eco_edif_comerc_serv_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_edif_comerc_serv_p
+  ADD CONSTRAINT eco_edif_comerc_serv_p_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_edif_ext_mineral_a
+  ADD CONSTRAINT eco_edif_ext_mineral_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_edif_ext_mineral_p
+  ADD CONSTRAINT eco_edif_ext_mineral_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_edif_industrial_a
+  ADD CONSTRAINT eco_edif_industrial_a_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
+   REFERENCES complexos.adm_org_industrial (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_edif_industrial_p
+  ADD CONSTRAINT eco_edif_industrial_p_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
+   REFERENCES complexos.adm_org_industrial (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_equip_agropec
+  ADD CONSTRAINT eco_equip_agropec_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (code) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_equip_agropec_a
-  ADD CONSTRAINT eco_equip_agropec_a_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
+  ADD CONSTRAINT eco_equip_agropec_a_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_equip_agropec_l
+  ADD CONSTRAINT eco_equip_agropec_l_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_equip_agropec_p
+  ADD CONSTRAINT eco_equip_agropec_p_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_ext_mineral
+  ADD CONSTRAINT eco_ext_mineral_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_ext_mineral_a
+  ADD CONSTRAINT eco_ext_mineral_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_ext_mineral_p
+  ADD CONSTRAINT eco_ext_mineral_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.eco_frigorifico_matadouro
+  ADD CONSTRAINT eco_frigorifico_matadouro_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.eco_frigorifico_matadouro
+  ADD CONSTRAINT eco_frigorifico_matadouro_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.eco_frigorifico_matadouro
+  ADD CONSTRAINT eco_frigorifico_matadouro_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.eco_madeireira
+  ADD CONSTRAINT eco_madeireira_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.eco_madeireira
+  ADD CONSTRAINT eco_madeireira_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.eco_madeireira
+  ADD CONSTRAINT eco_madeireira_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.eco_org_industrial
+  ADD CONSTRAINT eco_org_industrial_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.eco_org_industrial
+  ADD CONSTRAINT eco_org_industrial_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_area_ensino_a
+  ADD CONSTRAINT edu_area_ensino_a_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
+   REFERENCES complexos.edu_org_ensino_religioso (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_area_lazer_a
+  ADD CONSTRAINT edu_area_lazer_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_area_religiosa_a
+  ADD CONSTRAINT edu_area_religiosa_a_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
+   REFERENCES complexos.edu_org_religiosa (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_area_ruinas_a
+  ADD CONSTRAINT edu_area_ruinas_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_arquibancada
+  ADD CONSTRAINT edu_arquibancada_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_arquibancada_a
   ADD CONSTRAINT edu_arquibancada_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_equip_agropec_l
-  ADD CONSTRAINT eco_equip_agropec_l_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_equip_agropec_p
-  ADD CONSTRAINT eco_equip_agropec_p_id_org_agrop_ext_veg_pesca_fk FOREIGN KEY (id_org_agrop_ext_veg_pesca)
-   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_est_gerad_energia_eletr_a
-  ADD CONSTRAINT enc_est_gerad_energia_eletr_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_arquibancada_p
   ADD CONSTRAINT edu_arquibancada_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
-   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_campo_quadra
+  ADD CONSTRAINT edu_campo_quadra_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_campo_quadra_a
+  ADD CONSTRAINT edu_campo_quadra_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_campo_quadra_p
+  ADD CONSTRAINT edu_campo_quadra_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.edu_complexo_lazer
+  ADD CONSTRAINT edu_complexo_lazer_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.edu_complexo_lazer
+  ADD CONSTRAINT edu_complexo_lazer_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.edu_complexo_lazer
+  ADD CONSTRAINT edu_complexo_lazer_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
+   REFERENCES complexos.edu_org_ensino_religioso (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.edu_complexo_lazer
+  ADD CONSTRAINT edu_complexo_lazer_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
+   REFERENCES complexos.edu_org_religiosa (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_coreto_tribuna
+  ADD CONSTRAINT edu_coreto_tribuna_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_coreto_tribuna_a
+  ADD CONSTRAINT edu_coreto_tribuna_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_coreto_tribuna_p
+  ADD CONSTRAINT edu_coreto_tribuna_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_const_lazer_a
+  ADD CONSTRAINT edu_edif_const_lazer_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_const_lazer_p
+  ADD CONSTRAINT edu_edif_const_lazer_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_const_turistica_a
+  ADD CONSTRAINT edu_edif_const_turistica_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_const_turistica_p
+  ADD CONSTRAINT edu_edif_const_turistica_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_ensino_a
+  ADD CONSTRAINT edu_edif_ensino_a_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
+   REFERENCES complexos.edu_org_ensino_religioso (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_ensino_p
+  ADD CONSTRAINT edu_edif_ensino_p_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
+   REFERENCES complexos.edu_org_ensino_religioso (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_religiosa_a
+  ADD CONSTRAINT edu_edif_religiosa_a_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
+   REFERENCES complexos.edu_org_religiosa (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_religiosa_p
+  ADD CONSTRAINT edu_edif_religiosa_p_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
+   REFERENCES complexos.edu_org_religiosa (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.edu_org_ensino_militar
+  ADD CONSTRAINT edu_org_ensino_militar_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.edu_org_ensino_pub
+  ADD CONSTRAINT edu_org_ensino_pub_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.edu_org_ensino_religioso
+  ADD CONSTRAINT edu_org_ensino_religioso_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
+   REFERENCES complexos.edu_org_religiosa (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_piscina_a
+  ADD CONSTRAINT edu_piscina_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_pista_competicao_l
+  ADD CONSTRAINT edu_pista_competicao_l_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_ruina
+  ADD CONSTRAINT edu_ruina_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_ruina_a
+  ADD CONSTRAINT edu_ruina_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_ruina_p
+  ADD CONSTRAINT edu_ruina_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_antena_comunic_p
+  ADD CONSTRAINT enc_antena_comunic_p_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
+   REFERENCES complexos.enc_complexo_comunicacao (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_area_comunicacao_a
+  ADD CONSTRAINT enc_area_comunicacao_a_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
+   REFERENCES complexos.enc_complexo_comunicacao (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_area_energia_eletrica_a
+  ADD CONSTRAINT enc_area_energia_eletrica_a_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
+   REFERENCES complexos.enc_subestacao_ener_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_area_energia_eletrica_a
+  ADD CONSTRAINT enc_area_energia_eletrica_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.enc_complexo_comunicacao
+  ADD CONSTRAINT enc_complexo_comunicacao_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.enc_complexo_gerad_energ_eletr
+  ADD CONSTRAINT enc_complexo_gerad_energ_eletr_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_edif_comunic_a
+  ADD CONSTRAINT enc_edif_comunic_a_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
+   REFERENCES complexos.enc_complexo_comunicacao (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_edif_comunic_p
+  ADD CONSTRAINT enc_edif_comunic_p_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
+   REFERENCES complexos.enc_complexo_comunicacao (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_edif_energia_a
+  ADD CONSTRAINT enc_edif_energia_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_edif_energia_a
+  ADD CONSTRAINT enc_edif_energia_a_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
+   REFERENCES complexos.enc_subestacao_ener_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_edif_energia_p
+  ADD CONSTRAINT enc_edif_energia_p_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
+   REFERENCES complexos.enc_subestacao_ener_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_edif_energia_p
+  ADD CONSTRAINT enc_edif_energia_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_est_gerad_energia_eletr
+  ADD CONSTRAINT enc_est_gerad_energia_eletr_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_est_gerad_energia_eletr_a
+  ADD CONSTRAINT enc_est_gerad_energia_eletr_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_est_gerad_energia_eletr_l
   ADD CONSTRAINT enc_est_gerad_energia_eletr_l_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.eco_org_industrial ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.eco_madeireira ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.edu_org_ensino ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.adm_org_pub_militar ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.adm_org_pub_civil ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.edu_org_religiosa ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.tra_estrut_transporte ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.tra_estrut_apoio ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.tra_complexo_aeroportuario ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.eco_frigorifico_matadouro ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.asb_complexo_saneamento ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.asb_complexo_abast_agua ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.adm_org_comerc_serv ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.edu_org_ensino_militar ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.edu_org_ensino_pub ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.adm_org_ext_mineral ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.eco_org_agrop_ext_veg_pesca ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.edu_org_ensino_religioso ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.enc_complexo_gerad_energ_eletr ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.enc_subestacao_ener_eletr ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.enc_complexo_comunicacao ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.tra_complexo_portuario ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.pto_est_med_fenomenos ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.tra_duto ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_localidade_p ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_vila_p ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_cidade_p ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_capital_p ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.edu_complexo_lazer ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_aglomerado_rural_p ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.sau_org_saude ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.sau_org_saude_pub ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.sau_org_servico_social ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.sau_org_saude_militar ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.sau_org_servico_social_pub ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.adm_instituicao_publica ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_aglomerado_rural_isolado_p ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_aglom_rural_de_ext_urbana_p ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.hid_curso_dagua ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.hid_trecho_curso_dagua ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.tra_via_rodoviaria ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.tra_via_ferrea ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.tra_hidrovia ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.loc_complexo_habitacional ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.loc_aldeia_indigena ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE cb.enc_est_gerad_energia_eletr_p
+  ADD CONSTRAINT enc_est_gerad_energia_eletr_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_grupo_transformadores
+  ADD CONSTRAINT enc_grupo_transformadores_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
+   REFERENCES complexos.enc_subestacao_ener_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_grupo_transformadores_a
+  ADD CONSTRAINT enc_grupo_transformadores_a_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
+   REFERENCES complexos.enc_subestacao_ener_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_grupo_transformadores_p
+  ADD CONSTRAINT enc_grupo_transformadores_p_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
+   REFERENCES complexos.enc_subestacao_ener_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_hidreletrica_a
+  ADD CONSTRAINT enc_hidreletrica_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_hidreletrica_l
+  ADD CONSTRAINT enc_hidreletrica_l_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_hidreletrica_p
+  ADD CONSTRAINT enc_hidreletrica_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.enc_subestacao_ener_eletr
+  ADD CONSTRAINT enc_subestacao_ener_eletr_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_termeletrica_a
+  ADD CONSTRAINT enc_termeletrica_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_termeletrica_p
+  ADD CONSTRAINT enc_termeletrica_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_torre_comunic_p
+  ADD CONSTRAINT enc_torre_comunic_p_id_complexo_comunicacao_fk FOREIGN KEY (id_complexo_comunicacao)
+   REFERENCES complexos.enc_complexo_comunicacao (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_trecho_comunic_l
+  ADD CONSTRAINT enc_trecho_comunic_l_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_trecho_energia_l
+  ADD CONSTRAINT enc_trecho_energia_l_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.hid_barragem
+  ADD CONSTRAINT hid_barragem_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.hid_barragem_a
+  ADD CONSTRAINT hid_barragem_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.hid_barragem_l
+  ADD CONSTRAINT hid_barragem_l_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.hid_barragem_p
+  ADD CONSTRAINT hid_barragem_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.hid_reservatorio_hidrico_a
+  ADD CONSTRAINT hid_reservatorio_hidrico_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.hid_trecho_curso_dagua
+  ADD CONSTRAINT hid_trecho_curso_dagua_id_curso_dagua_fk FOREIGN KEY (id_curso_dagua)
+   REFERENCES complexos.hid_curso_dagua (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.hid_trecho_drenagem_l
+  ADD CONSTRAINT hid_trecho_drenagem_l_id_trecho_curso_dagua_fk FOREIGN KEY (id_trecho_curso_dagua)
+   REFERENCES complexos.hid_trecho_curso_dagua (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.hid_trecho_massa_dagua_a
+  ADD CONSTRAINT hid_trecho_massa_dagua_a_id_trecho_curso_dagua_fk FOREIGN KEY (id_trecho_curso_dagua)
+   REFERENCES complexos.hid_trecho_curso_dagua (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.loc_area_habitacional_a
+  ADD CONSTRAINT loc_area_habitacional_a_id_complexo_habitacional_fk FOREIGN KEY (id_complexo_habitacional)
+   REFERENCES complexos.loc_complexo_habitacional (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.loc_edif_habitacional_a
+  ADD CONSTRAINT loc_edif_habitacional_a_id_complexo_habitacional_fk FOREIGN KEY (id_complexo_habitacional)
+   REFERENCES complexos.loc_complexo_habitacional (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.loc_edif_habitacional_p
+  ADD CONSTRAINT loc_edif_habitacional_p_id_complexo_habitacional_fk FOREIGN KEY (id_complexo_habitacional)
+   REFERENCES complexos.loc_complexo_habitacional (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.loc_hab_indigena
+  ADD CONSTRAINT loc_hab_indigena_id_aldeia_indigena_fk FOREIGN KEY (id_aldeia_indigena)
+   REFERENCES complexos.loc_aldeia_indigena (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.loc_hab_indigena_a
+  ADD CONSTRAINT loc_hab_indigena_a_id_aldeia_indigena_fk FOREIGN KEY (id_aldeia_indigena)
+   REFERENCES complexos.loc_aldeia_indigena (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.loc_hab_indigena_p
+  ADD CONSTRAINT loc_hab_indigena_p_id_aldeia_indigena_fk FOREIGN KEY (id_aldeia_indigena)
+   REFERENCES complexos.loc_aldeia_indigena (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.pto_area_est_med_fenom_a
+  ADD CONSTRAINT pto_area_est_med_fenom_a_id_est_med_fenomenos_fk FOREIGN KEY (id_est_med_fenomenos)
+   REFERENCES complexos.pto_pto_est_med_fenomenos_p (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.pto_est_med_fenomenos
+  ADD CONSTRAINT pto_est_med_fenomenos_id_est_med_fenomenos_fk FOREIGN KEY (id_est_med_fenomenos)
+   REFERENCES complexos.pto_pto_est_med_fenomenos_p (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.pto_pto_est_med_fenomenos_p
+  ADD CONSTRAINT pto_pto_est_med_fenomenos_p_id_est_med_fenomenos_fk FOREIGN KEY (id_est_med_fenomenos)
+   REFERENCES complexos.pto_pto_est_med_fenomenos_p (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_area_saude_a
+  ADD CONSTRAINT sau_area_saude_a_id_org_saude_fk FOREIGN KEY (id_org_saude)
+   REFERENCES complexos.sau_org_saude (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_area_servico_social_a
+  ADD CONSTRAINT sau_area_servico_social_a_id_org_servico_social_fk FOREIGN KEY (id_org_servico_social)
+   REFERENCES complexos.sau_org_servico_social (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_edif_saude_a
+  ADD CONSTRAINT sau_edif_saude_a_id_org_saude_fk FOREIGN KEY (id_org_saude)
+   REFERENCES complexos.sau_org_saude (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_edif_saude_p
+  ADD CONSTRAINT sau_edif_saude_p_id_org_saude_fk FOREIGN KEY (id_org_saude)
+   REFERENCES complexos.sau_org_saude (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_edif_servico_social_a
+  ADD CONSTRAINT sau_edif_servico_social_a_id_org_servico_social_fk FOREIGN KEY (id_org_servico_social)
+   REFERENCES complexos.sau_org_servico_social (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_edif_servico_social_p
+  ADD CONSTRAINT sau_edif_servico_social_p_id_org_servico_social_fk FOREIGN KEY (id_org_servico_social)
+   REFERENCES complexos.sau_org_servico_social (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.sau_org_saude_militar
+  ADD CONSTRAINT sau_org_saude_militar_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.sau_org_saude_pub
+  ADD CONSTRAINT sau_org_saude_pub_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.sau_org_servico_social_pub
+  ADD CONSTRAINT sau_org_servico_social_pub_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_area_estrut_transporte_a
+  ADD CONSTRAINT tra_area_estrut_transporte_a_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
+   REFERENCES complexos.tra_estrut_transporte (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_atracadouro
+  ADD CONSTRAINT tra_atracadouro_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_atracadouro_a
+  ADD CONSTRAINT tra_atracadouro_a_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_atracadouro_l
+  ADD CONSTRAINT tra_atracadouro_l_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_atracadouro_p
+  ADD CONSTRAINT tra_atracadouro_p_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_caminho_aereo_l
+  ADD CONSTRAINT tra_caminho_aereo_l_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_condutor_hidrico_l
+  ADD CONSTRAINT tra_condutor_hidrico_l_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_condutor_hidrico_l
+  ADD CONSTRAINT tra_condutor_hidrico_l_id_duto_fk FOREIGN KEY (id_duto)
+   REFERENCES complexos.tra_duto (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_edif_constr_aeroportuaria_a
+  ADD CONSTRAINT tra_edif_constr_aeroportuaria_a_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_edif_constr_aeroportuaria_p
+  ADD CONSTRAINT tra_edif_constr_aeroportuaria_p_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_edif_constr_portuaria_a
+  ADD CONSTRAINT tra_edif_constr_portuaria_a_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_edif_constr_portuaria_p
+  ADD CONSTRAINT tra_edif_constr_portuaria_p_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_edif_metro_ferroviaria_a
+  ADD CONSTRAINT tra_edif_metro_ferroviaria_a_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_edif_metro_ferroviaria_p
+  ADD CONSTRAINT tra_edif_metro_ferroviaria_p_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_edif_rodoviaria_a
+  ADD CONSTRAINT tra_edif_rodoviaria_a_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_edif_rodoviaria_p
+  ADD CONSTRAINT tra_edif_rodoviaria_p_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_fundeadouro
+  ADD CONSTRAINT tra_fundeadouro_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_fundeadouro_a
+  ADD CONSTRAINT tra_fundeadouro_a_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_fundeadouro_l
+  ADD CONSTRAINT tra_fundeadouro_l_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_fundeadouro_p
+  ADD CONSTRAINT tra_fundeadouro_p_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_funicular
+  ADD CONSTRAINT tra_funicular_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_funicular_l
+  ADD CONSTRAINT tra_funicular_l_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_funicular_p
+  ADD CONSTRAINT tra_funicular_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_girador_ferroviario_p
+  ADD CONSTRAINT tra_girador_ferroviario_p_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_identific_trecho_rod_p
+  ADD CONSTRAINT tra_identific_trecho_rod_p_id_via_rodoviaria_fk FOREIGN KEY (id_via_rodoviaria)
+   REFERENCES complexos.tra_via_rodoviaria (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio
+  ADD CONSTRAINT tra_patio_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
+   REFERENCES complexos.adm_org_industrial (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio
+  ADD CONSTRAINT tra_patio_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
+   REFERENCES complexos.edu_org_ensino_religioso (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio
+  ADD CONSTRAINT tra_patio_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio
+  ADD CONSTRAINT tra_patio_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio
+  ADD CONSTRAINT tra_patio_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
+   REFERENCES complexos.tra_estrut_transporte (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
+   REFERENCES complexos.adm_org_industrial (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
+   REFERENCES complexos.tra_estrut_transporte (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
+   REFERENCES complexos.edu_org_ensino_religioso (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
+   REFERENCES complexos.edu_org_ensino_religioso (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
+   REFERENCES complexos.adm_org_industrial (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
+   REFERENCES complexos.tra_estrut_transporte (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_pista_ponto_pouso
+  ADD CONSTRAINT tra_pista_ponto_pouso_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_pista_ponto_pouso_a
+  ADD CONSTRAINT tra_pista_ponto_pouso_a_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_pista_ponto_pouso_l
+  ADD CONSTRAINT tra_pista_ponto_pouso_l_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_pista_ponto_pouso_p
+  ADD CONSTRAINT tra_pista_ponto_pouso_p_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_trecho_duto_l
+  ADD CONSTRAINT tra_trecho_duto_l_id_duto_fk FOREIGN KEY (id_duto)
+   REFERENCES complexos.tra_duto (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_trecho_ferroviario_l
+  ADD CONSTRAINT tra_trecho_ferroviario_l_id_via_ferrea_fk FOREIGN KEY (id_via_ferrea)
+   REFERENCES complexos.tra_via_ferrea (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_trecho_hidroviario_l
+  ADD CONSTRAINT tra_trecho_hidroviario_l_id_hidrovia_fk FOREIGN KEY (id_hidrovia)
+   REFERENCES complexos.hid_hidrovia (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_trecho_rodoviario_l
+  ADD CONSTRAINT tra_trecho_rodoviario_l_id_via_rodoviaria_fk FOREIGN KEY (id_via_rodoviaria)
+   REFERENCES complexos.tra_via_rodoviaria (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
 CREATE OR REPLACE FUNCTION edu_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $edu_descontinuidade_geometrica_l_avoid_multi_return$
     DECLARE
     BEGIN

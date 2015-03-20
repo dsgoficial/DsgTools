@@ -158,9 +158,9 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             self.dlg = ManageComplexDialog(self.iface, self.db, self.complexCombo.currentText())
         else:
             self.dlg = ManageComplexDialog(self.iface, self.db, 'complexos.'+self.complexCombo.currentText())
-        #connectes a signal to update the tree widget when done
+        #connects a signal to update the tree widget when done
         QObject.connect(self.dlg, SIGNAL(("tableUpdated()")), self.loadAssociatedFeatures)
-        #connectes a signal to disassociate features from complex before removal
+        #connects a signal to disassociate features from complex before removal
         QObject.connect(self.dlg, SIGNAL(("markedToRemove( PyQt_PyObject )")), self.disassociateFeatures)
         result = self.dlg.exec_()
         if result:
