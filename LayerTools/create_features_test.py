@@ -130,4 +130,4 @@ class CreateFeatureTest():
         return geom
 
 layers = iface.mapCanvas().layers()
-creator = CreateFeatureTest(layers, False)
+creator = CreateFeatureTest(layers, True)

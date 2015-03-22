@@ -632,12 +632,15 @@ CREATE TABLE cb.sau_edif_saude_p(
 	tipoclassecnae smallint NOT NULL,
 	nivelatencao smallint NOT NULL,
 	id_org_saude uuid,
+	id_org_saude_militar uuid,
+	id_org_saude_pub uuid,
 	CONSTRAINT sau_edif_saude_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_edificacao_p)
 #
 CREATE TABLE cb.sau_edif_servico_social_p(
 	tipoclassecnae smallint NOT NULL,
 	id_org_servico_social uuid,
+	id_org_servico_social_pub uuid,
 	CONSTRAINT sau_edif_servico_social_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_edificacao_p)
 #
@@ -680,12 +683,16 @@ CREATE TABLE cb.adm_edif_pub_militar_a(
 CREATE TABLE cb.sau_edif_servico_social_a(
 	tipoclassecnae smallint NOT NULL,
 	id_org_servico_social uuid,
+	id_org_servico_social_pub uuid,
 	CONSTRAINT sau_edif_servico_social_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_edificacao_a)
 #
 CREATE TABLE cb.edu_edif_ensino_a(
 	tipoclassecnae smallint NOT NULL,
 	id_org_ensino uuid,
+	id_org_ensino_militar uuid,
+	id_org_ensino_pub uuid,
+	id_org_ensino_religioso uuid,
 	CONSTRAINT edu_edif_ensino_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_edificacao_a)
 #
@@ -715,6 +722,8 @@ CREATE TABLE cb.sau_edif_saude_a(
 	tipoclassecnae smallint NOT NULL,
 	nivelatencao smallint NOT NULL,
 	id_org_saude uuid,
+	id_org_saude_militar uuid,
+	id_org_saude_pub uuid,
 	CONSTRAINT sau_edif_saude_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_edificacao_a)
 #
@@ -802,6 +811,12 @@ CREATE TABLE cb.asb_dep_abast_agua(
 	situacaofisica smallint NOT NULL,
 	operacional smallint NOT NULL,
 	id_complexo_abast_agua uuid,
+	id_org_ext_mineral uuid,
+	id_org_agropec_ext_veg_pesca uuid,
+	id_org_comerc_serv smallint,
+	id_org_industrial uuid,
+	id_frigorifico_matadouro uuid,
+	id_madeireira uuid,
 	CONSTRAINT asb_dep_abast_agua_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -851,7 +866,9 @@ CREATE TABLE cb.eco_deposito_geral(
 	id_org_ext_mineral uuid,
 	id_org_agropec_ext_veg_pesca uuid,
 	id_complexo_gerad_energ_eletr uuid,
-	id_estrut_transporte uuid,
+	id_estrut_apoio uuid,
+	id_complexo_aeroportuario uuid,
+	id_complexo_portuario uuid,
 	CONSTRAINT eco_deposito_geral_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -1178,14 +1195,14 @@ CREATE TABLE cb.tra_edif_metro_ferroviaria_a(
 ) INHERITS(cb.loc_edificacao_a)
 #
 CREATE TABLE cb.tra_edif_rodoviaria_p(
-	tipoedifrod smallint NOT NULL DEFAULT 0,
+	tipoedifrod smallint NOT NULL,
 	administracao smallint NOT NULL,
 	id_estrut_apoio uuid,
 	CONSTRAINT tra_edif_rodoviaria_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_edificacao_p)
 #
 CREATE TABLE cb.tra_edif_rodoviaria_a(
-	tipoedifrod smallint NOT NULL DEFAULT 0,
+	tipoedifrod smallint NOT NULL,
 	administracao smallint NOT NULL,
 	id_estrut_apoio uuid,
 	CONSTRAINT tra_edif_rodoviaria_a_pk PRIMARY KEY (id)
@@ -1235,6 +1252,8 @@ CREATE TABLE cb.eco_edif_industrial_p(
 	chamine smallint NOT NULL,
 	tipodivisaocnae smallint NOT NULL,
 	id_org_industrial uuid,
+	id_frigorifico_matadouro uuid,
+	id_madeireira uuid,
 	CONSTRAINT eco_edif_industrial_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_edificacao_p)
 #
@@ -1247,6 +1266,8 @@ CREATE TABLE cb.eco_edif_industrial_a(
 	chamine smallint NOT NULL,
 	tipodivisaocnae smallint NOT NULL,
 	id_org_industrial uuid,
+	id_frigorifico_matadouro uuid,
+	id_madeireira uuid,
 	CONSTRAINT eco_edif_industrial_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_edificacao_a)
 #
@@ -1259,16 +1280,25 @@ CREATE TABLE cb.tra_patio(
 	id serial NOT NULL,
 	nome varchar(80),
 	nomeabrev varchar(50),
-	geometriaaproximada smallint NOT NULL DEFAULT 2,
+	geometriaaproximada smallint NOT NULL,
 	modaluso smallint NOT NULL,
 	administracao smallint NOT NULL,
-	operacional smallint NOT NULL DEFAULT 0,
-	situacaofisica smallint NOT NULL DEFAULT 0,
-	id_estrut_transporte uuid,
+	operacional smallint NOT NULL,
+	situacaofisica smallint NOT NULL,
+	id_estrut_apoio uuid,
+	id_complexo_aeroportuario uuid,
+	id_complexo_portuario uuid,
 	id_org_ext_mineral uuid,
 	id_org_comerc_serv uuid,
+	id_org_agropec_ext_veg_pesca uuid,
 	id_org_industrial uuid,
+	id_frigorifico_matadouro uuid,
+	id_madeireira uuid,
 	id_org_ensino uuid,
+	id_org_ensino_militar uuid,
+	id_org_ensino_pub uuid,
+	id_org_ensino_religioso uuid,
+	id_complexo_lazer uuid,
 	CONSTRAINT tra_patio_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -1322,10 +1352,11 @@ CREATE TABLE cb.tra_funicular(
 	id serial NOT NULL,
 	nome varchar(80),
 	nomeabrev varchar(50),
-	geometriaaproximada smallint NOT NULL DEFAULT 2,
-	operacional smallint NOT NULL DEFAULT 0,
-	situacaofisica smallint NOT NULL DEFAULT 0,
+	geometriaaproximada smallint NOT NULL,
+	operacional smallint NOT NULL,
+	situacaofisica smallint NOT NULL,
 	id_org_ext_mineral uuid,
+	id_complexo_lazer uuid,
 	CONSTRAINT tra_funicular_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
 )#
@@ -1931,6 +1962,7 @@ CREATE TABLE cb.tra_caminho_aereo_l(
 	situacaofisica smallint NOT NULL,
 	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
 	id_org_ext_mineral uuid,
+	id_complexo_lazer uuid,
 	CONSTRAINT tra_caminho_aereo_l_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.tra_entroncamento_p(
@@ -2036,8 +2068,11 @@ CREATE TABLE complexos.edu_complexo_lazer(
 	administracao smallint NOT NULL,
 	id_org_religiosa uuid,
 	id_org_pub_civil uuid,
-	id_org_ensino uuid,
 	id_org_pub_militar uuid,
+	id_org_ensino uuid,
+	id_org_ensino_militar uuid,
+	id_org_ensino_pub uuid,
+	id_org_ensino_religioso uuid,
 	CONSTRAINT laz_complexo_lazer_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -2348,14 +2383,17 @@ CREATE TABLE cb.sau_area_servico_social_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	id_org_servico_social uuid,
+	id_org_servico_social_pub uuid,
 	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
 	CONSTRAINT sau_area_servico_social_a_pk PRIMARY KEY (id)
 )#
 CREATE TABLE cb.sau_area_saude_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
 	id_org_saude uuid,
+	id_org_saude_militar uuid,
+	id_org_saude_pub uuid,
+	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
 	CONSTRAINT sau_area_saude_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -2388,6 +2426,9 @@ CREATE TABLE cb.edu_area_ensino_a(
 	geometriaaproximada smallint NOT NULL,
 	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
 	id_org_ensino uuid,
+	id_org_ensino_militar uuid,
+	id_org_ensino_religioso uuid,
+	id_org_ensino_pub uuid,
 	CONSTRAINT cbc_area_ensino_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
@@ -2417,6 +2458,9 @@ CREATE TABLE cb.asb_cemiterio_p(
 CREATE TABLE cb.edu_edif_ensino_p(
 	tipoclassecnae smallint NOT NULL,
 	id_org_ensino uuid,
+	id_org_ensino_militar uuid,
+	id_org_ensino_pub uuid,
+	id_org_ensino_religioso uuid,
 	CONSTRAINT edu_edif_ensino_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_edificacao_p)
 #
@@ -2449,6 +2493,8 @@ CREATE TABLE cb.eco_area_industrial_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	id_org_industrial uuid,
+	id_frigorifico_matadouro uuid,
+	id_madeireira smallint,
 	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
 	CONSTRAINT eco_area_industrial_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 100)
@@ -2456,7 +2502,9 @@ CREATE TABLE cb.eco_area_industrial_a(
 CREATE TABLE cb.tra_area_estrut_transporte_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	id_estrut_transporte uuid,
+	id_estrut_apoio uuid,
+	id_complexo_aeroportuario uuid,
+	id_complexo_portuario uuid,
 	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cbc_area_estrut_transporte_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -3644,6 +3692,9 @@ CREATE TABLE cb.tra_posto_combustivel(
 	operacional smallint NOT NULL,
 	situacaofisica smallint NOT NULL,
 	matconstr smallint NOT NULL,
+	id_estrut_apoio uuid,
+	id_complexo_aeroportuario uuid,
+	id_complexo_portuario uuid,
 	CONSTRAINT tra_posto_combustivel_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.tra_posto_combustivel OWNER TO postgres#
@@ -3812,6 +3863,7 @@ CREATE TABLE complexos.loc_aldeia_indigena(
 ALTER TABLE complexos.loc_aldeia_indigena OWNER TO postgres#
 CREATE TABLE cb.loc_edif_habitacional_p(
 	id_complexo_habitacional uuid,
+	id_aldeia_indigena uuid,
 	CONSTRAINT loc_edif_habitacional_p_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_edificacao_p)
 #
@@ -3829,6 +3881,7 @@ CREATE TABLE cb.loc_hab_indigena(
 ALTER TABLE cb.loc_hab_indigena OWNER TO postgres#
 CREATE TABLE cb.loc_edif_habitacional_a(
 	id_complexo_habitacional uuid,
+	id_aldeia_indigena uuid,
 	CONSTRAINT loc_edif_habitacional_a_pk PRIMARY KEY (id)
 ) INHERITS(cb.loc_edificacao_a)
 #
@@ -3844,6 +3897,7 @@ CREATE TABLE cb.loc_area_habitacional_a(
 	nome varchar(80),
 	nomeabrev varchar(50),
 	id_complexo_habitacional uuid,
+	id_aldeia_indigena uuid,
 	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
 	CONSTRAINT loc_area_habitacional_a_pk PRIMARY KEY (id)
 )#
@@ -4321,82 +4375,25 @@ CREATE TABLE cb.sau_descontinuidade_geometrica_p(
 ) INHERITS(cb.aux_descontinuidade_geometrica_p)
 #
 ALTER TABLE cb.sau_descontinuidade_geometrica_p OWNER TO postgres#
-create view public.complex_schema as
-select distinct * from (select nsp.nspname as complex_schema, t2.relname as complex, npsagreg.nspname as aggregated_schema, t.relname as aggregated_class, at1.attname as column_name
-from pg_constraint c
-        left join pg_class t on c.conrelid = t.oid left join pg_class t2 on c.confrelid = t2.oid
-        left join pg_namespace nsp on t2.relnamespace = nsp.oid
-        left join pg_attribute as at1 on (at1.attnum=c.conkey[1]) and (at1.attrelid=c.conrelid)
-        left join pg_namespace npsagreg on t.relnamespace = npsagreg.oid
-        where contype = 'f' and (nsp.nspname = 'complexos')
-        UNION
-select nsp.nspname as complex_schema, COALESCE(inheritancetree.child,t2.relname) as complex, npsagreg.nspname as aggregated_schema, t.relname as aggregated_class, at1.attname as column_name
-from pg_constraint c
-        left join pg_class t on c.conrelid = t.oid left join pg_class t2 on c.confrelid = t2.oid
-        left join pg_namespace nsp on t2.relnamespace = nsp.oid
-        join
-                (SELECT tier1.*,c.relname AS child, c.oid as childoid, p.relname AS parent, tier2p.relname as grandpa, tier3p.relname as grandgrandpa, tier4p.relname as gggpa, COALESCE(tier4p.relname,tier3p.relname,tier2p.relname,p.relname) as ancestral,COALESCE(tier4p.oid,tier3p.oid,tier2p.oid,p.oid) as ancestralOid
-                FROM
-                    pg_inherits as tier1
-                    left JOIN pg_class AS c ON (inhrelid=c.oid)
-                    left JOIN pg_class as p ON (inhparent=p.oid)
-                    left join pg_inherits as tier2 on tier2.inhrelid=tier1.inhparent
-                    left JOIN pg_class as tier2p ON (tier2.inhparent=tier2p.oid)
-                    left join pg_inherits as tier3 on tier3.inhrelid=tier2.inhparent
-                    left JOIN pg_class as tier3p ON (tier3.inhparent=tier3p.oid)
-                    left join pg_inherits as tier4 on tier4.inhrelid=tier3.inhparent
-                    left JOIN pg_class as tier4p ON (tier4.inhparent=tier4p.oid)
-                    ) as inheritancetree
-                on t2.oid=ancestralOid
-        left join pg_attribute as at1 on (at1.attnum=c.conkey[1]) and (at1.attrelid=c.conrelid)
-        left join pg_namespace npsagreg on t.relnamespace = npsagreg.oid
-        where contype = 'f' and (nsp.nspname = 'complexos')
-        order by complex asc) as foo#
-ALTER TABLE complexos.eco_org_industrial ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.eco_madeireira ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.edu_org_ensino ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.adm_org_pub_militar ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.adm_org_pub_civil ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.edu_org_religiosa ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.tra_estrut_transporte ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.tra_estrut_apoio ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.tra_complexo_aeroportuario ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.eco_frigorifico_matadouro ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.asb_complexo_saneamento ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.asb_complexo_abast_agua ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.adm_org_comerc_serv ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.edu_org_ensino_militar ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.edu_org_ensino_pub ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.adm_org_ext_mineral ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.eco_org_agrop_ext_veg_pesca ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.edu_org_ensino_religioso ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.enc_complexo_gerad_energ_eletr ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.enc_subestacao_ener_eletr ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.enc_complexo_comunicacao ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.tra_complexo_portuario ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.pto_est_med_fenomenos ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.tra_duto ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_localidade_p ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_vila_p ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_cidade_p ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_capital_p ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.edu_complexo_lazer ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_aglomerado_rural_p ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.sau_org_saude ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.sau_org_saude_pub ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.sau_org_servico_social ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.sau_org_saude_militar ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.sau_org_servico_social_pub ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.adm_instituicao_publica ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_aglomerado_rural_isolado_p ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_aglom_rural_de_ext_urbana_p ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.hid_curso_dagua ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.hid_trecho_curso_dagua ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.tra_via_rodoviaria ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.tra_via_ferrea ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.tra_hidrovia ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.loc_complexo_habitacional ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE complexos.loc_aldeia_indigena ALTER COLUMN id set default uuid_generate_v4()#
+CREATE OR REPLACE VIEW public.complex_schema AS 
+ SELECT DISTINCT foo.complex_schema,
+    foo.complex,
+    foo.aggregated_schema,
+    foo.aggregated_class,
+    foo.column_name
+   FROM ( SELECT nsp.nspname AS complex_schema,
+            t2.relname AS complex,
+            npsagreg.nspname AS aggregated_schema,
+            t.relname AS aggregated_class,
+            at1.attname AS column_name
+           FROM pg_constraint c
+             LEFT JOIN pg_class t ON c.conrelid = t.oid
+             LEFT JOIN pg_class t2 ON c.confrelid = t2.oid
+             LEFT JOIN pg_namespace nsp ON t2.relnamespace = nsp.oid
+             LEFT JOIN pg_attribute at1 ON at1.attnum = c.conkey[1] AND at1.attrelid = c.conrelid
+             LEFT JOIN pg_namespace npsagreg ON t.relnamespace = npsagreg.oid
+          WHERE c.contype = 'f'::"char" AND nsp.nspname = 'complexos'::name
+     ORDER BY 2) foo#
 CREATE TABLE dominios.geracao (
  code smallint NOT NULL,
  code_name text NOT NULL, CONSTRAINT
@@ -16404,12 +16401,12 @@ ALTER TABLE complexos.adm_org_pub_civil
    REFERENCES complexos.adm_instituicao_publica (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.adm_org_pub_militar
-  ADD CONSTRAINT adm_org_pub_militar_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.adm_org_pub_militar
   ADD CONSTRAINT adm_org_pub_militar_id_instituicao_publica_fk FOREIGN KEY (id_instituicao_publica)
    REFERENCES complexos.adm_instituicao_publica (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.adm_org_pub_militar
+  ADD CONSTRAINT adm_org_pub_militar_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_posto_fiscal
   ADD CONSTRAINT adm_posto_fiscal_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
@@ -16424,20 +16421,20 @@ ALTER TABLE cb.adm_posto_fiscal_p
    REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_posto_pol_rod
-  ADD CONSTRAINT adm_posto_pol_rod_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_posto_pol_rod
   ADD CONSTRAINT adm_posto_pol_rod_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
    REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.adm_posto_pol_rod_a
-  ADD CONSTRAINT adm_posto_pol_rod_a_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
+ALTER TABLE cb.adm_posto_pol_rod
+  ADD CONSTRAINT adm_posto_pol_rod_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_posto_pol_rod_a
   ADD CONSTRAINT adm_posto_pol_rod_a_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
    REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.adm_posto_pol_rod_a
+  ADD CONSTRAINT adm_posto_pol_rod_a_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_posto_pol_rod_p
   ADD CONSTRAINT adm_posto_pol_rod_p_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
@@ -16464,16 +16461,76 @@ ALTER TABLE complexos.asb_complexo_saneamento
    REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_dep_abast_agua
+  ADD CONSTRAINT asb_dep_abast_agua_id_madeireira_fk FOREIGN KEY (id_madeireira)
+   REFERENCES complexos.eco_madeireira (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_abast_agua
   ADD CONSTRAINT asb_dep_abast_agua_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
    REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_abast_agua
+  ADD CONSTRAINT asb_dep_abast_agua_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_abast_agua
+  ADD CONSTRAINT asb_dep_abast_agua_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_abast_agua
+  ADD CONSTRAINT asb_dep_abast_agua_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
+   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_abast_agua
+  ADD CONSTRAINT asb_dep_abast_agua_id_frigorifico_matadouro_fk FOREIGN KEY (id_frigorifico_matadouro)
+   REFERENCES complexos.eco_frigorifico_matadouro (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_abast_agua_a
+  ADD CONSTRAINT asb_dep_abast_agua_a_id_madeireira_fk FOREIGN KEY (id_madeireira)
+   REFERENCES complexos.eco_madeireira (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_abast_agua_a
+  ADD CONSTRAINT asb_dep_abast_agua_a_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_dep_abast_agua_a
   ADD CONSTRAINT asb_dep_abast_agua_a_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
    REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_abast_agua_a
+  ADD CONSTRAINT asb_dep_abast_agua_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_abast_agua_a
+  ADD CONSTRAINT asb_dep_abast_agua_a_id_frigorifico_matadouro_fk FOREIGN KEY (id_frigorifico_matadouro)
+   REFERENCES complexos.eco_frigorifico_matadouro (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_abast_agua_a
+  ADD CONSTRAINT asb_dep_abast_agua_a_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
+   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_abast_agua_p
+  ADD CONSTRAINT asb_dep_abast_agua_p_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
+   REFERENCES complexos.eco_org_industrial (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_dep_abast_agua_p
   ADD CONSTRAINT asb_dep_abast_agua_p_id_complexo_abast_agua_fk FOREIGN KEY (id_complexo_abast_agua)
    REFERENCES complexos.asb_complexo_abast_agua (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_abast_agua_p
+  ADD CONSTRAINT asb_dep_abast_agua_p_id_frigorifico_matadouro_fk FOREIGN KEY (id_frigorifico_matadouro)
+   REFERENCES complexos.eco_frigorifico_matadouro (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_abast_agua_p
+  ADD CONSTRAINT asb_dep_abast_agua_p_id_madeireira_fk FOREIGN KEY (id_madeireira)
+   REFERENCES complexos.eco_madeireira (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_abast_agua_p
+  ADD CONSTRAINT asb_dep_abast_agua_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.asb_dep_abast_agua_p
+  ADD CONSTRAINT asb_dep_abast_agua_p_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_dep_saneamento
   ADD CONSTRAINT asb_dep_saneamento_id_complexo_saneamento_fk FOREIGN KEY (id_complexo_saneamento)
@@ -16519,6 +16576,26 @@ ALTER TABLE cb.eco_area_industrial_a
   ADD CONSTRAINT eco_area_industrial_a_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
    REFERENCES complexos.eco_org_industrial (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_area_industrial_a
+  ADD CONSTRAINT eco_area_industrial_a_id_frigorifico_matadouro_fk FOREIGN KEY (id_frigorifico_matadouro)
+   REFERENCES complexos.eco_frigorifico_matadouro (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral
+  ADD CONSTRAINT eco_deposito_geral_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral
+  ADD CONSTRAINT eco_deposito_geral_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral
+  ADD CONSTRAINT eco_deposito_geral_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral
+  ADD CONSTRAINT eco_deposito_geral_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_deposito_geral
   ADD CONSTRAINT eco_deposito_geral_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
    REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
@@ -16531,25 +16608,21 @@ ALTER TABLE cb.eco_deposito_geral
   ADD CONSTRAINT eco_deposito_geral_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
    REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral
-  ADD CONSTRAINT eco_deposito_geral_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral
-  ADD CONSTRAINT eco_deposito_geral_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_a
-  ADD CONSTRAINT eco_deposito_geral_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.eco_deposito_geral_a
-  ADD CONSTRAINT eco_deposito_geral_a_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_deposito_geral_a
   ADD CONSTRAINT eco_deposito_geral_a_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
    REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_a
+  ADD CONSTRAINT eco_deposito_geral_a_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_a
+  ADD CONSTRAINT eco_deposito_geral_a_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_a
+  ADD CONSTRAINT eco_deposito_geral_a_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_deposito_geral_a
   ADD CONSTRAINT eco_deposito_geral_a_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
@@ -16559,25 +16632,37 @@ ALTER TABLE cb.eco_deposito_geral_a
   ADD CONSTRAINT eco_deposito_geral_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
    REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_a
+  ADD CONSTRAINT eco_deposito_geral_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_deposito_geral_p
-  ADD CONSTRAINT eco_deposito_geral_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+  ADD CONSTRAINT eco_deposito_geral_p_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_p
+  ADD CONSTRAINT eco_deposito_geral_p_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_deposito_geral_p
+  ADD CONSTRAINT eco_deposito_geral_p_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_deposito_geral_p
   ADD CONSTRAINT eco_deposito_geral_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
    REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_deposito_geral_p
-  ADD CONSTRAINT eco_deposito_geral_p_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
+  ADD CONSTRAINT eco_deposito_geral_p_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_deposito_geral_p
   ADD CONSTRAINT eco_deposito_geral_p_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
    REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_deposito_geral_p
-  ADD CONSTRAINT eco_deposito_geral_p_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
+  ADD CONSTRAINT eco_deposito_geral_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_a
   ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_a_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
@@ -16607,9 +16692,25 @@ ALTER TABLE cb.eco_edif_industrial_a
   ADD CONSTRAINT eco_edif_industrial_a_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
    REFERENCES complexos.eco_org_industrial (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_edif_industrial_a
+  ADD CONSTRAINT eco_edif_industrial_a_id_madeireira_fk FOREIGN KEY (id_madeireira)
+   REFERENCES complexos.eco_madeireira (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_edif_industrial_a
+  ADD CONSTRAINT eco_edif_industrial_a_id_frigorifico_matadouro_fk FOREIGN KEY (id_frigorifico_matadouro)
+   REFERENCES complexos.eco_frigorifico_matadouro (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_industrial_p
   ADD CONSTRAINT eco_edif_industrial_p_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
    REFERENCES complexos.eco_org_industrial (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_edif_industrial_p
+  ADD CONSTRAINT eco_edif_industrial_p_id_madeireira_fk FOREIGN KEY (id_madeireira)
+   REFERENCES complexos.eco_madeireira (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.eco_edif_industrial_p
+  ADD CONSTRAINT eco_edif_industrial_p_id_frigorifico_matadouro_fk FOREIGN KEY (id_frigorifico_matadouro)
+   REFERENCES complexos.eco_frigorifico_matadouro (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_equip_agropec
   ADD CONSTRAINT eco_equip_agropec_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
@@ -16652,28 +16753,40 @@ ALTER TABLE complexos.eco_frigorifico_matadouro
    REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.eco_madeireira
-  ADD CONSTRAINT eco_madeireira_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
-   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.eco_madeireira
   ADD CONSTRAINT eco_madeireira_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
    REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.eco_madeireira
+  ADD CONSTRAINT eco_madeireira_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
+   REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.eco_madeireira
   ADD CONSTRAINT eco_madeireira_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
    REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.eco_org_industrial
-  ADD CONSTRAINT eco_org_industrial_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
-   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.eco_org_industrial
   ADD CONSTRAINT eco_org_industrial_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
    REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.eco_org_industrial
+  ADD CONSTRAINT eco_org_industrial_id_org_pub_militar_fk FOREIGN KEY (id_org_pub_militar)
+   REFERENCES complexos.adm_org_pub_militar (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_area_ensino_a
   ADD CONSTRAINT edu_area_ensino_a_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
    REFERENCES complexos.edu_org_ensino_religioso (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_area_ensino_a
+  ADD CONSTRAINT edu_area_ensino_a_id_org_ensino_militar_fk FOREIGN KEY (id_org_ensino_militar)
+   REFERENCES complexos.edu_org_ensino_militar (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_area_ensino_a
+  ADD CONSTRAINT edu_area_ensino_a_id_org_ensino_religioso_fk FOREIGN KEY (id_org_ensino_religioso)
+   REFERENCES complexos.edu_org_ensino_religioso (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_area_ensino_a
+  ADD CONSTRAINT edu_area_ensino_a_id_org_ensino_pub_fk FOREIGN KEY (id_org_ensino_pub)
+   REFERENCES complexos.edu_org_ensino_pub (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_area_lazer_a
   ADD CONSTRAINT edu_area_lazer_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
@@ -16712,6 +16825,14 @@ ALTER TABLE cb.edu_campo_quadra_p
    REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.edu_complexo_lazer
+  ADD CONSTRAINT edu_complexo_lazer_id_org_ensino_pub_fk FOREIGN KEY (id_org_ensino_pub)
+   REFERENCES complexos.edu_org_ensino_pub (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.edu_complexo_lazer
+  ADD CONSTRAINT edu_complexo_lazer_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
+   REFERENCES complexos.edu_org_religiosa (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.edu_complexo_lazer
   ADD CONSTRAINT edu_complexo_lazer_id_org_pub_civil_fk FOREIGN KEY (id_org_pub_civil)
    REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -16724,8 +16845,12 @@ ALTER TABLE complexos.edu_complexo_lazer
    REFERENCES complexos.edu_org_ensino_religioso (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.edu_complexo_lazer
-  ADD CONSTRAINT edu_complexo_lazer_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
-   REFERENCES complexos.edu_org_religiosa (id) MATCH FULL
+  ADD CONSTRAINT edu_complexo_lazer_id_org_ensino_militar_fk FOREIGN KEY (id_org_ensino_militar)
+   REFERENCES complexos.edu_org_ensino_militar (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.edu_complexo_lazer
+  ADD CONSTRAINT edu_complexo_lazer_id_org_ensino_religioso_fk FOREIGN KEY (id_org_ensino_religioso)
+   REFERENCES complexos.edu_org_ensino_religioso (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_coreto_tribuna
   ADD CONSTRAINT edu_coreto_tribuna_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
@@ -16759,9 +16884,33 @@ ALTER TABLE cb.edu_edif_ensino_a
   ADD CONSTRAINT edu_edif_ensino_a_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
    REFERENCES complexos.edu_org_ensino_religioso (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_ensino_a
+  ADD CONSTRAINT edu_edif_ensino_a_id_org_ensino_religioso_fk FOREIGN KEY (id_org_ensino_religioso)
+   REFERENCES complexos.edu_org_ensino_religioso (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_ensino_a
+  ADD CONSTRAINT edu_edif_ensino_a_id_org_ensino_militar_fk FOREIGN KEY (id_org_ensino_militar)
+   REFERENCES complexos.edu_org_ensino_militar (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_ensino_a
+  ADD CONSTRAINT edu_edif_ensino_a_id_org_ensino_pub_fk FOREIGN KEY (id_org_ensino_pub)
+   REFERENCES complexos.edu_org_ensino_pub (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_ensino_p
+  ADD CONSTRAINT edu_edif_ensino_p_id_org_ensino_religioso_fk FOREIGN KEY (id_org_ensino_religioso)
+   REFERENCES complexos.edu_org_ensino_religioso (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_ensino_p
   ADD CONSTRAINT edu_edif_ensino_p_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
    REFERENCES complexos.edu_org_ensino_religioso (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_ensino_p
+  ADD CONSTRAINT edu_edif_ensino_p_id_org_ensino_militar_fk FOREIGN KEY (id_org_ensino_militar)
+   REFERENCES complexos.edu_org_ensino_militar (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.edu_edif_ensino_p
+  ADD CONSTRAINT edu_edif_ensino_p_id_org_ensino_pub_fk FOREIGN KEY (id_org_ensino_pub)
+   REFERENCES complexos.edu_org_ensino_pub (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_religiosa_a
   ADD CONSTRAINT edu_edif_religiosa_a_id_org_religiosa_fk FOREIGN KEY (id_org_religiosa)
@@ -16844,12 +16993,12 @@ ALTER TABLE cb.enc_edif_energia_a
    REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_edif_energia_p
-  ADD CONSTRAINT enc_edif_energia_p_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
-   REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.enc_edif_energia_p
   ADD CONSTRAINT enc_edif_energia_p_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
    REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.enc_edif_energia_p
+  ADD CONSTRAINT enc_edif_energia_p_id_subestacao_ener_eletr_fk FOREIGN KEY (id_subestacao_ener_eletr)
+   REFERENCES complexos.enc_subestacao_ener_eletr (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_est_gerad_energia_eletr
   ADD CONSTRAINT enc_est_gerad_energia_eletr_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
@@ -16948,6 +17097,10 @@ ALTER TABLE cb.hid_trecho_massa_dagua_a
    REFERENCES complexos.hid_trecho_curso_dagua (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.loc_area_habitacional_a
+  ADD CONSTRAINT loc_area_habitacional_a_id_aldeia_indigena_fk FOREIGN KEY (id_aldeia_indigena)
+   REFERENCES complexos.loc_aldeia_indigena (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.loc_area_habitacional_a
   ADD CONSTRAINT loc_area_habitacional_a_id_complexo_habitacional_fk FOREIGN KEY (id_complexo_habitacional)
    REFERENCES complexos.loc_complexo_habitacional (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -16955,9 +17108,17 @@ ALTER TABLE cb.loc_edif_habitacional_a
   ADD CONSTRAINT loc_edif_habitacional_a_id_complexo_habitacional_fk FOREIGN KEY (id_complexo_habitacional)
    REFERENCES complexos.loc_complexo_habitacional (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.loc_edif_habitacional_a
+  ADD CONSTRAINT loc_edif_habitacional_a_id_aldeia_indigena_fk FOREIGN KEY (id_aldeia_indigena)
+   REFERENCES complexos.loc_aldeia_indigena (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.loc_edif_habitacional_p
   ADD CONSTRAINT loc_edif_habitacional_p_id_complexo_habitacional_fk FOREIGN KEY (id_complexo_habitacional)
    REFERENCES complexos.loc_complexo_habitacional (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.loc_edif_habitacional_p
+  ADD CONSTRAINT loc_edif_habitacional_p_id_aldeia_indigena_fk FOREIGN KEY (id_aldeia_indigena)
+   REFERENCES complexos.loc_aldeia_indigena (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.loc_hab_indigena
   ADD CONSTRAINT loc_hab_indigena_id_aldeia_indigena_fk FOREIGN KEY (id_aldeia_indigena)
@@ -16984,24 +17145,60 @@ ALTER TABLE cb.pto_pto_est_med_fenomenos_p
    REFERENCES complexos.pto_est_med_fenomenos (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.sau_area_saude_a
+  ADD CONSTRAINT sau_area_saude_a_id_org_saude_militar_fk FOREIGN KEY (id_org_saude_militar)
+   REFERENCES complexos.sau_org_saude_militar (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_area_saude_a
   ADD CONSTRAINT sau_area_saude_a_id_org_saude_fk FOREIGN KEY (id_org_saude)
    REFERENCES complexos.sau_org_saude (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_area_saude_a
+  ADD CONSTRAINT sau_area_saude_a_id_org_saude_pub_fk FOREIGN KEY (id_org_saude_pub)
+   REFERENCES complexos.sau_org_saude_pub (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_area_servico_social_a
+  ADD CONSTRAINT sau_area_servico_social_a_id_org_servico_social_pub_fk FOREIGN KEY (id_org_servico_social_pub)
+   REFERENCES complexos.sau_org_servico_social_pub (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.sau_area_servico_social_a
   ADD CONSTRAINT sau_area_servico_social_a_id_org_servico_social_fk FOREIGN KEY (id_org_servico_social)
    REFERENCES complexos.sau_org_servico_social (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.sau_edif_saude_a
+  ADD CONSTRAINT sau_edif_saude_a_id_org_saude_militar_fk FOREIGN KEY (id_org_saude_militar)
+   REFERENCES complexos.sau_org_saude_militar (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_edif_saude_a
+  ADD CONSTRAINT sau_edif_saude_a_id_org_saude_pub_fk FOREIGN KEY (id_org_saude_pub)
+   REFERENCES complexos.sau_org_saude_pub (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_edif_saude_a
   ADD CONSTRAINT sau_edif_saude_a_id_org_saude_fk FOREIGN KEY (id_org_saude)
    REFERENCES complexos.sau_org_saude (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_edif_saude_p
+  ADD CONSTRAINT sau_edif_saude_p_id_org_saude_pub_fk FOREIGN KEY (id_org_saude_pub)
+   REFERENCES complexos.sau_org_saude_pub (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.sau_edif_saude_p
   ADD CONSTRAINT sau_edif_saude_p_id_org_saude_fk FOREIGN KEY (id_org_saude)
    REFERENCES complexos.sau_org_saude (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_edif_saude_p
+  ADD CONSTRAINT sau_edif_saude_p_id_org_saude_militar_fk FOREIGN KEY (id_org_saude_militar)
+   REFERENCES complexos.sau_org_saude_militar (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.sau_edif_servico_social_a
   ADD CONSTRAINT sau_edif_servico_social_a_id_org_servico_social_fk FOREIGN KEY (id_org_servico_social)
    REFERENCES complexos.sau_org_servico_social (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_edif_servico_social_a
+  ADD CONSTRAINT sau_edif_servico_social_a_id_org_servico_social_pub_fk FOREIGN KEY (id_org_servico_social_pub)
+   REFERENCES complexos.sau_org_servico_social_pub (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.sau_edif_servico_social_p
+  ADD CONSTRAINT sau_edif_servico_social_p_id_org_servico_social_pub_fk FOREIGN KEY (id_org_servico_social_pub)
+   REFERENCES complexos.sau_org_servico_social_pub (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.sau_edif_servico_social_p
   ADD CONSTRAINT sau_edif_servico_social_p_id_org_servico_social_fk FOREIGN KEY (id_org_servico_social)
@@ -17020,8 +17217,16 @@ ALTER TABLE complexos.sau_org_servico_social_pub
    REFERENCES complexos.adm_org_pub_civil (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_area_estrut_transporte_a
-  ADD CONSTRAINT tra_area_estrut_transporte_a_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
+  ADD CONSTRAINT tra_area_estrut_transporte_a_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_area_estrut_transporte_a
+  ADD CONSTRAINT tra_area_estrut_transporte_a_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_area_estrut_transporte_a
+  ADD CONSTRAINT tra_area_estrut_transporte_a_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_atracadouro
   ADD CONSTRAINT tra_atracadouro_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
@@ -17043,13 +17248,17 @@ ALTER TABLE cb.tra_caminho_aereo_l
   ADD CONSTRAINT tra_caminho_aereo_l_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
    REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_condutor_hidrico_l
-  ADD CONSTRAINT tra_condutor_hidrico_l_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
-   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
+ALTER TABLE cb.tra_caminho_aereo_l
+  ADD CONSTRAINT tra_caminho_aereo_l_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_condutor_hidrico_l
   ADD CONSTRAINT tra_condutor_hidrico_l_id_duto_fk FOREIGN KEY (id_duto)
    REFERENCES complexos.tra_duto (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_condutor_hidrico_l
+  ADD CONSTRAINT tra_condutor_hidrico_l_id_complexo_gerad_energ_eletr_fk FOREIGN KEY (id_complexo_gerad_energ_eletr)
+   REFERENCES complexos.enc_complexo_gerad_energ_eletr (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_constr_aeroportuaria_a
   ADD CONSTRAINT tra_edif_constr_aeroportuaria_a_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
@@ -17103,9 +17312,21 @@ ALTER TABLE cb.tra_funicular
   ADD CONSTRAINT tra_funicular_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
    REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_funicular
+  ADD CONSTRAINT tra_funicular_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_funicular_l
   ADD CONSTRAINT tra_funicular_l_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
    REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_funicular_l
+  ADD CONSTRAINT tra_funicular_l_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_funicular_p
+  ADD CONSTRAINT tra_funicular_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_funicular_p
   ADD CONSTRAINT tra_funicular_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
@@ -17120,64 +17341,172 @@ ALTER TABLE cb.tra_identific_trecho_rod_p
    REFERENCES complexos.tra_via_rodoviaria (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_patio
+  ADD CONSTRAINT tra_patio_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio
+  ADD CONSTRAINT tra_patio_id_org_ensino_militar_fk FOREIGN KEY (id_org_ensino_militar)
+   REFERENCES complexos.edu_org_ensino_militar (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio
+  ADD CONSTRAINT tra_patio_id_org_ensino_religioso_fk FOREIGN KEY (id_org_ensino_religioso)
+   REFERENCES complexos.edu_org_ensino_religioso (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio
+  ADD CONSTRAINT tra_patio_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio
+  ADD CONSTRAINT tra_patio_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio
   ADD CONSTRAINT tra_patio_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
    REFERENCES complexos.eco_org_industrial (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio
+  ADD CONSTRAINT tra_patio_id_frigorifico_matadouro_fk FOREIGN KEY (id_frigorifico_matadouro)
+   REFERENCES complexos.eco_frigorifico_matadouro (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio
+  ADD CONSTRAINT tra_patio_id_madeireira_fk FOREIGN KEY (id_madeireira)
+   REFERENCES complexos.eco_madeireira (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_patio
   ADD CONSTRAINT tra_patio_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
    REFERENCES complexos.edu_org_ensino_religioso (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_patio
-  ADD CONSTRAINT tra_patio_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio
   ADD CONSTRAINT tra_patio_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
    REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_patio
-  ADD CONSTRAINT tra_patio_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
+  ADD CONSTRAINT tra_patio_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio
+  ADD CONSTRAINT tra_patio_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio
+  ADD CONSTRAINT tra_patio_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio
+  ADD CONSTRAINT tra_patio_id_org_ensino_pub_fk FOREIGN KEY (id_org_ensino_pub)
+   REFERENCES complexos.edu_org_ensino_pub (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_org_ensino_religioso_fk FOREIGN KEY (id_org_ensino_religioso)
+   REFERENCES complexos.edu_org_ensino_religioso (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_org_ensino_pub_fk FOREIGN KEY (id_org_ensino_pub)
+   REFERENCES complexos.edu_org_ensino_pub (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_org_ensino_militar_fk FOREIGN KEY (id_org_ensino_militar)
+   REFERENCES complexos.edu_org_ensino_militar (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
+   REFERENCES complexos.edu_org_ensino_religioso (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_madeireira_fk FOREIGN KEY (id_madeireira)
+   REFERENCES complexos.eco_madeireira (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_frigorifico_matadouro_fk FOREIGN KEY (id_frigorifico_matadouro)
+   REFERENCES complexos.eco_frigorifico_matadouro (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_patio_a
   ADD CONSTRAINT tra_patio_a_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
    REFERENCES complexos.eco_org_industrial (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_patio_a
-  ADD CONSTRAINT tra_patio_a_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
-   ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE cb.tra_patio_a
-  ADD CONSTRAINT tra_patio_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+  ADD CONSTRAINT tra_patio_a_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_patio_a
   ADD CONSTRAINT tra_patio_a_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
    REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_patio_a
-  ADD CONSTRAINT tra_patio_a_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
-   REFERENCES complexos.edu_org_ensino_religioso (id) MATCH FULL
+  ADD CONSTRAINT tra_patio_a_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_a
+  ADD CONSTRAINT tra_patio_a_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_patio_p
   ADD CONSTRAINT tra_patio_p_id_org_ensino_fk FOREIGN KEY (id_org_ensino)
    REFERENCES complexos.edu_org_ensino_religioso (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_patio_p
-  ADD CONSTRAINT tra_patio_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
-   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+  ADD CONSTRAINT tra_patio_p_id_org_ensino_militar_fk FOREIGN KEY (id_org_ensino_militar)
+   REFERENCES complexos.edu_org_ensino_militar (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_patio_p
-  ADD CONSTRAINT tra_patio_p_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
-   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
+  ADD CONSTRAINT tra_patio_p_id_org_ensino_pub_fk FOREIGN KEY (id_org_ensino_pub)
+   REFERENCES complexos.edu_org_ensino_pub (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_org_ensino_religioso_fk FOREIGN KEY (id_org_ensino_religioso)
+   REFERENCES complexos.edu_org_ensino_religioso (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_complexo_lazer_fk FOREIGN KEY (id_complexo_lazer)
+   REFERENCES complexos.edu_complexo_lazer (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_madeireira_fk FOREIGN KEY (id_madeireira)
+   REFERENCES complexos.eco_madeireira (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_frigorifico_matadouro_fk FOREIGN KEY (id_frigorifico_matadouro)
+   REFERENCES complexos.eco_frigorifico_matadouro (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_patio_p
   ADD CONSTRAINT tra_patio_p_id_org_industrial_fk FOREIGN KEY (id_org_industrial)
    REFERENCES complexos.eco_org_industrial (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_patio_p
-  ADD CONSTRAINT tra_patio_p_id_estrut_transporte_fk FOREIGN KEY (id_estrut_transporte)
-   REFERENCES complexos.tra_estrut_transporte (id) MATCH FULL
+  ADD CONSTRAINT tra_patio_p_id_org_agropec_ext_veg_pesca_fk FOREIGN KEY (id_org_agropec_ext_veg_pesca)
+   REFERENCES complexos.eco_org_agrop_ext_veg_pesca (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_org_comerc_serv_fk FOREIGN KEY (id_org_comerc_serv)
+   REFERENCES complexos.adm_org_comerc_serv (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_org_ext_mineral_fk FOREIGN KEY (id_org_ext_mineral)
+   REFERENCES complexos.adm_org_ext_mineral (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_patio_p
+  ADD CONSTRAINT tra_patio_p_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_pista_ponto_pouso
   ADD CONSTRAINT tra_pista_ponto_pouso_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
@@ -17193,6 +17522,42 @@ ALTER TABLE cb.tra_pista_ponto_pouso_l
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_pista_ponto_pouso_p
   ADD CONSTRAINT tra_pista_ponto_pouso_p_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_posto_combustivel
+  ADD CONSTRAINT tra_posto_combustivel_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_posto_combustivel
+  ADD CONSTRAINT tra_posto_combustivel_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_posto_combustivel
+  ADD CONSTRAINT tra_posto_combustivel_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_posto_combustivel_a
+  ADD CONSTRAINT tra_posto_combustivel_a_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_posto_combustivel_a
+  ADD CONSTRAINT tra_posto_combustivel_a_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
+   REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_posto_combustivel_a
+  ADD CONSTRAINT tra_posto_combustivel_a_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_posto_combustivel_p
+  ADD CONSTRAINT tra_posto_combustivel_p_id_estrut_apoio_fk FOREIGN KEY (id_estrut_apoio)
+   REFERENCES complexos.tra_estrut_apoio (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_posto_combustivel_p
+  ADD CONSTRAINT tra_posto_combustivel_p_id_complexo_portuario_fk FOREIGN KEY (id_complexo_portuario)
+   REFERENCES complexos.tra_complexo_portuario (id) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE cb.tra_posto_combustivel_p
+  ADD CONSTRAINT tra_posto_combustivel_p_id_complexo_aeroportuario_fk FOREIGN KEY (id_complexo_aeroportuario)
    REFERENCES complexos.tra_complexo_aeroportuario (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_trecho_duto_l
@@ -17211,6 +17576,51 @@ ALTER TABLE cb.tra_trecho_rodoviario_l
   ADD CONSTRAINT tra_trecho_rodoviario_l_id_via_rodoviaria_fk FOREIGN KEY (id_via_rodoviaria)
    REFERENCES complexos.tra_via_rodoviaria (id) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.eco_org_industrial ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.eco_madeireira ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.edu_org_ensino ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.adm_org_pub_militar ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.adm_org_pub_civil ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.edu_org_religiosa ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.tra_estrut_transporte ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.tra_estrut_apoio ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.tra_complexo_aeroportuario ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.eco_frigorifico_matadouro ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.asb_complexo_saneamento ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.asb_complexo_abast_agua ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.adm_org_comerc_serv ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.edu_org_ensino_militar ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.edu_org_ensino_pub ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.adm_org_ext_mineral ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.eco_org_agrop_ext_veg_pesca ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.edu_org_ensino_religioso ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.enc_complexo_gerad_energ_eletr ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.enc_subestacao_ener_eletr ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.enc_complexo_comunicacao ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.tra_complexo_portuario ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.pto_est_med_fenomenos ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.tra_duto ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE cb.loc_localidade_p ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE cb.loc_vila_p ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE cb.loc_cidade_p ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE cb.loc_capital_p ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.edu_complexo_lazer ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE cb.loc_aglomerado_rural_p ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.sau_org_saude ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.sau_org_saude_pub ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.sau_org_servico_social ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.sau_org_saude_militar ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.sau_org_servico_social_pub ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.adm_instituicao_publica ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE cb.loc_aglomerado_rural_isolado_p ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE cb.loc_aglom_rural_de_ext_urbana_p ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.hid_curso_dagua ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.hid_trecho_curso_dagua ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.tra_via_rodoviaria ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.tra_via_ferrea ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.tra_hidrovia ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.loc_complexo_habitacional ALTER COLUMN id set default uuid_generate_v4()#
+ALTER TABLE complexos.loc_aldeia_indigena ALTER COLUMN id set default uuid_generate_v4()#
 CREATE OR REPLACE FUNCTION edu_descontinuidade_geometrica_l_avoid_multi () RETURNS TRIGGER AS $edu_descontinuidade_geometrica_l_avoid_multi_return$
     DECLARE
     BEGIN
