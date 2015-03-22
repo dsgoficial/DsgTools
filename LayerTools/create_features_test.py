@@ -14,7 +14,7 @@
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
+ *   it under the terms of the GNU General Public License as published by  * 
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
@@ -28,8 +28,8 @@ from qgis.core import *
 
 import sys, os
 from uuid import uuid4
-# currentPath = 'C:/Users/luiz/.qgis2/python/plugins/DsgTools'
-currentPath = '/home/dsgdev/.qgis2/python/plugins/DsgTools'
+currentPath = 'C:/Users/luiz/.qgis2/python/plugins/DsgTools'
+# currentPath = '/home/dsgdev/.qgis2/python/plugins/DsgTools'
 sys.path.append(os.path.join(currentPath, 'QmlTools'))
 sys.path.append(os.path.join(currentPath, 'Utils'))
 from qmlParser import QmlParser
@@ -38,12 +38,12 @@ from utils import Utils
 import unittest, itertools
 
 # class CreateFeatureTest(unittest.TestCase):
-class CreateFeatureTest():
+class CreateFeatureTest(): 
     def __init__(self, layers, geomClass = True):
         self.geomClass = geomClass
 
         self.db = QSqlDatabase("QPSQL")
-        self.db.setDatabaseName('teste213')
+        self.db.setDatabaseName('edgv213')
         self.db.setHostName('localhost')
         self.db.setPort(5432)
         self.db.setUserName('postgres')
@@ -72,7 +72,7 @@ class CreateFeatureTest():
         provider = layer.dataProvider()
         fields = provider.fields()
 
-        file = open(os.path.join(currentPath, 'LayerTools', 'Problemas', layer.name()+'_relatorio_banco_2015_03_19.txt'), 'w')
+        file = open(os.path.join(currentPath, 'LayerTools', 'Problemas', layer.name()+'_relatorio_banco_2015_03_21.txt'), 'w')
         filetext = ''
         for field in fields:
             if field.name() in domainDict.keys():
@@ -130,4 +130,4 @@ class CreateFeatureTest():
         return geom
 
 layers = iface.mapCanvas().layers()
-creator = CreateFeatureTest(layers)
+creator = CreateFeatureTest(layers, False)

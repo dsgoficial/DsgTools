@@ -32,7 +32,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getAssociatedFeaturesData(self, aggregated_schema, aggregated_class, column_name, complex_uuid):
-        sql = "SELECT id from "+aggregated_schema+"."+aggregated_class+" where "+column_name+"="+'\''+complex_uuid+'\''
+        sql = "SELECT id from only "+aggregated_schema+"."+aggregated_class+" where "+column_name+"="+'\''+complex_uuid+'\''
         return sql
 
     def getLinkColumn(self, complexClass, aggregatedClass):
