@@ -89,7 +89,7 @@ class CreatePostGISDatabase(QThread):
         for command in commands:
             if self.stopMe == 0:
                 if not query.exec_(command):
-                    QgsMessageLog.logMessage(self.tr("Problem on database structure creation: ")+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage(self.tr("Problem on database structure creation: ")+'SQL: '+command+'\n'+query.lastError().text()+'\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     self.db.rollback()
                     self.db.close()
                     return 0
