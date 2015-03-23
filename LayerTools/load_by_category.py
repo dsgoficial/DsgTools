@@ -414,6 +414,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
 
     def preparePostGISToLoad(self, uri, categoria, layer_names, idGrupo, geom_column):
         idSubgrupo = qgis.utils.iface.legendInterface().addGroup(categoria,True,idGrupo)
+        layer_names.sort(reverse=True)
         for layer_name in layer_names:
             split = layer_name.split('_')
             category = split[0]
@@ -427,6 +428,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
 
     def prepareSpatialiteToLoad(self, uri, categoria, layer_names, idGrupo, geom_column):
         idSubgrupo = qgis.utils.iface.legendInterface().addGroup(categoria,True,idGrupo)
+        layer_names.sort(reverse=True)
         for layer_name in layer_names:
             split = layer_name.split('_')
             if self.dbVersion == '3.0' or self.dbVersion == '2.1.3':
