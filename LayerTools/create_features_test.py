@@ -162,4 +162,4 @@ class CreateFeatureTest():
 
 layers = iface.mapCanvas().layers()
 creator = CreateFeatureTest(layers, False)
-creator.testComplexAggregation()
+creator.testComplexAggregation() #to run this method QGIS TOC (layers tree) must be empty
