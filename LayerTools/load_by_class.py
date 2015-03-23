@@ -271,7 +271,7 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
         vlayer.setCrs(self.crs)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
-        if self.isSpatialite and self.dbVersion == '3.0':
+        if self.isSpatialite and (self.dbVersion == '3.0' or self.dbVersion == '2.1.3'):
             lyr = '_'.join(layer_name.replace('\r','').split('_')[1::])
         else:
             lyr = layer_name.replace('\r','')

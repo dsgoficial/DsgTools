@@ -128,6 +128,38 @@ class CreateFeatureTest():
             geom = QgsGeometry.fromMultiPolygon([[polyline]])
 
         return geom
+    
+    def testComplexAggregation(self):
+        sql = 'SELECT * from public.complex_schema order by complex asc'
+        query = QSqlQuery(sql, self.db)
+        while query.next():
+            complex_schema = query.value(0)
+            complex = query.value(1)
+            aggregated_schema = query.value(2)
+            aggregated_class = query.value(3)
+            column_name = query.value(4)
+            
+            if aggregated_schema == 'complexos':
+                continue
+            
+            sql = 'SELECT id from '+complex_schema+'.'+complex+' order by nome asc LIMIT 1'
+            query1 = QSqlQuery(sql, self.db)
+            while query1.next():
+                uuid = str(query1.value(0))
+    
+            sql = 'SELECT id from '+aggregated_schema+'.'+aggregated_class+' order by id asc LIMIT 1'
+            query2 = QSqlQuery(sql, self.db)
+            while query2.next():
+                id = str(query2.value(0))
+    
+            sql = 'UPDATE '+aggregated_schema+'.'+aggregated_class+' SET '+column_name+'='+'\''+uuid+'\''+' WHERE id='+id
+            query3 = QSqlQuery(self.db)
+            if not query3.exec_(sql):
+                filetext = 'SQL rodada: '+sql+'\n'
+                filetext += 'Erro obtido: '+query3.lastError().text()+'\n'
+                filetext += '-------------------------------------------\n'
+                QgsMessageLog.logMessage(filetext, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
 layers = iface.mapCanvas().layers()
-creator = CreateFeatureTest(layers, True)
+creator = CreateFeatureTest(layers, False)
+creator.testComplexAggregation()

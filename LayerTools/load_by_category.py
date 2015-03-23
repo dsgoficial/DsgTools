@@ -101,7 +101,6 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         self.db = None
         #populating the postgis combobox
         self.populatePostGISConnectionsCombo()
-        self.dbVersion = '2.1.3'
 
     def __del__(self):
         self.closeDatabase()
@@ -148,10 +147,6 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         self.checkBoxPolygon.setCheckState(0)
         self.checkBoxAll.setCheckState(0)
 
-
-        self.dbVersion = '2.1.3'
-
-
     def updateBDField(self):
         if self.dbLoaded == True:
             self.spatialiteFileEdit.setText(self.filename)
@@ -178,7 +173,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
                 split = tableName.split('_')
                 if len(split) < 2:
                     continue
-                if self.dbVersion == '3.0':
+                if self.dbVersion == '3.0' or self.dbVersion == '2.1.3':
                     schema = split[0]
                     category = split[1]
                     categoryName = schema+'.'+category
@@ -434,7 +429,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         idSubgrupo = qgis.utils.iface.legendInterface().addGroup(categoria,True,idGrupo)
         for layer_name in layer_names:
             split = layer_name.split('_')
-            if self.dbVersion == '3.0':
+            if self.dbVersion == '3.0' or self.dbVersion == '2.1.3':
                 category = split[0]+'.'+split[1]
             else:
                 category = split[0]
@@ -467,7 +462,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
         vlayer.setCrs(self.crs)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
-        if self.isSpatialite and self.dbVersion == '3.0':
+        if self.isSpatialite and (self.dbVersion == '3.0' or self.dbVersion == '2.1.3'):
             lyr = '_'.join(layer_name.replace('\r','').split('_')[1::])
         else:
             lyr = layer_name.replace('\r','')
