@@ -326,6 +326,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         #query to get the possible links to the selected complex in the combobox
         sql = self.gen.getComplexLinks(complex)
         query = QSqlQuery(sql, self.db)
+        print sql
         while query.next():
             #setting the variables
             complex_schema = query.value(0)
@@ -336,6 +337,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
 
             #query to obtain the created complexes
             sql = self.gen.getComplexData(complex_schema, complex)
+            print sql
             complexQuery = QSqlQuery(sql, self.db)
             while complexQuery.next():
                 complex_uuid = complexQuery.value(0)

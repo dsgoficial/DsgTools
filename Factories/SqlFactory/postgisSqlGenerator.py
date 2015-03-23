@@ -23,6 +23,10 @@
 from sqlGenerator import SqlGenerator
 
 class PostGISSqlGenerator(SqlGenerator):
+    def getComplexLinks(self, complex):
+        sql = "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_schema where complex = "+complex
+        return sql
+
     def getComplexTablesFromDatabase(self):
         sql = "select distinct table_name from information_schema.columns where table_schema = 'complexos'  ORDER BY table_name"
         return sql

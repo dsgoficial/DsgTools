@@ -22,8 +22,7 @@
 """
 class SqlGenerator:
     def getComplexLinks(self, complex):
-        sql = "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_schema where complex = "+complex
-        return sql
+        return None
 
     def getComplexTablesFromDatabase(self):
         return None

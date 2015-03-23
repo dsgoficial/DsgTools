@@ -23,6 +23,10 @@
 from sqlGenerator import SqlGenerator
 
 class SpatialiteSqlGenerator(SqlGenerator):
+    def getComplexLinks(self, complex):
+        sql = "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from public_complex_schema where complex = "+complex
+        return sql
+
     def getComplexTablesFromDatabase(self):
         sql = "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'complexos_%' ORDER BY name"
         return sql
@@ -40,9 +44,9 @@ class SpatialiteSqlGenerator(SqlGenerator):
 
     def getLinkColumn(self, complexClass, aggregatedClass):
         if self.isComplexClass(aggregatedClass):
-            sql = "SELECT column_name from complex_schema where complex = "+complexClass+" and aggregated_class = "+'\''+aggregatedClass[10:]+'\''
+            sql = "SELECT column_name from public_complex_schema where complex = "+complexClass+" and aggregated_class = "+'\''+aggregatedClass[10:]+'\''
         else:
-            sql = "SELECT column_name from complex_schema where complex = "+complexClass+" and aggregated_class = "+'\''+aggregatedClass[3:]+'\''
+            sql = "SELECT column_name from public_complex_schema where complex = "+complexClass+" and aggregated_class = "+'\''+aggregatedClass[3:]+'\''
         return sql
 
     def getSrid(self):
