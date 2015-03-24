@@ -173,12 +173,20 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
             self.projectModel.setRecord(0, record)
 
         self.tableView.setModel(self.projectModel)
+
+        #Hiding columns that point to other complexes so that the user can't change them
+        for i in range(self.projectModel.columnCount()):
+            columnName = self.projectModel.headerData(i, Qt.Horizontal)
+            if 'id_' in columnName:
+                self.tableView.hideColumn(i)
+
         self.tableView.show()
 
     def addComplex(self):
         record = self.projectModel.record()
         #insert a new record with an already determined uuid value
         record.setValue("id",str(uuid4()))
+        record.setValue("nome", self.tr("edit this field"))
         self.projectModel.insertRecord(self.projectModel.rowCount(), record)
 
     def removeComplex(self):
