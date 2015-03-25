@@ -114,6 +114,11 @@ ul#menu li a:hover {
 		color:#030;
 	}
 	
+	h4 {
+		margin-left:20px;
+		color:#030;
+	}
+	
 	p {
 		font-family:Arial;
 		margin:10px;
@@ -134,3 +139,12 @@ ul#menu li a:hover {
 		text-decoration:underline;
 	}
 	
+	code {
+		color:#030;
+		background-color:#F8F8F8;
+	}
+	
+	kbd {
+		color:black;
+		background-color:#FAF7E9;
+	}
