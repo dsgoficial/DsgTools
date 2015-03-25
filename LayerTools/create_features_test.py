@@ -161,5 +161,5 @@ class CreateFeatureTest():
                 QgsMessageLog.logMessage(filetext, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
 layers = iface.mapCanvas().layers()
-creator = CreateFeatureTest(layers, False)
+creator = CreateFeatureTest(layers, True)
 # creator.testComplexAggregation() #to run this method QGIS TOC (layers tree) must be empty

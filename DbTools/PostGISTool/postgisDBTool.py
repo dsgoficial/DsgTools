@@ -25,7 +25,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSql import QSqlDatabase,QSqlQuery
 
-from qgis.core import QgsCoordinateReferenceSystem
+from qgis.core import QgsCoordinateReferenceSystem,QgsMessageLog
 from qgis.gui import QgsGenericProjectionSelector
 
 import sys, os
@@ -112,7 +112,7 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         db.setUserName(user)
         db.setPassword(password)
         if not db.open():
-            print db.lastError().text()
+            QgsMessageLog.logMessage(db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         
         return db
     
