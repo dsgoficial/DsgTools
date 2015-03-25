@@ -12,7 +12,7 @@ qgisMinimumVersion=2.6
 description=Brazilian Army Cartographic Production Tools
 version=1.0
 author=Brazilian Army - Geographic Service Bureau
-email=luiz.claudio@dsg.eb.mil.br/borba@dsg.eb.mil.br/ferrari@dsg.eb.mil.br
+email=suporte.dsgtools@dsg.eb.mil.br
 
 # End of mandatory metadata
 
