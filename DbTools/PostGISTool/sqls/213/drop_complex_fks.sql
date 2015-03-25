@@ -17,9 +17,9 @@ ALTER TABLE complexos.adm_org_pub_civil
 ALTER TABLE complexos.adm_org_pub_civil
   DROP CONSTRAINT adm_org_pub_civil_id_instituicao_publica_fk#
 ALTER TABLE complexos.adm_org_pub_militar
-  DROP CONSTRAINT adm_org_pub_militar_id_org_pub_militar_fk#
-ALTER TABLE complexos.adm_org_pub_militar
   DROP CONSTRAINT adm_org_pub_militar_id_instituicao_publica_fk#
+ALTER TABLE complexos.adm_org_pub_militar
+  DROP CONSTRAINT adm_org_pub_militar_id_org_pub_militar_fk#
 ALTER TABLE cb.adm_posto_fiscal
   DROP CONSTRAINT adm_posto_fiscal_id_org_pub_civil_fk#
 ALTER TABLE cb.adm_posto_fiscal_a
@@ -27,17 +27,17 @@ ALTER TABLE cb.adm_posto_fiscal_a
 ALTER TABLE cb.adm_posto_fiscal_p
   DROP CONSTRAINT adm_posto_fiscal_p_id_org_pub_civil_fk#
 ALTER TABLE cb.adm_posto_pol_rod
-  DROP CONSTRAINT adm_posto_pol_rod_id_org_pub_militar_fk#
-ALTER TABLE cb.adm_posto_pol_rod
   DROP CONSTRAINT adm_posto_pol_rod_id_org_pub_civil_fk#
-ALTER TABLE cb.adm_posto_pol_rod_a
-  DROP CONSTRAINT adm_posto_pol_rod_a_id_org_pub_civil_fk#
+ALTER TABLE cb.adm_posto_pol_rod
+  DROP CONSTRAINT adm_posto_pol_rod_id_org_pub_militar_fk#
 ALTER TABLE cb.adm_posto_pol_rod_a
   DROP CONSTRAINT adm_posto_pol_rod_a_id_org_pub_militar_fk#
-ALTER TABLE cb.adm_posto_pol_rod_p
-  DROP CONSTRAINT adm_posto_pol_rod_p_id_org_pub_civil_fk#
+ALTER TABLE cb.adm_posto_pol_rod_a
+  DROP CONSTRAINT adm_posto_pol_rod_a_id_org_pub_civil_fk#
 ALTER TABLE cb.adm_posto_pol_rod_p
   DROP CONSTRAINT adm_posto_pol_rod_p_id_org_pub_militar_fk#
+ALTER TABLE cb.adm_posto_pol_rod_p
+  DROP CONSTRAINT adm_posto_pol_rod_p_id_org_pub_civil_fk#
 ALTER TABLE cb.asb_area_abast_agua_a
   DROP CONSTRAINT asb_area_abast_agua_a_id_complexo_abast_agua_fk#
 ALTER TABLE cb.asb_area_saneamento_a
@@ -48,8 +48,32 @@ ALTER TABLE complexos.asb_complexo_saneamento
   DROP CONSTRAINT asb_complexo_saneamento_id_org_comerc_serv_fk#
 ALTER TABLE cb.asb_dep_abast_agua
   DROP CONSTRAINT asb_dep_abast_agua_id_complexo_abast_agua_fk#
+ALTER TABLE cb.asb_dep_abast_agua
+  DROP CONSTRAINT asb_dep_abast_agua_id_org_industrial_fk#
+ALTER TABLE cb.asb_dep_abast_agua
+  DROP CONSTRAINT asb_dep_abast_agua_id_org_comerc_serv_fk#
+ALTER TABLE cb.asb_dep_abast_agua
+  DROP CONSTRAINT asb_dep_abast_agua_id_org_agropec_ext_veg_pesca_fk#
+ALTER TABLE cb.asb_dep_abast_agua
+  DROP CONSTRAINT asb_dep_abast_agua_id_org_ext_mineral_fk#
+ALTER TABLE cb.asb_dep_abast_agua_a
+  DROP CONSTRAINT asb_dep_abast_agua_a_id_org_comerc_serv_fk#
 ALTER TABLE cb.asb_dep_abast_agua_a
   DROP CONSTRAINT asb_dep_abast_agua_a_id_complexo_abast_agua_fk#
+ALTER TABLE cb.asb_dep_abast_agua_a
+  DROP CONSTRAINT asb_dep_abast_agua_a_id_org_ext_mineral_fk#
+ALTER TABLE cb.asb_dep_abast_agua_a
+  DROP CONSTRAINT asb_dep_abast_agua_a_id_org_agropec_ext_veg_pesca_fk#
+ALTER TABLE cb.asb_dep_abast_agua_a
+  DROP CONSTRAINT asb_dep_abast_agua_a_id_org_industrial_fk#
+ALTER TABLE cb.asb_dep_abast_agua_p
+  DROP CONSTRAINT asb_dep_abast_agua_p_id_org_industrial_fk#
+ALTER TABLE cb.asb_dep_abast_agua_p
+  DROP CONSTRAINT asb_dep_abast_agua_p_id_org_comerc_serv_fk#
+ALTER TABLE cb.asb_dep_abast_agua_p
+  DROP CONSTRAINT asb_dep_abast_agua_p_id_org_agropec_ext_veg_pesca_fk#
+ALTER TABLE cb.asb_dep_abast_agua_p
+  DROP CONSTRAINT asb_dep_abast_agua_p_id_org_ext_mineral_fk#
 ALTER TABLE cb.asb_dep_abast_agua_p
   DROP CONSTRAINT asb_dep_abast_agua_p_id_complexo_abast_agua_fk#
 ALTER TABLE cb.asb_dep_saneamento
@@ -75,35 +99,41 @@ ALTER TABLE cb.eco_area_ext_mineral_a
 ALTER TABLE cb.eco_area_industrial_a
   DROP CONSTRAINT eco_area_industrial_a_id_org_industrial_fk#
 ALTER TABLE cb.eco_deposito_geral
-  DROP CONSTRAINT eco_deposito_geral_id_org_comerc_serv_fk#
-ALTER TABLE cb.eco_deposito_geral
-  DROP CONSTRAINT eco_deposito_geral_id_org_ext_mineral_fk#
-ALTER TABLE cb.eco_deposito_geral
-  DROP CONSTRAINT eco_deposito_geral_id_org_agropec_ext_veg_pesca_fk#
+  DROP CONSTRAINT eco_deposito_geral_id_estrut_transporte_fk#
 ALTER TABLE cb.eco_deposito_geral
   DROP CONSTRAINT eco_deposito_geral_id_complexo_gerad_energ_eletr_fk#
 ALTER TABLE cb.eco_deposito_geral
-  DROP CONSTRAINT eco_deposito_geral_id_estrut_transporte_fk#
-ALTER TABLE cb.eco_deposito_geral_a
-  DROP CONSTRAINT eco_deposito_geral_a_id_org_comerc_serv_fk#
-ALTER TABLE cb.eco_deposito_geral_a
-  DROP CONSTRAINT eco_deposito_geral_a_id_estrut_transporte_fk#
+  DROP CONSTRAINT eco_deposito_geral_id_org_agropec_ext_veg_pesca_fk#
+ALTER TABLE cb.eco_deposito_geral
+  DROP CONSTRAINT eco_deposito_geral_id_org_ext_mineral_fk#
+ALTER TABLE cb.eco_deposito_geral
+  DROP CONSTRAINT eco_deposito_geral_id_org_comerc_serv_fk#
+ALTER TABLE cb.eco_deposito_geral
+  DROP CONSTRAINT eco_deposito_geral_id_org_industrial_fk#
 ALTER TABLE cb.eco_deposito_geral_a
   DROP CONSTRAINT eco_deposito_geral_a_id_complexo_gerad_energ_eletr_fk#
 ALTER TABLE cb.eco_deposito_geral_a
-  DROP CONSTRAINT eco_deposito_geral_a_id_org_agropec_ext_veg_pesca_fk#
+  DROP CONSTRAINT eco_deposito_geral_a_id_org_industrial_fk#
 ALTER TABLE cb.eco_deposito_geral_a
   DROP CONSTRAINT eco_deposito_geral_a_id_org_ext_mineral_fk#
+ALTER TABLE cb.eco_deposito_geral_a
+  DROP CONSTRAINT eco_deposito_geral_a_id_org_comerc_serv_fk#
+ALTER TABLE cb.eco_deposito_geral_a
+  DROP CONSTRAINT eco_deposito_geral_a_id_org_agropec_ext_veg_pesca_fk#
+ALTER TABLE cb.eco_deposito_geral_a
+  DROP CONSTRAINT eco_deposito_geral_a_id_estrut_transporte_fk#
+ALTER TABLE cb.eco_deposito_geral_p
+  DROP CONSTRAINT eco_deposito_geral_p_id_org_comerc_serv_fk#
 ALTER TABLE cb.eco_deposito_geral_p
   DROP CONSTRAINT eco_deposito_geral_p_id_org_ext_mineral_fk#
+ALTER TABLE cb.eco_deposito_geral_p
+  DROP CONSTRAINT eco_deposito_geral_p_id_org_agropec_ext_veg_pesca_fk#
 ALTER TABLE cb.eco_deposito_geral_p
   DROP CONSTRAINT eco_deposito_geral_p_id_complexo_gerad_energ_eletr_fk#
 ALTER TABLE cb.eco_deposito_geral_p
   DROP CONSTRAINT eco_deposito_geral_p_id_estrut_transporte_fk#
 ALTER TABLE cb.eco_deposito_geral_p
-  DROP CONSTRAINT eco_deposito_geral_p_id_org_agropec_ext_veg_pesca_fk#
-ALTER TABLE cb.eco_deposito_geral_p
-  DROP CONSTRAINT eco_deposito_geral_p_id_org_comerc_serv_fk#
+  DROP CONSTRAINT eco_deposito_geral_p_id_org_industrial_fk#
 ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_a
   DROP CONSTRAINT eco_edif_agrop_ext_veg_pesca_a_id_org_agropec_ext_veg_pesca_fk#
 ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_p
@@ -135,11 +165,11 @@ ALTER TABLE cb.eco_ext_mineral_a
 ALTER TABLE cb.eco_ext_mineral_p
   DROP CONSTRAINT eco_ext_mineral_p_id_org_ext_mineral_fk#
 ALTER TABLE complexos.eco_frigorifico_matadouro
+  DROP CONSTRAINT eco_frigorifico_matadouro_id_org_pub_militar_fk#
+ALTER TABLE complexos.eco_frigorifico_matadouro
   DROP CONSTRAINT eco_frigorifico_matadouro_id_org_agropec_ext_veg_pesca_fk#
 ALTER TABLE complexos.eco_frigorifico_matadouro
   DROP CONSTRAINT eco_frigorifico_matadouro_id_org_pub_civil_fk#
-ALTER TABLE complexos.eco_frigorifico_matadouro
-  DROP CONSTRAINT eco_frigorifico_matadouro_id_org_pub_militar_fk#
 ALTER TABLE complexos.eco_madeireira
   DROP CONSTRAINT eco_madeireira_id_org_pub_civil_fk#
 ALTER TABLE complexos.eco_madeireira
@@ -171,13 +201,13 @@ ALTER TABLE cb.edu_campo_quadra_a
 ALTER TABLE cb.edu_campo_quadra_p
   DROP CONSTRAINT edu_campo_quadra_p_id_complexo_lazer_fk#
 ALTER TABLE complexos.edu_complexo_lazer
-  DROP CONSTRAINT edu_complexo_lazer_id_org_pub_civil_fk#
+  DROP CONSTRAINT edu_complexo_lazer_id_org_ensino_fk#
 ALTER TABLE complexos.edu_complexo_lazer
   DROP CONSTRAINT edu_complexo_lazer_id_org_pub_militar_fk#
 ALTER TABLE complexos.edu_complexo_lazer
-  DROP CONSTRAINT edu_complexo_lazer_id_org_ensino_fk#
-ALTER TABLE complexos.edu_complexo_lazer
   DROP CONSTRAINT edu_complexo_lazer_id_org_religiosa_fk#
+ALTER TABLE complexos.edu_complexo_lazer
+  DROP CONSTRAINT edu_complexo_lazer_id_org_pub_civil_fk#
 ALTER TABLE cb.edu_coreto_tribuna
   DROP CONSTRAINT edu_coreto_tribuna_id_complexo_lazer_fk#
 ALTER TABLE cb.edu_coreto_tribuna_a
@@ -226,6 +256,8 @@ ALTER TABLE cb.enc_area_energia_eletrica_a
   DROP CONSTRAINT enc_area_energia_eletrica_a_id_complexo_gerad_energ_eletr_fk#
 ALTER TABLE complexos.enc_complexo_comunicacao
   DROP CONSTRAINT enc_complexo_comunicacao_id_org_comerc_serv_fk#
+ALTER TABLE complexos.enc_complexo_comunicacao
+  DROP CONSTRAINT enc_complexo_comunicacao_id_complexo_comunicacao_fk#
 ALTER TABLE complexos.enc_complexo_gerad_energ_eletr
   DROP CONSTRAINT enc_complexo_gerad_energ_eletr_id_org_comerc_serv_fk#
 ALTER TABLE cb.enc_edif_comunic_a
@@ -237,9 +269,9 @@ ALTER TABLE cb.enc_edif_energia_a
 ALTER TABLE cb.enc_edif_energia_a
   DROP CONSTRAINT enc_edif_energia_a_id_subestacao_ener_eletr_fk#
 ALTER TABLE cb.enc_edif_energia_p
-  DROP CONSTRAINT enc_edif_energia_p_id_subestacao_ener_eletr_fk#
-ALTER TABLE cb.enc_edif_energia_p
   DROP CONSTRAINT enc_edif_energia_p_id_complexo_gerad_energ_eletr_fk#
+ALTER TABLE cb.enc_edif_energia_p
+  DROP CONSTRAINT enc_edif_energia_p_id_subestacao_ener_eletr_fk#
 ALTER TABLE cb.enc_est_gerad_energia_eletr
   DROP CONSTRAINT enc_est_gerad_energia_eletr_id_complexo_gerad_energ_eletr_fk#
 ALTER TABLE cb.enc_est_gerad_energia_eletr_a
@@ -335,6 +367,8 @@ ALTER TABLE cb.tra_atracadouro_l
 ALTER TABLE cb.tra_atracadouro_p
   DROP CONSTRAINT tra_atracadouro_p_id_complexo_portuario_fk#
 ALTER TABLE cb.tra_caminho_aereo_l
+  DROP CONSTRAINT tra_caminho_aereo_l_id_complexo_lazer_fk#
+ALTER TABLE cb.tra_caminho_aereo_l
   DROP CONSTRAINT tra_caminho_aereo_l_id_org_ext_mineral_fk#
 ALTER TABLE cb.tra_condutor_hidrico_l
   DROP CONSTRAINT tra_condutor_hidrico_l_id_complexo_gerad_energ_eletr_fk#
@@ -365,45 +399,63 @@ ALTER TABLE cb.tra_fundeadouro_l
 ALTER TABLE cb.tra_fundeadouro_p
   DROP CONSTRAINT tra_fundeadouro_p_id_complexo_portuario_fk#
 ALTER TABLE cb.tra_funicular
+  DROP CONSTRAINT tra_funicular_id_complexo_lazer_fk#
+ALTER TABLE cb.tra_funicular
   DROP CONSTRAINT tra_funicular_id_org_ext_mineral_fk#
 ALTER TABLE cb.tra_funicular_l
   DROP CONSTRAINT tra_funicular_l_id_org_ext_mineral_fk#
+ALTER TABLE cb.tra_funicular_l
+  DROP CONSTRAINT tra_funicular_l_id_complexo_lazer_fk#
 ALTER TABLE cb.tra_funicular_p
   DROP CONSTRAINT tra_funicular_p_id_org_ext_mineral_fk#
+ALTER TABLE cb.tra_funicular_p
+  DROP CONSTRAINT tra_funicular_p_id_complexo_lazer_fk#
 ALTER TABLE cb.tra_girador_ferroviario_p
   DROP CONSTRAINT tra_girador_ferroviario_p_id_estrut_apoio_fk#
 ALTER TABLE cb.tra_identific_trecho_rod_p
   DROP CONSTRAINT tra_identific_trecho_rod_p_id_via_rodoviaria_fk#
-ALTER TABLE cb.tra_patio
-  DROP CONSTRAINT tra_patio_id_org_industrial_fk#
-ALTER TABLE cb.tra_patio
-  DROP CONSTRAINT tra_patio_id_org_ensino_fk#
 ALTER TABLE cb.tra_patio
   DROP CONSTRAINT tra_patio_id_org_comerc_serv_fk#
 ALTER TABLE cb.tra_patio
   DROP CONSTRAINT tra_patio_id_org_ext_mineral_fk#
 ALTER TABLE cb.tra_patio
   DROP CONSTRAINT tra_patio_id_estrut_transporte_fk#
+ALTER TABLE cb.tra_patio
+  DROP CONSTRAINT tra_patio_id_complexo_lazer_fk#
+ALTER TABLE cb.tra_patio
+  DROP CONSTRAINT tra_patio_id_org_ensino_fk#
+ALTER TABLE cb.tra_patio
+  DROP CONSTRAINT tra_patio_id_org_industrial_fk#
+ALTER TABLE cb.tra_patio
+  DROP CONSTRAINT tra_patio_id_org_agropec_ext_veg_pesca_fk#
 ALTER TABLE cb.tra_patio_a
-  DROP CONSTRAINT tra_patio_a_id_org_industrial_fk#
+  DROP CONSTRAINT tra_patio_a_id_org_ensino_fk#
 ALTER TABLE cb.tra_patio_a
-  DROP CONSTRAINT tra_patio_a_id_estrut_transporte_fk#
+  DROP CONSTRAINT tra_patio_a_id_complexo_lazer_fk#
+ALTER TABLE cb.tra_patio_a
+  DROP CONSTRAINT tra_patio_a_id_org_agropec_ext_veg_pesca_fk#
 ALTER TABLE cb.tra_patio_a
   DROP CONSTRAINT tra_patio_a_id_org_ext_mineral_fk#
 ALTER TABLE cb.tra_patio_a
-  DROP CONSTRAINT tra_patio_a_id_org_comerc_serv_fk#
+  DROP CONSTRAINT tra_patio_a_id_estrut_transporte_fk#
 ALTER TABLE cb.tra_patio_a
-  DROP CONSTRAINT tra_patio_a_id_org_ensino_fk#
+  DROP CONSTRAINT tra_patio_a_id_org_industrial_fk#
+ALTER TABLE cb.tra_patio_a
+  DROP CONSTRAINT tra_patio_a_id_org_comerc_serv_fk#
 ALTER TABLE cb.tra_patio_p
-  DROP CONSTRAINT tra_patio_p_id_org_ensino_fk#
+  DROP CONSTRAINT tra_patio_p_id_complexo_lazer_fk#
 ALTER TABLE cb.tra_patio_p
   DROP CONSTRAINT tra_patio_p_id_org_ext_mineral_fk#
 ALTER TABLE cb.tra_patio_p
-  DROP CONSTRAINT tra_patio_p_id_org_comerc_serv_fk#
+  DROP CONSTRAINT tra_patio_p_id_estrut_transporte_fk#
+ALTER TABLE cb.tra_patio_p
+  DROP CONSTRAINT tra_patio_p_id_org_agropec_ext_veg_pesca_fk#
 ALTER TABLE cb.tra_patio_p
   DROP CONSTRAINT tra_patio_p_id_org_industrial_fk#
 ALTER TABLE cb.tra_patio_p
-  DROP CONSTRAINT tra_patio_p_id_estrut_transporte_fk#
+  DROP CONSTRAINT tra_patio_p_id_org_ensino_fk#
+ALTER TABLE cb.tra_patio_p
+  DROP CONSTRAINT tra_patio_p_id_org_comerc_serv_fk#
 ALTER TABLE cb.tra_pista_ponto_pouso
   DROP CONSTRAINT tra_pista_ponto_pouso_id_complexo_aeroportuario_fk#
 ALTER TABLE cb.tra_pista_ponto_pouso_a
@@ -412,6 +464,12 @@ ALTER TABLE cb.tra_pista_ponto_pouso_l
   DROP CONSTRAINT tra_pista_ponto_pouso_l_id_complexo_aeroportuario_fk#
 ALTER TABLE cb.tra_pista_ponto_pouso_p
   DROP CONSTRAINT tra_pista_ponto_pouso_p_id_complexo_aeroportuario_fk#
+ALTER TABLE cb.tra_posto_combustivel
+  DROP CONSTRAINT tra_posto_combustivel_id_estrut_transporte_fk#
+ALTER TABLE cb.tra_posto_combustivel_a
+  DROP CONSTRAINT tra_posto_combustivel_a_id_estrut_transporte_fk#
+ALTER TABLE cb.tra_posto_combustivel_p
+  DROP CONSTRAINT tra_posto_combustivel_p_id_estrut_transporte_fk#
 ALTER TABLE cb.tra_trecho_duto_l
   DROP CONSTRAINT tra_trecho_duto_l_id_duto_fk#
 ALTER TABLE cb.tra_trecho_ferroviario_l
@@ -419,4 +477,4 @@ ALTER TABLE cb.tra_trecho_ferroviario_l
 ALTER TABLE cb.tra_trecho_hidroviario_l
   DROP CONSTRAINT tra_trecho_hidroviario_l_id_hidrovia_fk#
 ALTER TABLE cb.tra_trecho_rodoviario_l
-  DROP CONSTRAINT tra_trecho_rodoviario_l_id_via_rodoviaria_fk#
+  DROP CONSTRAINT tra_trecho_rodoviario_l_id_via_rodoviaria_fk
