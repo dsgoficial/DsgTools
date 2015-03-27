@@ -32,22 +32,19 @@ import sys
 currentPath = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/DbTools/PostGISTool'))
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/DbTools/SpatialiteTool'))
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/LayerTools'))
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ComplexTools'))
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ServerTools'))
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/ImageTools'))
+from DsgTools.LayerTools.load_by_class import LoadByClass
+from DsgTools.LayerTools.load_by_category import LoadByCategory
+from DsgTools.LayerTools.ui_create_inom_dialog import CreateInomDialog
 
-from load_by_class import LoadByClass
-from load_by_category import LoadByCategory
-from cria_spatialite_dialog import CriaSpatialiteDialog
-from complexWindow import ComplexWindow
-from serverConfigurator import ServerConfigurator
-from postgisDBTool import PostgisDBTool
-from createPostGISDatabase import CreatePostGISDatabase
-from ui_create_inom_dialog import CreateInomDialog
-from processingTools import ProcessingTools
+from DsgTools.DbTools.SpatialiteTool.cria_spatialite_dialog import CriaSpatialiteDialog
+from DsgTools.DbTools.PostGISTool.postgisDBTool import PostgisDBTool
+from DsgTools.DbTools.PostGISTool.createPostGISDatabase import CreatePostGISDatabase
+
+from DsgTools.ComplexTools.complexWindow import ComplexWindow
+
+from DsgTools.ServerTools.serverConfigurator import ServerConfigurator
+
+from DsgTools.ImageTools.processingTools import ProcessingTools
 
 from qgis.utils import showPluginHelp
 
