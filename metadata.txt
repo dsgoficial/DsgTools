@@ -19,7 +19,7 @@ email=suporte.dsgtools@dsg.eb.mil.br
 # Optional items:
 
 # Uncomment the following line and add your changelog:
-# changelog=
+# changelog=Minor bug fix on spatialite complex features and improved help. 
 
 # Tags are comma separated with spaces allowed
 tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure
