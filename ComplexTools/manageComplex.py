@@ -168,9 +168,8 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         #this is not supposed to happen
         record = self.projectModel.record(0)
         if not record.value("id"):
-            record.setValue("id",str(uuid4()))
-            record.setValue("nome", self.tr("edit this field"))
-            self.projectModel.setRecord(0, record)
+            adjustedRecord = self.adjustRecord(record)
+            self.projectModel.setRecord(0, adjustedRecord)
 
         self.tableView.setModel(self.projectModel)
 
@@ -184,6 +183,10 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
 
     def addComplex(self):
         record = self.projectModel.record()
+        adjustedRecord = self.adjustRecord(record)
+        self.projectModel.insertRecord(self.projectModel.rowCount(), adjustedRecord)
+        
+    def adjustRecord(self,record):
         #insert a new record with an already determined uuid value
         record.setValue("id",str(uuid4()))
         record.setValue("nome", self.tr("edit this field"))
@@ -191,8 +194,7 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
             columnName = self.projectModel.headerData(i, Qt.Horizontal)
             if self.domainDict.has_key(columnName):
                 record.setValue(columnName, self.tr("edit this field"))
-
-        self.projectModel.insertRecord(self.projectModel.rowCount(), record)
+        return record
 
     def removeComplex(self):
         #getting the selected rows
