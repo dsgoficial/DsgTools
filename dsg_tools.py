@@ -46,6 +46,8 @@ from DsgTools.ServerTools.serverConfigurator import ServerConfigurator
 
 from DsgTools.ImageTools.processingTools import ProcessingTools
 
+from DsgTools.ProcessingTools.processManager import ProcessManager
+
 from qgis.utils import showPluginHelp
 
 class DsgTools:
@@ -90,6 +92,8 @@ class DsgTools:
         self.menuBar = self.iface.mainWindow().menuBar()
 
         self.complexWindow = ComplexWindow(iface)
+
+        self.processManager = ProcessManager(iface)
 
 
     # noinspection PyMethodMayBeStatic
@@ -466,24 +470,9 @@ class DsgTools:
         self.dlg.show()
         result = self.dlg.exec_()
         if result == 1:
-            # Setting the progress bar
-            self.progressMessageBar = self.iface.messageBar().createMessage(self.tr("Creating database structure..."))
-            self.progressBar = QProgressBar()
-            self.progressBar.setAlignment(Qt.AlignLeft|Qt.AlignVCenter)
-            self.progressMessageBar.layout().addWidget(self.progressBar)
-            self.iface.messageBar().pushWidget(self.progressMessageBar, self.iface.messageBar().INFO)
-
             (db, version, epsg) = self.dlg.getParameters()
-            self.thread = CreatePostGISDatabase(db, version, epsg)
-            #Thread signals
-            QObject.connect( self.thread, SIGNAL( "rangeCalculated( PyQt_PyObject )" ), self.setProgressRange )
-            QObject.connect( self.thread, SIGNAL( "queryProcessed()" ), self.queryProcessed )
-            QObject.connect( self.thread, SIGNAL( "processingFinished(PyQt_PyObject)" ), self.processFinished )
-
-            QObject.connect( self.progressMessageBar, SIGNAL( "destroyed()" ), self.progressCanceled )
-
-            # Startin the processing
-            self.thread.start()
+            #creating the separeate process
+            self.processManager.createPostgisDatabaseProcess(db, version, epsg)
 
     def loadByCategory(self):
         try:
@@ -524,38 +513,6 @@ class DsgTools:
         result = self.dlg.exec_()
         if result:
             pass
-
-    def setProgressRange( self, maximum ):
-        if self.progressMessageBar:
-            self.progressBar.setRange( 0, maximum )
-
-    def queryProcessed( self):
-        if self.progressMessageBar:
-            self.progressBar.setValue( self.progressBar.value() + 1 )
-
-    def userCanceled( self ):
-        QMessageBox.information(self.iface.mainWindow(), 'DSG Tools',self.tr('Database structure creation canceled!'))
-
-    def processFinished( self, feedback):
-        if self.thread != None:
-            self.thread.stop()
-            self.thread = None
-
-        if feedback == 1:
-            self.progressBar.setValue( self.progressBar.maximum())
-            QMessageBox.information(self.iface.mainWindow(), 'DSG Tools',self.tr('Database structure successfully created!'))
-        elif feedback == 0:
-            QMessageBox.information(self.iface.mainWindow(), 'DSG Tools',self.tr('Problem creating the database structure!\n Check the Log terminal for details.'))
-        elif feedback == -1:
-            QMessageBox.information(self.iface.mainWindow(), 'DSG Tools',self.tr('User canceled the database structure creation!'))
-
-    def progressCanceled(self):
-        self.progressMessageBar = None
-        self.progressBar = None
-
-        if self.thread:
-            self.thread.stop()
-            self.thread = None
 
     def load250kLayer(self):
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/gif&layers=ctm250&styles=&tileMatrixSet=ctm250-wmsc-4&url=http://www.geoportal.eb.mil.br/tiles'

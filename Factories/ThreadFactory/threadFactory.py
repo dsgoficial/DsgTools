@@ -23,7 +23,7 @@
 from postgisDbThread import PostgisDbThread
 
 class ThreadFactory:
-    def createThreadGenerator(self, name):
+    def makeProcess(self, name):
         if name == 'pgdb':
             return PostgisDbThread()
         else:

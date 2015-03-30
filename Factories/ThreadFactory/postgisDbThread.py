@@ -29,28 +29,56 @@ import sys, os, codecs
 
 from genericThread import GenericThread
 
+from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+
+class PostgisDbMessages(QObject):
+    def __init__(self, thread):
+        super(PostgisDbMessages, self).__init__()
+        
+        self.thread = thread
+        
+    def getProblemMessage(self):
+        return self.tr("Problem on database structure creation: ")+'SQL: '+command+'\n'+query.lastError().text()+'\n'
+    
+    def getProblemFeedbackMessage(self):
+        self.tr('Problem creating the database structure!\n Check the Log terminal for details.')
+        
+    def getUserCanceledFeedbackMessage(self):
+        return self.tr('User canceled the database structure creation!')
+    
+    def getSuccessFeedbackMessage(self):
+        return self.tr("Successful datatabase structure creation")
+
+    @pyqtSlot(str)
+    def progressCanceled(self):
+        self.thread.stopped[0] = True    
+
 class PostgisDbThread(GenericThread):
-    def __init__(self, db, version, epsg, stopped):
+    def __init__(self):
         """Constructor.
         """
         super(PostgisDbThread, self).__init__()
 
+        self.factory = SqlGeneratorFactory()
+        #setting the sql generator
+        self.gen = self.factory.createSqlGenerator(False)
+        
+        self.messenger = PostgisDbMessages(self)
+
+    def setParameters(self, db, version, epsg, stopped):
         self.db = db
         self.version = version
         self.epsg = epsg
         self.stopped = stopped
 
-        self.factory = SqlGeneratorFactory()
-        #setting the sql generator
-        self.gen = self.factory.createSqlGenerator(False)
-
     def run(self):
         # Processing ending
         (ret, msg) = self.createDatabaseStructure()
-        self.processingFinished.emit(ret, msg)
+        self.signals.processingFinished.emit(ret, msg, self.getId())
 
     def createDatabaseStructure(self):
         currentPath = os.path.dirname(__file__)
+        currentPath = os.path.join(currentPath, '..', '..', 'DbTools', 'PostGISTool')
         if self.version == '2.1.3':
             edgvPath = os.path.join(currentPath, 'sqls', '213', 'edgv213.sql')
         elif self.version == '3.0':
@@ -67,7 +95,7 @@ class PostgisDbThread(GenericThread):
         commands = sql.split('#')
 
         # Progress bar steps calculated
-        self.rangeCalculated.emit(len(commands))
+        self.signals.rangeCalculated.emit(len(commands), self.getId())
 
         self.db.transaction()
         query = QSqlQuery(self.db)
@@ -76,23 +104,23 @@ class PostgisDbThread(GenericThread):
         for command in commands:
             if not self.stopped[0]:
                 if not query.exec_(command):
-                    QgsMessageLog.logMessage(self.tr("Problem on database structure creation: ")+'SQL: '+command+'\n'+query.lastError().text()+'\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage(self.messenger.getProblemMessage(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     self.db.rollback()
                     self.db.close()
-                    return (0,self.tr('Problem creating the database structure!\n Check the Log terminal for details.'))
+                    return (0, self.messenger.getProblemFeedbackMessage())
 
                 # Updating progress
-                self.stepProcessed.emit()
+                self.signals.stepProcessed.emit(self.getId())
             else:
                 self.db.rollback()
                 self.db.close()
-                QgsMessageLog.logMessage(self.tr("User canceled datatabase structure creation"), "DSG Tools Plugin", QgsMessageLog.INFO)
-                return (-1,self.tr('User canceled the database structure creation!'))
+                QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
+                return (-1, self.messenger.getUserCanceledFeedbackMessage())
 
         self.db.commit()
         sql = self.gen.allowConnections(self.db.connectionName())
         query = QSqlQuery(sql,self.db)
         self.db.commit()
         self.db.close()
-        QgsMessageLog.logMessage(self.tr("Successful datatabase structure creation"), "DSG Tools Plugin", QgsMessageLog.INFO)
-        return (1,self.tr("Successful datatabase structure creation"))
+        QgsMessageLog.logMessage(self.messenger.getSuccessFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
+        return (1, self.messenger.getSuccessFeedbackMessage())

@@ -20,17 +20,27 @@
  *                                                                         *
  ***************************************************************************/
 """# Import the PyQt and QGIS libraries
-from PyQt4.QtCore import QRunnable, pyqtSignal
+from PyQt4.QtCore import QObject, QRunnable, pyqtSignal
+
+from uuid import uuid4
+
+class ProcessSignals(QObject):
+    rangeCalculated = pyqtSignal(int, str)
+    stepProcessed = pyqtSignal(str)
+    processingFinished = pyqtSignal(int, str, str)
 
 class GenericThread(QRunnable):
-    rangeCalculated = pyqtSignal(int)
-    stepProcessed = pyqtSignal()
-    processingFinished = pyqtSignal(int, str)
-    
     def __init__(self):
         """Constructor.
         """
         super(GenericThread, self).__init__()
 
+        self.id = str(uuid4())
+        
+        self.signals = ProcessSignals()
+
     def run(self):
         pass
+
+    def getId(self):
+        return self.id
