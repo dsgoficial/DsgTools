@@ -51,7 +51,6 @@ class ProcessManager(QObject):
     @pyqtSlot(int, str)
     def setProgressRange(self, maximum, uuid):
         (progressMessageBar, progressBar) = self.findProgressMessageBar(uuid)
-        
         if progressMessageBar:
             progressBar.setRange(0, maximum)
 
