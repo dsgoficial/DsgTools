@@ -31,7 +31,6 @@ class ProcessManager(QObject):
         
         self.iface = iface
         self.processDict = dict()
-        self.messageBarDict = dict()
 
         self.threadFactory = ThreadFactory()
 
@@ -89,7 +88,6 @@ class ProcessManager(QObject):
 
         #storing the process and its related progressBar
         self.processDict[process] = (progressMessageBar, progressBar)
-        self.messageBarDict[progressMessageBar] = progressBar
 
         #initiating processing
         QThreadPool.globalInstance().start(process)
