@@ -49,7 +49,7 @@ class PostgisDbMessages(QObject):
     def getSuccessFeedbackMessage(self):
         return self.tr("Successful datatabase structure creation")
 
-    @pyqtSlot(str)
+    @pyqtSlot()
     def progressCanceled(self):
         self.thread.stopped[0] = True    
 
