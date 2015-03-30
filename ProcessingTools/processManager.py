@@ -23,6 +23,8 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+import sip
+
 from DsgTools.Factories.ThreadFactory.threadFactory import ThreadFactory
 
 class ProcessManager(QObject):
@@ -34,7 +36,7 @@ class ProcessManager(QObject):
 
         self.threadFactory = ThreadFactory()
 
-    def findProgressMessageBar(self, uuid):
+    def findProgressBar(self, uuid):
         for key in self.processDict.keys():
             id = key.getId()
             if id == uuid:
@@ -50,19 +52,19 @@ class ProcessManager(QObject):
 
     @pyqtSlot(int, str)
     def setProgressRange(self, maximum, uuid):
-        (progressMessageBar, progressBar) = self.findProgressMessageBar(uuid)
-        if progressMessageBar:
+        progressBar = self.findProgressBar(uuid)
+        if not sip.isdeleted(progressBar):
             progressBar.setRange(0, maximum)
 
     @pyqtSlot(str)
     def stepProcessed(self, uuid):
-        (progressMessageBar, progressBar) = self.findProgressMessageBar(uuid)
-        if progressMessageBar:
+        progressBar = self.findProgressBar(uuid)
+        if not sip.isdeleted(progressBar):
             progressBar.setValue(progressBar.value() + 1)
 
     @pyqtSlot(int,str,str)
     def processFinished( self, feedback, message, uuid):
-        (progressMessageBar, progressBar) = self.findProgressMessageBar(uuid)
+        progressBar = self.findProgressBar(uuid)
 
         process = self.findProcess(uuid)
         if process != None:
@@ -86,7 +88,7 @@ class ProcessManager(QObject):
         progressMessageBar.destroyed.connect(process.messenger.progressCanceled)
 
         #storing the process and its related progressBar
-        self.processDict[process] = (progressMessageBar, progressBar)
+        self.processDict[process] = progressBar
 
         #initiating processing
         QThreadPool.globalInstance().start(process)
