@@ -3,7 +3,6 @@
                     ComplexTools/complexWindow.py \
                     DbTools/SpatialiteTool/cria_spatialite_dialog.py \
                     DbTools/PostGISTool/postgisDBTool.py \
-                    DbTools/PostGISTool/createPostGISDatabase.py \
                     LayerTools/ui_create_inom_dialog.py \
                     LayerTools/load_by_class.py \
                     LayerTools/load_by_category.py \

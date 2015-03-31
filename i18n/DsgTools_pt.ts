@@ -18,7 +18,7 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Federal Decree 6,666.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -50,52 +50,52 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ComplexWindow</name>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="126"/>
+        <location filename="ComplexTools/complexWindow.py" line="125"/>
         <source>select a complex class</source>
         <translation>Selecione a Classe Complexa</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="138"/>
+        <location filename="ComplexTools/complexWindow.py" line="137"/>
         <source>select a database</source>
         <translation>Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="429"/>
+        <location filename="ComplexTools/complexWindow.py" line="431"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="177"/>
+        <location filename="ComplexTools/complexWindow.py" line="176"/>
         <source>Please, select an item to zoom.</source>
         <translation>Por favor, selecione um item para aproximar.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="196"/>
+        <location filename="ComplexTools/complexWindow.py" line="195"/>
         <source>The associated classes must be loaded in the table of contents.</source>
         <translation>As classes associadas precisam ser carregadas na tabela de conteúdo.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="211"/>
+        <location filename="ComplexTools/complexWindow.py" line="210"/>
         <source>Select a complex.</source>
         <translation>Selecione um complexo.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="268"/>
+        <location filename="ComplexTools/complexWindow.py" line="270"/>
         <source>The class you&apos;re trying to disassociate must loaded in the table of contents.</source>
         <translation>A classe que você está tentando desassociar precisa ser carregada na tabela de conteúdo.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="309"/>
+        <location filename="ComplexTools/complexWindow.py" line="311"/>
         <source>Please, select an aggregated class or aggregated id.</source>
         <translation>Por favor, selecione uma classe agregada ou o identificador dela.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="387"/>
+        <location filename="ComplexTools/complexWindow.py" line="389"/>
         <source>Please, select a complex.</source>
         <translation>Por favor, selecione um complexo.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="426"/>
+        <location filename="ComplexTools/complexWindow.py" line="428"/>
         <source>The following layers cannot be associated to complexes from </source>
         <translation>As camadas a seguir não podem ser associadas a complexos de</translation>
     </message>
@@ -103,37 +103,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CreateInomDialog</name>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="79"/>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="78"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="79"/>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="78"/>
         <source>Map name index not valid!</source>
         <translation>O índice de nomenclatura é inválido!</translation>
     </message>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="88"/>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="87"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="88"/>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="87"/>
         <source>Problem creating the frame! Check log for details.</source>
         <translation>Problema na criação da moldura! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="89"/>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="88"/>
         <source>Problem creating the frame:</source>
         <translation>Problema na criação da moldura:</translation>
     </message>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="154"/>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="153"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="209"/>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="208"/>
         <source>Select Database</source>
         <translation>Selecione o Banco de Dados</translation>
     </message>
@@ -143,17 +143,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="DbTools/PostGISTool/createPostGISDatabase.py" line="92"/>
         <source>Problem on database structure creation: </source>
-        <translation>Problema na criação da estrutura de banco de dados:</translation>
+        <translation type="obsolete">Problema na criação da estrutura de banco de dados:</translation>
     </message>
     <message>
         <location filename="DbTools/PostGISTool/createPostGISDatabase.py" line="102"/>
         <source>User canceled datatabase structure creation</source>
-        <translation>Usuário cancelou a criação da estrutura do banco de dados</translation>
+        <translation type="obsolete">Usuário cancelou a criação da estrutura do banco de dados</translation>
     </message>
     <message>
         <location filename="DbTools/PostGISTool/createPostGISDatabase.py" line="112"/>
         <source>Successful datatabase structure creation</source>
-        <translation>Criação da estrutura de banco de dados concluída com sucesso</translation>
+        <translation type="obsolete">Criação da estrutura de banco de dados concluída com sucesso</translation>
     </message>
 </context>
 <context>
@@ -206,7 +206,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="160"/>
         <source>3.0</source>
-        <translation>3.0</translation>
+        <translation type="obsolete">3.0</translation>
     </message>
 </context>
 <context>
@@ -265,7 +265,7 @@ p, li { white-space: pre-wrap; }
         <translation>Atualizar Tabela</translation>
     </message>
     <message>
-        <location filename="ui_serverConfigurator.ui" line="155"/>
+        <location filename="ServerTools/ui_serverConfigurator.py" line="101"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
@@ -302,10 +302,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="DbTools/PostGISTool/ui_postgisDBTool.ui" line="132"/>
         <source>3.0</source>
-        <translation>3.0</translation>
+        <translation type="obsolete">3.0</translation>
     </message>
     <message>
-        <location filename="ui_serverConfigurator.ui" line="148"/>
+        <location filename="ServerTools/ui_serverConfigurator.py" line="100"/>
         <source>Save</source>
         <translation>Salvar</translation>
     </message>
@@ -425,39 +425,39 @@ p, li { white-space: pre-wrap; }
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="ui_serverConfigurator.ui" line="14"/>
+        <location filename="ServerTools/ui_serverConfigurator.py" line="94"/>
         <source>Configurate Servers</source>
         <translation>Configurar Servidores</translation>
     </message>
     <message>
-        <location filename="ui_serverConfigurator.ui" line="22"/>
+        <location filename="ServerTools/ui_serverConfigurator.py" line="95"/>
         <source>Server Name:</source>
         <translation>Nome do Servidor:</translation>
     </message>
     <message>
-        <location filename="ui_serverConfigurator.ui" line="40"/>
+        <location filename="ServerTools/ui_serverConfigurator.py" line="96"/>
         <source>Host:</source>
         <translation>Servidor:</translation>
     </message>
     <message>
-        <location filename="ui_serverConfigurator.ui" line="67"/>
+        <location filename="ServerTools/ui_serverConfigurator.py" line="97"/>
         <source>Port:</source>
         <translation>Porta:</translation>
     </message>
     <message>
-        <location filename="ui_serverConfigurator.ui" line="94"/>
+        <location filename="ServerTools/ui_serverConfigurator.py" line="98"/>
         <source>User:</source>
         <translation>Usuário:</translation>
     </message>
     <message>
-        <location filename="ui_serverConfigurator.ui" line="121"/>
+        <location filename="ServerTools/ui_serverConfigurator.py" line="99"/>
         <source>Password:</source>
         <translation>Senha:</translation>
     </message>
     <message>
         <location filename="ServerTools/ui_serverConfigurator.ui" line="146"/>
         <source>Store Credentials</source>
-        <translation>Salvar Senha</translation>
+        <translation type="obsolete">Salvar Senha</translation>
     </message>
     <message>
         <location filename="DbTools/PostGISTool/ui_postgisDBTool.ui" line="94"/>
@@ -470,7 +470,7 @@ p, li { white-space: pre-wrap; }
         <translation>Pesquisar SRC</translation>
     </message>
     <message>
-        <location filename="ui_serverConfigurator.ui" line="162"/>
+        <location filename="ServerTools/ui_serverConfigurator.py" line="102"/>
         <source>Remove</source>
         <translation>Remover</translation>
     </message>
@@ -558,7 +558,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="dsg_tools.py" line="214"/>
         <source>Complex Tools</source>
-        <translation>Ferramentas de Complexos</translation>
+        <translation type="obsolete">Ferramentas de Complexos</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="313"/>
@@ -598,34 +598,34 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="dsg_tools.py" line="473"/>
         <source>Creating database structure...</source>
-        <translation>Criando Estrutura do Banco de Dados...</translation>
+        <translation type="obsolete">Criando Estrutura do Banco de Dados...</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="491"/>
         <source>Problem creating the Database!</source>
-        <translation>Problema naCriação do Banco de Dados!</translation>
+        <translation type="obsolete">Problema naCriação do Banco de Dados!</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="542"/>
         <source>Database structure creation canceled!</source>
-        <translation>Criação da Estrutura de Dados Cancelada!</translation>
+        <translation type="obsolete">Criação da Estrutura de Dados Cancelada!</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="551"/>
         <source>Database structure successfully created!</source>
-        <translation>Estrutura de Banco de Dados criada com sucesso!</translation>
+        <translation type="obsolete">Estrutura de Banco de Dados criada com sucesso!</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="553"/>
         <source>Problem creating the database structure!
  Check the Log terminal for details.</source>
-        <translation>Problema na Criação da Estrutura de Dados!
+        <translation type="obsolete">Problema na Criação da Estrutura de Dados!
 Olhe o Terminal Python para detalhes.</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="555"/>
         <source>User canceled the database structure creation!</source>
-        <translation>Usuário cancelou a criação da estrutura de dados!</translation>
+        <translation type="obsolete">Usuário cancelou a criação da estrutura de dados!</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="323"/>
@@ -678,42 +678,42 @@ Olhe o Terminal Python para detalhes.</translation>
         <translation>Cartas Topográficas</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="571"/>
+        <location filename="dsg_tools.py" line="522"/>
         <source>1:250k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="575"/>
+        <location filename="dsg_tools.py" line="526"/>
         <source>1:100k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="579"/>
+        <location filename="dsg_tools.py" line="530"/>
         <source>1:50k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="583"/>
+        <location filename="dsg_tools.py" line="534"/>
         <source>1:25k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:25k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="587"/>
+        <location filename="dsg_tools.py" line="538"/>
         <source>1:250k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="591"/>
+        <location filename="dsg_tools.py" line="542"/>
         <source>1:100k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="595"/>
+        <location filename="dsg_tools.py" line="546"/>
         <source>1:50k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="599"/>
+        <location filename="dsg_tools.py" line="550"/>
         <source>1:25k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:25k</translation>
     </message>
@@ -723,7 +723,7 @@ Olhe o Terminal Python para detalhes.</translation>
     <message>
         <location filename="LayerTools/load_by_category_dialog.ui" line="14"/>
         <source>Dialog</source>
-        <translation>Diálogo</translation>
+        <translation type="obsolete">Diálogo</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_category_dialog.ui" line="24"/>
@@ -836,47 +836,47 @@ Olhe o Terminal Python para detalhes.</translation>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="259"/>
+        <location filename="LayerTools/load_by_category.py" line="252"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="351"/>
+        <location filename="LayerTools/load_by_category.py" line="347"/>
         <source>WARNING!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="337"/>
+        <location filename="LayerTools/load_by_category.py" line="333"/>
         <source>Please, select at least one type of layer!</source>
         <translation>Por favor, selecione pelo menos um tipo de camada!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="349"/>
+        <location filename="LayerTools/load_by_category.py" line="345"/>
         <source>CRITICAL!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="342"/>
+        <location filename="LayerTools/load_by_category.py" line="338"/>
         <source>Problem loading the categories!</source>
         <translation>Problema na carga das categorias!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="349"/>
+        <location filename="LayerTools/load_by_category.py" line="345"/>
         <source>Could not determine the coordinate reference system!</source>
         <translation>Não foi possível determinar o Sistema de Coordenadas de Referência!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="348"/>
+        <location filename="LayerTools/load_by_category.py" line="344"/>
         <source>Database not loaded properly!</source>
         <translation>Banco de dados não foi carregado corretamente!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="351"/>
+        <location filename="LayerTools/load_by_category.py" line="347"/>
         <source>Please, select at least one category!</source>
         <translation>Por favor, selecione pelo menos uma categoria!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="399"/>
+        <location filename="LayerTools/load_by_category.py" line="394"/>
         <source>Problem counting elements: </source>
         <translation>Problema na contagem dos elementos:</translation>
     </message>
@@ -949,42 +949,42 @@ Olhe o Terminal Python para detalhes.</translation>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="154"/>
+        <location filename="LayerTools/load_by_class.py" line="152"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="190"/>
+        <location filename="LayerTools/load_by_class.py" line="188"/>
         <source>Select Database</source>
         <translation>Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="266"/>
+        <location filename="LayerTools/load_by_class.py" line="264"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="248"/>
+        <location filename="LayerTools/load_by_class.py" line="246"/>
         <source>Could not load the selected classes!</source>
         <translation>Não foi possível carregar as classes selecionadas!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="268"/>
+        <location filename="LayerTools/load_by_class.py" line="266"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="250"/>
+        <location filename="LayerTools/load_by_class.py" line="248"/>
         <source>Please, select at least one class!</source>
         <translation>Por favor, selecione pelo menos uma classe!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="266"/>
+        <location filename="LayerTools/load_by_class.py" line="264"/>
         <source>Could not load the layer(s)!</source>
         <translation>Não foi possível carregar a(s) camada(s)!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="268"/>
+        <location filename="LayerTools/load_by_class.py" line="266"/>
         <source>Please select at least one layer!</source>
         <translation>Por favor, selecione pelo menos uma camada!</translation>
     </message>
@@ -992,22 +992,22 @@ Olhe o Terminal Python para detalhes.</translation>
 <context>
     <name>ManageComplexDialog</name>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="172"/>
+        <location filename="ComplexTools/manageComplex.py" line="194"/>
         <source>edit this field</source>
         <translation>edite este campo</translation>
     </message>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="204"/>
+        <location filename="ComplexTools/manageComplex.py" line="217"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="204"/>
+        <location filename="ComplexTools/manageComplex.py" line="217"/>
         <source>The field: &apos;nome&apos; must be filled in all rows. Please, check and try again.</source>
         <translation>O campo &apos;nome&apos; precisa ser preenchido em todas as linhas. Por favor, verifique e tente novamente.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="218"/>
+        <location filename="ComplexTools/manageComplex.py" line="232"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
@@ -1015,9 +1015,34 @@ Olhe o Terminal Python para detalhes.</translation>
 <context>
     <name>PostgisDBTool</name>
     <message>
-        <location filename="DbTools/PostGISTool/postgisDBTool.py" line="99"/>
+        <location filename="DbTools/PostGISTool/postgisDBTool.py" line="98"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
+    </message>
+</context>
+<context>
+    <name>PostgisDbMessages</name>
+    <message>
+        <location filename="Factories/ThreadFactory/postgisDbThread.py" line="41"/>
+        <source>Problem on database structure creation: </source>
+        <translation>Problema na criação da estrutura de banco de dados:</translation>
+    </message>
+    <message>
+        <location filename="Factories/ThreadFactory/postgisDbThread.py" line="44"/>
+        <source>Problem creating the database structure!
+ Check the Log terminal for details.</source>
+        <translation>Problema na Criação da Estrutura de Dados!
+Olhe o Terminal Python para detalhes.</translation>
+    </message>
+    <message>
+        <location filename="Factories/ThreadFactory/postgisDbThread.py" line="47"/>
+        <source>User canceled the database structure creation!</source>
+        <translation>Usuário cancelou a criação da estrutura de dados!</translation>
+    </message>
+    <message>
+        <location filename="Factories/ThreadFactory/postgisDbThread.py" line="50"/>
+        <source>Successful datatabase structure creation</source>
+        <translation>Criação da estrutura de banco de dados concluída com sucesso</translation>
     </message>
 </context>
 <context>
@@ -1036,27 +1061,27 @@ Olhe o Terminal Python para detalhes.</translation>
 <context>
     <name>ServerConfigurator</name>
     <message>
-        <location filename="serverConfigurator.py" line="58"/>
+        <location filename="ServerTools/serverConfigurator.py" line="58"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="serverConfigurator.py" line="58"/>
+        <location filename="ServerTools/serverConfigurator.py" line="58"/>
         <source>Fill all parameters.</source>
         <translation>Preencha todos os parâmetros.</translation>
     </message>
     <message>
-        <location filename="serverConfigurator.py" line="68"/>
+        <location filename="ServerTools/serverConfigurator.py" line="68"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="serverConfigurator.py" line="56"/>
+        <location filename="ServerTools/serverConfigurator.py" line="56"/>
         <source>Server stored.</source>
         <translation>Servidor armazenado.</translation>
     </message>
     <message>
-        <location filename="serverConfigurator.py" line="68"/>
+        <location filename="ServerTools/serverConfigurator.py" line="68"/>
         <source>Server removed.</source>
         <translation>Servidor removido.</translation>
     </message>
