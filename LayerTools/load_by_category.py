@@ -34,10 +34,9 @@ from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 from PyQt4.QtGui import QApplication, QCursor
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Factories', 'SqlFactory'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Utils'))
-from utils import Utils
-from sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.Utils.utils import Utils
+from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from PyQt4.QtCore import QTime
 
 class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
     def __init__(self, parent=None):
@@ -303,6 +302,8 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         self.selectedClasses.sort()
 
     def okSelected(self):
+        time = QTime()
+        time.start()
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
 
@@ -320,6 +321,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
                 categoriasSelecionadas = []
                 for i in range(self.listWidgetCategoryTo.__len__()):
                     categoriasSelecionadas.append(self.listWidgetCategoryTo.item(i).text())
+
                 try:
                     if self.checkBoxPoint.isChecked():
                         self.loadLayers('p',categoriasSelecionadas,ponto)
@@ -351,11 +353,13 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             QApplication.restoreOverrideCursor()
         except:
             QApplication.restoreOverrideCursor()
+        print time.elapsed()
 
     def loadLayers(self, type, categories, layer_names):
         if self.isSpatialite:
             self.loadSpatialiteLayers(type, categories, layer_names)
         else:
+
             self.loadPostGISLayers(type, categories, layer_names)
 
     def setLayersWithElements(self):
@@ -461,6 +465,8 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
                 self.prepareSpatialiteToLoad(uri, categoria, layer_names, idGrupo, geom_column)
 
     def loadEDGVLayer(self, uri, layer_name, schema, provider, idSubgrupo):
+        time3 = QTime()
+        time3.start()
         vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
         vlayer.setCrs(self.crs)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
@@ -474,3 +480,4 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         qgis.utils.iface.legendInterface().moveLayer(vlayer, idSubgrupo)
         if not vlayer.isValid():
             QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        print layer_name,time3.elapsed()

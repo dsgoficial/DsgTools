@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from sqlGenerator import SqlGenerator
+from DsgTools.Factories.SqlFactory.sqlGenerator import SqlGenerator
 
 class SpatialiteSqlGenerator(SqlGenerator):
     def getComplexLinks(self, complex):
@@ -74,7 +74,7 @@ class SpatialiteSqlGenerator(SqlGenerator):
         return None
 
     def insertFrameIntoTable(self, wkt):
-        sql = "INSERT INTO public_aux_moldura_a(GEOMETRY) VALUES(geomfromtext("+wkt+"))"
+        sql = "INSERT INTO public_aux_moldura_a(GEOMETRY) VALUES(GeomFromText("+wkt+"))"
         return sql
 
     def getElementCountFromLayer(self, layer):
