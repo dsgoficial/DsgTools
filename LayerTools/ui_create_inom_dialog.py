@@ -28,13 +28,12 @@ from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 from PyQt4.QtGui import QMessageBox
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Factories', 'SqlFactory'))
-from sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_create_inom_dialog_base.ui'))
 
-from map_index import UtmGrid
+from DsgTools.LayerTools.map_index import UtmGrid
 
 class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
     def __init__(self, parent=None):

@@ -41,7 +41,7 @@ class PostgisDbMessages(QObject):
         return self.tr("Problem on database structure creation: ")+'SQL: '+command+'\n'+query.lastError().text()+'\n'
 
     def getProblemFeedbackMessage(self):
-        self.tr('Problem creating the database structure!\n Check the Log terminal for details.')
+        return self.tr('Problem creating the database structure!\n Check the Log terminal for details.')
 
     def getUserCanceledFeedbackMessage(self):
         return self.tr('User canceled the database structure creation!')
