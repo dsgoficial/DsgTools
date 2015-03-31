@@ -9,7 +9,8 @@
                     LayerTools/load_by_category.py \
                     QmlTools/qmlParser.py \
                     ServerTools/serverConfigurator.py \
-                    ServerTools/ui_serverConfigurator.py
+                    ServerTools/ui_serverConfigurator.py \
+                    Factories/ThreadFactory/postgisDbThread.py
 
  FORMS           = ComplexTools/complexWindow_base.ui \
                    ComplexTools/ui_manageComplex.ui \
