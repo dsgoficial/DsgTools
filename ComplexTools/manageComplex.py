@@ -33,10 +33,8 @@ from ui_manageComplex import Ui_Dialog
 from uuid import uuid4
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'QmlTools'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Utils'))
-from qmlParser import QmlParser
-from utils import Utils
+from DsgTools.QmlTools.qmlParser import QmlParser
+from DsgTools.Utils.utils import Utils
 
 class CustomTableModel(QSqlTableModel):
     def __init__(self, domainDict, parent=None, db=QSqlDatabase):
@@ -185,7 +183,7 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         record = self.projectModel.record()
         adjustedRecord = self.adjustRecord(record)
         self.projectModel.insertRecord(self.projectModel.rowCount(), adjustedRecord)
-        
+
     def adjustRecord(self,record):
         #insert a new record with an already determined uuid value
         record.setValue("id",str(uuid4()))

@@ -29,8 +29,7 @@ from qgis.core import QgsCoordinateReferenceSystem,QgsMessageLog
 from qgis.gui import QgsGenericProjectionSelector
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'Factories', 'SqlFactory'))
-from sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 
 from ui_postgisDBTool import Ui_Dialog
 
@@ -44,35 +43,35 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        
+
         self.iface = iface
-        
+
         self.populateServersCombo()
-        
+
         self.srs = None
 
         self.factory = SqlGeneratorFactory()
         #setting the sql generator
         self.gen = self.factory.createSqlGenerator(False)
-        
+
         self.epsg = 4326
-        
+
     def getParameters(self):
         return (self.getDatabase(self.databaseEdit.text()), self.versionCombo.currentText(), self.epsg)
-        
-    @pyqtSlot(bool)    
+
+    @pyqtSlot(bool)
     def on_saveButton_clicked(self):
         if self.createDatabase(self.databaseEdit.text()):
             self.storeConnectionConfiguration(self.serversCombo.currentText(), self.databaseEdit.text())
             self.done(1)
         else:
             self.done(0)
-    
-    @pyqtSlot(bool)    
+
+    @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
         self.done(-1)
 
-    @pyqtSlot(bool)    
+    @pyqtSlot(bool)
     def on_srsButton_clicked(self):
         projSelector = QgsGenericProjectionSelector()
         message = 'Select the Spatial Reference System!'
@@ -87,12 +86,12 @@ class PostgisDBTool(QDialog, Ui_Dialog):
                 self.epsg = 4326
         except:
             QMessageBox.warning(self, self.tr("Warning!"), self.tr(message))
-            
+
     def createDatabase(self, name):
         sql  = self.gen.getCreateDatabase(name)
-        
+
         db = self.getDatabase()
-        
+
         #creating the database
         query = QSqlQuery(db)
         if not query.exec_(sql):
@@ -101,7 +100,7 @@ class PostgisDBTool(QDialog, Ui_Dialog):
             return False
         db.close()
         return True
-    
+
     def getDatabase(self, database = 'postgres'):
         (host, port, user, password) = self.getServerConfiguration(self.serversCombo.currentText())
 
@@ -113,27 +112,27 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         db.setPassword(password)
         if not db.open():
             QgsMessageLog.logMessage(db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        
+
         return db
-    
+
     def updateConnectionName(self):
         server = self.serversCombo.currentText()
         database = self.databaseEdit.text()
         name = server+'_'+database
         self.connectionEdit.setText(name)
-    
+
     def on_serversCombo_currentIndexChanged(self, index):
         self.updateConnectionName()
-        
+
     def on_databaseEdit_textEdited(self, text):
         self.updateConnectionName()
-    
+
     def checkFields(self):
         if self.serversCombo.currentText() == '' or self.databaseEdit.text() == '' \
             or self.srsEdit.text() == '':
             return False
         return True
-    
+
     def getServerConfiguration(self, name):
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers/'+name)
@@ -143,12 +142,12 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         password = settings.value('password')
         settings.endGroup()
         return (host, port, user, password)
-    
+
     def storeConnectionConfiguration(self, server, database):
         name = self.connectionEdit.text()
-        
+
         (host, port, user, password) = self.getServerConfiguration(server)
-        
+
         settings = QSettings()
         settings.beginGroup('PostgreSQL/connections/'+name)
         settings.setValue('database', database)
@@ -157,14 +156,14 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         settings.setValue('username', user)
         settings.setValue('password', password)
         settings.endGroup()
-        
+
     def getServers(self):
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers')
         currentConnections = settings.childGroups()
         settings.endGroup()
         return currentConnections
-        
+
     def populateServersCombo(self):
         self.serversCombo.clear()
         currentConnections = self.getServers()

@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from postgisDbThread import PostgisDbThread
+from DsgTools.Factories.ThreadFactory.postgisDbThread import PostgisDbThread
 
 class ThreadFactory:
     def makeProcess(self, name):

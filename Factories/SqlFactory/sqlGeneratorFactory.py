@@ -22,8 +22,8 @@
 """
 import os
 
-from spatialiteSqlGenerator import SpatialiteSqlGenerator
-from postgisSqlGenerator import PostGISSqlGenerator
+from DsgTools.Factories.SqlFactory.spatialiteSqlGenerator import SpatialiteSqlGenerator
+from DsgTools.Factories.SqlFactory.postgisSqlGenerator import PostGISSqlGenerator
 
 class SqlGeneratorFactory:
     def createSqlGenerator(self, isSpatialite):

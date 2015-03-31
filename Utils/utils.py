@@ -30,23 +30,22 @@ from qgis.gui import *
 import qgis as qgis
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Factories', 'SqlFactory'))
-from sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 
 class Utils:
     def __init__(self):
         self.factory = SqlGeneratorFactory()
-    
+
     def __del__(self):
         pass
-     
+
     def getQmlDir(self, db):
         currentPath = os.path.dirname(__file__)
         if qgis.core.QGis.QGIS_VERSION_INT >= 20600:
             qmlVersionPath = os.path.join(currentPath, '..', 'Qmls', 'qgis_26')
         else:
             qmlVersionPath = os.path.join(currentPath, '..', 'Qmls', 'qgis_22')
-            
+
         version = self.getDatabaseVersion(db)
         if version == '3.0':
             qmlPath = os.path.join(qmlVersionPath, 'edgv_30')
@@ -61,7 +60,7 @@ class Utils:
         srids = []
         while query.next():
             srids.append(query.value(0))
-        return srids[0]    
+        return srids[0]
 
     def getPostGISConnectionParameters(self, name):
         settings = QSettings()
@@ -89,7 +88,7 @@ class Utils:
             db = QSqlDatabase("QSQLITE")
             db.setDatabaseName(filename)
         return (filename, db)
-    
+
     def getPostGISDatabase(self, postGISConnection):
         db = None
         db = QSqlDatabase("QPSQL")
@@ -100,7 +99,7 @@ class Utils:
         db.setUserName(user)
         db.setPassword(password)
         return db
-    
+
     def getDatabaseVersion(self, db):
         gen = self.factory.createSqlGenerator(self.isSpatialiteDB(db))
         sqlVersion = gen.getEDGVVersion()
@@ -109,11 +108,10 @@ class Utils:
         while queryVersion.next():
             version = queryVersion.value(0)
         return version
-    
+
     def isSpatialiteDB(self, db):
         if db.driverName() == 'QPSQL':
             isSpatialite = False
         elif db.driverName() == 'QSQLITE':
             isSpatialite = True
         return isSpatialite
-        

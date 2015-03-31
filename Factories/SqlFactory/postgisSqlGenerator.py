@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from sqlGenerator import SqlGenerator
+from DsgTools.Factories.SqlFactory.sqlGenerator import SqlGenerator
 
 class PostGISSqlGenerator(SqlGenerator):
     def getComplexLinks(self, complex):

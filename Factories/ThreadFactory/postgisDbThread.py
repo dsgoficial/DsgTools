@@ -27,31 +27,31 @@ from qgis.core import QgsMessageLog
 
 import sys, os, codecs
 
-from genericThread import GenericThread
+from DsgTools.Factories.ThreadFactory.genericThread import GenericThread
 
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 
 class PostgisDbMessages(QObject):
     def __init__(self, thread):
         super(PostgisDbMessages, self).__init__()
-        
+
         self.thread = thread
-        
+
     def getProblemMessage(self):
         return self.tr("Problem on database structure creation: ")+'SQL: '+command+'\n'+query.lastError().text()+'\n'
-    
+
     def getProblemFeedbackMessage(self):
         self.tr('Problem creating the database structure!\n Check the Log terminal for details.')
-        
+
     def getUserCanceledFeedbackMessage(self):
         return self.tr('User canceled the database structure creation!')
-    
+
     def getSuccessFeedbackMessage(self):
         return self.tr("Successful datatabase structure creation")
 
     @pyqtSlot()
     def progressCanceled(self):
-        self.thread.stopped[0] = True    
+        self.thread.stopped[0] = True
 
 class PostgisDbThread(GenericThread):
     def __init__(self):
@@ -62,7 +62,7 @@ class PostgisDbThread(GenericThread):
         self.factory = SqlGeneratorFactory()
         #setting the sql generator
         self.gen = self.factory.createSqlGenerator(False)
-        
+
         self.messenger = PostgisDbMessages(self)
 
     def setParameters(self, db, version, epsg, stopped):

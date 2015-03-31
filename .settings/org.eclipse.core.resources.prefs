@@ -2,7 +2,6 @@ eclipse.preferences.version=1
 encoding//ComplexTools/complexWindow.py=utf-8
 encoding//ComplexTools/manageComplex.py=utf-8
 encoding//ComplexTools/ui_manageComplex.py=utf-8
-encoding//DbTools/PostGISTool/createPostGISDatabase.py=utf-8
 encoding//DbTools/PostGISTool/postgisDBTool.py=utf-8
 encoding//DbTools/PostGISTool/ui_postgisDBTool.py=utf-8
 encoding//DbTools/SpatialiteTool/cria_spatialite_dialog.py=utf-8

@@ -21,8 +21,7 @@
  ***************************************************************************/
 """
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Factories', 'SqlFactory'))
-from sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
@@ -34,7 +33,7 @@ from qgis.core import *
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'complexWindow_base.ui'))
 
-from manageComplex import ManageComplexDialog
+from DsgTools.ComplexTools.manageComplex import ManageComplexDialog
 #from associateWithComplex import AssociateWithComplexDialog
 
 class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):

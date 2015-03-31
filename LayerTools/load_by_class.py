@@ -33,10 +33,8 @@ from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 from PyQt4.QtGui import QApplication, QCursor
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Factories', 'SqlFactory'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Utils'))
-from utils import Utils
-from sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.Utils.utils import Utils
+from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 
 class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
     def __init__(self, parent=None):

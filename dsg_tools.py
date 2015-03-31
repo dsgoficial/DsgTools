@@ -38,7 +38,6 @@ from DsgTools.LayerTools.ui_create_inom_dialog import CreateInomDialog
 
 from DsgTools.DbTools.SpatialiteTool.cria_spatialite_dialog import CriaSpatialiteDialog
 from DsgTools.DbTools.PostGISTool.postgisDBTool import PostgisDBTool
-from DsgTools.DbTools.PostGISTool.createPostGISDatabase import CreatePostGISDatabase
 
 from DsgTools.ComplexTools.complexWindow import ComplexWindow
 
