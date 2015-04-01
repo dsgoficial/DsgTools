@@ -2,13 +2,14 @@
 """
 /***************************************************************************
  DsgTools
-                               
+
                              -------------------
         begin                : 2014-09-19
         git sha              : $Format:%H$
         copyright            : (C) 2014 by Felipe Ferrari
         email                : ferrari@dsg.eb.mil.br
          mod history          : 2014-12-17 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
+         mod history          : 2014-03-31 by Philipe Borba - Cartographic Engineer @ Brazilian Army
 ***************************************************************************/
 
 /***************************************************************************
@@ -20,12 +21,13 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsGeometry,QgsCoordinateReferenceSystem,QgsDataSourceURI,QgsVectorLayer,QgsMapLayerRegistry,QgsMessageLog,QgsCoordinateTransform
-
+from qgis.core import *
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
 from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
 from PyQt4.QtGui import QMessageBox
+from pyspatialite import dbapi2 as sqlite3
+
 
 import sys, os
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
@@ -34,9 +36,10 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_create_inom_dialog_base.ui'))
 
 from DsgTools.LayerTools.map_index import UtmGrid
+from DsgTools.Utils.utils import Utils
 
 class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, parent=None):
+    def __init__(self, iface, parent=None):
         """Constructor."""
         super(CreateInomDialog, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -45,7 +48,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        
+        self.iface = iface
         #Sql factory generator
         self.isSpatialite = True
         self.tabWidget.setCurrentIndex(0)
@@ -54,19 +57,19 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
 
         QObject.connect(self.tabWidget, SIGNAL(("currentChanged(int)")), self.restoreInitialState)
         QObject.connect(self.pushButtonOpenFile, SIGNAL(("clicked()")), self.loadDatabase)
-        
+
         self.restoreInitialState()
 
         self.db = None
         #populating the postgis combobox
         self.populatePostGISConnectionsCombo()
-        
+
         self.map_index = UtmGrid()
-        
+
         self.disableAll()
-        
+
         self.setValidCharacters()
-        
+
         self.setMask()
 
     def __del__(self):
@@ -79,15 +82,99 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
             return
         frame = self.map_index.getQgsPolygonFrame(self.inomLineEdit.text())
         reprojected = self.reprojectFrame(frame)
-        ewkt = '\''+reprojected.exportToWkt()+'\','+str(self.epsg)
-        sql = self.gen.insertFrameIntoTable(ewkt)
-        print sql
-        query = QSqlQuery(self.db)
-        if not query.exec_(sql):
-            QMessageBox.warning(self, self.tr("Critical!"), self.tr('Problem creating the frame! Check log for details.'))
-            QgsMessageLog.logMessage(self.tr("Problem creating the frame:")+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            return
+        self.insertFrameIntoLayer(reprojected)
         self.done(1)
+
+    def insertFrameIntoLayer(self,reprojected):
+        self.utils = Utils()
+        self.dbVersion = self.utils.getDatabaseVersion(self.db)
+        self.qmlPath = self.utils.getQmlDir(self.db)
+        (loaded,layer) = self.checkLoaded()
+        if not loaded:
+            if self.isSpatialite:
+                layer = self.loadSpatialiteFrame()
+            else:
+                layer = self.loadPostGISFrame()
+
+        if not layer:
+            return
+
+        layer.startEditing()
+        feat = QgsFeature()
+        feat.setFields(layer.dataProvider().fields())
+        feat.setGeometry(reprojected)
+        feat.setAttribute(2,self.inomen)
+        feat.setAttribute(3,self.scaleCombo.currentText())
+        layer.addFeatures([feat], makeSelected=True)
+        layer.commitChanges()
+        bbox = reprojected.boundingBox()
+        for feature in layer.getFeatures():
+            bbox.combineExtentWith(feature.geometry().boundingBox())
+        self.iface.mapCanvas().setExtent(bbox)
+
+    def checkLoaded(self):
+        loaded = False
+        layer = None
+        for lyr in self.iface.legendInterface().layers():
+            dbname = lyr.dataProvider().dataSourceUri().split(' ')[0].split('=')[1]
+            if self.isSpatialite and lyr.name() == 'public_aux_moldura_a':
+                if dbname.split('\'')[1] == self.filename:
+                    loaded = True
+                    layer = lyr
+            if not self.isSpatialite and lyr.name() == 'aux_moldura_a':
+                (database, host, port, user, password) = self.utils.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
+                if dbname.split('\'')[1] == database:
+                    loaded = True
+                    layer = lyr
+        return (loaded,layer)
+
+    def loadPostGISFrame(self):
+        self.selectedClasses = ['public.aux_moldura_a']
+        (database, host, port, user, password) = self.utils.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
+        uri = QgsDataSourceURI()
+        uri.setConnection(str(host),str(port), str(database), str(user), str(password))
+        if len(self.selectedClasses)>0:
+            try:
+                geom_column = 'geom'
+                for layer in self.selectedClasses:
+                    split = layer.split('.')
+                    schema = split[0]
+                    layerName = split[1]
+                    sql = self.gen.loadLayerFromDatabase(layer)
+                    uri.setDataSource(schema, layerName, geom_column, sql,'id')
+                    uri.disableSelectAtId(True)
+                    return self.loadEDGVLayer(uri, layerName, schema, 'postgres')
+            except:
+                self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load the selected frame!"), level=QgsMessageBar.CRITICAL)
+        else:
+            self.bar.pushMessage(self.tr("Warning!"), self.tr("Please, select at least one class!"), level=QgsMessageBar.WARNING)
+
+    def loadSpatialiteFrame(self):
+        self.selectedClasses = ['public_aux_moldura_a']
+        uri = QgsDataSourceURI()
+        uri.setDatabase(self.filename)
+        schema = ''
+        geom_column = 'GEOMETRY'
+        if len(self.selectedClasses)>0:
+            for layer_name in self.selectedClasses:
+                uri.setDataSource(schema, layer_name, geom_column)
+                return self.loadEDGVLayer(uri, layer_name, schema, 'spatialite')
+
+    def loadEDGVLayer(self, uri, layer_name, schema, provider):
+        vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
+        vlayer.setCrs(self.crs)
+        QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
+        if self.isSpatialite and (self.dbVersion == '3.0' or self.dbVersion == '2.1.3'):
+            lyr = '_'.join(layer_name.replace('\r','').split('_')[1::])
+        else:
+            lyr = layer_name.replace('\r','')
+        vlayerQml = os.path.join(self.qmlPath, lyr+'.qml')
+        vlayer.loadNamedStyle(vlayerQml,False)
+        QgsMapLayerRegistry.instance().addMapLayer(vlayer)
+        if not vlayer.isValid():
+            QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return None
+        return vlayer
 
     @pyqtSlot()
     def on_cancelButton_clicked(self):
@@ -97,19 +184,19 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
     def on_comboBoxPostgis_currentIndexChanged(self):
         if self.comboBoxPostgis.currentIndex() > 0:
             self.loadDatabase()
-            
+
     @pyqtSlot(str)
     def on_miLineEdit_textChanged(self,s):
         if (s!=''):
-            inomen=self.map_index.getINomenFromMI(str(s))
-            self.inomLineEdit.setText(inomen)
+            self.inomen=self.map_index.getINomenFromMI(str(s))
+            self.inomLineEdit.setText(self.inomen)
 
     @pyqtSlot(str)
     def on_mirLineEdit_textChanged(self,s):
         if (s!=''):
-            inomen=self.map_index.getINomenFromMIR(str(s))
-            self.inomLineEdit.setText(inomen)
-            
+            self.inomen=self.map_index.getINomenFromMIR(str(s))
+            self.inomLineEdit.setText(self.inomen)
+
     def reprojectFrame(self, poly):
         print self.crs.geographicCRSAuthId(),self.epsg
         crsSrc = QgsCoordinateReferenceSystem(self.crs.geographicCRSAuthId())
@@ -120,12 +207,12 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
             newPolyline.append(coordinateTransformer.transform(point))
         qgsPolygon = QgsGeometry.fromMultiPolygon([[newPolyline]])
         return qgsPolygon
-           
+
     def closeDatabase(self):
         if self.db:
             self.db.close()
             self.db = None
-            
+
     def restoreInitialState(self):
         self.filename = ""
         self.dbLoaded = False
@@ -161,7 +248,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
                     self.postGISCrsEdit.setReadOnly(True)
         except:
             pass
-        
+
     def loadDatabase(self):
         self.closeDatabase()
         if self.isSpatialite:
@@ -179,12 +266,15 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
             self.db.setPort(int(port))
             self.db.setUserName(user)
             self.db.setPassword(password)
-        if not self.db.open():
-            print self.db.lastError().text()
-        else:
-            self.dbLoaded = True
-            self.setCRS()
-            
+        try:
+            if not self.db.open():
+                print self.db.lastError().text()
+            else:
+                self.dbLoaded = True
+                self.setCRS()
+        except:
+            pass
+
     def getPostGISConnectionParameters(self, name):
         settings = QSettings()
         settings.beginGroup('PostgreSQL/connections/'+name)
@@ -215,7 +305,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         while query.next():
             srids.append(query.value(0))
         return srids[0]
-    
+
     def setValidCharacters(self):
         self.chars = []
 
@@ -248,7 +338,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         self.chars.append(chars)
         chars = 'ABCD'
         self.chars.append(chars)
-        
+
     def setMask(self):
         if self.scaleCombo.currentText() == '1000k':
             self.inomLineEdit.setInputMask('NN-NN')
@@ -258,7 +348,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
             self.inomLineEdit.setInputMask('NN-NN-N-N')
         elif self.scaleCombo.currentText() == '100k':
             self.inomLineEdit.setInputMask('NN-NN-N-N-Nn')
-        elif self.scaleCombo.currentText() == '50k': 
+        elif self.scaleCombo.currentText() == '50k':
             self.inomLineEdit.setInputMask('NN-NN-N-N-Nn-N')
         elif self.scaleCombo.currentText() == '25k':
             self.inomLineEdit.setInputMask('NN-NN-N-N-Nn-N-NN')
@@ -270,7 +360,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
             self.inomLineEdit.setInputMask('NN-NN-N-N-Nn-N-NN-N-Nn-N')
         elif self.scaleCombo.currentText() == '1k':
             self.inomLineEdit.setInputMask('NN-NN-N-N-Nn-N-NN-N-Nn-N-N')
-        
+
     def validateMI(self):
         mi = self.inomLineEdit.text()
         split = mi.split('-')
@@ -331,7 +421,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         self.mirLineEdit.setEnabled(False)
         self.miLineEdit.setEnabled(False)
         self.inomLineEdit.setEnabled(False)
-        
+
     @pyqtSlot(int)
     def on_scaleCombo_currentIndexChanged(self):
         self.setMask()
@@ -342,18 +432,17 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
             self.mirLineEdit.setEnabled(True)
         else:
             self.mirLineEdit.setEnabled(False)
-            
+
     @pyqtSlot(bool)
     def on_miRadioButton_toggled(self, toggled):
         if toggled:
             self.miLineEdit.setEnabled(True)
         else:
             self.miLineEdit.setEnabled(False)
-            
+
     @pyqtSlot(bool)
     def on_inomRadioButton_toggled(self, toggled):
         if toggled:
             self.inomLineEdit.setEnabled(True)
         else:
             self.inomLineEdit.setEnabled(False)
-            
