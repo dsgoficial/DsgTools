@@ -43,6 +43,8 @@ from DsgTools.ComplexTools.complexWindow import ComplexWindow
 
 from DsgTools.ServerTools.serverConfigurator import ServerConfigurator
 
+from DsgTools.ServerTools.viewServers import ViewServers
+
 from DsgTools.ImageTools.processingTools import ProcessingTools
 
 from DsgTools.ProcessingTools.processManager import ProcessManager
@@ -318,6 +320,16 @@ class DsgTools:
             add_to_menu=False,
             add_to_toolbar=False)
         server.addAction(action)
+        
+        icon_path = ':/plugins/DsgTools/icons/server.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('View Server'),
+            callback=self.viewServers,
+            parent=self.dsgTools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        server.addAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/histogram.png'
         action = self.add_action(
@@ -508,6 +520,13 @@ class DsgTools:
 
     def configurateServers(self):
         self.dlg = ServerConfigurator(self.iface)
+        self.dlg.show()
+        result = self.dlg.exec_()
+        if result:
+            pass
+
+    def viewServers(self):
+        self.dlg = ViewServers(self.iface)
         self.dlg.show()
         result = self.dlg.exec_()
         if result:
