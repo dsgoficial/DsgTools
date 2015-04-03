@@ -26,6 +26,7 @@ from PyQt4.QtGui import *
 
 from ui_serverConfigurator import Ui_Dialog
 
+
 class ServerConfigurator(QDialog, Ui_Dialog):
     def __init__(self, iface):
         """Constructor."""
@@ -56,6 +57,7 @@ class ServerConfigurator(QDialog, Ui_Dialog):
             QMessageBox.warning(self, self.tr("Info!"), self.tr("Server stored."))
         else:
             QMessageBox.warning(self, self.tr("Warning!"), self.tr("Fill all parameters."))
+        self.done(1)
 
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):

@@ -41,7 +41,7 @@ from DsgTools.DbTools.PostGISTool.postgisDBTool import PostgisDBTool
 
 from DsgTools.ComplexTools.complexWindow import ComplexWindow
 
-from DsgTools.ServerTools.serverConfigurator import ServerConfigurator
+#from DsgTools.ServerTools.serverConfigurator import ServerConfigurator
 
 from DsgTools.ServerTools.viewServers import ViewServers
 
@@ -311,15 +311,15 @@ class DsgTools:
             add_to_toolbar=False)
         vectorIndex.addAction(action)
 
-        icon_path = ':/plugins/DsgTools/icons/server.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Server Settings'),
-            callback=self.configurateServers,
-            parent=self.dsgTools,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        server.addAction(action)
+#         icon_path = ':/plugins/DsgTools/icons/server.png'
+#         action = self.add_action(
+#             icon_path,
+#             text=self.tr('Server Settings'),
+#             callback=self.configurateServers,
+#             parent=self.dsgTools,
+#             add_to_menu=False,
+#             add_to_toolbar=False)
+#         server.addAction(action)
         
         icon_path = ':/plugins/DsgTools/icons/server.png'
         action = self.add_action(
@@ -518,12 +518,12 @@ class DsgTools:
         if result:
             pass
 
-    def configurateServers(self):
-        self.dlg = ServerConfigurator(self.iface)
-        self.dlg.show()
-        result = self.dlg.exec_()
-        if result:
-            pass
+#     def configurateServers(self):
+#         self.dlg = ServerConfigurator(self.iface)
+#         self.dlg.show()
+#         result = self.dlg.exec_()
+#         if result:
+#             pass
 
     def viewServers(self):
         self.dlg = ViewServers(self.iface)
