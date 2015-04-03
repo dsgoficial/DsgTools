@@ -20,23 +20,15 @@ Create spatialite database built according to Brazilian's EDGV
  *                                                                         *
  ***************************************************************************/
 """
+from PyQt4 import QtCore
+from qgis.core import QgsCoordinateReferenceSystem
+from qgis.gui import QgsGenericProjectionSelector, QgsMessageBar
+from PyQt4 import QtGui
 
-import os
-
-from PyQt4 import QtGui, uic, QtCore
-
-# FORM_CLASS, _ = uic.loadUiType(os.path.join(
-#     os.path.dirname(__file__), 'carrega_categoria_dialog_base.ui'))
 import cria_spatialite_dialog_base
 import sqlite3, os
-from PyQt4.QtCore import QFileInfo,QSettings
-from qgis.core import QgsCoordinateReferenceSystem,QgsDataSourceURI,QgsVectorLayer,QgsMapLayerRegistry
-from qgis.gui import QgsGenericProjectionSelector,QgsMessageBar
 import qgis as qgis
-from PyQt4 import QtGui
-import sys
 
-# class CarregaCategoriaDialog(QtGui.QDialog, FORM_CLASS):
 class CriaSpatialiteDialog(QtGui.QDialog, cria_spatialite_dialog_base.Ui_CriaSpatialite):
     def __init__(self, parent=None):
         """Constructor."""

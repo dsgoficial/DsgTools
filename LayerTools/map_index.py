@@ -22,8 +22,8 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsPoint,QgsGeometry,QgsFeature
-import string,os
+from qgis.core import QgsPoint, QgsGeometry, QgsFeature
+import string, os
 
 class UtmGrid:
     def __init__(self):

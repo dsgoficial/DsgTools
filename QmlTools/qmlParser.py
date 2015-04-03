@@ -20,7 +20,6 @@
  *                                                                         *
  ***************************************************************************/
 """
-import sys, os
 from PyQt4.QtXml import *
 
 class QmlParser:

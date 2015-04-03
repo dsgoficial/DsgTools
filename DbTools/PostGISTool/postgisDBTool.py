@@ -23,12 +23,11 @@
 # Import the PyQt and QGIS libraries
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4.QtSql import QSqlDatabase,QSqlQuery
+from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
-from qgis.core import QgsCoordinateReferenceSystem,QgsMessageLog
+from qgis.core import QgsCoordinateReferenceSystem, QgsMessageLog
 from qgis.gui import QgsGenericProjectionSelector
 
-import sys, os
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 
 from ui_postgisDBTool import Ui_Dialog

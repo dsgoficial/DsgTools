@@ -19,7 +19,7 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-"""# Import the PyQt and QGIS libraries
+"""
 from PyQt4.QtCore import QObject, QRunnable, pyqtSignal
 
 from uuid import uuid4

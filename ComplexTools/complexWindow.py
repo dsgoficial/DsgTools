@@ -20,21 +20,19 @@
  *                                                                         *
  ***************************************************************************/
 """
-import sys, os
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
 from PyQt4.QtGui import QTreeWidgetItem, QMessageBox
-from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
+from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
 from qgis.core import *
 
+import os
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'complexWindow_base.ui'))
 
+from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.ComplexTools.manageComplex import ManageComplexDialog
-#from associateWithComplex import AssociateWithComplexDialog
 
 class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
     def __init__(self, iface, parent=None):

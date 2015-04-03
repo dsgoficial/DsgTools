@@ -21,14 +21,13 @@
  ***************************************************************************/
 """# Import the PyQt and QGIS libraries
 from PyQt4.QtCore import *
-from PyQt4.QtSql import QSqlDatabase,QSqlQuery
+from PyQt4.QtSql import QSqlQuery
 
 from qgis.core import QgsMessageLog
 
-import sys, os, codecs
+import os, codecs
 
 from DsgTools.Factories.ThreadFactory.genericThread import GenericThread
-
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 
 class PostgisDbMessages(QObject):

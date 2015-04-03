@@ -20,20 +20,15 @@
  *                                                                         *
  ***************************************************************************/
 """
-
-import sys, os
+import os
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
 from PyQt4.QtGui import QHeaderView, QTableWidgetItem
 from serverConfigurator import ServerConfigurator
 
-from qgis.core import *
-
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_viewServers.ui'))
-
-
 
 class ViewServers(QtGui.QDialog, FORM_CLASS):
     def __init__(self, iface, parent=None):

@@ -20,16 +20,13 @@
  *                                                                         *
  ***************************************************************************/
 """
-# Import the PyQt and QGIS libraries
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSql import QSqlDatabase,QSqlQuery
 
-from qgis.core import *
-from qgis.gui import *
 import qgis as qgis
 
-import sys, os
+import os
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 
 class Utils:

@@ -23,16 +23,13 @@
 # Import the PyQt and QGIS libraries
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from qgis.core import *
-from qgis.gui import *
-from PyQt4.QtXml import *
 
-from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery,QSqlRecord
+from PyQt4.QtSql import QSqlTableModel, QSqlDatabase
 
 from ui_manageComplex import Ui_Dialog
 from uuid import uuid4
 
-import sys, os
+import os
 from DsgTools.QmlTools.qmlParser import QmlParser
 from DsgTools.Utils.utils import Utils
 

@@ -24,17 +24,14 @@
 from qgis.core import *
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
-from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
+from PyQt4.QtSql import QSqlDatabase,QSqlQuery
 from PyQt4.QtGui import QMessageBox
-from pyspatialite import dbapi2 as sqlite3
 
-
-import sys, os
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-
+import os
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_create_inom_dialog_base.ui'))
 
+from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.LayerTools.map_index import UtmGrid
 from DsgTools.Utils.utils import Utils
 

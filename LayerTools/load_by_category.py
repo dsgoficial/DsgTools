@@ -25,15 +25,15 @@
 import load_by_category_dialog
 
 from qgis.core import QgsCoordinateReferenceSystem,QgsDataSourceURI,QgsVectorLayer,QgsMapLayerRegistry,QgsMessageLog
-from qgis.gui import QgsGenericProjectionSelector,QgsMessageBar
+from qgis.gui import QgsMessageBar
 import qgis as qgis
 
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import QFileInfo,QSettings,pyqtSlot, Qt
-from PyQt4.QtSql import QSqlQueryModel, QSqlTableModel,QSqlDatabase,QSqlQuery
+from PyQt4 import QtGui, QtCore
+from PyQt4.QtCore import pyqtSlot, Qt
+from PyQt4.QtSql import QSqlQuery
 from PyQt4.QtGui import QApplication, QCursor
 
-import sys, os
+import os
 from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from PyQt4.QtCore import QTime

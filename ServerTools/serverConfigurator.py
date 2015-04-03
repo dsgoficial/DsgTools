@@ -20,12 +20,10 @@
  *                                                                         *
  ***************************************************************************/
 """
-# Import the PyQt and QGIS libraries
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from ui_serverConfigurator import Ui_Dialog
-
 
 class ServerConfigurator(QDialog, Ui_Dialog):
     def __init__(self, iface):

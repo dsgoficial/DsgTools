@@ -25,7 +25,6 @@ import os
 import osgeo.gdal
 import osgeo.osr
 import numpy
-import math
 
 # Import the PyQt and QGIS libraries
 from PyQt4.QtCore import *
