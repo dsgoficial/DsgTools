@@ -86,13 +86,8 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         self.utils = Utils()
         self.dbVersion = self.utils.getDatabaseVersion(self.db)
         self.qmlPath = self.utils.getQmlDir(self.db)
-        (loaded,layer) = self.checkLoaded()
-        if not loaded:
-            if self.isSpatialite:
-                layer = self.loadSpatialiteFrame()
-            else:
-                layer = self.loadPostGISFrame()
 
+        layer = self.getFrameLayer()
         if not layer:
             return
 
@@ -100,30 +95,45 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         feat = QgsFeature()
         feat.setFields(layer.dataProvider().fields())
         feat.setGeometry(reprojected)
-        feat.setAttribute(2,self.inomen)
-        feat.setAttribute(3,self.scaleCombo.currentText())
+        feat.setAttribute(2, self.inomen)
+        feat.setAttribute(3, self.scaleCombo.currentText())
         layer.addFeatures([feat], makeSelected=True)
         layer.commitChanges()
+
         bbox = reprojected.boundingBox()
         for feature in layer.getFeatures():
             bbox.combineExtentWith(feature.geometry().boundingBox())
         self.iface.mapCanvas().setExtent(bbox)
 
-    def checkLoaded(self):
-        loaded = False
-        layer = None
+    def getFrameLayer(self):
         for lyr in self.iface.legendInterface().layers():
-            dbname = lyr.dataProvider().dataSourceUri().split(' ')[0].split('=')[1]
-            if self.isSpatialite and lyr.name() == 'public_aux_moldura_a':
-                if dbname.split('\'')[1] == self.filename:
-                    loaded = True
-                    layer = lyr
-            if not self.isSpatialite and lyr.name() == 'aux_moldura_a':
-                (database, host, port, user, password) = self.utils.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
-                if dbname.split('\'')[1] == database:
-                    loaded = True
-                    layer = lyr
-        return (loaded,layer)
+            if lyr.name() == 'public_aux_moldura_a' or lyr.name() == 'aux_moldura_a':
+                dbname = self.getDBNameFromLayer(lyr)
+                if self.isSpatialite and dbname == self.filename:
+                    return lyr
+                if not self.isSpatialite:
+                    (database, host, port, user, password) = self.utils.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
+                    if dbname == database:
+                        return lyr
+
+        if self.isSpatialite:
+            return self.loadSpatialiteFrame()
+        else:
+            return self.loadPostGISFrame()
+
+        return None
+
+    def getDBNameFromLayer(self, lyr):
+        dbname = None
+        splitUri = lyr.dataProvider().dataSourceUri().split(' ')
+        if len(splitUri) > 0:
+            dbsplit = splitUri[0].split('=')
+            if len(dbsplit) > 1 and dbsplit[0] == 'dbname':
+                dbnameInString = dbsplit[1]
+                dbnameSplit = dbnameInString.split('\'')
+                if len(dbnameSplit) > 1:
+                    dbname = dbnameSplit[1]
+        return dbname
 
     def loadPostGISFrame(self):
         self.selectedClasses = ['public.aux_moldura_a']
