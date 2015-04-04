@@ -103,7 +103,10 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         bbox = reprojected.boundingBox()
         for feature in layer.getFeatures():
             bbox.combineExtentWith(feature.geometry().boundingBox())
+
+        bbox = self.iface.mapCanvas().mapSettings().layerToMapCoordinates(layer, bbox)
         self.iface.mapCanvas().setExtent(bbox)
+        self.iface.mapCanvas().refresh()
 
     def getFrameLayer(self):
         for lyr in self.iface.legendInterface().layers():
