@@ -124,6 +124,8 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         self.updateConnectionName()
 
     def on_databaseEdit_textEdited(self, text):
+        text = text.lower()
+        self.databaseEdit.setText(text)
         self.updateConnectionName()
 
     def checkFields(self):
