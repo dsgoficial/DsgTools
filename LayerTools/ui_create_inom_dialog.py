@@ -74,7 +74,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot()
     def on_okButton_clicked(self):
-        if not self.checkFields():
+        if not self.dbLoaded:
             QMessageBox.warning(self, self.tr("Warning!"), self.tr('Please, select a database first.'))
             return
 
@@ -85,16 +85,6 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         reprojected = self.reprojectFrame(frame)
         self.insertFrameIntoLayer(reprojected)
         self.done(1)
-
-    def checkFields(self):
-        if self.tabWidget.currentIndex == 0:
-            if not self.spatialiteFieldEdit.text() or not self.spatialiteCrsEdit.text():
-                return False
-        else:
-            if not self.comboBoxPostgis.currentText() or not self.postGISCrsEdit.text():
-                return False
-
-        return True
 
     def insertFrameIntoLayer(self,reprojected):
         self.utils = Utils()
@@ -167,7 +157,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
                     sql = self.gen.loadLayerFromDatabase(layer)
                     uri.setDataSource(schema, layerName, geom_column, sql,'id')
                     uri.disableSelectAtId(True)
-                    return self.loadEDGVLayer(uri, layerName, schema, 'postgres')
+                    return self.loadEDGVLayer(uri, layerName, 'postgres')
             except:
                 self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load the selected frame!"), level=QgsMessageBar.CRITICAL)
         else:
@@ -182,9 +172,9 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         if len(self.selectedClasses)>0:
             for layer_name in self.selectedClasses:
                 uri.setDataSource(schema, layer_name, geom_column)
-                return self.loadEDGVLayer(uri, layer_name, schema, 'spatialite')
+                return self.loadEDGVLayer(uri, layer_name, 'spatialite')
 
-    def loadEDGVLayer(self, uri, layer_name, schema, provider):
+    def loadEDGVLayer(self, uri, layer_name, provider):
         vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
         vlayer.setCrs(self.crs)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
