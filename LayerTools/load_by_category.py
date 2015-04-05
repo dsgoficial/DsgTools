@@ -302,8 +302,6 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         self.selectedClasses.sort()
 
     def okSelected(self):
-        time = QTime()
-        time.start()
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
 
@@ -353,7 +351,6 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             QApplication.restoreOverrideCursor()
         except:
             QApplication.restoreOverrideCursor()
-        print time.elapsed()
 
     def loadLayers(self, type, categories, layer_names):
         if self.isSpatialite:
@@ -417,21 +414,21 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
                 self.preparePostGISToLoad(uri, categoria, layer_names, idGrupo, geom_column)
 
     def preparePostGISToLoad(self, uri, categoria, layer_names, idGrupo, geom_column):
-        idSubgrupo = qgis.utils.iface.legendInterface().addGroup(categoria,True,idGrupo)
+        idSubgrupo = qgis.utils.iface.legendInterface().addGroup(categoria, True, idGrupo)
         layer_names.sort(reverse=True)
         for layer_name in layer_names:
             split = layer_name.split('_')
             category = split[0]
             schema = category.split('.')[0]
-            name = layer_name.replace(schema+'.','')
+            name = layer_name.replace(schema+'.', '')
             if category == categoria:
                 sql = self.gen.loadLayerFromDatabase(layer_name)
-                uri.setDataSource(schema, name, geom_column, sql,'id')
+                uri.setDataSource(schema, name, geom_column, sql, 'id')
                 uri.disableSelectAtId(True)
-                self.loadEDGVLayer(uri, name, schema, 'postgres', idSubgrupo)
+                self.loadEDGVLayer(uri, name, 'postgres', idSubgrupo)
 
     def prepareSpatialiteToLoad(self, uri, categoria, layer_names, idGrupo, geom_column):
-        idSubgrupo = qgis.utils.iface.legendInterface().addGroup(categoria,True,idGrupo)
+        idSubgrupo = qgis.utils.iface.legendInterface().addGroup(categoria, True, idGrupo)
         layer_names.sort(reverse=True)
         for layer_name in layer_names:
             split = layer_name.split('_')
@@ -441,7 +438,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
                 category = split[0]
             if category == categoria:
                 uri.setDataSource('', layer_name, geom_column)
-                self.loadEDGVLayer(uri, layer_name, '', 'spatialite', idSubgrupo)
+                self.loadEDGVLayer(uri, layer_name, 'spatialite', idSubgrupo)
 
     def loadSpatialiteLayers(self, type, categories, layer_names):
         uri = QgsDataSourceURI()
@@ -449,35 +446,32 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         geom_column = 'GEOMETRY'
 
         if self.parentTreeNode is None:
-            self.parentTreeNode = qgis.utils.iface.legendInterface (). addGroup (self.filename.split('.sqlite')[0].split('/')[-1], -1)
+            self.parentTreeNode = qgis.utils.iface.legendInterface(). addGroup(self.filename.split('.sqlite')[0].split('/')[-1], -1)
 
         if type == 'p':
-            idGrupo = qgis.utils.iface.legendInterface (). addGroup ("Ponto", True,self.parentTreeNode)
+            idGrupo = qgis.utils.iface.legendInterface(). addGroup("Ponto", True, self.parentTreeNode)
             for categoria in categories:
                 self.prepareSpatialiteToLoad(uri, categoria, layer_names, idGrupo, geom_column)
         if type == 'l':
-            idGrupo = qgis.utils.iface.legendInterface (). addGroup ("Linha", True,self.parentTreeNode)
+            idGrupo = qgis.utils.iface.legendInterface(). addGroup("Linha", True, self.parentTreeNode)
             for categoria in categories:
                 self.prepareSpatialiteToLoad(uri, categoria, layer_names, idGrupo, geom_column)
         if type == 'a':
-            idGrupo = qgis.utils.iface.legendInterface (). addGroup ("Area", True,self.parentTreeNode)
+            idGrupo = qgis.utils.iface.legendInterface(). addGroup("Area", True, self.parentTreeNode)
             for categoria in categories:
                 self.prepareSpatialiteToLoad(uri, categoria, layer_names, idGrupo, geom_column)
 
-    def loadEDGVLayer(self, uri, layer_name, schema, provider, idSubgrupo):
-        time3 = QTime()
-        time3.start()
+    def loadEDGVLayer(self, uri, layer_name, provider, idSubgrupo):
         vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
         vlayer.setCrs(self.crs)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
         if self.isSpatialite and (self.dbVersion == '3.0' or self.dbVersion == '2.1.3'):
-            lyr = '_'.join(layer_name.replace('\r','').split('_')[1::])
+            lyr = '_'.join(layer_name.replace('\r', '').split('_')[1::])
         else:
             lyr = layer_name.replace('\r','')
         vlayerQml = os.path.join(self.qmlPath, lyr+'.qml')
-        vlayer.loadNamedStyle(vlayerQml,False)
+        vlayer.loadNamedStyle(vlayerQml, False)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer)
         qgis.utils.iface.legendInterface().moveLayer(vlayer, idSubgrupo)
         if not vlayer.isValid():
             QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        print layer_name,time3.elapsed()

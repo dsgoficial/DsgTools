@@ -74,6 +74,10 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot()
     def on_okButton_clicked(self):
+        if not self.checkFields():
+            QMessageBox.warning(self, self.tr("Warning!"), self.tr('Please, select a database first.'))
+            return
+
         if not self.validateMI():
             QMessageBox.warning(self, self.tr("Warning!"), self.tr('Map name index not valid!'))
             return
@@ -81,6 +85,16 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         reprojected = self.reprojectFrame(frame)
         self.insertFrameIntoLayer(reprojected)
         self.done(1)
+
+    def checkFields(self):
+        if self.tabWidget.currentIndex == 0:
+            if not self.spatialiteFieldEdit.text() or not self.spatialiteCrsEdit.text():
+                return False
+        else:
+            if not self.comboBoxPostgis.currentText() or not self.postGISCrsEdit.text():
+                return False
+
+        return True
 
     def insertFrameIntoLayer(self,reprojected):
         self.utils = Utils()
@@ -208,7 +222,6 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
             self.inomLineEdit.setText(self.inomen)
 
     def reprojectFrame(self, poly):
-        print self.crs.geographicCRSAuthId(),self.epsg
         crsSrc = QgsCoordinateReferenceSystem(self.crs.geographicCRSAuthId())
         coordinateTransformer = QgsCoordinateTransform(crsSrc, self.crs)
         polyline = poly.asMultiPolygon()[0][0]

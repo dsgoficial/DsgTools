@@ -87,7 +87,7 @@ class PostgisDBTool(QDialog, Ui_Dialog):
             QMessageBox.warning(self, self.tr("Warning!"), self.tr(message))
 
     def createDatabase(self, name):
-        sql  = self.gen.getCreateDatabase(name)
+        sql = self.gen.getCreateDatabase(name)
 
         db = self.getDatabase()
 

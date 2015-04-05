@@ -238,7 +238,7 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
                     sql = self.gen.loadLayerFromDatabase(layer)
                     uri.setDataSource(schema, layerName, geom_column, sql,'id')
                     uri.disableSelectAtId(True)
-                    self.loadEDGVLayer(uri, layerName, schema, 'postgres')
+                    self.loadEDGVLayer(uri, layerName, 'postgres')
                 self.restoreInitialState()
                 self.close()
             except:
@@ -256,7 +256,7 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
             try:
                 for layer_name in self.selectedClasses:
                     uri.setDataSource(schema, layer_name, geom_column)
-                    self.loadEDGVLayer(uri, layer_name, schema, 'spatialite')
+                    self.loadEDGVLayer(uri, layer_name, 'spatialite')
                 self.restoreInitialState()
                 self.close()
             except:
@@ -264,16 +264,16 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         else:
             self.bar.pushMessage(self.tr("Warning!"), self.tr("Please select at least one layer!"), level=QgsMessageBar.WARNING)
 
-    def loadEDGVLayer(self, uri, layer_name, schema, provider):
+    def loadEDGVLayer(self, uri, layer_name, provider):
         vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
         vlayer.setCrs(self.crs)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
         if self.isSpatialite and (self.dbVersion == '3.0' or self.dbVersion == '2.1.3'):
-            lyr = '_'.join(layer_name.replace('\r','').split('_')[1::])
+            lyr = '_'.join(layer_name.replace('\r', '').split('_')[1::])
         else:
             lyr = layer_name.replace('\r','')
         vlayerQml = os.path.join(self.qmlPath, lyr+'.qml')
-        vlayer.loadNamedStyle(vlayerQml,False)
+        vlayer.loadNamedStyle(vlayerQml, False)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer)
         if not vlayer.isValid():
             QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
