@@ -17,44 +17,6 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Federal Decree 6,666.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Exército Brasileiro&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Diretoria de Serviço Geográfico&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Este plugin foi desenvolvido de acordo com o Decreto 6,666.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location filename="ui_about.ui" line="89"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Exército Brasileiro&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Diretoria de Serviço Geográfico&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location filename="ui_about.ui" line="89"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Version: 1.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -136,21 +98,6 @@ p, li { white-space: pre-wrap; }
         <translation>O índice de nomenclatura é inválido!</translation>
     </message>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="87"/>
-        <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
-    </message>
-    <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="87"/>
-        <source>Problem creating the frame! Check log for details.</source>
-        <translation type="obsolete">Problema na criação da moldura! Verifique o log para detalhes.</translation>
-    </message>
-    <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="88"/>
-        <source>Problem creating the frame:</source>
-        <translation type="obsolete">Problema na criação da moldura:</translation>
-    </message>
-    <message>
         <location filename="LayerTools/ui_create_inom_dialog.py" line="253"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
@@ -179,24 +126,6 @@ p, li { white-space: pre-wrap; }
         <location filename="LayerTools/ui_create_inom_dialog.py" line="78"/>
         <source>Please, select a database first.</source>
         <translation>Por favor, selecione um banco de dados antes.</translation>
-    </message>
-</context>
-<context>
-    <name>CreatePostGISDatabase</name>
-    <message>
-        <location filename="DbTools/PostGISTool/createPostGISDatabase.py" line="92"/>
-        <source>Problem on database structure creation: </source>
-        <translation type="obsolete">Problema na criação da estrutura de banco de dados:</translation>
-    </message>
-    <message>
-        <location filename="DbTools/PostGISTool/createPostGISDatabase.py" line="102"/>
-        <source>User canceled datatabase structure creation</source>
-        <translation type="obsolete">Usuário cancelou a criação da estrutura do banco de dados</translation>
-    </message>
-    <message>
-        <location filename="DbTools/PostGISTool/createPostGISDatabase.py" line="112"/>
-        <source>Successful datatabase structure creation</source>
-        <translation type="obsolete">Criação da estrutura de banco de dados concluída com sucesso</translation>
     </message>
 </context>
 <context>
@@ -245,11 +174,6 @@ p, li { white-space: pre-wrap; }
         <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="155"/>
         <source>2.1.3</source>
         <translation>2.1.3</translation>
-    </message>
-    <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="160"/>
-        <source>3.0</source>
-        <translation type="obsolete">3.0</translation>
     </message>
 </context>
 <context>
@@ -341,11 +265,6 @@ p, li { white-space: pre-wrap; }
         <location filename="DbTools/PostGISTool/ui_postgisDBTool.ui" line="127"/>
         <source>2.1.3</source>
         <translation>2.1.3</translation>
-    </message>
-    <message>
-        <location filename="DbTools/PostGISTool/ui_postgisDBTool.ui" line="132"/>
-        <source>3.0</source>
-        <translation type="obsolete">3.0</translation>
     </message>
     <message>
         <location filename="ServerTools/ui_serverConfigurator.py" line="100"/>
@@ -498,11 +417,6 @@ p, li { white-space: pre-wrap; }
         <translation>Senha:</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.ui" line="146"/>
-        <source>Store Credentials</source>
-        <translation type="obsolete">Salvar Senha</translation>
-    </message>
-    <message>
         <location filename="DbTools/PostGISTool/ui_postgisDBTool.ui" line="94"/>
         <source>CRS:</source>
         <translation>SRC:</translation>
@@ -639,16 +553,6 @@ p, li { white-space: pre-wrap; }
         <translation>Ferramentas de Camadas</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="214"/>
-        <source>Complex Tools</source>
-        <translation type="obsolete">Ferramentas de Complexos</translation>
-    </message>
-    <message>
-        <location filename="dsg_tools.py" line="313"/>
-        <source>Server Settings</source>
-        <translation type="obsolete">Configurações de Servidor</translation>
-    </message>
-    <message>
         <location filename="dsg_tools.py" line="343"/>
         <source>About</source>
         <translation>Sobre</translation>
@@ -677,38 +581,6 @@ p, li { white-space: pre-wrap; }
         <location filename="dsg_tools.py" line="413"/>
         <source>Create Frame</source>
         <translation>Criar Moldura</translation>
-    </message>
-    <message>
-        <location filename="dsg_tools.py" line="473"/>
-        <source>Creating database structure...</source>
-        <translation type="obsolete">Criando Estrutura do Banco de Dados...</translation>
-    </message>
-    <message>
-        <location filename="dsg_tools.py" line="491"/>
-        <source>Problem creating the Database!</source>
-        <translation type="obsolete">Problema naCriação do Banco de Dados!</translation>
-    </message>
-    <message>
-        <location filename="dsg_tools.py" line="542"/>
-        <source>Database structure creation canceled!</source>
-        <translation type="obsolete">Criação da Estrutura de Dados Cancelada!</translation>
-    </message>
-    <message>
-        <location filename="dsg_tools.py" line="551"/>
-        <source>Database structure successfully created!</source>
-        <translation type="obsolete">Estrutura de Banco de Dados criada com sucesso!</translation>
-    </message>
-    <message>
-        <location filename="dsg_tools.py" line="553"/>
-        <source>Problem creating the database structure!
- Check the Log terminal for details.</source>
-        <translation type="obsolete">Problema na Criação da Estrutura de Dados!
-Olhe o Terminal Python para detalhes.</translation>
-    </message>
-    <message>
-        <location filename="dsg_tools.py" line="555"/>
-        <source>User canceled the database structure creation!</source>
-        <translation type="obsolete">Usuário cancelou a criação da estrutura de dados!</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="333"/>
@@ -808,11 +680,6 @@ Olhe o Terminal Python para detalhes.</translation>
 </context>
 <context>
     <name>LoadByCategory</name>
-    <message>
-        <location filename="LayerTools/load_by_category_dialog.ui" line="14"/>
-        <source>Dialog</source>
-        <translation type="obsolete">Diálogo</translation>
-    </message>
     <message>
         <location filename="LayerTools/load_by_category_dialog.ui" line="24"/>
         <source>Spatialite</source>
@@ -1167,11 +1034,6 @@ Olhe o Terminal Python para detalhes.</translation>
         <location filename="ServerTools/serverConfigurator.py" line="63"/>
         <source>Server stored.</source>
         <translation>Servidor armazenado.</translation>
-    </message>
-    <message>
-        <location filename="ServerTools/serverConfigurator.py" line="68"/>
-        <source>Server removed.</source>
-        <translation type="obsolete">Servidor removido.</translation>
     </message>
     <message>
         <location filename="ServerTools/serverConfigurator.py" line="96"/>
