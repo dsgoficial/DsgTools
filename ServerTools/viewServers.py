@@ -24,7 +24,7 @@ import os
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
-from PyQt4.QtGui import QHeaderView, QTableWidgetItem
+from PyQt4.QtGui import QHeaderView, QTableWidgetItem, QMessageBox
 from serverConfigurator import ServerConfigurator
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -74,13 +74,29 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         result = dlg.exec_()
         if result:
             self.populateTable()
+            
+    @pyqtSlot(bool)
+    def on_editButton_clicked(self):
+        if len(self.tableWidget.selectedItems())==0:
+            QMessageBox.warning(self, self.tr("Warning!"), self.tr("Select one server."))
+            return
+        dlg = ServerConfigurator(self)
+        dlg.setServerConfiguration(self.tableWidget.selectedItems()[0].text())
+        #dlg.show()
+        result = dlg.exec_()
+        if result:
+            self.populateTable()
         
         
     @pyqtSlot(bool)
     def on_removeButton_clicked(self):
+        if len(self.tableWidget.selectedItems())==0:
+            QMessageBox.warning(self, self.tr("Warning!"), self.tr("Select one server."))
+            return
         selectedItem = self.tableWidget.selectedItems()[0]
         self.removeServerConfiguration(selectedItem.text())
         self.tableWidget.removeRow(selectedItem.row())
+        QMessageBox.warning(self, self.tr("Info!"), self.tr("Server removed."))
         
     def getServers(self):
         settings = QSettings()

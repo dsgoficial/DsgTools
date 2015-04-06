@@ -517,6 +517,36 @@ p, li { white-space: pre-wrap; }
         <source>Remove</source>
         <translation>Remover</translation>
     </message>
+    <message>
+        <location filename="ServerTools/ui_viewServers.ui" line="38"/>
+        <source>Server Name</source>
+        <translation>Nome do Servidor</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/ui_viewServers.ui" line="43"/>
+        <source>Address</source>
+        <translation>Endereço</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/ui_viewServers.ui" line="48"/>
+        <source>Port</source>
+        <translation>Porta</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/ui_viewServers.ui" line="53"/>
+        <source>User</source>
+        <translation>Usuário</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/ui_viewServers.ui" line="63"/>
+        <source>Add</source>
+        <translation>Adiciona</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/ui_viewServers.ui" line="77"/>
+        <source>Edit</source>
+        <translation>Edita</translation>
+    </message>
 </context>
 <context>
     <name>DockWidget</name>
@@ -606,7 +636,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="dsg_tools.py" line="313"/>
         <source>Server Settings</source>
-        <translation>Configurações de Servidor</translation>
+        <translation type="obsolete">Configurações de Servidor</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="343"/>
@@ -759,6 +789,11 @@ Olhe o Terminal Python para detalhes.</translation>
         <location filename="dsg_tools.py" line="567"/>
         <source>1:25k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:25k</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="323"/>
+        <source>View Server</source>
+        <translation>Visualizar Servidor</translation>
     </message>
 </context>
 <context>
@@ -1104,27 +1139,55 @@ Olhe o Terminal Python para detalhes.</translation>
 <context>
     <name>ServerConfigurator</name>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="57"/>
+        <location filename="ServerTools/serverConfigurator.py" line="96"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="57"/>
+        <location filename="ServerTools/serverConfigurator.py" line="66"/>
         <source>Fill all parameters.</source>
         <translation>Preencha todos os parâmetros.</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="68"/>
+        <location filename="ServerTools/serverConfigurator.py" line="63"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="55"/>
+        <location filename="ServerTools/serverConfigurator.py" line="63"/>
         <source>Server stored.</source>
         <translation>Servidor armazenado.</translation>
     </message>
     <message>
         <location filename="ServerTools/serverConfigurator.py" line="68"/>
+        <source>Server removed.</source>
+        <translation type="obsolete">Servidor removido.</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/serverConfigurator.py" line="96"/>
+        <source>Already has a server with this name.</source>
+        <translation>Já existe um servidor com este nome.</translation>
+    </message>
+</context>
+<context>
+    <name>ViewServers</name>
+    <message>
+        <location filename="ServerTools/viewServers.py" line="94"/>
+        <source>Warning!</source>
+        <translation>Alerta!</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/viewServers.py" line="94"/>
+        <source>Select one server.</source>
+        <translation>Selecione um servidor.</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/viewServers.py" line="99"/>
+        <source>Info!</source>
+        <translation>Informação!</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/viewServers.py" line="99"/>
         <source>Server removed.</source>
         <translation>Servidor removido.</translation>
     </message>

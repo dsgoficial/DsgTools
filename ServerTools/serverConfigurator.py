@@ -22,10 +22,15 @@
 """
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4 import QtGui, uic
+import os
 
 from ui_serverConfigurator import Ui_Dialog
 
-class ServerConfigurator(QDialog, Ui_Dialog):
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'ui_serverConfigurator.ui'))
+
+class ServerConfigurator(QDialog, FORM_CLASS):
     def __init__(self, iface):
         """Constructor."""
         super(ServerConfigurator, self).__init__()
@@ -37,38 +42,42 @@ class ServerConfigurator(QDialog, Ui_Dialog):
         self.setupUi(self)
 
         self.iface = iface
+        self.isEdit = 0
+        self.oldName=''
 
-        self.populateServersCombo()
+        #self.populateServersCombo()
 
         self.passwordEdit.setEchoMode(QLineEdit.Password)
 
     @pyqtSlot(bool)
     def on_saveButton_clicked(self):
         if self.checkFields():
-            name = self.serversCombo.currentText()
+            name = self.servEdit.text()
             host = self.hostEdit.text()
             port = self.portEdit.text()
             user = self.userEdit.text()
             password = self.passwordEdit.text()
-            self.storeServerConfiguration(name, host, port, user, password)
-            self.populateServersCombo()
+            if not self.storeServerConfiguration(name, host, port, user, password):
+                return
+#             self.populateServersCombo()
             QMessageBox.warning(self, self.tr("Info!"), self.tr("Server stored."))
+            self.done(1)
         else:
             QMessageBox.warning(self, self.tr("Warning!"), self.tr("Fill all parameters."))
-        self.done(1)
+        
 
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
         self.done(0)
 
-    @pyqtSlot(bool)
-    def on_removeButton_clicked(self):
-        self.removeServerConfiguration()
-        self.populateServersCombo()
-        QMessageBox.warning(self, self.tr("Info!"), self.tr("Server removed."))
+#     @pyqtSlot(bool)
+#     def on_removeButton_clicked(self):
+#         self.removeServerConfiguration()
+#         self.populateServersCombo()
+#         QMessageBox.warning(self, self.tr("Info!"), self.tr("Server removed."))
 
-    def on_serversCombo_currentIndexChanged(self, index):
-        self.getServerConfiguration(self.serversCombo.currentText())
+#     def on_serversCombo_currentIndexChanged(self, index):
+#         self.getServerConfiguration(self.serversCombo.currentText())
 
     def checkFields(self):
         if self.hostEdit.text() == '' or self.portEdit.text() == '' \
@@ -78,20 +87,32 @@ class ServerConfigurator(QDialog, Ui_Dialog):
 
     def storeServerConfiguration(self, name, host, port, user, password):
         settings = QSettings()
+        if self.isEdit:
+            settings.beginGroup('PostgreSQL/servers/'+self.oldName)
+            settings.remove('')
+            settings.endGroup()
+        else:
+            if settings.contains('PostgreSQL/servers/'+name+'/host'):
+                QMessageBox.warning(self, self.tr("Warning!"), self.tr("Already has a server with this name."))
+                self.servEdit.setStyleSheet('background-color: rgb(255, 150, 150)')
+                return 0
         settings.beginGroup('PostgreSQL/servers/'+name)
         settings.setValue('host', host)
         settings.setValue('port', port)
         settings.setValue('username', user)
         settings.setValue('password', password)
         settings.endGroup()
+        return 1
 
-    def removeServerConfiguration(self):
-        settings = QSettings()
-        settings.beginGroup('PostgreSQL/servers/'+self.serversCombo.currentText())
-        settings.remove('')
-        settings.endGroup()
+#     def removeServerConfiguration(self):
+#         settings = QSettings()
+#         settings.beginGroup('PostgreSQL/servers/'+self.serversCombo.currentText())
+#         settings.remove('')
+#         settings.endGroup()
 
-    def getServerConfiguration(self, name):
+    def setServerConfiguration(self, name):
+        self.isEdit = 1
+        self.oldName=name
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers/'+name)
         host = settings.value('host')
@@ -100,20 +121,21 @@ class ServerConfigurator(QDialog, Ui_Dialog):
         password = settings.value('password')
         settings.endGroup()
 
+        self.servEdit.setText(name)
         self.hostEdit.setText(host)
         self.portEdit.setText(port)
         self.userEdit.setText(user)
         self.passwordEdit.setText(password)
 
-    def getServers(self):
-        settings = QSettings()
-        settings.beginGroup('PostgreSQL/servers')
-        currentConnections = settings.childGroups()
-        settings.endGroup()
-        return currentConnections
+#     def getServers(self):
+#         settings = QSettings()
+#         settings.beginGroup('PostgreSQL/servers')
+#         currentConnections = settings.childGroups()
+#         settings.endGroup()
+#         return currentConnections
 
-    def populateServersCombo(self):
-        self.serversCombo.clear()
-        currentConnections = self.getServers()
-        for connection in currentConnections:
-            self.serversCombo.addItem(connection)
+#     def populateServersCombo(self):
+#         self.serversCombo.clear()
+#         currentConnections = self.getServers()
+#         for connection in currentConnections:
+#             self.serversCombo.addItem(connection)
