@@ -24,8 +24,10 @@ import os
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
-from PyQt4.QtGui import QHeaderView, QTableWidgetItem, QMessageBox
+from PyQt4.QtGui import QHeaderView, QTableWidgetItem, QMessageBox, QApplication, QCursor
+from PyQt4.QtSql import QSqlDatabase
 from serverConfigurator import ServerConfigurator
+from numpy.lib._iotools import NameValidator
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_viewServers.ui'))
@@ -56,11 +58,14 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         self.tableWidget.setRowCount(len(currentConnections))
         for i, connection in enumerate(currentConnections):
             self.tableWidget.setItem(i,0,QTableWidgetItem(connection))
-            (host, port, user) = self.getServerConfiguration(connection)
+            (host, port, user, password) = self.getServerConfiguration(connection)
             self.tableWidget.setItem(i,1,QTableWidgetItem(host))
             self.tableWidget.setItem(i,2,QTableWidgetItem(port))
             self.tableWidget.setItem(i,3,QTableWidgetItem(user))
-
+            if len(password)==0:
+                self.tableWidget.setItem(i,4,QTableWidgetItem(self.tr('Clear')))
+            else:
+                self.tableWidget.setItem(i,4,QTableWidgetItem(self.tr('Saved')))
     
         
     @pyqtSlot(bool)
@@ -77,11 +82,9 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
             
     @pyqtSlot(bool)
     def on_editButton_clicked(self):
-        if len(self.tableWidget.selectedItems())==0:
-            QMessageBox.warning(self, self.tr("Warning!"), self.tr("Select one server."))
-            return
+        selectedItem = self.returnSelectedName()
         dlg = ServerConfigurator(self)
-        dlg.setServerConfiguration(self.tableWidget.selectedItems()[0].text())
+        dlg.setServerConfiguration(selectedItem.text())
         #dlg.show()
         result = dlg.exec_()
         if result:
@@ -90,13 +93,21 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_removeButton_clicked(self):
-        if len(self.tableWidget.selectedItems())==0:
-            QMessageBox.warning(self, self.tr("Warning!"), self.tr("Select one server."))
-            return
-        selectedItem = self.tableWidget.selectedItems()[0]
+        selectedItem = self.returnSelectedName()
         self.removeServerConfiguration(selectedItem.text())
         self.tableWidget.removeRow(selectedItem.row())
         QMessageBox.warning(self, self.tr("Info!"), self.tr("Server removed."))
+        
+    @pyqtSlot(bool)
+    def on_testButton_clicked(self):
+        name = self.returnSelectedName().text()
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        test = self.testServer(name)
+        QApplication.restoreOverrideCursor()
+        if test:
+            QMessageBox.warning(self, self.tr("Info!"), self.tr("Server Online."))
+        else:
+            QMessageBox.warning(self, self.tr("Info!"), self.tr("Server Offline."))
         
     def getServers(self):
         settings = QSettings()
@@ -115,7 +126,7 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         password = settings.value('password')
         settings.endGroup()
         
-        return (host, port, user)
+        return (host, port, user, password)
     
     
     def removeServerConfiguration(self, name):
@@ -123,3 +134,23 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         settings.beginGroup('PostgreSQL/servers/'+name)
         settings.remove('')
         settings.endGroup()
+        
+    def testServer(self, name):
+        (host, port, user, password) = self.getServerConfiguration(name)
+        db = None
+        db = QSqlDatabase("QPSQL")
+        db.setConnectOptions("connect_timeout=50")
+        #db.setDatabaseName("")
+        db.setHostName(host)
+        db.setPort(int(port))
+        db.setUserName(user)
+        db.setPassword(password)
+        open = db.open()
+        db.close()
+        return open
+    
+    def returnSelectedName(self):
+        if len(self.tableWidget.selectedItems())==0:
+            QMessageBox.warning(self, self.tr("Warning!"), self.tr("Select one server."))
+            return
+        return self.tableWidget.selectedItems()[0]

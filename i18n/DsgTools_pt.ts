@@ -538,14 +538,24 @@ p, li { white-space: pre-wrap; }
         <translation>Usuário</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="63"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="68"/>
         <source>Add</source>
         <translation>Adiciona</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="77"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="82"/>
         <source>Edit</source>
         <translation>Edita</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/ui_viewServers.ui" line="58"/>
+        <source>Password</source>
+        <translation>Senha</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/ui_viewServers.ui" line="89"/>
+        <source>Test</source>
+        <translation>Testa</translation>
     </message>
 </context>
 <context>
@@ -1172,17 +1182,17 @@ Olhe o Terminal Python para detalhes.</translation>
 <context>
     <name>ViewServers</name>
     <message>
-        <location filename="ServerTools/viewServers.py" line="94"/>
+        <location filename="ServerTools/viewServers.py" line="154"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="94"/>
+        <location filename="ServerTools/viewServers.py" line="154"/>
         <source>Select one server.</source>
         <translation>Selecione um servidor.</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="99"/>
+        <location filename="ServerTools/viewServers.py" line="110"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
@@ -1190,6 +1200,26 @@ Olhe o Terminal Python para detalhes.</translation>
         <location filename="ServerTools/viewServers.py" line="99"/>
         <source>Server removed.</source>
         <translation>Servidor removido.</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/viewServers.py" line="66"/>
+        <source>Clear</source>
+        <translation>Vazio</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/viewServers.py" line="68"/>
+        <source>Saved</source>
+        <translation>Salva</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/viewServers.py" line="108"/>
+        <source>Server Online.</source>
+        <translation>Servidor Online.</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/viewServers.py" line="110"/>
+        <source>Server Offline.</source>
+        <translation>Servidor Offline.</translation>
     </message>
 </context>
 </TS>
