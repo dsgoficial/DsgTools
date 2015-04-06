@@ -83,6 +83,8 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_editButton_clicked(self):
         selectedItem = self.returnSelectedName()
+        if(selectedItem is None):
+            return
         dlg = ServerConfigurator(self)
         dlg.setServerConfiguration(selectedItem.text())
         #dlg.show()
@@ -94,13 +96,18 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_removeButton_clicked(self):
         selectedItem = self.returnSelectedName()
+        if(selectedItem is None):
+            return
         self.removeServerConfiguration(selectedItem.text())
         self.tableWidget.removeRow(selectedItem.row())
         QMessageBox.warning(self, self.tr("Info!"), self.tr("Server removed."))
         
     @pyqtSlot(bool)
     def on_testButton_clicked(self):
-        name = self.returnSelectedName().text()
+        selectedItem = self.returnSelectedName()
+        if(selectedItem is None):
+            return
+        name = selectedItem.text()
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         test = self.testServer(name)
         QApplication.restoreOverrideCursor()
