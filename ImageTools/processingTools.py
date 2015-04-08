@@ -27,15 +27,17 @@ import osgeo.osr
 import numpy
 
 # Import the PyQt and QGIS libraries
+from PyQt4 import uic
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsMessageLog
 from qgis.gui import QgsGenericProjectionSelector
 
-from ui_processingTools import Ui_Dialog
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'ui_processingTools.ui'))
 
-class ProcessingTools(QDialog, Ui_Dialog):
+class ProcessingTools(QDialog, FORM_CLASS):
     def __init__(self, iface):
         """Constructor."""
         super(ProcessingTools, self).__init__()
@@ -46,6 +48,8 @@ class ProcessingTools(QDialog, Ui_Dialog):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.iface = iface
+
+        self.tabWidget.removeTab(1)
 
         self.epsg = 4326
         srs = QgsCoordinateReferenceSystem(self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
@@ -63,19 +67,14 @@ class ProcessingTools(QDialog, Ui_Dialog):
 
         QMessageBox.information(self.iface.mainWindow(), self.tr("Information!"), self.tr("The processing may take several minutes. Please wait the final message."))
 
-        try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        self.filesList = []
+        for itemNumber in range(0,self.fileListWidget.count()):
+            inFile = self.fileListWidget.item(itemNumber).text()
+            self.filesList.append(str(inFile))
 
-            outDir = self.outputFolderEdit.text()
-            for itemNumber in range(0,self.fileListWidget.count()):
-                inFile = self.fileListWidget.item(itemNumber).text()
-                self.stretchImage(str(inFile), str(outDir), self.getStretchingPercentage(), self.epsg)
-
-            QApplication.restoreOverrideCursor()
-        except:
-            QApplication.restoreOverrideCursor()
-
-        QMessageBox.information(self.iface.mainWindow(), self.tr("Success!"), self.tr("Images Successfully processed."))
+    def getParameters(self):
+        (rasterType, minOutValue, maxOutValue) = self.getGDALRasterType()
+        return (self.filesList, rasterType, minOutValue, maxOutValue, str(self.outputFolderEdit.text()), self.getStretchingPercentage(), self.epsg)
 
     @pyqtSlot(bool)
     def on_srsButton_clicked(self):
@@ -153,90 +152,3 @@ class ProcessingTools(QDialog, Ui_Dialog):
             max = numpy.finfo(numpy.float64).max
             return (osgeo.gdal.GDT_Float64, min, max)
 
-    #Aplica realce de contraste, reprojecao e troca o tipo de numero utilizando a GDAL.
-    def stretchImage(self, inFile, outDir, percent, epsg, bands = []):
-        """Method that applies a specific histogram stretching to a group of images.
-            The method also performs a conversion changing the raster type.
-        """
-
-        #Getting the output raster type
-        (rasterType, minOutValue, maxOutValue) = self.getGDALRasterType()
-
-        #Open image
-        imgIn = osgeo.gdal.Open(inFile)
-        if not imgIn:
-            QMessageBox.critical(self.iface.mainWindow(), self.tr("Critical!"), self.tr("Failed to open input file."))
-            return
-
-        #Setting the output file name
-        fileName = inFile.split("/")[-1]
-        split = fileName.split(".")
-        baseName = split[0]
-        extension = '.' + split[-1]
-
-        #Defining the output driver
-        outDriver = imgIn.GetDriver()
-        createOptions = ['PHOTOMETRIC=RGB', 'ALPHA=NO']
-
-        #creating temp file for contrast stretch
-        outFileTmp = os.path.join(outDir, baseName+'_tmp'+extension)
-        #creating output file for contrast stretch
-        outFile = os.path.join(outDir, baseName+'_stretch'+extension)
-
-        #if bands is empty, make a new file with the same band size
-        if bands == []:
-            bands = range(0, imgIn.RasterCount)
-
-        #Creating a temp image, with the same input parameters, to store the converted input image to 8 bits
-        imgOut = outDriver.Create(outFileTmp,imgIn.RasterXSize, imgIn.RasterYSize, len(bands), rasterType, options = createOptions)
-        imgOut.SetProjection(imgIn.GetProjection())
-        imgOut.SetGeoTransform(imgIn.GetGeoTransform())
-
-        #Linear stretching
-        topPercent = 100.-percent/2.
-        bottomPercent = percent/2.
-        outBandNumber = 1
-        for bandNumber in bands:
-
-            b1 = imgIn.GetRasterBand(bandNumber+1)
-            matrix = b1.ReadAsArray()
-            arr = numpy.array(matrix)
-
-            minValue, maxValue = numpy.percentile(matrix, [bottomPercent, topPercent])
-            print minValue, maxValue
-
-            #Transformation parameters
-            #Rouding the values out of bounds
-            numpy.putmask(arr, arr>maxValue,maxValue)
-            numpy.putmask(arr, arr<minValue,minValue)
-
-            #The maxOutValue and the minOutValue must be set according to the convertion that will be applied (e.g. 8 bits, 16 bits, 32 bits)
-            a = (maxOutValue-minOutValue)/(maxValue-minValue)
-            newArr = numpy.floor((arr-minValue)*a+minOutValue)
-
-            outB = imgOut.GetRasterBand(outBandNumber)
-            outBandNumber += 1
-            outB.WriteArray(newArr)
-            outB.FlushCache()
-
-            QgsMessageLog.logMessage(self.tr("Band "+ str(bandNumber)+ ": "+str(minValue)+" , "+str(maxValue)),"DSG Tools Plugin", QgsMessageLog.INFO)
-
-        #creating final image for reprojection
-        outRasterSRS = osgeo.osr.SpatialReference()
-        outRasterSRS.ImportFromEPSG(epsg)
-
-        #this code uses virtual raster to compute the parameters of the output image
-        vrt = osgeo.gdal.AutoCreateWarpedVRT(imgOut, None, outRasterSRS.ExportToWkt(), osgeo.gdal.GRA_NearestNeighbour,  0.0)
-        imgWGS = outDriver.CreateCopy(outFile, vrt, options = createOptions)
-
-        #Checking if the output file was created with success
-        if os.path.exists(outFile):
-            QgsMessageLog.logMessage(self.tr("File successfully created: ") + outFile, "DSG Tools Plugin", QgsMessageLog.INFO)
-
-        #Deleting the objects
-        del imgWGS
-        del imgOut
-        del imgIn
-
-        #Unlinking the temp file
-        os.unlink(outFileTmp)

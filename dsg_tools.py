@@ -318,7 +318,7 @@ class DsgTools:
 #             add_to_menu=False,
 #             add_to_toolbar=False)
 #         server.addAction(action)
-        
+
         icon_path = ':/plugins/DsgTools/icons/server.png'
         action = self.add_action(
             icon_path,
@@ -337,7 +337,7 @@ class DsgTools:
             parent=self.dsgTools,
             add_to_menu=False,
             add_to_toolbar=False)
-#         self.dsgTools.addAction(action)
+        self.dsgTools.addAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/dsg.png'
         action = self.add_action(
@@ -458,6 +458,10 @@ class DsgTools:
     def showImageProcessor(self):
         dlg = ProcessingTools(self.iface)
         result = dlg.exec_()
+        if result == 1:
+            (filesList, rasterType, minOutValue, maxOutValue, outDir, percent, epsg) = dlg.getParameters()
+            #creating the separeate process
+            self.processManager.createDpiProcess(filesList, rasterType, minOutValue, maxOutValue, outDir, percent, epsg)
 
     def createSpatialiteDatabase(self):
         try:

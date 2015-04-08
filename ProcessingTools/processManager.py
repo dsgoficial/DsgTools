@@ -30,7 +30,7 @@ from DsgTools.Factories.ThreadFactory.threadFactory import ThreadFactory
 class ProcessManager(QObject):
     def __init__(self, iface):
         super(ProcessManager, self).__init__()
-        
+
         self.iface = iface
         self.processDict = dict()
 
@@ -74,7 +74,7 @@ class ProcessManager(QObject):
 
         if feedback == 1:
             progressBar.setValue(progressBar.maximum())
-        QMessageBox.information(self.iface.mainWindow(), 'DSG Tools', message)        
+        QMessageBox.information(self.iface.mainWindow(), 'DSG Tools', message)
 
     def prepareProcess(self, process, message):
         # Setting the progress bar
@@ -106,3 +106,17 @@ class ProcessManager(QObject):
 
         #preparing the progressBar that will be created
         self.prepareProcess(process, self.tr("Creating database structure..."))
+
+    def createDpiProcess(self, filesList, rasterType, minOutValue, maxOutValue, outDir, percent, epsg):
+        #creating process
+        process = self.threadFactory.makeProcess('dpi')
+        stopped = [False]
+        process.setParameters(filesList, rasterType, minOutValue, maxOutValue, outDir, percent, epsg, stopped)
+
+        #connecting signal/slots
+        process.signals.rangeCalculated.connect(self.setProgressRange)
+        process.signals.stepProcessed.connect(self.stepProcessed)
+        process.signals.processingFinished.connect(self.processFinished)
+
+        #preparing the progressBar that will be created
+        self.prepareProcess(process, self.tr("Processing images..."))

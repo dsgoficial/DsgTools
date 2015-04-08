@@ -21,10 +21,13 @@
  ***************************************************************************/
 """
 from DsgTools.Factories.ThreadFactory.postgisDbThread import PostgisDbThread
+from DsgTools.Factories.ThreadFactory.dpiThread import DpiThread
 
 class ThreadFactory:
     def makeProcess(self, name):
         if name == 'pgdb':
             return PostgisDbThread()
+        elif name == 'dpi':
+            return DpiThread()
         else:
             return None
