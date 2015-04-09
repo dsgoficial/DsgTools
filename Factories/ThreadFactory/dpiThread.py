@@ -51,6 +51,9 @@ class DpiMessages(QObject):
     def getSuccessFeedbackMessage(self):
         return self.tr("Successful image processing.")
 
+    def getSuccessfullFileCreation(self):
+        return self.tr("File successfully created: ")
+
     @pyqtSlot()
     def progressCanceled(self):
         self.thread.stopped[0] = True
@@ -83,12 +86,25 @@ class DpiThread(GenericThread):
         # Progress bar steps calculated
         self.signals.rangeCalculated.emit(len(filesList), self.getId())
 
+        steps = 0
+        for file in self.filesList:
+            #Open image
+            imgIn = osgeo.gdal.Open(file)
+            if not imgIn:
+                continue
+            steps += imgIn.RasterCount
+            del imgIn
+
+        steps *= 6
+
+        # Progress bar steps calculated
+        self.signals.rangeCalculated.emit(steps, self.getId())
+
         problemOcurred = False
         for file in self.filesList:
             ret = self.stretchImage(file, self.outDir, self.percent, self.epsg, self.bands)
             if ret == 1:
-                # Updating progress
-                self.signals.stepProcessed.emit(self.getId())
+                pass
             elif ret == 0:
                 problemOcurred = True
             else:
@@ -145,24 +161,34 @@ class DpiThread(GenericThread):
                 b1 = imgIn.GetRasterBand(bandNumber+1)
                 matrix = b1.ReadAsArray()
                 arr = numpy.array(matrix)
+                # Updating progress
+                self.signals.stepProcessed.emit(self.getId())
 
                 minValue, maxValue = numpy.percentile(matrix, [bottomPercent, topPercent])
+                # Updating progress
+                self.signals.stepProcessed.emit(self.getId())
 
                 #Transformation parameters
                 #Rouding the values out of bounds
                 numpy.putmask(arr, arr>maxValue,maxValue)
                 numpy.putmask(arr, arr<minValue,minValue)
+                # Updating progress
+                self.signals.stepProcessed.emit(self.getId())
 
                 #The maxOutValue and the minOutValue must be set according to the convertion that will be applied (e.g. 8 bits, 16 bits, 32 bits)
                 a = (maxOutValue-minOutValue)/(maxValue-minValue)
-                newArr = numpy.floor((arr-minValue)*a+minOutValue)
+                newArr = (arr-minValue)*a+minOutValue
+                # Updating progress
+                self.signals.stepProcessed.emit(self.getId())
 
                 outB = imgOut.GetRasterBand(outBandNumber)
                 outBandNumber += 1
                 outB.WriteArray(newArr)
                 outB.FlushCache()
+                # Updating progress
+                self.signals.stepProcessed.emit(self.getId())
 
-                QgsMessageLog.logMessage(self.tr("Band "+ str(bandNumber)+ ": "+str(minValue)+" , "+str(maxValue)),"DSG Tools Plugin", QgsMessageLog.INFO)
+                QgsMessageLog.logMessage("Band "+ str(bandNumber)+ ": "+str(minValue)+" , "+str(maxValue),"DSG Tools Plugin", QgsMessageLog.INFO)
             else:
                 QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
                 return -1
@@ -177,7 +203,9 @@ class DpiThread(GenericThread):
 
         #Checking if the output file was created with success
         if os.path.exists(outFile):
-            QgsMessageLog.logMessage(self.tr("File successfully created: ") + outFile, "DSG Tools Plugin", QgsMessageLog.INFO)
+            QgsMessageLog.logMessage(self.messenger.getSuccessfullFileCreation() + outFile, "DSG Tools Plugin", QgsMessageLog.INFO)
+            # Updating progress
+            self.signals.stepProcessed.emit(self.getId())
 
         #Deleting the objects
         del imgWGS
