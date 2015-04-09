@@ -23,6 +23,7 @@
 import osgeo.gdal
 import osgeo.osr
 import numpy
+import math
 
 # Import the PyQt and QGIS libraries
 from PyQt4.QtCore import *
@@ -153,18 +154,24 @@ class DpiThread(GenericThread):
         imgOut.SetGeoTransform(imgIn.GetGeoTransform())
 
         #Linear stretching
-        topPercent = 100.-percent/2.
-        bottomPercent = percent/2.
+        print percent
+        topPercent = 1.-percent/200.
+        bottomPercent = percent/200.
         outBandNumber = 1
         for bandNumber in bands:
             if not self.stopped[0]:
                 b1 = imgIn.GetRasterBand(bandNumber+1)
-                matrix = b1.ReadAsArray()
-                arr = numpy.array(matrix)
+                arr = b1.ReadAsArray()
                 # Updating progress
                 self.signals.stepProcessed.emit(self.getId())
 
-                minValue, maxValue = numpy.percentile(matrix, [bottomPercent, topPercent])
+                #computing percentile
+                newArr=arr.flatten()
+                newArr.sort()
+                total=len(newArr)
+                minValue=float(newArr[int(bottomPercent*total)])
+                maxValue=float(newArr[int(math.ceil(topPercent*total))])
+                del newArr
                 # Updating progress
                 self.signals.stepProcessed.emit(self.getId())
 
