@@ -79,10 +79,10 @@ class ProcessingTools(QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_srsButton_clicked(self):
         projSelector = QgsGenericProjectionSelector()
-        message = 'Select the Spatial Reference System!'
+        message = self.tr('Select the Spatial Reference System!')
         projSelector.setMessage(theMessage=message)
         if not projSelector.exec_():
-            QMessageBox.warning(self, self.tr("Warning!"), self.tr(message))
+            QMessageBox.warning(self, self.tr("Warning!"), message)
             return
         else:
             self.epsg = int(projSelector.selectedAuthId().split(':')[-1])
@@ -103,7 +103,7 @@ class ProcessingTools(QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_addFolderButton_clicked(self):
-        folder = QFileDialog.getExistingDirectory(self, "Select Directory")
+        folder = QFileDialog.getExistingDirectory(self, self.tr("Select Directory"))
         for dirName, subdirList, fileList in os.walk(folder):
             for fileName in fileList:
                 if fileName.split(".")[-1] == 'tif':
@@ -111,7 +111,7 @@ class ProcessingTools(QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_outputFolderButton_clicked(self):
-        folder = QFileDialog.getExistingDirectory(self, "Select Directory")
+        folder = QFileDialog.getExistingDirectory(self, self.tr("Select Directory"))
         self.outputFolderEdit.setText(folder)
 
     def getStretchingPercentage(self):
