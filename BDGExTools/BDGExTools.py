@@ -25,7 +25,7 @@
 """
 # Import the PyQt and QGIS libraries
 import urllib2
-from xml.dom.minidom import parse
+from xml.dom.minidom import parseString
 
 from PyQt4.QtCore import QSettings, QObject
 from PyQt4.QtGui import QMessageBox
@@ -73,8 +73,9 @@ class BDGExTools(QObject):
         self.setUrllibProxy()
 
         try:
-            getCapa = urllib2.urlopen("http://www.geoportal.eb.mil.br/tiles?request=GetCapabilities")
-            response = getCapa.read()
+            getCapa = urllib2.Request("http://www.geoportal.eb.mil.br/tiles?request=GetCapabilities", headers={'User-Agent' : "Magic Browser"})
+            resp = urllib2.urlopen(getCapa)
+            response = resp.read()
         except urllib2.URLError, e:
             QMessageBox.critical(None, self.tr("URL Error!"), str(e.args) + '\nReason: '+str(e.reason))
             return None
@@ -83,8 +84,10 @@ class BDGExTools(QObject):
             return None
 
         try:
-            myDom=parse(getCapa)
+            myDom=parseString(response)
+            print myDom
         except:
+            print response
             QMessageBox.critical(None, self.tr("Parse Error!"), self.tr('Invalid GetCapabilities response:')+'\n'+str(response))
             return None
 
