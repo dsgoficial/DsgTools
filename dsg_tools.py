@@ -506,7 +506,7 @@ class DsgTools:
         result = dlg.exec_()
         if result == 1:
             (filesList, rasterType, minOutValue, maxOutValue, outDir, percent, epsg) = dlg.getParameters()
-            #creating the separeate process
+            #creating the separate process
             self.processManager.createDpiProcess(filesList, rasterType, minOutValue, maxOutValue, outDir, percent, epsg)
 
     def createSpatialiteDatabase(self):
@@ -530,7 +530,7 @@ class DsgTools:
         result = self.dlg.exec_()
         if result == 1:
             (db, version, epsg) = self.dlg.getParameters()
-            #creating the separeate process
+            #creating the separate process
             self.processManager.createPostgisDatabaseProcess(db, version, epsg)
 
     def loadByCategory(self):
@@ -582,22 +582,32 @@ class DsgTools:
 
     def loadLandsatLayer(self):
         urlWithParams = self.BDGExTools.getTileCache('Landsat7')
+        if not urlWithParams:
+            return
         self.iface.addRasterLayer(urlWithParams, 'Landsat7','wms')
 
     def load250kLayer(self):
         urlWithParams = self.BDGExTools.getTileCache('1:250k')
+        if not urlWithParams:
+            return
         self.iface.addRasterLayer(urlWithParams, '1:250k','wms')
     
     def load100kLayer(self):
         urlWithParams = self.BDGExTools.getTileCache('1:100k')
+        if not urlWithParams:
+            return
         self.iface.addRasterLayer(urlWithParams, '1:100k','wms')
 
     def load50kLayer(self):
         urlWithParams = self.BDGExTools.getTileCache('1:50k')
+        if not urlWithParams:
+            return
         self.iface.addRasterLayer(urlWithParams, '1:50k','wms')
 
     def load25kLayer(self):
         urlWithParams = self.BDGExTools.getTileCache('1:25k')
+        if not urlWithParams:
+            return
         self.iface.addRasterLayer(urlWithParams, '1:25k','wms')
 
     def load250kRasterIndex(self):
