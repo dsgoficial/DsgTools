@@ -33,6 +33,29 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>BDGExTools</name>
+    <message>
+        <location filename="BDGExTools/BDGExTools.py" line="80"/>
+        <source>URL Error!</source>
+        <translation>Erro na URL!</translation>
+    </message>
+    <message>
+        <location filename="BDGExTools/BDGExTools.py" line="83"/>
+        <source>HTTP Error!</source>
+        <translation>Erro no HTTP!</translation>
+    </message>
+    <message>
+        <location filename="BDGExTools/BDGExTools.py" line="91"/>
+        <source>Parse Error!</source>
+        <translation>Erro de Análise!</translation>
+    </message>
+    <message>
+        <location filename="BDGExTools/BDGExTools.py" line="91"/>
+        <source>Invalid GetCapabilities response:</source>
+        <translation>Resposta do GetCapabilities Inválida:</translation>
+    </message>
+</context>
+<context>
     <name>ComplexWindow</name>
     <message>
         <location filename="ComplexTools/complexWindow.py" line="123"/>
@@ -232,7 +255,7 @@ p, li { white-space: pre-wrap; }
         <translation>Atualizar Tabela</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.py" line="101"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="109"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
@@ -267,7 +290,7 @@ p, li { white-space: pre-wrap; }
         <translation>2.1.3</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.py" line="100"/>
+        <location filename="ServerTools/ui_serverConfigurator.ui" line="170"/>
         <source>Save</source>
         <translation>Salvar</translation>
     </message>
@@ -387,32 +410,32 @@ p, li { white-space: pre-wrap; }
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.py" line="94"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="14"/>
         <source>Configurate Servers</source>
         <translation>Configurar Servidores</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.py" line="95"/>
+        <location filename="ServerTools/ui_serverConfigurator.ui" line="22"/>
         <source>Server Name:</source>
         <translation>Nome do Servidor:</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.py" line="96"/>
+        <location filename="ServerTools/ui_serverConfigurator.ui" line="49"/>
         <source>Host:</source>
         <translation>Servidor:</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.py" line="97"/>
+        <location filename="ServerTools/ui_serverConfigurator.ui" line="76"/>
         <source>Port:</source>
         <translation>Porta:</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.py" line="98"/>
+        <location filename="ServerTools/ui_serverConfigurator.ui" line="103"/>
         <source>User:</source>
         <translation>Usuário:</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.py" line="99"/>
+        <location filename="ServerTools/ui_serverConfigurator.ui" line="130"/>
         <source>Password:</source>
         <translation>Senha:</translation>
     </message>
@@ -427,7 +450,7 @@ p, li { white-space: pre-wrap; }
         <translation>Pesquisar SRC</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.py" line="102"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="75"/>
         <source>Remove</source>
         <translation>Remover</translation>
     </message>
@@ -470,6 +493,111 @@ p, li { white-space: pre-wrap; }
         <location filename="ServerTools/ui_viewServers.ui" line="89"/>
         <source>Test</source>
         <translation>Testa</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="14"/>
+        <source>Batch Image Processor</source>
+        <translation>Processador de Imagens em Lote</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="27"/>
+        <source>Image</source>
+        <translation>Imagem</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="36"/>
+        <source>Input images:</source>
+        <translation>Imagens de Entrada:</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="67"/>
+        <source>Add folder</source>
+        <translation>Adicionar diretório</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="91"/>
+        <source>Apply contrast enhancement:</source>
+        <translation>Aplicar melhoria de contraste:</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="99"/>
+        <source>None</source>
+        <translation>Nenhum</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="104"/>
+        <source>Linear 2%</source>
+        <translation>Linear 2%</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="112"/>
+        <source>Spatial Reference System:</source>
+        <translation>Sistema de Referência Espacial:</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="124"/>
+        <source>CRS</source>
+        <translation>SCR</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="133"/>
+        <source>Output raster type</source>
+        <translation>Tipo de raster de saída</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="141"/>
+        <source>Byte</source>
+        <translation>Byte</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="146"/>
+        <source>Unsigned Int 16</source>
+        <translation>Unsigned Int 16</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="151"/>
+        <source>Int 16</source>
+        <translation>Int 16</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="156"/>
+        <source>Unsigned Int 32</source>
+        <translation>Unsigned Int 32</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="161"/>
+        <source>Int 32</source>
+        <translation>Int 32</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="166"/>
+        <source>Float 32</source>
+        <translation>Float 32</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="171"/>
+        <source>Float 64</source>
+        <translation>Float 64</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="180"/>
+        <source>Metadata</source>
+        <translation>Metadados</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="186"/>
+        <source>Metadata output XML model:</source>
+        <translation>Modelo XML de metadados de saída:</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="207"/>
+        <source>Process metadata</source>
+        <translation>Processar metadados</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/ui_processingTools.ui" line="220"/>
+        <source>Output files folder:</source>
+        <translation>Diretório de arquivos de saída:</translation>
     </message>
 </context>
 <context>
@@ -526,156 +654,194 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>DpiMessages</name>
+    <message>
+        <location filename="Factories/ThreadFactory/dpiThread.py" line="44"/>
+        <source>Problem processing image: </source>
+        <translation>Problema no processamento da imagem: </translation>
+    </message>
+    <message>
+        <location filename="Factories/ThreadFactory/dpiThread.py" line="47"/>
+        <source>Problem processing images. Check log for details.</source>
+        <translation>Problema no processamento das imagens. Verifique o log para detalhes.</translation>
+    </message>
+    <message>
+        <location filename="Factories/ThreadFactory/dpiThread.py" line="50"/>
+        <source>User canceled image processing!</source>
+        <translation>Processamento cancelado pelo usuário!</translation>
+    </message>
+    <message>
+        <location filename="Factories/ThreadFactory/dpiThread.py" line="53"/>
+        <source>Successful image processing.</source>
+        <translation>Processamento de imagens concluído.</translation>
+    </message>
+    <message>
+        <location filename="Factories/ThreadFactory/dpiThread.py" line="56"/>
+        <source>File successfully created: </source>
+        <translation>Arquivo criado com sucesso: </translation>
+    </message>
+</context>
+<context>
     <name>DsgTools</name>
     <message>
-        <location filename="dsg_tools.py" line="428"/>
+        <location filename="dsg_tools.py" line="474"/>
         <source>&amp;DSG Tools</source>
         <translation>&amp;Ferramentas DSG</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="208"/>
+        <location filename="dsg_tools.py" line="212"/>
         <source>DSG Tools</source>
         <translation>Ferramentas DSG</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="213"/>
+        <location filename="dsg_tools.py" line="217"/>
         <source>Server Catalog</source>
         <translation>Catálogo de Servidores</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="214"/>
+        <location filename="dsg_tools.py" line="218"/>
         <source>Database Tools</source>
         <translation>Ferramentas de BD</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="215"/>
+        <location filename="dsg_tools.py" line="219"/>
         <source>Layer Tools</source>
         <translation>Ferramentas de Camadas</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="343"/>
+        <location filename="dsg_tools.py" line="389"/>
         <source>About</source>
         <translation>Sobre</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="367"/>
+        <location filename="dsg_tools.py" line="413"/>
         <source>Create Spatialite</source>
         <translation>Criar Spatialite</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="379"/>
+        <location filename="dsg_tools.py" line="425"/>
         <source>Create PostGIS</source>
         <translation>Criar PostGIS</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="390"/>
+        <location filename="dsg_tools.py" line="436"/>
         <source>Load by Category</source>
         <translation>Carrega por Categoria</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="402"/>
+        <location filename="dsg_tools.py" line="448"/>
         <source>Load by Class</source>
         <translation>Carrega por Classe</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="413"/>
+        <location filename="dsg_tools.py" line="459"/>
         <source>Create Frame</source>
         <translation>Criar Moldura</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="333"/>
+        <location filename="dsg_tools.py" line="379"/>
         <source>Image tools</source>
         <translation>Ferramentas para Imagens</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="353"/>
+        <location filename="dsg_tools.py" line="399"/>
         <source>Help</source>
         <translation>Ajuda</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="216"/>
+        <location filename="dsg_tools.py" line="220"/>
         <source>BDGEx</source>
         <translation>BDGEx</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="218"/>
+        <location filename="dsg_tools.py" line="223"/>
         <source>Product Indexes</source>
         <translation>Índices de Produtos</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="220"/>
+        <location filename="dsg_tools.py" line="225"/>
         <source>Vectorial Charts</source>
         <translation>Cartas Vetoriais</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="273"/>
+        <location filename="dsg_tools.py" line="319"/>
         <source>1:250,000</source>
         <translation>1:250.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="283"/>
+        <location filename="dsg_tools.py" line="329"/>
         <source>1:100,000</source>
         <translation>1:100.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="293"/>
+        <location filename="dsg_tools.py" line="339"/>
         <source>1:50,000</source>
         <translation>1:50.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="303"/>
+        <location filename="dsg_tools.py" line="349"/>
         <source>1:25,000</source>
         <translation>1:25.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="219"/>
+        <location filename="dsg_tools.py" line="224"/>
         <source>Topographic Charts</source>
         <translation>Cartas Topográficas</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="539"/>
+        <location filename="dsg_tools.py" line="615"/>
         <source>1:250k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="543"/>
+        <location filename="dsg_tools.py" line="619"/>
         <source>1:100k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="547"/>
+        <location filename="dsg_tools.py" line="623"/>
         <source>1:50k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="551"/>
+        <location filename="dsg_tools.py" line="627"/>
         <source>1:25k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:25k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="555"/>
+        <location filename="dsg_tools.py" line="631"/>
         <source>1:250k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="559"/>
+        <location filename="dsg_tools.py" line="635"/>
         <source>1:100k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="563"/>
+        <location filename="dsg_tools.py" line="639"/>
         <source>1:50k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="567"/>
+        <location filename="dsg_tools.py" line="643"/>
         <source>1:25k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:25k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="323"/>
+        <location filename="dsg_tools.py" line="369"/>
         <source>View Server</source>
         <translation>Visualizar Servidor</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="222"/>
+        <source>Coverage Layers</source>
+        <translation>Camadas de Cobertura</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="269"/>
+        <source>Landsat 7</source>
+        <translation>Landsat 7</translation>
     </message>
 </context>
 <context>
@@ -1001,6 +1167,67 @@ Olhe o Terminal Python para detalhes.</translation>
     </message>
 </context>
 <context>
+    <name>ProcessManager</name>
+    <message>
+        <location filename="ProcessingTools/processManager.py" line="108"/>
+        <source>Creating database structure...</source>
+        <translation>Criando a estrutura do banco de dados...</translation>
+    </message>
+    <message>
+        <location filename="ProcessingTools/processManager.py" line="122"/>
+        <source>Processing images...</source>
+        <translation>Processando as imagens...</translation>
+    </message>
+</context>
+<context>
+    <name>ProcessingTools</name>
+    <message>
+        <location filename="ImageTools/processingTools.py" line="85"/>
+        <source>Warning!</source>
+        <translation>Alerta!</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/processingTools.py" line="61"/>
+        <source>Please select at least one image.</source>
+        <translation>Por favor selecione pelo menos uma imagem.</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/processingTools.py" line="65"/>
+        <source>Please select at the output folder.</source>
+        <translation>Por favor selecione o diretório de saída.</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/processingTools.py" line="68"/>
+        <source>Information!</source>
+        <translation>Informação!</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/processingTools.py" line="68"/>
+        <source>The processing may take several minutes. Please wait the final message.</source>
+        <translation>O processamento pode levar vários minutos. Por favor aguarde a messagem de conclusão.</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/processingTools.py" line="82"/>
+        <source>Select the Spatial Reference System!</source>
+        <translation>Selecione o Sistema de Referência Espacial!</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/processingTools.py" line="94"/>
+        <source>Select Images</source>
+        <translation>Selecione as Imagens</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/processingTools.py" line="94"/>
+        <source>Image files (*.tif)</source>
+        <translation>Arquivos de Inagem (*.tif)</translation>
+    </message>
+    <message>
+        <location filename="ImageTools/processingTools.py" line="114"/>
+        <source>Select Directory</source>
+        <translation>Selecione um Diretório</translation>
+    </message>
+</context>
+<context>
     <name>QmlParser</name>
     <message>
         <location filename="QmlTools/qmlParser.py" line="74"/>
@@ -1044,22 +1271,22 @@ Olhe o Terminal Python para detalhes.</translation>
 <context>
     <name>ViewServers</name>
     <message>
-        <location filename="ServerTools/viewServers.py" line="154"/>
+        <location filename="ServerTools/viewServers.py" line="161"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="154"/>
+        <location filename="ServerTools/viewServers.py" line="161"/>
         <source>Select one server.</source>
         <translation>Selecione um servidor.</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="110"/>
+        <location filename="ServerTools/viewServers.py" line="117"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="99"/>
+        <location filename="ServerTools/viewServers.py" line="103"/>
         <source>Server removed.</source>
         <translation>Servidor removido.</translation>
     </message>
@@ -1074,12 +1301,12 @@ Olhe o Terminal Python para detalhes.</translation>
         <translation>Salva</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="108"/>
+        <location filename="ServerTools/viewServers.py" line="115"/>
         <source>Server Online.</source>
         <translation>Servidor Online.</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="110"/>
+        <location filename="ServerTools/viewServers.py" line="117"/>
         <source>Server Offline.</source>
         <translation>Servidor Offline.</translation>
     </message>
