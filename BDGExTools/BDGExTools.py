@@ -74,6 +74,7 @@ class BDGExTools(QObject):
 
         try:
             getCapa = urllib2.urlopen("http://www.geoportal.eb.mil.br/tiles?request=GetCapabilities")
+            response = getCapa.read()
         except urllib2.URLError, e:
             QMessageBox.critical(None, self.tr("URL Error!"), str(e.args) + '\nReason: '+str(e.reason))
             return None
@@ -84,7 +85,7 @@ class BDGExTools(QObject):
         try:
             myDom=parse(getCapa)
         except:
-            QMessageBox.critical(None, self.tr("Parse Error!"), self.tr('Could not parse the GetCapabilities request!'))
+            QMessageBox.critical(None, self.tr("Parse Error!"), self.tr('Invalid GetCapabilities response:')+'\n'+str(response))
             return None
 
         qgsIndexDict = dict()
