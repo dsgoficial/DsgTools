@@ -8,6 +8,7 @@
         begin                : 2014-10-09
         git sha              : $Format:%H$
         copyright            : (C) 2014 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
+        mod history          : 2015-04-12 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : luiz.claudio@dsg.eb.mil.br
  ***************************************************************************/
 
@@ -46,6 +47,8 @@ from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.ImageTools.processingTools import ProcessingTools
 
 from DsgTools.ProcessingTools.processManager import ProcessManager
+
+from DsgTools.BDGExTools.BDGExTools import BDGExTools
 
 from qgis.utils import showPluginHelp
 
@@ -94,6 +97,7 @@ class DsgTools:
 
         self.processManager = ProcessManager(iface)
 
+        self.BDGExTools = BDGExTools()
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -215,10 +219,12 @@ class DsgTools:
         layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/icons/layers.png')
         bdgex = self.addMenu(self.dsgTools, u'bdgex', self.tr('BDGEx'),':/plugins/DsgTools/icons/eb.png')
         topocharts = self.addMenu(bdgex, u'topocharts', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
+        coverageLyr = self.addMenu(bdgex, u'coverageLyr', self.tr('Coverage Layers'),':/plugins/DsgTools/icons/eb.png')
         indexes = self.addMenu(bdgex, u'indexes', self.tr('Product Indexes'),':/plugins/DsgTools/icons/eb.png')
         rasterIndex = self.addMenu(indexes, u'rasterindex', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
         vectorIndex = self.addMenu(indexes, u'vectorindex', self.tr('Vectorial Charts'),':/plugins/DsgTools/icons/eb.png')
 
+        icon_path = ':/plugins/DsgTools/icons/eb.png'
         icon_path = ':/plugins/DsgTools/icons/eb.png'
         action = self.add_action(
             icon_path,
@@ -228,6 +234,46 @@ class DsgTools:
             add_to_menu=False,
             add_to_toolbar=False)
         topocharts.addAction(action)
+        
+        icon_path = ':/plugins/DsgTools/icons/eb.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('1:100,000'),
+            callback=self.load100kLayer,
+            parent=topocharts,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        topocharts.addAction(action)
+        
+        icon_path = ':/plugins/DsgTools/icons/eb.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('1:50,000'),
+            callback=self.load50kLayer,
+            parent=topocharts,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        topocharts.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/eb.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('1:25,000'),
+            callback=self.load25kLayer,
+            parent=topocharts,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        topocharts.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/eb.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Landsat 7'),
+            callback=self.loadLandsatLayer,
+            parent=coverageLyr,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        coverageLyr.addAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/eb.png'
         action = self.add_action(
@@ -534,9 +580,25 @@ class DsgTools:
         if result:
             pass
 
+    def loadLandsatLayer(self):
+        urlWithParams = self.BDGExTools.getTileCache('Landsat7')
+        self.iface.addRasterLayer(urlWithParams, 'Landsat7','wms')
+
     def load250kLayer(self):
-        urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/gif&layers=ctm250&styles=&tileMatrixSet=ctm250-wmsc-4&url=http://www.geoportal.eb.mil.br/tiles'
+        urlWithParams = self.BDGExTools.getTileCache('1:250k')
         self.iface.addRasterLayer(urlWithParams, '1:250k','wms')
+    
+    def load100kLayer(self):
+        urlWithParams = self.BDGExTools.getTileCache('1:100k')
+        self.iface.addRasterLayer(urlWithParams, '1:100k','wms')
+
+    def load50kLayer(self):
+        urlWithParams = self.BDGExTools.getTileCache('1:50k')
+        self.iface.addRasterLayer(urlWithParams, '1:50k','wms')
+
+    def load25kLayer(self):
+        urlWithParams = self.BDGExTools.getTileCache('1:25k')
+        self.iface.addRasterLayer(urlWithParams, '1:25k','wms')
 
     def load250kRasterIndex(self):
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F250_WGS84_MATRICIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
