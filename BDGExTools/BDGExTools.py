@@ -46,13 +46,18 @@ class BDGExTools(QObject):
     def __del__(self):
         pass
     
-    def setUrllibProxy(self):
-        (enabled, host, port, user, password, type) = self.getProxyConfiguration()
+    def setUrllibProxy(self, url):
+        (enabled, host, port, user, password, type, excludeUrls) = self.getProxyConfiguration()
         if enabled == 'false' or type != 'HttpProxy':
             return
-
-        proxyStr = 'http://'+user+':'+password+'@'+host+':'+port
-        proxy = urllib2.ProxyHandler({'http': proxyStr})
+        
+        if excludeUrls in url:
+            print excludeUrls
+            proxy = urllib2.ProxyHandler({})
+        else:    
+            proxyStr = 'http://'+user+':'+password+'@'+host+':'+port
+            proxy = urllib2.ProxyHandler({'http': proxyStr})
+            
         opener = urllib2.build_opener(proxy, urllib2.HTTPHandler)
         urllib2.install_opener(opener)
 
@@ -65,15 +70,17 @@ class BDGExTools(QObject):
         user = settings.value('proxyUser')
         password = settings.value('proxyPassword')
         type = settings.value('proxyType')
+        excludeUrls = settings.value('proxyExcludedUrls')
         settings.endGroup()
-        return (enabled, host, port, user, password, type)
+        return (enabled, host, port, user, password, type, excludeUrls)
 
     def getTileCache(self,layerName):
+        url = "http://www.geoportal.eb.mil.br/tiles?request=GetCapabilities"
         # set proxy
-        self.setUrllibProxy()
+        self.setUrllibProxy(url)
 
         try:
-            getCapa = urllib2.Request("http://www.geoportal.eb.mil.br/tiles?request=GetCapabilities", headers={'User-Agent' : "Magic Browser"})
+            getCapa = urllib2.Request(url, headers={'User-Agent' : "Magic Browser"})
             resp = urllib2.urlopen(getCapa)
             response = resp.read()
         except urllib2.URLError, e:
