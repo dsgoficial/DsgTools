@@ -47,19 +47,22 @@ class BDGExTools(QObject):
         pass
     
     def setUrllibProxy(self, url):
-        (enabled, host, port, user, password, type, excludeUrls) = self.getProxyConfiguration()
+        (enabled, host, port, user, password, type, urlsList) = self.getProxyConfiguration()
         if enabled == 'false' or type != 'HttpProxy':
             return
         
-        if excludeUrls in url:
-            print excludeUrls
-            proxy = urllib2.ProxyHandler({})
-        else:    
-            proxyStr = 'http://'+user+':'+password+'@'+host+':'+port
-            proxy = urllib2.ProxyHandler({'http': proxyStr})
-            
+        for address in urlsList:
+            if address in url:
+                proxy = urllib2.ProxyHandler({})
+                opener = urllib2.build_opener(proxy, urllib2.HTTPHandler)
+                urllib2.install_opener(opener)
+                return
+
+        proxyStr = 'http://'+user+':'+password+'@'+host+':'+port
+        proxy = urllib2.ProxyHandler({'http': proxyStr})
         opener = urllib2.build_opener(proxy, urllib2.HTTPHandler)
         urllib2.install_opener(opener)
+        return          
 
     def getProxyConfiguration(self):
         settings = QSettings()
@@ -70,9 +73,10 @@ class BDGExTools(QObject):
         user = settings.value('proxyUser')
         password = settings.value('proxyPassword')
         type = settings.value('proxyType')
-        excludeUrls = settings.value('proxyExcludedUrls')
+        excludedUrls = settings.value('proxyExcludedUrls')
+        urlsList = excludedUrls.split('|')
         settings.endGroup()
-        return (enabled, host, port, user, password, type, excludeUrls)
+        return (enabled, host, port, user, password, type, urlsList)
 
     def getTileCache(self,layerName):
         url = "http://www.geoportal.eb.mil.br/tiles?request=GetCapabilities"
@@ -92,9 +96,7 @@ class BDGExTools(QObject):
 
         try:
             myDom=parseString(response)
-            print myDom
         except:
-            print response
             QMessageBox.critical(None, self.tr("Parse Error!"), self.tr('Invalid GetCapabilities response:')+'\n'+str(response))
             return None
 
