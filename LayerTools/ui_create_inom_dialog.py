@@ -99,7 +99,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         feat = QgsFeature()
         feat.setFields(layer.dataProvider().fields())
         feat.setGeometry(reprojected)
-        feat.setAttribute(2, self.inomen)
+        feat.setAttribute(2, self.inomLineEdit.text())
         feat.setAttribute(3, self.scaleCombo.currentText())
         layer.addFeatures([feat], makeSelected=True)
         layer.commitChanges()
@@ -360,19 +360,19 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         elif self.scaleCombo.currentText() == '250k':
             self.inomLineEdit.setInputMask('NN-NN-N-N')
         elif self.scaleCombo.currentText() == '100k':
-            self.inomLineEdit.setInputMask('NN-NN-N-N-Nn')
+            self.inomLineEdit.setInputMask('NN-NN-N-N-Nnn')
         elif self.scaleCombo.currentText() == '50k':
-            self.inomLineEdit.setInputMask('NN-NN-N-N-Nn-N')
+            self.inomLineEdit.setInputMask('NN-NN-N-N-Nnn-0')
         elif self.scaleCombo.currentText() == '25k':
-            self.inomLineEdit.setInputMask('NN-NN-N-N-Nn-N-NN')
+            self.inomLineEdit.setInputMask('NN-NN-N-N-Nnn-0-NN')
         elif self.scaleCombo.currentText() == '10k':
-            self.inomLineEdit.setInputMask('NN-NN-N-N-Nn-N-NN-N')
+            self.inomLineEdit.setInputMask('NN-NN-N-N-Nnn-0-NN-N')
         elif self.scaleCombo.currentText() == '5k':
-            self.inomLineEdit.setInputMask('NN-NN-N-N-Nn-N-NN-N-Nn')
+            self.inomLineEdit.setInputMask('NN-NN-N-N-Nnn-0-NN-N-Nnn')
         elif self.scaleCombo.currentText() == '2k':
-            self.inomLineEdit.setInputMask('NN-NN-N-N-Nn-N-NN-N-Nn-N')
+            self.inomLineEdit.setInputMask('NN-NN-N-N-Nnn-0-NN-N-Nnn-0')
         elif self.scaleCombo.currentText() == '1k':
-            self.inomLineEdit.setInputMask('NN-NN-N-N-Nn-N-NN-N-Nn-N-N')
+            self.inomLineEdit.setInputMask('NN-NN-N-N-Nnn-0-NN-N-Nnn-0-N')
 
     def validateMI(self):
         mi = self.inomLineEdit.text()
