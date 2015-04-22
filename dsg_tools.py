@@ -581,6 +581,12 @@ class DsgTools:
             pass
 
     def loadLandsatLayer(self):
+        urlWithParams = self.BDGExTools.getTileCache('RapidEye')
+        if not urlWithParams:
+            return
+        self.iface.addRasterLayer(urlWithParams, 'RapidEye','wms')
+
+    def loadLandsatLayer(self):
         urlWithParams = self.BDGExTools.getTileCache('Landsat7')
         if not urlWithParams:
             return

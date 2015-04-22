@@ -41,6 +41,7 @@ class BDGExTools(QObject):
         self.wmtsDict['1:50k']='ctm50'
         self.wmtsDict['1:25k']='ctm25'
         self.wmtsDict['Landsat7']='landsat7'
+        self.wmtsDict['RapidEye']='rapideye'
         pass
 
     def __del__(self):
