@@ -23,7 +23,7 @@ changelog=
 	1.0.1 - Minor bug fix on spatialite complex features and improved help.
 	1.1 - Bug fix on frame creation on spatilite databases. New thread management api. Help improved. Improvements on create frame.
 	1.1.1 - Bug fix on frame creation. Adjustments on few methods. Now postgis database are forced do have lowercase names.
-	1.2 - New WM(T)S services from BDGEx. Minor bug fix on create frame.
+	1.2 - New WM(T)S services from BDGEx. Minor bug fix on create frame. Image batch processing tool added.
 
 # Tags are comma separated with spaces allowed
 tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure
