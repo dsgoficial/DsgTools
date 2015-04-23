@@ -278,6 +278,16 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/icons/eb.png'
         action = self.add_action(
             icon_path,
+            text=self.tr('RapidEye'),
+            callback=self.loadRapidEyeLayer,
+            parent=coverageLyr,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        coverageLyr.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/eb.png'
+        action = self.add_action(
+            icon_path,
             text=self.tr('1:250,000'),
             callback=self.load250kRasterIndex,
             parent=rasterIndex,
@@ -580,7 +590,7 @@ class DsgTools:
         if result:
             pass
 
-    def loadLandsatLayer(self):
+    def loadRapidEyeLayer(self):
         urlWithParams = self.BDGExTools.getTileCache('RapidEye')
         if not urlWithParams:
             return
