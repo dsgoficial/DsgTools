@@ -22,6 +22,7 @@
 """
 import os
 import csv
+import shutil
 from osgeo import gdal, ogr
 
 # Import the PyQt and QGIS libraries
@@ -44,6 +45,8 @@ class InventoryTools(QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.iface = iface
+        
+        self.files = list()
        
     @pyqtSlot(bool)
     def on_parentFolderButton_clicked(self):
@@ -70,7 +73,11 @@ class InventoryTools(QDialog, FORM_CLASS):
     @pyqtSlot()      
     def on_buttonBox_accepted(self):
         self.makeInventory()
-        QMessageBox.information(self, self.tr('Information!'), self.tr('Inventory successfully created!'))
+        if not self.copyFilesCheckBox.isChecked():
+            QMessageBox.information(self, self.tr('Information!'), self.tr('Inventory successfully created!'))
+        else:
+            self.copyFiles()
+            QMessageBox.information(self, self.tr('Information!'), self.tr('Inventory and copy performed successfully!'))
             
     def makeInventory(self):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -84,16 +91,32 @@ class InventoryTools(QDialog, FORM_CLASS):
             outwriter = csv.writer(csvfile)
             for root, dirs, files in os.walk(parentFolder):
                 for file in files:
+                    extension = file.split('.')[-1]
                     line = os.path.join(root,file)
-                    gdalSrc = gdal.Open(line)
-                    ogrSrc = ogr.Open(line)
-                    if gdalSrc or ogrSrc:
+                    if extension == 'prj':
                         outwriter.writerow([line])
-                    gdalSrc = None
-                    ogrSrc = None
+                        self.files.append(line)
+                    else:
+                        gdalSrc = gdal.Open(line)
+                        ogrSrc = ogr.Open(line)
+                        if gdalSrc or ogrSrc:
+                            outwriter.writerow([line])
+                            self.files.append(line)
+                        gdalSrc = None
+                        ogrSrc = None
         finally:
             csvfile.close()
             
         QApplication.restoreOverrideCursor()
+        
+    def copyFiles(self):
+        destinationFolder = self.destinationFolderEdit.text()
+        
+        for fileName in self.files:
+            file = fileName.split(os.sep)[-1]
+            newFileName = os.path.join(destinationFolder, file)
+            
+            shutil.copy2(fileName, newFileName)
+        
                     
             
