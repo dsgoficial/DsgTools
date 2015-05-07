@@ -50,6 +50,8 @@ from DsgTools.ProcessingTools.processManager import ProcessManager
 
 from DsgTools.BDGExTools.BDGExTools import BDGExTools
 
+from DsgTools.InventoryTools.inventoryTools import InventoryTools
+
 from qgis.utils import showPluginHelp
 
 class DsgTools:
@@ -395,6 +397,16 @@ class DsgTools:
             add_to_toolbar=False)
         self.dsgTools.addAction(action)
 
+        icon_path = ':/plugins/DsgTools/icons/inventory.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Inventory tools'),
+            callback=self.showInventoryTool,
+            parent=self.dsgTools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        self.dsgTools.addAction(action)
+
         icon_path = ':/plugins/DsgTools/icons/dsg.png'
         action = self.add_action(
             icon_path,
@@ -518,6 +530,12 @@ class DsgTools:
             (filesList, rasterType, minOutValue, maxOutValue, outDir, percent, epsg) = dlg.getParameters()
             #creating the separate process
             self.processManager.createDpiProcess(filesList, rasterType, minOutValue, maxOutValue, outDir, percent, epsg)
+
+    def showInventoryTool(self):
+        dlg = InventoryTools(self.iface)
+        result = dlg.exec_()
+        if result == 1:
+            pass
 
     def createSpatialiteDatabase(self):
         try:
