@@ -110,6 +110,8 @@ class InventoryTools(QDialog, FORM_CLASS):
         QApplication.restoreOverrideCursor()
         
     def copyFiles(self):
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        
         destinationFolder = self.destinationFolderEdit.text()
         
         for fileName in self.files:
@@ -117,6 +119,5 @@ class InventoryTools(QDialog, FORM_CLASS):
             newFileName = os.path.join(destinationFolder, file)
             
             shutil.copy2(fileName, newFileName)
-        
-                    
             
+        QApplication.restoreOverrideCursor()
