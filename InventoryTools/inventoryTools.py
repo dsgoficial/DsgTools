@@ -51,17 +51,17 @@ class InventoryTools(QDialog, FORM_CLASS):
        
     @pyqtSlot(bool)
     def on_parentFolderButton_clicked(self):
-        folder = QFileDialog.getExistingDirectory(self, self.tr("Select Directory"))
+        folder = QFileDialog.getExistingDirectory(self, self.tr('Select Directory'))
         self.parentFolderEdit.setText(folder)
 
     @pyqtSlot(bool)
     def on_copyFilesButton_clicked(self):
-        folder = QFileDialog.getExistingDirectory(self, self.tr("Select Directory"))
+        folder = QFileDialog.getExistingDirectory(self, self.tr(Select Directory'))
         self.destinationFolderEdit.setText(folder)
 
     @pyqtSlot(bool)
     def on_outputFileButton_clicked(self):
-        fileName = QFileDialog.getSaveFileName(parent=self, caption='Save Output File', filter='CSV (*.csv)')
+        fileName = QFileDialog.getSaveFileName(parent=self, caption=self.tr('Save Output File'), filter='CSV (*.csv)')
         self.outputFileEdit.setText(fileName)
         
     @pyqtSlot(int)
@@ -80,8 +80,8 @@ class InventoryTools(QDialog, FORM_CLASS):
             if not self.copyFilesCheckBox.isChecked():
                 QMessageBox.information(self, self.tr('Information!'), self.tr('Inventory successfully created!'))
             else:
-                self.copyFiles()
-                QMessageBox.information(self, self.tr('Information!'), self.tr('Inventory and copy performed successfully!'))
+                if self.copyFiles():
+                    QMessageBox.information(self, self.tr('Information!'), self.tr('Inventory and copy performed successfully!'))
                 
             # Adding the layer and making it active
             layer = self.iface.addVectorLayer(self.outputFileEdit.text(), 'Inventory', 'delimitedtext')
