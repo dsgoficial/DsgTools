@@ -56,7 +56,7 @@ class InventoryTools(QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_copyFilesButton_clicked(self):
-        folder = QFileDialog.getExistingDirectory(self, self.tr('Select Directory'))
+        folder = QFileDialog.getExistingDirectory(self, self.tr(Select Directory'))
         self.destinationFolderEdit.setText(folder)
 
     @pyqtSlot(bool)
@@ -130,6 +130,7 @@ class InventoryTools(QDialog, FORM_CLASS):
                         gdalSrc = None
                         ogrSrc = None
         except:
+            csvfile.close()
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('An error occurred while searching for files.'))
             return False
