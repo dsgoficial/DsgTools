@@ -74,7 +74,9 @@ class InventoryTools(QDialog, FORM_CLASS):
     @pyqtSlot()      
     def on_buttonBox_accepted(self):
         try:
-            self.makeInventory()
+            if not self.makeInventory():
+                return
+
             if not self.copyFilesCheckBox.isChecked():
                 QMessageBox.information(self, self.tr('Information!'), self.tr('Inventory successfully created!'))
             else:
@@ -99,9 +101,14 @@ class InventoryTools(QDialog, FORM_CLASS):
         parentFolder = self.parentFolderEdit.text()
         outputFile = self.outputFileEdit.text()
         recursive = self.recursiveCheckBox.isChecked()
+
+        if not parentFolder or not outputFile:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.information(self, self.tr('Information!'), self.tr('Please, fill all fields.'))
+            return False
         
-        csvfile = open(outputFile, 'wb')
         try:
+            csvfile = open(outputFile, 'wb')
             outwriter = csv.writer(csvfile)
             outwriter.writerow(['fileName'])
             for root, dirs, files in os.walk(parentFolder):
@@ -119,20 +126,35 @@ class InventoryTools(QDialog, FORM_CLASS):
                             self.files.append(line)
                         gdalSrc = None
                         ogrSrc = None
+        except:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('An error occurred while searching for files.'))
+            return False
         finally:
             csvfile.close()
-            
-        QApplication.restoreOverrideCursor()
+            QApplication.restoreOverrideCursor()
+            return True
         
     def copyFiles(self):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         
         destinationFolder = self.destinationFolderEdit.text()
-        
-        for fileName in self.files:
-            file = fileName.split(os.sep)[-1]
-            newFileName = os.path.join(destinationFolder, file)
-            
-            shutil.copy2(fileName, newFileName)
-            
-        QApplication.restoreOverrideCursor()
+
+        if not destinationFolder:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.information(self, self.tr('Information!'), self.tr('Please, choose a location to save the files.'))
+            return False
+
+        try:
+            for fileName in self.files:
+                file = fileName.split(os.sep)[-1]
+                newFileName = os.path.join(destinationFolder, file)
+
+                shutil.copy2(fileName, newFileName)
+        except:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('An error occurred while copying the files.'))
+            return False
+        finally:
+            QApplication.restoreOverrideCursor()
+            return True
