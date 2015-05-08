@@ -89,7 +89,7 @@ class InventoryTools(QDialog, FORM_CLASS):
             actions = layer.actions()
             field = '[% "fileName" %]'
             actions.addAction(QgsAction.GenericPython, 'Load Vector Layer', 'qgis.utils.iface.addVectorLayer(\'%s\', \'File\', \'ogr\')' % field)
-            actions.addAction(QgsAction.GenericPython, 'Load Raster Layer', 'qgis.utils.iface.addRasterLayer(\'%s\', \'File\', \'ogr\')' % field)
+            actions.addAction(QgsAction.GenericPython, 'Load Raster Layer', 'qgis.utils.iface.addRasterLayer(\'%s\', \'File\')' % field)
         except:
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('An error occurred!'))
             
