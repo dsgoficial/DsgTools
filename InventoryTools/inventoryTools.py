@@ -71,8 +71,8 @@ class InventoryTools(QDialog, FORM_CLASS):
         else:
             self.frame_3.setEnabled(False)
      
-    @pyqtSlot()      
-    def on_buttonBox_accepted(self):
+    @pyqtSlot(bool)
+    def on_okButton_clicked(self):
         try:
             if not self.makeInventory():
                 return
@@ -93,14 +93,17 @@ class InventoryTools(QDialog, FORM_CLASS):
             actions.addAction(QgsAction.GenericPython, 'Load Vector Layer', 'qgis.utils.iface.addVectorLayer(\'%s\', \'File\', \'ogr\')' % field)
             actions.addAction(QgsAction.GenericPython, 'Load Raster Layer', 'qgis.utils.iface.addRasterLayer(\'%s\', \'File\')' % field)
         except:
+            QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('An error occurred!'))
+            return
+        finally:
+            self.close()
             
     def makeInventory(self):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         
         parentFolder = self.parentFolderEdit.text()
         outputFile = self.outputFileEdit.text()
-        recursive = self.recursiveCheckBox.isChecked()
 
         if not parentFolder or not outputFile:
             QApplication.restoreOverrideCursor()
