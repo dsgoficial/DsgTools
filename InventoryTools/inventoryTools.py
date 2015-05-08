@@ -56,7 +56,7 @@ class InventoryTools(QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_copyFilesButton_clicked(self):
-        folder = QFileDialog.getExistingDirectory(self, self.tr(Select Directory'))
+        folder = QFileDialog.getExistingDirectory(self, self.tr('Select Directory'))
         self.destinationFolderEdit.setText(folder)
 
     @pyqtSlot(bool)
