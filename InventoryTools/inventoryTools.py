@@ -30,6 +30,7 @@ from PyQt4 import uic
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from _csv import writer
+from qgis._core import QgsAction
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_inventoryTools.ui'))
@@ -72,12 +73,24 @@ class InventoryTools(QDialog, FORM_CLASS):
      
     @pyqtSlot()      
     def on_buttonBox_accepted(self):
-        self.makeInventory()
-        if not self.copyFilesCheckBox.isChecked():
-            QMessageBox.information(self, self.tr('Information!'), self.tr('Inventory successfully created!'))
-        else:
-            self.copyFiles()
-            QMessageBox.information(self, self.tr('Information!'), self.tr('Inventory and copy performed successfully!'))
+        try:
+            self.makeInventory()
+            if not self.copyFilesCheckBox.isChecked():
+                QMessageBox.information(self, self.tr('Information!'), self.tr('Inventory successfully created!'))
+            else:
+                self.copyFiles()
+                QMessageBox.information(self, self.tr('Information!'), self.tr('Inventory and copy performed successfully!'))
+                
+            # Adding the layer and making it active
+            layer = self.iface.addVectorLayer(self.outputFileEdit.text(), 'Inventory', 'delimitedtext')
+            self.iface.setActiveLayer(layer)
+            
+            # Creating and Attribute Action to load the inventoried file
+            actions = layer.actions()
+            field = '[% "fileName" %]'
+            actions.addAction(QgsAction.GenericPython, 'Load Layer', 'qgis.utils.iface.addVectorLayer(\'%s\', \'File\', \'ogr\')' % field)
+        except:
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('An error occurred!'))
             
     def makeInventory(self):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -89,6 +102,7 @@ class InventoryTools(QDialog, FORM_CLASS):
         csvfile = open(outputFile, 'wb')
         try:
             outwriter = csv.writer(csvfile)
+            outwriter.writerow(['fileName'])
             for root, dirs, files in os.walk(parentFolder):
                 for file in files:
                     extension = file.split('.')[-1]
