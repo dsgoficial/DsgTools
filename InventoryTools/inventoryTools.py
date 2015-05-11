@@ -48,6 +48,40 @@ class InventoryTools(QDialog, FORM_CLASS):
         self.iface = iface
         
         self.files = list()
+        
+        self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.treeWidget.customContextMenuRequested.connect(self.createMenu)
+        
+    def depth(self, item):
+        #calculates the depth of the item
+        depth = 0
+        while item is not None:
+            item = item.parent()
+            depth += 1
+        return depth
+    
+    def createMenu(self, position):
+        menu = QMenu()
+        
+        item = self.treeWidget.itemAt(position)
+
+        if not item:
+            menu.addAction(self.tr('Insert Extension'), self.insertExtension)
+        else:        
+            if self.depth(item) == 1:
+                menu.addAction(self.tr('Remove Extension'), self.removeExtension)
+            
+        menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
+        
+    def insertExtension(self):
+        item = QTreeWidgetItem(self.treeWidget.invisibleRootItem())
+        text = QInputDialog.getText(self, self.tr('Type the extension'), self.tr('File extension'), mode=QLineEdit.Normal)
+        item.setText(0,text[0])
+       
+    def removeExtension(self):
+        item = self.treeWidget.selectedItems()[0]
+        index = self.treeWidget.indexOfTopLevelItem(item)
+        self.treeWidget.takeTopLevelItem(index)
        
     @pyqtSlot(bool)
     def on_parentFolderButton_clicked(self):
@@ -96,8 +130,8 @@ class InventoryTools(QDialog, FORM_CLASS):
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('An error occurred!'))
             return
-        finally:
-            self.close()
+
+        self.close()
             
     def makeInventory(self):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -117,6 +151,8 @@ class InventoryTools(QDialog, FORM_CLASS):
             for root, dirs, files in os.walk(parentFolder):
                 for file in files:
                     extension = file.split('.')[-1]
+                    if self.isInBlackList(extension):
+                        continue
                     line = os.path.join(root,file)
                     if extension == 'prj':
                         outwriter.writerow([line])
@@ -134,10 +170,10 @@ class InventoryTools(QDialog, FORM_CLASS):
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('An error occurred while searching for files.'))
             return False
-        finally:
-            csvfile.close()
-            QApplication.restoreOverrideCursor()
-            return True
+
+        csvfile.close()
+        QApplication.restoreOverrideCursor()
+        return True
         
     def copyFiles(self):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -159,6 +195,16 @@ class InventoryTools(QDialog, FORM_CLASS):
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('An error occurred while copying the files.'))
             return False
-        finally:
-            QApplication.restoreOverrideCursor()
-            return True
+
+        QApplication.restoreOverrideCursor()
+        return True
+        
+    def isInBlackList(self, ext):
+        root = self.treeWidget.invisibleRootItem()
+        for i in range(root.childCount()):
+            item = root.child(i)
+            extension = item.text(0)
+            if ext == extension:
+                return True
+         
+        return False
