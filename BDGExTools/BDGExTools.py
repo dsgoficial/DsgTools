@@ -75,11 +75,10 @@ class BDGExTools(QObject):
         password = settings.value('proxyPassword')
         type = settings.value('proxyType')
         excludedUrls = settings.value('proxyExcludedUrls')
-        urlsList = []
         try:
             urlsList = excludedUrls.split('|')
         except:
-            pass
+            urlsList = []
         settings.endGroup()
         return (enabled, host, port, user, password, type, urlsList)
 
