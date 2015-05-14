@@ -106,6 +106,10 @@ class InventoryTools(QDialog, FORM_CLASS):
             self.frame_3.setEnabled(False)
      
     @pyqtSlot(bool)
+    def on_cancelButton_clicked(self):
+        self.close()
+
+    @pyqtSlot(bool)
     def on_okButton_clicked(self):
         try:
             if not self.makeInventory():
