@@ -35,22 +35,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>BDGExTools</name>
     <message>
-        <location filename="BDGExTools/BDGExTools.py" line="80"/>
+        <location filename="BDGExTools/BDGExTools.py" line="95"/>
         <source>URL Error!</source>
         <translation>Erro na URL!</translation>
     </message>
     <message>
-        <location filename="BDGExTools/BDGExTools.py" line="83"/>
+        <location filename="BDGExTools/BDGExTools.py" line="98"/>
         <source>HTTP Error!</source>
         <translation>Erro no HTTP!</translation>
     </message>
     <message>
-        <location filename="BDGExTools/BDGExTools.py" line="91"/>
+        <location filename="BDGExTools/BDGExTools.py" line="104"/>
         <source>Parse Error!</source>
         <translation>Erro de Análise!</translation>
     </message>
     <message>
-        <location filename="BDGExTools/BDGExTools.py" line="91"/>
+        <location filename="BDGExTools/BDGExTools.py" line="104"/>
         <source>Invalid GetCapabilities response:</source>
         <translation>Resposta do GetCapabilities Inválida:</translation>
     </message>
@@ -68,7 +68,7 @@ p, li { white-space: pre-wrap; }
         <translation>Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="429"/>
+        <location filename="ComplexTools/complexWindow.py" line="431"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
@@ -98,12 +98,12 @@ p, li { white-space: pre-wrap; }
         <translation>Por favor, selecione uma classe agregada ou o identificador dela.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="387"/>
+        <location filename="ComplexTools/complexWindow.py" line="388"/>
         <source>Please, select a complex.</source>
         <translation>Por favor, selecione um complexo.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="426"/>
+        <location filename="ComplexTools/complexWindow.py" line="428"/>
         <source>The following layers cannot be associated to complexes from </source>
         <translation>As camadas a seguir não podem ser associadas a complexos de</translation>
     </message>
@@ -121,12 +121,12 @@ p, li { white-space: pre-wrap; }
         <translation>O índice de nomenclatura é inválido!</translation>
     </message>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="253"/>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="255"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="311"/>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="313"/>
         <source>Select Database</source>
         <translation>Selecione o Banco de Dados</translation>
     </message>
@@ -202,32 +202,32 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CriaSpatialiteDialog</name>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="133"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="139"/>
         <source>Please, select the coordinate system</source>
         <translation>Por favor, selecione o sistema de coordenadas</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="128"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="134"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="128"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="134"/>
         <source>Problem creating the database!</source>
         <translation>Problema criando o banco de dados!</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="137"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="143"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="135"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="141"/>
         <source>Please, select a folder to save the database</source>
         <translation>Por favor, selecione uma pasta para salvar o banco</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="137"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="143"/>
         <source>Please, fill the file name.</source>
         <translation>Por favor, preencha o nome do arquivo.</translation>
     </message>
@@ -255,7 +255,7 @@ p, li { white-space: pre-wrap; }
         <translation>Atualizar Tabela</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="109"/>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="156"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
@@ -405,7 +405,7 @@ p, li { white-space: pre-wrap; }
         <translation>INOM:</translation>
     </message>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog_base.ui" line="307"/>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="149"/>
         <source>Ok</source>
         <translation>Ok</translation>
     </message>
@@ -599,6 +599,51 @@ p, li { white-space: pre-wrap; }
         <source>Output files folder:</source>
         <translation>Diretório de arquivos de saída:</translation>
     </message>
+    <message>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="14"/>
+        <source>Inventory Tools</source>
+        <translation>Ferramentas de Inventário</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="31"/>
+        <source>Parent Folder:</source>
+        <translation>Diretório pai:</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="135"/>
+        <source>Select Folder</source>
+        <translation>Selecione a Pasta</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="64"/>
+        <source>Output File:</source>
+        <translation>Arquivo de saída:</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="74"/>
+        <source>Save File</source>
+        <translation>Salvar Arquivo</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="86"/>
+        <source>Insert file extensions to be excluded</source>
+        <translation>Insira extensões de arquivo para serem excluídas</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="93"/>
+        <source>Excluded formats</source>
+        <translation>Formatos excluídos</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="104"/>
+        <source>Copy Files</source>
+        <translation>Copiar arquivos</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="125"/>
+        <source>Destination Folder:</source>
+        <translation>Pasta de destino:</translation>
+    </message>
 </context>
 <context>
     <name>DockWidget</name>
@@ -684,164 +729,252 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DsgTools</name>
     <message>
-        <location filename="dsg_tools.py" line="474"/>
+        <location filename="dsg_tools.py" line="496"/>
         <source>&amp;DSG Tools</source>
         <translation>&amp;Ferramentas DSG</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="212"/>
+        <location filename="dsg_tools.py" line="214"/>
         <source>DSG Tools</source>
         <translation>Ferramentas DSG</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="217"/>
+        <location filename="dsg_tools.py" line="219"/>
         <source>Server Catalog</source>
         <translation>Catálogo de Servidores</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="218"/>
+        <location filename="dsg_tools.py" line="220"/>
         <source>Database Tools</source>
         <translation>Ferramentas de BD</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="219"/>
+        <location filename="dsg_tools.py" line="221"/>
         <source>Layer Tools</source>
         <translation>Ferramentas de Camadas</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="389"/>
+        <location filename="dsg_tools.py" line="411"/>
         <source>About</source>
         <translation>Sobre</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="413"/>
+        <location filename="dsg_tools.py" line="435"/>
         <source>Create Spatialite</source>
         <translation>Criar Spatialite</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="425"/>
+        <location filename="dsg_tools.py" line="447"/>
         <source>Create PostGIS</source>
         <translation>Criar PostGIS</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="436"/>
+        <location filename="dsg_tools.py" line="458"/>
         <source>Load by Category</source>
         <translation>Carrega por Categoria</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="448"/>
+        <location filename="dsg_tools.py" line="470"/>
         <source>Load by Class</source>
         <translation>Carrega por Classe</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="459"/>
+        <location filename="dsg_tools.py" line="481"/>
         <source>Create Frame</source>
         <translation>Criar Moldura</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="379"/>
+        <location filename="dsg_tools.py" line="391"/>
         <source>Image tools</source>
         <translation>Ferramentas para Imagens</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="399"/>
+        <location filename="dsg_tools.py" line="421"/>
         <source>Help</source>
         <translation>Ajuda</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="220"/>
+        <location filename="dsg_tools.py" line="222"/>
         <source>BDGEx</source>
         <translation>BDGEx</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="223"/>
+        <location filename="dsg_tools.py" line="225"/>
         <source>Product Indexes</source>
         <translation>Índices de Produtos</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="225"/>
+        <location filename="dsg_tools.py" line="227"/>
         <source>Vectorial Charts</source>
         <translation>Cartas Vetoriais</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="319"/>
+        <location filename="dsg_tools.py" line="331"/>
         <source>1:250,000</source>
         <translation>1:250.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="329"/>
+        <location filename="dsg_tools.py" line="341"/>
         <source>1:100,000</source>
         <translation>1:100.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="339"/>
+        <location filename="dsg_tools.py" line="351"/>
         <source>1:50,000</source>
         <translation>1:50.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="349"/>
+        <location filename="dsg_tools.py" line="361"/>
         <source>1:25,000</source>
         <translation>1:25.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="224"/>
+        <location filename="dsg_tools.py" line="226"/>
         <source>Topographic Charts</source>
         <translation>Cartas Topográficas</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="615"/>
+        <location filename="dsg_tools.py" line="649"/>
         <source>1:250k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="619"/>
+        <location filename="dsg_tools.py" line="653"/>
         <source>1:100k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="623"/>
+        <location filename="dsg_tools.py" line="657"/>
         <source>1:50k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="627"/>
+        <location filename="dsg_tools.py" line="661"/>
         <source>1:25k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:25k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="631"/>
+        <location filename="dsg_tools.py" line="665"/>
         <source>1:250k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="635"/>
+        <location filename="dsg_tools.py" line="669"/>
         <source>1:100k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="639"/>
+        <location filename="dsg_tools.py" line="673"/>
         <source>1:50k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="643"/>
+        <location filename="dsg_tools.py" line="677"/>
         <source>1:25k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:25k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="369"/>
+        <location filename="dsg_tools.py" line="381"/>
         <source>View Server</source>
         <translation>Visualizar Servidor</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="222"/>
+        <location filename="dsg_tools.py" line="224"/>
         <source>Coverage Layers</source>
         <translation>Camadas de Cobertura</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="269"/>
+        <location filename="dsg_tools.py" line="271"/>
         <source>Landsat 7</source>
         <translation>Landsat 7</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="281"/>
+        <source>RapidEye</source>
+        <translation>RapidEye</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="401"/>
+        <source>Inventory tools</source>
+        <translation>Ferramentas de Inventário</translation>
+    </message>
+</context>
+<context>
+    <name>InventoryTools</name>
+    <message>
+        <location filename="InventoryTools/inventoryTools.py" line="69"/>
+        <source>Insert Extension</source>
+        <translation>Inserir Extensão</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/inventoryTools.py" line="72"/>
+        <source>Remove Extension</source>
+        <translation>Remover extensão</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/inventoryTools.py" line="78"/>
+        <source>Type the extension</source>
+        <translation>Escreva a extensão</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/inventoryTools.py" line="78"/>
+        <source>File extension</source>
+        <translation>Extensão do arquivo</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/inventoryTools.py" line="93"/>
+        <source>Select Directory</source>
+        <translation>Selecione um Diretório</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/inventoryTools.py" line="98"/>
+        <source>Save Output File</source>
+        <translation>Salvar arquivo de saída</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/inventoryTools.py" line="189"/>
+        <source>Information!</source>
+        <translation>Informação!</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/inventoryTools.py" line="119"/>
+        <source>Inventory successfully created!</source>
+        <translation>Invetário criado com sucesso!</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/inventoryTools.py" line="122"/>
+        <source>Inventory and copy performed successfully!</source>
+        <translation>Inventário e cópia feitos com sucesso!</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/inventoryTools.py" line="200"/>
+        <source>Critical!</source>
+        <translation>Crítico!</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/inventoryTools.py" line="135"/>
+        <source>An error occurred!</source>
+        <translation>Um erro ocorreu!</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/inventoryTools.py" line="148"/>
+        <source>Please, fill all fields.</source>
+        <translation>Por favor, preencha todos os campos.</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/inventoryTools.py" line="175"/>
+        <source>An error occurred while searching for files.</source>
+        <translation>Um erro ocorreu durante a busca de arquivos.</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/inventoryTools.py" line="189"/>
+        <source>Please, choose a location to save the files.</source>
+        <translation>Por favor, escolha um local para salvar os arquivos.</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/inventoryTools.py" line="200"/>
+        <source>An error occurred while copying the files.</source>
+        <translation>Um erro ocorreu durante a cópia dos arquivos.</translation>
     </message>
 </context>
 <context>
@@ -957,47 +1090,47 @@ p, li { white-space: pre-wrap; }
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="252"/>
+        <location filename="LayerTools/load_by_category.py" line="255"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="345"/>
+        <location filename="LayerTools/load_by_category.py" line="348"/>
         <source>WARNING!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="331"/>
+        <location filename="LayerTools/load_by_category.py" line="334"/>
         <source>Please, select at least one type of layer!</source>
         <translation>Por favor, selecione pelo menos um tipo de camada!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="343"/>
+        <location filename="LayerTools/load_by_category.py" line="346"/>
         <source>CRITICAL!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="336"/>
+        <location filename="LayerTools/load_by_category.py" line="339"/>
         <source>Problem loading the categories!</source>
         <translation>Problema na carga das categorias!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="343"/>
+        <location filename="LayerTools/load_by_category.py" line="346"/>
         <source>Could not determine the coordinate reference system!</source>
         <translation>Não foi possível determinar o Sistema de Coordenadas de Referência!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="342"/>
+        <location filename="LayerTools/load_by_category.py" line="345"/>
         <source>Database not loaded properly!</source>
         <translation>Banco de dados não foi carregado corretamente!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="345"/>
+        <location filename="LayerTools/load_by_category.py" line="348"/>
         <source>Please, select at least one category!</source>
         <translation>Por favor, selecione pelo menos uma categoria!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="391"/>
+        <location filename="LayerTools/load_by_category.py" line="394"/>
         <source>Problem counting elements: </source>
         <translation>Problema na contagem dos elementos:</translation>
     </message>
@@ -1070,42 +1203,42 @@ p, li { white-space: pre-wrap; }
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="151"/>
+        <location filename="LayerTools/load_by_class.py" line="154"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="187"/>
+        <location filename="LayerTools/load_by_class.py" line="190"/>
         <source>Select Database</source>
         <translation>Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="263"/>
+        <location filename="LayerTools/load_by_class.py" line="267"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="245"/>
+        <location filename="LayerTools/load_by_class.py" line="248"/>
         <source>Could not load the selected classes!</source>
         <translation>Não foi possível carregar as classes selecionadas!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="265"/>
+        <location filename="LayerTools/load_by_class.py" line="269"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="247"/>
+        <location filename="LayerTools/load_by_class.py" line="250"/>
         <source>Please, select at least one class!</source>
         <translation>Por favor, selecione pelo menos uma classe!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="263"/>
+        <location filename="LayerTools/load_by_class.py" line="267"/>
         <source>Could not load the layer(s)!</source>
         <translation>Não foi possível carregar a(s) camada(s)!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="265"/>
+        <location filename="LayerTools/load_by_class.py" line="269"/>
         <source>Please select at least one layer!</source>
         <translation>Por favor, selecione pelo menos uma camada!</translation>
     </message>
@@ -1243,27 +1376,27 @@ Olhe o Terminal Python para detalhes.</translation>
 <context>
     <name>ServerConfigurator</name>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="96"/>
+        <location filename="ServerTools/serverConfigurator.py" line="97"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="66"/>
+        <location filename="ServerTools/serverConfigurator.py" line="67"/>
         <source>Fill all parameters.</source>
         <translation>Preencha todos os parâmetros.</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="63"/>
+        <location filename="ServerTools/serverConfigurator.py" line="64"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="63"/>
+        <location filename="ServerTools/serverConfigurator.py" line="64"/>
         <source>Server stored.</source>
         <translation>Servidor armazenado.</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="96"/>
+        <location filename="ServerTools/serverConfigurator.py" line="97"/>
         <source>Already has a server with this name.</source>
         <translation>Já existe um servidor com este nome.</translation>
     </message>

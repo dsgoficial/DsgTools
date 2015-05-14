@@ -13,7 +13,8 @@
  					QmlTools/qmlParser.py \
  					ServerTools/serverConfigurator.py \
  					ServerTools/viewServers.py \
- 					dsg_tools.py
+ 					dsg_tools.py \
+					InventoryTools/inventoryTools.py
 
  FORMS           =	ComplexTools/complexWindow_base.ui \
  					ComplexTools/ui_manageComplex.ui \
@@ -25,7 +26,8 @@
  					LayerTools/ui_create_inom_dialog_base.ui \
  					ServerTools/ui_serverConfigurator.ui \
  					ServerTools/ui_viewServers.ui \
- 					ui_about.ui
+ 					ui_about.ui \
+					InventoryTools/ui_inventoryTools.ui
 
  TRANSLATIONS    = i18n/DsgTools_pt.ts
 
