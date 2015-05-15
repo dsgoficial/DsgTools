@@ -14,7 +14,8 @@
  					ServerTools/serverConfigurator.py \
  					ServerTools/viewServers.py \
  					dsg_tools.py \
-					InventoryTools/inventoryTools.py
+					InventoryTools/inventoryTools.py \
+					Factories/ThreadFactory/inventoryThread.py
 
  FORMS           =	ComplexTools/complexWindow_base.ui \
  					ComplexTools/ui_manageComplex.ui \

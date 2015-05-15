@@ -834,42 +834,42 @@ p, li { white-space: pre-wrap; }
         <translation>Cartas Topográficas</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="649"/>
+        <location filename="dsg_tools.py" line="651"/>
         <source>1:250k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="653"/>
+        <location filename="dsg_tools.py" line="655"/>
         <source>1:100k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="657"/>
+        <location filename="dsg_tools.py" line="659"/>
         <source>1:50k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="661"/>
+        <location filename="dsg_tools.py" line="663"/>
         <source>1:25k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:25k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="665"/>
+        <location filename="dsg_tools.py" line="667"/>
         <source>1:250k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="669"/>
+        <location filename="dsg_tools.py" line="671"/>
         <source>1:100k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="673"/>
+        <location filename="dsg_tools.py" line="675"/>
         <source>1:50k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="677"/>
+        <location filename="dsg_tools.py" line="679"/>
         <source>1:25k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:25k</translation>
     </message>
@@ -900,6 +900,34 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>InventoryMessages</name>
+    <message>
+        <location filename="Factories/ThreadFactory/inventoryThread.py" line="43"/>
+        <source>An error occurred while searching for files.</source>
+        <translation>Um erro ocorreu durante a busca de arquivos.</translation>
+    </message>
+    <message>
+        <location filename="Factories/ThreadFactory/inventoryThread.py" line="46"/>
+        <source>An error occurred while copying the files.</source>
+        <translation>Um erro ocorreu durante a cópia dos arquivos.</translation>
+    </message>
+    <message>
+        <location filename="Factories/ThreadFactory/inventoryThread.py" line="49"/>
+        <source>Inventory successfully created!</source>
+        <translation>Inventário criado com sucesso!</translation>
+    </message>
+    <message>
+        <location filename="Factories/ThreadFactory/inventoryThread.py" line="52"/>
+        <source>Inventory and copy performed successfully!</source>
+        <translation>Inventário e cópia feitas com sucesso!</translation>
+    </message>
+    <message>
+        <location filename="Factories/ThreadFactory/inventoryThread.py" line="55"/>
+        <source>User canceled inventory processing!</source>
+        <translation>Inventário cancelado pelo usuário!</translation>
+    </message>
+</context>
+<context>
     <name>InventoryTools</name>
     <message>
         <location filename="InventoryTools/inventoryTools.py" line="69"/>
@@ -922,57 +950,42 @@ p, li { white-space: pre-wrap; }
         <translation>Extensão do arquivo</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="93"/>
+        <location filename="InventoryTools/inventoryTools.py" line="104"/>
         <source>Select Directory</source>
         <translation>Selecione um Diretório</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="98"/>
+        <location filename="InventoryTools/inventoryTools.py" line="109"/>
         <source>Save Output File</source>
         <translation>Salvar arquivo de saída</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="189"/>
+        <location filename="InventoryTools/inventoryTools.py" line="192"/>
         <source>Information!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="119"/>
-        <source>Inventory successfully created!</source>
-        <translation>Invetário criado com sucesso!</translation>
-    </message>
-    <message>
-        <location filename="InventoryTools/inventoryTools.py" line="122"/>
-        <source>Inventory and copy performed successfully!</source>
-        <translation>Inventário e cópia feitos com sucesso!</translation>
-    </message>
-    <message>
-        <location filename="InventoryTools/inventoryTools.py" line="200"/>
+        <location filename="InventoryTools/inventoryTools.py" line="203"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="135"/>
-        <source>An error occurred!</source>
-        <translation>Um erro ocorreu!</translation>
-    </message>
-    <message>
-        <location filename="InventoryTools/inventoryTools.py" line="148"/>
+        <location filename="InventoryTools/inventoryTools.py" line="151"/>
         <source>Please, fill all fields.</source>
         <translation>Por favor, preencha todos os campos.</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="175"/>
+        <location filename="InventoryTools/inventoryTools.py" line="178"/>
         <source>An error occurred while searching for files.</source>
         <translation>Um erro ocorreu durante a busca de arquivos.</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="189"/>
+        <location filename="InventoryTools/inventoryTools.py" line="192"/>
         <source>Please, choose a location to save the files.</source>
         <translation>Por favor, escolha um local para salvar os arquivos.</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="200"/>
+        <location filename="InventoryTools/inventoryTools.py" line="203"/>
         <source>An error occurred while copying the files.</source>
         <translation>Um erro ocorreu durante a cópia dos arquivos.</translation>
     </message>
@@ -1302,14 +1315,19 @@ Olhe o Terminal Python para detalhes.</translation>
 <context>
     <name>ProcessManager</name>
     <message>
-        <location filename="ProcessingTools/processManager.py" line="108"/>
+        <location filename="ProcessingTools/processManager.py" line="109"/>
         <source>Creating database structure...</source>
         <translation>Criando a estrutura do banco de dados...</translation>
     </message>
     <message>
-        <location filename="ProcessingTools/processManager.py" line="122"/>
+        <location filename="ProcessingTools/processManager.py" line="123"/>
         <source>Processing images...</source>
         <translation>Processando as imagens...</translation>
+    </message>
+    <message>
+        <location filename="ProcessingTools/processManager.py" line="138"/>
+        <source>Making inventory, please wait...</source>
+        <translation>Fazendo o inventário, por favor espere...</translation>
     </message>
 </context>
 <context>

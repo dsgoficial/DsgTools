@@ -135,7 +135,7 @@ class ProcessManager(QObject):
         process.signals.loadFile.connect(self.loadInventoryFile)
 
         #preparing the progressBar that will be created
-        self.prepareProcess(process, self.tr("Making inventory please wait..."))
+        self.prepareProcess(process, self.tr("Making inventory, please wait..."))
 
     @pyqtSlot(str)
     def loadInventoryFile(self, outputFile):
