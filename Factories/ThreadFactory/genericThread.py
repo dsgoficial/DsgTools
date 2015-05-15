@@ -28,6 +28,7 @@ class ProcessSignals(QObject):
     rangeCalculated = pyqtSignal(int, str)
     stepProcessed = pyqtSignal(str)
     processingFinished = pyqtSignal(int, str, str)
+    loadFile = pyqtSignal(str)
 
 class GenericThread(QRunnable):
     def __init__(self):

@@ -535,8 +535,10 @@ class DsgTools:
         dlg = InventoryTools(self.iface)
         result = dlg.exec_()
         if result == 1:
-            pass
-
+            (parentFolder, outputFile, makeCopy, destinationFolder, blackList) = dlg.getParameters()
+            #creating the separate process
+            self.processManager.createInventoryProcess(parentFolder, outputFile, makeCopy, destinationFolder, blackList)
+            
     def createSpatialiteDatabase(self):
         try:
             self.databaseButton.setDefaultAction(self.toolbar.sender())

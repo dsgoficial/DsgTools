@@ -22,6 +22,7 @@
 """
 from DsgTools.Factories.ThreadFactory.postgisDbThread import PostgisDbThread
 from DsgTools.Factories.ThreadFactory.dpiThread import DpiThread
+from DsgTools.Factories.ThreadFactory.inventoryThread import InventoryThread
 
 class ThreadFactory:
     def makeProcess(self, name):
@@ -29,5 +30,7 @@ class ThreadFactory:
             return PostgisDbThread()
         elif name == 'dpi':
             return DpiThread()
+        elif name == 'inventory':
+            return InventoryThread()
         else:
             return None

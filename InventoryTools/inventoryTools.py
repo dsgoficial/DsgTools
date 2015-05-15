@@ -82,6 +82,17 @@ class InventoryTools(QDialog, FORM_CLASS):
         item = self.treeWidget.selectedItems()[0]
         index = self.treeWidget.indexOfTopLevelItem(item)
         self.treeWidget.takeTopLevelItem(index)
+
+    def getParameters(self):
+        blackList = []
+        root = self.treeWidget.invisibleRootItem()
+        for i in range(root.childCount()):
+            item = root.child(i)
+            extension = item.text(0)
+            blackList.append(extension)
+            
+        return (self.parentFolderEdit.text(), self.outputFileEdit.text(), self.copyFilesCheckBox.isChecked(), \
+                self.destinationFolderEdit.text(), blackList)
        
     @pyqtSlot(bool)
     def on_parentFolderButton_clicked(self):
@@ -107,35 +118,27 @@ class InventoryTools(QDialog, FORM_CLASS):
      
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
-        self.close()
+        self.done(0)
 
     @pyqtSlot(bool)
     def on_okButton_clicked(self):
-        try:
-            if not self.makeInventory():
+        parentFolder = self.parentFolderEdit.text()
+        outputFile = self.outputFileEdit.text()
+
+        if not parentFolder or not outputFile:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.information(self, self.tr('Information!'), self.tr('Please, fill all fields.'))
+            return
+        
+        if self.copyFilesCheckBox.isChecked():
+            destinationFolder = self.destinationFolderEdit.text()
+    
+            if not destinationFolder:
+                QApplication.restoreOverrideCursor()
+                QMessageBox.information(self, self.tr('Information!'), self.tr('Please, choose a location to save the files.'))
                 return
 
-            if not self.copyFilesCheckBox.isChecked():
-                QMessageBox.information(self, self.tr('Information!'), self.tr('Inventory successfully created!'))
-            else:
-                if self.copyFiles():
-                    QMessageBox.information(self, self.tr('Information!'), self.tr('Inventory and copy performed successfully!'))
-                
-            # Adding the layer and making it active
-            layer = self.iface.addVectorLayer(self.outputFileEdit.text(), 'Inventory', 'delimitedtext')
-            self.iface.setActiveLayer(layer)
-            
-            # Creating and Attribute Action to load the inventoried file
-            actions = layer.actions()
-            field = '[% "fileName" %]'
-            actions.addAction(QgsAction.GenericPython, 'Load Vector Layer', 'qgis.utils.iface.addVectorLayer(\'%s\', \'File\', \'ogr\')' % field)
-            actions.addAction(QgsAction.GenericPython, 'Load Raster Layer', 'qgis.utils.iface.addRasterLayer(\'%s\', \'File\')' % field)
-        except:
-            QApplication.restoreOverrideCursor()
-            QMessageBox.critical(self, self.tr('Critical!'), self.tr('An error occurred!'))
-            return
-
-        self.close()
+        self.done(1)
             
     def makeInventory(self):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))

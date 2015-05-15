@@ -22,6 +22,7 @@
 """
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from qgis._core import QgsAction
 
 import sip
 
@@ -120,3 +121,29 @@ class ProcessManager(QObject):
 
         #preparing the progressBar that will be created
         self.prepareProcess(process, self.tr("Processing images..."))
+
+    def createInventoryProcess(self, parentFolder, outputFile, makeCopy, destinationFolder, blackList):
+        #creating process
+        process = self.threadFactory.makeProcess('inventory')
+        stopped = [False]
+        process.setParameters(parentFolder, outputFile, makeCopy, destinationFolder, blackList, stopped)
+
+        #connecting signal/slots
+        process.signals.rangeCalculated.connect(self.setProgressRange)
+        process.signals.stepProcessed.connect(self.stepProcessed)
+        process.signals.processingFinished.connect(self.processFinished)
+        process.signals.loadFile.connect(self.loadInventoryFile)
+
+        #preparing the progressBar that will be created
+        self.prepareProcess(process, self.tr("Making inventory please wait..."))
+
+    @pyqtSlot(str)
+    def loadInventoryFile(self, outputFile):
+        # Adding the layer and making it active
+        layer = self.iface.addVectorLayer(outputFile, 'Inventory', 'delimitedtext')
+        self.iface.setActiveLayer(layer)            
+        # Creating and Attribute Action to load the inventoried file
+        actions = layer.actions()
+        field = '[% "fileName" %]'
+        actions.addAction(QgsAction.GenericPython, 'Load Vector Layer', 'qgis.utils.iface.addVectorLayer(\'%s\', \'File\', \'ogr\')' % field)
+        actions.addAction(QgsAction.GenericPython, 'Load Raster Layer', 'qgis.utils.iface.addRasterLayer(\'%s\', \'File\')' % field)            
