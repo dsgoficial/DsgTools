@@ -140,7 +140,7 @@ class ProcessManager(QObject):
     @pyqtSlot(str)
     def loadInventoryFile(self, outputFile):
         # Adding the layer and making it active
-        layer = self.iface.addVectorLayer(outputFile, 'Inventory', 'delimitedtext')
+        layer = self.iface.addVectorLayer('file://'+outputFile+'?delimiter=%s' % ',', 'Inventory', 'delimitedtext')
         self.iface.setActiveLayer(layer)            
         # Creating and Attribute Action to load the inventoried file
         actions = layer.actions()
