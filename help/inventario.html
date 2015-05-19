@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+  	
+	<title>Ferramentas de Inventário</title>
+    
+    <link rel="stylesheet" href="css/bootstrap.css">
+	<link rel="stylesheet" href="everydayimstyling.css" />
+</head>
+
+<body>
+	
+    <h2>
+    	Ferramentas de Inventário
+    </h2>
+    
+	<p align="justify">
+        O plugin DSG Tools permite que seja feito um inventário de todas os dados geoespaciais que sejam suportados pelo GDAL/OGR. 
+        Essa ferramenta cria um arquivo CSV, com o caminho completo de todos os arquivos inventariados, que é carregado no QGIS após processamento. 
+        Após o carragamento do arquivo de inventário é possível que seja feita o carregamento individual dos arquivos inventariados no QGIS atráves de 
+        duas ações de atributos do QGIS, Load vector Layer e Load Raster Layer. A seguir será mostrado em detalhes como usar estas ferramentas. 
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/inventario_basico.png' name='figuras1' width=411 height=353 alt='Erro ao mostrar a imagem'>
+    </p>
+
+    <p align="justify">
+        Inicialmente devem ser preenchidos os campos <kbd>Diretório Pai:</kbd> e <kbd>Arquivo de saída:</kbd>. Caso o usuário não deseje que todos os 
+        formatos suportados pela GDAL/OGR sejam pesquisados é possível inserir em <kbd>Insira extensões de arquivo para serem excluídas</kbd> 
+        uma lista de extensões que não serão levadas em consideração pela ferramenta. A inserção de extensões para serem excluídas é feita com o 
+        clique do botão direito do mouse no campo abaixo.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/inventario_formatos_excluidos.png' name='figuras1' width=411 height=353 alt='Erro ao mostrar a imagem'>
+    </p>
+
+    <p align="justify">
+        Clicando-se com o botão direito na área mostrada acima é possível inserir formatos para serem excluídos da pesquisa como se pode ver na 
+        figura abaixo.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/inventario_inserir_formato.png' name='figuras1' width=411 height=353 alt='Erro ao mostrar a imagem'>
+    </p>
+
+    <p align="justify">
+        Após clicar em <kbd>Inserir formato</kbd> uma janela permitirá que o formato desejado seja excluído da pesquisa.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/inventario_inserir_formato1.png' name='figuras1' width=411 height=353 alt='Erro ao mostrar a imagem'>
+    </p>
+
+    <p align="justify">
+        Caso o usuário deseje remover alguma extensão marcada para exclusão é só clicar com o botão direito no formato para que o menu 
+        <kbd>Excluir formato</kbd> apareça, restando ao usuário somente clicar no menu para excluir o formato.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/inventario_excluir_formato.png' name='figuras1' width=411 height=353 alt='Erro ao mostrar a imagem'>
+    </p>
+
+    <p align="justify">
+        Também é possível que os arquivos inventariados sejam copiados para uma pasta de destino. Desta forma, além de ser feito o inventário é possível  
+        que os arquivos sejam levados para uma única pasta para posterior organização. Esta possibilidade é feita com a marcação desta opção em 
+        <kbd>Copiar arquivos</kbd>.
+    </p>
+
+    <p align="justify">
+        Após a realização do inventário o arquivo gerado é carregado na árvore de camadas do QGIS. Ao se abrir a tabela de atributos é possível ver todos 
+        os arquivos que foram inventariados. Clicando-se com o botão direito em cima de um dos atributos (arquivo inventariado) é possível que seja feito 
+        o carregamento do mesmo ao se clicar em <kbd>Load Vector Layer</kbd> ou <kbd>Load Raster Layer</kbd>.
+    </p>
+    <p align=center>
+        <img src='dsg_tools/inventario_attribute_action.png' name='figuras1' width=537 height=346 alt='Erro ao mostrar a imagem'>
+    </p>
+
+    <br>
+
+</body>
+</html>
