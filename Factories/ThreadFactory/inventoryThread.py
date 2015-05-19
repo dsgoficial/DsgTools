@@ -142,19 +142,19 @@ class InventoryThread(GenericThread):
             return (1, self.messenger.getSuccessInventoryMessage())
         
     def copyFiles(self, destinationFolder):
-        try:
-            for fileName in self.files:
-                if not self.stopped[0]:
-                    file = fileName.split(os.sep)[-1]
-                    newFileName = os.path.join(destinationFolder, file)
-    
+        for fileName in self.files:
+            if not self.stopped[0]:
+                file = fileName.split(os.sep)[-1]
+                newFileName = os.path.join(destinationFolder, file)
+
+                try:
                     shutil.copy2(fileName, newFileName)
-                else:
-                    QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
-                    return (-1, self.messenger.getUserCanceledFeedbackMessage())
-        except:
-            QgsMessageLog.logMessage(self.messenger.getCopyErrorMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
-            return (0, self.messenger.getCopyErrorMessage())
+                except IOError, e:
+                    QgsMessageLog.logMessage(self.messenger.getCopyErrorMessage()+'\n'+e.strerror, "DSG Tools Plugin", QgsMessageLog.INFO)
+                    return (0, self.messenger.getCopyErrorMessage()+'\n'+e.strerror)
+            else:
+                QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
+                return (-1, self.messenger.getUserCanceledFeedbackMessage())
 
         QgsMessageLog.logMessage(self.messenger.getSuccessInventoryAndCopyMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())
