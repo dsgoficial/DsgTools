@@ -68,13 +68,14 @@ class InventoryThread(GenericThread):
         self.messenger = InventoryMessages(self)
         self.files = list()
         
-    def setParameters(self, parentFolder, outputFile, makeCopy, destinationFolder, blackList, stopped):
+    def setParameters(self, parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, stopped):
         self.parentFolder = parentFolder
         self.outputFile = outputFile
         self.makeCopy = makeCopy
         self.destinationFolder = destinationFolder
-        self.blackList = blackList
+        self.formatsList = formatsList
         self.stopped = stopped
+        self.isWhitelist = isWhitelist
     
     def run(self):
         # Actual process
@@ -104,7 +105,7 @@ class InventoryThread(GenericThread):
                 for file in files:
                     if not self.stopped[0]:
                         extension = file.split('.')[-1]
-                        if self.isInBlackList(extension):
+                        if not self.inventoryFile(extension):
                             continue
                         line = os.path.join(root,file)
                         if extension == 'prj':
@@ -159,8 +160,14 @@ class InventoryThread(GenericThread):
         QgsMessageLog.logMessage(self.messenger.getSuccessInventoryAndCopyMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())
         
-    def isInBlackList(self, ext):
-        if ext in self.blackList:
+    def isInFormatsList(self, ext):
+        if ext in self.formatsList:
                 return True         
         return False
+    
+    def inventoryFile(self, ext):
+        if self.isWhitelist:
+            return self.isInFormatsList(ext)
+        else:
+            return not self.isInFormatsList(ext)
     

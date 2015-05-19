@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>519</width>
-    <height>489</height>
+    <width>470</width>
+    <height>537</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -83,14 +83,32 @@
    <item row="2" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Insert file extensions to be excluded</string>
+      <string>File extensions to be considered</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QRadioButton" name="blacklistRadio">
+          <property name="text">
+           <string>Exclude the following formats</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="whitelistRadio">
+          <property name="text">
+           <string>Search only the following formats</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0">
        <widget class="QTreeWidget" name="treeWidget">
         <column>
          <property name="text">
-          <string>Excluded formats</string>
+          <string>Formats</string>
          </property>
         </column>
        </widget>

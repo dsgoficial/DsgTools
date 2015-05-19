@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.0" language="pt_BR">
+<!DOCTYPE TS><TS version="2.0" language="pt_BR" sourcelanguage="">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -255,7 +254,7 @@ p, li { white-space: pre-wrap; }
         <translation>Atualizar Tabela</translation>
     </message>
     <message>
-        <location filename="InventoryTools/ui_inventoryTools.ui" line="156"/>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="174"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
@@ -405,7 +404,7 @@ p, li { white-space: pre-wrap; }
         <translation>INOM:</translation>
     </message>
     <message>
-        <location filename="InventoryTools/ui_inventoryTools.ui" line="149"/>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="167"/>
         <source>Ok</source>
         <translation>Ok</translation>
     </message>
@@ -610,7 +609,7 @@ p, li { white-space: pre-wrap; }
         <translation>Diretório pai:</translation>
     </message>
     <message>
-        <location filename="InventoryTools/ui_inventoryTools.ui" line="135"/>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="153"/>
         <source>Select Folder</source>
         <translation>Selecione a Pasta</translation>
     </message>
@@ -625,24 +624,34 @@ p, li { white-space: pre-wrap; }
         <translation>Salvar Arquivo</translation>
     </message>
     <message>
-        <location filename="InventoryTools/ui_inventoryTools.ui" line="86"/>
-        <source>Insert file extensions to be excluded</source>
-        <translation>Insira extensões de arquivo para serem excluídas</translation>
-    </message>
-    <message>
-        <location filename="InventoryTools/ui_inventoryTools.ui" line="93"/>
-        <source>Excluded formats</source>
-        <translation>Formatos excluídos</translation>
-    </message>
-    <message>
-        <location filename="InventoryTools/ui_inventoryTools.ui" line="104"/>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="122"/>
         <source>Copy Files</source>
         <translation>Copiar arquivos</translation>
     </message>
     <message>
-        <location filename="InventoryTools/ui_inventoryTools.ui" line="125"/>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="143"/>
         <source>Destination Folder:</source>
         <translation>Pasta de destino:</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="86"/>
+        <source>File extensions to be considered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="94"/>
+        <source>Exclude the following formats</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="101"/>
+        <source>Search only the following formats</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/ui_inventoryTools.ui" line="111"/>
+        <source>Formats</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -902,27 +911,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>InventoryMessages</name>
     <message>
-        <location filename="Factories/ThreadFactory/inventoryThread.py" line="43"/>
+        <location filename="Factories/ThreadFactory/inventoryThread.py" line="44"/>
         <source>An error occurred while searching for files.</source>
         <translation>Um erro ocorreu durante a busca de arquivos.</translation>
     </message>
     <message>
-        <location filename="Factories/ThreadFactory/inventoryThread.py" line="46"/>
+        <location filename="Factories/ThreadFactory/inventoryThread.py" line="47"/>
         <source>An error occurred while copying the files.</source>
         <translation>Um erro ocorreu durante a cópia dos arquivos.</translation>
     </message>
     <message>
-        <location filename="Factories/ThreadFactory/inventoryThread.py" line="49"/>
+        <location filename="Factories/ThreadFactory/inventoryThread.py" line="50"/>
         <source>Inventory successfully created!</source>
         <translation>Inventário criado com sucesso!</translation>
     </message>
     <message>
-        <location filename="Factories/ThreadFactory/inventoryThread.py" line="52"/>
+        <location filename="Factories/ThreadFactory/inventoryThread.py" line="53"/>
         <source>Inventory and copy performed successfully!</source>
         <translation>Inventário e cópia feitas com sucesso!</translation>
     </message>
     <message>
-        <location filename="Factories/ThreadFactory/inventoryThread.py" line="55"/>
+        <location filename="Factories/ThreadFactory/inventoryThread.py" line="56"/>
         <source>User canceled inventory processing!</source>
         <translation>Inventário cancelado pelo usuário!</translation>
     </message>
@@ -930,64 +939,49 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>InventoryTools</name>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="69"/>
+        <location filename="InventoryTools/inventoryTools.py" line="71"/>
         <source>Insert Extension</source>
         <translation>Inserir Extensão</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="72"/>
+        <location filename="InventoryTools/inventoryTools.py" line="74"/>
         <source>Remove Extension</source>
         <translation>Remover extensão</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="78"/>
+        <location filename="InventoryTools/inventoryTools.py" line="79"/>
         <source>Type the extension</source>
         <translation>Escreva a extensão</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="78"/>
+        <location filename="InventoryTools/inventoryTools.py" line="79"/>
         <source>File extension</source>
         <translation>Extensão do arquivo</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="104"/>
+        <location filename="InventoryTools/inventoryTools.py" line="106"/>
         <source>Select Directory</source>
         <translation>Selecione um Diretório</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="109"/>
+        <location filename="InventoryTools/inventoryTools.py" line="111"/>
         <source>Save Output File</source>
         <translation>Salvar arquivo de saída</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="192"/>
+        <location filename="InventoryTools/inventoryTools.py" line="140"/>
         <source>Information!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="203"/>
-        <source>Critical!</source>
-        <translation>Crítico!</translation>
-    </message>
-    <message>
-        <location filename="InventoryTools/inventoryTools.py" line="151"/>
+        <location filename="InventoryTools/inventoryTools.py" line="132"/>
         <source>Please, fill all fields.</source>
         <translation>Por favor, preencha todos os campos.</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="178"/>
-        <source>An error occurred while searching for files.</source>
-        <translation>Um erro ocorreu durante a busca de arquivos.</translation>
-    </message>
-    <message>
-        <location filename="InventoryTools/inventoryTools.py" line="192"/>
+        <location filename="InventoryTools/inventoryTools.py" line="140"/>
         <source>Please, choose a location to save the files.</source>
         <translation>Por favor, escolha um local para salvar os arquivos.</translation>
-    </message>
-    <message>
-        <location filename="InventoryTools/inventoryTools.py" line="203"/>
-        <source>An error occurred while copying the files.</source>
-        <translation>Um erro ocorreu durante a cópia dos arquivos.</translation>
     </message>
 </context>
 <context>

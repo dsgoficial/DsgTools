@@ -122,11 +122,11 @@ class ProcessManager(QObject):
         #preparing the progressBar that will be created
         self.prepareProcess(process, self.tr("Processing images..."))
 
-    def createInventoryProcess(self, parentFolder, outputFile, makeCopy, destinationFolder, blackList):
+    def createInventoryProcess(self, parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist):
         #creating process
         process = self.threadFactory.makeProcess('inventory')
         stopped = [False]
-        process.setParameters(parentFolder, outputFile, makeCopy, destinationFolder, blackList, stopped)
+        process.setParameters(parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, stopped)
 
         #connecting signal/slots
         process.signals.rangeCalculated.connect(self.setProgressRange)

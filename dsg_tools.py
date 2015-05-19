@@ -535,9 +535,9 @@ class DsgTools:
         dlg = InventoryTools(self.iface)
         result = dlg.exec_()
         if result == 1:
-            (parentFolder, outputFile, makeCopy, destinationFolder, blackList) = dlg.getParameters()
+            (parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist) = dlg.getParameters()
             #creating the separate process
-            self.processManager.createInventoryProcess(parentFolder, outputFile, makeCopy, destinationFolder, blackList)
+            self.processManager.createInventoryProcess(parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist)
             
     def createSpatialiteDatabase(self):
         try:
