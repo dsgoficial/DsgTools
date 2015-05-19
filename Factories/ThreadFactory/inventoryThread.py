@@ -32,6 +32,7 @@ from qgis.core import QgsMessageLog
 from qgis._core import QgsAction
 
 from DsgTools.Factories.ThreadFactory.genericThread import GenericThread
+from exceptions import OSError
 
 class InventoryMessages(QObject):
     def __init__(self, thread):
@@ -92,6 +93,11 @@ class InventoryThread(GenericThread):
 
         try:
             csvfile = open(outputFile, 'wb')
+        except IOError, e:
+            QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+e.strerror, "DSG Tools Plugin", QgsMessageLog.INFO)
+            return (0, self.messenger.getInventoryErrorMessage()+'\n'+e.strerror)
+
+        try:
             outwriter = csv.writer(csvfile)
             outwriter.writerow(['fileName'])
             for root, dirs, files in os.walk(parentFolder):
@@ -115,6 +121,14 @@ class InventoryThread(GenericThread):
                     else:
                         QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
                         return (-1, self.messenger.getUserCanceledFeedbackMessage())
+        except csv.Error, e:
+            csvfile.close()
+            QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+str(e), "DSG Tools Plugin", QgsMessageLog.INFO)
+            return (0, self.messenger.getInventoryErrorMessage()+'\n'+str(e))
+        except OSError, e:
+            csvfile.close()
+            QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+e.strerror, "DSG Tools Plugin", QgsMessageLog.INFO)
+            return (0, self.messenger.getInventoryErrorMessage()+'\n'+e.strerror)
         except:
             csvfile.close()
             QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
