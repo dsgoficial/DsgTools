@@ -636,22 +636,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="InventoryTools/ui_inventoryTools.ui" line="86"/>
         <source>File extensions to be considered</source>
-        <translation type="unfinished"></translation>
+        <translation>Extensões de arquivo que serão consideradas</translation>
     </message>
     <message>
         <location filename="InventoryTools/ui_inventoryTools.ui" line="94"/>
         <source>Exclude the following formats</source>
-        <translation type="unfinished"></translation>
+        <translation>Excluir os seguintes formatos</translation>
     </message>
     <message>
         <location filename="InventoryTools/ui_inventoryTools.ui" line="101"/>
         <source>Search only the following formats</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscar somente os seguintes formatos</translation>
     </message>
     <message>
         <location filename="InventoryTools/ui_inventoryTools.ui" line="111"/>
         <source>Formats</source>
-        <translation type="unfinished"></translation>
+        <translation>Formatos</translation>
     </message>
 </context>
 <context>
