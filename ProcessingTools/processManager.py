@@ -140,10 +140,15 @@ class ProcessManager(QObject):
     @pyqtSlot(str)
     def loadInventoryFile(self, outputFile):
         # Adding the layer and making it active
-        layer = self.iface.addVectorLayer('file://'+outputFile+'?delimiter=%s' % ',', 'Inventory', 'delimitedtext')
-        self.iface.setActiveLayer(layer)            
-        # Creating and Attribute Action to load the inventoried file
-        actions = layer.actions()
-        field = '[% "fileName" %]'
-        actions.addAction(QgsAction.GenericPython, 'Load Vector Layer', 'qgis.utils.iface.addVectorLayer(\'%s\', \'File\', \'ogr\')' % field)
-        actions.addAction(QgsAction.GenericPython, 'Load Raster Layer', 'qgis.utils.iface.addRasterLayer(\'%s\', \'File\')' % field)            
+        url = QUrl.fromLocalFile(outputFile)
+        url.addQueryItem('delimiter', ',')
+        layer_uri = str(url.toEncoded())
+       
+        layer = self.iface.addVectorLayer(layer_uri, 'Inventory', 'delimitedtext')
+        if layer:
+            self.iface.setActiveLayer(layer)            
+            # Creating and Attribute Action to load the inventoried file
+            actions = layer.actions()
+            field = '[% "fileName" %]'
+            actions.addAction(QgsAction.GenericPython, 'Load Vector Layer', 'qgis.utils.iface.addVectorLayer(\'%s\', \'File\', \'ogr\')' % field)
+            actions.addAction(QgsAction.GenericPython, 'Load Raster Layer', 'qgis.utils.iface.addRasterLayer(\'%s\', \'File\')' % field)            
