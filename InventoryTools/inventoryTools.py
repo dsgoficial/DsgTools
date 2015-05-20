@@ -132,11 +132,12 @@ class InventoryTools(QDialog, FORM_CLASS):
             QMessageBox.information(self, self.tr('Information!'), self.tr('Please, fill all fields.'))
             return
 
-        root = self.treeWidget.invisibleRootItem()
-        if root.childCount() == 0:
-            QApplication.restoreOverrideCursor()
-            QMessageBox.information(self, self.tr('Information!'), self.tr('Please, insert file extensions to be considered.'))
-            return
+        if self.whitelistRadio.isChecked():
+            root = self.treeWidget.invisibleRootItem()
+            if root.childCount() == 0:
+                QApplication.restoreOverrideCursor()
+                QMessageBox.information(self, self.tr('Information!'), self.tr('Please, insert file extensions to be considered.'))
+                return
         
         if self.copyFilesCheckBox.isChecked():
             destinationFolder = self.destinationFolderEdit.text()
