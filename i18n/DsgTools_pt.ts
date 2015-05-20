@@ -969,7 +969,7 @@ p, li { white-space: pre-wrap; }
         <translation>Salvar arquivo de saída</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="140"/>
+        <location filename="InventoryTools/inventoryTools.py" line="146"/>
         <source>Information!</source>
         <translation>Informação!</translation>
     </message>
@@ -979,9 +979,14 @@ p, li { white-space: pre-wrap; }
         <translation>Por favor, preencha todos os campos.</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="140"/>
+        <location filename="InventoryTools/inventoryTools.py" line="146"/>
         <source>Please, choose a location to save the files.</source>
         <translation>Por favor, escolha um local para salvar os arquivos.</translation>
+    </message>
+    <message>
+        <location filename="InventoryTools/inventoryTools.py" line="138"/>
+        <source>Please, insert file extensions to be considered.</source>
+        <translation>Por favor, insira extensões de arquivo que devem ser consideradas.</translation>
     </message>
 </context>
 <context>
