@@ -108,6 +108,7 @@ class InventoryThread(GenericThread):
                         if not self.inventoryFile(extension):
                             continue
                         line = os.path.join(root,file)
+                        line = line.decode(encoding='UTF-8')
                         if extension == 'prj':
                             outwriter.writerow([line])
                             self.files.append(line)
