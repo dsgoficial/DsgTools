@@ -148,6 +148,7 @@ class InventoryThread(GenericThread):
         for fileName in self.files:
             if not self.stopped[0]:
                 file = fileName.split(os.sep)[-1]
+                file = fileName.replace('/', os.sep)
                 newFileName = os.path.join(destinationFolder, file)
 
                 try:
