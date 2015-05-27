@@ -150,6 +150,5 @@ class ProcessManager(QObject):
             # Creating and Attribute Action to load the inventoried file
             actions = layer.actions()
             field = '[% "fileName" %]'
-            field = field.replace('\'', '\\')
             actions.addAction(QgsAction.GenericPython, 'Load Vector Layer', 'qgis.utils.iface.addVectorLayer(\'%s\', \'File\', \'ogr\')' % field)
             actions.addAction(QgsAction.GenericPython, 'Load Raster Layer', 'qgis.utils.iface.addRasterLayer(\'%s\', \'File\')' % field)            

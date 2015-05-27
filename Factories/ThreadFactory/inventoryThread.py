@@ -109,6 +109,7 @@ class InventoryThread(GenericThread):
                             continue
                         line = os.path.join(root,file)
                         line = line.encode(encoding='UTF-8')
+                        line = line.replace(os.sep, '/')
                         if extension == 'prj':
                             outwriter.writerow([line])
                             self.files.append(line)
