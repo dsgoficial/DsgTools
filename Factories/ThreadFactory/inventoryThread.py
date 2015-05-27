@@ -147,8 +147,8 @@ class InventoryThread(GenericThread):
     def copyFiles(self, destinationFolder):
         for fileName in self.files:
             if not self.stopped[0]:
+                fileName = fileName.replace('/', os.sep)
                 file = fileName.split(os.sep)[-1]
-                file = file.replace('/', os.sep)
                 newFileName = os.path.join(destinationFolder, file)
                 newFileName = newFileName.replace('/', os.sep)
 
