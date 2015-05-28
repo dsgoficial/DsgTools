@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 import os
+import time
 import csv
 import shutil
 from osgeo import gdal, ogr
@@ -100,7 +101,7 @@ class InventoryThread(GenericThread):
 
         try:
             outwriter = csv.writer(csvfile)
-            outwriter.writerow(['fileName'])
+            outwriter.writerow(['fileName', 'date', 'size (KB)', 'extension'])
             for root, dirs, files in os.walk(parentFolder):
                 for file in files:
                     if not self.stopped[0]:
@@ -111,14 +112,12 @@ class InventoryThread(GenericThread):
                         line = line.encode(encoding='UTF-8')
                         line = line.replace(os.sep, '/')
                         if extension == 'prj':
-                            outwriter.writerow([line])
-                            self.files.append(line)
+                            self.writeLine(outwriter, line, extension)
                         else:
                             gdalSrc = gdal.Open(line)
                             ogrSrc = ogr.Open(line)
                             if gdalSrc or ogrSrc:
-                                outwriter.writerow([line])
-                                self.files.append(line)
+                                self.writeLine(outwriter, line, extension)
                             gdalSrc = None
                             ogrSrc = None
                     else:
@@ -174,4 +173,11 @@ class InventoryThread(GenericThread):
             return self.isInFormatsList(ext)
         else:
             return not self.isInFormatsList(ext)
+        
+    def writeLine(self, outwriter, line, extension):
+        creationDate = time.ctime(os.path.getctime(line))
+        size = os.path.getsize(line)/1000.
+
+        outwriter.writerow([line, creationDate, size, extension])
+        self.files.append(line)
     
