@@ -55,13 +55,13 @@ class RasterProcess():
 
         return targetSR
 
-    def createRasterFromBandArray(self, band, destfile):
-        cols = band.shape[1]
-        rows = band.shape[0]
+    def createRasterFromBandArray(self, raster, bandnumber, destfile):
+        cols = raster.RasterXSize
+        rows = raster.RasterYSize
 
         (xOrigin, yOrigin, pixelWidth, pixelHeight) = self.getGeoreferenceInfo()
 
-        targetSR = self.getCRS()
+        targetSR = self.getCRS(raster)
 
         driver = gdal.GetDriverByName('GTiff')
 
@@ -69,7 +69,7 @@ class RasterProcess():
         outRaster.SetGeoTransform((xOrigin, pixelWidth, 0, yOrigin, 0, pixelHeight))
 
         outband = outRaster.GetRasterBand(1)
-        outband.WriteArray(band)
+        outband.WriteArray(self.getBandAsArray(raster, bandnumber))
 
         outRaster.SetProjection(targetSR.ExportToWkt())
 
