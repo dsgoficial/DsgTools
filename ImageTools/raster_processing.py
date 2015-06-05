@@ -5,29 +5,20 @@ import numpy
 
 
 class RasterProcess():
-    def __init__(self, rgbfile, panfile):
+    def __init__(self):
         # this allows GDAL to throw Python Exceptions
         gdal.UseExceptions()
 
+    def openRaster(self, file):
         try:
-            self.rgb = gdal.Open(rgbfile)
+            raster = gdal.Open(file)
         except RuntimeError, e:
-            print 'Unable to open rgb image'
+            print 'Unable to open image'
             print e
 
             sys.exit(1)
 
-        try:
-            self.pan = gdal.Open(panfile)
-        except RuntimeError, e:
-            print 'Unable to open pan image'
-            print e
-
-            sys.exit(1)
-
-    def __del__(self):
-        self.rgb = None
-        self.pan = None
+        return raster
 
     def getBandAsArray(self, raster, bandnumber):
         try:
@@ -56,13 +47,13 @@ class RasterProcess():
 
         return targetSR
 
-    def createRasterFromRGBbands(self, red, green, blue, destfile):
-        cols = self.rgb.RasterXSize
-        rows = self.rgb.RasterYSize
+    def createRasterFromRGBbands(self, srcraster, red, green, blue, destfile):
+        cols = srcraster.RasterXSize
+        rows = srcraster.RasterYSize
 
         (xOrigin, yOrigin, pixelWidth, pixelHeight) = self.getGeoreferenceInfo(self.rgb)
 
-        targetSR = self.getCRS(self.rgb)
+        targetSR = self.getCRS(srcraster)
 
         driver = gdal.GetDriverByName('GTiff')
 
@@ -75,12 +66,14 @@ class RasterProcess():
 
         outRaster.SetProjection(targetSR.ExportToWkt())
 
-    def pansharpenImage(self, destfile):
-        red = self.getBandAsArray(self.rgb, 1)
-        green = self.getBandAsArray(self.rgb, 2)
-        blue = self.getBandAsArray(self.rgb, 3)
+    def pansharpenImage(self, rgbfile, panfile, destfile):
+        rgb = self.openRaster(rgbfile)
+        red = self.getBandAsArray(rgb, 1)
+        green = self.getBandAsArray(rgb, 2)
+        blue = self.getBandAsArray(rgb, 3)
 
-        pan = self.getBandAsArray(self.pan, 1)
+        panraster = self.openRaster(panfile)
+        pan = self.getBandAsArray(panraster, 1)
 
         rgb_to_hsv = numpy.vectorize(colorsys.rgb_to_hsv)
         hsv_to_rgb = numpy.vectorize(colorsys.hsv_to_rgb)
@@ -90,9 +83,11 @@ class RasterProcess():
 
         self.createRasterFromRGBbands(r, g, b, destfile)
 
+        rgb = None
+        panraster = None
 
-obj = RasterProcess("/Users/luiz/Downloads/WV24bandsample/superimposed.tif",
-                    "/Users/luiz/Downloads/WV24bandsample/pan_sample.tif")
-# band = obj.getBandAsArray(1)
-# obj.createRasterFromBandArray(band, "/Users/luiz/Downloads/landsat_sample/teste.tif")
-obj.pansharpenImage("/Users/luiz/Downloads/WV24bandsample/sharpened.tif")
+
+obj = RasterProcess()
+obj.pansharpenImage("/Users/luiz/Downloads/WV24bandsample/superimposed.tif",
+                    "/Users/luiz/Downloads/WV24bandsample/pan_sample.tif",
+                    "/Users/luiz/Downloads/WV24bandsample/sharpened.tif")
