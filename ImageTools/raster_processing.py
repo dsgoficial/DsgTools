@@ -51,7 +51,7 @@ class RasterProcess():
         cols = srcraster.RasterXSize
         rows = srcraster.RasterYSize
 
-        (xOrigin, yOrigin, pixelWidth, pixelHeight) = self.getGeoreferenceInfo(self.rgb)
+        (xOrigin, yOrigin, pixelWidth, pixelHeight) = self.getGeoreferenceInfo(srcraster)
 
         targetSR = self.getCRS(srcraster)
 
