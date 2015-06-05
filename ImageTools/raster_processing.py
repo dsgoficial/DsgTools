@@ -3,13 +3,14 @@ import sys
 import colorsys
 import numpy
 
+
 class RasterProcess():
     def __init__(self, rgbfile, panfile):
         # this allows GDAL to throw Python Exceptions
         gdal.UseExceptions()
 
         try:
-            self.rgb = gdal.Open( rgbfile )
+            self.rgb = gdal.Open(rgbfile)
         except RuntimeError, e:
             print 'Unable to open rgb image'
             print e
@@ -17,7 +18,7 @@ class RasterProcess():
             sys.exit(1)
 
         try:
-            self.pan = gdal.Open( panfile )
+            self.pan = gdal.Open(panfile)
         except RuntimeError, e:
             print 'Unable to open pan image'
             print e
@@ -81,15 +82,17 @@ class RasterProcess():
 
         pan = self.getBandAsArray(self.pan, 1)
 
-        rgb_to_hsv 	= numpy.vectorize(colorsys.rgb_to_hsv)
-        hsv_to_rgb 	= numpy.vectorize(colorsys.hsv_to_rgb)
+        rgb_to_hsv = numpy.vectorize(colorsys.rgb_to_hsv)
+        hsv_to_rgb = numpy.vectorize(colorsys.hsv_to_rgb)
 
-        h,s,v = rgb_to_hsv(red, green, blue)
-        r,g,b = hsv_to_rgb(h, s, pan)
+        h, s, v = rgb_to_hsv(red, green, blue)
+        r, g, b = hsv_to_rgb(h, s, pan)
 
         self.createRasterFromRGBbands(r, g, b, destfile)
 
-obj = RasterProcess("/Users/luiz/Downloads/WV24bandsample/superimposed.tif", "/Users/luiz/Downloads/WV24bandsample/pan_sample.tif")
+
+obj = RasterProcess("/Users/luiz/Downloads/WV24bandsample/superimposed.tif",
+                    "/Users/luiz/Downloads/WV24bandsample/pan_sample.tif")
 # band = obj.getBandAsArray(1)
 # obj.createRasterFromBandArray(band, "/Users/luiz/Downloads/landsat_sample/teste.tif")
 obj.pansharpenImage("/Users/luiz/Downloads/WV24bandsample/sharpened.tif")
