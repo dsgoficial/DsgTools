@@ -81,7 +81,7 @@ class RasterProcess():
         h, s, v = rgb_to_hsv(red, green, blue)
         r, g, b = hsv_to_rgb(h, s, pan)
 
-        self.createRasterFromRGBbands(r, g, b, destfile)
+        self.createRasterFromRGBbands(rgb, r, g, b, destfile)
 
         rgb = None
         panraster = None
