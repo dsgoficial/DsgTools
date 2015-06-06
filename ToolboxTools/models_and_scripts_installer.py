@@ -73,13 +73,11 @@ class ModelsAndScriptsInstaller(QDialog, FORM_CLASS):
 
     def getModels(self):
         modelspath = os.path.join(currentPath, '..', 'QGIS_Models')
-        print modelspath
         extension = 'model'
         return self.scanFolder(modelspath, extension)
 
     def getScripts(self):
         scriptspath = os.path.join(currentPath, '..', 'QGIS_Scripts')
-        print scriptspath
         extension = 'py'
         return self.scanFolder(scriptspath, extension)
 
@@ -89,7 +87,6 @@ class ModelsAndScriptsInstaller(QDialog, FORM_CLASS):
             for model in files:
                 if text in model:
                     destination = os.path.join(folder, text)
-                    print destination
                     shutil.copy2(model, destination)
 
     @pyqtSlot(QAbstractButton)
@@ -104,4 +101,3 @@ class ModelsAndScriptsInstaller(QDialog, FORM_CLASS):
         Processing.initialize()
         self.copyFiles(self.modelsList, self.models, os.path.join(currentPath, '..', '..', '..', '..', 'processing', 'models'))
         Processing.initialize()
-
