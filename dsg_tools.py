@@ -52,6 +52,8 @@ from DsgTools.BDGExTools.BDGExTools import BDGExTools
 
 from DsgTools.InventoryTools.inventoryTools import InventoryTools
 
+from DsgTools.ToolboxTools.models_and_scripts_installer import ModelsAndScriptsInstaller
+
 from qgis.utils import showPluginHelp
 
 class DsgTools:
@@ -407,6 +409,16 @@ class DsgTools:
             add_to_toolbar=False)
         self.dsgTools.addAction(action)
 
+        icon_path = ':/plugins/DsgTools/icons/inventory.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Models and Scripts Installer'),
+            callback=self.installModelsAndScripts,
+            parent=self.dsgTools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        self.dsgTools.addAction(action)
+
         icon_path = ':/plugins/DsgTools/icons/dsg.png'
         action = self.add_action(
             icon_path,
@@ -539,6 +551,12 @@ class DsgTools:
             #creating the separate process
             self.processManager.createInventoryProcess(parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist)
             
+    def installModelsAndScripts(self):
+        dlg = ModelsAndScriptsInstaller()
+        result = dlg.exec_()
+        if result == 1:
+            pass
+
     def createSpatialiteDatabase(self):
         try:
             self.databaseButton.setDefaultAction(self.toolbar.sender())
