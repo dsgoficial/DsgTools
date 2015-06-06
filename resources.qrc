@@ -17,5 +17,6 @@
         <file>icons/histogram.png</file>
         <file>icons/eb.png</file>
         <file>icons/inventory.png</file>
+        <file>icons/install.png</file>
     </qresource>
 </RCC>
