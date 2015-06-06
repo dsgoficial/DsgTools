@@ -1323,6 +1323,14 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>ModelsAndScriptsInstaller</name>
+    <message>
+        <location filename="ToolboxTools/models_and_scripts_installer.py" line="93"/>
+        <source>Error copying file: </source>
+        <translation>Erro copiando arquivo: </translation>
+    </message>
+</context>
+<context>
     <name>PostgisDBTool</name>
     <message>
         <location filename="DbTools/PostGISTool/postgisDBTool.py" line="97"/>
