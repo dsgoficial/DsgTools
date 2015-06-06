@@ -15,7 +15,8 @@
  					ServerTools/viewServers.py \
  					dsg_tools.py \
 					InventoryTools/inventoryTools.py \
-					Factories/ThreadFactory/inventoryThread.py
+					Factories/ThreadFactory/inventoryThread.py \
+					ToolboxTools/models_and_scripts_installer.py
 
  FORMS           =	ComplexTools/complexWindow_base.ui \
  					ComplexTools/ui_manageComplex.ui \
@@ -28,7 +29,8 @@
  					ServerTools/ui_serverConfigurator.ui \
  					ServerTools/ui_viewServers.ui \
  					ui_about.ui \
-					InventoryTools/ui_inventoryTools.ui
+					InventoryTools/ui_inventoryTools.ui \
+					ToolboxTools/models_and_scripts_installer.ui
 
  TRANSLATIONS    = i18n/DsgTools_pt.ts
 
