@@ -29,6 +29,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from processing.core.Processing import Processing
+from qgis.core import QgsMessageLog
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'models_and_scripts_installer.ui'))
