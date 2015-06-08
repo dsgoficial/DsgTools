@@ -29,7 +29,7 @@ changelog=
 	1.4 - New tool to install Models and Script (geoalgorithms) in the Processing Toolbox. HSV fusion script added. New model added.
 
 # Tags are comma separated with spaces allowed
-tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure
+tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script
 
 homepage=http://hub.qgis.org/projects/dsgtools
 tracker=http://hub.qgis.org/projects/dsgtools
