@@ -132,7 +132,6 @@ class RasterProcess():
             self.writeBlock(outG, g, sizeX, 1, row, gdal.GDT_Float32)
             self.writeBlock(outB, b, sizeX, 1, row, gdal.GDT_Float32)
 
-
         rgb = None
         panraster = None
         outRaster = None
