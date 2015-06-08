@@ -22,9 +22,9 @@
 """
 
 ##DSG=group
-##Arquivo_RGB=raster
-##Arquivo_Pan=raster
-##Arquivo_fusionado=output raster
+##RGB_Layer=raster
+##Pan_Layer=raster
+##Pansharpened=output raster
 
 from osgeo import gdal, osr
 import sys
