@@ -1,2 +1,6 @@
 eclipse.preferences.version=1
+encoding//ImageTools/processingTools.py=utf-8
+encoding//ImageTools/raster_processing.py=utf-8
+encoding//QGIS_Scripts/HSV_fusion.py=utf-8
 encoding//ServerTools/viewServers.py=utf-8
+encoding//ToolboxTools/models_and_scripts_installer.py=utf-8
