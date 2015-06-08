@@ -115,9 +115,17 @@ class RasterProcess():
         outR = outRaster.GetRasterBand(1)
         outG = outRaster.GetRasterBand(2)
         outB = outRaster.GetRasterBand(3)
+
+        if int(float(i)/sizeY*100)!=progress:
+            progress=int(float(i)/sizeY*100)
+            print "Linha: ", row, "de", sizeY, "(", progress , "%). Tempo restante estimado:", timePerCycle*(sizeY-row)  
+
         
         sizeX = pan.XSize
         sizeY = pan.YSize
+        
+        p = 0
+        progress.setPercentage(p)
         for row in range(sizeY):
             redblock = self.readBlock(red, sizeX, 1, row, gdal.GDT_Byte)
             greenblock = self.readBlock(green, sizeX, 1, row, gdal.GDT_Byte)
@@ -131,6 +139,10 @@ class RasterProcess():
             self.writeBlock(outR, r, sizeX, 1, row, gdal.GDT_Float32)
             self.writeBlock(outG, g, sizeX, 1, row, gdal.GDT_Float32)
             self.writeBlock(outB, b, sizeX, 1, row, gdal.GDT_Float32)
+
+            if int(float(row)/sizeY*100) != p:
+                p = int(float(row)/sizeY*100)
+                progress.setPercentage(p)
 
         rgb = None
         panraster = None
