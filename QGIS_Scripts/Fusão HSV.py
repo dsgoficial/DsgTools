@@ -116,11 +116,6 @@ class RasterProcess():
         outG = outRaster.GetRasterBand(2)
         outB = outRaster.GetRasterBand(3)
 
-        if int(float(i)/sizeY*100)!=progress:
-            progress=int(float(i)/sizeY*100)
-            print "Linha: ", row, "de", sizeY, "(", progress , "%). Tempo restante estimado:", timePerCycle*(sizeY-row)  
-
-        
         sizeX = pan.XSize
         sizeY = pan.YSize
         
