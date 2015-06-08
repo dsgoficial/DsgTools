@@ -88,11 +88,11 @@ class ModelsAndScriptsInstaller(QDialog, FORM_CLASS):
             for file in files:
                 if text in file:
                     destination = os.path.join(folder, text)
-                try:
-                    shutil.copy2(file, destination)
-                except IOError, e:
-                    QgsMessageLog.logMessage(self.tr('Error copying file: ')+text+'\n'+e.strerror, "DSG Tools Plugin", QgsMessageLog.INFO)
-                    continue
+                    try:
+                        shutil.copy2(file, destination)
+                    except IOError, e:
+                        QgsMessageLog.logMessage(self.tr('Error copying file: ')+text+'\n'+e.strerror, "DSG Tools Plugin", QgsMessageLog.INFO)
+                        continue
 
     @pyqtSlot(QAbstractButton)
     def on_buttonBox_clicked(self, button):
