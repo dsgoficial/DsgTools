@@ -83,7 +83,7 @@ class RasterProcess():
         outRaster.GetRasterBand(2).WriteArray(green)
         outRaster.GetRasterBand(3).WriteArray(blue)
 
-    def createRaster(self, srcraster, destfile):
+    def createRaster(self, srcraster, destfile, pixelType):
         cols = srcraster.RasterXSize
         rows = srcraster.RasterYSize
 
@@ -93,7 +93,7 @@ class RasterProcess():
 
         driver = gdal.GetDriverByName('GTiff')
 
-        outRaster = driver.Create(destfile, cols, rows, 3, gdal.GDT_Float32)
+        outRaster = driver.Create(destfile, cols, rows, 3, pixelType)
         outRaster.SetGeoTransform((xOrigin, pixelWidth, 0, yOrigin, 0, pixelHeight))
         outRaster.SetProjection(targetSR.ExportToWkt())
         
@@ -110,27 +110,32 @@ class RasterProcess():
         
         rgb_to_hsv = numpy.vectorize(colorsys.rgb_to_hsv)
         hsv_to_rgb = numpy.vectorize(colorsys.hsv_to_rgb)
+        
+        if red.DataType > pan.DataType:
+            pixelType = red.DataType
+        else:
+            pixelType = pan.DataType
 
-        outRaster = self.createRaster(rgb, destfile)
+        outRaster = self.createRaster(rgb, destfile, pixelType)
         outR = outRaster.GetRasterBand(1)
         outG = outRaster.GetRasterBand(2)
         outB = outRaster.GetRasterBand(3)
-        
+
         sizeX = pan.XSize
-        sizeY = pan.YSize
+        sizeY = pan.YSize        
         for row in range(sizeY):
-            redblock = self.readBlock(red, sizeX, 1, row, gdal.GDT_Byte)
-            greenblock = self.readBlock(green, sizeX, 1, row, gdal.GDT_Byte)
-            blueblock = self.readBlock(blue, sizeX, 1, row, gdal.GDT_Byte)
+            redblock = self.readBlock(red, sizeX, 1, row, red.DataType)
+            greenblock = self.readBlock(green, sizeX, 1, row, green.DataType)
+            blueblock = self.readBlock(blue, sizeX, 1, row, blue.DataType)
             
-            panblock = self.readBlock(pan, sizeX, 1, row, gdal.GDT_Float32)
+            panblock = self.readBlock(pan, sizeX, 1, row, pan.DataType)
             
             h, s, v = rgb_to_hsv(redblock, greenblock, blueblock)
             r, g, b = hsv_to_rgb(h, s, panblock)
             
-            self.writeBlock(outR, r, sizeX, 1, row, gdal.GDT_Float32)
-            self.writeBlock(outG, g, sizeX, 1, row, gdal.GDT_Float32)
-            self.writeBlock(outB, b, sizeX, 1, row, gdal.GDT_Float32)
+            self.writeBlock(outR, r, sizeX, 1, row, pixelType)
+            self.writeBlock(outG, g, sizeX, 1, row, pixelType)
+            self.writeBlock(outB, b, sizeX, 1, row, pixelType)
 
         rgb = None
         panraster = None
@@ -151,13 +156,20 @@ class RasterProcess():
         return pixelArray
     
     def getNumpyType(self, pixelType = gdal.GDT_Byte):
-        numpytype = None
         if pixelType == gdal.GDT_Byte:
-            numpytype = numpy.ubyte
+            return numpy.uint8
+        elif pixelType == gdal.GDT_UInt16:
+            return numpy.uint16
+        elif pixelType == gdal.GDT_Int16:
+            return numpy.int16
+        elif pixelType == gdal.GDT_UInt32:
+            return numpy.uint32
+        elif pixelType == gdal.GDT_Int32:
+            return numpy.int32
         elif pixelType == gdal.GDT_Float32:
-            numpytype = numpy.float32
-            
-        return numpytype
+            return numpy.float32
+        elif pixelType == gdal.GDT_Float64:
+            return numpy.float64
     
     def writeBlock(self, band, block, sizeX, sizeY = 1, offsetY = 0, pixelType = gdal.GDT_Byte):
         numpytype = self.getNumpyType(pixelType)
@@ -167,4 +179,4 @@ class RasterProcess():
 obj = RasterProcess()
 obj.pansharpenImage('/home/lclaudio/Documents/classificacao_rgb.tif',
                     '/home/lclaudio/Documents/corte_amp.tif',
-                    '/home/lclaudio/Documents/sharpened.tif')
+                    '/home/lclaudio/Documents/teste.tif')
