@@ -1,50 +1,50 @@
 {
     "values": {
         "inputs": {
-            "RASTERLAYER_IMAGEMCLASSIFICADA": {
+            "RASTERLAYER_CLASSIFICAO": {
                 "values": {
                     "pos": {
                         "values": {
-                            "y": 37.0, 
-                            "x": 117.0
+                            "y": 40.0, 
+                            "x": 109.0
                         }, 
                         "class": "point"
                     }, 
                     "param": {
                         "values": {
                             "isAdvanced": false, 
-                            "name": "RASTERLAYER_IMAGEMCLASSIFICADA", 
+                            "name": "RASTERLAYER_CLASSIFICAO", 
                             "showSublayersDialog": true, 
                             "value": null, 
                             "exported": null, 
                             "hidden": false, 
                             "optional": false, 
-                            "description": "Imagem Classificada"
+                            "description": "Classifica\u00e7\u00e3o"
                         }, 
                         "class": "processing.core.parameters.ParameterRaster"
                     }
                 }, 
                 "class": "processing.modeler.ModelerAlgorithm.ModelerParameter"
             }, 
-            "RASTERLAYER_BANDADEAMPLITUDE": {
+            "RASTERLAYER_AMPLITUDE": {
                 "values": {
                     "pos": {
                         "values": {
-                            "y": 126.0, 
-                            "x": 118.0
+                            "y": 97.0, 
+                            "x": 106.0
                         }, 
                         "class": "point"
                     }, 
                     "param": {
                         "values": {
                             "isAdvanced": false, 
-                            "name": "RASTERLAYER_BANDADEAMPLITUDE", 
+                            "name": "RASTERLAYER_AMPLITUDE", 
                             "showSublayersDialog": true, 
                             "value": null, 
                             "exported": null, 
                             "hidden": false, 
                             "optional": false, 
-                            "description": "Banda de Amplitude"
+                            "description": "Amplitude"
                         }, 
                         "class": "processing.core.parameters.ParameterRaster"
                     }
@@ -56,18 +56,18 @@
         "group": "DSG", 
         "name": "Realce de Classifica\u00e7\u00e3o", 
         "algs": {
-            "SCRIPTFUSAOHSV_1": {
+            "SCRIPTFUSOHSV_1": {
                 "values": {
-                    "name": "SCRIPTFUSAOHSV_1", 
+                    "name": "SCRIPTFUSOHSV_1", 
                     "paramsFolded": true, 
                     "outputs": {
                         "Arquivo_fusionado": {
                             "values": {
-                                "description": "fusionado", 
+                                "description": "pansharpened", 
                                 "pos": {
                                     "values": {
-                                        "y": 303.0, 
-                                        "x": 395.0
+                                        "y": 299.0, 
+                                        "x": 378.0
                                     }, 
                                     "class": "point"
                                 }
@@ -75,14 +75,14 @@
                             "class": "processing.modeler.ModelerAlgorithm.ModelerOutput"
                         }
                     }, 
-                    "outputsFolded": true, 
                     "pos": {
                         "values": {
-                            "y": 222.0, 
-                            "x": 393.0
+                            "y": 217.0, 
+                            "x": 378.0
                         }, 
                         "class": "point"
                     }, 
+                    "outputsFolded": true, 
                     "dependencies": [], 
                     "params": {
                         "Arquivo_RGB": {
@@ -94,14 +94,14 @@
                         }, 
                         "Arquivo_Pan": {
                             "values": {
-                                "name": "RASTERLAYER_BANDADEAMPLITUDE"
+                                "name": "RASTERLAYER_AMPLITUDE"
                             }, 
                             "class": "processing.modeler.ModelerAlgorithm.ValueFromInput"
                         }
                     }, 
                     "active": true, 
-                    "consoleName": "script:fusaohsv", 
-                    "description": "Fusa\u0303o HSV"
+                    "consoleName": "script:fusohsv", 
+                    "description": "Fus\u00e3o HSV"
                 }, 
                 "class": "processing.modeler.ModelerAlgorithm.Algorithm"
             }, 
@@ -110,14 +110,14 @@
                     "name": "OTBSUPERIMPOSESENSOR_1", 
                     "paramsFolded": true, 
                     "outputs": {}, 
-                    "outputsFolded": true, 
                     "pos": {
                         "values": {
-                            "y": 127.0, 
-                            "x": 389.0
+                            "y": 128.0, 
+                            "x": 376.0
                         }, 
                         "class": "point"
                     }, 
+                    "outputsFolded": true, 
                     "dependencies": [], 
                     "params": {
                         "-interpolator": 0, 
@@ -128,12 +128,12 @@
                             }, 
                             "class": "processing.modeler.ModelerAlgorithm.ValueFromOutput"
                         }, 
-                        "-lms": 4.0, 
+                        "-ram": 128.0, 
                         "-interpolator.bco.radius": 2.0, 
-                        "-ram": 1024.0, 
+                        "-lms": 4.0, 
                         "-inr": {
                             "values": {
-                                "name": "RASTERLAYER_BANDADEAMPLITUDE"
+                                "name": "RASTERLAYER_AMPLITUDE"
                             }, 
                             "class": "processing.modeler.ModelerAlgorithm.ValueFromInput"
                         }, 
@@ -150,19 +150,19 @@
                     "name": "GDALOGRPCTTORGB_1", 
                     "paramsFolded": true, 
                     "outputs": {}, 
-                    "outputsFolded": true, 
                     "pos": {
                         "values": {
-                            "y": 36.0, 
-                            "x": 389.0
+                            "y": 37.0, 
+                            "x": 378.0
                         }, 
                         "class": "point"
                     }, 
+                    "outputsFolded": true, 
                     "dependencies": [], 
                     "params": {
                         "INPUT": {
                             "values": {
-                                "name": "RASTERLAYER_IMAGEMCLASSIFICADA"
+                                "name": "RASTERLAYER_CLASSIFICAO"
                             }, 
                             "class": "processing.modeler.ModelerAlgorithm.ValueFromInput"
                         }, 
