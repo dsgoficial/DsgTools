@@ -126,19 +126,24 @@ class RasterProcess():
 
         p = 0
         progress.setPercentage(p)
-        for row in range(sizeY):
-            redblock = self.readBlock(red, sizeX, 1, row, red.DataType)
-            greenblock = self.readBlock(green, sizeX, 1, row, green.DataType)
-            blueblock = self.readBlock(blue, sizeX, 1, row, blue.DataType)
-            
-            panblock = self.readBlock(pan, sizeX, 1, row, pan.DataType)
-            
+        block = 10
+        for row in range(0, sizeY, block):
+            if row + block < sizeY:
+                lines = block
+            else:
+                lines = sizeY - row
+            redblock = self.readBlock(red, sizeX, lines, row, red.DataType)
+            greenblock = self.readBlock(green, sizeX, lines, row, green.DataType)
+            blueblock = self.readBlock(blue, sizeX, lines, row, blue.DataType)
+
+            panblock = self.readBlock(pan, sizeX, lines, row, pan.DataType)
+
             h, s, v = rgb_to_hsv(redblock, greenblock, blueblock)
             r, g, b = hsv_to_rgb(h, s, panblock)
-            
-            self.writeBlock(outR, r, sizeX, 1, row, pixelType)
-            self.writeBlock(outG, g, sizeX, 1, row, pixelType)
-            self.writeBlock(outB, b, sizeX, 1, row, pixelType)
+
+            self.writeBlock(outR, r, sizeX, lines, row, pixelType)
+            self.writeBlock(outG, g, sizeX, lines, row, pixelType)
+            self.writeBlock(outB, b, sizeX, lines, row, pixelType)
 
             if int(float(row)/sizeY*100) != p:
                 p = int(float(row)/sizeY*100)
