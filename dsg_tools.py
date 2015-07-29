@@ -287,7 +287,7 @@ class DsgTools:
             parent=coverageLyr,
             add_to_menu=False,
             add_to_toolbar=False)
-#         coverageLyr.addAction(action)
+        coverageLyr.addAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/eb.png'
         action = self.add_action(
