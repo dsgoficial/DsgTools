@@ -170,7 +170,8 @@ class InventoryThread(GenericThread):
             error = QgsVectorFileWriter.writeAsVectorFormat(layer, self.outputFile, "utf-8", None, "ESRI Shapefile")
         
         if self.makeCopy:
-            return self.copyFiles(destinationFolder)
+            # return self.copyFiles(destinationFolder)
+            return self.copy(destinationFolder)
         else:
             QgsMessageLog.logMessage(self.messenger.getSuccessInventoryMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
             return (1, self.messenger.getSuccessInventoryMessage())
@@ -198,7 +199,37 @@ class InventoryThread(GenericThread):
 
         QgsMessageLog.logMessage(self.messenger.getSuccessInventoryAndCopyMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())
-        
+
+    def copy(self, destinationFolder):
+        for fileName in self.files:
+            # adjusting the separators according to the OS
+            fileName = fileName.replace('/', os.sep)
+            file = fileName.split(os.sep)[-1]
+            newFileName = os.path.join(destinationFolder, file)
+            newFileName = newFileName.replace('/', os.sep)
+
+            gdalSrc = gdal.Open(filename)
+            ogrSrc = ogr.Open(filename)
+            if ogrSrc:
+                driver = ogrSrc.GetDriver()
+                dst_ds = driver.CreateCopy(newFileName, ogrSrc, 0)
+                print 'foi'
+
+                ogrSrc = None
+                dst_ds = None
+            elif gdalSrc:
+                driver = gdalSrc.GetDriver()
+                dst_ds = driver.CreateCopy(newFileName, gdalSrc, 0)
+
+                ogrSrc = None
+                dst_ds = None
+            else:
+                QgsMessageLog.logMessage(self.messenger.getCopyErrorMessage()+'\n'+e.strerror, "DSG Tools Plugin", QgsMessageLog.INFO)
+                return (0, self.messenger.getCopyErrorMessage()+'\n'+e.strerror)
+
+        QgsMessageLog.logMessage(self.messenger.getSuccessInventoryAndCopyMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
+        return (1, self.messenger.getSuccessInventoryAndCopyMessage())
+
     def isInFormatsList(self, ext):
         '''Check if the extension is in the formats list
         '''
