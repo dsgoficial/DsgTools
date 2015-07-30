@@ -27,10 +27,11 @@ import shutil
 from osgeo import gdal, ogr
 
 # Import the PyQt and QGIS libraries
+from qgis.core import *
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import QgsMessageLog
-from qgis._core import QgsAction
+from qgis._core import QgsAction, QgsPoint
 
 from DsgTools.Factories.ThreadFactory.genericThread import GenericThread
 from exceptions import OSError
@@ -69,7 +70,7 @@ class InventoryThread(GenericThread):
         self.messenger = InventoryMessages(self)
         self.files = list()
         
-    def setParameters(self, parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, stopped):
+    def setParameters(self, parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, isOnlyGeo, stopped):
         self.parentFolder = parentFolder
         self.outputFile = outputFile
         self.makeCopy = makeCopy
@@ -77,6 +78,7 @@ class InventoryThread(GenericThread):
         self.formatsList = formatsList
         self.stopped = stopped
         self.isWhitelist = isWhitelist
+        self.isOnlyGeo = isOnlyGeo
     
     def run(self):
         # Actual process
@@ -102,6 +104,7 @@ class InventoryThread(GenericThread):
         try:
             outwriter = csv.writer(csvfile)
             outwriter.writerow(['fileName', 'date', 'size (KB)', 'extension'])
+            layer = self.createMemoryLayer()
             for root, dirs, files in os.walk(parentFolder):
                 for file in files:
                     if not self.stopped[0]:
@@ -117,7 +120,15 @@ class InventoryThread(GenericThread):
                             gdalSrc = gdal.Open(line)
                             ogrSrc = ogr.Open(line)
                             if gdalSrc or ogrSrc:
-                                self.writeLine(outwriter, line, extension)
+                                if self.isOnlyGeo:
+                                    (ogrPoly, prjWkt) = self.getExtent(line)
+                                    crsSrc = QgsCoordinateReferenceSystem()
+                                    crsSrc.createFromWkt(prjWkt)
+                                    qgsPolygon = self.reprojectBoundingBox(crsSrc, ogrPoly)
+                                    attributes = self.makeAttributes(line, extension)
+                                    self.insertIntoMemoryLayer(layer, qgsPolygon, attributes)
+                                else:
+                                    self.writeLine(outwriter, line, extension)
                             gdalSrc = None
                             ogrSrc = None
                     else:
@@ -136,6 +147,9 @@ class InventoryThread(GenericThread):
             QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
             return (0, self.messenger.getInventoryErrorMessage())
         csvfile.close()
+        
+        if self.isOnlyGeo:
+            error = QgsVectorFileWriter.writeAsVectorFormat(layer, self.outputFile, "utf-8", None, "ESRI Shapefile")
         
         if self.makeCopy:
             return self.copyFiles(destinationFolder)
@@ -175,9 +189,117 @@ class InventoryThread(GenericThread):
             return not self.isInFormatsList(ext)
         
     def writeLine(self, outwriter, line, extension):
+        row = self.makeAttributes(line, extension)
+        outwriter.writerow(row)
+        self.files.append(line)
+        
+    def makeAttributes(self, line, extension):
         creationDate = time.ctime(os.path.getctime(line))
         size = os.path.getsize(line)/1000.
-
-        outwriter.writerow([line, creationDate, size, extension])
-        self.files.append(line)
+        
+        return [line, creationDate, size, extension]
+        
+    def getRasterExtent(self, gt, cols, rows):
+        ''' Return list of corner coordinates from a geotransform
+            @type gt:   C{tuple/list}
+            @param gt: geotransform
+            @type cols:   C{int}
+            @param cols: number of columns in the dataset
+            @type rows:   C{int}
+            @param rows: number of rows in the dataset
+            @rtype:    C{[float,...,float]}
+            @return:   coordinates of each corner
+        '''
+        ext=[]
+        xarr=[0,cols]
+        yarr=[0,rows]
     
+        for px in xarr:
+            for py in yarr:
+                x=gt[0]+(px*gt[1])+(py*gt[2])
+                y=gt[3]+(px*gt[4])+(py*gt[5])
+                ext.append([x,y])
+            yarr.reverse()
+        return ext        
+
+    def getExtent(self, filename):
+        gdalSrc = gdal.Open(filename)
+        ogrSrc = ogr.Open(filename)
+        if ogrSrc:
+            poly = ogr.Geometry(ogr.wkbPolygon)
+            spatialRef = None
+            for id in range(ogrSrc.GetLayerCount()):
+                layer = ogrSrc.GetLayer(id)
+                extent = layer.GetExtent()
+                spatialRef = layer.GetSpatialRef()
+                
+                # Create a Polygon from the extent tuple
+                ring = ogr.Geometry(ogr.wkbLinearRing)
+                ring.AddPoint(extent[0],extent[2])
+                ring.AddPoint(extent[0], extent[3])
+                ring.AddPoint(extent[1], extent[3])
+                ring.AddPoint(extent[1], extent[2])
+                ring.AddPoint(extent[0],extent[2])
+                box = ogr.Geometry(ogr.wkbPolygon)
+                box.AddGeometry(ring)
+                
+                poly = poly.Union(box)
+            
+            ogrSrc = None
+            return (poly, spatialRef.ExportToWkt())
+        elif gdalSrc:
+            gdalSrc.GetProjectionRef()
+            gt = gdalSrc.GetGeoTransform()
+            cols = gdalSrc.RasterXSize
+            rows = gdalSrc.RasterYSize
+            ext = self.getRasterExtent(gt, cols, rows)
+            print ext
+            
+            ring = ogr.Geometry(ogr.wkbLinearRing)
+            for pt in ext:
+                ring.AddPoint(pt[0],pt[1])
+            ring.AddPoint(ext[0][0], ext[0][1])
+            box = ogr.Geometry(ogr.wkbPolygon)
+            box.AddGeometry(ring)
+            
+            prjWkt = gdalSrc.GetProjectionRef()
+            gdalSrc = None
+            return (box, prjWkt)
+        else:
+            return None
+        
+    def createMemoryLayer(self):
+        layer = QgsVectorLayer('Polygon?crs=4326', 'Inventory', 'memory')
+        if not layer.isValid():
+            return None
+        provider = layer.dataProvider()
+        provider.addAttributes([QgsField('fileName', QVariant.String), QgsField('date', QVariant.String),
+                                QgsField('size (KB)', QVariant.String), QgsField('extension)', QVariant.String)])
+        layer.updateFields()
+        return layer
+    
+    def reprojectBoundingBox(self, crsSrc, ogrPoly):
+        crsDest = QgsCoordinateReferenceSystem(4326)
+        coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest)
+        
+        newPolyline = []
+        ring = ogrPoly.GetGeometryRef(0)
+        for i in range(ring.GetPointCount()):
+            pt = ring.GetPoint(i)
+            point = QgsPoint(pt[0], pt[1])
+            newPolyline.append(coordinateTransformer.transform(point))
+        qgsPolygon = QgsGeometry.fromPolygon([newPolyline])
+        return qgsPolygon
+    
+    def insertIntoMemoryLayer(self, layer, poly, attributes):
+        """Inserts the poly into memory layer
+        """
+        provider = layer.dataProvider()
+
+        #Creating the feature
+        feature = QgsFeature()
+        feature.setGeometry(poly)
+        feature.setAttributes(attributes)
+
+        # Adding the feature into the file
+        provider.addFeatures([feature])

@@ -94,7 +94,7 @@ class InventoryTools(QDialog, FORM_CLASS):
             formatsList.append(extension)
             
         return (self.parentFolderEdit.text(), self.outputFileEdit.text(), self.copyFilesCheckBox.isChecked(), \
-                self.destinationFolderEdit.text(), formatsList, self.whitelistRadio.isChecked())
+                self.destinationFolderEdit.text(), formatsList, self.whitelistRadio.isChecked(), self.onlyGeoCheckBox.isChecked())
        
     @pyqtSlot(bool)
     def on_parentFolderButton_clicked(self):
@@ -108,7 +108,10 @@ class InventoryTools(QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_outputFileButton_clicked(self):
-        fileName = QFileDialog.getSaveFileName(parent=self, caption=self.tr('Save Output File'), filter='CSV (*.csv)')
+        if self.onlyGeoCheckBox.isChecked():
+            fileName = QFileDialog.getSaveFileName(parent=self, caption=self.tr('Save Output File'), filter='Shapefile (*.shp)')
+        else:
+            fileName = QFileDialog.getSaveFileName(parent=self, caption=self.tr('Save Output File'), filter='CSV (*.csv)')
         self.outputFileEdit.setText(fileName)
         
     @pyqtSlot(int)

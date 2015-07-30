@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>470</width>
-    <height>537</height>
+    <width>430</width>
+    <height>472</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -48,6 +48,13 @@
     </widget>
    </item>
    <item row="1" column="0" colspan="2">
+    <widget class="QCheckBox" name="onlyGeoCheckBox">
+     <property name="text">
+      <string>Search only Georeferenced files</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
     <widget class="QFrame" name="frame_2">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -80,7 +87,7 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="3" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>File extensions to be considered</string>
@@ -116,14 +123,14 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QCheckBox" name="copyFilesCheckBox">
      <property name="text">
       <string>Copy Files</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item row="5" column="0" colspan="2">
     <widget class="QFrame" name="frame_3">
      <property name="enabled">
       <bool>false</bool>
@@ -159,7 +166,7 @@
      </layout>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="6" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
       <widget class="QPushButton" name="okButton">

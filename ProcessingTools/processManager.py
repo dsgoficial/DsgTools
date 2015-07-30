@@ -122,11 +122,11 @@ class ProcessManager(QObject):
         #preparing the progressBar that will be created
         self.prepareProcess(process, self.tr("Processing images..."))
 
-    def createInventoryProcess(self, parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist):
+    def createInventoryProcess(self, parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, isOnlyGeo):
         #creating process
         process = self.threadFactory.makeProcess('inventory')
         stopped = [False]
-        process.setParameters(parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, stopped)
+        process.setParameters(parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, isOnlyGeo, stopped)
 
         #connecting signal/slots
         process.signals.rangeCalculated.connect(self.setProgressRange)
@@ -144,7 +144,8 @@ class ProcessManager(QObject):
         url.addQueryItem('delimiter', ',')
         layer_uri = str(url.toEncoded())
        
-        layer = self.iface.addVectorLayer(layer_uri, 'Inventory', 'delimitedtext')
+#         layer = self.iface.addVectorLayer(layer_uri, 'Inventory', 'delimitedtext')
+        layer = self.iface.addVectorLayer(outputFile, 'Inventory', 'ogr')
         if layer:
             self.iface.setActiveLayer(layer)            
             # Creating and Attribute Action to load the inventoried file
