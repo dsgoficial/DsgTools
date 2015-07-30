@@ -85,7 +85,7 @@ class InventoryThread(GenericThread):
         (ret, msg) = self.makeInventory(self.parentFolder, self.outputFile, self.destinationFolder)
         
         if ret == 1:
-            self.signals.loadFile.emit(self.outputFile)
+            self.signals.loadFile.emit(self.outputFile, self.isOnlyGeo)
         
         # Doing that to stop progress bar
         self.signals.rangeCalculated.emit(10, self.getId())

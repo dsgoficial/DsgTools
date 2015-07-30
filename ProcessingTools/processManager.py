@@ -137,15 +137,17 @@ class ProcessManager(QObject):
         #preparing the progressBar that will be created
         self.prepareProcess(process, self.tr("Making inventory, please wait..."))
 
-    @pyqtSlot(str)
-    def loadInventoryFile(self, outputFile):
-        # Adding the layer and making it active
-        url = QUrl.fromLocalFile(outputFile)
-        url.addQueryItem('delimiter', ',')
-        layer_uri = str(url.toEncoded())
-       
-#         layer = self.iface.addVectorLayer(layer_uri, 'Inventory', 'delimitedtext')
-        layer = self.iface.addVectorLayer(outputFile, 'Inventory', 'ogr')
+    @pyqtSlot(str, bool)
+    def loadInventoryFile(self, outputFile, isOnlyGeo):
+        if not isOnlyGeo:
+            # Adding the layer and making it active
+            url = QUrl.fromLocalFile(outputFile)
+            url.addQueryItem('delimiter', ',')
+            layer_uri = str(url.toEncoded())
+            layer = self.iface.addVectorLayer(layer_uri, 'Inventory', 'delimitedtext')
+        else:
+            layer = self.iface.addVectorLayer(outputFile, 'Inventory', 'ogr')
+
         if layer:
             self.iface.setActiveLayer(layer)            
             # Creating and Attribute Action to load the inventoried file
