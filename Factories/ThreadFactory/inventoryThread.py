@@ -92,9 +92,12 @@ class InventoryThread(GenericThread):
         self.signals.processingFinished.emit(ret, msg, self.getId())
     
     def makeInventory(self, parentFolder, outputFile, destinationFolder):
+        '''Makes the inventory
+        '''
         # Progress bar steps calculated
         self.signals.rangeCalculated.emit(0, self.getId())
 
+        # creating a csv file
         try:
             csvfile = open(outputFile, 'wb')
         except IOError, e:
@@ -103,29 +106,44 @@ class InventoryThread(GenericThread):
 
         try:
             outwriter = csv.writer(csvfile)
+            # defining the first row
             outwriter.writerow(['fileName', 'date', 'size (KB)', 'extension'])
+            # creating the memory layer used in only geo mode
             layer = self.createMemoryLayer()
+            # iterating over the parent folder recursively
             for root, dirs, files in os.walk(parentFolder):
                 for file in files:
+                    # check if the user stopped the operation
                     if not self.stopped[0]:
                         extension = file.split('.')[-1]
+                        # check if the file should be skipped
                         if not self.inventoryFile(extension):
                             continue
+                        # making the full path
                         line = os.path.join(root,file)
                         line = line.encode(encoding='UTF-8')
+                        # changing the separator, it will be changed later
                         line = line.replace(os.sep, '/')
+                        # forcing the inventory of .prj files
                         if extension == 'prj':
                             self.writeLine(outwriter, line, extension)
                         else:
+                            # check if GDAL/OGR recognizes the file
                             gdalSrc = gdal.Open(line)
                             ogrSrc = ogr.Open(line)
                             if gdalSrc or ogrSrc:
+                                #if only geo mode
                                 if self.isOnlyGeo:
+                                    # get the bounding box and wkt projection
                                     (ogrPoly, prjWkt) = self.getExtent(line)
+                                    # making a QGIS projection
                                     crsSrc = QgsCoordinateReferenceSystem()
                                     crsSrc.createFromWkt(prjWkt)
+                                    # reprojecting the bounding box
                                     qgsPolygon = self.reprojectBoundingBox(crsSrc, ogrPoly)
+                                    # making the attributes
                                     attributes = self.makeAttributes(line, extension)
+                                    # inserting into memory layer
                                     self.insertIntoMemoryLayer(layer, qgsPolygon, attributes)
                                 else:
                                     self.writeLine(outwriter, line, extension)
@@ -158,13 +176,17 @@ class InventoryThread(GenericThread):
             return (1, self.messenger.getSuccessInventoryMessage())
         
     def copyFiles(self, destinationFolder):
+        '''Copy inventoried files to the destination folder
+        '''
         for fileName in self.files:
             if not self.stopped[0]:
+                # adjusting the separators according to the OS
                 fileName = fileName.replace('/', os.sep)
                 file = fileName.split(os.sep)[-1]
                 newFileName = os.path.join(destinationFolder, file)
                 newFileName = newFileName.replace('/', os.sep)
 
+                # making tha actual copy
                 try:
                     shutil.copy2(fileName, newFileName)
                 except IOError, e:
@@ -178,22 +200,30 @@ class InventoryThread(GenericThread):
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())
         
     def isInFormatsList(self, ext):
+        '''Check if the extension is in the formats list
+        '''
         if ext in self.formatsList:
                 return True         
         return False
     
     def inventoryFile(self, ext):
+        '''Check is the extension should be analyzed
+        '''
         if self.isWhitelist:
             return self.isInFormatsList(ext)
         else:
             return not self.isInFormatsList(ext)
         
     def writeLine(self, outwriter, line, extension):
+        '''Write CSV line
+        '''
         row = self.makeAttributes(line, extension)
         outwriter.writerow(row)
         self.files.append(line)
         
     def makeAttributes(self, line, extension):
+        '''Make the attributes array
+        '''
         creationDate = time.ctime(os.path.getctime(line))
         size = os.path.getsize(line)/1000.
         
@@ -201,13 +231,9 @@ class InventoryThread(GenericThread):
         
     def getRasterExtent(self, gt, cols, rows):
         ''' Return list of corner coordinates from a geotransform
-            @type gt:   C{tuple/list}
             @param gt: geotransform
-            @type cols:   C{int}
             @param cols: number of columns in the dataset
-            @type rows:   C{int}
             @param rows: number of rows in the dataset
-            @rtype:    C{[float,...,float]}
             @return:   coordinates of each corner
         '''
         ext=[]
@@ -223,6 +249,8 @@ class InventoryThread(GenericThread):
         return ext        
 
     def getExtent(self, filename):
+        '''Makes a ogr polygon to represent the extent (i.e. bounding box)
+        '''
         gdalSrc = gdal.Open(filename)
         ogrSrc = ogr.Open(filename)
         if ogrSrc:
@@ -253,12 +281,12 @@ class InventoryThread(GenericThread):
             cols = gdalSrc.RasterXSize
             rows = gdalSrc.RasterYSize
             ext = self.getRasterExtent(gt, cols, rows)
-            print ext
-            
+
             ring = ogr.Geometry(ogr.wkbLinearRing)
             for pt in ext:
                 ring.AddPoint(pt[0],pt[1])
             ring.AddPoint(ext[0][0], ext[0][1])
+
             box = ogr.Geometry(ogr.wkbPolygon)
             box.AddGeometry(ring)
             

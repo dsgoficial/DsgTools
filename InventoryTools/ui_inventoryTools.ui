@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>430</width>
-    <height>472</height>
+    <width>476</width>
+    <height>488</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,6 +51,9 @@
     <widget class="QCheckBox" name="onlyGeoCheckBox">
      <property name="text">
       <string>Search only Georeferenced files</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
