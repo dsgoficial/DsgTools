@@ -134,19 +134,10 @@ class InventoryThread(GenericThread):
                             if gdalSrc or ogrSrc:
                                 #if only geo mode
                                 if self.isOnlyGeo:
-                                    # get the bounding box and wkt projection
-                                    (ogrPoly, prjWkt) = self.getExtent(line)
-                                    # making a QGIS projection
-                                    crsSrc = QgsCoordinateReferenceSystem()
-                                    crsSrc.createFromWkt(prjWkt)
-                                    # reprojecting the bounding box
-                                    qgsPolygon = self.reprojectBoundingBox(crsSrc, ogrPoly)
-                                    # making the attributes
-                                    attributes = self.makeAttributes(line, extension)
-                                    # inserting into memory layer
-                                    self.insertIntoMemoryLayer(layer, qgsPolygon, attributes)
+                                    self.computeBoxAndAttributes(layer, line, extension)
                                 else:
                                     self.writeLine(outwriter, line, extension)
+                                self.files.append(line)
                             gdalSrc = None
                             ogrSrc = None
                     else:
@@ -176,6 +167,19 @@ class InventoryThread(GenericThread):
             QgsMessageLog.logMessage(self.messenger.getSuccessInventoryMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
             return (1, self.messenger.getSuccessInventoryMessage())
         
+    def computeBoxAndAttributes(self, layer, line, extension):
+        # get the bounding box and wkt projection
+        (ogrPoly, prjWkt) = self.getExtent(line)
+        # making a QGIS projection
+        crsSrc = QgsCoordinateReferenceSystem()
+        crsSrc.createFromWkt(prjWkt)
+        # reprojecting the bounding box
+        qgsPolygon = self.reprojectBoundingBox(crsSrc, ogrPoly)
+        # making the attributes
+        attributes = self.makeAttributes(line, extension)
+        # inserting into memory layer
+        self.insertIntoMemoryLayer(layer, qgsPolygon, attributes)
+        
     def copyFiles(self, destinationFolder):
         '''Copy inventoried files to the destination folder
         '''
@@ -201,6 +205,8 @@ class InventoryThread(GenericThread):
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())
 
     def copy(self, destinationFolder):
+        '''Copy inventoried files considering the dataset
+        '''
         for fileName in self.files:
             # adjusting the separators according to the OS
             fileName = fileName.replace('/', os.sep)
@@ -208,27 +214,51 @@ class InventoryThread(GenericThread):
             newFileName = os.path.join(destinationFolder, file)
             newFileName = newFileName.replace('/', os.sep)
 
-            gdalSrc = gdal.Open(filename)
-            ogrSrc = ogr.Open(filename)
+            gdalSrc = gdal.Open(fileName)
+            ogrSrc = ogr.Open(fileName)
+            ok = True
             if ogrSrc:
-                driver = ogrSrc.GetDriver()
-                dst_ds = driver.CreateCopy(newFileName, ogrSrc, 0)
-                print 'foi'
-
-                ogrSrc = None
-                dst_ds = None
+                if not self.copyOGRDataSource(ogrSrc, newFileName):
+                    ok = False
             elif gdalSrc:
-                driver = gdalSrc.GetDriver()
-                dst_ds = driver.CreateCopy(newFileName, gdalSrc, 0)
-
-                ogrSrc = None
-                dst_ds = None
+                if not self.copyGDALDataSource(gdalSrc, newFileName):
+                    ok = False
             else:
+                ok = False
+
+            if not ok:
                 QgsMessageLog.logMessage(self.messenger.getCopyErrorMessage()+'\n'+e.strerror, "DSG Tools Plugin", QgsMessageLog.INFO)
                 return (0, self.messenger.getCopyErrorMessage()+'\n'+e.strerror)
 
+        
         QgsMessageLog.logMessage(self.messenger.getSuccessInventoryAndCopyMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())
+    
+    def copyGDALDataSource(self, gdalSrc, newFileName):
+        try:
+            driver = gdalSrc.GetDriver()
+            dst_ds = driver.CreateCopy(newFileName, gdalSrc)
+        except:
+            ogrSrc = None
+            dst_ds = None
+            return False
+            
+        ogrSrc = None
+        dst_ds = None
+        return True
+    
+    def copyOGRDataSource(self, ogrSrc, newFileName):
+        try:
+            driver = ogrSrc.GetDriver()
+            dst_ds = driver.CopyDataSource(ogrSrc, newFileName)
+        except:
+            ogrSrc = None
+            dst_ds = None
+            return False
+
+        ogrSrc = None
+        dst_ds = None
+        return True
 
     def isInFormatsList(self, ext):
         '''Check if the extension is in the formats list
@@ -250,7 +280,6 @@ class InventoryThread(GenericThread):
         '''
         row = self.makeAttributes(line, extension)
         outwriter.writerow(row)
-        self.files.append(line)
         
     def makeAttributes(self, line, extension):
         '''Make the attributes array

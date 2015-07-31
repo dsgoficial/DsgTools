@@ -53,6 +53,12 @@ class InventoryTools(QDialog, FORM_CLASS):
         self.treeWidget.customContextMenuRequested.connect(self.createMenu)
         
         self.whitelistRadio.setChecked(True)
+
+        # set most used file extensions        
+        item = QTreeWidgetItem(self.treeWidget.invisibleRootItem())
+        item.setText(0,'shp')
+        item = QTreeWidgetItem(self.treeWidget.invisibleRootItem())
+        item.setText(0,'tif')
         
     def depth(self, item):
         #calculates the depth of the item
