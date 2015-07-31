@@ -235,10 +235,9 @@ class InventoryThread(GenericThread):
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())
     
     def copyGDALDataSource(self, gdalSrc, newFileName):
-        try:
-            driver = gdalSrc.GetDriver()
-            dst_ds = driver.CreateCopy(newFileName, gdalSrc)
-        except:
+        driver = gdalSrc.GetDriver()
+        dst_ds = driver.CreateCopy(newFileName, gdalSrc)
+        if not dst_ds:
             ogrSrc = None
             dst_ds = None
             return False
@@ -248,10 +247,9 @@ class InventoryThread(GenericThread):
         return True
     
     def copyOGRDataSource(self, ogrSrc, newFileName):
-        try:
-            driver = ogrSrc.GetDriver()
-            dst_ds = driver.CopyDataSource(ogrSrc, newFileName)
-        except:
+        driver = ogrSrc.GetDriver()
+        dst_ds = driver.CopyDataSource(ogrSrc, newFileName)
+        if not dst_ds:
             ogrSrc = None
             dst_ds = None
             return False
