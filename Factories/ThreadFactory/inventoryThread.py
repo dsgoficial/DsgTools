@@ -227,9 +227,8 @@ class InventoryThread(GenericThread):
                 ok = False
 
             if not ok:
-                QgsMessageLog.logMessage(self.messenger.getCopyErrorMessage()+'\n'+e.strerror, "DSG Tools Plugin", QgsMessageLog.INFO)
-                return (0, self.messenger.getCopyErrorMessage()+'\n'+e.strerror)
-
+                QgsMessageLog.logMessage(self.messenger.getCopyErrorMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
+                return (0, self.messenger.getCopyErrorMessage())
         
         QgsMessageLog.logMessage(self.messenger.getSuccessInventoryAndCopyMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())
