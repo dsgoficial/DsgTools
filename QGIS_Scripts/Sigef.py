@@ -36,13 +36,17 @@ def createCSV(input, output):
     geom = feature.geometry()
     polygon = geom.asPolygon()
     outring = polygon[0]
+    
+    crsDest = QgsCoordinateReferenceSystem(4674)
+    coordinateTransformer = QgsCoordinateTransform(layer.crs(), crsDest)
 
     count = 0
     size = len(outring)
     p = 0
     progress.setPercentage(p)    
     for point in outring:
-        outwriter.writerow([str(count), dd2dms_sigef(point[0]), dd2dms_sigef(point[1])])
+        sirgasPt = coordinateTransformer.transform(point)
+        outwriter.writerow([str(count), dd2dms_sigef(sirgasPt[0]), dd2dms_sigef(sirgasPt[1])])
         count += 1
 
         if int(float(count)/size*100) != p:
