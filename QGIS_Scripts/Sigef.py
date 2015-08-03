@@ -1,30 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-/***************************************************************************
- DsgTools
-                                 A QGIS plugin
- Brazilian Army Cartographic Production Tools
-                              -------------------
-        begin                : 2015-07-03
-        git sha              : $Format:%H$
-        copyright            : (C) 2015 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
-        email                : luiz.claudio@dsg.eb.mil.br
- ***************************************************************************/
-
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
-"""
-
 ##DSG=group
 ##Perimetro=vector
 ##Dados_SIGEF=output table
 
+from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
 from qgis.core import *
 import csv
 
@@ -48,8 +26,7 @@ def createCSV(input, output):
     layer = processing.getObject(input)
     features = layer.selectedFeatures()
     if len(features) != 1:
-        progress.setInfo('Selecione uma e somente uma geometria!')
-        return
+        raise GeoAlgorithmExecutionException('Selecione uma e somente uma geometria!')
         
     csvfile = open(output, 'wb')
     outwriter = csv.writer(csvfile)
