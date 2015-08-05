@@ -3525,7 +3525,8 @@ CREATE TABLE cb.tra_ciclovia_l(
 	operacional smallint NOT NULL,
 	situacaofisica smallint NOT NULL,
 	trafego smallint NOT NULL,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL
+	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
+	CONSTRAINT tra_ciclovia_l_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.tra_ciclovia_l OWNER TO postgres#
 CREATE INDEX tra_ciclovia_l_gist ON cb.tra_ciclovia_l
@@ -3620,7 +3621,8 @@ CREATE TABLE cb.tra_ponto_hidroviario_p(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	relacionado smallint NOT NULL,
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL
+	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
+	CONSTRAINT tra_ponto_hidroviario_p_pk PRIMARY KEY (id)
 )#
 ALTER TABLE cb.tra_ponto_hidroviario_p OWNER TO postgres#
 CREATE INDEX tra_ponto_hidroviario_p_gist ON cb.tra_ponto_hidroviario_p
