@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../AzimuthDistanceCalculator/.idea/AzimuthDistanceCalculator.iml" filepath="$PROJECT_DIR$/../AzimuthDistanceCalculator/.idea/AzimuthDistanceCalculator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../DSGManagementTools/.idea/DSGManagementTools.iml" filepath="$PROJECT_DIR$/../DSGManagementTools/.idea/DSGManagementTools.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/DsgTools.iml" filepath="$PROJECT_DIR$/.idea/DsgTools.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../GridZoneGenerator/.idea/GridZoneGenerator.iml" filepath="$PROJECT_DIR$/../GridZoneGenerator/.idea/GridZoneGenerator.iml" />
+      <module fileurl="file://$USER_HOME$/Documents/MyWing/.idea/MyWing.iml" filepath="$USER_HOME$/Documents/MyWing/.idea/MyWing.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../OSMDownloader/.idea/OSMDownloader.iml" filepath="$PROJECT_DIR$/../OSMDownloader/.idea/OSMDownloader.iml" />
+      <module fileurl="file://$USER_HOME$/Documents/Wal/.idea/Wal.iml" filepath="$USER_HOME$/Documents/Wal/.idea/Wal.iml" />
+    </modules>
+  </component>
+</project>
