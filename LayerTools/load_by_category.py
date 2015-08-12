@@ -22,23 +22,24 @@
  *                                                                         *
  ***************************************************************************/
 """
-import load_by_category_dialog
-
 from qgis.core import QgsCoordinateReferenceSystem,QgsDataSourceURI,QgsVectorLayer,QgsMapLayerRegistry,QgsMessageLog
 from qgis.gui import QgsMessageBar
 import qgis as qgis
 
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui, QtCore, uic
 from PyQt4.QtCore import pyqtSlot, Qt
 from PyQt4.QtSql import QSqlQuery
 from PyQt4.QtGui import QApplication, QCursor
 
-import os
+import os, sys
 from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from PyQt4.QtCore import QTime
 
-class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'load_by_category_dialog.ui'))
+
+class LoadByCategory(QtGui.QDialog, FORM_CLASS):
     def __init__(self, parent=None):
         """Constructor."""
         super(LoadByCategory, self).__init__(parent)
@@ -47,37 +48,25 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
-        self.filename = ""
-        self.dbLoaded = False
-        self.epsg = 0
-        self.crs = None
+        self.setupUi(self)
+
         self.categories = []
         self.selectedClasses = []
-
+ 
         self.point = []
         self.line = []
         self.polygon = []
         self.pointWithElement = []
         self.lineWithElement = []
         self.polygonWithElement = []
-
-        #Sql factory generator
-        self.isSpatialite = True
-
-        self.setupUi(self)
-        self.tabWidget.setCurrentIndex(0)
-        self.factory = SqlGeneratorFactory()
-        self.gen = self.factory.createSqlGenerator(self.isSpatialite)
-        self.utils = Utils()
-
+ 
         self.parentTreeNode = None
-
-        self.comboBoxPostgis.setCurrentIndex(0)
+ 
         self.checkBoxPoint.setCheckState(0)
         self.checkBoxLine.setCheckState(0)
         self.checkBoxPolygon.setCheckState(0)
         self.checkBoxAll.setCheckState(0)
-
+ 
         self.bar = QgsMessageBar()
         self.setLayout(QtGui.QGridLayout(self))
         self.layout().setContentsMargins(0,0,0,0)
@@ -85,42 +74,22 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         self.bar.setSizePolicy(sizePolicy)
         self.layout().addWidget(self.bar, 0,0,1,1)
-
+ 
         #Objects Connections
-        QtCore.QObject.connect(self.pushButtonOpenFile, QtCore.SIGNAL(("clicked()")), self.loadDatabase)
+        QtCore.QObject.connect(self.widget, QtCore.SIGNAL(("connectionChanged()")), self.listCategoriesFromDatabase)
+        QtCore.QObject.connect(self.widget, QtCore.SIGNAL(("problemOccurred()")), self.pushMessage)
+        
         QtCore.QObject.connect(self.pushButtonCancel, QtCore.SIGNAL(("clicked()")), self.cancel)
         QtCore.QObject.connect(self.pushButtonOk, QtCore.SIGNAL(("clicked()")), self.okSelected)
-        QtCore.QObject.connect(self.tabWidget,QtCore.SIGNAL(("currentChanged(int)")), self.restoreInitialState)
         QtCore.QObject.connect(self.pushButtonSelectAll, QtCore.SIGNAL(("clicked()")), self.selectAll)
         QtCore.QObject.connect(self.pushButtonDeselectAll, QtCore.SIGNAL(("clicked()")), self.deselectAll)
         QtCore.QObject.connect(self.pushButtonSelectOne, QtCore.SIGNAL(("clicked()")), self.selectOne)
         QtCore.QObject.connect(self.pushButtonDeselectOne, QtCore.SIGNAL(("clicked()")), self.deselectOne)
         QtCore.QObject.connect(self.checkBoxAll, QtCore.SIGNAL(("stateChanged(int)")), self.setAllGroup)
-
-        self.db = None
-        #populating the postgis combobox
-        self.populatePostGISConnectionsCombo()
-
-    def __del__(self):
-        self.closeDatabase()
-
-    def closeDatabase(self):
-        if self.db:
-            self.db.close()
-            self.db = None
-
+ 
     def restoreInitialState(self):
-        self.filename = ""
-        self.dbLoaded = False
-        self.epsg = 0
-        self.crs = None
         self.categories = []
         self.selectedClasses = []
-        self.spatialiteFileEdit.setText(self.filename)
-        self.postGISCrsEdit.setText('')
-        self.postGISCrsEdit.setReadOnly(True)
-        self.spatialiteCrsEdit.setText('')
-        self.spatialiteCrsEdit.setReadOnly(True)
         self.listWidgetCategoryFrom.clear()
         self.listWidgetCategoryTo.clear()
 
@@ -132,41 +101,29 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         self.polygonWithElement = []
         self.parentTreeNode = None
 
-        #Setting the database type
-        if self.tabWidget.currentIndex() == 0:
-            self.isSpatialite = True
-        else:
-            self.isSpatialite = False
-
-        #getting the sql generator according to the database type
-        self.gen = self.factory.createSqlGenerator(self.isSpatialite)
-        self.comboBoxPostgis.setCurrentIndex(0)
         self.checkBoxPoint.setCheckState(0)
         self.checkBoxLine.setCheckState(0)
         self.checkBoxPolygon.setCheckState(0)
         self.checkBoxAll.setCheckState(0)
 
-    def updateBDField(self):
-        if self.dbLoaded == True:
-            self.spatialiteFileEdit.setText(self.filename)
-        else:
-            self.filename = ""
-            self.spatialiteFileEdit.setText(self.filename)
-
-    def getDatabaseVersion(self):
-        self.dbVersion = self.utils.getDatabaseVersion(self.db)
-        self.qmlPath = self.utils.getQmlDir(self.db)
+#     def updateBDField(self):
+#         if self.dbLoaded == True:
+#             self.spatialiteFileEdit.setText(self.filename)
+#         else:
+#             self.filename = ""
+#             self.spatialiteFileEdit.setText(self.filename)
 
     def listCategoriesFromDatabase(self):
         self.listWidgetCategoryFrom.clear()
         self.listWidgetCategoryTo.clear()
-        sql = self.gen.getTablesFromDatabase()
-        query = QSqlQuery(sql, self.db)
+        sql = self.widget.gen.getTablesFromDatabase()
+        query = QSqlQuery(sql, self.widget.db)
 
-        self.getDatabaseVersion()
+        self.dbVersion = self.widget.getDBVersion()
+        self.qmlPath = self.widget.getQmlPath()
 
         while query.next():
-            if self.isSpatialite:
+            if self.widget.isSpatialite:
                 tableName = query.value(0)
                 layerName = tableName
                 split = tableName.split('_')
@@ -244,6 +201,9 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             self.checkBoxPoint.setCheckState(0)
             self.checkBoxLine.setCheckState(0)
             self.checkBoxPolygon.setCheckState(0)
+            
+    def pushMessage(self, msg):
+        self.bar.pushMessage("", self.tr("Coordinate Reference System not set or invalid!"), level=QgsMessageBar.WARNING)
 
     def setCRS(self):
         try:
@@ -261,34 +221,6 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         except:
             pass
 
-    @pyqtSlot(int)
-    def on_comboBoxPostgis_currentIndexChanged(self):
-        if self.comboBoxPostgis.currentIndex() > 0:
-            self.loadDatabase()
-
-    def loadDatabase(self):
-        self.closeDatabase()
-
-        if self.isSpatialite:
-            (self.filename, self.db) = self.utils.getSpatialiteDatabase()
-            if self.filename:
-                self.spatialiteFileEdit.setText(self.filename)
-        else:
-            self.db = self.utils.getPostGISDatabase(self.comboBoxPostgis.currentText())
-        try:
-            if not self.db.open():
-                QgsMessageLog.logMessage(self.db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            else:
-                self.dbLoaded = True
-                self.listCategoriesFromDatabase()
-        except:
-            pass
-
-    def populatePostGISConnectionsCombo(self):
-        self.comboBoxPostgis.clear()
-        self.comboBoxPostgis.addItem("Select Database")
-        self.comboBoxPostgis.addItems(self.utils.getPostGISConnections())
-
     def cancel(self):
         self.restoreInitialState()
         self.close()
@@ -304,7 +236,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
     def okSelected(self):
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-
+    
             if self.checkBoxOnlyWithElements.isChecked():
                 self.setLayersWithElements()
                 ponto = self.pointWithElement
@@ -314,12 +246,12 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
                 ponto = self.point
                 linha = self.line
                 area = self.polygon
-
-            if self.db and self.crs and len(self.listWidgetCategoryTo)>0:
+    
+            if self.widget.db and self.widget.crs and len(self.listWidgetCategoryTo)>0:
                 categoriasSelecionadas = []
                 for i in range(self.listWidgetCategoryTo.__len__()):
                     categoriasSelecionadas.append(self.listWidgetCategoryTo.item(i).text())
-
+    
                 try:
                     if self.checkBoxPoint.isChecked():
                         self.loadLayers('p',categoriasSelecionadas,ponto)
@@ -336,9 +268,9 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
                     qgis.utils.iface.messageBar().pushMessage(self.tr("CRITICAL!"), self.tr("Problem loading the categories!"), level=QgsMessageBar.CRITICAL)
                     pass
             else:
-                if self.db and not self.crs:
+                if self.widget.db and not self.widget.crs:
                     self.bar.pushMessage(self.tr("CRITICAL!"), self.tr("Could not determine the coordinate reference system!"), level=QgsMessageBar.CRITICAL)
-                if not self.db and not self.crs:
+                if not self.widget.db and not self.widget.crs:
                     self.bar.pushMessage(self.tr("CRITICAL!"), self.tr("Database not loaded properly!"), level=QgsMessageBar.CRITICAL)
                     self.bar.pushMessage(self.tr("CRITICAL!"), self.tr("Could not determine the coordinate reference system!"), level=QgsMessageBar.CRITICAL)
                 if len(self.listWidgetCategoryTo)==0:
@@ -347,13 +279,13 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
                 self.pointWithElement = []
                 self.lineWithElement = []
                 self.polygonWithElement = []
-
+    
             QApplication.restoreOverrideCursor()
         except:
             QApplication.restoreOverrideCursor()
 
     def loadLayers(self, type, categories, layer_names):
-        if self.isSpatialite:
+        if self.widget.isSpatialite:
             self.loadSpatialiteLayers(type, categories, layer_names)
         else:
 
@@ -383,8 +315,8 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
     def countElements(self, layers):
         listaQuantidades = []
         for layer in layers:
-            sql = self.gen.getElementCountFromLayer(layer)
-            query = QSqlQuery(sql,self.db)
+            sql = self.widget.gen.getElementCountFromLayer(layer)
+            query = QSqlQuery(sql,self.widget.db)
             query.next()
             number = query.value(0)
             if not query.exec_(sql):
@@ -393,7 +325,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
         return listaQuantidades
 
     def loadPostGISLayers(self, type, categories, layer_names):
-        (database, host, port, user, password) = self.utils.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
+        (database, host, port, user, password) = self.widget.utils.getPostGISConnectionParameters(self.widget.comboBoxPostgis.currentText())
         uri = QgsDataSourceURI()
         uri.setConnection(str(host),str(port), str(database), str(user), str(password))
         geom_column = 'geom'
@@ -422,7 +354,7 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
             schema = category.split('.')[0]
             name = layer_name.replace(schema+'.', '')
             if category == categoria:
-                sql = self.gen.loadLayerFromDatabase(layer_name)
+                sql = self.widget.gen.loadLayerFromDatabase(layer_name)
                 uri.setDataSource(schema, name, geom_column, sql, 'id')
                 uri.disableSelectAtId(True)
                 self.loadEDGVLayer(uri, name, 'postgres', idSubgrupo)
@@ -442,11 +374,11 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
 
     def loadSpatialiteLayers(self, type, categories, layer_names):
         uri = QgsDataSourceURI()
-        uri.setDatabase(self.filename)
+        uri.setDatabase(self.widget.filename)
         geom_column = 'GEOMETRY'
 
         if self.parentTreeNode is None:
-            self.parentTreeNode = qgis.utils.iface.legendInterface(). addGroup(self.filename.split('.sqlite')[0].split('/')[-1], -1)
+            self.parentTreeNode = qgis.utils.iface.legendInterface(). addGroup(self.widget.filename.split('.sqlite')[0].split('/')[-1], -1)
 
         if type == 'p':
             idGrupo = qgis.utils.iface.legendInterface(). addGroup("Ponto", True, self.parentTreeNode)
@@ -463,9 +395,9 @@ class LoadByCategory(QtGui.QDialog, load_by_category_dialog.Ui_LoadByCategory):
 
     def loadEDGVLayer(self, uri, layer_name, provider, idSubgrupo):
         vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
-        vlayer.setCrs(self.crs)
+        vlayer.setCrs(self.widget.crs)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
-        if self.isSpatialite and (self.dbVersion == '3.0' or self.dbVersion == '2.1.3'):
+        if self.widget.isSpatialite and (self.dbVersion == '3.0' or self.dbVersion == '2.1.3'):
             lyr = '_'.join(layer_name.replace('\r', '').split('_')[1::])
         else:
             lyr = layer_name.replace('\r','')
