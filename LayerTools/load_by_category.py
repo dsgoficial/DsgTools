@@ -106,13 +106,6 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         self.checkBoxPolygon.setCheckState(0)
         self.checkBoxAll.setCheckState(0)
 
-#     def updateBDField(self):
-#         if self.dbLoaded == True:
-#             self.spatialiteFileEdit.setText(self.filename)
-#         else:
-#             self.filename = ""
-#             self.spatialiteFileEdit.setText(self.filename)
-
     def listCategoriesFromDatabase(self):
         self.listWidgetCategoryFrom.clear()
         self.listWidgetCategoryTo.clear()

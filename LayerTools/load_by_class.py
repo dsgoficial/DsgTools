@@ -21,12 +21,10 @@
  *                                                                         *
  ***************************************************************************/
 """
-import load_by_class_base
-
 from qgis.core import QgsCoordinateReferenceSystem,QgsDataSourceURI,QgsVectorLayer,QgsMapLayerRegistry,QgsMessageLog
 from qgis.gui import QgsMessageBar
 
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui, QtCore, uic
 from PyQt4.QtCore import pyqtSlot, Qt
 from PyQt4.QtSql import QSqlQuery
 from PyQt4.QtGui import QApplication, QCursor
@@ -35,7 +33,10 @@ import os
 from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 
-class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'load_by_class_base.ui'))
+
+class LoadByClass(QtGui.QDialog, FORM_CLASS):
     def __init__(self, parent=None):
         """Constructor."""
         super(LoadByClass, self).__init__(parent)
@@ -44,20 +45,9 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
-        self.filename = ""
-        self.dbLoaded = False
-        self.epsg = 0
-        self.crs = None
-        self.selectedClasses = []
-
-        #Sql factory generator
-        self.isSpatialite = True
-
         self.setupUi(self)
-        self.tabWidget.setCurrentIndex(0)
-        self.factory = SqlGeneratorFactory()
-        self.gen = self.factory.createSqlGenerator(self.isSpatialite)
-        self.utils = Utils()
+
+        self.selectedClasses = []
 
         self.bar = QgsMessageBar()
         self.setLayout(QtGui.QGridLayout(self))
@@ -68,68 +58,30 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         self.layout().addWidget(self.bar, 0,0,1,1)
 
         #Objects Connections
-        QtCore.QObject.connect(self.pushButtonOpenFile, QtCore.SIGNAL(("clicked()")), self.loadDatabase)
+        QtCore.QObject.connect(self.widget, QtCore.SIGNAL(("connectionChanged()")), self.listClassesFromDatabase)
+        QtCore.QObject.connect(self.widget, QtCore.SIGNAL(("problemOccurred()")), self.pushMessage)
+        
         QtCore.QObject.connect(self.pushButtonCancel, QtCore.SIGNAL(("clicked()")), self.cancel)
         QtCore.QObject.connect(self.selectAllCheck, QtCore.SIGNAL(("stateChanged(int)")), self.selectAll)
         QtCore.QObject.connect(self.pushButtonOk, QtCore.SIGNAL(("clicked()")), self.okSelected)
-        QtCore.QObject.connect(self.tabWidget,QtCore.SIGNAL(("currentChanged(int)")), self.restoreInitialState)
-
-        self.db = None
-        #populating the postgis combobox
-        self.populatePostGISConnectionsCombo()
-
-    def __del__(self):
-        self.closeDatabase()
-
-    def closeDatabase(self):
-        if self.db:
-            self.db.close()
-            self.db = None
 
     def restoreInitialState(self):
-        self.filename = ""
-        self.dbLoaded = False
-        self.epsg = 0
-        self.crs = None
         self.selectedClasses = []
-        self.spatialiteFileEdit.setText(self.filename)
-        self.postGISCrsEdit.setText('')
-        self.postGISCrsEdit.setReadOnly(True)
-        self.spatialiteCrsEdit.setText('')
-        self.spatialiteCrsEdit.setReadOnly(True)
 
         tam = self.classesListWidget.__len__()
         for i in range(tam+1,1,-1):
             item = self.classesListWidget.takeItem(i-2)
 
         self.selectAllCheck.setCheckState(0)
-        #Setting the database type
-        if self.tabWidget.currentIndex() == 0:
-            self.isSpatialite = True
-        else:
-            self.isSpatialite = False
-        #getting the sql generator according to the database type
-        self.gen = self.factory.createSqlGenerator(self.isSpatialite)
-        self.comboBoxPostgis.setCurrentIndex(0)
-
-    def updateBDField(self):
-        if self.dbLoaded == True:
-            self.spatialiteFileEdit.setText(self.filename)
-        else:
-            self.filename = ""
-            self.spatialiteFileEdit.setText(self.filename)
-
-    def getDatabaseVersion(self):
-        self.dbVersion = self.utils.getDatabaseVersion(self.db)
-        self.qmlPath = self.utils.getQmlDir(self.db)
 
     def listClassesFromDatabase(self):
         self.classesListWidget.clear()
-        self.getDatabaseVersion()
-        sql = self.gen.getTablesFromDatabase()
-        query = QSqlQuery(sql, self.db)
+        self.dbVersion = self.widget.getDBVersion()
+        self.qmlPath = self.widget.getQmlPath()
+        sql = self.widget.gen.getTablesFromDatabase()
+        query = QSqlQuery(sql, self.widget.db)
         while query.next():
-            if self.isSpatialite:
+            if self.widget.isSpatialite:
                 tableName = query.value(0)
                 layerName = tableName
             else:
@@ -142,54 +94,13 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
                 item = QtGui.QListWidgetItem(layerName)
                 self.classesListWidget.addItem(item)
         self.classesListWidget.sortItems()
-        self.setCRS()
-
-    def setCRS(self):
-        try:
-            self.epsg = self.utils.findEPSG(self.db)
-            if self.epsg == -1:
-                self.bar.pushMessage("", self.tr("Coordinate Reference System not set or invalid!"), level=QgsMessageBar.WARNING)
-            else:
-                self.crs = QgsCoordinateReferenceSystem(self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
-                if self.isSpatialite:
-                    self.spatialiteCrsEdit.setText(self.crs.description())
-                    self.spatialiteCrsEdit.setReadOnly(True)
-                else:
-                    self.postGISCrsEdit.setText(self.crs.description())
-                    self.postGISCrsEdit.setReadOnly(True)
-        except:
-            pass
-
-    @pyqtSlot(int)
-    def on_comboBoxPostgis_currentIndexChanged(self):
-        if self.comboBoxPostgis.currentIndex() > 0:
-            self.loadDatabase()
-
-    def loadDatabase(self):
-        self.closeDatabase()
-        if self.isSpatialite:
-            (self.filename, self.db) = self.utils.getSpatialiteDatabase()
-            if self.filename:
-                self.spatialiteFileEdit.setText(self.filename)
-        else:
-            self.db = self.utils.getPostGISDatabase(self.comboBoxPostgis.currentText())
-        try:
-            if not self.db.open():
-                QgsMessageLog.logMessage(self.db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            else:
-                self.dbLoaded = True
-                self.listClassesFromDatabase()
-        except:
-            pass
-
-    def populatePostGISConnectionsCombo(self):
-        self.comboBoxPostgis.clear()
-        self.comboBoxPostgis.addItem(self.tr("Select Database"))
-        self.comboBoxPostgis.addItems(self.utils.getPostGISConnections())
 
     def cancel(self):
         self.restoreInitialState()
         self.close()
+        
+    def pushMessage(self, msg):
+        self.bar.pushMessage("", self.tr("Coordinate Reference System not set or invalid!"), level=QgsMessageBar.WARNING)
 
     def selectAll(self):
         if self.selectAllCheck.isChecked():
@@ -213,19 +124,19 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
         self.selectedClasses.sort()
 
     def okSelected(self):
-        try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            if self.isSpatialite:
-                self.loadSpatialiteLayers()
-            else:
-                self.loadPostGISLayers()
-            QApplication.restoreOverrideCursor()
-        except:
-            QApplication.restoreOverrideCursor()
+#         try:
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        if self.widget.isSpatialite:
+            self.loadSpatialiteLayers()
+        else:
+            self.loadPostGISLayers()
+        QApplication.restoreOverrideCursor()
+#         except:
+#             QApplication.restoreOverrideCursor()
 
     def loadPostGISLayers(self):
         self.getSelectedItems()
-        (database, host, port, user, password) = self.utils.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
+        (database, host, port, user, password) = self.widget.utils.getPostGISConnectionParameters(self.widget.comboBoxPostgis.currentText())
         uri = QgsDataSourceURI()
         uri.setConnection(str(host),str(port), str(database), str(user), str(password))
         if len(self.selectedClasses)>0:
@@ -235,7 +146,7 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
                     split = layer.split('.')
                     schema = split[0]
                     layerName = split[1]
-                    sql = self.gen.loadLayerFromDatabase(layer)
+                    sql = self.widget.gen.loadLayerFromDatabase(layer)
                     uri.setDataSource(schema, layerName, geom_column, sql,'id')
                     uri.disableSelectAtId(True)
                     self.loadEDGVLayer(uri, layerName, 'postgres')
@@ -249,7 +160,7 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
     def loadSpatialiteLayers(self):
         self.getSelectedItems()
         uri = QgsDataSourceURI()
-        uri.setDatabase(self.filename)
+        uri.setDatabase(self.widget.filename)
         schema = ''
         geom_column = 'GEOMETRY'
         if len(self.selectedClasses)>0:
@@ -266,9 +177,9 @@ class LoadByClass(QtGui.QDialog, load_by_class_base.Ui_LoadByClass):
 
     def loadEDGVLayer(self, uri, layer_name, provider):
         vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
-        vlayer.setCrs(self.crs)
+        vlayer.setCrs(self.widget.crs)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
-        if self.isSpatialite and (self.dbVersion == '3.0' or self.dbVersion == '2.1.3'):
+        if self.widget.isSpatialite and (self.dbVersion == '3.0' or self.dbVersion == '2.1.3'):
             lyr = '_'.join(layer_name.replace('\r', '').split('_')[1::])
         else:
             lyr = layer_name.replace('\r','')
