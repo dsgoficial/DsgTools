@@ -46,20 +46,6 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.iface = iface
-        #Sql factory generator
-        self.isSpatialite = True
-        self.tabWidget.setCurrentIndex(0)
-        self.factory = SqlGeneratorFactory()
-        self.gen = self.factory.createSqlGenerator(self.isSpatialite)
-
-        QObject.connect(self.tabWidget, SIGNAL(("currentChanged(int)")), self.restoreInitialState)
-        QObject.connect(self.pushButtonOpenFile, SIGNAL(("clicked()")), self.loadDatabase)
-
-        self.restoreInitialState()
-
-        self.db = None
-        #populating the postgis combobox
-        self.populatePostGISConnectionsCombo()
 
         self.map_index = UtmGrid()
 
@@ -69,12 +55,9 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
 
         self.setMask()
 
-    def __del__(self):
-        self.closeDatabase()
-
     @pyqtSlot()
     def on_okButton_clicked(self):
-        if not self.dbLoaded:
+        if not self.widget.dbLoaded:
             QMessageBox.warning(self, self.tr("Warning!"), self.tr('Please, select a database first.'))
             return
 
@@ -87,9 +70,8 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         self.done(1)
 
     def insertFrameIntoLayer(self,reprojected):
-        self.utils = Utils()
-        self.dbVersion = self.utils.getDatabaseVersion(self.db)
-        self.qmlPath = self.utils.getQmlDir(self.db)
+        self.dbVersion = self.widget.getDBVersion()
+        self.qmlPath = self.widget.getQmlPath()
 
         layer = self.getFrameLayer()
         if not layer:
@@ -116,14 +98,14 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         for lyr in self.iface.legendInterface().layers():
             if lyr.name() == 'public_aux_moldura_a' or lyr.name() == 'aux_moldura_a':
                 dbname = self.getDBNameFromLayer(lyr)
-                if self.isSpatialite and dbname == self.filename:
+                if self.widget.isSpatialite and dbname == self.widget.filename:
                     return lyr
-                if not self.isSpatialite:
-                    (database, host, port, user, password) = self.utils.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
+                if not self.widget.isSpatialite:
+                    (database, host, port, user, password) = self.widget.utils.getPostGISConnectionParameters(self.widget.comboBoxPostgis.currentText())
                     if dbname == database:
                         return lyr
 
-        if self.isSpatialite:
+        if self.widget.isSpatialite:
             return self.loadSpatialiteFrame()
         else:
             return self.loadPostGISFrame()
@@ -144,7 +126,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
 
     def loadPostGISFrame(self):
         self.selectedClasses = ['public.aux_moldura_a']
-        (database, host, port, user, password) = self.utils.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
+        (database, host, port, user, password) = self.widget.utils.getPostGISConnectionParameters(self.widget.comboBoxPostgis.currentText())
         uri = QgsDataSourceURI()
         uri.setConnection(str(host),str(port), str(database), str(user), str(password))
         if len(self.selectedClasses)>0:
@@ -154,7 +136,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
                     split = layer.split('.')
                     schema = split[0]
                     layerName = split[1]
-                    sql = self.gen.loadLayerFromDatabase(layer)
+                    sql = self.widget.gen.loadLayerFromDatabase(layer)
                     uri.setDataSource(schema, layerName, geom_column, sql,'id')
                     uri.disableSelectAtId(True)
                     return self.loadEDGVLayer(uri, layerName, 'postgres')
@@ -166,7 +148,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
     def loadSpatialiteFrame(self):
         self.selectedClasses = ['public_aux_moldura_a']
         uri = QgsDataSourceURI()
-        uri.setDatabase(self.filename)
+        uri.setDatabase(self.widget.filename)
         schema = ''
         geom_column = 'GEOMETRY'
         if len(self.selectedClasses)>0:
@@ -176,9 +158,9 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
 
     def loadEDGVLayer(self, uri, layer_name, provider):
         vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
-        vlayer.setCrs(self.crs)
+        vlayer.setCrs(self.widget.crs)
         QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
-        if self.isSpatialite and (self.dbVersion == '3.0' or self.dbVersion == '2.1.3'):
+        if self.widget.isSpatialite and (self.dbVersion == '3.0' or self.dbVersion == '2.1.3'):
             lyr = '_'.join(layer_name.replace('\r','').split('_')[1::])
         else:
             lyr = layer_name.replace('\r','')
@@ -194,11 +176,6 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
     def on_cancelButton_clicked(self):
         self.done(0)
 
-    @pyqtSlot(int)
-    def on_comboBoxPostgis_currentIndexChanged(self):
-        if self.comboBoxPostgis.currentIndex() > 0:
-            self.loadDatabase()
-
     @pyqtSlot(str)
     def on_miLineEdit_textChanged(self,s):
         if (s!=''):
@@ -212,112 +189,14 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
             self.inomLineEdit.setText(self.inomen)
 
     def reprojectFrame(self, poly):
-        crsSrc = QgsCoordinateReferenceSystem(self.crs.geographicCRSAuthId())
-        coordinateTransformer = QgsCoordinateTransform(crsSrc, self.crs)
+        crsSrc = QgsCoordinateReferenceSystem(self.widget.crs.geographicCRSAuthId())
+        coordinateTransformer = QgsCoordinateTransform(crsSrc, self.widget.crs)
         polyline = poly.asMultiPolygon()[0][0]
         newPolyline = []
         for point in polyline:
             newPolyline.append(coordinateTransformer.transform(point))
         qgsPolygon = QgsGeometry.fromMultiPolygon([[newPolyline]])
         return qgsPolygon
-
-    def closeDatabase(self):
-        if self.db:
-            self.db.close()
-            self.db = None
-
-    def restoreInitialState(self):
-        self.filename = ""
-        self.dbLoaded = False
-        self.epsg = 0
-        self.crs = None
-        self.postGISCrsEdit.setText('')
-        self.postGISCrsEdit.setReadOnly(True)
-        self.spatialiteCrsEdit.setText('')
-        self.spatialiteCrsEdit.setReadOnly(True)
-
-        if self.tabWidget.currentIndex() == 0:
-            self.isSpatialite = True
-        else:
-            self.isSpatialite = False
-
-        #getting the sql generator according to the database type
-        self.gen = self.factory.createSqlGenerator(self.isSpatialite)
-        self.comboBoxPostgis.setCurrentIndex(0)
-
-    def setCRS(self):
-        try:
-            self.epsg = self.findEPSG()
-            print self.epsg
-            if self.epsg == -1:
-                self.bar.pushMessage("", self.tr("Coordinate Reference System not set or invalid!"), level=QgsMessageBar.WARNING)
-            else:
-                self.crs = QgsCoordinateReferenceSystem(self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
-                if self.isSpatialite:
-                    self.spatialiteCrsEdit.setText(self.crs.description())
-                    self.spatialiteCrsEdit.setReadOnly(True)
-                else:
-                    self.postGISCrsEdit.setText(self.crs.description())
-                    self.postGISCrsEdit.setReadOnly(True)
-        except:
-            pass
-
-    def loadDatabase(self):
-        self.closeDatabase()
-        if self.isSpatialite:
-            fd = QtGui.QFileDialog()
-            self.filename = fd.getOpenFileName(filter='*.sqlite')
-            if self.filename:
-                self.spatialiteFileEdit.setText(self.filename)
-                self.db = QSqlDatabase("QSQLITE")
-                self.db.setDatabaseName(self.filename)
-        else:
-            self.db = QSqlDatabase("QPSQL")
-            (database, host, port, user, password) = self.getPostGISConnectionParameters(self.comboBoxPostgis.currentText())
-            self.db.setDatabaseName(database)
-            self.db.setHostName(host)
-            self.db.setPort(int(port))
-            self.db.setUserName(user)
-            self.db.setPassword(password)
-        try:
-            if not self.db.open():
-                print self.db.lastError().text()
-            else:
-                self.dbLoaded = True
-                self.setCRS()
-        except:
-            pass
-
-    def getPostGISConnectionParameters(self, name):
-        settings = QSettings()
-        settings.beginGroup('PostgreSQL/connections/'+name)
-        database = settings.value('database')
-        host = settings.value('host')
-        port = settings.value('port')
-        user = settings.value('username')
-        password = settings.value('password')
-        settings.endGroup()
-        return (database, host, port, user, password)
-
-    def getPostGISConnections(self):
-        settings = QSettings()
-        settings.beginGroup('PostgreSQL/connections')
-        currentConnections = settings.childGroups()
-        settings.endGroup()
-        return currentConnections
-
-    def populatePostGISConnectionsCombo(self):
-        self.comboBoxPostgis.clear()
-        self.comboBoxPostgis.addItem(self.tr("Select Database"))
-        self.comboBoxPostgis.addItems(self.getPostGISConnections())
-
-    def findEPSG(self):
-        sql = self.gen.getSrid()
-        query = QSqlQuery(sql, self.db)
-        srids = []
-        while query.next():
-            srids.append(query.value(0))
-        return srids[0]
 
     def setValidCharacters(self):
         self.chars = []
