@@ -112,3 +112,38 @@ class Utils:
         elif db.driverName() == 'QSQLITE':
             isSpatialite = True
         return isSpatialite
+    
+    def getServerConfiguration(self, name):
+        settings = QSettings()
+        settings.beginGroup('PostgreSQL/servers/'+name)
+        host = settings.value('host')
+        port = settings.value('port')
+        user = settings.value('username')
+        password = settings.value('password')
+        settings.endGroup()
+        return (host, port, user, password)
+    
+    def browseServer(self,dbList,host,port,user,password):
+        sql = self.factory.getEDGVVersion()
+        edvgDbList = []
+        for database in dbList:
+            db = self.getPostGISDatabase((database,host,port,user,password))
+            query = QSqlQuery(sql,db)
+            while query.next():
+                version = query.value(0)
+            if version:
+                edgvDbList.append((database,version))
+        return edgvDbList
+        
+    def getDbsFromServer(self,name):
+        (host, port, user, password) = self.getServerConfiguration(name)
+        database = 'postgres'
+        
+        db = self.getPostGISDatabase((database,host,port,user,password))
+        sql = self.factory.getDatabasesFromServer()
+        query = QSqlQuery(sql,db)
+        dbList = []
+        while query.next():
+            dbList.append(query.value(0))
+        return dbList
+            

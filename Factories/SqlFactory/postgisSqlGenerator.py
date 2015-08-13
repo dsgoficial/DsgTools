@@ -78,3 +78,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def getElementCountFromLayer(self, layer):
         sql = "SELECT count(*) FROM ONLY "+layer
         return sql
+    
+    def getDatabasesFromServer(self):
+        sql = "SELECT datname FROM pg_database"
+        return sql
