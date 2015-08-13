@@ -40,8 +40,6 @@ from DsgTools.DbTools.PostGISTool.postgisDBTool import PostgisDBTool
 
 from DsgTools.ComplexTools.complexWindow import ComplexWindow
 
-#from DsgTools.ServerTools.serverConfigurator import ServerConfigurator
-
 from DsgTools.ServerTools.viewServers import ViewServers
 
 from DsgTools.ImageTools.processingTools import ProcessingTools

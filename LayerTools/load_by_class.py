@@ -21,17 +21,15 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsCoordinateReferenceSystem,QgsDataSourceURI,QgsVectorLayer,QgsMapLayerRegistry,QgsMessageLog
+from qgis.core import QgsDataSourceURI,QgsVectorLayer,QgsMapLayerRegistry,QgsMessageLog
 from qgis.gui import QgsMessageBar
 
 from PyQt4 import QtGui, QtCore, uic
-from PyQt4.QtCore import pyqtSlot, Qt
+from PyQt4.QtCore import Qt
 from PyQt4.QtSql import QSqlQuery
 from PyQt4.QtGui import QApplication, QCursor
 
 import os
-from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'load_by_class_base.ui'))

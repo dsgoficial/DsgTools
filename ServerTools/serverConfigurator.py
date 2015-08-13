@@ -22,10 +22,8 @@
 """
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4 import QtGui, uic
+from PyQt4 import uic
 import os
-
-from ui_serverConfigurator import Ui_Dialog
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_serverConfigurator.ui'))
@@ -45,8 +43,6 @@ class ServerConfigurator(QDialog, FORM_CLASS):
         self.isEdit = 0
         self.oldName=''
 
-        #self.populateServersCombo()
-
         self.passwordEdit.setEchoMode(QLineEdit.Password)
 
     @pyqtSlot(bool)
@@ -59,7 +55,6 @@ class ServerConfigurator(QDialog, FORM_CLASS):
             password = self.passwordEdit.text()
             if not self.storeServerConfiguration(name, host, port, user, password):
                 return
-#             self.populateServersCombo()
             QMessageBox.warning(self, self.tr("Info!"), self.tr("Server stored."))
             self.done(1)
         else:
@@ -69,15 +64,6 @@ class ServerConfigurator(QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
         self.done(0)
-
-#     @pyqtSlot(bool)
-#     def on_removeButton_clicked(self):
-#         self.removeServerConfiguration()
-#         self.populateServersCombo()
-#         QMessageBox.warning(self, self.tr("Info!"), self.tr("Server removed."))
-
-#     def on_serversCombo_currentIndexChanged(self, index):
-#         self.getServerConfiguration(self.serversCombo.currentText())
 
     def checkFields(self):
         if self.hostEdit.text() == '' or self.portEdit.text() == '' \
@@ -104,12 +90,6 @@ class ServerConfigurator(QDialog, FORM_CLASS):
         settings.endGroup()
         return 1
 
-#     def removeServerConfiguration(self):
-#         settings = QSettings()
-#         settings.beginGroup('PostgreSQL/servers/'+self.serversCombo.currentText())
-#         settings.remove('')
-#         settings.endGroup()
-
     def setServerConfiguration(self, name):
         self.isEdit = 1
         self.oldName=name
@@ -126,16 +106,3 @@ class ServerConfigurator(QDialog, FORM_CLASS):
         self.portEdit.setText(port)
         self.userEdit.setText(user)
         self.passwordEdit.setText(password)
-
-#     def getServers(self):
-#         settings = QSettings()
-#         settings.beginGroup('PostgreSQL/servers')
-#         currentConnections = settings.childGroups()
-#         settings.endGroup()
-#         return currentConnections
-
-#     def populateServersCombo(self):
-#         self.serversCombo.clear()
-#         currentConnections = self.getServers()
-#         for connection in currentConnections:
-#             self.serversCombo.addItem(connection)

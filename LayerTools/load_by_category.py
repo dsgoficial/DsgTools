@@ -27,14 +27,11 @@ from qgis.gui import QgsMessageBar
 import qgis as qgis
 
 from PyQt4 import QtGui, QtCore, uic
-from PyQt4.QtCore import pyqtSlot, Qt
+from PyQt4.QtCore import  Qt
 from PyQt4.QtSql import QSqlQuery
 from PyQt4.QtGui import QApplication, QCursor
 
-import os, sys
-from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from PyQt4.QtCore import QTime
+import os
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'load_by_category_dialog.ui'))

@@ -24,16 +24,13 @@
 from qgis.core import *
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
-from PyQt4.QtSql import QSqlDatabase,QSqlQuery
 from PyQt4.QtGui import QMessageBox
 
 import os
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_create_inom_dialog_base.ui'))
 
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.LayerTools.map_index import UtmGrid
-from DsgTools.Utils.utils import Utils
 
 class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
     def __init__(self, iface, parent=None):

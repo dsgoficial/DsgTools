@@ -27,7 +27,6 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import QHeaderView, QTableWidgetItem, QMessageBox, QApplication, QCursor
 from PyQt4.QtSql import QSqlDatabase
 from serverConfigurator import ServerConfigurator
-from numpy.lib._iotools import NameValidator
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_viewServers.ui'))
@@ -92,7 +91,6 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         if result:
             self.populateTable()
         
-        
     @pyqtSlot(bool)
     def on_removeButton_clicked(self):
         selectedItem = self.returnSelectedName()
@@ -123,7 +121,6 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         settings.endGroup()
         return currentConnections
     
-    
     def getServerConfiguration(self, name):
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers/'+name)
@@ -134,7 +131,6 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         settings.endGroup()
         
         return (host, port, user, password)
-    
     
     def removeServerConfiguration(self, name):
         settings = QSettings()

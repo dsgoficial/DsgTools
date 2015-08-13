@@ -20,18 +20,14 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os, sys
+import os
 
-# QGIS imports
-import qgis as qgis
-from qgis.gui import QgsMessageBar
-from qgis.core import QgsCoordinateReferenceSystem,QgsDataSourceURI,QgsVectorLayer,QgsMapLayerRegistry,QgsMessageLog
+from qgis.core import QgsCoordinateReferenceSystem,QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, QtCore, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, Qt
-from PyQt4.QtSql import QSqlQuery
-from PyQt4.QtGui import QApplication, QCursor
+from PyQt4 import QtGui, uic
+from PyQt4.QtCore import pyqtSlot, pyqtSignal
+from PyQt4.QtSql import QSqlDatabase
 
 # DSGTools imports
 from DsgTools.Utils.utils import Utils
