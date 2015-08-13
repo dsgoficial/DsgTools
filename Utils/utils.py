@@ -145,5 +145,5 @@ class Utils:
         dbList = []
         while query.next():
             dbList.append(query.value(0))
-        return dbList
+        return browseServer(dbList,host,port,user,password)
             
