@@ -93,7 +93,7 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
 
     def populateServersCombo(self):
         self.serversCombo.clear()
-        self.serversCombo.addItem("Select Server")
+        self.serversCombo.addItem(self.tr('Select Server'))
         currentConnections = self.getServers()
         for connection in currentConnections:
             self.serversCombo.addItem(connection)
@@ -123,7 +123,7 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
             else:
                 newConnections.append(dbname)
         
-        msg = 'Information:\n'
+        msg = self.tr('Information:\n')
         if len(existentConnections) > 0:
             msg += self.tr('The following databases connections already exist:\n')  
             for conn in existentConnections:

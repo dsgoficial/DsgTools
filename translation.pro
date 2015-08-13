@@ -16,7 +16,9 @@
  					dsg_tools.py \
 					InventoryTools/inventoryTools.py \
 					Factories/ThreadFactory/inventoryThread.py \
-					ToolboxTools/models_and_scripts_installer.py
+					ToolboxTools/models_and_scripts_installer.py \
+					ServerTools/serverDBExplorer.py \
+					CustomWidgets/connectionWidget.py
 
  FORMS           =	ComplexTools/complexWindow_base.ui \
  					ComplexTools/ui_manageComplex.ui \
@@ -30,7 +32,9 @@
  					ServerTools/ui_viewServers.ui \
  					ui_about.ui \
 					InventoryTools/ui_inventoryTools.ui \
-					ToolboxTools/models_and_scripts_installer.ui
+					ToolboxTools/models_and_scripts_installer.ui \
+					ServerTools/ui_serverDBExplorer.ui \
+					CustomWidgets/connectionWidget.ui
 
  TRANSLATIONS    = i18n/DsgTools_pt.ts
 

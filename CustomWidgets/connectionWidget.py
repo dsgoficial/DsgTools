@@ -138,7 +138,7 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         try:
             self.epsg = self.utils.findEPSG(self.db)
             if self.epsg == -1:
-                self.problemOccurred.emit('Coordinate Reference System not set or invalid!')
+                self.problemOccurred.emit(self.tr('Coordinate Reference System not set or invalid!'))
             else:
                 self.crs = QgsCoordinateReferenceSystem(self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
                 if self.isSpatialite:
@@ -152,7 +152,7 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
 
     def populatePostGISConnectionsCombo(self):
         self.comboBoxPostgis.clear()
-        self.comboBoxPostgis.addItem("Select Database")
+        self.comboBoxPostgis.addItem(self.tr('Select Database'))
         self.comboBoxPostgis.addItems(self.utils.getPostGISConnections())
         
     def isDBConnected(self):
