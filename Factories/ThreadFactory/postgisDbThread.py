@@ -21,7 +21,7 @@
  ***************************************************************************/
 """# Import the PyQt and QGIS libraries
 from PyQt4.QtCore import *
-from PyQt4.QtSql import QSqlQuery
+from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 
 from qgis.core import QgsMessageLog
 
@@ -106,6 +106,7 @@ class PostgisDbThread(GenericThread):
                     QgsMessageLog.logMessage(self.messenger.getProblemMessage(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     self.db.rollback()
                     self.db.close()
+                    self.dropDatabase(self.db)
                     return (0, self.messenger.getProblemFeedbackMessage())
 
                 # Updating progress
@@ -113,6 +114,7 @@ class PostgisDbThread(GenericThread):
             else:
                 self.db.rollback()
                 self.db.close()
+                self.dropDatabase(self.db)                
                 QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
                 return (-1, self.messenger.getUserCanceledFeedbackMessage())
 
@@ -123,3 +125,21 @@ class PostgisDbThread(GenericThread):
         self.db.close()
         QgsMessageLog.logMessage(self.messenger.getSuccessFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
         return (1, self.messenger.getSuccessFeedbackMessage())
+
+    def dropDatabase(self,db):
+        host = db.hostName()
+        port = db.port()
+        user = db.userName()
+        password = db.password()
+        database = 'postgres'
+        pgDB = QSqlDatabase('QPSQL')
+        pgDB.setHostName(host)
+        pgDB.setPort(port)
+        pgDB.setUserName(user)
+        pgDB.setPassword(password)
+        pgDB.setDatabaseName(database)
+        if not pgDB.open():
+            pass
+        sql = self.gen.dropDatabase(db.databaseName())
+        query = QSqlQuery(pgDB)
+        return query.exec_(sql)
