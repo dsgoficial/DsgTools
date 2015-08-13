@@ -37,6 +37,8 @@ from PyQt4.QtGui import QApplication, QCursor
 from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 
+from DsgTools.ServerTools.serverDBExplorer import ServerDBExplorer
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'connectionWidget.ui'))
 
@@ -54,7 +56,8 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         
-        self.setInitialState()        
+        self.setInitialState()
+        self.newConnectionDialog =  ServerDBExplorer(self)
          
     def __del__(self):
         self.closeDatabase()
@@ -167,3 +170,9 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
     def getQmlPath(self):
         if self.isDBConnected():
             return self.utils.getQmlDir(self.db)
+        
+        
+    @pyqtSlot(bool)
+    def on_addConnectionButton_clicked(self):  
+        return self.newConnectionDialog.exec_()
+        
