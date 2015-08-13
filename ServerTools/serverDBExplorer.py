@@ -114,19 +114,25 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
     def on_createConnectionPushButton_clicked(self):
         items = self.serverListWidget.selectedItems()
         existentConnections = []
+        newConnections = []
         for item in items:
             dbname = item.data(Qt.UserRole)
             ret = self.utils.storeConnection(self.serversCombo.currentText(), dbname)
             if not ret:
                 existentConnections.append(dbname)
+            else:
+                newConnections.append(dbname)
         
+        msg = 'Information:\n'
         if len(existentConnections) > 0:
-            msg = self.tr('The following databases connections already exist:\n')  
+            msg += self.tr('The following databases connections already exist:\n')  
             for conn in existentConnections:
-                msg += conn+'\n'
-            QMessageBox.warning(self, self.tr("Warning!"), msg)
-        else:
-            QMessageBox.warning(self, self.tr("Warning!"), self.tr('Connections created successfully!'))
+                msg += conn+', '
+        if len(newConnections) > 0:
+            msg += self.tr('\nThe following databases connections were created successfully!:\n')  
+            for conn in newConnections:
+                msg += conn+', '
+        QMessageBox.warning(self, self.tr("Warning!"), msg)
             
     @pyqtSlot(bool)
     def on_selectAllPushButton_clicked(self):
