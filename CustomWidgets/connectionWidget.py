@@ -57,7 +57,6 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
         
         self.setInitialState()
-        self.newConnectionDialog =  ServerDBExplorer(self)
          
     def __del__(self):
         self.closeDatabase()
@@ -94,10 +93,6 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
     def on_pushButtonOpenFile_clicked(self):  
         self.loadDatabase()
         self.connectionChanged.emit()
-        
-    @pyqtSlot(bool)
-    def on_addConnectionButton_clicked(self):  
-        print 'Oi'
         
     @pyqtSlot(int)
     def on_tabWidget_currentChanged(self):
@@ -171,8 +166,9 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         if self.isDBConnected():
             return self.utils.getQmlDir(self.db)
         
-        
     @pyqtSlot(bool)
     def on_addConnectionButton_clicked(self):  
-        return self.newConnectionDialog.exec_()
-        
+        newConnectionDialog =  ServerDBExplorer(self)
+        retvalue = newConnectionDialog.exec_()
+        self.populatePostGISConnectionsCombo()
+        return retvalue

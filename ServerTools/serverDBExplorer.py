@@ -30,14 +30,16 @@ from qgis.core import QgsCoordinateReferenceSystem,QgsDataSourceURI,QgsVectorLay
 
 # Qt imports
 from PyQt4 import QtGui, QtCore, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, Qt
+from PyQt4.QtCore import pyqtSlot, pyqtSignal, Qt, QSettings
 from PyQt4.QtSql import QSqlQuery
-from PyQt4.QtGui import QApplication, QCursor
+from PyQt4.QtGui import QApplication, QCursor, QListWidgetItem, QMessageBox
 
 # DSGTools imports
 from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.ServerTools.viewServers import ViewServers
+from PyQt4.Qt import QVariant
+from OpenGL.raw.GL.APPLE import row_bytes
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_serverDBExplorer.ui'))
@@ -53,12 +55,82 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.createNewServer = ViewServers(self)
- 
-         
-    def __del__(self):
-        pass
+        self.utils = Utils()
+        
+        self.factory = SqlGeneratorFactory()
+        #setting the sql generator
+        self.gen = self.factory.createSqlGenerator(False)
+        
+        self.populateServersCombo()
+        
+    def getServers(self):
+        settings = QSettings()
+        settings.beginGroup('PostgreSQL/servers')
+        currentConnections = settings.childGroups()
+        settings.endGroup()
+        return currentConnections
+    
+    def storeConnectionConfiguration(self, server, database):
+        name = self.connectionEdit.text()
+        
+        (host, port, user, password) = self.getServerConfiguration(server)
+        
+        settings = QSettings()
+        if not settings.contains('PostgreSQL/servers/'+name+'/host'):
+            settings.beginGroup('PostgreSQL/connections/'+name)
+            settings.setValue('database', database)
+            settings.setValue('host', host)
+            settings.setValue('port', port)
+            settings.setValue('username', user)
+            settings.setValue('password', password)
+            settings.endGroup()
     
     @pyqtSlot(bool)
     def on_createNewServerPushButton_clicked(self):  
-        return self.createNewServer.exec_()
+        createNewServer = ViewServers(self)
+        createNewServer.exec_()
+        self.populateServersCombo()
+
+    def populateServersCombo(self):
+        self.serversCombo.clear()
+        self.serversCombo.addItem("Select Server")
+        currentConnections = self.getServers()
+        for connection in currentConnections:
+            self.serversCombo.addItem(connection)
+    
+    @pyqtSlot(int)
+    def on_serversCombo_currentIndexChanged(self):
+        self.serverListWidget.clear()
+        if not self.serversCombo.currentIndex() > 0:
+            return
+        
+        dbList = self.utils.getDbsFromServer(self.serversCombo.currentText())
+        for (dbname, dbversion) in dbList:
+            item =  QListWidgetItem(self.serverListWidget)
+            item.setText(dbname+' (EDGV v. '+dbversion+')')
+            item.setData(Qt.UserRole, dbname)
+            
+    @pyqtSlot(bool)
+    def on_createConnectionPushButton_clicked(self):
+        items = self.serverListWidget.selectedItems()
+        existentConnections = []
+        for item in items:
+            dbname = item.data(Qt.UserRole)
+            ret = self.utils.storeConnection(self.serversCombo.currentText(), dbname)
+            if not ret:
+                existentConnections.append(dbname)
+        
+        if len(existentConnections) > 0:
+            msg = self.tr('The following databases connections already exist:\n')  
+            for conn in existentConnections:
+                msg += conn+'\n'
+            QMessageBox.warning(self, self.tr("Warning!"), msg)
+        else:
+            QMessageBox.warning(self, self.tr("Warning!"), self.tr('Connections created successfully!'))
+            
+    @pyqtSlot(bool)
+    def on_selectAllPushButton_clicked(self):
+        count = self.serverListWidget.count()
+        for row in range(count):
+            item = self.serverListWidget.item(row)
+            item.setSelected(True)        

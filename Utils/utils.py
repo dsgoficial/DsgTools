@@ -87,9 +87,12 @@ class Utils:
         return (filename, db)
 
     def getPostGISDatabase(self, postGISConnection):
+        (database, host, port, user, password) = self.getPostGISConnectionParameters(postGISConnection)
+        return self.getPostGISDatabaseWithParams(database, host, port, user, password)
+    
+    def getPostGISDatabaseWithParams(self, database, host, port, user, password):
         db = None
         db = QSqlDatabase("QPSQL")
-        (database, host, port, user, password) = self.getPostGISConnectionParameters(postGISConnection)
         db.setDatabaseName(database)
         db.setHostName(host)
         db.setPort(int(port))
@@ -124,26 +127,49 @@ class Utils:
         return (host, port, user, password)
     
     def browseServer(self,dbList,host,port,user,password):
-        sql = self.factory.getEDGVVersion()
+        gen = self.factory.createSqlGenerator(False)
         edvgDbList = []
         for database in dbList:
-            db = self.getPostGISDatabase((database,host,port,user,password))
-            query = QSqlQuery(sql,db)
+            db = self.getPostGISDatabaseWithParams(database,host,port,user,password)
+            if not db.open():
+                print db.lastError().text()
+
+            query = QSqlQuery(gen.getEDGVVersion(),db)
             while query.next():
                 version = query.value(0)
-            if version:
-                edgvDbList.append((database,version))
-        return edgvDbList
+                if version:
+                    edvgDbList.append((database,version))
+        return edvgDbList
         
     def getDbsFromServer(self,name):
+        gen = self.factory.createSqlGenerator(False)
+        
         (host, port, user, password) = self.getServerConfiguration(name)
         database = 'postgres'
         
-        db = self.getPostGISDatabase((database,host,port,user,password))
-        sql = self.factory.getDatabasesFromServer()
-        query = QSqlQuery(sql,db)
+        db = self.getPostGISDatabaseWithParams(database,host,port,user,password)
+        if not db.open():
+            print db.lastError().text()
+        
+        query = QSqlQuery(gen.getDatabasesFromServer(),db)
         dbList = []
         while query.next():
             dbList.append(query.value(0))
-        return browseServer(dbList,host,port,user,password)
+        return self.browseServer(dbList,host,port,user,password)
+    
+    def storeConnection(self, server, database):
+        (host, port, user, password) = self.getServerConfiguration(server)
+        
+        connection = server+'_'+database
+        settings = QSettings()
+        if not settings.contains('PostgreSQL/connections/'+connection+'/database'):
+            settings.beginGroup('PostgreSQL/connections/'+connection)
+            settings.setValue('database', database)
+            settings.setValue('host', host)
+            settings.setValue('port', port)
+            settings.setValue('username', user)
+            settings.setValue('password', password)
+            settings.endGroup()
+            return True
+        return False
             

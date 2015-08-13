@@ -39,7 +39,6 @@ class SqlGenerator:
     def getSrid(self):
         return None
 
-
     def getEDGVVersion(self):
         sql = "SELECT edgvversion FROM db_metadata LIMIT 1"
         return sql
