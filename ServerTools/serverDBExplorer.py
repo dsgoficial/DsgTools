@@ -21,25 +21,17 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os, sys
-
-# QGIS imports
-import qgis as qgis
-from qgis.gui import QgsMessageBar
-from qgis.core import QgsCoordinateReferenceSystem,QgsDataSourceURI,QgsVectorLayer,QgsMapLayerRegistry,QgsMessageLog
+import os
 
 # Qt imports
-from PyQt4 import QtGui, QtCore, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, Qt, QSettings
-from PyQt4.QtSql import QSqlQuery
-from PyQt4.QtGui import QApplication, QCursor, QListWidgetItem, QMessageBox
+from PyQt4 import QtGui, uic
+from PyQt4.QtCore import pyqtSlot, Qt, QSettings
+from PyQt4.QtGui import QListWidgetItem, QMessageBox
 
 # DSGTools imports
 from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.ServerTools.viewServers import ViewServers
-from PyQt4.Qt import QVariant
-from OpenGL.raw.GL.APPLE import row_bytes
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_serverDBExplorer.ui'))
