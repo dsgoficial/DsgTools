@@ -10,7 +10,7 @@
 name=DSG Tools
 qgisMinimumVersion=2.6
 description=Brazilian Army Cartographic Production Tools
-version=1.4.1
+version=1.5
 author=Brazilian Army - Geographic Service Bureau
 email=suporte.dsgtools@dsg.eb.mil.br
 about=
@@ -39,7 +39,8 @@ changelog=
 	1.3 - New Inventory Tool added. Now it's possible to scan recursively a folder and make a inventory of all geospatial data supported by GDAL/OGR. Bug fix on BDGExTools.
 	1.3.1 - Minor bug fix on Inventory Tools for Windows OS.
 	1.4 - New tool to install Models and Script (geoalgorithms) in the Processing Toolbox. HSV fusion script added. New model added.
-	1.4.1 - RapidEye Tile Cache service back on air. 
+	1.4.1 - RapidEye Tile Cache service back on air.
+	1.5 - Improvements on the Inventory Tool. New server browser for EDGV databases. Minor bug fixes.
 
 # Tags are comma separated with spaces allowed
 tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script
