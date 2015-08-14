@@ -23,8 +23,10 @@ about=
 	-Inventory Tool for all geospatial data supported by GDAL/OGR.
 	-Tool to install Models and Script (geoalgorithms) in the Processing Toolbox (HSV fusion script available).
 	Requirements for LINUX (Ubuntu/Debian):
-	Install python-qt4-sql as follows:
+	Install the following packages as follows:
 	sudo apt-get install python-qt4-sql
+	sudo apt-get install libqt4-sql-psql
+	sudo apt-get install libqt4-sql-sqlite
 
 # End of mandatory metadata
 
