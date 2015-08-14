@@ -88,7 +88,8 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_pushButtonOpenFile_clicked(self):  
         self.loadDatabase()
-        self.connectionChanged.emit()
+        if self.isDBConnected():
+            self.connectionChanged.emit()
         
     @pyqtSlot(int)
     def on_tabWidget_currentChanged(self):

@@ -109,6 +109,7 @@ class PostgisDBTool(QDialog, Ui_Dialog):
         db.setPort(int(port))
         db.setUserName(user)
         db.setPassword(password)
+        db.setConnectOptions('connect_timeout=10')
         if not db.open():
             QgsMessageLog.logMessage(db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
