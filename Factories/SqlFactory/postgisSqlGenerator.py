@@ -83,6 +83,6 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "SELECT datname FROM pg_database"
         return sql
     
-    def dropDatabase(self,name):
+    def dropDatabase(self, name):
         sql = "DROP DATABASE "+name
-        return SqlGenerator
+        return sql

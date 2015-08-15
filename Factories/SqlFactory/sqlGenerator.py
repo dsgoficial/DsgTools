@@ -61,5 +61,5 @@ class SqlGenerator:
     def getDatabasesFromServer(self):
         return None
     
-    def dropDatabase(self,name):
+    def dropDatabase(self, name):
         return None
