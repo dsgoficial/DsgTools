@@ -99,7 +99,6 @@ class PostgisDbThread(GenericThread):
         self.db.transaction()
         query = QSqlQuery(self.db)
 
-        update = True
         for command in commands:
             if not self.stopped[0]:
                 if not query.exec_(command):
