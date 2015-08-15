@@ -36,7 +36,7 @@ class PostgisDbMessages(QObject):
 
         self.thread = thread
 
-    def getProblemMessage(self):
+    def getProblemMessage(self, command, query):
         return self.tr("Problem on database structure creation: ")+'SQL: '+command+'\n'+query.lastError().text()+'\n'
 
     def getProblemFeedbackMessage(self):
@@ -103,7 +103,7 @@ class PostgisDbThread(GenericThread):
         for command in commands:
             if not self.stopped[0]:
                 if not query.exec_(command):
-                    QgsMessageLog.logMessage(self.messenger.getProblemMessage(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage(self.messenger.getProblemMessage(command, query), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     self.db.rollback()
                     self.db.close()
                     self.dropDatabase(self.db)
@@ -118,9 +118,6 @@ class PostgisDbThread(GenericThread):
                 QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
                 return (-1, self.messenger.getUserCanceledFeedbackMessage())
 
-        self.db.commit()
-        sql = self.gen.allowConnections(self.db.connectionName())
-        query = QSqlQuery(sql,self.db)
         self.db.commit()
         self.db.close()
         QgsMessageLog.logMessage(self.messenger.getSuccessFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
@@ -139,7 +136,7 @@ class PostgisDbThread(GenericThread):
         pgDB.setPassword(password)
         pgDB.setDatabaseName(database)
         if not pgDB.open():
-            pass
+            return False
         sql = self.gen.dropDatabase(db.databaseName())
         query = QSqlQuery(pgDB)
         return query.exec_(sql)
