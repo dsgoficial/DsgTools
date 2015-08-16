@@ -133,11 +133,11 @@ class Utils:
         for database in dbList:
             db = self.getPostGISDatabaseWithParams(database,host,port,user,password)
             if not db.open():
-                qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+db.lastError().text(), level=QgsMessageBar.CRITICAL)
+                qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+db.lastError().databaseText(), level=QgsMessageBar.CRITICAL)
 
             query = QSqlQuery(db)
             if not query.exec_(gen.getEDGVVersion()):
-                qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+query.lastError().text(), level=QgsMessageBar.CRITICAL)
+                qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+query.lastError().databaseText(), level=QgsMessageBar.CRITICAL)
             else:
                 while query.next():
                     version = query.value(0)
