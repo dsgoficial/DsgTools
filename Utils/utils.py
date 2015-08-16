@@ -25,6 +25,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtSql import QSqlDatabase,QSqlQuery
 
 import qgis as qgis
+from qgis.gui import QgsMessageBar
 
 import os
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
@@ -132,13 +133,16 @@ class Utils:
         for database in dbList:
             db = self.getPostGISDatabaseWithParams(database,host,port,user,password)
             if not db.open():
-                print db.lastError().text()
+                qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+db.lastError().text(), level=QgsMessageBar.CRITICAL)
 
-            query = QSqlQuery(gen.getEDGVVersion(),db)
-            while query.next():
-                version = query.value(0)
-                if version:
-                    edvgDbList.append((database,version))
+            query = QSqlQuery(db)
+            if not query.exec_(gen.getEDGVVersion()):
+                qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+query.lastError().text(), level=QgsMessageBar.CRITICAL)
+            else:
+                while query.next():
+                    version = query.value(0)
+                    if version:
+                        edvgDbList.append((database,version))
         return edvgDbList
         
     def getDbsFromServer(self,name):
