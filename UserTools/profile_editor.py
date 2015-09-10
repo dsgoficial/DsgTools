@@ -133,21 +133,22 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         rootItem = self.treeWidget.invisibleRootItem()
         #database item
         dbItem = rootItem.child(0)
-        profileDict = self.getItemCheckState(dbItem)
+        permissions = self.getItemCheckState(dbItem)
         
         schema_count = dbItem.childCount()
         for i in range(schema_count):
             schemaItem = dbItem.child(i)
-            profileDict[schemaItem.text(0)] = self.getItemCheckState(schemaItem)
+            permissions[schemaItem.text(0)] = self.getItemCheckState(schemaItem)
             category_count = schemaItem.childCount()
             for j in range(category_count):
                 categoryItem = schemaItem.child(j)
-                profileDict[schemaItem.text(0)][categoryItem.text(0)] = self.getItemCheckState(categoryItem)
+                permissions[schemaItem.text(0)][categoryItem.text(0)] = self.getItemCheckState(categoryItem)
                 layer_count = categoryItem.childCount()
                 for k in range(layer_count):
                     layerItem = categoryItem.child(k)
-                    profileDict[schemaItem.text(0)][categoryItem.text(0)][layerItem.text(0)] = self.getItemCheckState(layerItem)
-                    
+                    permissions[schemaItem.text(0)][categoryItem.text(0)][layerItem.text(0)] = self.getItemCheckState(layerItem)
+                 
+        profileDict['database'] = permissions   
         return profileDict
     
     def getItemCheckState(self, item):
