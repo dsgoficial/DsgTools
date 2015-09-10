@@ -31,6 +31,8 @@ from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 
+import json
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'profile_editor.ui'))
 
@@ -91,7 +93,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         #database item
         dbItem = self.createItem(rootItem, self.tr('Database'))
         
-        categories = dict()
+        self.categories = dict()
         while query.next():
             #table name
             tableName = query.value(0)
@@ -106,24 +108,70 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
                 
                 schema = split[0]
                 category = split[1]
-                if schema not in categories.keys():
-                    categories[schema] = dict()
+                if schema not in self.categories.keys():
+                    self.categories[schema] = dict()
                     
                     #schema item
                     schemaItem = self.createItem(dbItem, schema)
                     
-                if category not in categories[schema].keys():
-                    categories[schema][category] = []
+                if category not in self.categories[schema].keys():
+                    self.categories[schema][category] = []
                     
                     #category item
                     categoryItem = self.createItem(schemaItem, category)
 
-                if layerName not in categories[schema][category]:
-                    categories[schema][category].append(category)
+                if layerName not in self.categories[schema][category]:
+                    self.categories[schema][category].append(layerName)
                     
                     #layer item
                     layerItem = self.createItem(categoryItem, layerName)
+                    
+    def makeProfileDict(self):
+        profileDict = dict()
+        
+        #invisible root item
+        rootItem = self.treeWidget.invisibleRootItem()
+        #database item
+        dbItem = rootItem.child(0)
+        profileDict = self.getItemCheckState(dbItem)
+        
+        schema_count = dbItem.childCount()
+        for i in range(schema_count):
+            schemaItem = dbItem.child(i)
+            profileDict[schemaItem.text(0)] = self.getItemCheckState(schemaItem)
+            category_count = schemaItem.childCount()
+            for j in range(category_count):
+                categoryItem = schemaItem.child(j)
+                profileDict[schemaItem.text(0)][categoryItem.text(0)] = self.getItemCheckState(categoryItem)
+                layer_count = categoryItem.childCount()
+                for k in range(layer_count):
+                    layerItem = categoryItem.child(k)
+                    profileDict[schemaItem.text(0)][categoryItem.text(0)][layerItem.text(0)] = self.getItemCheckState(layerItem)
+                    
+        return profileDict
     
+    def getItemCheckState(self, item):
+        ret = dict()
+        ret['read'] = str(item.checkState(1))
+        ret['write'] = str(item.checkState(2))
+        ret['create'] = str(item.checkState(3))
+        ret['drop'] = str(item.checkState(4))
+        ret['super'] = str(item.checkState(5))
+        return ret
+        
     @pyqtSlot(int)
     def on_comboBox_currentIndexChanged(self):
-         self.setInitialState()  
+         self.setInitialState()
+         
+    @pyqtSlot(bool)
+    def on_saveButton_clicked(self):
+        if not self.profileEdit.text():
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Fill the profile name!'))
+            return
+        else:
+            profile = self.profileEdit.text()
+            
+        path = os.path.join(os.path.dirname(__file__), profile+'.json')
+        
+        with open(path, 'w') as outfile:
+            json.dump(self.makeProfileDict(), outfile)
