@@ -52,6 +52,8 @@ from DsgTools.InventoryTools.inventoryTools import InventoryTools
 
 from DsgTools.ToolboxTools.models_and_scripts_installer import ModelsAndScriptsInstaller
 
+from DsgTools.UserTools.profile_editor import ProfileEditor
+
 from qgis.utils import showPluginHelp
 
 class DsgTools:
@@ -417,6 +419,16 @@ class DsgTools:
             add_to_toolbar=False)
         self.dsgTools.addAction(action)
 
+        icon_path = ':/plugins/DsgTools/icons/profile.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Profile Editor'),
+            callback=self.showProfileEditor,
+            parent=self.dsgTools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        self.dsgTools.addAction(action)
+
         icon_path = ':/plugins/DsgTools/icons/dsg.png'
         action = self.add_action(
             icon_path,
@@ -527,6 +539,10 @@ class DsgTools:
 
     def showAbout(self):
         dlg = aboutdialog.AboutDialog()
+        dlg.exec_()
+        
+    def showProfileEditor(self):
+        dlg = ProfileEditor()
         dlg.exec_()
 
     def showHelp(self):

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>478</width>
-    <height>287</height>
+    <width>593</width>
+    <height>326</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>User:</string>
+        <string>Database:</string>
        </property>
       </widget>
      </item>
@@ -77,11 +77,20 @@
      <item>
       <widget class="QGroupBox" name="groupBox_2">
        <property name="title">
-        <string>Installed Profiles</string>
+        <string>Assigned Profiles</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">
-         <widget class="QListView" name="listView"/>
+         <widget class="QTreeWidget" name="treeWidget">
+          <attribute name="headerVisible">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string notr="true">1</string>
+           </property>
+          </column>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -114,6 +123,16 @@
     </layout>
    </item>
   </layout>
+  <zorder>layoutWidget</zorder>
+  <zorder>groupBox</zorder>
+  <zorder>groupBox_2</zorder>
+  <zorder>insertAllButton</zorder>
+  <zorder>insertButton</zorder>
+  <zorder>removeButton</zorder>
+  <zorder>removeAllButton</zorder>
+  <zorder>label</zorder>
+  <zorder>comboBox</zorder>
+  <zorder>pushButton_2</zorder>
  </widget>
  <resources/>
  <connections/>

@@ -18,5 +18,6 @@
         <file>icons/eb.png</file>
         <file>icons/inventory.png</file>
         <file>icons/install.png</file>
+        <file>icons/profile.png</file>
     </qresource>
 </RCC>
