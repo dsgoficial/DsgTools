@@ -71,7 +71,8 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
             #QgsMessageLog.logMessage(self.db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             print self.db.lastError().text()
             
-        self.populateTreeWidget()
+        #self.populateTreeWidget()
+        self.readJsonFile('filename')
         
     def createItem(self, parent, text):
         item = QtGui.QTreeWidgetItem(parent)
@@ -91,7 +92,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         #invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
         #database item
-        dbItem = self.createItem(rootItem, self.tr('Database'))
+        dbItem = self.createItem(rootItem, 'database')
         
         self.categories = dict()
         while query.next():
@@ -133,16 +134,16 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         rootItem = self.treeWidget.invisibleRootItem()
         #database item
         dbItem = rootItem.child(0)
-        permissions = self.getItemCheckState(dbItem)
+        permissions = dict()
         
         schema_count = dbItem.childCount()
         for i in range(schema_count):
             schemaItem = dbItem.child(i)
-            permissions[schemaItem.text(0)] = self.getItemCheckState(schemaItem)
+            permissions[schemaItem.text(0)] = dict()
             category_count = schemaItem.childCount()
             for j in range(category_count):
                 categoryItem = schemaItem.child(j)
-                permissions[schemaItem.text(0)][categoryItem.text(0)] = self.getItemCheckState(categoryItem)
+                permissions[schemaItem.text(0)][categoryItem.text(0)] = dict()
                 layer_count = categoryItem.childCount()
                 for k in range(layer_count):
                     layerItem = categoryItem.child(k)
@@ -150,6 +151,45 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
                  
         profileDict['database'] = permissions   
         return profileDict
+    
+    def readJsonFile(self, filename):
+        try:
+            file = open('/home/lclaudio/.qgis2/python/plugins/DsgTools/UserTools/teste.json', 'r')
+            data = file.read()
+            profileDict = json.loads(data)
+        except:
+            profileDict = dict()
+            
+        #invisible root item
+        rootItem = self.treeWidget.invisibleRootItem()
+        #database item
+        dbItem = self.createItem(rootItem, 'database')
+
+        permissions = profileDict['database']
+        self.createChildrenItems(dbItem, permissions)
+                                        
+    def createChildrenItems(self, parent, mydict):
+        #permissions
+        lista = ['read', 'write', 'create', 'drop', 'super']
+        for key in mydict.keys():
+            if key in lista:
+                self.setItemCheckState(parent, mydict, key)
+            else:
+                itemText = key
+                item = self.createItem(parent, itemText)
+                self.createChildrenItems(item, mydict[key])
+                
+    def setItemCheckState(self, item, mydict, key):
+        if key == 'read':
+            item.setCheckState(1, int(mydict[key]))
+        elif key == 'write':
+            item.setCheckState(2, int(mydict[key]))
+        elif key == 'create':
+            item.setCheckState(3, int(mydict[key]))
+        elif key == 'drop':
+            item.setCheckState(4, int(mydict[key]))
+        elif key == 'super':
+            item.setCheckState(5, int(mydict[key]))
     
     def getItemCheckState(self, item):
         ret = dict()
