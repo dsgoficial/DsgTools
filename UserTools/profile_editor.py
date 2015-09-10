@@ -53,7 +53,8 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         
         self.db = None
         
-        self.setInitialState()      
+        self.setInitialState()
+        self.profileEdit.setText('teste')
         
     def setInitialState(self):
         if self.db:
