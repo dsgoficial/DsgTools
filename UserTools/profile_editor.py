@@ -178,7 +178,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
             data = file.read()
             profileDict = json.loads(data)
         except:
-            profileDict = dict()
+            return
             
         #invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
@@ -239,6 +239,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         path = os.path.join(self.folder, profile+'.json')
         
         with open(path, 'w') as outfile:
-            json.dump(self.makeProfileDict(), outfile)
-            if self.jsonCombo.findText(profile) == -1:
-                self.jsonCombo.addItem(profile)
+            json.dump(self.makeProfileDict(), outfile, sort_keys=True, indent=4)
+
+        if self.jsonCombo.findText(profile) == -1:
+            self.jsonCombo.addItem(profile)
