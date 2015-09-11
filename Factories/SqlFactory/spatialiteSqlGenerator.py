@@ -54,7 +54,7 @@ class SpatialiteSqlGenerator(SqlGenerator):
         return sql
 
     def getTablesFromDatabase(self):
-        sql = "SELECT name FROM sqlite_master WHERE type='table'"
+        sql = "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
         return sql
 
     def disassociateComplexFromComplex(self, aggregated_class, link_column, uuid):
