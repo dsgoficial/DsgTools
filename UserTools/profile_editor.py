@@ -30,6 +30,7 @@ from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 # DSGTools imports
 from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.UserTools.create_profile import CreateProfile
 
 import json
 
@@ -54,14 +55,9 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         self.utils = Utils()
 
         self.folder = os.path.join(os.path.dirname(__file__), 'profiles')
-        self.jsonCombo.addItems(self.getProfiles())
+        self.getProfiles()
         self.setInitialState()
         
-    def __del__(self):
-        if self.db:
-            self.db.close()
-            self.db = None
-
     def getProfiles(self):
         ret = []
         for root, dirs, files in os.walk(self.folder):
@@ -69,27 +65,16 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
                 ext = file.split('.')[-1]
                 if ext == 'json':
                     ret.append(file.split('.')[0])
-        return ret
+
+        self.jsonCombo.clear()
+        self.jsonCombo.addItems(ret)
 
     def setInitialState(self):
         self.treeWidget.clear()
 
         if self.jsonCombo.count() == 0:
-            currentPath = os.path.dirname(__file__)
-            if self.versionCombo.currentText() == '2.1.3':
-                edgvPath = os.path.join(currentPath, '..', 'DbTools', 'SpatialiteTool', 'template', '213', 'seed_edgv213.sqlite')
-            else:
-                edgvPath = os.path.join(currentPath, '..', 'DbTools', 'SpatialiteTool', 'template', '30', 'seed_edgv30.sqlite')
-
-            self.db = QSqlDatabase("QSQLITE")
-            self.db.setDatabaseName(edgvPath)
-            if not self.db.open():
-                #QgsMessageLog.logMessage(self.db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                print db.lastError().text()
-
-            self.populateTreeWidget()
-
-            self.db.close()
+            self.treeWidget.clear()
+            return
         else:
             profile = os.path.join(self.folder, self.jsonCombo.currentText()+'.json')
             self.readJsonFile(profile)
@@ -104,49 +89,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         item.setCheckState(5, QtCore.Qt.Unchecked)
         item.setText(0, text)
         return item
-            
-    def populateTreeWidget(self):
-        sql = self.gen.getTablesFromDatabase()
-        query = QSqlQuery(sql, self.db)
-        
-        #invisible root item
-        rootItem = self.treeWidget.invisibleRootItem()
-        #database item
-        dbItem = self.createItem(rootItem, 'database')
-        
-        self.categories = dict()
-        while query.next():
-            #table name
-            tableName = query.value(0)
-            
-            #proceed only for edgv tables
-            if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" or tableName.split("_")[-1] == "a":
-                layerName = tableName
-                split = tableName.split('_')
-                
-                if len(split) < 2:
-                    continue
-                
-                schema = split[0]
-                category = split[1]
-                if schema not in self.categories.keys():
-                    self.categories[schema] = dict()
-                    
-                    #schema item
-                    schemaItem = self.createItem(dbItem, schema)
-                    
-                if category not in self.categories[schema].keys():
-                    self.categories[schema][category] = []
-                    
-                    #category item
-                    categoryItem = self.createItem(schemaItem, category)
-
-                if layerName not in self.categories[schema][category]:
-                    self.categories[schema][category].append(layerName)
-                    
-                    #layer item
-                    layerItem = self.createItem(categoryItem, layerName)
-                    
+    
     def makeProfileDict(self):
         profileDict = dict()
         
@@ -169,7 +112,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
                     layerItem = categoryItem.child(k)
                     permissions[schemaItem.text(0)][categoryItem.text(0)][layerItem.text(0)] = self.getItemCheckState(layerItem)
                  
-        profileDict['database'] = permissions   
+        profileDict[self.parent] = permissions   
         return profileDict
     
     def readJsonFile(self, filename):
@@ -177,15 +120,16 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
             file = open(filename, 'r')
             data = file.read()
             profileDict = json.loads(data)
+            self.parent = profileDict.keys()[0]
         except:
             return
             
         #invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
         #database item
-        dbItem = self.createItem(rootItem, 'database')
+        dbItem = self.createItem(rootItem, self.parent)
 
-        permissions = profileDict['database']
+        permissions = profileDict[self.parent]
         self.createChildrenItems(dbItem, permissions)
                                         
     def createChildrenItems(self, parent, mydict):
@@ -221,13 +165,16 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         return ret
         
     @pyqtSlot(int)
-    def on_versionCombo_currentIndexChanged(self):
-         self.setInitialState()
-
-    @pyqtSlot(int)
     def on_jsonCombo_currentIndexChanged(self):
-         self.setInitialState()
+        self.setInitialState()
 
+    @pyqtSlot(bool)
+    def on_createButton_clicked(self):
+        dlg = CreateProfile()
+        result = dlg.exec_()
+        if result:
+            self.getProfiles()
+        
     @pyqtSlot(bool)
     def on_saveButton_clicked(self):
         if not self.jsonCombo.currentText():
@@ -240,6 +187,3 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         
         with open(path, 'w') as outfile:
             json.dump(self.makeProfileDict(), outfile, sort_keys=True, indent=4)
-
-        if self.jsonCombo.findText(profile) == -1:
-            self.jsonCombo.addItem(profile)

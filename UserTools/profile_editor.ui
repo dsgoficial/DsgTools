@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>677</width>
-    <height>492</height>
+    <width>652</width>
+    <height>449</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
      <item>
       <widget class="QComboBox" name="jsonCombo">
        <property name="editable">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="duplicatesEnabled">
         <bool>false</bool>
@@ -34,19 +34,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QPushButton" name="createButton">
        <property name="text">
-        <string>EDGV Version:</string>
+        <string>Create Profile</string>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="versionCombo">
-       <item>
-        <property name="text">
-         <string>2.1.3</string>
-        </property>
-       </item>
       </widget>
      </item>
     </layout>
