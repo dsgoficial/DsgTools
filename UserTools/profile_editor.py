@@ -50,6 +50,8 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         self.factory = SqlGeneratorFactory()
         self.gen = self.factory.createSqlGenerator(True)
         self.utils = Utils()
+
+        self.folder = os.path.join(os.path.dirname(__file__), 'profiles')
         
         self.db = None
 
@@ -61,9 +63,8 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
             self.db.close()
 
     def getProfiles(self):
-        folder = os.path.join(os.path.dirname(__file__), 'profiles')
         ret = []
-        for root, dirs, files in os.walk(folder):
+        for root, dirs, files in os.walk(self.folder):
             for file in files:
                 ext = file.split('.')[-1]
                 if ext == 'json':
@@ -91,7 +92,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
 
             self.populateTreeWidget()
         else:
-            profile = os.path.join(os.path.dirname(__file__), 'profiles', self.jsonCombo.currentText()+'.json')
+            profile = os.path.join(self.folder, self.jsonCombo.currentText()+'.json')
             self.readJsonFile(profile)
         
     def createItem(self, parent, text):
@@ -236,7 +237,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         else:
             profile = self.jsonCombo.currentText()
             
-        path = os.path.join(os.path.dirname(__file__), 'profiles', profile+'.json')
+        path = os.path.join(self.folder, profile+'.json')
         
         with open(path, 'w') as outfile:
             json.dump(self.makeProfileDict(), outfile)
