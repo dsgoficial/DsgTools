@@ -52,15 +52,8 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         self.utils = Utils()
 
         self.folder = os.path.join(os.path.dirname(__file__), 'profiles')
-        
-        self.db = None
-
         self.jsonCombo.addItems(self.getProfiles())
         self.setInitialState()
-
-    def __del__(self):
-        if self.db:
-            self.db.close()
 
     def getProfiles(self):
         ret = []
@@ -74,9 +67,6 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
     def setInitialState(self):
         self.treeWidget.clear()
 
-        if self.db:
-            self.db.close()
-
         if self.jsonCombo.count() == 0:
             currentPath = os.path.dirname(__file__)
             if self.versionCombo.currentText() == '2.1.3':
@@ -84,13 +74,15 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
             else:
                 edgvPath = os.path.join(currentPath, '..', 'DbTools', 'SpatialiteTool', 'template', '30', 'seed_edgv30.sqlite')
 
-            self.db = QSqlDatabase("QSQLITE")
-            self.db.setDatabaseName(edgvPath)
+            db = QSqlDatabase("QSQLITE")
+            db.setDatabaseName(edgvPath)
             if not self.db.open():
                 #QgsMessageLog.logMessage(self.db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                print self.db.lastError().text()
+                print db.lastError().text()
 
             self.populateTreeWidget()
+
+            db.close()
         else:
             profile = os.path.join(self.folder, self.jsonCombo.currentText()+'.json')
             self.readJsonFile(profile)
@@ -241,4 +233,5 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         
         with open(path, 'w') as outfile:
             json.dump(self.makeProfileDict(), outfile)
-            self.jsonCombo.addItem(profile)
+            if self.jsonCombo.findText(profile) == -1:
+                self.jsonCombo.addItem(profile)
