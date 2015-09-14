@@ -87,11 +87,40 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "DROP DATABASE "+name
         return sql
     
-    def createRole(self, mydict):
-        return None
+    def createRole(self, roleName, mydict):
+        sql = "CREATE ROLE "+roleName+" with NOLOGIN REPLICATION;\n"
+        for db in mydict.keys():
+            for schema in mydict[db].keys():
+                for cat in mydict[db][schema].keys():
+                    for table in mydict[db][schema][cat].keys():
+                        read = mydict[db][schema][cat][table]["read"]
+                        write = mydict[db][schema][cat][table]["write"]
+                        if write == '2':
+                            sql+='GRANT ALL on '+table+' to '+roleName+';\n'
+                        elif read == '2':
+                            sql+='GRANT SELECT on '+table+' to '+roleName+';\n'
+                sql += 'grant all on schema '+schema+' to '+roleName+';\n'
+                sql += 'revoke create on schema '+schema+' to '+roleName+';\n'
+                sql += 'grant usage on schema '+schema+' to '+roleName+';\n'
+                sql += 'grant execute on all functions in schema '+schema+' to '+roleName+';\n'
+                sql += 'grant usage on all sequences in schema '+schema+' to '+roleName+';\n'
+        
+        sql += 'grant all on all tables in schema information_schema to '+roleName+';\n'
+        sql += 'grant all on all tables in schema pg_catalog to '+roleName+';\n'
+        sql += 'grant all on schema information_schema to '+roleName+';\n'
+        sql += 'grant all on schema pg_catalog to '+roleName+';\n'
+        sql += 'revoke create on schema information_schema to '+roleName+';\n'
+        sql += 'revoke create on schema pg_catalog to '+roleName+';\n'
+        sql += 'grant usage on schema information_schema to '+roleName+';\n'
+        sql += 'grant usage on schema pg_catalog to '+roleName+';\n'
+        sql += 'grant usage on all sequences in schema information_schema to '+roleName+';\n'
+        sql += 'grant usage on all sequences in schema pg_catalog to '+roleName+';\n'
+        return sql
 
     def dropRole(self, role):
-        return None
+        sql = 'DROP ROLE IF EXISTS '+role
+        return sql
     
     def grantRole(self, user, role):
-        return None    
+        sql = 'GRANT '+role+' to '+user
+        return sql    
