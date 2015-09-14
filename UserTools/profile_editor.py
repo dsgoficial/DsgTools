@@ -32,6 +32,7 @@ from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.UserTools.create_profile import CreateProfile
 
+
 import json
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -71,13 +72,15 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
 
     def setInitialState(self):
         self.treeWidget.clear()
-
+        self.treeWidget.setSortingEnabled(False)
         if self.jsonCombo.count() == 0:
             self.treeWidget.clear()
             return
         else:
             profile = os.path.join(self.folder, self.jsonCombo.currentText()+'.json')
             self.readJsonFile(profile)
+#         self.treeWidget.setSortingEnabled(True)
+        self.treeWidget.sortByColumn(0,QtCore.Qt.AscendingOrder)
         
     def createItem(self, parent, text):
         item = QtGui.QTreeWidgetItem(parent)
@@ -167,7 +170,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(int)
     def on_jsonCombo_currentIndexChanged(self):
         self.setInitialState()
-
+    
     @pyqtSlot(bool)
     def on_createButton_clicked(self):
         dlg = CreateProfile()
@@ -187,3 +190,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         
         with open(path, 'w') as outfile:
             json.dump(self.makeProfileDict(), outfile, sort_keys=True, indent=4)
+    
+    @pyqtSlot(bool)
+    def on_cancelButton_clicked(self):
+        self.close()
