@@ -96,25 +96,25 @@ class PostGISSqlGenerator(SqlGenerator):
                         read = mydict[db][schema][cat][table]["read"]
                         write = mydict[db][schema][cat][table]["write"]
                         if write == '2':
-                            sql+='GRANT ALL on '+table+' to '+roleName+';\n'
+                            sql+='GRANT ALL ON '+table+' TO '+roleName+';\n'
                         elif read == '2':
-                            sql+='GRANT SELECT on '+table+' to '+roleName+';\n'
-                sql += 'grant all on schema '+schema+' to '+roleName+';\n'
-                sql += 'revoke create on schema '+schema+' to '+roleName+';\n'
-                sql += 'grant usage on schema '+schema+' to '+roleName+';\n'
-                sql += 'grant execute on all functions in schema '+schema+' to '+roleName+';\n'
-                sql += 'grant usage on all sequences in schema '+schema+' to '+roleName+';\n'
+                            sql+='GRANT SELECT ON '+table+' TO '+roleName+';\n'
+                sql += 'GRANT ALL ON SCHEMA '+schema+' TO '+roleName+';\n'
+                sql += 'REVOKE CREATE ON SCHEMA '+schema+' TO '+roleName+';\n'
+                sql += 'GRANT USAGE ON SCHEMA '+schema+' TO '+roleName+';\n'
+                sql += 'GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA '+schema+' TO '+roleName+';\n'
+                sql += 'GRANT USAGE ON ALL SEQUENCES IN SCHEMA '+schema+' TO '+roleName+';\n'
         
-        sql += 'grant all on all tables in schema information_schema to '+roleName+';\n'
-        sql += 'grant all on all tables in schema pg_catalog to '+roleName+';\n'
-        sql += 'grant all on schema information_schema to '+roleName+';\n'
-        sql += 'grant all on schema pg_catalog to '+roleName+';\n'
-        sql += 'revoke create on schema information_schema to '+roleName+';\n'
-        sql += 'revoke create on schema pg_catalog to '+roleName+';\n'
-        sql += 'grant usage on schema information_schema to '+roleName+';\n'
-        sql += 'grant usage on schema pg_catalog to '+roleName+';\n'
-        sql += 'grant usage on all sequences in schema information_schema to '+roleName+';\n'
-        sql += 'grant usage on all sequences in schema pg_catalog to '+roleName+';\n'
+        sql += 'GRANT ALL ON ALL TABLES IN SCHEMA information_schema TO '+roleName+';\n'
+        sql += 'GRANT ALL ON ALL TABLES IN SCHEMA pg_catalog TO '+roleName+';\n'
+        sql += 'GRANT ALL ON SCHEMA information_schema TO '+roleName+';\n'
+        sql += 'GRANT ALL ON SCHEMA pg_catalog TO '+roleName+';\n'
+        sql += 'REVOKE CREATE ON SCHEMA information_schema TO '+roleName+';\n'
+        sql += 'REVOKE CREATE ON SCHEMA pg_catalog TO '+roleName+';\n'
+        sql += 'GRANT USAGE ON SCHEMA information_schema TO '+roleName+';\n'
+        sql += 'GRANT USAGE ON SCHEMA pg_catalog TO '+roleName+';\n'
+        sql += 'GRANT USAGE ON ALL SEQUENCES IN SCHEMA information_schema TO '+roleName+';\n'
+        sql += 'GRANT USAGE ON ALL SEQUENCES IN SCHEMA pg_catalog TO '+roleName+';\n'
         return sql
 
     def dropRole(self, role):
@@ -122,5 +122,5 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def grantRole(self, user, role):
-        sql = 'GRANT '+role+' to '+user
+        sql = 'GRANT '+role+' TO '+user
         return sql    
