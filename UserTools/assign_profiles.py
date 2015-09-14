@@ -74,13 +74,11 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
             dict = self.parseJson(profile)
 
             sql = self.gen.createRole(role, dict)
-            print sql
             split = sql.split(';')
             query = QSqlQuery(self.widget.db)
 
             for inner in split:
                 if not query.exec_(inner):
-                    print 'deu merda'
                     print self.widget.db.lastError().text()
         
     def getProfiles(self):

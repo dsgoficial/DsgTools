@@ -114,7 +114,7 @@ class PostGISSqlGenerator(SqlGenerator):
         sql += 'GRANT USAGE ON SCHEMA information_schema TO '+roleName+';\n'
         sql += 'GRANT USAGE ON SCHEMA pg_catalog TO '+roleName+';\n'
         sql += 'GRANT USAGE ON ALL SEQUENCES IN SCHEMA information_schema TO '+roleName+';\n'
-        sql += 'GRANT USAGE ON ALL SEQUENCES IN SCHEMA pg_catalog TO '+roleName+';\n'
+        sql += 'GRANT USAGE ON ALL SEQUENCES IN SCHEMA pg_catalog TO '+roleName
         return sql
 
     def dropRole(self, role):
