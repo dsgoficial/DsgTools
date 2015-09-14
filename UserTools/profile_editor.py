@@ -48,7 +48,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.treeWidget.setColumnWidth(0, 300)
+        self.treeWidget.setColumnWidth(0, 400)
         
         self.db = None
         
@@ -68,13 +68,15 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
                 if ext == 'json':
                     ret.append(file.split('.')[0])
 
+        ret.sort()
         self.jsonCombo.clear()
+        self.jsonCombo.addItem(self.tr('Select a profile'))
         self.jsonCombo.addItems(ret)
 
     def setInitialState(self):
         self.treeWidget.clear()
         self.treeWidget.setSortingEnabled(False)
-        if self.jsonCombo.count() == 0:
+        if self.jsonCombo.count() == 0 or self.jsonCombo.currentIndex() == 0:
             self.treeWidget.clear()
             return
         else:
@@ -88,7 +90,6 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsTristate | QtCore.Qt.ItemIsUserCheckable)
         item.setCheckState(1, QtCore.Qt.Unchecked)
         item.setCheckState(2, QtCore.Qt.Unchecked)
-        item.setCheckState(3, QtCore.Qt.Unchecked)
         item.setText(0, text)
         return item
     
@@ -136,7 +137,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
                                         
     def createChildrenItems(self, parent, mydict):
         #permissions
-        lista = ['read', 'write', 'super']
+        lista = ['read', 'write']
         for key in mydict.keys():
             if key in lista:
                 self.setItemCheckState(parent, mydict, key)
@@ -150,14 +151,11 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
             item.setCheckState(1, int(mydict[key]))
         elif key == 'write':
             item.setCheckState(2, int(mydict[key]))
-        elif key == 'super':
-            item.setCheckState(3, int(mydict[key]))
     
     def getItemCheckState(self, item):
         ret = dict()
         ret['read'] = str(item.checkState(1))
         ret['write'] = str(item.checkState(2))
-        ret['super'] = str(item.checkState(3))
         return ret
         
     @pyqtSlot(int)

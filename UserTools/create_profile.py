@@ -106,7 +106,6 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
                     categories[schema][category][layerName] = dict()
                     categories[schema][category][layerName]['read'] = '0'
                     categories[schema][category][layerName]['write'] = '0'
-                    categories[schema][category][layerName]['super'] = '0'
                     
         self.profile['database'+'_'+self.versionCombo.currentText()] = categories
 

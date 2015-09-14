@@ -80,11 +80,6 @@
           <string>Write</string>
          </property>
         </column>
-        <column>
-         <property name="text">
-          <string>Super</string>
-         </property>
-        </column>
        </widget>
       </item>
      </layout>
