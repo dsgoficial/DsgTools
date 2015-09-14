@@ -86,3 +86,12 @@ class PostGISSqlGenerator(SqlGenerator):
     def dropDatabase(self, name):
         sql = "DROP DATABASE "+name
         return sql
+    
+    def createRole(self, mydict):
+        return None
+
+    def dropRole(self, role):
+        return None
+    
+    def grantRole(self, user, role):
+        return None    

@@ -80,3 +80,12 @@ class SpatialiteSqlGenerator(SqlGenerator):
     def getElementCountFromLayer(self, layer):
         sql = "SELECT count(*) FROM "+layer
         return sql
+    
+    def createRole(self, mydict):
+        return None
+
+    def dropRole(self, role):
+        return None
+    
+    def grantRole(self, user, role):
+        return None

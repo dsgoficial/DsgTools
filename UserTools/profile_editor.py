@@ -48,6 +48,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.treeWidget.setColumnWidth(0, 300)
         
         self.db = None
         
@@ -88,8 +89,6 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         item.setCheckState(1, QtCore.Qt.Unchecked)
         item.setCheckState(2, QtCore.Qt.Unchecked)
         item.setCheckState(3, QtCore.Qt.Unchecked)
-        item.setCheckState(4, QtCore.Qt.Unchecked)
-        item.setCheckState(5, QtCore.Qt.Unchecked)
         item.setText(0, text)
         return item
     
@@ -137,7 +136,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
                                         
     def createChildrenItems(self, parent, mydict):
         #permissions
-        lista = ['read', 'write', 'create', 'drop', 'super']
+        lista = ['read', 'write', 'super']
         for key in mydict.keys():
             if key in lista:
                 self.setItemCheckState(parent, mydict, key)
@@ -151,20 +150,14 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
             item.setCheckState(1, int(mydict[key]))
         elif key == 'write':
             item.setCheckState(2, int(mydict[key]))
-        elif key == 'create':
-            item.setCheckState(3, int(mydict[key]))
-        elif key == 'drop':
-            item.setCheckState(4, int(mydict[key]))
         elif key == 'super':
-            item.setCheckState(5, int(mydict[key]))
+            item.setCheckState(3, int(mydict[key]))
     
     def getItemCheckState(self, item):
         ret = dict()
         ret['read'] = str(item.checkState(1))
         ret['write'] = str(item.checkState(2))
-        ret['create'] = str(item.checkState(3))
-        ret['drop'] = str(item.checkState(4))
-        ret['super'] = str(item.checkState(5))
+        ret['super'] = str(item.checkState(3))
         return ret
         
     @pyqtSlot(int)

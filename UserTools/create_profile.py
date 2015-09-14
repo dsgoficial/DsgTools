@@ -87,7 +87,7 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
             tableName = query.value(0)
             
             #proceed only for edgv tables
-            if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" or tableName.split("_")[-1] == "a":
+            if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" or tableName.split("_")[-1] == "a" or tableName.split("_")[0] == 'complexos':
                 layerName = tableName.split('_')[0]+'.'+'_'.join(tableName.split('_')[1::])
                 split = tableName.split('_')
                 
@@ -106,8 +106,6 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
                     categories[schema][category][layerName] = dict()
                     categories[schema][category][layerName]['read'] = '0'
                     categories[schema][category][layerName]['write'] = '0'
-                    categories[schema][category][layerName]['create'] = '0'
-                    categories[schema][category][layerName]['drop'] = '0'
                     categories[schema][category][layerName]['super'] = '0'
                     
         self.profile['database'+'_'+self.versionCombo.currentText()] = categories

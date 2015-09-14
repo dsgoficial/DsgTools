@@ -63,3 +63,12 @@ class SqlGenerator:
     
     def dropDatabase(self, name):
         return None
+    
+    def createRole(self, mydict):
+        return None
+
+    def dropRole(self, role):
+        return None
+    
+    def grantRole(self, user, role):
+        return None
