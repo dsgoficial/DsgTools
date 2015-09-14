@@ -32,7 +32,6 @@ from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.UserTools.create_profile import CreateProfile
 
-
 import json
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -124,6 +123,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
             data = file.read()
             profileDict = json.loads(data)
             self.parent = profileDict.keys()[0]
+            file.close()
         except:
             return
             

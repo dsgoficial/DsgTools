@@ -54,6 +54,8 @@ from DsgTools.ToolboxTools.models_and_scripts_installer import ModelsAndScriptsI
 
 from DsgTools.UserTools.profile_editor import ProfileEditor
 
+from DsgTools.UserTools.assign_profiles import AssignProfiles
+
 from qgis.utils import showPluginHelp
 
 class DsgTools:
@@ -429,6 +431,16 @@ class DsgTools:
             add_to_toolbar=False)
         self.dsgTools.addAction(action)
 
+        icon_path = ':/plugins/DsgTools/icons/assignProfile.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Assign Profiles'),
+            callback=self.assignProfiles,
+            parent=self.dsgTools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        self.dsgTools.addAction(action)
+
         icon_path = ':/plugins/DsgTools/icons/dsg.png'
         action = self.add_action(
             icon_path,
@@ -543,6 +555,10 @@ class DsgTools:
         
     def showProfileEditor(self):
         dlg = ProfileEditor()
+        dlg.exec_()
+
+    def assignProfiles(self):
+        dlg = AssignProfiles()
         dlg.exec_()
 
     def showHelp(self):

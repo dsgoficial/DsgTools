@@ -11,20 +11,31 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Define User Profiles</string>
+   <string>Assign Profiles to Database</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
-   <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+   <item row="2" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QPushButton" name="saveButton">
        <property name="text">
-        <string>Database:</string>
+        <string>Save</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="comboBox"/>
+      <widget class="QPushButton" name="createProfile">
+       <property name="text">
+        <string>Create Profile</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancelButton">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -33,11 +44,15 @@
      <item>
       <widget class="QGroupBox" name="groupBox">
        <property name="title">
-        <string>Possible Profiles</string>
+        <string>Saved Profiles</string>
        </property>
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
-         <widget class="QListView" name="possibleProfilesView"/>
+         <widget class="QListWidget" name="possibleProfiles">
+          <property name="selectionMode">
+           <enum>QAbstractItemView::MultiSelection</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -77,19 +92,14 @@
      <item>
       <widget class="QGroupBox" name="groupBox_2">
        <property name="title">
-        <string>Assigned Profiles</string>
+        <string>Profiles to be Assigned</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">
-         <widget class="QTreeWidget" name="treeWidget">
-          <attribute name="headerVisible">
-           <bool>false</bool>
-          </attribute>
-          <column>
-           <property name="text">
-            <string notr="true">1</string>
-           </property>
-          </column>
+         <widget class="QListWidget" name="assignedProfiles">
+          <property name="selectionMode">
+           <enum>QAbstractItemView::MultiSelection</enum>
+          </property>
          </widget>
         </item>
        </layout>
@@ -97,43 +107,19 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="okButton">
-       <property name="text">
-        <string>Save</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton">
-       <property name="text">
-        <string>Clear All</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_2">
-       <property name="text">
-        <string>Cancel</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   <item row="0" column="0">
+    <widget class="ConnectionWidget" name="widget" native="true"/>
    </item>
   </layout>
-  <zorder>layoutWidget</zorder>
-  <zorder>groupBox</zorder>
-  <zorder>groupBox_2</zorder>
-  <zorder>insertAllButton</zorder>
-  <zorder>insertButton</zorder>
-  <zorder>removeButton</zorder>
-  <zorder>removeAllButton</zorder>
-  <zorder>label</zorder>
-  <zorder>comboBox</zorder>
-  <zorder>pushButton_2</zorder>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ConnectionWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.connectionWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
