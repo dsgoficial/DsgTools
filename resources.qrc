@@ -19,5 +19,7 @@
         <file>icons/inventory.png</file>
         <file>icons/install.png</file>
         <file>icons/profile.png</file>
+        <file>icons/assignProfile.png</file>
+        <file>icons/removeProfile.png</file>
     </qresource>
 </RCC>
