@@ -66,6 +66,19 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
         except:
             return None
         
+    def getProfiles(self):
+        self.possibleProfiles.clear()
+        
+        ret = []
+        for root, dirs, files in os.walk(self.folder):
+            for file in files:
+                ext = file.split('.')[-1]
+                if ext == 'json':
+                    ret.append(file.split('.')[0])
+
+        ret.sort()
+        self.possibleProfiles.addItems(ret)
+        
     @pyqtSlot(bool)
     def on_saveButton_clicked(self):
         for i in range(self.assignedProfiles.__len__()):
@@ -79,20 +92,11 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
 
             for inner in split:
                 if not query.exec_(inner):
-                    print self.widget.db.lastError().text()
+                    print query.lastError().text()
         
-    def getProfiles(self):
-        self.possibleProfiles.clear()
-        
-        ret = []
-        for root, dirs, files in os.walk(self.folder):
-            for file in files:
-                ext = file.split('.')[-1]
-                if ext == 'json':
-                    ret.append(file.split('.')[0])
-
-        ret.sort()
-        self.possibleProfiles.addItems(ret)
+    @pyqtSlot(bool)
+    def on_cancelButton_clicked(self):
+        self.close()
         
     @pyqtSlot(bool)
     def on_insertAllButton_clicked(self):

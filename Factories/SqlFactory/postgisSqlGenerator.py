@@ -118,9 +118,39 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def dropRole(self, role):
-        sql = 'DROP ROLE IF EXISTS '+role
+        sql = '''CREATE OR REPLACE FUNCTION droprole(name text) RETURNS void AS $BODY$
+                    DECLARE
+                        s text;
+                    BEGIN
+                        FOR s in SELECT DISTINCT 'REVOKE ALL ON ALL TABLES IN SCHEMA ' || table_schema || ' FROM ' || name from information_schema.columns
+                        LOOP
+                            EXECUTE s;
+                        END LOOP;
+                        FOR s in SELECT DISTINCT 'REVOKE ALL ON ALL FUNCTIONS IN SCHEMA ' || table_schema || ' FROM ' || name from information_schema.columns
+                        LOOP
+                            EXECUTE s;
+                        END LOOP;
+                        FOR s in SELECT DISTINCT 'REVOKE ALL ON ALL SEQUENCES IN SCHEMA ' || table_schema || ' FROM ' || name from information_schema.columns
+                        LOOP
+                            EXECUTE s;
+                        END LOOP;
+                        FOR s in SELECT DISTINCT 'REVOKE ALL ON SCHEMA ' || table_schema || ' FROM ' || name from information_schema.columns
+                        LOOP
+                            EXECUTE s;
+                        END LOOP;
+                        EXECUTE 'DROP ROLE IF EXISTS '||name
+                        RETURN;
+                        
+                    END
+                $BODY$ LANGUAGE plpgsql;#
+            '''
+        sql += 'SELECT droprole(\''+role+'\')'
         return sql
     
     def grantRole(self, user, role):
         sql = 'GRANT '+role+' TO '+user
-        return sql    
+        return sql
+    
+    def getRoles(self):
+        sql = 'SELECT rolname FROM pg_roles WHERE rolname <> \'postgres\' OR rolcanlogin = \'f\''
+        return sql

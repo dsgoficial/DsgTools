@@ -89,3 +89,6 @@ class SpatialiteSqlGenerator(SqlGenerator):
     
     def grantRole(self, user, role):
         return None
+    
+    def getRoles(self):
+        return None
