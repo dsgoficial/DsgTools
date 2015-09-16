@@ -37,6 +37,9 @@ import json
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'assign_profiles.ui'))
 
+from DsgTools.UserTools.profile_editor import ProfileEditor
+
+
 class AssignProfiles(QtGui.QDialog, FORM_CLASS):
     def __init__(self, parent = None):
         """Constructor."""
@@ -97,6 +100,12 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
         self.close()
+        
+    @pyqtSlot(bool)
+    def on_createProfile_clicked(self):
+        dlg = ProfileEditor()
+        dlg.exec_()
+        self.getProfiles()
         
     @pyqtSlot(bool)
     def on_insertAllButton_clicked(self):

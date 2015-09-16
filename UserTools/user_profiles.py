@@ -37,6 +37,8 @@ import json
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'user_profiles.ui'))
 
+from DsgTools.UserTools.assign_profiles import AssignProfiles
+
 class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
     def __init__(self, parent = None):
         """Constructor."""
@@ -102,6 +104,12 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         self.assigned.sort()
         self.installedProfiles.addItems(self.installed)
         self.assignedProfiles.addItems(self.assigned)
+        
+    @pyqtSlot(bool)
+    def on_assignProfile_clicked(self):
+        dlg = AssignProfiles()
+        dlg.exec_()
+        self.getProfiles(self.comboBox.currentText())        
         
     @pyqtSlot(int)
     def on_comboBox_currentIndexChanged(self):

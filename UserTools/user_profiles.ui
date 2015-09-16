@@ -101,9 +101,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="createProfile">
+      <widget class="QPushButton" name="assignProfile">
        <property name="text">
-        <string>Create Profile</string>
+        <string>Assign Profile</string>
        </property>
       </widget>
      </item>
