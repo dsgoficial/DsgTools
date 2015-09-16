@@ -156,7 +156,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
         
     def getRoles(self):
-        sql = 'SELECT rolname FROM pg_roles WHERE rolname <> \'postgres\' OR rolcanlogin = \'f\''
+        sql = 'SELECT rolname FROM pg_roles WHERE rolname <> \'postgres\' AND rolcanlogin = \'f\''
         return sql
     
     def getUserRelatedRoles(self, username):

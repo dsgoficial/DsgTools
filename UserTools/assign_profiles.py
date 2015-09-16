@@ -47,7 +47,7 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-#         self.widget.tabWidget.removeTab(0)
+        self.widget.tabWidget.setTabEnabled(0, False)
         
         self.factory = SqlGeneratorFactory()
         self.gen = self.factory.createSqlGenerator(False)
