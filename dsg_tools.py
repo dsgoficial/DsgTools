@@ -58,6 +58,8 @@ from DsgTools.UserTools.assign_profiles import AssignProfiles
 
 from DsgTools.UserTools.remove_profiles import RemoveProfiles
 
+from DsgTools.UserTools.user_profiles import ManageUserProfiles
+
 from qgis.utils import showPluginHelp
 
 class DsgTools:
@@ -502,6 +504,17 @@ class DsgTools:
         database.addAction(action)
         self.databaseButton.addAction(action)
 
+        icon_path = ':/plugins/DsgTools/icons/manageUserProfiles.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Manage User Profiles'),
+            callback=self.manageUserProfiles,
+            parent=self.dsgTools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        database.addAction(action)
+        self.databaseButton.addAction(action)
+
         icon_path = ':/plugins/DsgTools/icons/category.png'
         action = self.add_action(
             icon_path,
@@ -577,6 +590,10 @@ class DsgTools:
 
     def removeProfiles(self):
         dlg = RemoveProfiles()
+        dlg.exec_()
+
+    def manageUserProfiles(self):
+        dlg = ManageUserProfiles()
         dlg.exec_()
 
     def showHelp(self):

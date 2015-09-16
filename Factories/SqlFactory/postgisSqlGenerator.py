@@ -151,6 +151,22 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = 'GRANT '+role+' TO '+user
         return sql
     
+    def revokeRole(self, user, role):
+        sql = 'REVOKE '+role+' FROM '+user
+        return sql
+        
     def getRoles(self):
         sql = 'SELECT rolname FROM pg_roles WHERE rolname <> \'postgres\' OR rolcanlogin = \'f\''
         return sql
+    
+    def getUserRelatedRoles(self, username):
+        sql =   '''select rolname, usename from 
+                    (select * from pg_roles as r where r.rolcanlogin = \'f\' and r.rolname<>\'postgres\') as listaRoles left join 
+                    (select * from pg_auth_members as m join pg_user as u on m.member = u.usesysid and u.usename=\'%s\') 
+                    as euTenho on euTenho.roleid=listaRoles.oid
+                ''' % username
+        return sql
+    
+    def getUsers(self):
+        sql = 'SELECT usename FROM pg_user WHERE usename <> \'postgres\''
+        return sql;    
