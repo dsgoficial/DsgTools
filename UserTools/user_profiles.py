@@ -84,8 +84,8 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         if not self.widget.db:
             return
         
-        ret1 = []
-        ret2 = []
+        self.installed = []
+        self.assigned = []
 
         sql = self.gen.getUserRelatedRoles(username)
         query = QSqlQuery(sql, self.widget.db)
@@ -94,14 +94,14 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
             rolname = query.value(0)
             usename = query.value(1)
             if not usename:
-                ret1.append(rolname)
+                self.installed.append(rolname)
             else:
-                ret2.append(rolname)
+                self.assigned.append(rolname)
 
-        ret1.sort()
-        ret2.sort()
-        self.installedProfiles.addItems(ret1)
-        self.assignedProfiles.addItems(ret2)
+        self.installed.sort()
+        self.assigned.sort()
+        self.installedProfiles.addItems(self.installed)
+        self.assignedProfiles.addItems(self.assigned)
         
     @pyqtSlot(int)
     def on_comboBox_currentIndexChanged(self):
@@ -113,10 +113,35 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
             return
 
         user = self.comboBox.currentText()
+        grant = []
+        revoke = []
+        profiles1 = []
         for i in range(self.assignedProfiles.__len__()):
             role = self.assignedProfiles.item(i).text()
+            profiles1.append(role)
+            
+        for role in profiles1:
+            if role not in self.assigned:
+                grant.append(role)
 
+        profiles2 = []
+        for i in range(self.installedProfiles.__len__()):
+            role = self.installedProfiles.item(i).text()
+            profiles2.append(role)
+            
+        for role in profiles2:
+            if role not in self.installed:
+                revoke.append(role)
+            
+        for role in grant:
             sql = self.gen.grantRole(user, role)
+            query = QSqlQuery(self.widget.db)
+
+            if not query.exec_(sql):
+                print query.lastError().text()
+
+        for role in revoke:
+            sql = self.gen.revokeRole(user, role)
             query = QSqlQuery(self.widget.db)
 
             if not query.exec_(sql):

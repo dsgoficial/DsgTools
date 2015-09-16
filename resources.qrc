@@ -21,5 +21,6 @@
         <file>icons/profile.png</file>
         <file>icons/assignProfile.png</file>
         <file>icons/removeProfile.png</file>
+        <file>icons/manageUserProfiles.png</file>
     </qresource>
 </RCC>
