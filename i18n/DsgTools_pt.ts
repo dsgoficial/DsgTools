@@ -56,6 +56,29 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>AssignProfiles</name>
+    <message>
+        <location filename="UserTools/assign_profiles.py" line="100"/>
+        <source>Critical!</source>
+        <translation>Crítico!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/assign_profiles.py" line="100"/>
+        <source>Problem assigning profile: </source>
+        <translation>Problema atribuindo perfil: </translation>
+    </message>
+    <message>
+        <location filename="UserTools/assign_profiles.py" line="103"/>
+        <source>Warning!</source>
+        <translation>Alerta!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/assign_profiles.py" line="103"/>
+        <source>Profiles assigned successfully!</source>
+        <translation>Perfis atribuídos com sucesso!</translation>
+    </message>
+</context>
+<context>
     <name>BDGExTools</name>
     <message>
         <location filename="BDGExTools/BDGExTools.py" line="95"/>
@@ -134,12 +157,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ConnectionWidget</name>
     <message>
-        <location filename="CustomWidgets/connectionWidget.py" line="143"/>
+        <location filename="CustomWidgets/connectionWidget.py" line="139"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.py" line="157"/>
+        <location filename="CustomWidgets/connectionWidget.py" line="153"/>
         <source>Select Database</source>
         <translation>Selecione o Banco de Dados</translation>
     </message>
@@ -147,12 +170,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CreateInomDialog</name>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="146"/>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="143"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="65"/>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="62"/>
         <source>Map name index not valid!</source>
         <translation>O índice de nomenclatura é inválido!</translation>
     </message>
@@ -167,24 +190,37 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="144"/>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="141"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="144"/>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="141"/>
         <source>Could not load the selected frame!</source>
         <translation>Não foi possível carregar a moldura selecionada!</translation>
     </message>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="146"/>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="143"/>
         <source>Please, select at least one class!</source>
         <translation>Por favor, selecione pelo menos uma classe!</translation>
     </message>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="61"/>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="58"/>
         <source>Please, select a database first.</source>
         <translation>Por favor, selecione um banco de dados antes.</translation>
+    </message>
+</context>
+<context>
+    <name>CreateProfile</name>
+    <message>
+        <location filename="UserTools/create_profile.py" line="115"/>
+        <source>Warning!</source>
+        <translation>Alerta!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/create_profile.py" line="115"/>
+        <source>Fill the profile name!</source>
+        <translation>Preencha o nome do perfil!</translation>
     </message>
 </context>
 <context>
@@ -820,179 +856,199 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DsgTools</name>
     <message>
-        <location filename="dsg_tools.py" line="508"/>
+        <location filename="dsg_tools.py" line="557"/>
         <source>&amp;DSG Tools</source>
         <translation>&amp;Ferramentas DSG</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="216"/>
+        <location filename="dsg_tools.py" line="222"/>
         <source>DSG Tools</source>
         <translation>Ferramentas DSG</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="221"/>
+        <location filename="dsg_tools.py" line="227"/>
         <source>Server Catalog</source>
         <translation>Catálogo de Servidores</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="222"/>
+        <location filename="dsg_tools.py" line="228"/>
         <source>Database Tools</source>
         <translation>Ferramentas de BD</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="223"/>
+        <location filename="dsg_tools.py" line="229"/>
         <source>Layer Tools</source>
         <translation>Ferramentas de Camadas</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="423"/>
+        <location filename="dsg_tools.py" line="439"/>
         <source>About</source>
         <translation>Sobre</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="447"/>
+        <location filename="dsg_tools.py" line="463"/>
         <source>Create Spatialite</source>
         <translation>Criar Spatialite</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="459"/>
+        <location filename="dsg_tools.py" line="475"/>
         <source>Create PostGIS</source>
         <translation>Criar PostGIS</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="470"/>
+        <location filename="dsg_tools.py" line="519"/>
         <source>Load by Category</source>
         <translation>Carrega por Categoria</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="482"/>
+        <location filename="dsg_tools.py" line="531"/>
         <source>Load by Class</source>
         <translation>Carrega por Classe</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="493"/>
+        <location filename="dsg_tools.py" line="542"/>
         <source>Create Frame</source>
         <translation>Criar Moldura</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="393"/>
+        <location filename="dsg_tools.py" line="399"/>
         <source>Image tools</source>
         <translation>Ferramentas para Imagens</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="433"/>
+        <location filename="dsg_tools.py" line="449"/>
         <source>Help</source>
         <translation>Ajuda</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="224"/>
+        <location filename="dsg_tools.py" line="230"/>
         <source>BDGEx</source>
         <translation>BDGEx</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="227"/>
+        <location filename="dsg_tools.py" line="233"/>
         <source>Product Indexes</source>
         <translation>Índices de Produtos</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="229"/>
+        <location filename="dsg_tools.py" line="235"/>
         <source>Vectorial Charts</source>
         <translation>Cartas Vetoriais</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="333"/>
+        <location filename="dsg_tools.py" line="339"/>
         <source>1:250,000</source>
         <translation>1:250.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="343"/>
+        <location filename="dsg_tools.py" line="349"/>
         <source>1:100,000</source>
         <translation>1:100.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="353"/>
+        <location filename="dsg_tools.py" line="359"/>
         <source>1:50,000</source>
         <translation>1:50.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="363"/>
+        <location filename="dsg_tools.py" line="369"/>
         <source>1:25,000</source>
         <translation>1:25.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="228"/>
+        <location filename="dsg_tools.py" line="234"/>
         <source>Topographic Charts</source>
         <translation>Cartas Topográficas</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="669"/>
+        <location filename="dsg_tools.py" line="734"/>
         <source>1:250k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="673"/>
+        <location filename="dsg_tools.py" line="738"/>
         <source>1:100k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="677"/>
+        <location filename="dsg_tools.py" line="742"/>
         <source>1:50k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="681"/>
+        <location filename="dsg_tools.py" line="746"/>
         <source>1:25k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:25k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="685"/>
+        <location filename="dsg_tools.py" line="750"/>
         <source>1:250k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="689"/>
+        <location filename="dsg_tools.py" line="754"/>
         <source>1:100k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="693"/>
+        <location filename="dsg_tools.py" line="758"/>
         <source>1:50k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="697"/>
+        <location filename="dsg_tools.py" line="762"/>
         <source>1:25k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:25k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="383"/>
+        <location filename="dsg_tools.py" line="389"/>
         <source>View Server</source>
         <translation>Visualizar Servidor</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="226"/>
+        <location filename="dsg_tools.py" line="232"/>
         <source>Coverage Layers</source>
         <translation>Camadas de Cobertura</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="273"/>
+        <location filename="dsg_tools.py" line="279"/>
         <source>Landsat 7</source>
         <translation>Landsat 7</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="283"/>
+        <location filename="dsg_tools.py" line="289"/>
         <source>RapidEye</source>
         <translation>RapidEye</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="403"/>
+        <location filename="dsg_tools.py" line="409"/>
         <source>Inventory tools</source>
         <translation>Ferramentas de Inventário</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="413"/>
+        <location filename="dsg_tools.py" line="419"/>
         <source>Models and Scripts Installer</source>
         <translation>Instalador de Modelos e Scripts</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="429"/>
+        <source>Profile Editor</source>
+        <translation>Editor de Perfis</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="486"/>
+        <source>Assign Profiles</source>
+        <translation>Atribuir Perfis</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="497"/>
+        <source>Remove Profiles</source>
+        <translation>Remover Perfis</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="508"/>
+        <source>Manage User Profiles</source>
+        <translation>Gerenciar Perfis de Usuário</translation>
     </message>
 </context>
 <context>
@@ -1232,47 +1288,47 @@ p, li { white-space: pre-wrap; }
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="205"/>
+        <location filename="LayerTools/load_by_category.py" line="202"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="270"/>
+        <location filename="LayerTools/load_by_category.py" line="267"/>
         <source>WARNING!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="256"/>
+        <location filename="LayerTools/load_by_category.py" line="253"/>
         <source>Please, select at least one type of layer!</source>
         <translation>Por favor, selecione pelo menos um tipo de camada!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="268"/>
+        <location filename="LayerTools/load_by_category.py" line="265"/>
         <source>CRITICAL!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="261"/>
+        <location filename="LayerTools/load_by_category.py" line="258"/>
         <source>Problem loading the categories!</source>
         <translation>Problema na carga das categorias!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="268"/>
+        <location filename="LayerTools/load_by_category.py" line="265"/>
         <source>Could not determine the coordinate reference system!</source>
         <translation>Não foi possível determinar o Sistema de Coordenadas de Referência!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="267"/>
+        <location filename="LayerTools/load_by_category.py" line="264"/>
         <source>Database not loaded properly!</source>
         <translation>Banco de dados não foi carregado corretamente!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="270"/>
+        <location filename="LayerTools/load_by_category.py" line="267"/>
         <source>Please, select at least one category!</source>
         <translation>Por favor, selecione pelo menos uma categoria!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="316"/>
+        <location filename="LayerTools/load_by_category.py" line="313"/>
         <source>Problem counting elements: </source>
         <translation>Problema na contagem dos elementos:</translation>
     </message>
@@ -1345,7 +1401,7 @@ p, li { white-space: pre-wrap; }
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="103"/>
+        <location filename="LayerTools/load_by_class.py" line="101"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
@@ -1355,32 +1411,32 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="175"/>
+        <location filename="LayerTools/load_by_class.py" line="173"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="156"/>
+        <location filename="LayerTools/load_by_class.py" line="154"/>
         <source>Could not load the selected classes!</source>
         <translation>Não foi possível carregar as classes selecionadas!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="177"/>
+        <location filename="LayerTools/load_by_class.py" line="175"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="158"/>
+        <location filename="LayerTools/load_by_class.py" line="156"/>
         <source>Please, select at least one class!</source>
         <translation>Por favor, selecione pelo menos uma classe!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="175"/>
+        <location filename="LayerTools/load_by_class.py" line="173"/>
         <source>Could not load the layer(s)!</source>
         <translation>Não foi possível carregar a(s) camada(s)!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="177"/>
+        <location filename="LayerTools/load_by_class.py" line="175"/>
         <source>Please select at least one layer!</source>
         <translation>Por favor, selecione pelo menos uma camada!</translation>
     </message>
@@ -1406,6 +1462,39 @@ p, li { white-space: pre-wrap; }
         <location filename="ComplexTools/manageComplex.py" line="229"/>
         <source>Error!</source>
         <translation>Erro!</translation>
+    </message>
+</context>
+<context>
+    <name>ManageUserProfiles</name>
+    <message>
+        <location filename="UserTools/user_profiles.py" line="76"/>
+        <source>Select a User</source>
+        <translation>Selecione um Usuário</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.py" line="158"/>
+        <source>Critical!</source>
+        <translation>Crítico!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.py" line="149"/>
+        <source>Problem granting profile: </source>
+        <translation>Problema ao atribuir perfil: </translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.py" line="158"/>
+        <source>Problem revoking profile: </source>
+        <translation>Problema ao revogar perfil: </translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.py" line="164"/>
+        <source>Warning!</source>
+        <translation>Alerta!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.py" line="164"/>
+        <source>User updated successfully!</source>
+        <translation>Usuário atualizado com sucesso!</translation>
     </message>
 </context>
 <context>
@@ -1516,6 +1605,34 @@ Olhe o Terminal Python para detalhes.</translation>
     </message>
 </context>
 <context>
+    <name>ProfileEditor</name>
+    <message>
+        <location filename="UserTools/profile_editor.py" line="72"/>
+        <source>Select a profile</source>
+        <translation>Selecione um perfil</translation>
+    </message>
+    <message>
+        <location filename="UserTools/profile_editor.py" line="198"/>
+        <source>Warning!</source>
+        <translation>Alerta!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/profile_editor.py" line="185"/>
+        <source>Fill the profile name!</source>
+        <translation>Preenche o nome do perfil!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/profile_editor.py" line="196"/>
+        <source>Problem saving file!</source>
+        <translation>Problema ao salvar o arquivo!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/profile_editor.py" line="198"/>
+        <source>Profile saved successfully!</source>
+        <translation>Perfil salvo com sucesso!</translation>
+    </message>
+</context>
+<context>
     <name>QmlParser</name>
     <message>
         <location filename="QmlTools/qmlParser.py" line="74"/>
@@ -1529,29 +1646,52 @@ Olhe o Terminal Python para detalhes.</translation>
     </message>
 </context>
 <context>
-    <name>ServerConfigurator</name>
+    <name>RemoveProfiles</name>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="97"/>
+        <location filename="UserTools/remove_profiles.py" line="89"/>
+        <source>Critical!</source>
+        <translation>Crítico!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/remove_profiles.py" line="89"/>
+        <source>Problem removing profile: </source>
+        <translation>Problema ao revogar perfil: </translation>
+    </message>
+    <message>
+        <location filename="UserTools/remove_profiles.py" line="92"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="67"/>
+        <location filename="UserTools/remove_profiles.py" line="92"/>
+        <source>Profiles removed successfully!</source>
+        <translation>Perfils removidos com sucesso!</translation>
+    </message>
+</context>
+<context>
+    <name>ServerConfigurator</name>
+    <message>
+        <location filename="ServerTools/serverConfigurator.py" line="83"/>
+        <source>Warning!</source>
+        <translation>Alerta!</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/serverConfigurator.py" line="62"/>
         <source>Fill all parameters.</source>
         <translation>Preencha todos os parâmetros.</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="64"/>
+        <location filename="ServerTools/serverConfigurator.py" line="59"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="64"/>
+        <location filename="ServerTools/serverConfigurator.py" line="59"/>
         <source>Server stored.</source>
         <translation>Servidor armazenado.</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="97"/>
+        <location filename="ServerTools/serverConfigurator.py" line="83"/>
         <source>Already has a server with this name.</source>
         <translation>Já existe um servidor com este nome.</translation>
     </message>
@@ -1559,31 +1699,31 @@ Olhe o Terminal Python para detalhes.</translation>
 <context>
     <name>ServerDBExplorer</name>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="96"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="88"/>
         <source>Select Server</source>
         <translation>Selecione Servidor</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="126"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="118"/>
         <source>Information:
 </source>
         <translation>Informação:</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="128"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="120"/>
         <source>The following databases connections already exist:
 </source>
         <translation>Os seguintes conexões de bancos de dados já existem:</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="132"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="124"/>
         <source>
 The following databases connections were created successfully!:
 </source>
         <translation>As seguintes conexões de bancos de dados foram criadas com sucesso!:</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="135"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="127"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
@@ -1591,42 +1731,42 @@ The following databases connections were created successfully!:
 <context>
     <name>ViewServers</name>
     <message>
-        <location filename="ServerTools/viewServers.py" line="161"/>
+        <location filename="ServerTools/viewServers.py" line="157"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="161"/>
+        <location filename="ServerTools/viewServers.py" line="157"/>
         <source>Select one server.</source>
         <translation>Selecione um servidor.</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="117"/>
+        <location filename="ServerTools/viewServers.py" line="114"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="103"/>
+        <location filename="ServerTools/viewServers.py" line="100"/>
         <source>Server removed.</source>
         <translation>Servidor removido.</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="66"/>
+        <location filename="ServerTools/viewServers.py" line="65"/>
         <source>Clear</source>
         <translation>Vazio</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="68"/>
+        <location filename="ServerTools/viewServers.py" line="67"/>
         <source>Saved</source>
         <translation>Salva</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="115"/>
+        <location filename="ServerTools/viewServers.py" line="112"/>
         <source>Server Online.</source>
         <translation>Servidor Online.</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="117"/>
+        <location filename="ServerTools/viewServers.py" line="114"/>
         <source>Server Offline.</source>
         <translation>Servidor Offline.</translation>
     </message>

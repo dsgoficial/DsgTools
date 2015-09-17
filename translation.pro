@@ -18,7 +18,12 @@
 					Factories/ThreadFactory/inventoryThread.py \
 					ToolboxTools/models_and_scripts_installer.py \
 					ServerTools/serverDBExplorer.py \
-					CustomWidgets/connectionWidget.py
+					CustomWidgets/connectionWidget.py \
+					UserTools/assign_profiles.py \
+					UserTools/create_profile.py \
+					UserTools/profile_editor.py \
+					UserTools/remove_profiles.py \
+					UserTools/user_profiles.py
 
  FORMS           =	ComplexTools/complexWindow_base.ui \
  					ComplexTools/ui_manageComplex.ui \
@@ -35,6 +40,11 @@
 					ToolboxTools/models_and_scripts_installer.ui \
 					ServerTools/ui_serverDBExplorer.ui \
 					CustomWidgets/connectionWidget.ui
+					UserTools/assign_profiles.ui \
+					UserTools/create_profile.ui \
+					UserTools/profile_editor.ui \
+					UserTools/remove_profiles.ui \
+					UserTools/user_profiles.ui
 
  TRANSLATIONS    = i18n/DsgTools_pt.ts
 
