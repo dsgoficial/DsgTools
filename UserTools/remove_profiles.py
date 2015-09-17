@@ -86,4 +86,8 @@ class RemoveProfiles(QtGui.QDialog, FORM_CLASS):
 
             for inner in split:
                 if not query.exec_(inner):
-                    print query.lastError().text()
+                    QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem removing profile: ') +role+'\n'+query.lastError().text())
+                    return
+            
+        QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles removed successfully!'))
+                    

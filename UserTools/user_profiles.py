@@ -107,7 +107,7 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_assignProfile_clicked(self):
-        dlg = AssignProfiles()
+        dlg = AssignProfiles(self.widget.comboBoxPostgis.currentIndex())
         dlg.exec_()
         self.getProfiles(self.comboBox.currentText())        
         
@@ -146,16 +146,22 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
             query = QSqlQuery(self.widget.db)
 
             if not query.exec_(sql):
-                print query.lastError().text()
+                QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem granting profile: ') +role+'\n'+query.lastError().text())
+                self.getProfiles(user)
+                return
 
         for role in revoke:
             sql = self.gen.revokeRole(user, role)
             query = QSqlQuery(self.widget.db)
 
             if not query.exec_(sql):
-                print query.lastError().text()
+                QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem revoking profile: ') +role+'\n'+query.lastError().text())
+                self.getProfiles(user)
+                return
                 
         self.getProfiles(user)
+        
+        QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('User updated successfully!'))
         
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):

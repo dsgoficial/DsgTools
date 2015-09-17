@@ -168,6 +168,16 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         result = dlg.exec_()
         if result:
             self.getProfiles()
+            
+    @pyqtSlot(bool)
+    def on_clearButton_clicked(self):
+        #invisible root item
+        rootItem = self.treeWidget.invisibleRootItem()
+        #database item
+        dbItem = rootItem.child(0)
+        if dbItem:
+            dbItem.setCheckState(1, 0)
+            dbItem.setCheckState(2, 0)
         
     @pyqtSlot(bool)
     def on_saveButton_clicked(self):
@@ -179,8 +189,13 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
             
         path = os.path.join(self.folder, profile+'.json')
         
-        with open(path, 'w') as outfile:
-            json.dump(self.makeProfileDict(), outfile, sort_keys=True, indent=4)
+        try:
+            with open(path, 'w') as outfile:
+                json.dump(self.makeProfileDict(), outfile, sort_keys=True, indent=4)
+        except:
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving file!'))
+            
+        QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile saved successfully!'))
     
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):

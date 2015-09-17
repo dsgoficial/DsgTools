@@ -41,7 +41,7 @@ from DsgTools.UserTools.profile_editor import ProfileEditor
 
 
 class AssignProfiles(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, parent = None):
+    def __init__(self, index = None, parent = None):
         """Constructor."""
         super(AssignProfiles, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -51,6 +51,8 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.widget.tabWidget.setTabEnabled(0, False)
+        if index:
+            self.widget.comboBoxPostgis.setCurrentIndex(index)
         
         self.factory = SqlGeneratorFactory()
         self.gen = self.factory.createSqlGenerator(False)
@@ -95,7 +97,10 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
 
             for inner in split:
                 if not query.exec_(inner):
-                    print query.lastError().text()
+                    QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem assigning profile: ') +role+'\n'+query.lastError().text())
+                    return
+            
+        QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles assigned successfully!'))                
         
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
