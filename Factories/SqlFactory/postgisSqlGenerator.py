@@ -105,6 +105,7 @@ class PostGISSqlGenerator(SqlGenerator):
                 sql += 'GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA '+schema+' TO '+roleName+';\n'
                 sql += 'GRANT USAGE ON ALL SEQUENCES IN SCHEMA '+schema+' TO '+roleName+';\n'
         
+        sql += 'GRANT SELECT ON db_metadata TO '+roleName+';\n'
         sql += 'GRANT ALL ON ALL TABLES IN SCHEMA information_schema TO '+roleName+';\n'
         sql += 'GRANT ALL ON ALL TABLES IN SCHEMA pg_catalog TO '+roleName+';\n'
         sql += 'GRANT ALL ON SCHEMA information_schema TO '+roleName+';\n'
