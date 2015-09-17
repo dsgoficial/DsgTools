@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+'''
 /***************************************************************************
  DsgTools
                                  A QGIS plugin
@@ -19,7 +19,7 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-"""
+'''
 import os
 
 from PyQt4 import QtGui, uic
@@ -28,12 +28,14 @@ from PyQt4.QtGui import QHeaderView, QTableWidgetItem, QMessageBox, QApplication
 from PyQt4.QtSql import QSqlDatabase
 from serverConfigurator import ServerConfigurator
 
+from qgis.core import QgsMessageLog
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_viewServers.ui'))
 
 class ViewServers(QtGui.QDialog, FORM_CLASS):
     def __init__(self, iface, parent=None):
-        """Constructor."""
+        '''Constructor.'''
         super(ViewServers, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -49,8 +51,6 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         header = self.tableWidget.horizontalHeader()
         header.setResizeMode(QHeaderView.Stretch)
         self.populateTable()
-            
-        
         
     def populateTable(self):
         currentConnections = self.getServers()
@@ -65,7 +65,6 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
                 self.tableWidget.setItem(i,4,QTableWidgetItem(self.tr('Clear')))
             else:
                 self.tableWidget.setItem(i,4,QTableWidgetItem(self.tr('Saved')))
-    
         
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
@@ -98,7 +97,7 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
             return
         self.removeServerConfiguration(selectedItem.text())
         self.tableWidget.removeRow(selectedItem.row())
-        QMessageBox.warning(self, self.tr("Info!"), self.tr("Server removed."))
+        QMessageBox.warning(self, self.tr('Info!'), self.tr('Server removed.'))
         
     @pyqtSlot(bool)
     def on_testButton_clicked(self):
@@ -110,9 +109,9 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         test = self.testServer(name)
         QApplication.restoreOverrideCursor()
         if test:
-            QMessageBox.warning(self, self.tr("Info!"), self.tr("Server Online."))
+            QMessageBox.warning(self, self.tr('Info!'), self.tr('Server Online.'))
         else:
-            QMessageBox.warning(self, self.tr("Info!"), self.tr("Server Offline."))
+            QMessageBox.warning(self, self.tr('Info!'), self.tr('Server Offline.'))
         
     def getServers(self):
         settings = QSettings()
@@ -141,19 +140,20 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
     def testServer(self, name):
         (host, port, user, password) = self.getServerConfiguration(name)
         db = None
-        db = QSqlDatabase("QPSQL")
-        db.setConnectOptions("connect_timeout=50")
-        #db.setDatabaseName("")
+        db = QSqlDatabase('QPSQL')
+        db.setConnectOptions('connect_timeout=50')
+        db.setDatabaseName('postgres')
         db.setHostName(host)
         db.setPort(int(port))
         db.setUserName(user)
         db.setPassword(password)
-        open = db.open()
-        db.close()
-        return open
+        ok = db.open()
+        if not ok:
+            QgsMessageLog.logMessage(db.lastError().text(), 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+        return ok
     
     def returnSelectedName(self):
         if len(self.tableWidget.selectedItems())==0:
-            QMessageBox.warning(self, self.tr("Warning!"), self.tr("Select one server."))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select one server.'))
             return
         return self.tableWidget.selectedItems()[0]
