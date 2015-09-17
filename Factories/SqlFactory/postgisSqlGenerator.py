@@ -80,7 +80,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getDatabasesFromServer(self):
-        sql = "SELECT datname FROM pg_database"
+        sql = "SELECT datname FROM pg_database where datname <> \'postgres\' and datname <> \'template\' and datname <> \'template0\' and datname <> \'template_postgis\'"
         return sql
     
     def dropDatabase(self, name):

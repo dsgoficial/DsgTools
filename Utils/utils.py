@@ -136,9 +136,7 @@ class Utils:
                 qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+db.lastError().databaseText(), level=QgsMessageBar.CRITICAL)
 
             query = QSqlQuery(db)
-            if not query.exec_(gen.getEDGVVersion()):
-                qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+query.lastError().databaseText(), level=QgsMessageBar.CRITICAL)
-            else:
+            if query.exec_(gen.getEDGVVersion()):
                 while query.next():
                     version = query.value(0)
                     if version:
@@ -153,7 +151,7 @@ class Utils:
         
         db = self.getPostGISDatabaseWithParams(database,host,port,user,password)
         if not db.open():
-            print db.lastError().text()
+            QgsMessageLog.logMessage(db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         
         query = QSqlQuery(gen.getDatabasesFromServer(),db)
         dbList = []

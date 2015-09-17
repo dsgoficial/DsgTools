@@ -115,7 +115,6 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
 
     def loadDatabase(self):
         self.closeDatabase()
-
         if self.isSpatialite:
             (self.filename, self.db) = self.utils.getSpatialiteDatabase()
             if self.filename:
