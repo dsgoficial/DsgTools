@@ -10,7 +10,7 @@
 name=DSG Tools
 qgisMinimumVersion=2.6
 description=Brazilian Army Cartographic Production Tools
-version=1.5
+version=1.6
 author=Brazilian Army - Geographic Service Bureau
 email=suporte.dsgtools@dsg.eb.mil.br
 about=
@@ -22,6 +22,8 @@ about=
 	-Access to some WM(T)S services provided by BDGEx.
 	-Inventory Tool for all geospatial data supported by GDAL/OGR.
 	-Tool to install Models and Script (geoalgorithms) in the Processing Toolbox (HSV fusion script available).
+	-Database role management. Access profile (i.e. Read/Write permissions by table in database ).
+	-Database user profile management (e.g. Grant/Revoke predifined roles to/from user )
 	Requirements for LINUX (Ubuntu/Debian):
 	Install the following packages as follows:
 	sudo apt-get install python-qt4-sql
