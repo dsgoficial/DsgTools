@@ -60,6 +60,8 @@ from DsgTools.UserTools.remove_profiles import RemoveProfiles
 
 from DsgTools.UserTools.user_profiles import ManageUserProfiles
 
+from DsgTools.ConversionTools.postgis2spatialite import Postgis2Spatialite
+
 from qgis.utils import showPluginHelp
 
 class DsgTools:
@@ -425,6 +427,16 @@ class DsgTools:
             add_to_toolbar=False)
         self.dsgTools.addAction(action)
 
+        icon_path = ':/plugins/DsgTools/icons/install.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Convert Postgis to Spatialite'),
+            callback=self.showConvertPostgis2Spatialite,
+            parent=self.dsgTools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        self.dsgTools.addAction(action)
+
         icon_path = ':/plugins/DsgTools/icons/profile.png'
         action = self.add_action(
             icon_path,
@@ -600,6 +612,13 @@ class DsgTools:
         index = os.path.join(os.path.dirname(__file__), 'help', 'index')
         showPluginHelp('DsgTools', index)
 
+    def showConvertPostgis2Spatialite(self):
+        dlg = Postgis2Spatialite()
+        dlg.show()
+        result = dlg.exec_()
+        if result:
+            pass
+        
     def showImageProcessor(self):
         dlg = ProcessingTools(self.iface)
         result = dlg.exec_()
