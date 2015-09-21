@@ -60,7 +60,7 @@ from DsgTools.UserTools.remove_profiles import RemoveProfiles
 
 from DsgTools.UserTools.user_profiles import ManageUserProfiles
 
-from DsgTools.ConversionTools.postgis2spatialite import Postgis2Spatialite
+from DsgTools.ConversionTools.convert_database import ConvertDatabase
 
 from qgis.utils import showPluginHelp
 
@@ -430,8 +430,8 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/icons/install.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Convert Postgis to Spatialite'),
-            callback=self.showConvertPostgis2Spatialite,
+            text=self.tr('Convert Database'),
+            callback=self.showConvertDatabase,
             parent=self.dsgTools,
             add_to_menu=False,
             add_to_toolbar=False)
@@ -612,8 +612,8 @@ class DsgTools:
         index = os.path.join(os.path.dirname(__file__), 'help', 'index')
         showPluginHelp('DsgTools', index)
 
-    def showConvertPostgis2Spatialite(self):
-        dlg = Postgis2Spatialite()
+    def showConvertDatabase(self):
+        dlg = ConvertDatabase()
         dlg.show()
         result = dlg.exec_()
         if result:
