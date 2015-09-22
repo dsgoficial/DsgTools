@@ -31,14 +31,12 @@ from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.UserTools.create_profile import CreateProfile
+from DsgTools.UserTools.profile_editor import ProfileEditor
 
 import json
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'assign_profiles.ui'))
-
-from DsgTools.UserTools.profile_editor import ProfileEditor
-
 
 class AssignProfiles(QtGui.QDialog, FORM_CLASS):
     def __init__(self, index = None, parent = None):

@@ -25,7 +25,6 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 import os.path
-import aboutdialog
 import sys
 
 currentPath = os.path.dirname(__file__)
@@ -34,34 +33,21 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from DsgTools.LayerTools.load_by_class import LoadByClass
 from DsgTools.LayerTools.load_by_category import LoadByCategory
 from DsgTools.LayerTools.ui_create_inom_dialog import CreateInomDialog
-
 from DsgTools.DbTools.SpatialiteTool.cria_spatialite_dialog import CriaSpatialiteDialog
 from DsgTools.DbTools.PostGISTool.postgisDBTool import PostgisDBTool
-
 from DsgTools.ComplexTools.complexWindow import ComplexWindow
-
 from DsgTools.ServerTools.viewServers import ViewServers
-
 from DsgTools.ImageTools.processingTools import ProcessingTools
-
 from DsgTools.ProcessingTools.processManager import ProcessManager
-
 from DsgTools.BDGExTools.BDGExTools import BDGExTools
-
 from DsgTools.InventoryTools.inventoryTools import InventoryTools
-
 from DsgTools.ToolboxTools.models_and_scripts_installer import ModelsAndScriptsInstaller
-
 from DsgTools.UserTools.profile_editor import ProfileEditor
-
 from DsgTools.UserTools.assign_profiles import AssignProfiles
-
 from DsgTools.UserTools.remove_profiles import RemoveProfiles
-
 from DsgTools.UserTools.user_profiles import ManageUserProfiles
-
 from DsgTools.ConversionTools.convert_database import ConvertDatabase
-
+from DsgTools.aboutdialog import AboutDialog
 from qgis.utils import showPluginHelp
 
 class DsgTools:
@@ -589,7 +575,7 @@ class DsgTools:
             pass
 
     def showAbout(self):
-        dlg = aboutdialog.AboutDialog()
+        dlg = AboutDialog()
         dlg.exec_()
         
     def showProfileEditor(self):
