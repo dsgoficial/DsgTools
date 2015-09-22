@@ -2,7 +2,6 @@
 ##Pasta_de_Busca=folder
 ##Relatorio=output table
 
-from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
 import csv, os
 from osgeo import ogr
 
