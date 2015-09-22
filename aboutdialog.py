@@ -18,13 +18,15 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtGui import *
+import os
+from PyQt4 import QtGui, uic
 
-from ui_about import Ui_AboutDialog
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'ui_about.ui'))
 
-
-class AboutDialog(QDialog, Ui_AboutDialog):
-    def __init__(self):
-        QDialog.__init__(self)
+class AboutDialog(QtGui.QDialog, FORM_CLASS):
+    def __init__(self, parent = None):
+        """Constructor."""
+        super(AboutDialog, self).__init__(parent)
         self.setupUi(self)
 
