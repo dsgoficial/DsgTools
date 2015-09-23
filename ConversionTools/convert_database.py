@@ -58,6 +58,8 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         self.widget_2.tabWidget.setTabEnabled(1,False)        
 
     def setConversion(self,conversionType):
+        self.widget.setInitialState()
+        self.widget_2.setInitialState()
         if conversionType == 'Select a conversion':
             self.widget.tabWidget.setTabEnabled(0, False)
             self.widget.tabWidget.setTabEnabled(1,False)
@@ -83,3 +85,7 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(int)
     def on_comboBox_currentIndexChanged(self):
         self.setConversion(self.comboBox.currentText())
+
+    @pyqtSlot(bool)
+    def on_cancelButton_clicked(self):
+        self.close()
