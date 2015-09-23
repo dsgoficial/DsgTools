@@ -27,6 +27,9 @@ from PyQt4.QtGui import *
 import os.path
 import sys
 
+# Initialize Qt resources from file resources_rc.py
+import resources_rc
+
 currentPath = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
