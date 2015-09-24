@@ -77,8 +77,8 @@ class RemoveProfiles(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot()
     def on_buttonBox_accepted(self):
-        for i in range(self.listWidget.__len__()):
-            role = self.listWidget.item(i).text()
+        for item in self.listWidget.selectedItems():
+            role = item.text()
 
             sql = self.gen.dropRole(role)
             split = sql.split('#')
