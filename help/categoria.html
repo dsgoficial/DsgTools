@@ -17,45 +17,30 @@
     	Ferramentas de Camada <small>Carregar por Categoria</small>
     </h2>
     
-    <p align="justify">
-    	<small>
-			<em>
-            	Observação: Caso se deseje acessar um banco de dados já criado em vez de criar um novo através do DSG Tools, utilizar a ferramenta <a href="carregarBDexistente.html">Adicionar camada PostGIS</a>.
-            </em>
-        </small>
-	</p>
-    
 	<p align="justify">
-        A funcionalidade de carregamento por categoria permite que camadas presentes no banco de dados sejam carregadas apenas com a definição da categoria. A figura abaixo mostra o diálogo de carregamento vazio.
+        A funcionalidade de carregamento por categoria permite que todas camadas de uma ou mais categorias presentes no banco de dados sejam carregadas. A figura abaixo mostra o diálogo de carregamento vazio.
     </p>
 
     <p align=center>
-        <img src='dsg_tools/categoria.bmp' name='figuras1' width=559 height=469 alt='Erro ao mostrar a imagem'>
+        <img src='dsg_tools/categoria.png' name='figuras1' alt='Erro ao mostrar a imagem'>
     </p>
 
     <p align="justify">
-        Inicialmente deve ser feito o carregamento do banco desejado (PostGIS ou Spatialite). Tendo sido feito o carregamento a lista de categorias presentes no banco serão apresentadas na lista <kbd>Carrega por Categoria</kbd> presente no lado inferior esquerdo do diálogo.
+        Inicialmente deve ser feito a seleção do banco desejado (seja PostGIS ou Spatialite). Tendo sido feito a seleção, a lista de categorias presentes no banco serão apresentadas na lista <kbd>Carrega por Categoria</kbd> presente no lado inferior esquerdo do diálogo. No caso da utilização de um banco de dados PostGIS, o banco é selecionado pelas conexões já configuradas. Uma nova conexão pode ser criada diretamente neste diálogo, desde que o banco esteja em um dos servidores configurados.
     </p>
-
+    
     <p align=center>
-        <img src='dsg_tools/categoria_categorias_listadas.bmp' name='figuras1' width=556 height=468 alt='Erro ao mostrar a imagem'>
+        <img src='dsg_tools/categoria_postgis.png' name='figuras1' alt='Erro ao mostrar a imagem'>
     </p>
 
     <p align="justify">
         Usando os botões <kbd>>></kbd>, <kbd>></kbd>, <kbd><</kbd>, <kbd><<</kbd> é possível, respectivamente, carregar todas as categorias, carregar somente uma, descarregar uma e descarregar todas as categorias previamente carregadas.
     </p>
 
-    <p align=center>
-        <img src='dsg_tools/categoria_categorias_botoes.bmp' name='figuras1' width=556 height=468 alt='Erro ao mostrar a imagem'>
-    </p>
-
     <p align="justify">
-        O passo final se dá ao se selecionar a primitiva geométrica das categorias selecionadas que se quer carregar e se o usuário deseja carregar somente categorias que já possuem elementos (feições já existentes). Após selecionadas as categorias e opções desejadas, clicar em <kbd>OK</kbd> para realizar o carregamento.
+        O passo final se dá ao se selecionar a primitiva geométrica das categorias selecionadas que se quer carregar e se o usuário deseja carregar somente categorias que já possuem elementos (<kbd>Apenas Camadas com Elementos</kbd>). Após selecionadas as categorias e opções desejadas, clicar em <kbd>OK</kbd> para realizar o carregamento.
     </p>
 
-    <p align=center>
-        <img src='dsg_tools/categoria_categorias_agrupamento.bmp' name='figuras1' width=556 height=468 alt='Erro ao mostrar a imagem'>
-    </p>
     <br>
 
 
