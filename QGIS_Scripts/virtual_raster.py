@@ -7,6 +7,7 @@ import processing
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
 from qgis.core import QgsVectorLayer, QgsRasterLayer, QgsSpatialIndex, QgsFeatureRequest, QgsCoordinateTransform, QgsFeature
 import os
+import shutil, stat
 
 #script methods
 def createReprojectedLayer(layer, crs):
@@ -68,14 +69,15 @@ def createVrt(vrt):
     p = 0
     progress.setPercentage(p)    
     for key in vrt.keys():
-        vrtfilename = os.path.join(Pasta, key+'.vrt')
+        vrtfilename = os.path.join(Pasta, key, key+'.vrt')
         features = vrt[key]
         rasterList = []
         for feat in features:
             filename = feat['fileName']
-            raster = QgsRasterLayer(filename, filename)
+            newfilename = copyFileSet(Pasta, key, filename)
+            raster = QgsRasterLayer(newfilename, newfilename)
             rasterList.append(raster)
-            ovr = filename+'.ovr'
+            ovr = newfilename+'.ovr'
             if not os.path.isfile(ovr):
                 progress.setText('Fazendo Pirâmides...')
                 #('gdalogr:overviews', input, levels=8, clean=False, resampling_method=0(nearest), format=1(Gtiff .ovr))
@@ -87,9 +89,34 @@ def createVrt(vrt):
     
         progress.setText('Fazendo raster virtual...')
         processing.runalg('gdalogr:buildvirtualraster', rasterList, 0, False, False, vrtfilename)
+        
+def copyFileSet(parent, folder, filename):
+    path = os.path.dirname(filename)
+    basename = os.path.basename(filename)
+    texto = 'Copiando %s e arquivos relacionados...' % basename
+    progress.setText(texto)
+    
+    destination = os.path.join(parent, folder)
+    if not os.path.exists(destination):
+        os.makedirs(destination)
+        
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            if basename.split('.')[0] in file:
+                try:
+                    dir = os.path.join(destination, 'imagens')
+                    if not os.path.exists(dir):
+                        os.makedirs(dir)
+                    f = os.path.join(root, file)
+                    newf = os.path.join(parent, folder, 'imagens', file)
+                    shutil.copy2(f, newf)
+                except:
+                    raise GeoAlgorithmExecutionException('Problema ao copiar arquivos!')
+    return os.path.join(parent, folder, 'imagens', basename)
+    
 #end of script methods
         
-##Making the actual work
+#Making the actual work
 #Camada de inventario
 inventario = processing.getObject(Inventario)
 
@@ -119,4 +146,4 @@ vrt = makeVrtDict(candidates, camada)
 
 #creating vrt files
 createVrt(vrt)
-##ending the actual work
+#ending the actual work
