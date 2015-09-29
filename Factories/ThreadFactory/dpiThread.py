@@ -154,7 +154,6 @@ class DpiThread(GenericThread):
         imgOut.SetGeoTransform(imgIn.GetGeoTransform())
 
         #Linear stretching
-        print percent
         topPercent = 1.-percent/200.
         bottomPercent = percent/200.
         outBandNumber = 1
