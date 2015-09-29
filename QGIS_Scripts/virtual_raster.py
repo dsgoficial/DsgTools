@@ -17,7 +17,7 @@ def createReprojectedLayer(layer, crs):
         return None
     
     provider = temp.dataProvider()
-    provider.addAttributes(layer.dataProvider().fields())
+    provider.addAttributes(layer.dataProvider().fields().toList())
     temp.updateFields()
     
     coordinateTransformer = QgsCoordinateTransform(layer.crs(), crs)
