@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Profile Editor</string>
+   <string>Profile Model Editor</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
@@ -19,7 +19,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Profile Name:</string>
+        <string>Profile Model Name:</string>
        </property>
       </widget>
      </item>
@@ -36,7 +36,7 @@
      <item>
       <widget class="QPushButton" name="createButton">
        <property name="text">
-        <string>Create Profile</string>
+        <string>Create Profile Model</string>
        </property>
       </widget>
      </item>
@@ -102,9 +102,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="cancelButton">
+      <widget class="QPushButton" name="closeButton">
        <property name="text">
-        <string>Cancel</string>
+        <string>Close</string>
        </property>
       </widget>
      </item>

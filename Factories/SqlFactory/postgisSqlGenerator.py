@@ -139,7 +139,8 @@ class PostGISSqlGenerator(SqlGenerator):
                         LOOP
                             EXECUTE s;
                         END LOOP;
-                        EXECUTE 'DROP ROLE IF EXISTS '||name
+                        EXECUTE 'REVOKE ALL ON db_metadata FROM '|| name;
+                        EXECUTE 'DROP ROLE IF EXISTS '||name;
                         RETURN;
                         
                     END

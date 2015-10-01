@@ -47,7 +47,6 @@ from DsgTools.InventoryTools.inventoryTools import InventoryTools
 from DsgTools.ToolboxTools.models_and_scripts_installer import ModelsAndScriptsInstaller
 from DsgTools.UserTools.profile_editor import ProfileEditor
 from DsgTools.UserTools.assign_profiles import AssignProfiles
-from DsgTools.UserTools.remove_profiles import RemoveProfiles
 from DsgTools.UserTools.user_profiles import ManageUserProfiles
 from DsgTools.ConversionTools.convert_database import ConvertDatabase
 from DsgTools.aboutdialog import AboutDialog
@@ -426,16 +425,6 @@ class DsgTools:
             add_to_toolbar=False)
         self.dsgTools.addAction(action)
 
-        icon_path = ':/plugins/DsgTools/icons/profile.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Profile Editor'),
-            callback=self.showProfileEditor,
-            parent=self.dsgTools,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        self.dsgTools.addAction(action)
-
         icon_path = ':/plugins/DsgTools/icons/dsg.png'
         action = self.add_action(
             icon_path,
@@ -483,22 +472,22 @@ class DsgTools:
         database.addAction(action)
         self.databaseButton.addAction(action)
 
-        icon_path = ':/plugins/DsgTools/icons/assignProfile.png'
+        icon_path = ':/plugins/DsgTools/icons/profile.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Assign Profiles'),
-            callback=self.assignProfiles,
+            text=self.tr('Profile Editor'),
+            callback=self.showProfileEditor,
             parent=self.dsgTools,
             add_to_menu=False,
             add_to_toolbar=False)
         database.addAction(action)
         self.databaseButton.addAction(action)
 
-        icon_path = ':/plugins/DsgTools/icons/removeProfile.png'
+        icon_path = ':/plugins/DsgTools/icons/assignProfile.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Remove Profiles'),
-            callback=self.removeProfiles,
+            text=self.tr('Manage Profile Models'),
+            callback=self.assignProfiles,
             parent=self.dsgTools,
             add_to_menu=False,
             add_to_toolbar=False)

@@ -105,7 +105,7 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         self.assignedProfiles.addItems(self.assigned)
         
     @pyqtSlot(bool)
-    def on_assignProfile_clicked(self):
+    def on_installProfile_clicked(self):
         dlg = AssignProfiles(self.widget.comboBoxPostgis.currentIndex())
         dlg.exec_()
         self.getProfiles(self.comboBox.currentText())        
@@ -114,8 +114,7 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
     def on_comboBox_currentIndexChanged(self):
         self.getProfiles(self.comboBox.currentText())
         
-    @pyqtSlot(bool)
-    def on_saveButton_clicked(self):
+    def saveUserState(self):
         if self.comboBox.currentIndex() == 0:
             return
 
@@ -163,7 +162,7 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('User updated successfully!'))
         
     @pyqtSlot(bool)
-    def on_cancelButton_clicked(self):
+    def on_closeButton_clicked(self):
         self.close()
         
     @pyqtSlot(bool)
@@ -173,6 +172,8 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
             item = self.installedProfiles.takeItem(i-2)
             self.assignedProfiles.addItem(item)
         self.assignedProfiles.sortItems()
+        
+        self.saveUserState()
 
     @pyqtSlot(bool)
     def on_removeAllButton_clicked(self):
@@ -182,6 +183,8 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
             self.installedProfiles.addItem(item)
         self.installedProfiles.sortItems()
 
+        self.saveUserState()
+
     @pyqtSlot(bool)
     def on_insertButton_clicked(self):
         listedItems = self.installedProfiles.selectedItems()
@@ -190,6 +193,8 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
             self.assignedProfiles.addItem(item)
         self.assignedProfiles.sortItems()
 
+        self.saveUserState()
+
     @pyqtSlot(bool)
     def on_removeButton_clicked(self):
         listedItems = self.assignedProfiles.selectedItems()
@@ -197,4 +202,5 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
             item = self.assignedProfiles.takeItem(self.assignedProfiles.row(i))
             self.installedProfiles.addItem(item)
         self.installedProfiles.sortItems()
-        
+
+        self.saveUserState()

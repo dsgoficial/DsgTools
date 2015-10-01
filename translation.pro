@@ -22,7 +22,6 @@
 					UserTools/assign_profiles.py \
 					UserTools/create_profile.py \
 					UserTools/profile_editor.py \
-					UserTools/remove_profiles.py \
 					UserTools/user_profiles.py
 
  FORMS           =	ComplexTools/complexWindow_base.ui \
@@ -43,7 +42,6 @@
 					UserTools/assign_profiles.ui \
 					UserTools/create_profile.ui \
 					UserTools/profile_editor.ui \
-					UserTools/remove_profiles.ui \
 					UserTools/user_profiles.ui
 
  TRANSLATIONS    = i18n/DsgTools_pt.ts

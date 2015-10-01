@@ -57,7 +57,10 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
         self.utils = Utils()        
         
         self.folder = os.path.join(os.path.dirname(__file__), 'profiles')
-        self.getProfiles()
+        self.getModelProfiles()
+        
+        #Objects Connections
+        QtCore.QObject.connect(self.widget, QtCore.SIGNAL(("connectionChanged()")), self.getInstalledProfiles)
 
     def parseJson(self, filename):       
         try:
@@ -69,7 +72,7 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
         except:
             return None
         
-    def getProfiles(self):
+    def getModelProfiles(self):
         self.possibleProfiles.clear()
         
         ret = []
@@ -82,10 +85,27 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
         ret.sort()
         self.possibleProfiles.addItems(ret)
         
+    def getInstalledProfiles(self):
+        self.assignedProfiles.clear()
+        
+        if not self.widget.db:
+            return
+        
+        ret = []
+
+        sql = self.gen.getRoles()
+        query = QSqlQuery(sql, self.widget.db)
+
+        while query.next():
+            ret.append(query.value(0))
+
+        ret.sort()
+        self.assignedProfiles.addItems(ret)
+
     @pyqtSlot(bool)
-    def on_saveButton_clicked(self):
-        for i in range(self.assignedProfiles.__len__()):
-            role = self.assignedProfiles.item(i).text()
+    def on_installButton_clicked(self):
+        for item in self.possibleProfiles.selectedItems():
+            role = item.text()
             profile = os.path.join(self.folder, role +'.json')
             dict = self.parseJson(profile)
 
@@ -98,47 +118,34 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
                     QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem assigning profile: ') +role+'\n'+query.lastError().text())
                     return
             
-        QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles assigned successfully!'))                
+        QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles assigned successfully!'))    
+        
+        self.getInstalledProfiles()            
         
     @pyqtSlot(bool)
-    def on_cancelButton_clicked(self):
+    def on_closeButton_clicked(self):
         self.close()
         
     @pyqtSlot(bool)
-    def on_createProfile_clicked(self):
+    def on_openProfileEditor_clicked(self):
         dlg = ProfileEditor()
         dlg.exec_()
-        self.getProfiles()
+        self.getModelProfiles()
         
-    @pyqtSlot(bool)
-    def on_insertAllButton_clicked(self):
-        tam = self.possibleProfiles.__len__()
-        for i in range(tam+1,1,-1):
-            item = self.possibleProfiles.takeItem(i-2)
-            self.assignedProfiles.addItem(item)
-        self.assignedProfiles.sortItems()
-
-    @pyqtSlot(bool)
-    def on_removeAllButton_clicked(self):
-        tam = self.assignedProfiles.__len__()
-        for i in range(tam+1,1,-1):
-            item = self.assignedProfiles.takeItem(i-2)
-            self.possibleProfiles.addItem(item)
-        self.possibleProfiles.sortItems()
-
-    @pyqtSlot(bool)
-    def on_insertButton_clicked(self):
-        listedItems = self.possibleProfiles.selectedItems()
-        for i in listedItems:
-            item = self.possibleProfiles.takeItem(self.possibleProfiles.row(i))
-            self.assignedProfiles.addItem(item)
-        self.assignedProfiles.sortItems()
-
     @pyqtSlot(bool)
     def on_removeButton_clicked(self):
-        listedItems = self.assignedProfiles.selectedItems()
-        for i in listedItems:
-            item = self.assignedProfiles.takeItem(self.assignedProfiles.row(i))
-            self.possibleProfiles.addItem(item)
-        self.possibleProfiles.sortItems()
+        for item in self.assignedProfiles.selectedItems():
+            role = item.text()
+
+            sql = self.gen.dropRole(role)
+            split = sql.split('#')
+            query = QSqlQuery(self.widget.db)
+
+            for inner in split:
+                if not query.exec_(inner):
+                    QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem removing profile: ') +role+'\n'+query.lastError().text())
+                    return
+            
+        QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles removed successfully!'))
         
+        self.getInstalledProfiles()

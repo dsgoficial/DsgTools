@@ -35,24 +35,34 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AssignProfiles</name>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="100"/>
+        <location filename="UserTools/assign_profiles.py" line="146"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="100"/>
+        <location filename="UserTools/assign_profiles.py" line="118"/>
         <source>Problem assigning profile: </source>
         <translation>Problema atribuindo perfil: </translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="103"/>
+        <location filename="UserTools/assign_profiles.py" line="149"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="103"/>
+        <location filename="UserTools/assign_profiles.py" line="121"/>
         <source>Profiles assigned successfully!</source>
         <translation>Perfis atribuídos com sucesso!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/assign_profiles.py" line="146"/>
+        <source>Problem removing profile: </source>
+        <translation>Problema ao remover perfil: </translation>
+    </message>
+    <message>
+        <location filename="UserTools/assign_profiles.py" line="149"/>
+        <source>Profiles removed successfully!</source>
+        <translation>Perfis removidos com sucesso!</translation>
     </message>
 </context>
 <context>
@@ -134,12 +144,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ConnectionWidget</name>
     <message>
-        <location filename="CustomWidgets/connectionWidget.py" line="139"/>
+        <location filename="CustomWidgets/connectionWidget.py" line="143"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.py" line="153"/>
+        <location filename="CustomWidgets/connectionWidget.py" line="157"/>
         <source>Select Database</source>
         <translation>Selecione o Banco de Dados</translation>
     </message>
@@ -499,47 +509,47 @@ p, li { white-space: pre-wrap; }
         <translation>Pesquisar SRC</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="75"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="78"/>
         <source>Remove</source>
         <translation>Remover</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="38"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="41"/>
         <source>Server Name</source>
         <translation>Nome do Servidor</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="43"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="46"/>
         <source>Address</source>
         <translation>Endereço</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="48"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="51"/>
         <source>Port</source>
         <translation>Porta</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="53"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="56"/>
         <source>User</source>
         <translation>Usuário</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="68"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="71"/>
         <source>Add</source>
         <translation>Adiciona</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="82"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="85"/>
         <source>Edit</source>
         <translation>Edita</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="58"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="61"/>
         <source>Password</source>
         <translation>Senha</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="89"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="92"/>
         <source>Test</source>
         <translation>Testa</translation>
     </message>
@@ -833,199 +843,214 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DsgTools</name>
     <message>
-        <location filename="dsg_tools.py" line="557"/>
+        <location filename="dsg_tools.py" line="547"/>
         <source>&amp;DSG Tools</source>
         <translation>&amp;Ferramentas DSG</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="222"/>
+        <location filename="dsg_tools.py" line="212"/>
         <source>DSG Tools</source>
         <translation>Ferramentas DSG</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="227"/>
+        <location filename="dsg_tools.py" line="217"/>
         <source>Server Catalog</source>
         <translation>Catálogo de Servidores</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="228"/>
+        <location filename="dsg_tools.py" line="218"/>
         <source>Database Tools</source>
         <translation>Ferramentas de BD</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="229"/>
+        <location filename="dsg_tools.py" line="219"/>
         <source>Layer Tools</source>
         <translation>Ferramentas de Camadas</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="439"/>
+        <location filename="dsg_tools.py" line="429"/>
         <source>About</source>
         <translation>Sobre</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="463"/>
+        <location filename="dsg_tools.py" line="453"/>
         <source>Create Spatialite</source>
         <translation>Criar Spatialite</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="475"/>
+        <location filename="dsg_tools.py" line="465"/>
         <source>Create PostGIS</source>
         <translation>Criar PostGIS</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="519"/>
+        <location filename="dsg_tools.py" line="509"/>
         <source>Load by Category</source>
         <translation>Carrega por Categoria</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="531"/>
+        <location filename="dsg_tools.py" line="521"/>
         <source>Load by Class</source>
         <translation>Carrega por Classe</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="542"/>
+        <location filename="dsg_tools.py" line="532"/>
         <source>Create Frame</source>
         <translation>Criar Moldura</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="399"/>
+        <location filename="dsg_tools.py" line="389"/>
         <source>Image tools</source>
         <translation>Ferramentas para Imagens</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="449"/>
+        <location filename="dsg_tools.py" line="439"/>
         <source>Help</source>
         <translation>Ajuda</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="230"/>
+        <location filename="dsg_tools.py" line="220"/>
         <source>BDGEx</source>
         <translation>BDGEx</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="233"/>
+        <location filename="dsg_tools.py" line="223"/>
         <source>Product Indexes</source>
         <translation>Índices de Produtos</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="235"/>
+        <location filename="dsg_tools.py" line="225"/>
         <source>Vectorial Charts</source>
         <translation>Cartas Vetoriais</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="339"/>
+        <location filename="dsg_tools.py" line="329"/>
         <source>1:250,000</source>
         <translation>1:250.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="349"/>
+        <location filename="dsg_tools.py" line="339"/>
         <source>1:100,000</source>
         <translation>1:100.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="359"/>
+        <location filename="dsg_tools.py" line="349"/>
         <source>1:50,000</source>
         <translation>1:50.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="369"/>
+        <location filename="dsg_tools.py" line="359"/>
         <source>1:25,000</source>
         <translation>1:25.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="234"/>
+        <location filename="dsg_tools.py" line="224"/>
         <source>Topographic Charts</source>
         <translation>Cartas Topográficas</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="734"/>
+        <location filename="dsg_tools.py" line="731"/>
         <source>1:250k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="738"/>
+        <location filename="dsg_tools.py" line="735"/>
         <source>1:100k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="742"/>
+        <location filename="dsg_tools.py" line="739"/>
         <source>1:50k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="746"/>
+        <location filename="dsg_tools.py" line="743"/>
         <source>1:25k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:25k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="750"/>
+        <location filename="dsg_tools.py" line="747"/>
         <source>1:250k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="754"/>
+        <location filename="dsg_tools.py" line="751"/>
         <source>1:100k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="758"/>
+        <location filename="dsg_tools.py" line="755"/>
         <source>1:50k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="762"/>
+        <location filename="dsg_tools.py" line="759"/>
         <source>1:25k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:25k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="389"/>
+        <location filename="dsg_tools.py" line="379"/>
         <source>View Server</source>
         <translation>Visualizar Servidor</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="232"/>
+        <location filename="dsg_tools.py" line="222"/>
         <source>Coverage Layers</source>
         <translation>Camadas de Cobertura</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="279"/>
+        <location filename="dsg_tools.py" line="269"/>
         <source>Landsat 7</source>
         <translation>Landsat 7</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="289"/>
+        <location filename="dsg_tools.py" line="279"/>
         <source>RapidEye</source>
         <translation>RapidEye</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="409"/>
+        <location filename="dsg_tools.py" line="399"/>
         <source>Inventory tools</source>
         <translation>Ferramentas de Inventário</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="419"/>
+        <location filename="dsg_tools.py" line="409"/>
         <source>Models and Scripts Installer</source>
         <translation>Instalador de Modelos e Scripts</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="429"/>
+        <location filename="dsg_tools.py" line="476"/>
         <source>Profile Editor</source>
         <translation>Editor de Perfis</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="486"/>
         <source>Assign Profiles</source>
-        <translation>Atribuir Perfis</translation>
+        <translation type="obsolete">Atribuir Perfis</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="497"/>
         <source>Remove Profiles</source>
-        <translation>Remover Perfis</translation>
+        <translation type="obsolete">Remover Perfis</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="508"/>
+        <location filename="dsg_tools.py" line="498"/>
         <source>Manage User Profiles</source>
         <translation>Gerenciar Perfis de Usuário</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="419"/>
+        <source>Convert Database</source>
+        <translation>Converter Banco de Dados</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="487"/>
+        <source>Manage Profiles Models</source>
+        <translation type="obsolete">Gerenciar Modelos de Perfil</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="487"/>
+        <source>Manage Profile Models</source>
+        <translation>Gerenciar Modelos de Perfil</translation>
     </message>
 </context>
 <context>
@@ -1051,24 +1076,29 @@ p, li { white-space: pre-wrap; }
         <translation>Pesquisar</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.ui" line="114"/>
+        <location filename="CustomWidgets/connectionWidget.ui" line="162"/>
         <source>Coordinate System</source>
         <translation>Sistema de Coordenadas</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.ui" line="86"/>
+        <location filename="CustomWidgets/connectionWidget.ui" line="132"/>
         <source>PostGIS</source>
         <translation>PostGIS</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.ui" line="92"/>
+        <location filename="CustomWidgets/connectionWidget.ui" line="138"/>
         <source>Connections</source>
         <translation>Conexões</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.ui" line="103"/>
+        <location filename="CustomWidgets/connectionWidget.ui" line="151"/>
         <source>Add connection</source>
         <translation>Adicionar Conexão</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/connectionWidget.ui" line="176"/>
+        <source>EDGV Version</source>
+        <translation>EDGV Versão</translation>
     </message>
 </context>
 <context>
@@ -1444,32 +1474,32 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ManageUserProfiles</name>
     <message>
-        <location filename="UserTools/user_profiles.py" line="76"/>
+        <location filename="UserTools/user_profiles.py" line="75"/>
         <source>Select a User</source>
         <translation>Selecione um Usuário</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="158"/>
+        <location filename="UserTools/user_profiles.py" line="156"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="149"/>
+        <location filename="UserTools/user_profiles.py" line="147"/>
         <source>Problem granting profile: </source>
         <translation>Problema ao atribuir perfil: </translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="158"/>
+        <location filename="UserTools/user_profiles.py" line="156"/>
         <source>Problem revoking profile: </source>
         <translation>Problema ao revogar perfil: </translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="164"/>
+        <location filename="UserTools/user_profiles.py" line="162"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="164"/>
+        <location filename="UserTools/user_profiles.py" line="162"/>
         <source>User updated successfully!</source>
         <translation>Usuário atualizado com sucesso!</translation>
     </message>
@@ -1627,22 +1657,22 @@ Olhe o Terminal Python para detalhes.</translation>
     <message>
         <location filename="UserTools/remove_profiles.py" line="89"/>
         <source>Critical!</source>
-        <translation>Crítico!</translation>
+        <translation type="obsolete">Crítico!</translation>
     </message>
     <message>
         <location filename="UserTools/remove_profiles.py" line="89"/>
         <source>Problem removing profile: </source>
-        <translation>Problema ao revogar perfil: </translation>
+        <translation type="obsolete">Problema ao revogar perfil: </translation>
     </message>
     <message>
         <location filename="UserTools/remove_profiles.py" line="92"/>
         <source>Warning!</source>
-        <translation>Alerta!</translation>
+        <translation type="obsolete">Alerta!</translation>
     </message>
     <message>
         <location filename="UserTools/remove_profiles.py" line="92"/>
         <source>Profiles removed successfully!</source>
-        <translation>Perfils removidos com sucesso!</translation>
+        <translation type="obsolete">Perfils removidos com sucesso!</translation>
     </message>
 </context>
 <context>

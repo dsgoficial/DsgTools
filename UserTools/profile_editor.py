@@ -198,5 +198,5 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile saved successfully!'))
     
     @pyqtSlot(bool)
-    def on_cancelButton_clicked(self):
+    def on_closeButton_clicked(self):
         self.close()
