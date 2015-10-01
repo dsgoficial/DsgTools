@@ -134,6 +134,7 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_removeButton_clicked(self):
+        problem = False
         for item in self.assignedProfiles.selectedItems():
             role = item.text()
 
@@ -144,8 +145,10 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
             for inner in split:
                 if not query.exec_(inner):
                     QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem removing profile: ') +role+'\n'+query.lastError().text())
-                    return
+                    problem = True
+                    continue
             
-        QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles removed successfully!'))
+        if not problem:
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles removed successfully!'))
         
         self.getInstalledProfiles()
