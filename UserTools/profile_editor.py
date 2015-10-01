@@ -181,8 +181,8 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_saveButton_clicked(self):
-        if not self.jsonCombo.currentText():
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Fill the profile name!'))
+        if self.jsonCombo.currentIndex() == 0:
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select a profile model!'))
             return
         else:
             profile = self.jsonCombo.currentText()

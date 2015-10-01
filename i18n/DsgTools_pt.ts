@@ -35,7 +35,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AssignProfiles</name>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="146"/>
+        <location filename="UserTools/assign_profiles.py" line="147"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -45,7 +45,7 @@ p, li { white-space: pre-wrap; }
         <translation>Problema atribuindo perfil: </translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="149"/>
+        <location filename="UserTools/assign_profiles.py" line="152"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
@@ -55,12 +55,12 @@ p, li { white-space: pre-wrap; }
         <translation>Perfis atribuídos com sucesso!</translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="146"/>
+        <location filename="UserTools/assign_profiles.py" line="147"/>
         <source>Problem removing profile: </source>
         <translation>Problema ao remover perfil: </translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="149"/>
+        <location filename="UserTools/assign_profiles.py" line="152"/>
         <source>Profiles removed successfully!</source>
         <translation>Perfis removidos com sucesso!</translation>
     </message>
@@ -1626,7 +1626,7 @@ Olhe o Terminal Python para detalhes.</translation>
     <message>
         <location filename="UserTools/profile_editor.py" line="185"/>
         <source>Fill the profile name!</source>
-        <translation>Preenche o nome do perfil!</translation>
+        <translation type="obsolete">Preenche o nome do perfil!</translation>
     </message>
     <message>
         <location filename="UserTools/profile_editor.py" line="196"/>
@@ -1637,6 +1637,11 @@ Olhe o Terminal Python para detalhes.</translation>
         <location filename="UserTools/profile_editor.py" line="198"/>
         <source>Profile saved successfully!</source>
         <translation>Perfil salvo com sucesso!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/profile_editor.py" line="185"/>
+        <source>Select a profile model!</source>
+        <translation>Selecione um modelo de perfil!</translation>
     </message>
 </context>
 <context>
