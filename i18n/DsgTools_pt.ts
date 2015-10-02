@@ -35,7 +35,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AssignProfiles</name>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="147"/>
+        <location filename="UserTools/assign_profiles.py" line="168"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -63,6 +63,21 @@ p, li { white-space: pre-wrap; }
         <location filename="UserTools/assign_profiles.py" line="152"/>
         <source>Profiles removed successfully!</source>
         <translation>Perfis removidos com sucesso!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/assign_profiles.py" line="158"/>
+        <source>Question</source>
+        <translation>Questão</translation>
+    </message>
+    <message>
+        <location filename="UserTools/assign_profiles.py" line="158"/>
+        <source>Do you really want to remove selected profile models?</source>
+        <translation>Você deseja realmente remover os modelos de perfil selecionados?</translation>
+    </message>
+    <message>
+        <location filename="UserTools/assign_profiles.py" line="168"/>
+        <source>Problem removing profile model: </source>
+        <translation>Problema removendo o modelo de perfil: </translation>
     </message>
 </context>
 <context>
@@ -509,7 +524,7 @@ p, li { white-space: pre-wrap; }
         <translation>Pesquisar SRC</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="78"/>
+        <location filename="UserTools/assign_profiles.ui" line="29"/>
         <source>Remove</source>
         <translation>Remover</translation>
     </message>
@@ -774,17 +789,17 @@ p, li { white-space: pre-wrap; }
         <translation>Instalar</translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.ui" line="72"/>
+        <location filename="UserTools/assign_profiles.ui" line="79"/>
         <source>Installed User Profiles</source>
         <translation>Perfis de Usuário instalados</translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.ui" line="98"/>
+        <location filename="UserTools/assign_profiles.ui" line="105"/>
         <source>Remove Profile</source>
         <translation>Remover Perfil</translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.ui" line="136"/>
+        <location filename="UserTools/assign_profiles.ui" line="143"/>
         <source>Open Profile Editor</source>
         <translation>Abrir Editor de Perfil</translation>
     </message>

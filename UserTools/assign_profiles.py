@@ -152,3 +152,19 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles removed successfully!'))
         
         self.getInstalledProfiles()
+
+    @pyqtSlot(bool)
+    def on_removeJson_clicked(self):
+        if not QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to remove selected profile models?')):
+            return
+        
+        for item in self.possibleProfiles.selectedItems():
+            json = item.text()
+            file = json+'.json'
+            path = os.path.join(self.folder, file)
+            try:
+                os.remove(path)
+            except OSError as e:
+                QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem removing profile model: ')+json+'\n'+e.strerror)
+        
+        self.getModelProfiles()
