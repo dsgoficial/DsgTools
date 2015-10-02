@@ -146,7 +146,6 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
                 if not query.exec_(inner):
                     QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem removing profile: ') +role+'\n'+query.lastError().text())
                     problem = True
-                    continue
             
         if not problem:
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles removed successfully!'))
