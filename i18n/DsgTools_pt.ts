@@ -344,12 +344,12 @@ p, li { white-space: pre-wrap; }
         <translation>Versão da EDGV:</translation>
     </message>
     <message>
-        <location filename="DbTools/PostGISTool/ui_postgisDBTool.ui" line="127"/>
+        <location filename="UserTools/create_profile.ui" line="44"/>
         <source>2.1.3</source>
         <translation>2.1.3</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.ui" line="170"/>
+        <location filename="UserTools/profile_editor.ui" line="93"/>
         <source>Save</source>
         <translation>Salvar</translation>
     </message>
@@ -489,7 +489,7 @@ p, li { white-space: pre-wrap; }
         <translation>Porta:</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverConfigurator.ui" line="103"/>
+        <location filename="UserTools/user_profiles.ui" line="77"/>
         <source>User:</source>
         <translation>Usuário:</translation>
     </message>
@@ -757,6 +757,131 @@ p, li { white-space: pre-wrap; }
         <location filename="ServerTools/ui_serverDBExplorer.ui" line="83"/>
         <source>Select All</source>
         <translation>Selecionar Todos</translation>
+    </message>
+    <message>
+        <location filename="UserTools/assign_profiles.ui" line="14"/>
+        <source>Manage Database User Profiles</source>
+        <translation>Gerenciar Perfis de Usuários de Bancos de Dados</translation>
+    </message>
+    <message>
+        <location filename="UserTools/assign_profiles.ui" line="23"/>
+        <source>Existent User Profile Models</source>
+        <translation>Modelos de Perfil de Usuários Existentes</translation>
+    </message>
+    <message>
+        <location filename="UserTools/assign_profiles.ui" line="49"/>
+        <source>Install</source>
+        <translation>Instalar</translation>
+    </message>
+    <message>
+        <location filename="UserTools/assign_profiles.ui" line="72"/>
+        <source>Installed User Profiles</source>
+        <translation>Perfis de Usuário instalados</translation>
+    </message>
+    <message>
+        <location filename="UserTools/assign_profiles.ui" line="98"/>
+        <source>Remove Profile</source>
+        <translation>Remover Perfil</translation>
+    </message>
+    <message>
+        <location filename="UserTools/assign_profiles.ui" line="136"/>
+        <source>Open Profile Editor</source>
+        <translation>Abrir Editor de Perfil</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.ui" line="113"/>
+        <source>Close</source>
+        <translation>Fechar</translation>
+    </message>
+    <message>
+        <location filename="UserTools/create_profile.ui" line="14"/>
+        <source>Dialog</source>
+        <translation>Diálogo</translation>
+    </message>
+    <message>
+        <location filename="UserTools/create_profile.ui" line="22"/>
+        <source>Profile Name:</source>
+        <translation>Nome do Perfil:</translation>
+    </message>
+    <message>
+        <location filename="UserTools/create_profile.ui" line="36"/>
+        <source>EDGV Version:</source>
+        <translation>Versão EDGV:</translation>
+    </message>
+    <message>
+        <location filename="UserTools/profile_editor.ui" line="14"/>
+        <source>Profile Model Editor</source>
+        <translation>Editor de Modelos de Perfil</translation>
+    </message>
+    <message>
+        <location filename="UserTools/profile_editor.ui" line="22"/>
+        <source>Profile Model Name:</source>
+        <translation>Nome do Modelo de Perfil:</translation>
+    </message>
+    <message>
+        <location filename="UserTools/profile_editor.ui" line="39"/>
+        <source>Create Profile Model</source>
+        <translation>Criar Modelo de Perfil</translation>
+    </message>
+    <message>
+        <location filename="UserTools/profile_editor.ui" line="48"/>
+        <source>Permissions</source>
+        <translation>Permissões</translation>
+    </message>
+    <message>
+        <location filename="UserTools/profile_editor.ui" line="75"/>
+        <source>Read</source>
+        <translation>Ler</translation>
+    </message>
+    <message>
+        <location filename="UserTools/profile_editor.ui" line="80"/>
+        <source>Write</source>
+        <translation>Escrever</translation>
+    </message>
+    <message>
+        <location filename="UserTools/profile_editor.ui" line="100"/>
+        <source>Clear All</source>
+        <translation>Limpar Tudo</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.ui" line="14"/>
+        <source>Manage User Profiles</source>
+        <translation>Gerenciar Perfis de Usuário</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.ui" line="25"/>
+        <source>Installed Profiles</source>
+        <translation>Perfis instalados</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.ui" line="39"/>
+        <source>&gt;&gt;</source>
+        <translation>&gt;&gt;</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.ui" line="46"/>
+        <source>&gt;</source>
+        <translation>&gt;</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.ui" line="53"/>
+        <source>&lt;</source>
+        <translation>&lt;</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.ui" line="60"/>
+        <source>&lt;&lt;</source>
+        <translation>&lt;&lt;</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.ui" line="69"/>
+        <source>Assigned Profiles</source>
+        <translation>Perfis Atribuídos</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.ui" line="106"/>
+        <source>Install New Profile</source>
+        <translation>Instalar Novo Perfil</translation>
     </message>
 </context>
 <context>

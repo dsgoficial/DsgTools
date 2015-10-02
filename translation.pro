@@ -38,7 +38,7 @@
 					InventoryTools/ui_inventoryTools.ui \
 					ToolboxTools/models_and_scripts_installer.ui \
 					ServerTools/ui_serverDBExplorer.ui \
-					CustomWidgets/connectionWidget.ui
+					CustomWidgets/connectionWidget.ui \
 					UserTools/assign_profiles.ui \
 					UserTools/create_profile.ui \
 					UserTools/profile_editor.ui \
