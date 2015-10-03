@@ -415,15 +415,15 @@ class DsgTools:
             add_to_toolbar=False)
         self.dsgTools.addAction(action)
 
-        icon_path = ':/plugins/DsgTools/icons/install.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Convert Database'),
-            callback=self.showConvertDatabase,
-            parent=self.dsgTools,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        self.dsgTools.addAction(action)
+        # icon_path = ':/plugins/DsgTools/icons/install.png'
+        # action = self.add_action(
+        #     icon_path,
+        #     text=self.tr('Convert Database'),
+        #     callback=self.showConvertDatabase,
+        #     parent=self.dsgTools,
+        #     add_to_menu=False,
+        #     add_to_toolbar=False)
+        # self.dsgTools.addAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/dsg.png'
         action = self.add_action(
@@ -472,38 +472,38 @@ class DsgTools:
         database.addAction(action)
         self.databaseButton.addAction(action)
 
-        icon_path = ':/plugins/DsgTools/icons/profile.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Profile Editor'),
-            callback=self.showProfileEditor,
-            parent=self.dsgTools,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        database.addAction(action)
-        self.databaseButton.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/assignProfile.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Manage Profile Models'),
-            callback=self.assignProfiles,
-            parent=self.dsgTools,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        database.addAction(action)
-        self.databaseButton.addAction(action)
-
         icon_path = ':/plugins/DsgTools/icons/manageUserProfiles.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Manage User Profiles'),
+            text=self.tr('Manage User Permissions'),
             callback=self.manageUserProfiles,
             parent=self.dsgTools,
             add_to_menu=False,
             add_to_toolbar=False)
         database.addAction(action)
         self.databaseButton.addAction(action)
+
+        #User Permissions submenu
+        permissions = self.addMenu(database, u'layers', self.tr('User Permissions Tools'),':/plugins/DsgTools/icons/profile.png')
+        icon_path = ':/plugins/DsgTools/icons/profile.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('User Permissions Editor'),
+            callback=self.showProfileEditor,
+            parent=self.dsgTools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        permissions.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/assignProfile.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Install/Remove User Permissions'),
+            callback=self.assignProfiles,
+            parent=self.dsgTools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        permissions.addAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/category.png'
         action = self.add_action(

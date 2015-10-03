@@ -35,7 +35,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AssignProfiles</name>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="168"/>
+        <location filename="UserTools/assign_profiles.py" line="167"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -45,7 +45,7 @@ p, li { white-space: pre-wrap; }
         <translation>Problema atribuindo perfil: </translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="152"/>
+        <location filename="UserTools/assign_profiles.py" line="151"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
@@ -60,22 +60,22 @@ p, li { white-space: pre-wrap; }
         <translation>Problema ao remover perfil: </translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="152"/>
+        <location filename="UserTools/assign_profiles.py" line="151"/>
         <source>Profiles removed successfully!</source>
         <translation>Perfis removidos com sucesso!</translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="158"/>
+        <location filename="UserTools/assign_profiles.py" line="157"/>
         <source>Question</source>
         <translation>Questão</translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="158"/>
+        <location filename="UserTools/assign_profiles.py" line="157"/>
         <source>Do you really want to remove selected profile models?</source>
         <translation>Você deseja realmente remover os modelos de perfil selecionados?</translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="168"/>
+        <location filename="UserTools/assign_profiles.py" line="167"/>
         <source>Problem removing profile model: </source>
         <translation>Problema removendo o modelo de perfil: </translation>
     </message>
@@ -776,12 +776,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="UserTools/assign_profiles.ui" line="14"/>
         <source>Manage Database User Profiles</source>
-        <translation>Gerenciar Perfis de Usuários de Bancos de Dados</translation>
+        <translation type="obsolete">Gerenciar Perfis de Usuários de Bancos de Dados</translation>
     </message>
     <message>
         <location filename="UserTools/assign_profiles.ui" line="23"/>
         <source>Existent User Profile Models</source>
-        <translation>Modelos de Perfil de Usuários Existentes</translation>
+        <translation type="obsolete">Modelos de Perfil de Usuários Existentes</translation>
     </message>
     <message>
         <location filename="UserTools/assign_profiles.ui" line="49"/>
@@ -791,7 +791,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="UserTools/assign_profiles.ui" line="79"/>
         <source>Installed User Profiles</source>
-        <translation>Perfis de Usuário instalados</translation>
+        <translation type="obsolete">Perfis de Usuário instalados</translation>
     </message>
     <message>
         <location filename="UserTools/assign_profiles.ui" line="105"/>
@@ -801,7 +801,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="UserTools/assign_profiles.ui" line="143"/>
         <source>Open Profile Editor</source>
-        <translation>Abrir Editor de Perfil</translation>
+        <translation type="obsolete">Abrir Editor de Perfil</translation>
     </message>
     <message>
         <location filename="UserTools/user_profiles.ui" line="113"/>
@@ -811,12 +811,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="UserTools/create_profile.ui" line="14"/>
         <source>Dialog</source>
-        <translation>Diálogo</translation>
+        <translation type="obsolete">Diálogo</translation>
     </message>
     <message>
         <location filename="UserTools/create_profile.ui" line="22"/>
         <source>Profile Name:</source>
-        <translation>Nome do Perfil:</translation>
+        <translation type="obsolete">Nome do Perfil:</translation>
     </message>
     <message>
         <location filename="UserTools/create_profile.ui" line="36"/>
@@ -826,17 +826,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="UserTools/profile_editor.ui" line="14"/>
         <source>Profile Model Editor</source>
-        <translation>Editor de Modelos de Perfil</translation>
+        <translation type="obsolete">Editor de Modelos de Perfil</translation>
     </message>
     <message>
         <location filename="UserTools/profile_editor.ui" line="22"/>
         <source>Profile Model Name:</source>
-        <translation>Nome do Modelo de Perfil:</translation>
+        <translation type="obsolete">Nome do Modelo de Perfil:</translation>
     </message>
     <message>
         <location filename="UserTools/profile_editor.ui" line="39"/>
         <source>Create Profile Model</source>
-        <translation>Criar Modelo de Perfil</translation>
+        <translation type="obsolete">Criar Modelo de Perfil</translation>
     </message>
     <message>
         <location filename="UserTools/profile_editor.ui" line="48"/>
@@ -861,12 +861,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="UserTools/user_profiles.ui" line="14"/>
         <source>Manage User Profiles</source>
-        <translation>Gerenciar Perfis de Usuário</translation>
+        <translation type="obsolete">Gerenciar Perfis de Usuário</translation>
     </message>
     <message>
         <location filename="UserTools/user_profiles.ui" line="25"/>
         <source>Installed Profiles</source>
-        <translation>Perfis instalados</translation>
+        <translation type="obsolete">Perfis instalados</translation>
     </message>
     <message>
         <location filename="UserTools/user_profiles.ui" line="39"/>
@@ -891,12 +891,62 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="UserTools/user_profiles.ui" line="69"/>
         <source>Assigned Profiles</source>
-        <translation>Perfis Atribuídos</translation>
+        <translation type="obsolete">Perfis Atribuídos</translation>
     </message>
     <message>
         <location filename="UserTools/user_profiles.ui" line="106"/>
         <source>Install New Profile</source>
-        <translation>Instalar Novo Perfil</translation>
+        <translation type="obsolete">Instalar Novo Perfil</translation>
+    </message>
+    <message>
+        <location filename="UserTools/assign_profiles.ui" line="14"/>
+        <source>Install/Remove User Permissions</source>
+        <translation>Instalar/Remover Permissões de Usuário</translation>
+    </message>
+    <message>
+        <location filename="UserTools/assign_profiles.ui" line="23"/>
+        <source>Existent User Permissions Models</source>
+        <translation>Modelos de Permissões de Usuário Existentes</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.ui" line="25"/>
+        <source>Installed User Permissions</source>
+        <translation>Permissões de Usuário Instaladas</translation>
+    </message>
+    <message>
+        <location filename="UserTools/profile_editor.ui" line="39"/>
+        <source>Create Permissions Model</source>
+        <translation>Criar Modelo de Permissões</translation>
+    </message>
+    <message>
+        <location filename="UserTools/profile_editor.ui" line="22"/>
+        <source>Permissions Model Name:</source>
+        <translation>Nome do Modelo de Permissões:</translation>
+    </message>
+    <message>
+        <location filename="UserTools/profile_editor.ui" line="14"/>
+        <source>User Permissions Editor</source>
+        <translation>Editor de Permissões de Usuário</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.ui" line="14"/>
+        <source>Manage User Permissions</source>
+        <translation>Gerenciar Permissões de Usuário</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.ui" line="69"/>
+        <source>Assigned User Permissions</source>
+        <translation>Permissões de Usuário Atribuídas</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.ui" line="106"/>
+        <source>Install New User Permission</source>
+        <translation>Instalar Nova Permissão de Usuário</translation>
+    </message>
+    <message>
+        <location filename="UserTools/assign_profiles.ui" line="143"/>
+        <source>Open User Permissions Editor</source>
+        <translation type="unfinished">Abrir Editor de Permissões de Usuário</translation>
     </message>
 </context>
 <context>
@@ -1160,7 +1210,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="dsg_tools.py" line="476"/>
         <source>Profile Editor</source>
-        <translation>Editor de Perfis</translation>
+        <translation type="obsolete">Editor de Perfis</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="486"/>
@@ -1175,12 +1225,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="dsg_tools.py" line="498"/>
         <source>Manage User Profiles</source>
-        <translation>Gerenciar Perfis de Usuário</translation>
+        <translation type="obsolete">Gerenciar Perfis de Usuário</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="419"/>
         <source>Convert Database</source>
-        <translation>Converter Banco de Dados</translation>
+        <translation type="obsolete">Converter Banco de Dados</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="487"/>
@@ -1190,7 +1240,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="dsg_tools.py" line="487"/>
         <source>Manage Profile Models</source>
-        <translation>Gerenciar Modelos de Perfil</translation>
+        <translation type="obsolete">Gerenciar Modelos de Perfil</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="476"/>
+        <source>Manage User Permissions</source>
+        <translation>Gerenciar Permissões de Usuário</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="487"/>
+        <source>User Permissions Tools</source>
+        <translation>Ferramentas de Permissões de Usuário</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="489"/>
+        <source>User Permissions Editor</source>
+        <translation>Editor de Permissões de Usuário</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="499"/>
+        <source>Install/Remove User Permissions</source>
+        <translation>Instalar/Remover Permissões de Usuário</translation>
     </message>
 </context>
 <context>

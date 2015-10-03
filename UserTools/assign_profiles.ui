@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Manage Database User Profiles</string>
+   <string>Install/Remove User Permissions</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <item row="0" column="0" colspan="2">
@@ -20,7 +20,7 @@
    <item row="1" column="0">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Existent User Profile Models</string>
+      <string>Existent User Permissions Models</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="1" column="2">
@@ -76,7 +76,7 @@
    <item row="1" column="1">
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
-      <string>Installed User Profiles</string>
+      <string>Installed User Permissions</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0" colspan="3">
@@ -140,7 +140,7 @@
      <item>
       <widget class="QPushButton" name="openProfileEditor">
        <property name="text">
-        <string>Open Profile Editor</string>
+        <string>Open User Permissions Editor</string>
        </property>
       </widget>
      </item>

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Profile Model Editor</string>
+   <string>User Permissions Editor</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
@@ -19,7 +19,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Profile Model Name:</string>
+        <string>Permissions Model Name:</string>
        </property>
       </widget>
      </item>
@@ -36,7 +36,7 @@
      <item>
       <widget class="QPushButton" name="createButton">
        <property name="text">
-        <string>Create Profile Model</string>
+        <string>Create Permissions Model</string>
        </property>
       </widget>
      </item>
