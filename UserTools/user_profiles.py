@@ -32,6 +32,8 @@ from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.UserTools.create_profile import CreateProfile
 from DsgTools.UserTools.assign_profiles import AssignProfiles
+from DsgTools.UserTools.create_user import CreateUser
+# from DsgTools.UserTools.alter_user_password import AlterUserPassword
 
 import json
 
@@ -109,6 +111,11 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         dlg = AssignProfiles(self.widget.comboBoxPostgis.currentIndex())
         dlg.exec_()
         self.getProfiles(self.comboBox.currentText())        
+
+    @pyqtSlot(bool)
+    def on_createUserButton_clicked(self):
+        dlg = CreateUser(self.comboBox.currentText())
+        dlg.exec_()
         
     @pyqtSlot(int)
     def on_comboBox_currentIndexChanged(self):

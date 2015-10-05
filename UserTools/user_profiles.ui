@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>617</width>
-    <height>381</height>
+    <width>833</width>
+    <height>498</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -85,6 +85,20 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="createUserButton">
+            <property name="text">
+             <string>Create User</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="alterPasswordButton">
+            <property name="text">
+             <string>Alter Password</string>
             </property>
            </widget>
           </item>
