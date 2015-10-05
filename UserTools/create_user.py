@@ -38,7 +38,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'create_user.ui'))
 
 class CreateUser(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, user = None, parent = None):
+    def __init__(self, user = None, db = None, parent = None):
         """Constructor."""
         super(CreateUser, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -47,8 +47,34 @@ class CreateUser(QtGui.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-
+        self.db = db
         self.factory = SqlGeneratorFactory()
         self.gen = self.factory.createSqlGenerator(False)
-        self.utils = Utils()        
+        
+        
+        self.utils = Utils()   
+        self.refreshScreen()     
+    
+    def refreshScreen(self):
+        self.userLineEdit.setText('')
+        self.passwordLineEdit.setText('')
+    
+    @pyqtSlot(bool)
+    def on_createUserButton_clicked(self):
+        user = self.userLineEdit.text()
+        password = self.passwordLineEdit.text()
+        sql = self.gen.createUser(user,password)
+        query = QSqlQuery(self.db)
 
+        if not query.exec_(sql):
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem creating user: ') +user+'\n'+query.lastError().text())
+            self.refreshScreen()
+            return
+        else:
+            QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('User ') +user+' created successfully!')
+            self.refreshScreen()
+            return
+
+    @pyqtSlot(bool)
+    def on_closeButton_clicked(self):
+        self.close()

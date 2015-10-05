@@ -83,4 +83,7 @@ class SqlGenerator:
         return None
     
     def getUsers(self):
-        return None;
+        return None
+    
+    def createUser(self):
+        return None

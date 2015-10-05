@@ -114,8 +114,12 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_createUserButton_clicked(self):
-        dlg = CreateUser(self.comboBox.currentText())
+        if not self.widget.db:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
+            return
+        dlg = CreateUser(self.comboBox.currentText(),self.widget.db)
         dlg.exec_()
+        self.populateUsers()
         
     @pyqtSlot(int)
     def on_comboBox_currentIndexChanged(self):
