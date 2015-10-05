@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>833</width>
+    <width>1052</width>
     <height>498</height>
    </rect>
   </property>
@@ -26,7 +26,14 @@
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">
-         <widget class="QListWidget" name="installedProfiles"/>
+         <widget class="QListWidget" name="installedProfiles">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -99,6 +106,13 @@
            <widget class="QPushButton" name="alterPasswordButton">
             <property name="text">
              <string>Alter Password</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="removeUserButton">
+            <property name="text">
+             <string>Remove User</string>
             </property>
            </widget>
           </item>

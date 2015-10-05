@@ -175,4 +175,8 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def createUser(self,user,password):
         sql = 'CREATE ROLE '+user+' WITH LOGIN PASSWORD \''+password+'\';'
-        return sql    
+        return sql   
+    
+    def removeUser(self,user):
+        sql = 'DROP ROLE '+user
+        return sql 

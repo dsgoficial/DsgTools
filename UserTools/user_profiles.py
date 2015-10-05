@@ -120,6 +120,29 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         dlg = CreateUser(self.comboBox.currentText(),self.widget.db)
         dlg.exec_()
         self.populateUsers()
+    
+    @pyqtSlot(bool)    
+    def on_removeUserButton_clicked(self):
+        user = self.comboBox.currentText()
+        if not self.widget.db:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
+            return
+        if self.comboBox.currentIndex() == 0:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a user to remove!'))
+            return
+        
+        
+        sql = self.gen.removeUser(user)
+        query = QSqlQuery(self.widget.db)
+
+        if not query.exec_(sql):
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem removing user: ') +user+'\n'+query.lastError().text())
+            self.getProfiles(user)
+            return
+                
+        self.getProfiles(user)
+        QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('User removed successfully!'))
+        self.populateUsers()               
         
     @pyqtSlot(int)
     def on_comboBox_currentIndexChanged(self):

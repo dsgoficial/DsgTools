@@ -87,3 +87,6 @@ class SqlGenerator:
     
     def createUser(self):
         return None
+    
+    def removeUser(self):
+        return None    
