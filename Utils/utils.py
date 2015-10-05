@@ -26,6 +26,7 @@ from PyQt4.QtSql import QSqlDatabase,QSqlQuery
 
 import qgis as qgis
 from qgis.gui import QgsMessageBar
+from qgis.core import QgsMessageLog
 
 import os
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
