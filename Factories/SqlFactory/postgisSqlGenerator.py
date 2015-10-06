@@ -173,8 +173,11 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = 'SELECT usename FROM pg_user WHERE usename <> \'postgres\''
         return sql
     
-    def createUser(self,user,password):
-        sql = 'CREATE ROLE '+user+' WITH LOGIN PASSWORD \''+password+'\';'
+    def createUser(self,user,password,isSuperuser):
+        if isSuperuser:
+            sql = 'CREATE ROLE '+user+' WITH SUPERUSER CREATEDB CREATEROLE REPLICATION LOGIN PASSWORD \''+password+'\';'
+        else:
+            sql = 'CREATE ROLE '+user+' WITH LOGIN PASSWORD \''+password+'\';'
         return sql   
     
     def removeUser(self,user):

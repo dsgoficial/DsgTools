@@ -63,7 +63,11 @@ class CreateUser(QtGui.QDialog, FORM_CLASS):
     def on_createUserButton_clicked(self):
         user = self.userLineEdit.text()
         password = self.passwordLineEdit.text()
-        sql = self.gen.createUser(user,password)
+        if self.superUserCheckBox.checkState() == 2:
+            isSuperUser = True
+        else:
+            isSuperUser = False
+        sql = self.gen.createUser(user,password,isSuperUser)
         query = QSqlQuery(self.db)
 
         if not query.exec_(sql):

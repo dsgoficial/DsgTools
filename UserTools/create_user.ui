@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>179</width>
-    <height>101</height>
+    <height>128</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,14 +38,21 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="2" column="0" colspan="3">
+    <widget class="QCheckBox" name="superUserCheckBox">
+     <property name="text">
+      <string>Superuser</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
     <widget class="QPushButton" name="createUserButton">
      <property name="text">
       <string>Create User</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="2">
+   <item row="3" column="2">
     <widget class="QPushButton" name="closeButton">
      <property name="text">
       <string>Close</string>
