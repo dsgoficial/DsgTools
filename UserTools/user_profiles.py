@@ -33,7 +33,8 @@ from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactor
 from DsgTools.UserTools.create_profile import CreateProfile
 from DsgTools.UserTools.assign_profiles import AssignProfiles
 from DsgTools.UserTools.create_user import CreateUser
-# from DsgTools.UserTools.alter_user_password import AlterUserPassword
+from DsgTools.UserTools.alter_user_password import AlterUserPassword
+
 
 import json
 
@@ -143,7 +144,20 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         self.getProfiles(user)
         QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('User removed successfully!'))
         self.populateUsers()               
-        
+
+    @pyqtSlot(bool)
+    def on_alterPasswordButton_clicked(self):
+        user = self.comboBox.currentText()
+        if not self.widget.db:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
+            return
+        if self.comboBox.currentIndex() == 0:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a user!'))
+            return
+        dlg = AlterUserPassword(user,self.widget.db)
+        dlg.exec_()
+
+
     @pyqtSlot(int)
     def on_comboBox_currentIndexChanged(self):
         self.getProfiles(self.comboBox.currentText())

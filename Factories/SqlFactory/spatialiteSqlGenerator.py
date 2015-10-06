@@ -107,4 +107,6 @@ class SpatialiteSqlGenerator(SqlGenerator):
     
     def removeUser(self):
         return None    
-    
+
+    def alterUserPass(self):
+        return None     

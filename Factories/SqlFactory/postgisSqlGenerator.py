@@ -183,3 +183,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def removeUser(self,user):
         sql = 'DROP ROLE '+user
         return sql 
+    
+    def alterUserPass(self,user,newPass):
+        sql = 'ALTER ROLE '+user+' WITH PASSWORD \''+newPass+'\''
+        return sql 
