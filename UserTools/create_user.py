@@ -58,11 +58,20 @@ class CreateUser(QtGui.QDialog, FORM_CLASS):
     def refreshScreen(self):
         self.userLineEdit.setText('')
         self.passwordLineEdit.setText('')
+        self.passwordLineEdit_2.setText('')
+        self.superUserCheckBox.setCheckState(0)
     
     @pyqtSlot(bool)
     def on_createUserButton_clicked(self):
         user = self.userLineEdit.text()
         password = self.passwordLineEdit.text()
+        password_2 = self.passwordLineEdit_2.text()
+        if password <> password_2:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Password missmatch! User not created!'))
+            self.refreshScreen()
+            return
+        
+        
         if self.superUserCheckBox.checkState() == 2:
             isSuperUser = True
         else:
