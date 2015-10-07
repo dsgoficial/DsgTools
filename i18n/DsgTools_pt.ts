@@ -33,6 +33,64 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>AlterUserPassword</name>
+    <message>
+        <location filename="UserTools/alter_user_password.ui" line="14"/>
+        <source>Alter User Password</source>
+        <translation>Alterar Password de Usuário</translation>
+    </message>
+    <message>
+        <location filename="UserTools/alter_user_password.ui" line="20"/>
+        <source>Repeat New Password</source>
+        <translation>Repetir Novo Password</translation>
+    </message>
+    <message>
+        <location filename="UserTools/alter_user_password.ui" line="37"/>
+        <source>New Password</source>
+        <translation>Novo Password</translation>
+    </message>
+    <message>
+        <location filename="UserTools/alter_user_password.ui" line="54"/>
+        <source>Alter Password</source>
+        <translation>Alterar Password</translation>
+    </message>
+    <message>
+        <location filename="UserTools/alter_user_password.ui" line="61"/>
+        <source>Cancel</source>
+        <translation>Cancelar</translation>
+    </message>
+    <message>
+        <location filename="UserTools/alter_user_password.py" line="68"/>
+        <source>Critical!</source>
+        <translation>Crítico!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/alter_user_password.py" line="61"/>
+        <source>Password missmatch! Password not altered!</source>
+        <translation type="obsolete">Password não coincidente! Password não alterado!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/alter_user_password.py" line="68"/>
+        <source>Problem altering user&apos;s password: </source>
+        <translation>Problema alterando password do usuário: </translation>
+    </message>
+    <message>
+        <location filename="UserTools/alter_user_password.py" line="71"/>
+        <source>Success!</source>
+        <translation>Sucesso!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/alter_user_password.py" line="71"/>
+        <source>User </source>
+        <translation>Usuário </translation>
+    </message>
+    <message>
+        <location filename="UserTools/alter_user_password.py" line="61"/>
+        <source>Password mismatch! Password not altered!</source>
+        <translation>Password não coincidente! Password não alterado!</translation>
+    </message>
+</context>
+<context>
     <name>AssignProfiles</name>
     <message>
         <location filename="UserTools/assign_profiles.py" line="167"/>
@@ -108,12 +166,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="ComplexTools/complexWindow.py" line="123"/>
         <source>select a complex class</source>
-        <translation>Selecione a Classe Complexa</translation>
+        <translation>selecione a classe complexa</translation>
     </message>
     <message>
         <location filename="ComplexTools/complexWindow.py" line="135"/>
         <source>select a database</source>
-        <translation>Selecione o Banco de Dados</translation>
+        <translation>selecione o Banco de Dados</translation>
     </message>
     <message>
         <location filename="ComplexTools/complexWindow.py" line="431"/>
@@ -226,6 +284,69 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>CreateUser</name>
+    <message>
+        <location filename="UserTools/create_user.ui" line="65"/>
+        <source>Create User</source>
+        <translation>Criar Usuário</translation>
+    </message>
+    <message>
+        <location filename="UserTools/create_user.ui" line="20"/>
+        <source>User Name</source>
+        <translation>Nome do Usuário</translation>
+    </message>
+    <message>
+        <location filename="UserTools/create_user.ui" line="30"/>
+        <source>Password</source>
+        <translation>Senha</translation>
+    </message>
+    <message>
+        <location filename="UserTools/create_user.ui" line="44"/>
+        <source>Re-enter Password</source>
+        <translation>Entre o Password novamente</translation>
+    </message>
+    <message>
+        <location filename="UserTools/create_user.ui" line="58"/>
+        <source>Superuser</source>
+        <translation>Superusuário</translation>
+    </message>
+    <message>
+        <location filename="UserTools/create_user.ui" line="72"/>
+        <source>Close</source>
+        <translation>Fechar</translation>
+    </message>
+    <message>
+        <location filename="UserTools/create_user.py" line="83"/>
+        <source>Critical!</source>
+        <translation>Crítico!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/create_user.py" line="70"/>
+        <source>Password missmatch! User not created!</source>
+        <translation type="obsolete">Password não coincidente! Usuário não criado!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/create_user.py" line="83"/>
+        <source>Problem creating user: </source>
+        <translation>Problema criando usuário: </translation>
+    </message>
+    <message>
+        <location filename="UserTools/create_user.py" line="87"/>
+        <source>Success!</source>
+        <translation>Sucesso!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/create_user.py" line="87"/>
+        <source>User </source>
+        <translation>Usuário </translation>
+    </message>
+    <message>
+        <location filename="UserTools/create_user.py" line="70"/>
+        <source>Password mismatch! User not created!</source>
+        <translation>Password não coincidente! Usuário não criado!</translation>
+    </message>
+</context>
+<context>
     <name>CriaSpatialite</name>
     <message>
         <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="33"/>
@@ -265,7 +386,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="147"/>
         <source>EDGV Version:</source>
-        <translation>Versão EDGV:</translation>
+        <translation>Versão da EDGV:</translation>
     </message>
     <message>
         <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="155"/>
@@ -316,7 +437,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="ComplexTools/ui_manageComplex.ui" line="29"/>
         <source>Add Complex</source>
-        <translation>Criar Complexo</translation>
+        <translation>Adicionar Complexo</translation>
     </message>
     <message>
         <location filename="ComplexTools/ui_manageComplex.ui" line="36"/>
@@ -504,7 +625,7 @@ p, li { white-space: pre-wrap; }
         <translation>Porta:</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="77"/>
+        <location filename="UserTools/user_profiles.ui" line="84"/>
         <source>User:</source>
         <translation>Usuário:</translation>
     </message>
@@ -551,12 +672,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="ServerTools/ui_viewServers.ui" line="71"/>
         <source>Add</source>
-        <translation>Adiciona</translation>
+        <translation>Adicionar</translation>
     </message>
     <message>
         <location filename="ServerTools/ui_viewServers.ui" line="85"/>
         <source>Edit</source>
-        <translation>Edita</translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <location filename="ServerTools/ui_viewServers.ui" line="61"/>
@@ -804,7 +925,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Abrir Editor de Perfil</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="113"/>
+        <location filename="UserTools/user_profiles.ui" line="141"/>
         <source>Close</source>
         <translation>Fechar</translation>
     </message>
@@ -821,7 +942,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="UserTools/create_profile.ui" line="36"/>
         <source>EDGV Version:</source>
-        <translation>Versão EDGV:</translation>
+        <translation>Versão da EDGV:</translation>
     </message>
     <message>
         <location filename="UserTools/profile_editor.ui" line="14"/>
@@ -869,22 +990,22 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Perfis instalados</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="39"/>
+        <location filename="UserTools/user_profiles.ui" line="46"/>
         <source>&gt;&gt;</source>
         <translation>&gt;&gt;</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="46"/>
+        <location filename="UserTools/user_profiles.ui" line="53"/>
         <source>&gt;</source>
         <translation>&gt;</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="53"/>
+        <location filename="UserTools/user_profiles.ui" line="60"/>
         <source>&lt;</source>
         <translation>&lt;</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="60"/>
+        <location filename="UserTools/user_profiles.ui" line="67"/>
         <source>&lt;&lt;</source>
         <translation>&lt;&lt;</translation>
     </message>
@@ -934,19 +1055,34 @@ p, li { white-space: pre-wrap; }
         <translation>Gerenciar Permissões de Usuário</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="69"/>
+        <location filename="UserTools/user_profiles.ui" line="76"/>
         <source>Assigned User Permissions</source>
         <translation>Permissões de Usuário Atribuídas</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="106"/>
+        <location filename="UserTools/user_profiles.ui" line="134"/>
         <source>Install New User Permission</source>
         <translation>Instalar Nova Permissão de Usuário</translation>
     </message>
     <message>
         <location filename="UserTools/assign_profiles.ui" line="143"/>
         <source>Open User Permissions Editor</source>
-        <translation type="unfinished">Abrir Editor de Permissões de Usuário</translation>
+        <translation>Abrir Editor de Permissões de Usuário</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.ui" line="101"/>
+        <source>Create User</source>
+        <translation>Criar Usuário</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.ui" line="108"/>
+        <source>Alter Password</source>
+        <translation>Alterar Password</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.ui" line="115"/>
+        <source>Remove User</source>
+        <translation>Remover Usuário</translation>
     </message>
 </context>
 <context>
@@ -1075,12 +1211,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="dsg_tools.py" line="509"/>
         <source>Load by Category</source>
-        <translation>Carrega por Categoria</translation>
+        <translation>Carregar por Categoria</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="521"/>
         <source>Load by Class</source>
-        <translation>Carrega por Classe</translation>
+        <translation>Carregar por Classe</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="532"/>
@@ -1308,7 +1444,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="CustomWidgets/connectionWidget.ui" line="176"/>
         <source>EDGV Version</source>
-        <translation>EDGV Versão</translation>
+        <translation>Versão da EDGV</translation>
     </message>
 </context>
 <context>
@@ -1427,7 +1563,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="LayerTools/load_by_category_dialog.ui" line="25"/>
         <source>Load by Category</source>
-        <translation>Carrega por Categoria</translation>
+        <translation>Carregar por Categoria</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_category_dialog.ui" line="42"/>
@@ -1684,34 +1820,59 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ManageUserProfiles</name>
     <message>
-        <location filename="UserTools/user_profiles.py" line="75"/>
+        <location filename="UserTools/user_profiles.py" line="78"/>
         <source>Select a User</source>
         <translation>Selecione um Usuário</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="156"/>
+        <location filename="UserTools/user_profiles.py" line="204"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="147"/>
+        <location filename="UserTools/user_profiles.py" line="195"/>
         <source>Problem granting profile: </source>
         <translation>Problema ao atribuir perfil: </translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="156"/>
+        <location filename="UserTools/user_profiles.py" line="204"/>
         <source>Problem revoking profile: </source>
         <translation>Problema ao revogar perfil: </translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="162"/>
+        <location filename="UserTools/user_profiles.py" line="210"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="162"/>
+        <location filename="UserTools/user_profiles.py" line="210"/>
         <source>User updated successfully!</source>
         <translation>Usuário atualizado com sucesso!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.py" line="152"/>
+        <source>First select a database!</source>
+        <translation>Selecione um banco de dados antes!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.py" line="132"/>
+        <source>First select a user to remove!</source>
+        <translation>Primeiro selecione um usuário para remover!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.py" line="140"/>
+        <source>Problem removing user: </source>
+        <translation>Problema removendo usuário: </translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.py" line="145"/>
+        <source>User removed successfully!</source>
+        <translation>Usuário removido com sucesso!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.py" line="155"/>
+        <source>First select a user!</source>
+        <translation>Primeiro selecione um usuário!</translation>
     </message>
 </context>
 <context>
@@ -1929,7 +2090,8 @@ Olhe o Terminal Python para detalhes.</translation>
         <location filename="ServerTools/serverDBExplorer.py" line="118"/>
         <source>Information:
 </source>
-        <translation>Informação:</translation>
+        <translation>Informação:
+</translation>
     </message>
     <message>
         <location filename="ServerTools/serverDBExplorer.py" line="120"/>
@@ -1942,7 +2104,8 @@ Olhe o Terminal Python para detalhes.</translation>
         <source>
 The following databases connections were created successfully!:
 </source>
-        <translation>As seguintes conexões de bancos de dados foram criadas com sucesso!:</translation>
+        <translation>
+As seguintes conexões de bancos de dados foram criadas com sucesso!:</translation>
     </message>
     <message>
         <location filename="ServerTools/serverDBExplorer.py" line="127"/>
@@ -1975,12 +2138,12 @@ The following databases connections were created successfully!:
     <message>
         <location filename="ServerTools/viewServers.py" line="65"/>
         <source>Clear</source>
-        <translation>Vazio</translation>
+        <translation>Limpar</translation>
     </message>
     <message>
         <location filename="ServerTools/viewServers.py" line="67"/>
         <source>Saved</source>
-        <translation>Salva</translation>
+        <translation>Salvo</translation>
     </message>
     <message>
         <location filename="ServerTools/viewServers.py" line="112"/>

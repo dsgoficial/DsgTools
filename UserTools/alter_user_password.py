@@ -58,7 +58,7 @@ class AlterUserPassword(QtGui.QDialog, FORM_CLASS):
         newpassword = self.newPasswordLineEdit.text()
         newpassword_2 = self.newPasswordLineEdit_2.text()
         if newpassword <> newpassword_2:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Password missmatch! Password not altered!'))
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Password mismatch! Password not altered!'))
             return
 
         sql = self.gen.alterUserPass(self.user,newpassword)

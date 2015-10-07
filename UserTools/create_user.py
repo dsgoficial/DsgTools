@@ -67,7 +67,7 @@ class CreateUser(QtGui.QDialog, FORM_CLASS):
         password = self.passwordLineEdit.text()
         password_2 = self.passwordLineEdit_2.text()
         if password <> password_2:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Password missmatch! User not created!'))
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Password mismatch! User not created!'))
             self.refreshScreen()
             return
         
