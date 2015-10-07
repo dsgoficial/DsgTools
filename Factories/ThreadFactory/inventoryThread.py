@@ -87,16 +87,11 @@ class InventoryThread(GenericThread):
         if ret == 1:
             self.signals.loadFile.emit(self.outputFile, self.isOnlyGeo)
         
-        # Doing that to stop progress bar
-        self.signals.rangeCalculated.emit(10, self.getId())
         self.signals.processingFinished.emit(ret, msg, self.getId())
     
     def makeInventory(self, parentFolder, outputFile, destinationFolder):
         '''Makes the inventory
         '''
-        # Progress bar steps calculated
-        self.signals.rangeCalculated.emit(0, self.getId())
-
         # creating a csv file
         try:
             csvfile = open(outputFile, 'wb')
@@ -112,6 +107,8 @@ class InventoryThread(GenericThread):
             layer = self.createMemoryLayer()
             # iterating over the parent folder recursively
             for root, dirs, files in os.walk(parentFolder):
+                # Progress bar steps calculated
+                self.signals.rangeCalculated.emit(len(files), self.getId())
                 for file in files:
                     # check if the user stopped the operation
                     if not self.stopped[0]:
@@ -140,6 +137,8 @@ class InventoryThread(GenericThread):
                                 self.files.append(line)
                             gdalSrc = None
                             ogrSrc = None
+                            
+                        self.signals.stepProcessed.emit(self.getId())
                     else:
                         QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
                         return (-1, self.messenger.getUserCanceledFeedbackMessage())
