@@ -83,6 +83,7 @@ def createVrt(vrt):
                 #('gdalogr:overviews', input, levels=8, clean=False, resampling_method=0(nearest), format=1(Gtiff .ovr))
                 processing.runalg('gdalogr:overviews', raster, 8, True, 0, 1)
         
+        count += 1
         if int(float(count)/size*100) != p:
             p = int(float(count)/size*100)
             progress.setPercentage(p)    
