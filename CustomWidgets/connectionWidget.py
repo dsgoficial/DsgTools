@@ -70,6 +70,7 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         
         self.db = None
         self.isSpatialite = True
+        self.dbVersion = ''
         self.tabWidget.setCurrentIndex(0)
         self.factory = SqlGeneratorFactory()
         self.gen = self.factory.createSqlGenerator(self.isSpatialite)
@@ -97,6 +98,7 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.dbLoaded = False
         self.epsg = 0
         self.crs = None
+        self.dbVersion = ''
         
         self.spatialiteFileEdit.setText(self.filename)
         self.postGISCrsEdit.setText('')
@@ -121,7 +123,8 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
             (self.filename, self.db) = self.utils.getSpatialiteDatabase()
             if self.filename:
                 self.spatialiteFileEdit.setText(self.filename)
-                self.edgvSpatialiteVersionEdit.setText(self.utils.getDatabaseVersion(self.db))
+                self.dbVersion = self.utils.getDatabaseVersion(self.db)
+                self.edgvSpatialiteVersionEdit.setText(self.dbVersion)
         else:
             self.db = self.utils.getPostGISDatabase(self.comboBoxPostgis.currentText())
         try:
@@ -130,7 +133,8 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
             else:
                 self.dbLoaded = True
                 self.setCRS()
-                self.edgvPostgisVersionEdit.setText(self.utils.getDatabaseVersion(self.db))
+                self.dbVersion = self.utils.getDatabaseVersion(self.db)
+                self.edgvPostgisVersionEdit.setText(self.dbVersion)
         except:
             pass    
 

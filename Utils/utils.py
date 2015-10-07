@@ -175,4 +175,73 @@ class Utils:
             settings.endGroup()
             return True
         return False
-            
+    
+    def listGeomClassesFromDatabase(self, db, isSpatialite):
+        classList = []
+        gen = self.factory.createSqlGenerator(isSpatialite)
+        sql = gen.getTablesFromDatabase()
+        query = QSqlQuery(sql, db)
+        while query.next():
+            if isSpatialite:
+                tableName = query.value(0)
+                layerName = tableName
+            else:
+                tableSchema = query.value(0)
+                tableName = query.value(1)
+                layerName = tableSchema+'.'+tableName
+            if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
+                or tableName.split("_")[-1] == "a":
+
+                classList.append(layerName)
+        
+        return classList
+
+    def listComplexClassesFromDatabase(self, db, isSpatialite):
+        classList = []
+        gen = self.factory.createSqlGenerator(isSpatialite)
+        sql = gen.getTablesFromDatabase()
+        query = QSqlQuery(sql, db)
+        while query.next():
+            if isSpatialite:
+                tableName = query.value(0)
+                layerName = tableName
+                tableSchema = layerName.split('_')[0]
+            else:
+                tableSchema = query.value(0)
+                tableName = query.value(1)
+                layerName = tableSchema+'.'+tableName
+            if tableSchema == 'complexos':
+                classList.append(layerName)
+        
+        return classList
+
+    
+    def countElements(self, layers, db, isSpatialite):
+        listaQuantidades = []
+        for layer in layers:
+            gen = self.factory.createSqlGenerator(isSpatialite)
+            sql = gen.getElementCountFromLayer(layer)
+            query = QSqlQuery(sql,db)
+            query.next()
+            number = query.value(0)
+            if not query.exec_(sql):
+                QgsMessageLog.logMessage(self.tr("Problem counting elements: ")+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            listaQuantidades.append([layer, number])
+        return listaQuantidades
+
+    def listWithElementsFromDatabase(self, classList, db, isSpatialite):
+        classListWithNumber = self.countElements(classList, db, isSpatialite)
+        classesWithElements = []
+        for cl in classListWithNumber:
+            if cl[1]>0:
+                classesWithElements.append(cl[0])   
+        return classesWithElements
+    
+    def listGeomClassesWithElementsFromDatabase(self, db, isSpatialite):
+        classList = self.listGeomClassesFromDatabase(db, isSpatialite)
+        return self.listWithElementsFromDatabase(classList,db,isSpatialite)
+    
+    def listComplexClassesWithElementsFromDatabase(self, db, isSpatialite):
+        classList = self.listComplexClassesFromDatabase(db, isSpatialite)
+        return self.listWithElementsFromDatabase(classList,db,isSpatialite)
+        

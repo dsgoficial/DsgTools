@@ -49,6 +49,10 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.utils = Utils()
+        self.geomClasses = None
+        self.complexClasses = None
+        
         self.comboBox.addItem(self.tr('Select a conversion'))
         self.comboBox.addItem(self.tr('postgis2spatialite'))
         self.comboBox.addItem(self.tr('spatialite2postgis'))
@@ -89,3 +93,20 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
         self.close()
+    
+    @pyqtSlot(bool)
+    def on_convertButton_clicked(self):
+        if not self.widget.db:
+            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Enter input database!'))
+            return
+        if not self.widget_2.db:
+            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Enter output database!'))
+            return
+        if self.widget.dbVersion <> self.widget_2.dbVersion:
+            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Version mismatch!\nConversion must be between databases with the same version!'))
+            return
+        self.geomClasses = self.utils.listGeomClassesWithElementsFromDatabase(self.widget.db, self.widget.isSpatialite)
+        self.complexClasses = self.utils.listComplexClassesWithElementsFromDatabase(self.widget.db, self.widget.isSpatialite)
+        
+        print self.geomClasses
+        print self.complexClasses
