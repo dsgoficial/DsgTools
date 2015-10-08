@@ -81,12 +81,12 @@ def createVrt(vrt):
             if not os.path.isfile(ovr):
                 progress.setText('Fazendo Pirâmides...')
                 #('gdalogr:overviews', input, levels=8, clean=False, resampling_method=0(nearest), format=1(Gtiff .ovr))
-                processing.runalg('gdalogr:overviews', raster, 8, True, 0, 1)
+                processing.runalg('gdalogr:overviews', raster, '8 32 128', True, 0, 1)
         
-        count += 1
         if int(float(count)/size*100) != p:
             p = int(float(count)/size*100)
             progress.setPercentage(p)    
+        count += 1
     
         progress.setText('Fazendo raster virtual...')
         processing.runalg('gdalogr:buildvirtualraster', rasterList, 0, False, False, vrtfilename)
