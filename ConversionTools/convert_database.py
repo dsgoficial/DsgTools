@@ -107,8 +107,8 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
             return
         self.geomClasses = self.utils.listGeomClassesWithElementsFromDatabase(self.widget.db, self.widget.isSpatialite)
         self.complexClasses = self.utils.listComplexClassesWithElementsFromDatabase(self.widget.db, self.widget.isSpatialite)
-        
-        print self.getPostgisDomainDict('2.1.3', self.widget_2.db)
+        print self.utils.makeOgrPostGISConn(self.widget_2.db)
+#         print self.getPostgisDomainDict('2.1.3', self.widget_2.db)
 
     def getPostgisNotNullDict(self,edgvVersion,db):
         if edgvVersion == '2.1.3':

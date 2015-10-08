@@ -244,4 +244,12 @@ class Utils:
     def listComplexClassesWithElementsFromDatabase(self, db, isSpatialite):
         classList = self.listComplexClassesFromDatabase(db, isSpatialite)
         return self.listWithElementsFromDatabase(classList,db,isSpatialite)
-        
+    
+    def makeOgrPostGISConn(self,db):
+        dbName = db.databaseName()
+        dbUser = db.userName()
+        dbHost = db.hostName()
+        dbPass = db.password()
+        dbPort = str(db.port())
+        constring = '\"PG: dbname=\''+dbName+'\' user=\''+dbUser+'\' host=\''+dbHost+'\' password=\''+dbPass+'\' port='+dbPort+'\"'
+        return constring
