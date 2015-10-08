@@ -92,4 +92,10 @@ class SqlGenerator:
         return None   
 
     def alterUserPass(self):
-        return None   
+        return None
+    
+    def validateWithDomain(self):
+        return None 
+    
+    def getNotNullFields(self):
+        return None  

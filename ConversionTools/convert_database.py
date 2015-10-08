@@ -108,5 +108,52 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         self.geomClasses = self.utils.listGeomClassesWithElementsFromDatabase(self.widget.db, self.widget.isSpatialite)
         self.complexClasses = self.utils.listComplexClassesWithElementsFromDatabase(self.widget.db, self.widget.isSpatialite)
         
-        print self.geomClasses
-        print self.complexClasses
+        print self.getPostgisDomainDict('2.1.3', self.widget_2.db)
+
+    def getPostgisNotNullDict(self,edgvVersion,db):
+        if edgvVersion == '2.1.3':
+            schemaList = ['cb','complexos']
+        else:
+            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not defined for this database version!'))
+            return
+        sql = self.widget_2.gen.getNotNullFields(schemaList)
+        query = QSqlQuery(sql, db)
+        notNullDict = dict()
+        while query.next():
+            className = query(0)
+            attName = query(1)
+            if className not in notNullDict.keys():
+                notNullDict[className]=[]
+            notNullDict[className].append(attName)
+        return notNullDict
+    
+    def getPostgisDomainDict(self,edgvVersion,db):
+        if edgvVersion == '2.1.3':
+            schemaList = ['cb','complexos','dominios']
+        else:
+            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not defined for this database version!'))
+            return
+        sql = self.widget_2.gen.validateWithDomain(schemaList)
+
+        query = QSqlQuery(sql, db)
+        classDict = dict()
+        domainDict = dict()
+        
+        while query.next():
+
+            className = query.value(0)
+            attName = query.value(1)
+            domainName = query.value(2)
+            domainTable = query.value(3)
+            domainQuery = query.value(4)
+
+            if className not in classDict.keys():
+                classDict[className]=dict()
+            if attName not in classDict[className].keys():
+                classDict[className][attName]=[]
+                query2 = QSqlQuery(domainQuery,db)
+                while query2.next():
+                    value = query2.value(0)
+                    classDict[className][attName].append(value)
+
+        return classDict
