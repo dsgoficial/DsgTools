@@ -30,11 +30,6 @@ from qgis.core import QgsMessageLog
 
 import os, ogr
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-import sys
-sys.path.append("/home/dsgdev/.eclipse/org.eclipse.platform_3.8_155965261/plugins/org.python.pydev_3.9.2.201502050007/pysrc/")
-
-import pydevd
-
 
 class Utils:
     def __init__(self):
@@ -219,7 +214,6 @@ class Utils:
                 classList.append(layerName)
         
         return classList
-
     
     def countElements(self, layers, db, isSpatialite):
         listaQuantidades = []
@@ -250,7 +244,7 @@ class Utils:
         classList = self.listComplexClassesFromDatabase(db, isSpatialite)
         return self.listWithElementsFromDatabase(classList,db,isSpatialite)
     
-    def makeOgrPostGISConn(self,db):
+    def makeOgrPostGISConn(self, db):
         dbName = db.databaseName()
         dbUser = db.userName()
         dbHost = db.hostName()
@@ -259,7 +253,7 @@ class Utils:
         constring = 'PG: dbname=\''+dbName+'\' user=\''+dbUser+'\' host=\''+dbHost+'\' password=\''+dbPass+'\' port='+dbPort
         return constring
     
-    def getPostgisNotNullDict(self,edgvVersion,db):
+    def getPostgisNotNullDict(self, edgvVersion, db):
         gen = self.factory.createSqlGenerator(False)
         if edgvVersion == '2.1.3':
             schemaList = ['cb','complexos']
@@ -277,7 +271,7 @@ class Utils:
             notNullDict[className].append(attName)
         return notNullDict
 
-    def getPostgisDomainDict(self,edgvVersion,db):
+    def getPostgisDomainDict(self, edgvVersion, db):
         gen = self.factory.createSqlGenerator(False)
         if edgvVersion == '2.1.3':
             schemaList = ['cb','complexos','dominios']
@@ -339,7 +333,7 @@ class Utils:
 
         return classDict
 
-    def makeTranslationMap(self,layerName,layer, outLayer, fieldMapper):
+    def makeTranslationMap(self, layerName, layer, outLayer, fieldMapper):
         layerFieldMapper=fieldMapper[layerName]
         layerDef = layer.GetLayerDefn()
         outLayerDef = outLayer.GetLayerDefn()
@@ -355,13 +349,12 @@ class Utils:
                 panMap.append(-1)
         return panMap
     
-    def translateLayer(self,inputLayer,outputLayer,layerPanMap,defaults={},translateValues={}):
+    def translateLayer(self, inputLayer, outputLayer, layerPanMap, defaults={}, translateValues={}):
         inputLayer.ResetReading()
         for feat in inputLayer:
             newFeat=ogr.Feature(outputLayer.GetLayerDefn())
             newFeat.SetFromWithMap(feat,True,layerPanMap)
             outputLayer.CreateFeature(newFeat)
-
 
     def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList, inputIsSpatialite):
         gen = self.factory.createSqlGenerator(inputIsSpatialite)
@@ -392,6 +385,3 @@ class Utils:
                 layerPanMap=self.makeTranslationMap(filename, inputLayer,outputLayer, fieldMap)
                 self.translateLayer(inputLayer, outputLayer, layerPanMap)
         outputDS.Destroy()
-
-        
-        
