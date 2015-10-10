@@ -99,3 +99,9 @@ class SqlGenerator:
     
     def getNotNullFields(self):
         return None  
+    
+    def getFeaturesWithSQL(self,layer,attrList):
+        return None
+
+    def getStructure(self,edgvVersion):
+        return None

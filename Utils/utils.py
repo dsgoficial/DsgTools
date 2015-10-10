@@ -28,8 +28,13 @@ import qgis as qgis
 from qgis.gui import QgsMessageBar
 from qgis.core import QgsMessageLog
 
-import os
+import os, ogr
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+import sys
+sys.path.append("/home/dsgdev/.eclipse/org.eclipse.platform_3.8_155965261/plugins/org.python.pydev_3.9.2.201502050007/pysrc/")
+
+import pydevd
+
 
 class Utils:
     def __init__(self):
@@ -183,11 +188,11 @@ class Utils:
         query = QSqlQuery(sql, db)
         while query.next():
             if isSpatialite:
-                tableName = query.value(0)
+                tableName = query.value(0).encode('utf-8')
                 layerName = tableName
             else:
-                tableSchema = query.value(0)
-                tableName = query.value(1)
+                tableSchema = query.value(0).encode('utf-8')
+                tableName = query.value(1).encode('utf-8')
                 layerName = tableSchema+'.'+tableName
             if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
                 or tableName.split("_")[-1] == "a":
@@ -203,12 +208,12 @@ class Utils:
         query = QSqlQuery(sql, db)
         while query.next():
             if isSpatialite:
-                tableName = query.value(0)
+                tableName = query.value(0).encode('utf-8')
                 layerName = tableName
                 tableSchema = layerName.split('_')[0]
             else:
-                tableSchema = query.value(0)
-                tableName = query.value(1)
+                tableSchema = query.value(0).encode('utf-8')
+                tableName = query.value(1).encode('utf-8')
                 layerName = tableSchema+'.'+tableName
             if tableSchema == 'complexos':
                 classList.append(layerName)
@@ -251,5 +256,142 @@ class Utils:
         dbHost = db.hostName()
         dbPass = db.password()
         dbPort = str(db.port())
-        constring = '\"PG: dbname=\''+dbName+'\' user=\''+dbUser+'\' host=\''+dbHost+'\' password=\''+dbPass+'\' port='+dbPort+'\"'
+        constring = 'PG: dbname=\''+dbName+'\' user=\''+dbUser+'\' host=\''+dbHost+'\' password=\''+dbPass+'\' port='+dbPort
         return constring
+    
+    def getPostgisNotNullDict(self,edgvVersion,db):
+        gen = self.factory.createSqlGenerator(False)
+        if edgvVersion == '2.1.3':
+            schemaList = ['cb','complexos']
+        else:
+            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Operation not defined for this database version!'))
+            return
+        sql = gen.getNotNullFields(schemaList)
+        query = QSqlQuery(sql, db)
+        notNullDict = dict()
+        while query.next():
+            className = query(0).encode('utf-8')
+            attName = query(1).encode('utf-8')
+            if className not in notNullDict.keys():
+                notNullDict[className]=[]
+            notNullDict[className].append(attName)
+        return notNullDict
+
+    def getPostgisDomainDict(self,edgvVersion,db):
+        gen = self.factory.createSqlGenerator(False)
+        if edgvVersion == '2.1.3':
+            schemaList = ['cb','complexos','dominios']
+        else:
+            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Operation not defined for this database version!'))
+            return
+        sql = gen.validateWithDomain(schemaList)
+
+        query = QSqlQuery(sql, db)
+        classDict = dict()
+        domainDict = dict()
+        
+        while query.next():
+
+            className = query.value(0).encode('utf-8')
+            attName = query.value(1).encode('utf-8')
+            domainName = query.value(2).encode('utf-8')
+            domainTable = query.value(3).encode('utf-8')
+            domainQuery = query.value(4).encode('utf-8')
+
+            if className not in classDict.keys():
+                classDict[className]=dict()
+            if attName not in classDict[className].keys():
+                classDict[className][attName]=[]
+                query2 = QSqlQuery(domainQuery,db)
+                while query2.next():
+                    value = query2.value(0).encode('utf-8')
+                    classDict[className][attName].append(value)
+
+        return classDict
+    
+    def getStructureDict(self, db, edgvVersion, isSpatialite):
+        gen = self.factory.createSqlGenerator(isSpatialite)
+        classDict = dict()
+        sql = gen.getStructure(edgvVersion)        
+        query = QSqlQuery(sql, db)
+        
+        if isSpatialite:
+            while query.next():
+                className = query.value(0).encode('utf-8')
+                classSql = query.value(1).encode('utf-8')
+                
+                if className not in classDict.keys():
+                    classDict[className]=dict()
+                sqlList = classSql.split('(')[1].replace(')','').strip().replace('\'','').replace('\"','').split(',')
+                
+                for s in sqlList:
+                     fieldName = str(s.strip().split(' ')[0])
+                     classDict[className][fieldName]=fieldName
+                     
+        if not isSpatialite:
+            while query.next():
+                className = query.value(0).encode('utf-8')+'.'+query.value(1).encode('utf-8')
+                fieldName = query.value(2).encode('utf-8')
+                if className not in classDict.keys():
+                    classDict[className]=dict()
+
+                classDict[className][fieldName]=fieldName
+
+        return classDict
+
+    def makeTranslationMap(self,layerName,layer, outLayer, fieldMapper):
+        layerFieldMapper=fieldMapper[layerName]
+        layerDef = layer.GetLayerDefn()
+        outLayerDef = outLayer.GetLayerDefn()
+        panMap = []        
+        for i in range(layerDef.GetFieldCount()):
+            featureDef = layerDef.GetFieldDefn(i)
+            fieldName = featureDef.GetName()
+            if fieldName in layerFieldMapper.keys():
+                name = layerFieldMapper[fieldName]
+                fieldId = outLayerDef.GetFieldIndex(name)
+                panMap.append(fieldId) 
+            else:
+                panMap.append(-1)
+        return panMap
+    
+    def translateLayer(self,inputLayer,outputLayer,layerPanMap,defaults={},translateValues={}):
+        inputLayer.ResetReading()
+        for feat in inputLayer:
+            newFeat=ogr.Feature(outputLayer.GetLayerDefn())
+            newFeat.SetFromWithMap(feat,True,layerPanMap)
+            outputLayer.CreateFeature(newFeat)
+
+
+    def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList, inputIsSpatialite):
+        gen = self.factory.createSqlGenerator(inputIsSpatialite)
+        for layerId in range(inputDS.GetLayerCount()):
+            filename = inputDS.GetLayer(layerId).GetName()
+            if filename in inputLayerList:
+                if inputIsSpatialite:
+                    schema = filename.split('_')[0]
+                else:
+                    schema = filename.split('.')[0]
+                attr = fieldMap[filename].keys()
+                attrList = []
+                for a in attr:
+                    if schema == 'complexos':
+                        attrList.append(a)
+                    elif a not in ['id', 'OGC_FID']:
+                        attrList.append(a)
+                        
+                sql = gen.getFeaturesWithSQL(filename,attrList)
+                inputLayer = inputDS.ExecuteSQL(sql)
+                if inputIsSpatialite:
+                    outFileName = filename.split('_')[0]+'.'+'_'.join(filename.split('_')[1::])
+                else:
+                    outFileName = filename.replace('.','_')
+
+                outputLayer=outputDS.GetLayerByName(outFileName)
+
+                layerPanMap=self.makeTranslationMap(filename, inputLayer,outputLayer, fieldMap)
+                self.translateLayer(inputLayer, outputLayer, layerPanMap)
+        outputDS.Destroy()
+
+        
+        

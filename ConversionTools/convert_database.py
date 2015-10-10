@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
+import os, ogr
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
@@ -59,7 +59,9 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         self.widget.tabWidget.setTabEnabled(0, False)
         self.widget.tabWidget.setTabEnabled(1,False)
         self.widget_2.tabWidget.setTabEnabled(0, False)
-        self.widget_2.tabWidget.setTabEnabled(1,False)        
+        self.widget_2.tabWidget.setTabEnabled(1,False)
+        self.allDataRadioButton.setEnabled(False)
+        self.fixDataRadioButton.setEnabled(False)        
 
     def setConversion(self,conversionType):
         self.widget.setInitialState()
@@ -70,7 +72,10 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
             self.widget.tabWidget.setCurrentIndex(0)
             self.widget_2.tabWidget.setTabEnabled(0, False)
             self.widget_2.tabWidget.setTabEnabled(1,False)
-            self.widget_2.tabWidget.setCurrentIndex(0)                 
+            self.widget_2.tabWidget.setCurrentIndex(0)
+            self.allDataRadioButton.setEnabled(False)
+            self.fixDataRadioButton.setEnabled(False) 
+                             
         if conversionType == 'postgis2spatialite':
             self.widget.tabWidget.setTabEnabled(1,True)
             self.widget.tabWidget.setTabEnabled(0,False)
@@ -78,6 +83,10 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
             self.widget_2.tabWidget.setTabEnabled(0,True)
             self.widget_2.tabWidget.setTabEnabled(1,False)
             self.widget_2.tabWidget.setCurrentIndex(0)
+            
+            self.allDataRadioButton.setEnabled(False)
+            self.fixDataRadioButton.setEnabled(False)        
+
         if conversionType == 'spatialite2postgis':
             self.widget.tabWidget.setTabEnabled(0,True)
             self.widget.tabWidget.setTabEnabled(1,False)
@@ -86,12 +95,15 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
             self.widget_2.tabWidget.setTabEnabled(0,False)
             self.widget_2.tabWidget.setCurrentIndex(1)
             
+            self.allDataRadioButton.setEnabled(True)
+            self.fixDataRadioButton.setEnabled(True)   
+            
     @pyqtSlot(int)
     def on_comboBox_currentIndexChanged(self):
         self.setConversion(self.comboBox.currentText())
 
     @pyqtSlot(bool)
-    def on_cancelButton_clicked(self):
+    def on_closeButton_clicked(self):
         self.close()
     
     @pyqtSlot(bool)
@@ -107,53 +119,36 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
             return
         self.geomClasses = self.utils.listGeomClassesWithElementsFromDatabase(self.widget.db, self.widget.isSpatialite)
         self.complexClasses = self.utils.listComplexClassesWithElementsFromDatabase(self.widget.db, self.widget.isSpatialite)
-        print self.utils.makeOgrPostGISConn(self.widget_2.db)
-#         print self.getPostgisDomainDict('2.1.3', self.widget_2.db)
-
-    def getPostgisNotNullDict(self,edgvVersion,db):
-        if edgvVersion == '2.1.3':
-            schemaList = ['cb','complexos']
-        else:
-            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not defined for this database version!'))
-            return
-        sql = self.widget_2.gen.getNotNullFields(schemaList)
-        query = QSqlQuery(sql, db)
-        notNullDict = dict()
-        while query.next():
-            className = query(0)
-            attName = query(1)
-            if className not in notNullDict.keys():
-                notNullDict[className]=[]
-            notNullDict[className].append(attName)
-        return notNullDict
-    
-    def getPostgisDomainDict(self,edgvVersion,db):
-        if edgvVersion == '2.1.3':
-            schemaList = ['cb','complexos','dominios']
-        else:
-            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not defined for this database version!'))
-            return
-        sql = self.widget_2.gen.validateWithDomain(schemaList)
-
-        query = QSqlQuery(sql, db)
-        classDict = dict()
-        domainDict = dict()
+        self.makeConversion(self.comboBox.currentText(),self.geomClasses)
         
-        while query.next():
+        QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Conversion complete! Ololo! Ololo! Ololo!'))
 
-            className = query.value(0)
-            attName = query.value(1)
-            domainName = query.value(2)
-            domainTable = query.value(3)
-            domainQuery = query.value(4)
 
-            if className not in classDict.keys():
-                classDict[className]=dict()
-            if attName not in classDict[className].keys():
-                classDict[className][attName]=[]
-                query2 = QSqlQuery(domainQuery,db)
-                while query2.next():
-                    value = query2.value(0)
-                    classDict[className][attName].append(value)
 
-        return classDict
+    def makeConversion(self, type, classes):
+        if type == 'spatialite2postgis':
+            self.convert2postgis(classes)
+        if type == 'postgis2spatialite':
+            self.convert2spatialite(classes)
+        else:
+            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not defined!'))
+            return
+    
+    def convert2spatialite(self, classes, hasFieldMapper=False):
+        if not hasFieldMapper:
+            fieldMap = self.buildFieldMap(self.widget.db,self.widget.dbVersion, self.widget.isSpatialite)
+        conn = self.utils.makeOgrPostGISConn(self.widget.db)
+        inputOgrDb = ogr.Open(conn)
+        self.outputOgrDb = ogr.Open( self.widget_2.filename , update = 1)
+        inputLayerList = classes
+        return self.utils.translateDS(inputOgrDb, self.outputOgrDb, fieldMap, inputLayerList, self.widget.isSpatialite)
+        
+    
+    def convert2postgis(self, classes, hasFieldMapper=False):
+        return
+    
+    def buildFieldMap(self,db, edgvVersion, inputIsSpatialite): 
+        fieldMap = self.utils.getStructureDict(db, edgvVersion, inputIsSpatialite)
+        return fieldMap
+
+    

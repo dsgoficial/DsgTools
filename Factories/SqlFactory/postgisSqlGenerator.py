@@ -207,4 +207,16 @@ class PostGISSqlGenerator(SqlGenerator):
     def getNotNullFields(self,schemaList):
         schemas = '\''+'\',\''.join(schemaList)+'\''
         sql = 'select table_name, column_name from information_schema.columns where is_nullable = \'NO\' and column_name not in (\'id\',\'geom\') and table_schema in (%s)' % schemas
-        return sql        
+        return sql 
+    
+    def getFeaturesWithSQL(self,layer,attrList):
+        ls = ','.join(attrList)
+        sql = 'SELECT %s FROM ONLY %s' % (ls,layer)
+        return sql    
+    
+    def getStructure(self,edgvVersion):
+        sql = ''
+        if edgvVersion == '2.1.3':
+            sql = 'SELECT table_schema, table_name, column_name FROM INFORMATION_SCHEMA.COLUMNS where table_schema in (\'cb\',\'complexos\',\'public\')'
+        return sql
+   

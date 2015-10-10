@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 from DsgTools.Factories.SqlFactory.sqlGenerator import SqlGenerator
+from mx.Tools.mxTools.mxTools import attrlist
 
 class SpatialiteSqlGenerator(SqlGenerator):
     def getComplexLinks(self, complex):
@@ -115,4 +116,15 @@ class SpatialiteSqlGenerator(SqlGenerator):
         return None
     
     def getNotNullFields(self):
-        return None    
+        return None
+     
+    def getFeaturesWithSQL(self,layer,attrList):
+        ls = ','.join(attrList)
+        sql = 'SELECT %s FROM %s' % (ls,layer)
+        return sql
+
+    def getStructure(self,edgvVersion):
+        sql = ''
+        if edgvVersion == '2.1.3':
+            sql = 'select name, sql from sqlite_master where type = \'table\' and (name like \'cb_%\' or name like \'complexos_%\' or name like \'public_%\')'
+        return sql   
