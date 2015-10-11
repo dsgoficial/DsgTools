@@ -119,6 +119,7 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
             return
         self.geomClasses = self.utils.listGeomClassesWithElementsFromDatabase(self.widget.db, self.widget.isSpatialite)
         self.complexClasses = self.utils.listComplexClassesWithElementsFromDatabase(self.widget.db, self.widget.isSpatialite)
+        self.makeConversion(self.comboBox.currentText(),self.complexClasses)
         self.makeConversion(self.comboBox.currentText(),self.geomClasses)
         
         QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Conversion complete! Ololo! Ololo! Ololo!'))

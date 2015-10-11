@@ -358,30 +358,28 @@ class Utils:
 
     def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList, inputIsSpatialite):
         gen = self.factory.createSqlGenerator(inputIsSpatialite)
-        for layerId in range(inputDS.GetLayerCount()):
-            filename = inputDS.GetLayer(layerId).GetName()
-            if filename in inputLayerList:
-                if inputIsSpatialite:
-                    schema = filename.split('_')[0]
-                else:
-                    schema = filename.split('.')[0]
-                attr = fieldMap[filename].keys()
-                attrList = []
-                for a in attr:
-                    if schema == 'complexos':
-                        attrList.append(a)
-                    elif a not in ['id', 'OGC_FID']:
-                        attrList.append(a)
-                        
-                sql = gen.getFeaturesWithSQL(filename,attrList)
-                inputLayer = inputDS.ExecuteSQL(sql)
-                if inputIsSpatialite:
-                    outFileName = filename.split('_')[0]+'.'+'_'.join(filename.split('_')[1::])
-                else:
-                    outFileName = filename.replace('.','_')
+        for filename in inputLayerList:
+            if inputIsSpatialite:
+                schema = filename.split('_')[0]
+            else:
+                schema = filename.split('.')[0]
+            attr = fieldMap[filename].keys()
+            attrList = []
+            for a in attr:
+                if schema == 'complexos':
+                    attrList.append(a)
+                elif a not in ['id', 'OGC_FID']:
+                    attrList.append(a)
+                    
+            sql = gen.getFeaturesWithSQL(filename,attrList)
+            inputLayer = inputDS.ExecuteSQL(sql)
+            if inputIsSpatialite:
+                outFileName = filename.split('_')[0]+'.'+'_'.join(filename.split('_')[1::])
+            else:
+                outFileName = filename.replace('.','_')
 
-                outputLayer=outputDS.GetLayerByName(outFileName)
+            outputLayer=outputDS.GetLayerByName(outFileName)
 
-                layerPanMap=self.makeTranslationMap(filename, inputLayer,outputLayer, fieldMap)
-                self.translateLayer(inputLayer, outputLayer, layerPanMap)
+            layerPanMap=self.makeTranslationMap(filename, inputLayer,outputLayer, fieldMap)
+            self.translateLayer(inputLayer, outputLayer, layerPanMap)
         outputDS.Destroy()
