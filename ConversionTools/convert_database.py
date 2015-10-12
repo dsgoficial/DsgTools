@@ -127,7 +127,8 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
 
     def makeConversion(self, type, complexClasses, geomClasses):
         if type == 'spatialite2postgis':
-            self.invalidatedDataDict = self.validateSpatialite(self.widget.db,self.widget_2.db,complexClasses,geomClasses)
+            self.invalidatedDataDict = self.validateSpatialite(self.widget.db,self.widget_2.db,self.widget_2.dbVersion,complexClasses,geomClasses)
+            print self.invalidatedDataDict
             self.convert2postgis(classes)
         if type == 'postgis2spatialite':
             if len(complexClasses)>0:
@@ -163,6 +164,7 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         spatialiteDbStructure = self.utils.getStructureDict(spatialiteDB, edgvVersion, True)
         aggregationColumns = self.utils.getAggregationAttributes(postgisDB,False)
         
+        invalidated['nullComplexPk'] = dict() #only complexes are checked, because geom classes won't have its ids converted
         invalidated['notInDomain'] = dict()
         invalidated['nullAttribute'] = dict()
         invalidated['missingAggregator'] = dict()
@@ -179,30 +181,39 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
                 table = '_'.join(cl.split('_')[1::])
                 pgClass = schema + '.' + table
                 allAttrList = spatialiteDbStructure[cl].keys()
-                attrList = ['OGC_FID']
+                if schema == 'complexos':
+                    attrList = ['id']
+                else:
+                    attrList = ['OGC_FID']
                 for att in allAttrList:
-                    if (att in domainDict[cl].keys()) and (att not in attrList):
-                        attrList.append(att)
+                    if pgClass in domainDict.keys():
+                        if (att in domainDict[pgClass].keys()) and (att not in attrList):
+                            attrList.append(att)
                 sql = self.widget.gen.getFeaturesWithSQL(cl,attrList) 
                 query = QSqlQuery(sql, spatialiteDB)
                 
                 while query.next():
                     id = query.value(0)
-                    for i in range(len(attrList)-1):
-                        value = query.value(i+1)
+                    #validates complex pk
+                    if cl not in invalidated['nullComplexPk'].keys():
+                        invalidated['nullComplexPk'][cl]=0
+                    invalidated['nullComplexPk'][cl]+=1
+                    
+                    for i in range(len(attrList)):
+                        value = query.value(i)
                         #validates domain
                         if pgClass in domainDict.keys():
-                            if (attrList[i] in domainDict[cl].keys()) and (value not in domainDict[pgClass][attrList[i]]):
-                                if cl not in invalidated['notInDomain'][cl].keys():
+                            if (attrList[i] in domainDict[pgClass].keys()) and (value not in domainDict[pgClass][attrList[i]]):
+                                if cl not in invalidated['notInDomain'].keys():
                                     invalidated['notInDomain'][cl] = dict()
                                 if id not in invalidated['notInDomain'][cl].keys():
                                     invalidated['notInDomain'][cl][id] = dict()
                                 if att not in invalidated['notInDomain'][cl][id].keys():
-                                    invalidated['notInDomain'][cl][id][att] = dict()
-                                invalidated['notInDomain'][cl][id][att] = value
+                                    invalidated['notInDomain'][cl][id][attrList[i]] = dict()
+                                invalidated['notInDomain'][cl][id][attrList[i]] = value
                         #validates not nulls
                         if pgClass in notNullDict.keys():
-                            if attrList[i] in notNullDict[pgClass]:
+                            if attrList[i] in notNullDict[pgClass] and value == 'NULL':
                                 if cl not in invalidated['nullAttribute'].keys():
                                     invalidated['nullAttribute'][cl] = dict()
                                 if id not in invalidated['nullAttribute'][cl].keys():

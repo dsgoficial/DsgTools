@@ -264,12 +264,13 @@ class Utils:
         query = QSqlQuery(sql, db)
         notNullDict = dict()
         while query.next():
-            schemaName = query(0).encode('utf-8')
-            className = query(1).encode('utf-8')
-            attName = query(2).encode('utf-8')
-            if className not in notNullDict.keys():
-                notNullDict[className]=[]
-            notNullDict[schemaName+'.'+className].append(attName)
+            schemaName = query.value(0).encode('utf-8')
+            className = query.value(1).encode('utf-8')
+            attName = query.value(2).encode('utf-8')
+            cl = schemaName+'.'+className
+            if cl not in notNullDict.keys():
+                notNullDict[cl]=[]
+            notNullDict[cl].append(attName)
         return notNullDict
 
     def getPostgisDomainDict(self, edgvVersion, db):
@@ -292,15 +293,15 @@ class Utils:
             domainName = query.value(3).encode('utf-8')
             domainTable = query.value(4).encode('utf-8')
             domainQuery = query.value(5).encode('utf-8')
-
-            if className not in classDict.keys():
-                classDict[className]=dict()
-            if attName not in classDict[className].keys():
-                classDict[className][attName]=[]
+            cl = schemaName+'.'+className
+            if cl not in classDict.keys():
+                classDict[cl]=dict()
+            if attName not in classDict[cl].keys():
+                classDict[cl][attName]=[]
                 query2 = QSqlQuery(domainQuery,db)
                 while query2.next():
-                    value = query2.value(0).encode('utf-8')
-                    classDict[schemaName+'.'+className][attName].append(value)
+                    value = query2.value(0)
+                    classDict[cl][attName].append(value)
 
         return classDict
     
@@ -387,7 +388,7 @@ class Utils:
     
     def getAggregationAttributes(self,db,isSpatialite):
         columns = []
-        gen = self.factory.createSqlGenerator(inputIsSpatialite)
+        gen = self.factory.createSqlGenerator(isSpatialite)
         sql = gen.getAggregationColumn()
         query = QSqlQuery(sql, db)
         
