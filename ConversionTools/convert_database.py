@@ -119,18 +119,21 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
             return
         self.geomClasses = self.utils.listGeomClassesWithElementsFromDatabase(self.widget.db, self.widget.isSpatialite)
         self.complexClasses = self.utils.listComplexClassesWithElementsFromDatabase(self.widget.db, self.widget.isSpatialite)
-        self.makeConversion(self.comboBox.currentText(),self.complexClasses)
-        self.makeConversion(self.comboBox.currentText(),self.geomClasses)
+        self.makeConversion(self.comboBox.currentText(),self.complexClasses,self.geomClasses)
         
         QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Conversion complete! Ololo! Ololo! Ololo!'))
 
 
 
-    def makeConversion(self, type, classes):
+    def makeConversion(self, type, complexClasses, geomClasses):
         if type == 'spatialite2postgis':
+            self.invalidatedDataDict = self.validateSpatialite(self.widget.db,self.widget_2.db,complexClasses,geomClasses)
             self.convert2postgis(classes)
         if type == 'postgis2spatialite':
-            self.convert2spatialite(classes)
+            if len(complexClasses)>0:
+                self.convert2spatialite(complexClasses)
+            if len(geomClasses)>0:
+                self.convert2spatialite(geomClasses)
         else:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not defined!'))
             return
@@ -151,5 +154,84 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
     def buildFieldMap(self,db, edgvVersion, inputIsSpatialite): 
         fieldMap = self.utils.getStructureDict(db, edgvVersion, inputIsSpatialite)
         return fieldMap
+    
+    def validateSpatialite(self, spatialiteDB, postgisDB, edgvVersion, complexClasses, geomClasses):
+        invalidated = dict()
+        
+        domainDict = self.utils.getPostgisDomainDict(edgvVersion, postgisDB)
+        notNullDict = self.utils.getPostgisNotNullDict(edgvVersion, postgisDB)
+        spatialiteDbStructure = self.utils.getStructureDict(spatialiteDB, edgvVersion, True)
+        aggregationColumns = self.utils.getAggregationAttributes(postgisDB,False)
+        
+        invalidated['notInDomain'] = dict()
+        invalidated['nullAttribute'] = dict()
+        invalidated['missingAggregator'] = dict()
+        
+        self.makeSpatialiteValidation(invalidated, spatialiteDB, postgisDB, domainDict, notNullDict, spatialiteDbStructure, aggregationColumns, complexClasses)
+        self.makeSpatialiteValidation(invalidated, spatialiteDB, postgisDB, domainDict, notNullDict, spatialiteDbStructure, aggregationColumns, geomClasses)
 
+        return invalidated
+    
+    def makeSpatialiteValidation(self,invalidated, spatialiteDB, postgisDB, domainDict, notNullDict, spatialiteDbStructure, aggregationColumns, classes):
+        for cl in classes:
+            if cl in spatialiteDbStructure.keys():
+                schema = cl.split('_')[0]
+                table = '_'.join(cl.split('_')[1::])
+                pgClass = schema + '.' + table
+                allAttrList = spatialiteDbStructure[cl].keys()
+                attrList = ['OGC_FID']
+                for att in allAttrList:
+                    if (att in domainDict[cl].keys()) and (att not in attrList):
+                        attrList.append(att)
+                sql = self.widget.gen.getFeaturesWithSQL(cl,attrList) 
+                query = QSqlQuery(sql, spatialiteDB)
+                
+                while query.next():
+                    id = query.value(0)
+                    for i in range(len(attrList)-1):
+                        value = query.value(i+1)
+                        #validates domain
+                        if pgClass in domainDict.keys():
+                            if (attrList[i] in domainDict[cl].keys()) and (value not in domainDict[pgClass][attrList[i]]):
+                                if cl not in invalidated['notInDomain'][cl].keys():
+                                    invalidated['notInDomain'][cl] = dict()
+                                if id not in invalidated['notInDomain'][cl].keys():
+                                    invalidated['notInDomain'][cl][id] = dict()
+                                if att not in invalidated['notInDomain'][cl][id].keys():
+                                    invalidated['notInDomain'][cl][id][att] = dict()
+                                invalidated['notInDomain'][cl][id][att] = value
+                        #validates not nulls
+                        if pgClass in notNullDict.keys():
+                            if attrList[i] in notNullDict[pgClass]:
+                                if cl not in invalidated['nullAttribute'].keys():
+                                    invalidated['nullAttribute'][cl] = dict()
+                                if id not in invalidated['nullAttribute'][cl].keys():
+                                    invalidated['nullAttribute'][cl][id] = dict()
+                                if attrList[i] not in invalidated['nullAttribute'][cl][id].keys():
+                                    invalidated['nullAttribute'][cl][id][attrList[i]] = dict()
+                                invalidated['nullAttribute'][cl][id][attrList[i]] = value
+                        
+                        #validates aggregates
+                        if attrList[i] in aggregationColumns and value <> 'NULL':
+                            sql2 = self.widget_2.gen.getAggregatorFromComplexSchema(table,attrList[i])
+                            query2 = QSqlQuery(sql2, postgisDB)
+                            idsFound = []
+                            while query2.next():
+                                complexCandidate = query2.value(0)
+                                sql3 = self.widget_2.gen.getAggregatorFromId(complexCandidate,attrList[i])
+                                query3 = QSqlQuery(sql3, postgisDB)
+                                while query3.next():
+                                    fid = query3.value(0)
+                                    idsFound.append(fid)
+                            
+                            if len(idsFound) == 0:
+                                if cl not in invalidated['missingAggregator'].keys():
+                                    invalidated['missingAggregator'][cl] = dict()
+                                if id not in invalidated['missingAggregator'][cl].keys():
+                                    invalidated['missingAggregator'][cl][id] = dict()
+                                if attrList[i] not in invalidated['missingAggregator'][cl][id].keys():
+                                    invalidated['missingAggregator'][cl][id][attrList[i]] = dict()
+                                invalidated['missingAggregator'][cl][id][attrList[i]] = value                                
+                            
+        return
     

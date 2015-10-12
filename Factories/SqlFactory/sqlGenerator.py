@@ -105,3 +105,12 @@ class SqlGenerator:
 
     def getStructure(self,edgvVersion):
         return None
+
+    def getAggregationColumn(self):
+        return None
+
+    def getAggregatorFromId(self, className, id):
+       return None
+   
+    def getAggregatorFromComplexSchema(self,aggregated,aggregationColumn):
+        return None

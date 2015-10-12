@@ -191,7 +191,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def validateWithDomain(self,schemaList):
         schemas = '\''+'\',\''.join(schemaList)+'\''
         sql = '''SELECT
-                tc.table_name, kcu.column_name, 
+                tc.table_schema,tc.table_name, kcu.column_name, 
                 ccu.table_name AS foreign_table_name,
                 ccu.column_name AS foreign_column_name,
                 'SELECT ' || ccu.column_name || ' FROM dominios.' || ccu.table_name
@@ -206,7 +206,7 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def getNotNullFields(self,schemaList):
         schemas = '\''+'\',\''.join(schemaList)+'\''
-        sql = 'select table_name, column_name from information_schema.columns where is_nullable = \'NO\' and column_name not in (\'id\',\'geom\') and table_schema in (%s)' % schemas
+        sql = 'select table_schema, table_name, column_name from information_schema.columns where is_nullable = \'NO\' and column_name not in (\'id\',\'geom\') and table_schema in (%s)' % schemas
         return sql 
     
     def getFeaturesWithSQL(self,layer,attrList):
@@ -219,4 +219,15 @@ class PostGISSqlGenerator(SqlGenerator):
         if edgvVersion == '2.1.3':
             sql = 'SELECT table_schema, table_name, column_name FROM INFORMATION_SCHEMA.COLUMNS where table_schema in (\'cb\',\'complexos\',\'public\')'
         return sql
+    
+    def getAggregationColumn(self):
+        sql = 'SELECT DISTINCT column_name FROM public.complex_schema'
+        return sql
+    
+    def getAggregatorFromId(self, className, id):
+       sql = 'SELECT id from %s where id =\'%s\'' % (className,id)
+       return sql
    
+    def getAggregatorFromComplexSchema(self,aggregated,aggregationColumn):
+        sql = 'SELECT complex from public.complex_schema where aggregated_class = \'%s\' and aggregationColumn = \'%s\'' % (aggregated,aggregationColumn)
+        return sql

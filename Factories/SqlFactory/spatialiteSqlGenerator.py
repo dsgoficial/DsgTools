@@ -127,4 +127,16 @@ class SpatialiteSqlGenerator(SqlGenerator):
         sql = ''
         if edgvVersion == '2.1.3':
             sql = 'select name, sql from sqlite_master where type = \'table\' and (name like \'cb_%\' or name like \'complexos_%\' or name like \'public_%\')'
-        return sql   
+        return sql  
+    
+    def getAggregationColumn(self):
+        sql = 'SELECT DISTINCT column_name FROM public_complex_schema'
+        return sql
+
+    def getAggregatorFromId(self, className, id):
+       sql = 'SELECT id from %s where id =\'%s\'' % (className,id)
+       return sql
+   
+    def getAggregatorFromComplexSchema(self,aggregated,aggregationColumn):
+        sql = 'SELECT complex from public_complex_schema where aggregated_class = \'%s\' and aggregationColumn = \'%s\'' % (aggregated,aggregationColumn)
+        return sql

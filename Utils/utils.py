@@ -264,11 +264,12 @@ class Utils:
         query = QSqlQuery(sql, db)
         notNullDict = dict()
         while query.next():
-            className = query(0).encode('utf-8')
-            attName = query(1).encode('utf-8')
+            schemaName = query(0).encode('utf-8')
+            className = query(1).encode('utf-8')
+            attName = query(2).encode('utf-8')
             if className not in notNullDict.keys():
                 notNullDict[className]=[]
-            notNullDict[className].append(attName)
+            notNullDict[schemaName+'.'+className].append(attName)
         return notNullDict
 
     def getPostgisDomainDict(self, edgvVersion, db):
@@ -285,12 +286,12 @@ class Utils:
         domainDict = dict()
         
         while query.next():
-
-            className = query.value(0).encode('utf-8')
-            attName = query.value(1).encode('utf-8')
-            domainName = query.value(2).encode('utf-8')
-            domainTable = query.value(3).encode('utf-8')
-            domainQuery = query.value(4).encode('utf-8')
+            schemaName = query.value(0).encode('utf-8')
+            className = query.value(1).encode('utf-8')
+            attName = query.value(2).encode('utf-8')
+            domainName = query.value(3).encode('utf-8')
+            domainTable = query.value(4).encode('utf-8')
+            domainQuery = query.value(5).encode('utf-8')
 
             if className not in classDict.keys():
                 classDict[className]=dict()
@@ -299,7 +300,7 @@ class Utils:
                 query2 = QSqlQuery(domainQuery,db)
                 while query2.next():
                     value = query2.value(0).encode('utf-8')
-                    classDict[className][attName].append(value)
+                    classDict[schemaName+'.'+className][attName].append(value)
 
         return classDict
     
@@ -383,3 +384,14 @@ class Utils:
             layerPanMap=self.makeTranslationMap(filename, inputLayer,outputLayer, fieldMap)
             self.translateLayer(inputLayer, outputLayer, layerPanMap)
         outputDS.Destroy()
+    
+    def getAggregationAttributes(self,db,isSpatialite):
+        columns = []
+        gen = self.factory.createSqlGenerator(inputIsSpatialite)
+        sql = gen.getAggregationColumn()
+        query = QSqlQuery(sql, db)
+        
+        while query.next():
+            value = query.value(0)
+            columns.append(value)
+        return columns
