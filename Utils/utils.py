@@ -230,10 +230,10 @@ class Utils:
 
     def listWithElementsFromDatabase(self, classList, db, isSpatialite):
         classListWithNumber = self.countElements(classList, db, isSpatialite)
-        classesWithElements = []
+        classesWithElements = dict()
         for cl in classListWithNumber:
             if cl[1]>0:
-                classesWithElements.append(cl[0])   
+                classesWithElements[cl[0]]=cl[1]   
         return classesWithElements
     
     def listGeomClassesWithElementsFromDatabase(self, db, isSpatialite):
@@ -318,8 +318,8 @@ class Utils:
                 
                 if className not in classDict.keys():
                     classDict[className]=dict()
-                sqlList = classSql.split('(')[1].replace(')','').strip().replace('\'','').replace('\"','').split(',')
-                
+                classSql = classSql.split(className)[1]
+                sqlList = classSql.replace('(','').replace(')','').replace('\"','').replace('\'','').split(',')
                 for s in sqlList:
                      fieldName = str(s.strip().split(' ')[0])
                      classDict[className][fieldName]=fieldName
@@ -351,14 +351,37 @@ class Utils:
                 panMap.append(-1)
         return panMap
     
-    def translateLayer(self, inputLayer, outputLayer, layerPanMap, defaults={}, translateValues={}):
+    def translateLayer(self, inputLayer, inputLayerName, outputLayer, layerPanMap, defaults={}, translateValues={},invalidatedDataDict=None):
         inputLayer.ResetReading()
+        attrBlackList = dict()
+        if invalidatedDataDict is not None:
+            invId = []
+            for errorType in invalidatedDataDict.keys():
+                if errorType == 'nullComplexPk':
+                    if className in invalidatedDataDict[errorType].keys():
+                        invId.append(invalidatedDataDict[errorType][inputLayerName])
+                if errorType == 'notInDomain' or errorType == 'nullAttribute':
+                    if className in invalidatedDataDict[errorType].keys():
+                        for id in invalidatedDataDict[errorType][inputLayerName].keys():
+                            if id not in attrBlackList.keys():
+                                attrBlackList[id]=[]
+                            for a in invalidatedDataDict[errorType][inputLayerName][id].keys():
+                                if a not in attrBlackList[id]:
+                                    attrBlackList[id].append(a)
+                    
         for feat in inputLayer:
-            newFeat=ogr.Feature(outputLayer.GetLayerDefn())
-            newFeat.SetFromWithMap(feat,True,layerPanMap)
-            outputLayer.CreateFeature(newFeat)
+            if invalidatedDataDict is not None:
+                outputLyrDef = outputLayer.GetLayerDefn()
+                newFeat=ogr.Feature(outputLayer.GetLayerDefn())
+                featOriginalId = inputLayer.GetField('OGC_FID')
+                newFeat.SetFromWithMap(feat,True,layerPanMap)
+                outputLayer.CreateFeature(newFeat)
+            else:
+                newFeat=ogr.Feature(outputLayer.GetLayerDefn())
+                newFeat.SetFromWithMap(feat,True,layerPanMap)
+                outputLayer.CreateFeature(newFeat)
 
-    def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList, inputIsSpatialite):
+    def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList, inputIsSpatialite,invalidatedDataDict=None):
         gen = self.factory.createSqlGenerator(inputIsSpatialite)
         for filename in inputLayerList:
             if inputIsSpatialite:
@@ -370,21 +393,22 @@ class Utils:
             for a in attr:
                 if schema == 'complexos':
                     attrList.append(a)
-                elif a not in ['id', 'OGC_FID']:
+                elif a not in ['id']:
                     attrList.append(a)
-                    
-            sql = gen.getFeaturesWithSQL(filename,attrList)
-            inputLayer = inputDS.ExecuteSQL(sql)
+            
+            sql = gen.getFeaturesWithSQL(filename,attrList) #order elements here
+            inputLayer = inputDS.ExecuteSQL(sql.encode('utf-8'))
             if inputIsSpatialite:
                 outFileName = filename.split('_')[0]+'.'+'_'.join(filename.split('_')[1::])
             else:
                 outFileName = filename.replace('.','_')
 
             outputLayer=outputDS.GetLayerByName(outFileName)
-
+            #order conversion here
             layerPanMap=self.makeTranslationMap(filename, inputLayer,outputLayer, fieldMap)
-            self.translateLayer(inputLayer, outputLayer, layerPanMap)
+            self.translateLayer(inputLayer, filename, outputLayer, layerPanMap,invalidatedDataDict)
         outputDS.Destroy()
+        return True
     
     def getAggregationAttributes(self,db,isSpatialite):
         columns = []

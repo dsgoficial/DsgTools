@@ -32,7 +32,6 @@ from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.UserTools.create_profile import CreateProfile
 
-import json
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'convert_database.ui'))
@@ -52,6 +51,7 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         self.utils = Utils()
         self.geomClasses = None
         self.complexClasses = None
+        self.invalidatedDataDict = dict()
         
         self.comboBox.addItem(self.tr('Select a conversion'))
         self.comboBox.addItem(self.tr('postgis2spatialite'))
@@ -61,11 +61,13 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         self.widget_2.tabWidget.setTabEnabled(0, False)
         self.widget_2.tabWidget.setTabEnabled(1,False)
         self.allDataRadioButton.setEnabled(False)
-        self.fixDataRadioButton.setEnabled(False)        
+        self.fixDataRadioButton.setEnabled(False)   
+        
 
     def setConversion(self,conversionType):
         self.widget.setInitialState()
         self.widget_2.setInitialState()
+        self.invalidatedDataDict = dict()
         if conversionType == 'Select a conversion':
             self.widget.tabWidget.setTabEnabled(0, False)
             self.widget.tabWidget.setTabEnabled(1,False)
@@ -119,38 +121,127 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
             return
         self.geomClasses = self.utils.listGeomClassesWithElementsFromDatabase(self.widget.db, self.widget.isSpatialite)
         self.complexClasses = self.utils.listComplexClassesWithElementsFromDatabase(self.widget.db, self.widget.isSpatialite)
-        self.makeConversion(self.comboBox.currentText(),self.complexClasses,self.geomClasses)
-        
-        QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Conversion complete! Ololo! Ololo! Ololo!'))
+        converted = False
+        converted = self.makeConversion(self.comboBox.currentText(),self.complexClasses,self.geomClasses)
+        if converted:
+            QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Conversion complete! Ololo! Ololo! Ololo!'))
+        else:
+            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not performed! Check log for details.'))
 
+    def makeConversion(self, type, complexClassesDict, geomClassesDict):
+        self.logDisplay.clear()
+        self.logDisplay.insertPlainText(self.tr('Conversion type: '+type+'\n'))
+        self.logDisplay.insertPlainText(self.tr('Input database: ')+self.widget.db.databaseName()+'\n')
+        self.logDisplay.insertPlainText(self.tr('Output database: ')+self.widget_2.db.databaseName()+'\n')
+        self.logDisplay.insertPlainText(self.tr('\n---------------- Complex Classes With Elements Read Summary ------------------------\n'))
+        self.logDisplay.insertPlainText(self.tr('Class -> Elements\n'))
+        complexClasses = complexClassesDict.keys()
+        geomClasses = geomClassesDict.keys()
+        complexClasses.sort()
+        geomClasses.sort()
+        for i in complexClasses:
+            self.logDisplay.insertPlainText(i+self.tr('->')+str(complexClassesDict[i])+'\n')
+        self.logDisplay.insertPlainText(self.tr('\n---------------- Geometric Classes With Elements Read Summary ------------------------\n'))
+        self.logDisplay.insertPlainText(self.tr('Class -> Elements\n'))
+        for i in geomClasses:
+            self.logDisplay.insertPlainText(i+self.tr('->')+str(geomClassesDict[i])+'\n')        
 
-
-    def makeConversion(self, type, complexClasses, geomClasses):
         if type == 'spatialite2postgis':
             self.invalidatedDataDict = self.validateSpatialite(self.widget.db,self.widget_2.db,self.widget_2.dbVersion,complexClasses,geomClasses)
-            print self.invalidatedDataDict
-            self.convert2postgis(classes)
+            converted = False
+            allClasses = []
+            for i in complexClasses:
+                allClasses.append(i)
+            for i in geomClasses:
+                allClasses.append(i)
+            hasErrors = self.buildInvalidatedLog(allClasses, self.invalidatedDataDict)
+            if self.fixDataRadioButton.isChecked():
+                if len(complexClasses) > 0:
+                    converted = self.convert2postgis(complexClasses, self.invalidatedDataDict)
+                if len(geomClasses) > 0:
+                    converted = False
+                    converted = self.convert2postgis(geomClasses, self.invalidatedDataDict)
+            else:
+                if not hasErrors:
+                    if len(complexClasses) > 0:
+                        converted = self.convert2postgis(complexClasses, self.invalidatedDataDict)
+                    if len(geomClasses) > 0:
+                        converted = False
+                        converted = self.convert2postgis(geomClasses, self.invalidatedDataDict)                    
         if type == 'postgis2spatialite':
-            if len(complexClasses)>0:
-                self.convert2spatialite(complexClasses)
-            if len(geomClasses)>0:
-                self.convert2spatialite(geomClasses)
+            converted = False
+    
+            if len(complexClasses) > 0:
+                converted = self.convert2spatialite(complexClasses)
+            if len(geomClasses) > 0:
+                converted = False
+                converted = self.convert2spatialite(geomClasses)
+            return converted
         else:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not defined!'))
-            return
+            return False
     
     def convert2spatialite(self, classes, hasFieldMapper=False):
         if not hasFieldMapper:
-            fieldMap = self.buildFieldMap(self.widget.db,self.widget.dbVersion, self.widget.isSpatialite)
+            fieldMap = self.buildFieldMap(self.widget.db, self.widget.dbVersion, self.widget.isSpatialite)
         conn = self.utils.makeOgrPostGISConn(self.widget.db)
         inputOgrDb = ogr.Open(conn)
         self.outputOgrDb = ogr.Open( self.widget_2.filename , update = 1)
         inputLayerList = classes
         return self.utils.translateDS(inputOgrDb, self.outputOgrDb, fieldMap, inputLayerList, self.widget.isSpatialite)
-        
     
-    def convert2postgis(self, classes, hasFieldMapper=False):
-        return
+    def convert2postgis(self, classes, invalidatedDataDict, hasFieldMapper=False):
+        if not hasFieldMapper:
+            fieldMap = self.buildFieldMap(self.widget.db, self.widget.dbVersion, self.widget.isSpatialite)
+        inputOgrDb = ogr.Open(self.widget.filename)
+        conn = self.utils.makeOgrPostGISConn(self.widget_2.db)        
+        self.outputOgrDb = ogr.Open(conn)
+        inputLayerList = classes
+        return self.utils.translateDS(inputOgrDb, self.outputOgrDb, fieldMap, inputLayerList, self.widget.isSpatialite,invalidatedDataDict)
+    
+    def buildInvalidatedLog(self,classes,invalidatedDataDict):
+        hasErrors = False
+        for key in invalidatedDataDict.keys():
+            if len(invalidatedDataDict[key].keys()) > 0:
+                hasErrors = True
+        if hasErrors:
+            self.logDisplay.insertPlainText(self.tr('\n-------Validation Problems Summary-----------\n'))
+            for key in invalidatedDataDict.keys():
+                if key == 'nullComplexPk' and len(invalidatedDataDict[key].keys())>0:
+                    self.logDisplay.insertPlainText(self.tr('\nComplex Features with null primary keys:\n'))
+                    for cl in invalidatedDataDict[key].keys():
+                        self.logDisplay.insertPlainText(self.tr('Class: ')+cl+self.tr(' number of features: ')+str(invalidatedDataDict[key][cl])+'\n')
+
+                if key == 'notInDomain' and len(invalidatedDataDict[key].keys())>0:
+                    self.logDisplay.insertPlainText(self.tr('\nFeatures with attributes not in domain:\n'))
+                    for cl in invalidatedDataDict[key].keys():
+                        self.logDisplay.insertPlainText(self.tr('Class: ')+cl+'\n')
+                        for id in invalidatedDataDict[key][cl].keys():
+                            attrCommaList = '(id,'+','.join(invalidatedDataDict[key][cl][id].keys())+') = '
+                            at = invalidatedDataDict[key][cl][id].keys()
+                            valueList = '('+str(id)
+                            for i in range(len(at)):
+                                valueList += ','+str(invalidatedDataDict[key][cl][id][at[i]])
+                            valueList += ')\n'
+                        
+                            self.logDisplay.insertPlainText(attrCommaList+valueList)
+
+                if key == 'nullAttribute' and len(invalidatedDataDict[key].keys())>0:
+                    self.logDisplay.insertPlainText(self.tr('\nFeatures with null attributes in a not null field:\n'))
+                    for cl in invalidatedDataDict[key].keys():
+                        self.logDisplay.insertPlainText(self.tr('Class: ')+cl+'\n')
+                        for id in invalidatedDataDict[key][cl].keys():
+                            for attr in invalidatedDataDict[key][cl][id].keys():
+                                self.logDisplay.insertPlainText(self.tr('id: ')+str(id)+self.tr(' Attribute: ')+attr+self.tr(' Value: ')+str(invalidatedDataDict[key][cl][id][attr])+'\n')
+
+                if key == 'missingAggregator' and len(invalidatedDataDict[key].keys())>0:
+                    self.logDisplay.insertPlainText(self.tr('\nFeatures with null aggregator missing:\n'))
+                    for cl in invalidatedDataDict[key].keys():
+                        self.logDisplay.insertPlainText(self.tr('Class: ')+cl+'\n')
+                        for id in invalidatedDataDict[key][cl].keys():
+                            for attr in invalidatedDataDict[key][cl][id].keys():
+                                self.logDisplay.insertPlainText(self.tr('id: ')+str(id)+self.tr(' Attribute: ')+attr+self.tr(' Value: ')+str(invalidatedDataDict[key][cl][id][attr])+'\n')
+        return hasErrors
     
     def buildFieldMap(self,db, edgvVersion, inputIsSpatialite): 
         fieldMap = self.utils.getStructureDict(db, edgvVersion, inputIsSpatialite)
@@ -221,7 +312,6 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
                                 if attrList[i] not in invalidated['nullAttribute'][cl][id].keys():
                                     invalidated['nullAttribute'][cl][id][attrList[i]] = dict()
                                 invalidated['nullAttribute'][cl][id][attrList[i]] = value
-                        
                         #validates aggregates
                         if attrList[i] in aggregationColumns and value <> 'NULL':
                             sql2 = self.widget_2.gen.getAggregatorFromComplexSchema(table,attrList[i])
@@ -243,6 +333,5 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
                                 if attrList[i] not in invalidated['missingAggregator'][cl][id].keys():
                                     invalidated['missingAggregator'][cl][id][attrList[i]] = dict()
                                 invalidated['missingAggregator'][cl][id][attrList[i]] = value                                
-                            
         return
     

@@ -114,3 +114,6 @@ class SqlGenerator:
    
     def getAggregatorFromComplexSchema(self,aggregated,aggregationColumn):
         return None
+    
+    def createCustomSort(self):
+        return None

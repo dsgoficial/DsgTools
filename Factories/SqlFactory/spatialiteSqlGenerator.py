@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 from DsgTools.Factories.SqlFactory.sqlGenerator import SqlGenerator
-from mx.Tools.mxTools.mxTools import attrlist
 
 class SpatialiteSqlGenerator(SqlGenerator):
     def getComplexLinks(self, complex):
@@ -140,3 +139,6 @@ class SpatialiteSqlGenerator(SqlGenerator):
     def getAggregatorFromComplexSchema(self,aggregated,aggregationColumn):
         sql = 'SELECT complex from public_complex_schema where aggregated_class = \'%s\' and aggregationColumn = \'%s\'' % (aggregated,aggregationColumn)
         return sql
+    
+    def createCustomSort(self):
+        return None

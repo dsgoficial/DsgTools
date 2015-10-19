@@ -231,3 +231,29 @@ class PostGISSqlGenerator(SqlGenerator):
     def getAggregatorFromComplexSchema(self,aggregated,aggregationColumn):
         sql = 'SELECT complex from public.complex_schema where aggregated_class = \'%s\' and aggregationColumn = \'%s\'' % (aggregated,aggregationColumn)
         return sql
+    
+    def createCustomSort(self):
+        sql = '''CREATE OR REPLACE FUNCTION
+                      array_sort_dsg(
+                        array_vals_to_sort anyarray
+                      )
+                      RETURNS TABLE (
+                        sorted_array anyarray
+                      )
+                      AS $BODY$
+                        BEGIN
+                          RETURN QUERY SELECT
+                            ARRAY_AGG(val) AS sorted_array
+                          FROM
+                            (
+                              SELECT
+                                UNNEST(array_vals_to_sort) AS val
+                              ORDER BY
+                                val DESC NULLS FIRST
+                            ) AS sorted_vals
+                          ;
+                        END;
+                      $BODY$
+                    LANGUAGE plpgsql;
+                    '''
+        return sql
