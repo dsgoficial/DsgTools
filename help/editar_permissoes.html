@@ -14,59 +14,12 @@
 <body>
 	<!--Insira o título da seção adicionada na próxima tag-->
     <h2>
-    	Gerenciar Permissões de usuário
+    	Editor de Permissões de Usuário
     </h2>
     
-    <!--Insira parágrafos usando o modelo da próxima tag-->
-	<p align="justify">
-		O DSGTools permite que sejam criadas permissões para os usuários. Essas permissões definem como o usuário terá acesso aos bancos de dados criados pelo DSGTools. 
-		A permissões só funcionam em bancos PostGIS.
-	</p>
     
 	<p align="justify">
-		Inicialmente deve ser selecionado o banco de dados que será configurado. Caso o banco não esteja na lista pode-se efetuar a adição do banco pelo botão <a target="_blank" href='configurador_conexoes.html'>Adicionar Conexão</a>.
-	</p>
-    
-    <!--Insira imagens usando o modelo da próxima tag-->
-    <p align=center>
-        <img src='dsg_tools/gerenciar_permissoes1.png' name='figuras1' width=600 height=450 alt='Erro ao mostrar a imagem'>
-    </p>
-    
-	<p align="justify">
-		Com a seleção do banco feita deve se selecionar um <kbd>Usuário</kbd> já criado no banco. Caso o usuário ainda não exista é possível criar com o uso do Botão <kbd>Criar usuário</kbd> 
-		como se pode ver na figura a seguir.
-	</p>
-    
-    <p align=center>
-        <img src='dsg_tools/criar_usuario.png' name='figuras1' width=400 height=300 alt='Erro ao mostrar a imagem'>
-    </p>
-
-	<p align="justify">
-		Com os dados preechidos é só clicar em <kbd>Criar Usuário</kbd> e esperar a mensagem de retorno. É possível definir também se o usuário que está sendo criado será ou não superusuário clicando em <kbd>Supersuário</kbd>. 
-		É possível também alterar o password com o botão <kbd>Alterar Password</kbd> e é possível remover o usuário selecionado com o botão <kbd>Remover Usuário</kbd>. 
-		Agora resta selecionar o usuário recém criado.
-	</p>
-    
-    <p align=center>
-        <img src='dsg_tools/gerenciar_permissoes10.png' name='figuras1' width=600 height=450 alt='Erro ao mostrar a imagem'>
-    </p>
-
-	<p align="justify">
-		Com o usuário selecionado é possível ver as permissões já existentes no banco selecionado no campo <kbd>Permissões de Usuário Instaladas</kbd>. Caso a permissão desejada não esteja lá, é possível clicar em <kbd>Instalar Nova Permissão de Usuário</kbd>. 
-		A janela de resultado pode ser vista na figura a seguir.
-	</p>
-    
-    <p align=center>
-        <img src='dsg_tools/instalar_remover_permissoes1.png' name='figuras1' width=600 height=450 alt='Erro ao mostrar a imagem'>
-    </p>
-
-	<p align="justify">
-		Nesta janela é possível ver os modelos de permissões criados na máquina do usuário no campo <kbd>Modelos de Permissões de Usuário Existentes</kbd>. Elas podem ser instaladas no banco, para tanto, devem ser selecionadas e posteriormente deve se clicar no botão <kbd>Instalar</kbd>. Caso se queria, é possível apagar 
-		do computador um modelo de permissão clicando no botão <kbd>Remover</kbd>. As Permissões de Usuário instaladas podem ser vistas no campo <kbd>Permissões de Usuário Instaladas</kbd>. Caso se deseje remover algumas permissões deve-se selecionar as mesmas e clicar no botão <kbd>Remover Perfil</kbd>.
-	</p>
-    
-	<p align="justify">
-		Caso não existam os Modelos de Permissões necessários é possível confeccionar eles através do botão <kbd>Abrir Editor de Permissões de Usuário</kbd>. O resultado pode se ver na figura a seguir.
+		A janela de edição de permissões de usuário permite a criação/edição de modelos de permissões. A janela inicial pode se ver na figura a seguir.
 	</p>
     
     <p align=center>
@@ -97,29 +50,6 @@
     <p align=center>
         <img src='dsg_tools/editar_permissoes4.png' name='figuras1' width=600 height=450 alt='Erro ao mostrar a imagem'>
     </p>
-
-	<p align="justify">
-		Com o modelo de permissões criado e instalado no banco de dados é possível se fazer a atribuição dessas permissões a um usuário selecionado. 
-		Suponhamos que o usuário criado seja "luiz", ao se fazer a seleção dele é possível ver as Permissões de Usuário instaladas no banco e as permissões que ele possui. 
-		Para se instalar um conjunto de permissões nova deve se selecionar uma (ou mais) permissões e clicar em <kbd>>></kbd>, <kbd>></kbd>, <kbd><</kbd>, <kbd><<</kbd> para, 
-		respectivamente, atribuir todas as permissões, atribuir somente uma, remover uma e remover todas as permissões previamente atribuídas. 
-	</p>
-    
-    <p align=center>
-        <img src='dsg_tools/gerenciar_permissoes10.png' name='figuras1' width=600 height=450 alt='Erro ao mostrar a imagem'>
-    </p>
-
-	<p align="justify">
-		Supondo a instalação das permissões de vegetação (onde é possível ver todo o banco mas somente editar a categaoria vegetação) teríamos o resultado como se pode ver na figura abaixo. 
-	</p>
-    
-    <p align=center>
-        <img src='dsg_tools/gerenciar_permissoes11.png' name='figuras1' width=600 height=450 alt='Erro ao mostrar a imagem'>
-    </p>
-
-	<p align="justify">
-		Desta forma as permissões do usuário "luiz" foram definidas. 
-	</p>
     
 	<br>
 
