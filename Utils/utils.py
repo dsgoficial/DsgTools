@@ -236,8 +236,15 @@ class Utils:
                 classesWithElements[cl[0]]=cl[1]   
         return classesWithElements
     
-    def listGeomClassesWithElementsFromDatabase(self, db, isSpatialite):
-        classList = self.listGeomClassesFromDatabase(db, isSpatialite)
+    def listClassesWithElementsFromDatabase(self, db, isSpatialite):
+        geomClassList = self.listGeomClassesFromDatabase(db, isSpatialite)
+        complexClassList = self.listComplexClassesFromDatabase(db, isSpatialite)
+        classList = []
+        for g in geomClassList:
+            classList.append(g)
+        for c in complexClassList:
+            classList.append(c)
+        classList.sort()
         return self.listWithElementsFromDatabase(classList,db,isSpatialite)
     
     def listComplexClassesWithElementsFromDatabase(self, db, isSpatialite):

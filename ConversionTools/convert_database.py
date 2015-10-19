@@ -119,63 +119,44 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         if self.widget.dbVersion <> self.widget_2.dbVersion:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Version mismatch!\nConversion must be between databases with the same version!'))
             return
-        self.geomClasses = self.utils.listGeomClassesWithElementsFromDatabase(self.widget.db, self.widget.isSpatialite)
-        self.complexClasses = self.utils.listComplexClassesWithElementsFromDatabase(self.widget.db, self.widget.isSpatialite)
+        self.classWithElements = self.utils.listClassesWithElementsFromDatabase(self.widget.db, self.widget.isSpatialite)
         converted = False
-        converted = self.makeConversion(self.comboBox.currentText(),self.complexClasses,self.geomClasses)
+        converted = self.makeConversion(self.comboBox.currentText(),self.classWithElements)
         if converted:
             QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Conversion complete! Ololo! Ololo! Ololo!'))
         else:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not performed! Check log for details.'))
 
-    def makeConversion(self, type, complexClassesDict, geomClassesDict):
+    def makeConversion(self, type, classesDict):
         self.logDisplay.clear()
         self.logDisplay.insertPlainText(self.tr('Conversion type: '+type+'\n'))
         self.logDisplay.insertPlainText(self.tr('Input database: ')+self.widget.db.databaseName()+'\n')
         self.logDisplay.insertPlainText(self.tr('Output database: ')+self.widget_2.db.databaseName()+'\n')
-        self.logDisplay.insertPlainText(self.tr('\n---------------- Complex Classes With Elements Read Summary ------------------------\n'))
-        self.logDisplay.insertPlainText(self.tr('Class -> Elements\n'))
-        complexClasses = complexClassesDict.keys()
-        geomClasses = geomClassesDict.keys()
-        complexClasses.sort()
-        geomClasses.sort()
-        for i in complexClasses:
-            self.logDisplay.insertPlainText(i+self.tr('->')+str(complexClassesDict[i])+'\n')
-        self.logDisplay.insertPlainText(self.tr('\n---------------- Geometric Classes With Elements Read Summary ------------------------\n'))
-        self.logDisplay.insertPlainText(self.tr('Class -> Elements\n'))
-        for i in geomClasses:
-            self.logDisplay.insertPlainText(i+self.tr('->')+str(geomClassesDict[i])+'\n')        
+        self.logDisplay.insertPlainText(self.tr('Class ----------> Elements\n'))
+        classes = classesDict.keys()
+
+        for i in classes:
+            self.logDisplay.insertPlainText(i+self.tr('---------->')+str(classesDict[i])+'\n')
 
         if type == 'spatialite2postgis':
-            self.invalidatedDataDict = self.validateSpatialite(self.widget.db,self.widget_2.db,self.widget_2.dbVersion,complexClasses,geomClasses)
+            self.invalidatedDataDict = self.validateSpatialite(self.widget.db,self.widget_2.db,self.widget_2.dbVersion,classes)
             converted = False
-            allClasses = []
-            for i in complexClasses:
-                allClasses.append(i)
-            for i in geomClasses:
-                allClasses.append(i)
-            hasErrors = self.buildInvalidatedLog(allClasses, self.invalidatedDataDict)
+            hasErrors = self.buildInvalidatedLog(classes, self.invalidatedDataDict)
             if self.fixDataRadioButton.isChecked():
-                if len(complexClasses) > 0:
-                    converted = self.convert2postgis(complexClasses, self.invalidatedDataDict)
-                if len(geomClasses) > 0:
-                    converted = False
-                    converted = self.convert2postgis(geomClasses, self.invalidatedDataDict)
+                if len(classes) > 0:
+                    converted = self.convert2postgis(classes, self.invalidatedDataDict)
             else:
                 if not hasErrors:
-                    if len(complexClasses) > 0:
-                        converted = self.convert2postgis(complexClasses, self.invalidatedDataDict)
-                    if len(geomClasses) > 0:
-                        converted = False
-                        converted = self.convert2postgis(geomClasses, self.invalidatedDataDict)                    
+                    if len(classes) > 0:
+                        converted = self.convert2postgis(classes, self.invalidatedDataDict)
+            
+            return converted
+               
         if type == 'postgis2spatialite':
             converted = False
-    
-            if len(complexClasses) > 0:
-                converted = self.convert2spatialite(complexClasses)
-            if len(geomClasses) > 0:
-                converted = False
-                converted = self.convert2spatialite(geomClasses)
+            if len(classes) > 0:
+                converted = self.convert2spatialite(classes)
+
             return converted
         else:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not defined!'))
@@ -207,10 +188,6 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         if hasErrors:
             self.logDisplay.insertPlainText(self.tr('\n-------Validation Problems Summary-----------\n'))
             for key in invalidatedDataDict.keys():
-                if key == 'nullComplexPk' and len(invalidatedDataDict[key].keys())>0:
-                    self.logDisplay.insertPlainText(self.tr('\nComplex Features with null primary keys:\n'))
-                    for cl in invalidatedDataDict[key].keys():
-                        self.logDisplay.insertPlainText(self.tr('Class: ')+cl+self.tr(' number of features: ')+str(invalidatedDataDict[key][cl])+'\n')
 
                 if key == 'notInDomain' and len(invalidatedDataDict[key].keys())>0:
                     self.logDisplay.insertPlainText(self.tr('\nFeatures with attributes not in domain:\n'))
@@ -234,39 +211,33 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
                             for attr in invalidatedDataDict[key][cl][id].keys():
                                 self.logDisplay.insertPlainText(self.tr('id: ')+str(id)+self.tr(' Attribute: ')+attr+self.tr(' Value: ')+str(invalidatedDataDict[key][cl][id][attr])+'\n')
 
-                if key == 'missingAggregator' and len(invalidatedDataDict[key].keys())>0:
-                    self.logDisplay.insertPlainText(self.tr('\nFeatures with null aggregator missing:\n'))
-                    for cl in invalidatedDataDict[key].keys():
-                        self.logDisplay.insertPlainText(self.tr('Class: ')+cl+'\n')
-                        for id in invalidatedDataDict[key][cl].keys():
-                            for attr in invalidatedDataDict[key][cl][id].keys():
-                                self.logDisplay.insertPlainText(self.tr('id: ')+str(id)+self.tr(' Attribute: ')+attr+self.tr(' Value: ')+str(invalidatedDataDict[key][cl][id][attr])+'\n')
         return hasErrors
     
     def buildFieldMap(self,db, edgvVersion, inputIsSpatialite): 
         fieldMap = self.utils.getStructureDict(db, edgvVersion, inputIsSpatialite)
         return fieldMap
     
-    def validateSpatialite(self, spatialiteDB, postgisDB, edgvVersion, complexClasses, geomClasses):
+    def validateSpatialite(self, spatialiteDB, postgisDB, edgvVersion, classes):
         invalidated = dict()
         
         domainDict = self.utils.getPostgisDomainDict(edgvVersion, postgisDB)
         notNullDict = self.utils.getPostgisNotNullDict(edgvVersion, postgisDB)
         spatialiteDbStructure = self.utils.getStructureDict(spatialiteDB, edgvVersion, True)
         aggregationColumns = self.utils.getAggregationAttributes(postgisDB,False)
-        
-        invalidated['nullComplexPk'] = dict() #only complexes are checked, because geom classes won't have its ids converted
+ 
+        invalidated['nullLine'] = dict()       
+        invalidated['nullPk'] = dict() #only complexes are checked, because geom classes won't have its ids converted
         invalidated['notInDomain'] = dict()
         invalidated['nullAttribute'] = dict()
-        invalidated['missingAggregator'] = dict()
-        
-        self.makeSpatialiteValidation(invalidated, spatialiteDB, postgisDB, domainDict, notNullDict, spatialiteDbStructure, aggregationColumns, complexClasses)
-        self.makeSpatialiteValidation(invalidated, spatialiteDB, postgisDB, domainDict, notNullDict, spatialiteDbStructure, aggregationColumns, geomClasses)
+   
+        self.makeSpatialiteValidation(invalidated, spatialiteDB, postgisDB, domainDict, notNullDict, spatialiteDbStructure, aggregationColumns, classes)
 
         return invalidated
     
     def makeSpatialiteValidation(self,invalidated, spatialiteDB, postgisDB, domainDict, notNullDict, spatialiteDbStructure, aggregationColumns, classes):
         for cl in classes:
+            if cl == 'cb_rel_curva_nivel_l':
+                print 'ololo'
             if cl in spatialiteDbStructure.keys():
                 schema = cl.split('_')[0]
                 table = '_'.join(cl.split('_')[1::])
@@ -285,16 +256,29 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
                 
                 while query.next():
                     id = query.value(0)
+                    #detects null lines
+                    for i in range(len(attrList)):
+                        nullLine = True
+                        value = query.value(i)
+                        if value <> None:
+                            nullLine = False
+                            break
+                    if nullLine:
+                        if cl not in invalidated['nullLine'].keys():
+                            invalidated['nullLine'][cl]=0
+                        invalidated['nullLine'][cl]+=1
+                    
                     #validates complex pk
-                    if cl not in invalidated['nullComplexPk'].keys():
-                        invalidated['nullComplexPk'][cl]=0
-                    invalidated['nullComplexPk'][cl]+=1
+                    if id == None and (not nullLine):
+                        if cl not in invalidated['nullPk'].keys():
+                            invalidated['nullPk'][cl]=0
+                        invalidated['nullPk'][cl]+=1
                     
                     for i in range(len(attrList)):
                         value = query.value(i)
                         #validates domain
                         if pgClass in domainDict.keys():
-                            if (attrList[i] in domainDict[pgClass].keys()) and (value not in domainDict[pgClass][attrList[i]]):
+                            if (attrList[i] in domainDict[pgClass].keys()) and (value not in domainDict[pgClass][attrList[i]]) and (value != None) and not nullLine:
                                 if cl not in invalidated['notInDomain'].keys():
                                     invalidated['notInDomain'][cl] = dict()
                                 if id not in invalidated['notInDomain'][cl].keys():
@@ -304,7 +288,7 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
                                 invalidated['notInDomain'][cl][id][attrList[i]] = value
                         #validates not nulls
                         if pgClass in notNullDict.keys():
-                            if attrList[i] in notNullDict[pgClass] and value == 'NULL':
+                            if attrList[i] in notNullDict[pgClass] and value == None:
                                 if cl not in invalidated['nullAttribute'].keys():
                                     invalidated['nullAttribute'][cl] = dict()
                                 if id not in invalidated['nullAttribute'][cl].keys():
@@ -312,26 +296,6 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
                                 if attrList[i] not in invalidated['nullAttribute'][cl][id].keys():
                                     invalidated['nullAttribute'][cl][id][attrList[i]] = dict()
                                 invalidated['nullAttribute'][cl][id][attrList[i]] = value
-                        #validates aggregates
-                        if attrList[i] in aggregationColumns and value <> 'NULL':
-                            sql2 = self.widget_2.gen.getAggregatorFromComplexSchema(table,attrList[i])
-                            query2 = QSqlQuery(sql2, postgisDB)
-                            idsFound = []
-                            while query2.next():
-                                complexCandidate = query2.value(0)
-                                sql3 = self.widget_2.gen.getAggregatorFromId(complexCandidate,attrList[i])
-                                query3 = QSqlQuery(sql3, postgisDB)
-                                while query3.next():
-                                    fid = query3.value(0)
-                                    idsFound.append(fid)
                             
-                            if len(idsFound) == 0:
-                                if cl not in invalidated['missingAggregator'].keys():
-                                    invalidated['missingAggregator'][cl] = dict()
-                                if id not in invalidated['missingAggregator'][cl].keys():
-                                    invalidated['missingAggregator'][cl][id] = dict()
-                                if attrList[i] not in invalidated['missingAggregator'][cl][id].keys():
-                                    invalidated['missingAggregator'][cl][id][attrList[i]] = dict()
-                                invalidated['missingAggregator'][cl][id][attrList[i]] = value                                
         return
     
