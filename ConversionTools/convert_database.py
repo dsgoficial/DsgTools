@@ -130,13 +130,15 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
     def makeConversion(self, type, classesDict):
         self.logDisplay.clear()
         self.logDisplay.insertPlainText(self.tr('Conversion type: '+type+'\n'))
-        self.logDisplay.insertPlainText(self.tr('Input database: ')+self.widget.db.databaseName()+'\n')
-        self.logDisplay.insertPlainText(self.tr('Output database: ')+self.widget_2.db.databaseName()+'\n')
-        self.logDisplay.insertPlainText(self.tr('Class ----------> Elements\n'))
+        self.logDisplay.insertPlainText(self.tr('\nInput database: ')+self.widget.db.databaseName()+'\n')
+        self.logDisplay.insertPlainText(self.tr('\nOutput database: ')+self.widget_2.db.databaseName()+'\n')
+        self.logDisplay.insertPlainText('\n'+'{:-^60}'.format(self.tr('Read Summary')))
+        self.logDisplay.insertPlainText('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
         classes = classesDict.keys()
-
+        classes.sort()
+        clStr = ''
         for i in classes:
-            self.logDisplay.insertPlainText(i+self.tr('---------->')+str(classesDict[i])+'\n')
+            self.logDisplay.insertPlainText('{:<50}'.format(i)+str(classesDict[i])+'\n')
 
         if type == 'spatialite2postgis':
             self.invalidatedDataDict = self.validateSpatialite(self.widget.db,self.widget_2.db,self.widget_2.dbVersion,classes)
@@ -186,13 +188,25 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
             if len(invalidatedDataDict[key].keys()) > 0:
                 hasErrors = True
         if hasErrors:
-            self.logDisplay.insertPlainText(self.tr('\n-------Validation Problems Summary-----------\n'))
+            self.logDisplay.insertPlainText('\n'+'{:-^60}'.format(self.tr('Validation Problems Summary')))
             for key in invalidatedDataDict.keys():
+                
+                if key == 'nullLine' and len(invalidatedDataDict[key].keys())>0:
+                    self.logDisplay.insertPlainText(self.tr('\n\nClasses with null lines:\n'))
+                    self.logDisplay.insertPlainText('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
+                    for cl in invalidatedDataDict[key].keys():
+                        self.logDisplay.insertPlainText('{:<50}'.format(cl)+str(invalidatedDataDict[key][cl])+'\n')
+
+                if key == 'nullPk' and len(invalidatedDataDict[key].keys())>0:
+                    self.logDisplay.insertPlainText(self.tr('\n\nClasses with null primary keys:\n'))
+                    self.logDisplay.insertPlainText('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
+                    for cl in invalidatedDataDict[key].keys():
+                        self.logDisplay.insertPlainText('{:<50}'.format(cl)+str(invalidatedDataDict[key][cl])+'\n')
 
                 if key == 'notInDomain' and len(invalidatedDataDict[key].keys())>0:
-                    self.logDisplay.insertPlainText(self.tr('\nFeatures with attributes not in domain:\n'))
+                    self.logDisplay.insertPlainText(self.tr('\n\nFeatures with attributes not in domain:\n\n'))
                     for cl in invalidatedDataDict[key].keys():
-                        self.logDisplay.insertPlainText(self.tr('Class: ')+cl+'\n')
+                        self.logDisplay.insertPlainText(self.tr('\nClass: ')+cl+'\n')
                         for id in invalidatedDataDict[key][cl].keys():
                             attrCommaList = '(id,'+','.join(invalidatedDataDict[key][cl][id].keys())+') = '
                             at = invalidatedDataDict[key][cl][id].keys()
@@ -204,13 +218,17 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
                             self.logDisplay.insertPlainText(attrCommaList+valueList)
 
                 if key == 'nullAttribute' and len(invalidatedDataDict[key].keys())>0:
-                    self.logDisplay.insertPlainText(self.tr('\nFeatures with null attributes in a not null field:\n'))
+                    self.logDisplay.insertPlainText(self.tr('\n\nFeatures with null attributes in a not null field:\n\n'))
                     for cl in invalidatedDataDict[key].keys():
                         self.logDisplay.insertPlainText(self.tr('Class: ')+cl+'\n')
                         for id in invalidatedDataDict[key][cl].keys():
+                            attrCommaList = '(id,'+','.join(invalidatedDataDict[key][cl][id].keys())+') = '
+                            valueList = '('+str(id)
                             for attr in invalidatedDataDict[key][cl][id].keys():
-                                self.logDisplay.insertPlainText(self.tr('id: ')+str(id)+self.tr(' Attribute: ')+attr+self.tr(' Value: ')+str(invalidatedDataDict[key][cl][id][attr])+'\n')
-
+                                valueList += ','+str(invalidatedDataDict[key][cl][id][attr])
+                            valueList += ')\n'
+                            
+                            self.logDisplay.insertPlainText(attrCommaList+valueList)
         return hasErrors
     
     def buildFieldMap(self,db, edgvVersion, inputIsSpatialite): 
@@ -226,7 +244,7 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         aggregationColumns = self.utils.getAggregationAttributes(postgisDB,False)
  
         invalidated['nullLine'] = dict()       
-        invalidated['nullPk'] = dict() #only complexes are checked, because geom classes won't have its ids converted
+        invalidated['nullPk'] = dict()
         invalidated['notInDomain'] = dict()
         invalidated['nullAttribute'] = dict()
    
@@ -236,8 +254,6 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
     
     def makeSpatialiteValidation(self,invalidated, spatialiteDB, postgisDB, domainDict, notNullDict, spatialiteDbStructure, aggregationColumns, classes):
         for cl in classes:
-            if cl == 'cb_rel_curva_nivel_l':
-                print 'ololo'
             if cl in spatialiteDbStructure.keys():
                 schema = cl.split('_')[0]
                 table = '_'.join(cl.split('_')[1::])
@@ -248,9 +264,8 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
                 else:
                     attrList = ['OGC_FID']
                 for att in allAttrList:
-                    if pgClass in domainDict.keys():
-                        if (att in domainDict[pgClass].keys()) and (att not in attrList):
-                            attrList.append(att)
+                    if att not in attrList:
+                        attrList.append(att)
                 sql = self.widget.gen.getFeaturesWithSQL(cl,attrList) 
                 query = QSqlQuery(sql, spatialiteDB)
                 
@@ -268,7 +283,7 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
                             invalidated['nullLine'][cl]=0
                         invalidated['nullLine'][cl]+=1
                     
-                    #validates complex pk
+                    #validates pks
                     if id == None and (not nullLine):
                         if cl not in invalidated['nullPk'].keys():
                             invalidated['nullPk'][cl]=0
@@ -277,25 +292,38 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
                     for i in range(len(attrList)):
                         value = query.value(i)
                         #validates domain
-                        if pgClass in domainDict.keys():
-                            if (attrList[i] in domainDict[pgClass].keys()) and (value not in domainDict[pgClass][attrList[i]]) and (value != None) and not nullLine:
-                                if cl not in invalidated['notInDomain'].keys():
-                                    invalidated['notInDomain'][cl] = dict()
-                                if id not in invalidated['notInDomain'][cl].keys():
-                                    invalidated['notInDomain'][cl][id] = dict()
-                                if att not in invalidated['notInDomain'][cl][id].keys():
-                                    invalidated['notInDomain'][cl][id][attrList[i]] = dict()
-                                invalidated['notInDomain'][cl][id][attrList[i]] = value
+                        if pgClass in domainDict.keys():    
+                            if attrList[i] in domainDict[pgClass].keys():
+                                if value not in domainDict[pgClass][attrList[i]] and (not nullLine):
+                                    if cl not in invalidated['notInDomain'].keys():
+                                        invalidated['notInDomain'][cl] = dict()
+                                    if id not in invalidated['notInDomain'][cl].keys():
+                                        invalidated['notInDomain'][cl][id] = dict()
+                                    if att not in invalidated['notInDomain'][cl][id].keys():
+                                        invalidated['notInDomain'][cl][id][attrList[i]] = dict()
+                                    invalidated['notInDomain'][cl][id][attrList[i]] = value
                         #validates not nulls
                         if pgClass in notNullDict.keys():
-                            if attrList[i] in notNullDict[pgClass] and value == None:
-                                if cl not in invalidated['nullAttribute'].keys():
-                                    invalidated['nullAttribute'][cl] = dict()
-                                if id not in invalidated['nullAttribute'][cl].keys():
-                                    invalidated['nullAttribute'][cl][id] = dict()
-                                if attrList[i] not in invalidated['nullAttribute'][cl][id].keys():
-                                    invalidated['nullAttribute'][cl][id][attrList[i]] = dict()
-                                invalidated['nullAttribute'][cl][id][attrList[i]] = value
-                            
+                            if pgClass in domainDict.keys():
+                                if attrList[i] in notNullDict[pgClass] and attrList[i] not in domainDict[pgClass].keys():
+                                    if (value == None) and (not nullLine) and (attrList[i] not in domainDict[pgClass].keys()):
+                                        if cl not in invalidated['nullAttribute'].keys():
+                                            invalidated['nullAttribute'][cl] = dict()
+                                        if id not in invalidated['nullAttribute'][cl].keys():
+                                            invalidated['nullAttribute'][cl][id] = dict()
+                                        if attrList[i] not in invalidated['nullAttribute'][cl][id].keys():
+                                            invalidated['nullAttribute'][cl][id][attrList[i]] = dict()
+                                        invalidated['nullAttribute'][cl][id][attrList[i]] = value                                    
+                            else:
+                                if attrList[i] in notNullDict[pgClass]:
+                                    if (value == None) and (not nullLine) and (attrList[i] not in domainDict[pgClass].keys()):
+                                        if cl not in invalidated['nullAttribute'].keys():
+                                            invalidated['nullAttribute'][cl] = dict()
+                                        if id not in invalidated['nullAttribute'][cl].keys():
+                                            invalidated['nullAttribute'][cl][id] = dict()
+                                        if attrList[i] not in invalidated['nullAttribute'][cl][id].keys():
+                                            invalidated['nullAttribute'][cl][id][attrList[i]] = dict()
+                                        invalidated['nullAttribute'][cl][id][attrList[i]] = value 
+                                
         return
     
