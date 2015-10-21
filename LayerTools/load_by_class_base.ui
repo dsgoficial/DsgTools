@@ -32,7 +32,7 @@
   <property name="windowTitle">
    <string>Load by Class</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <widget class="ConnectionWidget" name="widget" native="true"/>
    </item>
@@ -41,8 +41,18 @@
      <property name="title">
       <string>Select the classes</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Filter:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="filterEdit"/>
+      </item>
+      <item row="1" column="0" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
          <widget class="QListWidget" name="classesListWidget">

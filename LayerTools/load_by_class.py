@@ -73,6 +73,7 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
         self.selectAllCheck.setCheckState(0)
 
     def listClassesFromDatabase(self):
+        self.classes = []
         self.classesListWidget.clear()
         self.dbVersion = self.widget.getDBVersion()
         self.qmlPath = self.widget.getQmlPath()
@@ -89,8 +90,14 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
             if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
                 or tableName.split("_")[-1] == "a":
 
-                item = QtGui.QListWidgetItem(layerName)
-                self.classesListWidget.addItem(item)
+                self.classes.append(layerName)
+        self.classesListWidget.addItems(self.classes)
+        self.classesListWidget.sortItems()
+
+    def on_filterEdit_textChanged(self, text):
+        classes = [edgvClass for edgvClass in self.classes if text in edgvClass]
+        self.classesListWidget.clear()
+        self.classesListWidget.addItems(classes)
         self.classesListWidget.sortItems()
 
     def cancel(self):
