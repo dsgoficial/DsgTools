@@ -358,7 +358,22 @@ class Utils:
                 panMap.append(-1)
         return panMap
     
-    def translateLayer(self, inputLayer, inputLayerName, outputLayer, layerPanMap, defaults={}, translateValues={},invalidatedDataDict=None):
+    def translateLayer(self, inputLayer, inputLayerName, outputLayer, layerPanMap, defaults={}, translateValues={}):
+        inputLayer.ResetReading()
+                    
+        for feat in inputLayer:
+            if invalidatedDataDict is not None:
+                outputLyrDef = outputLayer.GetLayerDefn()
+                newFeat=ogr.Feature(outputLayer.GetLayerDefn())
+                featOriginalId = inputLayer.GetField('OGC_FID')
+                newFeat.SetFromWithMap(feat,True,layerPanMap)
+                outputLayer.CreateFeature(newFeat)
+            else:
+                newFeat=ogr.Feature(outputLayer.GetLayerDefn())
+                newFeat.SetFromWithMap(feat,True,layerPanMap)
+                outputLayer.CreateFeature(newFeat)
+
+    def translateLayerWithDataFix(self, inputLayer, inputLayerName, outputLayer, layerPanMap, defaults={}, translateValues={}):
         inputLayer.ResetReading()
         attrBlackList = dict()
         if invalidatedDataDict is not None:
@@ -388,7 +403,7 @@ class Utils:
                 newFeat.SetFromWithMap(feat,True,layerPanMap)
                 outputLayer.CreateFeature(newFeat)
 
-    def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList, inputIsSpatialite,invalidatedDataDict=None):
+    def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList, inputIsSpatialite):
         gen = self.factory.createSqlGenerator(inputIsSpatialite)
         for filename in inputLayerList:
             if inputIsSpatialite:
@@ -413,7 +428,36 @@ class Utils:
             outputLayer=outputDS.GetLayerByName(outFileName)
             #order conversion here
             layerPanMap=self.makeTranslationMap(filename, inputLayer,outputLayer, fieldMap)
-            self.translateLayer(inputLayer, filename, outputLayer, layerPanMap,invalidatedDataDict)
+            self.translateLayer(inputLayer, filename, outputLayer, layerPanMap)
+        outputDS.Destroy()
+        return True
+
+    def translateDSWithDataFix(self, inputDS, outputDS, fieldMap, inputLayerList, inputIsSpatialite,invalidatedDataDict):
+        gen = self.factory.createSqlGenerator(inputIsSpatialite)
+        for filename in inputLayerList:
+            if inputIsSpatialite:
+                schema = filename.split('_')[0]
+            else:
+                schema = filename.split('.')[0]
+            attr = fieldMap[filename].keys()
+            attrList = []
+            for a in attr:
+                if schema == 'complexos':
+                    attrList.append(a)
+                elif a not in ['id']:
+                    attrList.append(a)
+            
+            sql = gen.getFeaturesWithSQL(filename,attrList) #order elements here
+            inputLayer = inputDS.ExecuteSQL(sql.encode('utf-8'))
+            if inputIsSpatialite:
+                outFileName = filename.split('_')[0]+'.'+'_'.join(filename.split('_')[1::])
+            else:
+                outFileName = filename.replace('.','_')
+
+            outputLayer=outputDS.GetLayerByName(outFileName)
+            #order conversion here
+            layerPanMap=self.makeTranslationMap(filename, inputLayer,outputLayer, fieldMap)
+            self.translateLayerWithDataFix(inputLayer, filename, outputLayer, layerPanMap,invalidatedDataDict)
         outputDS.Destroy()
         return True
     

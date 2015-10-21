@@ -146,11 +146,15 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
             hasErrors = self.buildInvalidatedLog(classes, self.invalidatedDataDict)
             if self.fixDataRadioButton.isChecked():
                 if len(classes) > 0:
-                    converted = self.convert2postgis(classes, self.invalidatedDataDict)
+                    converted = self.convert2postgisWithDataFix(classes, self.invalidatedDataDict)
+                else:
+                    QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not performed! Empty input database!'))                    
             else:
                 if not hasErrors:
                     if len(classes) > 0:
-                        converted = self.convert2postgis(classes, self.invalidatedDataDict)
+                        converted = self.convert2postgis(classes)
+                    else:
+                        QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not performed! Empty input database!'))
             
             return converted
                
@@ -158,7 +162,9 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
             converted = False
             if len(classes) > 0:
                 converted = self.convert2spatialite(classes)
-
+            else:
+                QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not performed! Empty input database!'))
+                        
             return converted
         else:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not defined!'))
@@ -172,7 +178,7 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         self.outputOgrDb = ogr.Open( self.widget_2.filename , update = 1)
         inputLayerList = classes
         return self.utils.translateDS(inputOgrDb, self.outputOgrDb, fieldMap, inputLayerList, self.widget.isSpatialite)
-    
+
     def convert2postgis(self, classes, invalidatedDataDict, hasFieldMapper=False):
         if not hasFieldMapper:
             fieldMap = self.buildFieldMap(self.widget.db, self.widget.dbVersion, self.widget.isSpatialite)
@@ -180,7 +186,16 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         conn = self.utils.makeOgrPostGISConn(self.widget_2.db)        
         self.outputOgrDb = ogr.Open(conn)
         inputLayerList = classes
-        return self.utils.translateDS(inputOgrDb, self.outputOgrDb, fieldMap, inputLayerList, self.widget.isSpatialite,invalidatedDataDict)
+        return self.utils.translateDS(inputOgrDb, self.outputOgrDb, fieldMap, inputLayerList, self.widget.isSpatialite)
+    
+    def convert2postgisWithDataFix(self, classes, invalidatedDataDict, hasFieldMapper=False):
+        if not hasFieldMapper:
+            fieldMap = self.buildFieldMap(self.widget.db, self.widget.dbVersion, self.widget.isSpatialite)
+        inputOgrDb = ogr.Open(self.widget.filename)
+        conn = self.utils.makeOgrPostGISConn(self.widget_2.db)        
+        self.outputOgrDb = ogr.Open(conn)
+        inputLayerList = classes
+        return self.utils.translateDSWithDataFix(inputOgrDb, self.outputOgrDb, fieldMap, inputLayerList, self.widget.isSpatialite,invalidatedDataDict)
     
     def buildInvalidatedLog(self,classes,invalidatedDataDict):
         hasErrors = False
