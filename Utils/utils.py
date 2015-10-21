@@ -362,16 +362,9 @@ class Utils:
         inputLayer.ResetReading()
                     
         for feat in inputLayer:
-            if invalidatedDataDict is not None:
-                outputLyrDef = outputLayer.GetLayerDefn()
-                newFeat=ogr.Feature(outputLayer.GetLayerDefn())
-                featOriginalId = inputLayer.GetField('OGC_FID')
-                newFeat.SetFromWithMap(feat,True,layerPanMap)
-                outputLayer.CreateFeature(newFeat)
-            else:
-                newFeat=ogr.Feature(outputLayer.GetLayerDefn())
-                newFeat.SetFromWithMap(feat,True,layerPanMap)
-                outputLayer.CreateFeature(newFeat)
+            newFeat=ogr.Feature(outputLayer.GetLayerDefn())
+            newFeat.SetFromWithMap(feat,True,layerPanMap)
+            outputLayer.CreateFeature(newFeat)
 
     def translateLayerWithDataFix(self, inputLayer, inputLayerName, outputLayer, layerPanMap, defaults={}, translateValues={}):
         inputLayer.ResetReading()
