@@ -28,7 +28,8 @@ import qgis as qgis
 from qgis.gui import QgsMessageBar
 from qgis.core import QgsMessageLog
 
-import os, ogr
+import os
+from osgeo import ogr
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 
 class Utils:

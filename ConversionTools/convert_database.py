@@ -20,7 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os, ogr
+import os
+from osgeo import ogr
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
