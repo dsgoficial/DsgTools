@@ -217,12 +217,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ConnectionWidget</name>
     <message>
-        <location filename="CustomWidgets/connectionWidget.py" line="143"/>
+        <location filename="CustomWidgets/connectionWidget.py" line="149"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.py" line="157"/>
+        <location filename="CustomWidgets/connectionWidget.py" line="163"/>
         <source>Select Database</source>
         <translation>Selecione o Banco de Dados</translation>
     </message>
@@ -1739,22 +1739,22 @@ p, li { white-space: pre-wrap; }
         <translation>Selecione as Classes</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class_base.ui" line="64"/>
+        <location filename="LayerTools/load_by_class_base.ui" line="74"/>
         <source>Select All</source>
         <translation>Selecionar Todos</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class_base.ui" line="88"/>
+        <location filename="LayerTools/load_by_class_base.ui" line="98"/>
         <source>Ok</source>
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class_base.ui" line="108"/>
+        <location filename="LayerTools/load_by_class_base.ui" line="118"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="101"/>
+        <location filename="LayerTools/load_by_class.py" line="108"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
@@ -1764,34 +1764,39 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="173"/>
+        <location filename="LayerTools/load_by_class.py" line="180"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="154"/>
+        <location filename="LayerTools/load_by_class.py" line="161"/>
         <source>Could not load the selected classes!</source>
         <translation>Não foi possível carregar as classes selecionadas!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="175"/>
+        <location filename="LayerTools/load_by_class.py" line="182"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="156"/>
+        <location filename="LayerTools/load_by_class.py" line="163"/>
         <source>Please, select at least one class!</source>
         <translation>Por favor, selecione pelo menos uma classe!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="173"/>
+        <location filename="LayerTools/load_by_class.py" line="180"/>
         <source>Could not load the layer(s)!</source>
         <translation>Não foi possível carregar a(s) camada(s)!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="175"/>
+        <location filename="LayerTools/load_by_class.py" line="182"/>
         <source>Please select at least one layer!</source>
         <translation>Por favor, selecione pelo menos uma camada!</translation>
+    </message>
+    <message>
+        <location filename="LayerTools/load_by_class_base.ui" line="48"/>
+        <source>Filter:</source>
+        <translation>Filtro:</translation>
     </message>
 </context>
 <context>
