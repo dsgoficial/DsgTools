@@ -254,8 +254,6 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
     
     def makeSpatialiteValidation(self,invalidated, spatialiteDB, postgisDB, domainDict, notNullDict, spatialiteDbStructure, aggregationColumns, classes):
         for cl in classes:
-            if cl == 'cb_rel_curva_nivel_l':
-                print 'ololo'
             if cl in spatialiteDbStructure.keys():
                 schema = cl.split('_')[0]
                 table = '_'.join(cl.split('_')[1::])
@@ -285,7 +283,7 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
                             invalidated['nullLine'][cl]=0
                         invalidated['nullLine'][cl]+=1
                     
-                    #validates complex pk
+                    #validates pks
                     if id == None and (not nullLine):
                         if cl not in invalidated['nullPk'].keys():
                             invalidated['nullPk'][cl]=0
@@ -308,8 +306,6 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
                         if pgClass in notNullDict.keys():
                             if pgClass in domainDict.keys():
                                 if attrList[i] in notNullDict[pgClass] and attrList[i] not in domainDict[pgClass].keys():
-                                    if (id == 195 or id == '195') and pgClass == 'cb.rel_curva_nivel_l':
-                                        print 'ololo'
                                     if (value == None) and (not nullLine) and (attrList[i] not in domainDict[pgClass].keys()):
                                         if cl not in invalidated['nullAttribute'].keys():
                                             invalidated['nullAttribute'][cl] = dict()
@@ -320,8 +316,6 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
                                         invalidated['nullAttribute'][cl][id][attrList[i]] = value                                    
                             else:
                                 if attrList[i] in notNullDict[pgClass]:
-                                    if (id == 195 or id == '195') and pgClass == 'cb.rel_curva_nivel_l':
-                                        print 'ololo'
                                     if (value == None) and (not nullLine) and (attrList[i] not in domainDict[pgClass].keys()):
                                         if cl not in invalidated['nullAttribute'].keys():
                                             invalidated['nullAttribute'][cl] = dict()
