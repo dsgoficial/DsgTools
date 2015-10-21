@@ -84,7 +84,7 @@ class CreateUser(QtGui.QDialog, FORM_CLASS):
             self.refreshScreen()
             return
         else:
-            QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('User ') +user+' created successfully on database '+self.db.databaseName()+'!')
+            QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('User ') +user+self.tr(' created successfully on database ')+self.db.databaseName()+'!')
             self.refreshScreen()
             return
 

@@ -89,6 +89,11 @@ p, li { white-space: pre-wrap; }
         <source>Password mismatch! Password not altered!</source>
         <translation>Password não coincidente! Password não alterado!</translation>
     </message>
+    <message>
+        <location filename="UserTools/alter_user_password.py" line="71"/>
+        <source> password successfully updated on database </source>
+        <translation> password atualizado com sucesso no banco de dados </translation>
+    </message>
 </context>
 <context>
     <name>AssignProfiles</name>
@@ -344,6 +349,11 @@ p, li { white-space: pre-wrap; }
         <location filename="UserTools/create_user.py" line="70"/>
         <source>Password mismatch! User not created!</source>
         <translation>Password não coincidente! Usuário não criado!</translation>
+    </message>
+    <message>
+        <location filename="UserTools/create_user.py" line="87"/>
+        <source> created successfully on database </source>
+        <translation> criado com sucesso no banco de dados </translation>
     </message>
 </context>
 <context>

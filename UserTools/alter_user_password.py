@@ -68,7 +68,7 @@ class AlterUserPassword(QtGui.QDialog, FORM_CLASS):
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem altering user\'s password: ') +user+'\n'+query.lastError().text())
             return
         else:
-            QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('User ') +self.user+' password successfully updated on database '+self.db.databaseName()+'!')
+            QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('User ') +self.user+self.tr(' password successfully updated on database ')+self.db.databaseName()+'!')
             self.close()
             return
 
