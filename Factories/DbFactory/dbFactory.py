@@ -33,13 +33,3 @@ class DbFactory:
             return PostGISDb(qtsqlDb,False)
         else:
             return None
-
-if __name__ == "__main__":
-    from PyQt4.QtSql import QSqlDatabase
-    f = DbFactory()
-    db = QSqlDatabase("QSQLITE")
-    db.setDatabaseName('/home/borba/Documents/banco_teste.sqlite')
-    sp = f.createDbFactory(db)
-    db.open()
-    x = sp.listGeomClassesFromDatabase()
-    print 'lalala'
