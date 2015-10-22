@@ -26,10 +26,17 @@ from DsgTools.Factories.DbFactory.spatialiteDb import SpatialiteDb
 from DsgTools.Factories.DbFactory.postgisDb import PostgisDb
 
 class DbFactory:
-    def createDbFactory(self, qtsqlDb):
-        if qtsqlDb.driverName() == "QSQLITE":
-            return SpatialiteDb(qtsqlDb,True)
-        if qtsqlDb.driverName() == "QPSQL":
-            return PostGISDb(qtsqlDb,False)
+    def createDbFactory(self,driverName):
+        if driverName == "QSQLITE":
+            return SpatialiteDb()
+        if driverName == "QPSQL":
+            return PostgisDb()
         else:
             return None
+
+
+if __name__ == '__main__':
+    dbF = DbFactory()
+    gen=dbF.createDbFactory("QPSQL")
+    gen.openDb()
+    

@@ -23,16 +23,23 @@
 import os
 from osgeo import ogr
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from PyQt4.QtSql import QSqlQuery
+from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 from PyQt4.QtCore import QSettings
+from PyQt4.Qt import QObject
 
 
-class AbstractDb:
-    def __init__(self,qtsqlDb,isSpatialite):
-        self.db = qtsqlDb
-        self.gen = SqlGeneratorFactory().createSqlGenerator(isSpatialite)
-        self.dbVersion = self.getDatabaseVersion()
-        self.ogrDb = None
+class AbstractDb(QObject):
+    
+    def __init__(self):
+        super(AbstractDb,self).__init__()
+        pass
+    
+    def openDb(self):
+        if not self.db.open():
+            raise Exception(self.tr('Error when openning datatabase.\n')+self.db.lastError().text())
+
+    def connectDatabaseWithServerName(self,name):
+        return None
     
     def getDatabaseVersion(self):
         sqlVersion = self.gen.getEDGVVersion()
@@ -43,9 +50,6 @@ class AbstractDb:
     
     def getType(self):
         return self.db.driverName()
-    
-    def setConnection(self):
-        return None
     
     def listGeomClassesFromDatabase(self):
         return None
@@ -90,7 +94,7 @@ class AbstractDb:
                 classesWithElements[cl[0]]=cl[1]   
         return classesWithElements
 
-    def getStructureDict(self, edgvVersion):
+    def getStructureDict(self):
         return None
 
     def makeOgrConn(self):
@@ -118,3 +122,13 @@ class AbstractDb:
         if self.ogrDb != None:
             self.buildOgrDatabase()
             return self.ogrDb
+
+    def buildFieldMap(self): 
+        fieldMap = self.getStructureDict()
+        return fieldMap
+    
+    def convertToPostgis(self, outputDb, invalidatedDict,type):
+        return None
+    
+    def convertToSpatialite(self, outputDb):
+        return None    

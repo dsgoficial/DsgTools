@@ -21,12 +21,21 @@
  ***************************************************************************/
 """
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
-from PyQt4.QtSql import QSqlQuery
+from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 
 class PostgisDb(AbstractDb):
     
-    def setConnection(self):
-        return None
+    def __init__(self):
+        super(PostgisDb,self).__init__()
+        self.db = QSqlDatabase('QPSQL')
+
+    def connectDatabaseWithServerName(self,name):
+        (host, port, user, password) = self.getServerConfiguration(name)
+        self.db.setHostName(host)
+        self.db.setPort(port)
+        self.db.setUserName(user)
+        self.db.setPassword(password)
+
     
     def listGeomClassesFromDatabase(self):
         classList = []
@@ -166,3 +175,9 @@ class PostgisDb(AbstractDb):
                     value = query2.value(0)
                     classDict[cl][attName].append(value)
         return classDict
+
+    def convertToPostgis(self, outputDb, invalidatedDict,type):
+        return None
+    
+    def convertToSpatialite(self, outputDb):
+        return None 

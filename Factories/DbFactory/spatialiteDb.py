@@ -24,8 +24,12 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from PyQt4.QtSql import QSqlQuery
 
 class SpatialiteDb(AbstractDb):
+
+    def __init__(self):
+        super(SpatialiteDb,self).__init__()
+        self.db = QSqlDatabase('QSQLITE')
     
-    def setConnection(self):
+    def connectDatabaseWithServerName(self,name):
         return None
     
     def listGeomClassesFromDatabase(self):
@@ -89,3 +93,9 @@ class SpatialiteDb(AbstractDb):
 
     def getDomainDict(self):
         return None
+
+    def convertToPostgis(self, outputDb, invalidatedDict,type):
+        return None
+    
+    def convertToSpatialite(self, outputDb):
+        return None 
