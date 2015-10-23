@@ -53,6 +53,7 @@ class Utils:
             qmlPath = os.path.join(qmlVersionPath, 'edgv_213')
         return qmlPath
 
+    #Deprecated. Reimplemented in DbFactory
     def findEPSG(self, db):
         gen = self.factory.createSqlGenerator(self.isSpatialiteDB(db))
         sql = gen.getSrid()
@@ -103,6 +104,7 @@ class Utils:
         db.setPassword(password)
         return db
 
+    #Deprecated. Reimplemented in DbFactory
     def getDatabaseVersion(self, db):
         gen = self.factory.createSqlGenerator(self.isSpatialiteDB(db))
         sqlVersion = gen.getEDGVVersion()
@@ -119,6 +121,7 @@ class Utils:
             isSpatialite = True
         return isSpatialite
     
+    #Deprecated. Reimplemented in DbFactory
     def getServerConfiguration(self, name):
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers/'+name)
@@ -129,6 +132,7 @@ class Utils:
         settings.endGroup()
         return (host, port, user, password)
     
+    #TODO: Reimplement in server_tools
     def browseServer(self,dbList,host,port,user,password):
         gen = self.factory.createSqlGenerator(False)
         edvgDbList = []
@@ -144,7 +148,8 @@ class Utils:
                     if version:
                         edvgDbList.append((database,version))
         return edvgDbList
-        
+    
+    #TODO: Reimplement in server_tools    
     def getDbsFromServer(self,name):
         gen = self.factory.createSqlGenerator(False)
         
@@ -160,7 +165,8 @@ class Utils:
         while query.next():
             dbList.append(query.value(0))
         return self.browseServer(dbList,host,port,user,password)
-    
+
+    #Deprecated. Reimplemented in DbFactory    
     def storeConnection(self, server, database):
         (host, port, user, password) = self.getServerConfiguration(server)
         
@@ -176,7 +182,8 @@ class Utils:
             settings.endGroup()
             return True
         return False
-    
+
+    #Deprecated. Reimplemented in DbFactory
     def listGeomClassesFromDatabase(self, db, isSpatialite):
         classList = []
         gen = self.factory.createSqlGenerator(isSpatialite)
@@ -197,6 +204,7 @@ class Utils:
         
         return classList
 
+    #Deprecated. Reimplemented in DbFactory
     def listComplexClassesFromDatabase(self, db, isSpatialite):
         classList = []
         gen = self.factory.createSqlGenerator(isSpatialite)
@@ -215,7 +223,8 @@ class Utils:
                 classList.append(layerName)
         
         return classList
-    
+
+    #Deprecated. Reimplemented in DbFactory    
     def countElements(self, layers, db, isSpatialite):
         listaQuantidades = []
         for layer in layers:
@@ -229,6 +238,7 @@ class Utils:
             listaQuantidades.append([layer, number])
         return listaQuantidades
 
+    #Deprecated. Reimplemented in DbFactory
     def listWithElementsFromDatabase(self, classList, db, isSpatialite):
         classListWithNumber = self.countElements(classList, db, isSpatialite)
         classesWithElements = dict()
@@ -237,6 +247,7 @@ class Utils:
                 classesWithElements[cl[0]]=cl[1]   
         return classesWithElements
     
+    #Deprecated. Already reimplemented in DbFactory as listWithElementsFromDatabase
     def listClassesWithElementsFromDatabase(self, db, isSpatialite):
         geomClassList = self.listGeomClassesFromDatabase(db, isSpatialite)
         complexClassList = self.listComplexClassesFromDatabase(db, isSpatialite)
@@ -261,6 +272,7 @@ class Utils:
         constring = 'PG: dbname=\''+dbName+'\' user=\''+dbUser+'\' host=\''+dbHost+'\' password=\''+dbPass+'\' port='+dbPort
         return constring
     
+    #Deprecated. Reimplemented in DbFactory as getNotNullDict
     def getPostgisNotNullDict(self, edgvVersion, db):
         gen = self.factory.createSqlGenerator(False)
         if edgvVersion == '2.1.3':
@@ -280,7 +292,8 @@ class Utils:
                 notNullDict[cl]=[]
             notNullDict[cl].append(attName)
         return notNullDict
-
+    
+    #Deprecated. Reimplemented in DbFactory as getDomainDict
     def getPostgisDomainDict(self, edgvVersion, db):
         gen = self.factory.createSqlGenerator(False)
         if edgvVersion == '2.1.3':
@@ -313,6 +326,7 @@ class Utils:
 
         return classDict
     
+    #Deprecated. Reimplemented in DbFactory
     def getStructureDict(self, db, edgvVersion, isSpatialite):
         gen = self.factory.createSqlGenerator(isSpatialite)
         classDict = dict()
@@ -455,6 +469,7 @@ class Utils:
         outputDS.Destroy()
         return True
     
+    #Deprecated. Reimplemented in DbFactory
     def getAggregationAttributes(self,db,isSpatialite):
         columns = []
         gen = self.factory.createSqlGenerator(isSpatialite)

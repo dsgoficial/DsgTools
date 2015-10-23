@@ -38,6 +38,7 @@ class PostgisDb(AbstractDb):
 
     
     def listGeomClassesFromDatabase(self):
+        self.checkAndOpenDb()      
         classList = []
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
@@ -51,6 +52,7 @@ class PostgisDb(AbstractDb):
         return classList
     
     def listComplexClassesFromDatabase(self):
+        self.checkAndOpenDb()        
         classList = []
         gen = self.factory.createSqlGenerator(isSpatialite)
         sql = gen.getTablesFromDatabase()
@@ -105,6 +107,7 @@ class PostgisDb(AbstractDb):
         return False
 
     def getStructureDict(self):
+        self.checkAndOpenDb()
         classDict = dict()
         sql = gen.getStructure(self.dbVersion)        
         query = QSqlQuery(sql, db)
@@ -130,6 +133,7 @@ class PostgisDb(AbstractDb):
         self.ogrDb = ogr.Open(con)
 
     def getNotNullDict(self):
+        self.checkAndOpenDb()
         if self.dbVersion == '2.1.3':
             schemaList = ['cb','complexos']
         else:
@@ -149,6 +153,7 @@ class PostgisDb(AbstractDb):
         return notNullDict
 
     def getDomainDict(self):
+        self.checkAndOpenDb()
         if self.dbVersion == '2.1.3':
             schemaList = ['cb','complexos','dominios']
         else:

@@ -33,6 +33,7 @@ class SpatialiteDb(AbstractDb):
         return None
     
     def listGeomClassesFromDatabase(self):
+        self.checkAndOpenDb()
         classList = []
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
@@ -43,6 +44,7 @@ class SpatialiteDb(AbstractDb):
         return classList
     
     def listComplexClassesFromDatabase(self):
+        self.checkAndOpenDb()
         classList = []
         gen = self.factory.createSqlGenerator(isSpatialite)
         sql = gen.getTablesFromDatabase()
@@ -64,6 +66,7 @@ class SpatialiteDb(AbstractDb):
         return None
 
     def getStructureDict(self):
+        self.checkAndOpenDb()
         classDict = dict()
         sql = self.gen.getStructure(self.dbVersion)        
         query = QSqlQuery(sql, self.db)

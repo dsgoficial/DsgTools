@@ -34,14 +34,21 @@ class AbstractDb(QObject):
         super(AbstractDb,self).__init__()
         pass
     
-    def openDb(self):
-        if not self.db.open():
-            raise Exception(self.tr('Error when openning datatabase.\n')+self.db.lastError().text())
+    def __del__(self):
+        if self.db.isOpen():
+            self.db.close()
+            self.db = None
+    
+    def checkAndOpenDb(self):
+        if not self.db.isOpen():
+            if not self.db.open():
+                raise Exception(self.tr('Error when openning datatabase.\n')+self.db.lastError().text())
 
     def connectDatabaseWithServerName(self,name):
         return None
     
     def getDatabaseVersion(self):
+        self.checkAndOpenDb()
         sqlVersion = self.gen.getEDGVVersion()
         queryVersion =  QSqlQuery(sqlVersion, self.db)
         while queryVersion.next():
@@ -67,6 +74,7 @@ class AbstractDb(QObject):
         return None
 
     def countElements(self, layers):
+        self.checkAndOpenDb()
         listaQuantidades = []
         for layer in layers:
             sql = self.gen.getElementCountFromLayer(layer)
@@ -79,6 +87,7 @@ class AbstractDb(QObject):
         return listaQuantidades     
 
     def findEPSG(self):
+        self.checkAndOpenDb()    
         sql = self.gen.getSrid()
         query = QSqlQuery(sql, self.db)
         srids = []
@@ -87,6 +96,7 @@ class AbstractDb(QObject):
         return srids[0]
 
     def listWithElementsFromDatabase(self, classList):
+        self.checkAndOpenDb()
         classListWithNumber = self.countElements(classList, self.db)
         classesWithElements = dict()
         for cl in classListWithNumber:
@@ -107,6 +117,7 @@ class AbstractDb(QObject):
         return None
 
     def getAggregationAttributes(self):
+        self.checkAndOpenDb()       
         columns = []
         sql = self.gen.getAggregationColumn()
         query = QSqlQuery(sql, self.db)
@@ -123,7 +134,8 @@ class AbstractDb(QObject):
             self.buildOgrDatabase()
             return self.ogrDb
 
-    def buildFieldMap(self): 
+    def buildFieldMap(self):
+        self.checkAndOpenDb()
         fieldMap = self.getStructureDict()
         return fieldMap
     
