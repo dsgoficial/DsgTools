@@ -247,7 +247,7 @@ class Utils:
                 classesWithElements[cl[0]]=cl[1]   
         return classesWithElements
     
-    #Deprecated. Already reimplemented in DbFactory as listWithElementsFromDatabase
+    #Deprecated. Already reimplemented in DbFactory as listClassesWithElementsFromDatabase
     def listClassesWithElementsFromDatabase(self, db, isSpatialite):
         geomClassList = self.listGeomClassesFromDatabase(db, isSpatialite)
         complexClassList = self.listComplexClassesFromDatabase(db, isSpatialite)

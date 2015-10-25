@@ -268,6 +268,7 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
 
         return invalidated
     
+    #Deprecated. Reimplemented in DbFactory as validateWithOutputDatabaseSchema
     def makeSpatialiteValidation(self,invalidated, spatialiteDB, postgisDB, domainDict, notNullDict, spatialiteDbStructure, aggregationColumns, classes):
         for cl in classes:
             if cl in spatialiteDbStructure.keys():

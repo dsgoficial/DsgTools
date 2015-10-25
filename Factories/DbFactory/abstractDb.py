@@ -95,6 +95,7 @@ class AbstractDb(QObject):
             srids.append(query.value(0))
         return srids[0]
 
+
     def listWithElementsFromDatabase(self, classList):
         self.checkAndOpenDb()
         classListWithNumber = self.countElements(classList, self.db)
@@ -103,6 +104,17 @@ class AbstractDb(QObject):
             if cl[1]>0:
                 classesWithElements[cl[0]]=cl[1]   
         return classesWithElements
+
+    def listClassesWithElementsFromDatabase(self):
+        geomClassList = self.listGeomClassesFromDatabase()
+        complexClassList = self.listComplexClassesFromDatabase()
+        classList = []
+        for g in geomClassList:
+            classList.append(g)
+        for c in complexClassList:
+            classList.append(c)
+        classList.sort()
+        return self.listWithElementsFromDatabase(classList)
 
     def getStructureDict(self):
         return None
@@ -138,9 +150,29 @@ class AbstractDb(QObject):
         self.checkAndOpenDb()
         fieldMap = self.getStructureDict()
         return fieldMap
-    
-    def convertToPostgis(self, outputDb, invalidatedDict,type):
+
+    def validateWithOutputDatabaseSchema(self,outputdb):
         return None
     
-    def convertToSpatialite(self, outputDb):
-        return None    
+    def makeValidationSummary(self):
+        return None
+    
+    def convertDatabase(self,outputdb,type):
+        if outputdb.driverName() == 'QPSQL':
+            return self.convertToPostgis(outputdb,type)
+        if outputdb.driverName() == 'QSQLITE':
+            return self.convertToSpatialite(outputdb,type)
+        return None
+    
+    def convertToPostgis(self, outputDb,type):
+        return None
+    
+    def convertToSpatialite(self, outputDb,type):
+        return None 
+
+    def buildInvalidatedDict(self):
+        return None
+    
+    def buildInvalidatedLog(self,invalidated):
+        return None
+    

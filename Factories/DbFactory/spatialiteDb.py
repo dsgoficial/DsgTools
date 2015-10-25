@@ -97,8 +97,20 @@ class SpatialiteDb(AbstractDb):
     def getDomainDict(self):
         return None
 
-    def convertToPostgis(self, outputDb, invalidatedDict,type):
+    def convertToPostgis(self, outputDb,type):
         return None
     
-    def convertToSpatialite(self, outputDb):
-        return None 
+    def convertToSpatialite(self, outputDb,type):
+        return None    
+
+    def makeValidationSummary(self):
+        return None
+
+    def validateWithOutputDatabaseSchema(self,outputdb):
+        return None
+    
+    def buildInvalidatedDict(self):
+        return None
+    
+    def buildInvalidatedLog(self,invalidated):
+        return None
