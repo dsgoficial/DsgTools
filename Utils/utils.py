@@ -39,20 +39,22 @@ class Utils:
     def __del__(self):
         pass
     
-    def introspectDict(self,d,ls):
-        if type(d) <> dict:
-            return d
-        else:
-            for key in d.keys():
-                ls.append([key,self.introspectDict(d[key],ls)])
-        return ls
+    def mergeDict(self,dictionary1, dictionary2):
+        output = dict()
+        for item, value in dictionary1.iteritems():
+            if dictionary2.has_key(item):
+                if isinstance(dictionary2[item], dict):
+                    output[item] = self.mergeDict(value, dictionary2.pop(item))
+            else:
+                output[item] = value
+        for item, value in dictionary2.iteritems():
+             output[item] = value
+        return output
     
-    def buildNestedDict(self,inputDict,keyList,value):
+    
+    def buildOneNestedDict(self,inputDict,keyList,value):
         if len(keyList) == 1:
             if keyList[0] not in inputDict.keys():
-                for k in inputDict.values():
-                    if type(k) <> dict:
-                        pass
                 inputDict[keyList[0]] = dict()
             inputDict[keyList[0]]=value
             return inputDict
@@ -60,11 +62,15 @@ class Utils:
             if keyList[0] not in inputDict.keys():
                 if len(inputDict.values()) == 0:
                     inputDict[keyList[0]] = dict()
-                else:
-                    for key in inputDict.keys():
-                        pass
-            inputDict[keyList[0]] = self.buildNestedDict(inputDict[keyList[0]],keyList[1::],value)
+            inputDict[keyList[0]] = self.buildOneNestedDict(inputDict[keyList[0]],keyList[1::],value)
             return inputDict
+    
+    def buildNestedDict(self,inputDict,keyList,value):
+        if len(inputDict.keys())>0:
+            tempDict = self.buildOneNestedDict(dict(),keyList,value)
+            return self.mergeDict(inputDict, tempDict)
+        else:
+            return self.buildOneNestedDict(inputDict,keyList,value)
 
     def getQmlDir(self, db):
         currentPath = os.path.dirname(__file__)
@@ -517,3 +523,5 @@ if __name__ == '__main__':
     print x
     y = utils.buildNestedDict(x, ['e','f','g','h'], 3)
     print y
+    z = utils.buildNestedDict(y, ['e','f','g','i'], 5)
+    print z
