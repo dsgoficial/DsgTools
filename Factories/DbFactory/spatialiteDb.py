@@ -112,5 +112,3 @@ class SpatialiteDb(AbstractDb):
     def buildInvalidatedDict(self):
         return None
     
-    def buildInvalidatedLog(self,invalidated):
-        return None

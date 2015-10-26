@@ -224,7 +224,7 @@ class PostgisDb(AbstractDb):
                 for att in allAttrList:
                     if att not in attrList:
                         attrList.append(att)
-                sql = self.widget.gen.getFeaturesWithSQL(cl,attrList) 
+                sql = self.gen.getFeaturesWithSQL(cl,attrList) 
                 query = QSqlQuery(sql, spatialiteDB)
                 
                 while query.next():
@@ -284,5 +284,3 @@ class PostgisDb(AbstractDb):
                                         invalidated['nullAttribute'][cl][id][attrList[i]] = value
         return invalidated
     
-    def buildInvalidatedLog(self,invalidated):
-        return None

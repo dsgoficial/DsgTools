@@ -24,14 +24,18 @@ import os
 from osgeo import ogr
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from PyQt4.QtSql import QSqlQuery, QSqlDatabase
-from PyQt4.QtCore import QSettings
+from PyQt4.QtCore import QSettings, SIGNAL, pyqtSignal
 from PyQt4.Qt import QObject
+from apt.auth import update
 
 
 class AbstractDb(QObject):
+    updateLog = pyqtSignal(str)
+    clearLog = pyqtSignal()
     
     def __init__(self):
         super(AbstractDb,self).__init__()
+        self.conversionTypeDict = dict({'QPSQL':'postgis','QSQLITE':'spatialite'})
         pass
     
     def __del__(self):
@@ -154,9 +158,6 @@ class AbstractDb(QObject):
     def validateWithOutputDatabaseSchema(self,outputdb):
         return None
     
-    def makeValidationSummary(self):
-        return None
-    
     def convertDatabase(self,outputdb,type):
         if outputdb.driverName() == 'QPSQL':
             return self.convertToPostgis(outputdb,type)
@@ -173,6 +174,65 @@ class AbstractDb(QObject):
     def buildInvalidatedDict(self):
         return None
     
-    def buildInvalidatedLog(self,invalidated):
-        return None
+    def makeValidationSummary(self,invalidated):
+        hasErrors = False
+        for key in invalidatedDataDict.keys():
+            if len(invalidatedDataDict[key].keys()) > 0:
+                hasErrors = True
+        if hasErrors:
+            updateLog.emit('\n'+'{:-^60}'.format(self.tr('Validation Problems Summary')))
+            for key in invalidatedDataDict.keys():
+                
+                if key == 'nullLine' and len(invalidatedDataDict[key].keys())>0:
+                    updateLog.emit(self.tr('\n\nClasses with null lines:\n'))
+                    updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
+                    for cl in invalidatedDataDict[key].keys():
+                        updateLog.emit('{:<50}'.format(cl)+str(invalidatedDataDict[key][cl])+'\n')
+
+                if key == 'nullPk' and len(invalidatedDataDict[key].keys())>0:
+                    updateLog.emit(self.tr('\n\nClasses with null primary keys:\n'))
+                    updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
+                    for cl in invalidatedDataDict[key].keys():
+                        updateLog.emit('{:<50}'.format(cl)+str(invalidatedDataDict[key][cl])+'\n')
+
+                if key == 'notInDomain' and len(invalidatedDataDict[key].keys())>0:
+                    updateLog.emit(self.tr('\n\nFeatures with attributes not in domain:\n\n'))
+                    for cl in invalidatedDataDict[key].keys():
+                        updateLog.emit(self.tr('\nClass: ')+cl+'\n')
+                        for id in invalidatedDataDict[key][cl].keys():
+                            attrCommaList = '(id,'+','.join(invalidatedDataDict[key][cl][id].keys())+') = '
+                            at = invalidatedDataDict[key][cl][id].keys()
+                            valueList = '('+str(id)
+                            for i in range(len(at)):
+                                valueList += ','+str(invalidatedDataDict[key][cl][id][at[i]])
+                            valueList += ')\n'
+                            updateLog.emit(attrCommaList+valueList)
+
+                if key == 'nullAttribute' and len(invalidatedDataDict[key].keys())>0:
+                    updateLog.emit(self.tr('\n\nFeatures with null attributes in a not null field:\n\n'))
+                    for cl in invalidatedDataDict[key].keys():
+                        updateLog.emit(self.tr('Class: ')+cl+'\n')
+                        for id in invalidatedDataDict[key][cl].keys():
+                            attrCommaList = '(id,'+','.join(invalidatedDataDict[key][cl][id].keys())+') = '
+                            valueList = '('+str(id)
+                            for attr in invalidatedDataDict[key][cl][id].keys():
+                                valueList += ','+str(invalidatedDataDict[key][cl][id][attr])
+                            valueList += ')\n'
+                            updateLog.emit(attrCommaList+valueList)
+        return hasErrors
     
+    def buildReadSummary(self,output,classDict):
+        clearLog.emit() #Clears log
+        inputType = self.conversionTypeDict[self.driverName()]
+        outputType = self.conversionTypeDict[output.drivername()]
+        updateLog.emit(self.tr('Conversion type: ')+inputType+'2'+outputType+'\n')
+        updateLog.emit(self.tr('\nInput database: ')+self.databaseName()+'\n')
+        updateLog.emit(self.tr('\nOutput database: ')+output.databaseName()+'\n')
+        updateLog.emit('\n'+'{:-^60}'.format(self.tr('Read Summary')))
+        updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
+        classes = classesDict.keys()
+        classes.sort()
+        clStr = ''
+        for i in classes:
+            updateLog.emit('{:<50}'.format(i)+str(classesDict[i])+'\n')
+        return None

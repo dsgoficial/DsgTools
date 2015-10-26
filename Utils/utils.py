@@ -38,6 +38,33 @@ class Utils:
 
     def __del__(self):
         pass
+    
+    def introspectDict(self,d,ls):
+        if type(d) <> dict:
+            return d
+        else:
+            for key in d.keys():
+                ls.append([key,self.introspectDict(d[key],ls)])
+        return ls
+    
+    def buildNestedDict(self,inputDict,keyList,value):
+        if len(keyList) == 1:
+            if keyList[0] not in inputDict.keys():
+                for k in inputDict.values():
+                    if type(k) <> dict:
+                        pass
+                inputDict[keyList[0]] = dict()
+            inputDict[keyList[0]]=value
+            return inputDict
+        else:
+            if keyList[0] not in inputDict.keys():
+                if len(inputDict.values()) == 0:
+                    inputDict[keyList[0]] = dict()
+                else:
+                    for key in inputDict.keys():
+                        pass
+            inputDict[keyList[0]] = self.buildNestedDict(inputDict[keyList[0]],keyList[1::],value)
+            return inputDict
 
     def getQmlDir(self, db):
         currentPath = os.path.dirname(__file__)
@@ -480,3 +507,13 @@ class Utils:
             value = query.value(0)
             columns.append(value)
         return columns
+
+if __name__ == '__main__':
+    from DsgTools.Utils.utils import Utils
+    utils = Utils()
+    di = dict()
+    ls = []
+    x = utils.buildNestedDict(di, ['a','b','c','d'], 1)
+    print x
+    y = utils.buildNestedDict(x, ['e','f','g','h'], 3)
+    print y
