@@ -44,11 +44,32 @@ class Utils:
         for item, value in dictionary1.iteritems():
             if dictionary2.has_key(item):
                 if isinstance(dictionary2[item], dict):
-                    output[item] = self.mergeDict(value, dictionary2.pop(item))
+                    if type(value) == list:
+                        if item not in output.keys():
+                            output[item] = []
+                        for i in value:
+                            output[item].append(i)
+                        output[item].extend(self.mergeDict(value, dictionary2.pop(item)))
+                    else:
+                        output[item] = self.mergeDict(value, dictionary2.pop(item))
+            else:
+                if type(value) == list:
+                    if item not in output.keys():
+                        output[item]=[]
+                    for i in value:
+                        if i not in output[item]:
+                            output[item].append(i)
+                else:
+                    output[item] = value
+        for item, value in dictionary2.iteritems():
+            if type(value) == list:
+                if item not in output.keys():
+                    output[item]=[]
+                for i in value:
+                    if i not in output[item]:
+                        output[item].append(i)
             else:
                 output[item] = value
-        for item, value in dictionary2.iteritems():
-             output[item] = value
         return output
     
     
@@ -56,7 +77,12 @@ class Utils:
         if len(keyList) == 1:
             if keyList[0] not in inputDict.keys():
                 inputDict[keyList[0]] = dict()
-            inputDict[keyList[0]]=value
+            if type(value) == list:
+                inputDict[keyList[0]]=[]
+                for i in value:
+                    inputDict[keyList[0]].append(i)
+            else:
+                inputDict[keyList[0]]=value
             return inputDict
         else:
             if keyList[0] not in inputDict.keys():
@@ -519,9 +545,9 @@ if __name__ == '__main__':
     utils = Utils()
     di = dict()
     ls = []
-    x = utils.buildNestedDict(di, ['a','b','c','d'], 1)
+    x = utils.buildNestedDict(di, ['a','b','c','d'], [1,2])
     print x
-    y = utils.buildNestedDict(x, ['e','f','g','h'], 3)
+    y = utils.buildNestedDict(x, ['e','f','g','h'], [3])
     print y
-    z = utils.buildNestedDict(y, ['e','f','g','i'], 5)
+    z = utils.buildNestedDict(y, ['e','f','g','h'], [5])
     print z
