@@ -38,5 +38,7 @@ class DbFactory:
 if __name__ == '__main__':
     dbF = DbFactory()
     gen=dbF.createDbFactory("QPSQL")
-    gen.openDb()
+    gen.connectDatabaseWithServerName('local_m_1915_4')
+    domain = gen.getDomainDict()
+    print domain
     

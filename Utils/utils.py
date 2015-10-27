@@ -41,9 +41,13 @@ class Utils:
     
     def mergeDict(self,dictionary1, dictionary2):
         output = dict()
+        if type(dictionary1) <> dict or type(dictionary2) <> dict:
+            return dictionary2
         for item, value in dictionary1.iteritems():
             if dictionary2.has_key(item):
                 if isinstance(dictionary2[item], dict):
+                    output[item] = self.mergeDict(value, dictionary2.pop(item))
+                else:
                     if type(value) == list:
                         if item not in output.keys():
                             output[item] = []
@@ -545,6 +549,8 @@ if __name__ == '__main__':
     utils = Utils()
     di = dict()
     ls = []
+    print utils.buildNestedDict(di, ['a','b','c','d'], 1)
+    print utils.buildNestedDict(utils.buildNestedDict(di, ['a','b','c','d'], 1), ['a','b','c','e'], 1)
     x = utils.buildNestedDict(di, ['a','b','c','d'], [1,2])
     print x
     y = utils.buildNestedDict(x, ['e','f','g','h'], [3])

@@ -22,6 +22,7 @@
 """
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from PyQt4.QtSql import QSqlQuery, QSqlDatabase
+from PyQt4.QtCore import QSettings
 
 class PostgisDb(AbstractDb):
     
@@ -171,14 +172,15 @@ class PostgisDb(AbstractDb):
             domainTable = query.value(4).toString()
             domainQuery = query.value(5).toString()
             cl = schemaName+'.'+className
-            if cl not in classDict.keys():
-                classDict[cl]=dict()
-            if attName not in classDict[cl].keys():
-                classDict[cl][attName]=[]
-                query2 = QSqlQuery(domainQuery,db)
-                while query2.next():
-                    value = query2.value(0)
-                    classDict[cl][attName].append(value)
+#             if cl not in classDict.keys():
+#                 classDict[cl]=dict()
+#             if attName not in classDict[cl].keys():
+#                 classDict[cl][attName]=[]
+            query2 = QSqlQuery(domainQuery,db)
+            while query2.next():
+                value = query2.value(0)
+                classDict = utils.buildNestedDict(classDict,[cl,attName],[value])
+#                 classDict[cl][attName].append(value)
         return classDict
     
     #TODO: treat each case (hammer time and don't touch my data)
