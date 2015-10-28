@@ -23,20 +23,52 @@
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 from PyQt4.QtCore import QSettings
+from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from osgeo import ogr
 
 class PostgisDb(AbstractDb):
     
     def __init__(self):
         super(PostgisDb,self).__init__()
         self.db = QSqlDatabase('QPSQL')
+        self.gen = SqlGeneratorFactory().createSqlGenerator(False)
+        
+    def connectDatabase(self,conn=None):
+        if conn.split(':')[0] == 'PG':
+            connSplit = conn.split(' ')
+            parDict = dict()
+            for i in connSplit[1::]:
+                par = i.split('=')
+                parDict[par[0]]=par[1]
+            self.connectDatabaseWithParameters(parDict['host'], parDict['port'], parDict['database'], parDict['user'], parDict['password'])
+        else:
+            self.connectDatabaseWithQSettings(conn)
 
-    def connectDatabaseWithServerName(self,name):
-        (host, port, user, password) = self.getServerConfiguration(name)
+    def connectDatabaseWithGui(self):
+        return None
+
+    def connectDatabaseWithParameters(self,host,port,database,user,password):
         self.db.setHostName(host)
         self.db.setPort(port)
+        self.db.setDatabaseName(database)
         self.db.setUserName(user)
         self.db.setPassword(password)
 
+    def connectDatabaseWithQSettings(self,name):
+        (host, port, database, user, password) = self.getConnectionFromQSettings(name)
+        self.db.setHostName(host)
+        self.db.setPort(int(port))
+        self.db.setDatabaseName(database)
+        self.db.setUserName(user)
+        self.db.setPassword(password)
+
+    def getDatabaseVersion(self):
+        self.checkAndOpenDb()
+        sqlVersion = self.gen.getEDGVVersion()
+        queryVersion =  QSqlQuery(sqlVersion, self.db)
+        while queryVersion.next():
+            version = queryVersion.value(0)
+        return version
     
     def listGeomClassesFromDatabase(self):
         self.checkAndOpenDb()      
@@ -44,8 +76,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
         while query.next():
-            tableSchema = query.value(0).toString()
-            tableName = query.value(1).toString()
+            tableSchema = query.value(0)
+            tableName = query.value(1)
             layerName = tableSchema+'.'+tableName
             if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
                 or tableName.split("_")[-1] == "a":
@@ -55,12 +87,11 @@ class PostgisDb(AbstractDb):
     def listComplexClassesFromDatabase(self):
         self.checkAndOpenDb()        
         classList = []
-        gen = self.factory.createSqlGenerator(isSpatialite)
-        sql = gen.getTablesFromDatabase()
-        query = QSqlQuery(sql, db)
+        sql = self.gen.getTablesFromDatabase()
+        query = QSqlQuery(sql, self.db)
         while query.next():
-            tableSchema = query.value(0).toString()
-            tableName = query.value(1).toString()
+            tableSchema = query.value(0)
+            tableName = query.value(1)
             layerName = tableSchema+'.'+tableName
             if tableSchema == 'complexos':
                 classList.append(layerName)
@@ -82,6 +113,17 @@ class PostgisDb(AbstractDb):
             return True
         return False        
 
+    def getConnectionFromQSettings(self, conName):
+        settings = QSettings()
+        settings.beginGroup('PostgreSQL/connections/'+conName)
+        host = settings.value('host')
+        port = settings.value('port')
+        database = settings.value('database')
+        user = settings.value('username')
+        password = settings.value('password')
+        settings.endGroup()
+        return (host, port, database, user, password)       
+
     def getServerConfiguration(self, name):
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers/'+name)
@@ -92,29 +134,15 @@ class PostgisDb(AbstractDb):
         settings.endGroup()
         return (host, port, user, password)        
 
-    def storeConnection(self, server):
-        (host, port, user, password) = self.getServerConfiguration(server)
-        connection = server+'_'+self.db.databaseName()
-        settings = QSettings()
-        if not settings.contains('PostgreSQL/connections/'+connection+'/database'):
-            settings.beginGroup('PostgreSQL/connections/'+connection)
-            settings.setValue('database', database)
-            settings.setValue('host', host)
-            settings.setValue('port', port)
-            settings.setValue('username', user)
-            settings.setValue('password', password)
-            settings.endGroup()
-            return True
-        return False
 
     def getStructureDict(self):
         self.checkAndOpenDb()
         classDict = dict()
-        sql = gen.getStructure(self.dbVersion)        
-        query = QSqlQuery(sql, db)
+        sql = self.gen.getStructure(self.getDatabaseVersion())        
+        query = QSqlQuery(sql, self.db)
         while query.next():
-            className = query.value(0).toString()+'.'+query.value(1).toString()
-            fieldName = query.value(2).toString()
+            className = query.value(0)+'.'+query.value(1)
+            fieldName = query.value(2)
             if className not in classDict.keys():
                 classDict[className]=dict()
             classDict[className][fieldName]=fieldName
@@ -131,7 +159,8 @@ class PostgisDb(AbstractDb):
     
     def buildOgrDatabase(self):
         con = self.makeOgrConn()
-        self.ogrDb = ogr.Open(con)
+        ogrDb = ogr.Open(con)
+        return ogrDb
 
     def getNotNullDict(self):
         self.checkAndOpenDb()
@@ -155,7 +184,7 @@ class PostgisDb(AbstractDb):
 
     def getDomainDict(self):
         self.checkAndOpenDb()
-        if self.dbVersion == '2.1.3':
+        if self.getDatabaseVersion() == '2.1.3':
             schemaList = ['cb','complexos','dominios']
         else:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Operation not defined for this database version!'))
@@ -172,24 +201,11 @@ class PostgisDb(AbstractDb):
             domainTable = query.value(4).toString()
             domainQuery = query.value(5).toString()
             cl = schemaName+'.'+className
-#             if cl not in classDict.keys():
-#                 classDict[cl]=dict()
-#             if attName not in classDict[cl].keys():
-#                 classDict[cl][attName]=[]
-            query2 = QSqlQuery(domainQuery,db)
+            query2 = QSqlQuery(domainQuery,self.db)
             while query2.next():
-                value = query2.value(0)
-                classDict = utils.buildNestedDict(classDict,[cl,attName],[value])
-#                 classDict[cl][attName].append(value)
+                value = query2.value(0).toInt()[0]
+                classDict = self.utils.buildNestedDict(classDict,[str(cl),str(attName)],[value])
         return classDict
-    
-    #TODO: treat each case (hammer time and don't touch my data)
-    def convertToPostgis(self, outputDb,type):
-        return None
-    
-    def convertToSpatialite(self, outputDb,type):
-        
-        return None    
     
     def makeValidationSummary(self):
         return None
@@ -252,37 +268,42 @@ class PostgisDb(AbstractDb):
                     for i in range(len(attrList)):
                         value = query.value(i)
                         #validates domain
-                        if pgClass in domainDict.keys():    
-                            if attrList[i] in domainDict[pgClass].keys():
-                                if value not in domainDict[pgClass][attrList[i]] and (not nullLine):
-                                    if cl not in invalidated['notInDomain'].keys():
-                                        invalidated['notInDomain'][cl] = dict()
-                                    if id not in invalidated['notInDomain'][cl].keys():
-                                        invalidated['notInDomain'][cl][id] = dict()
-                                    if att not in invalidated['notInDomain'][cl][id].keys():
-                                        invalidated['notInDomain'][cl][id][attrList[i]] = dict()
-                                    invalidated['notInDomain'][cl][id][attrList[i]] = value
+                        invalidated = self.utils.buildNestedDict(invalidated, ['notInDomain',cl,id,attrList[i]], value)
                         #validates not nulls
                         if pgClass in notNullDict.keys():
                             if pgClass in domainDict.keys():
                                 if attrList[i] in notNullDict[pgClass] and attrList[i] not in domainDict[pgClass].keys():
                                     if (value == None) and (not nullLine) and (attrList[i] not in domainDict[pgClass].keys()):
-                                        if cl not in invalidated['nullAttribute'].keys():
-                                            invalidated['nullAttribute'][cl] = dict()
-                                        if id not in invalidated['nullAttribute'][cl].keys():
-                                            invalidated['nullAttribute'][cl][id] = dict()
-                                        if attrList[i] not in invalidated['nullAttribute'][cl][id].keys():
-                                            invalidated['nullAttribute'][cl][id][attrList[i]] = dict()
-                                        invalidated['nullAttribute'][cl][id][attrList[i]] = value                                    
+                                        invalidated = self.utils.buildOneNestedDict(invalidated, ['nullAttribute',cl,id,attrList[i]], value)             
                             else:
                                 if attrList[i] in notNullDict[pgClass]:
                                     if (value == None) and (not nullLine) and (attrList[i] not in domainDict[pgClass].keys()):
-                                        if cl not in invalidated['nullAttribute'].keys():
-                                            invalidated['nullAttribute'][cl] = dict()
-                                        if id not in invalidated['nullAttribute'][cl].keys():
-                                            invalidated['nullAttribute'][cl][id] = dict()
-                                        if attrList[i] not in invalidated['nullAttribute'][cl][id].keys():
-                                            invalidated['nullAttribute'][cl][id][attrList[i]] = dict()
-                                        invalidated['nullAttribute'][cl][id][attrList[i]] = value
+                                        invalidated = self.utils.buildOneNestedDict(invalidated, ['nullAttribute',cl,id,attrList[i]], value)
+
         return invalidated
+
+    def translateLayerNameToOutputFormat(self,lyr,outputDb):
+        if self.getType() == 'QSQLITE':
+            return lyr.split('.')[0]+'_'.join(lyr.split('_')[1::])
+        if self.getType() == 'QPSQL':
+            return lyr
+
+    def getTableSchema(self,lyr):
+        schema = lyr.split('.')[0]
+        className = lyr.split('.')[1::]
+        return (schema,className)
+
+    #TODO: treat each case (hammer time and don't touch my data)
+    def convertToPostgis(self, outputAbstractDb,type):
+        return None
     
+    def convertToSpatialite(self, outputAbstractDb,type):
+        self.checkAndOpenDb()
+        outputAbstractDb.checkAndOpenDb()
+        fieldMap = self.buildFieldMap()
+        inputOgrDb = self.buildOgrDatabase()
+        ouputOgrDb = outputAbstractDb.buildOgrDatabase()
+        outputType = outputAbstractDb.getType()
+        inputLayerList = self.listClassesWithElementsFromDatabase()
+        self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList)
+        return None

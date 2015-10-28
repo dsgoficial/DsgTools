@@ -143,7 +143,8 @@ class Utils:
         currentConnections = settings.childGroups()
         settings.endGroup()
         return currentConnections
-
+    
+    #Deprecated. Reimplemented in DbFactory as connectDatabaseWithGui
     def getSpatialiteDatabase(self):
         db = None
         fd = QFileDialog()

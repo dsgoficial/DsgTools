@@ -27,6 +27,7 @@ from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 from PyQt4.QtCore import QSettings, SIGNAL, pyqtSignal
 from PyQt4.Qt import QObject
 from apt.auth import update
+from DsgTools.Utils.utils import Utils
 
 
 class AbstractDb(QObject):
@@ -36,6 +37,7 @@ class AbstractDb(QObject):
     def __init__(self):
         super(AbstractDb,self).__init__()
         self.conversionTypeDict = dict({'QPSQL':'postgis','QSQLITE':'spatialite'})
+        self.utils = Utils()
         pass
     
     def __del__(self):
@@ -48,16 +50,20 @@ class AbstractDb(QObject):
             if not self.db.open():
                 raise Exception(self.tr('Error when openning datatabase.\n')+self.db.lastError().text())
 
-    def connectDatabaseWithServerName(self,name):
+    def connectDatabase(self,conn=None):
+        return None
+    
+    def connectDatabaseWithParameters(self,host,port,database,user,password):
+        return None
+
+    def connectDatabaseWithQSettings(self,name):
+        return None
+
+    def connectDatabaseWithGui(self):
         return None
     
     def getDatabaseVersion(self):
-        self.checkAndOpenDb()
-        sqlVersion = self.gen.getEDGVVersion()
-        queryVersion =  QSqlQuery(sqlVersion, self.db)
-        while queryVersion.next():
-            version = queryVersion.value(0)
-        return version
+        return None
     
     def getType(self):
         return self.db.driverName()
@@ -67,14 +73,14 @@ class AbstractDb(QObject):
 
     def listComplexClassesFromDatabase(self):
         return None    
-        
+
+    def getConnectionFromQSettings(self, conName):
+        return None
+
     def storeConnection(self, server):
         return None
         
     def getServerConfiguration(self, name):
-        return None
-
-    def storeConnection(self, server):
         return None
 
     def countElements(self, layers):
@@ -102,7 +108,7 @@ class AbstractDb(QObject):
 
     def listWithElementsFromDatabase(self, classList):
         self.checkAndOpenDb()
-        classListWithNumber = self.countElements(classList, self.db)
+        classListWithNumber = self.countElements(classList)
         classesWithElements = dict()
         for cl in classListWithNumber:
             if cl[1]>0:
@@ -158,17 +164,17 @@ class AbstractDb(QObject):
     def validateWithOutputDatabaseSchema(self,outputdb):
         return None
     
-    def convertDatabase(self,outputdb,type):
-        if outputdb.driverName() == 'QPSQL':
-            return self.convertToPostgis(outputdb,type)
-        if outputdb.driverName() == 'QSQLITE':
-            return self.convertToSpatialite(outputdb,type)
+    def convertDatabase(self,outputAbstractDb,type):
+        if outputAbstractDb.db.driverName() == 'QPSQL':
+            return self.convertToPostgis(outputAbstractDb,type)
+        if outputAbstractDb.db.driverName() == 'QSQLITE':
+            return self.convertToSpatialite(outputAbstractDb,type)
         return None
     
-    def convertToPostgis(self, outputDb,type):
+    def convertToPostgis(self, outputAbstractDb,type):
         return None
     
-    def convertToSpatialite(self, outputDb,type):
+    def convertToSpatialite(self, outputAbstractDb,type):
         return None 
 
     def buildInvalidatedDict(self):
@@ -221,7 +227,13 @@ class AbstractDb(QObject):
                             updateLog.emit(attrCommaList+valueList)
         return hasErrors
     
-    def buildReadSummary(self,output,classDict):
+    def translateLayerNameToOutputFormat(self,lyr,outputAbstractDb):
+        return None
+    
+    def getTableSchema(self,lyr):
+        return None
+            
+    def buildReadSummary(self,outputAbstractDb,classDict):
         clearLog.emit() #Clears log
         inputType = self.conversionTypeDict[self.driverName()]
         outputType = self.conversionTypeDict[output.drivername()]
@@ -236,3 +248,51 @@ class AbstractDb(QObject):
         for i in classes:
             updateLog.emit('{:<50}'.format(i)+str(classesDict[i])+'\n')
         return None
+    
+    def makeTranslationMap(self, layerName, layer, outLayer, fieldMapper):
+        layerFieldMapper=fieldMapper[layerName]
+        layerDef = layer.GetLayerDefn()
+        outLayerDef = outLayer.GetLayerDefn()
+        panMap = []        
+        for i in range(layerDef.GetFieldCount()):
+            featureDef = layerDef.GetFieldDefn(i)
+            fieldName = featureDef.GetName()
+            if fieldName in layerFieldMapper.keys():
+                name = layerFieldMapper[fieldName]
+                fieldId = outLayerDef.GetFieldIndex(name)
+                panMap.append(fieldId) 
+            else:
+                panMap.append(-1)
+        return panMap
+    
+    def translateLayer(self, inputLayer, inputLayerName, outputLayer, outFileName, layerPanMap, defaults={}, translateValues={}):
+        inputLayer.ResetReading()
+        count = 0
+        for feat in inputLayer:
+            newFeat=ogr.Feature(outputLayer.GetLayerDefn())
+            newFeat.SetFromWithMap(feat,True,layerPanMap)
+            outputLayer.CreateFeature(newFeat)
+            count += 1
+        updateLog.emit('{:<50}'.format(count)+str(outputFileName)+'\n')
+    
+    def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList): 
+        updateLog.emit('\n'+'{:-^60}'.format(self.tr('Write Summary')))
+        updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
+        for inputLyr in inputLayerList:
+            schema = self.getTableSchema(inputLyr)
+            attr = fieldMap[inputLyr].keys()
+            attrList = []
+            for a in attr:
+                if schema == 'complexos':
+                    attrList.append(a)
+                elif a not in ['id']:
+                    attrList.append(a)
+            sql = self.gen.getFeaturesWithSQL(inputLyr,attrList) #order elements here
+            inputOgrLayer = inputDS.ExecuteSQL(sql.encode('utf-8'))
+            outputFileName = self.translateLayerNameToOutputFormat(inputLyr)
+            outputLayer=outputDS.GetLayerByName(outputFileName)
+            #order conversion here
+            layerPanMap=self.makeTranslationMap(inputLyr, inputOgrLayer,outputLayer, fieldMap)
+            self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outFileName, layerPanMap)
+        outputDS.Destroy()
+        return True

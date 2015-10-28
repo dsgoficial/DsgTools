@@ -37,8 +37,11 @@ class DbFactory:
 
 if __name__ == '__main__':
     dbF = DbFactory()
-    gen=dbF.createDbFactory("QPSQL")
-    gen.connectDatabaseWithServerName('local_m_1915_4')
-    domain = gen.getDomainDict()
-    print domain
+    genSpatialite = dbF.createDbFactory("QSQLITE")
+    genSpatialite.connectDatabase('/home/dsgdev/Downloads/teste_conversao.sqlite')
+    print genSpatialite.db.databaseName()
+#     gen=dbF.createDbFactory("QPSQL")
+#     gen.connectDatabaseWithParameters('localhost',5432,'m_1915_4','postgres','postgres')
+#     domain = gen.getDomainDict()
+
     
