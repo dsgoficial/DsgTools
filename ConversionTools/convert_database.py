@@ -37,7 +37,6 @@ from DsgTools.UserTools.create_profile import CreateProfile
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'convert_database.ui'))
 
-from DsgTools.UserTools.assign_profiles import AssignProfiles
 
 class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
     def __init__(self, parent = None):
@@ -121,7 +120,8 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Version mismatch!\nConversion must be between databases with the same version!'))
             return
         
-        self.widget.abstractDb.updateLog.connect(self.logUpdated)
+        self.widget.abstractDb.signals.updateLog.connect(self.logUpdated)
+        self.widget.abstractDb.signals.clearLog.connect(self.logCleared)
 
         converted = self.widget.abstractDb.convertDatabase(self.widget_2.abstractDb,'')
         if converted:

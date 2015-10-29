@@ -24,20 +24,21 @@ import os
 from osgeo import ogr
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from PyQt4.QtSql import QSqlQuery, QSqlDatabase
-from PyQt4.QtCore import QSettings, SIGNAL, pyqtSignal
-from PyQt4.Qt import QObject
-from apt.auth import update
+from PyQt4.QtCore import QSettings, SIGNAL, pyqtSignal, QObject
 from DsgTools.Utils.utils import Utils
 
+class DbSignals(QObject):
+        updateLog = pyqtSignal(str)
+        clearLog = pyqtSignal()
 
 class AbstractDb(QObject):
-    updateLog = pyqtSignal(str)
-    clearLog = pyqtSignal()
+
     
     def __init__(self):
         super(AbstractDb,self).__init__()
         self.conversionTypeDict = dict({'QPSQL':'postgis','QSQLITE':'spatialite'})
         self.utils = Utils()
+        self.signals = DbSignals()
         pass
     
     def __del__(self):
@@ -165,6 +166,7 @@ class AbstractDb(QObject):
         return None
     
     def convertDatabase(self,outputAbstractDb,type):
+        self.signals.clearLog.emit()
         if outputAbstractDb.db.driverName() == 'QPSQL':
             return self.convertToPostgis(outputAbstractDb,type)
         if outputAbstractDb.db.driverName() == 'QSQLITE':
@@ -227,7 +229,7 @@ class AbstractDb(QObject):
                             updateLog.emit(attrCommaList+valueList)
         return hasErrors
     
-    def translateLayerNameToOutputFormat(self,lyr,outputAbstractDb):
+    def translateOGRLayerNameToOutputFormat(self,lyr,outputAbstractDb):
         return None
     
     def getTableSchema(self,lyr):
@@ -273,11 +275,11 @@ class AbstractDb(QObject):
             newFeat.SetFromWithMap(feat,True,layerPanMap)
             outputLayer.CreateFeature(newFeat)
             count += 1
-        updateLog.emit('{:<50}'.format(count)+str(outputFileName)+'\n')
+        self.updateLog.emit('{:<50}'.format(count)+str(outputFileName)+'\n')
     
     def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList): 
-        updateLog.emit('\n'+'{:-^60}'.format(self.tr('Write Summary')))
-        updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
+        self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Write Summary')))
+        self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
         for inputLyr in inputLayerList:
             schema = self.getTableSchema(inputLyr)
             attr = fieldMap[inputLyr].keys()
@@ -289,10 +291,10 @@ class AbstractDb(QObject):
                     attrList.append(a)
             sql = self.gen.getFeaturesWithSQL(inputLyr,attrList) #order elements here
             inputOgrLayer = inputDS.ExecuteSQL(sql.encode('utf-8'))
-            outputFileName = self.translateLayerNameToOutputFormat(inputLyr)
+            outputFileName = self.translateOGRLayerNameToOutputFormat(inputLyr,outputDS)
             outputLayer=outputDS.GetLayerByName(outputFileName)
             #order conversion here
             layerPanMap=self.makeTranslationMap(inputLyr, inputOgrLayer,outputLayer, fieldMap)
-            self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outFileName, layerPanMap)
+            self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap)
         outputDS.Destroy()
         return True

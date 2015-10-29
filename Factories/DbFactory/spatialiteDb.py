@@ -124,11 +124,11 @@ class SpatialiteDb(AbstractDb):
     def buildInvalidatedDict(self):
         return None
     
-    def translateLayerNameToOutputFormat(self,lyr,outputDb):
-        if self.getType() == 'QSQLITE':
+    def translateOGRLayerNameToOutputFormat(self,lyr,ogrOutput):
+        if ogrOutput.GetDriver().name == 'SQLite':
             return lyr
-        if self.getType() == 'QPSQL':
-            return lyr.split('_')[0]+'.'+'_'.join(lyr.split('_')[1::])
+        if ogrOutput.GetDriver().name == 'PostgreSQL':
+            return str(lyr.split('_')[0]+'.'+'_'.join(lyr.split('_')[1::]))
     
     def getTableSchema(self,lyr):
         schema = lyr.split('_')[0]

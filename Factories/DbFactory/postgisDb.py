@@ -145,7 +145,7 @@ class PostgisDb(AbstractDb):
             fieldName = query.value(2)
             if className not in classDict.keys():
                 classDict[className]=dict()
-            classDict[className][fieldName]=fieldName
+            classDict[str(className)][str(fieldName)]=str(fieldName)
         return classDict
     
     def makeOgrConn(self):
@@ -282,10 +282,10 @@ class PostgisDb(AbstractDb):
 
         return invalidated
 
-    def translateLayerNameToOutputFormat(self,lyr,outputDb):
-        if self.getType() == 'QSQLITE':
-            return lyr.split('.')[0]+'_'.join(lyr.split('_')[1::])
-        if self.getType() == 'QPSQL':
+    def translateOGRLayerNameToOutputFormat(self,lyr,ogrOutput):
+        if ogrOutput.GetDriver().name == 'SQLite':
+            return str(lyr.split('.')[0]+'_'+'_'.join(lyr.split('.')[1::]))
+        if ogrOutput.GetDriver().name == 'PostgreSQL':
             return lyr
 
     def getTableSchema(self,lyr):
@@ -302,7 +302,7 @@ class PostgisDb(AbstractDb):
         outputAbstractDb.checkAndOpenDb()
         fieldMap = self.buildFieldMap()
         inputOgrDb = self.buildOgrDatabase()
-        ouputOgrDb = outputAbstractDb.buildOgrDatabase()
+        outputOgrDb = outputAbstractDb.buildOgrDatabase()
         outputType = outputAbstractDb.getType()
         inputLayerList = self.listClassesWithElementsFromDatabase()
         self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList)
