@@ -207,80 +207,8 @@ class PostgisDb(AbstractDb):
                 classDict = self.utils.buildNestedDict(classDict,[str(cl),str(attName)],[value])
         return classDict
     
-    def makeValidationSummary(self):
+    def validateWithOutputDatabaseSchema(self,outputAbstractDb):
         return None
-    
-    def buildInvalidatedDict(self):
-        invalidated = dict()
-        notNullDict = self.utils.getPostgisNotNullDict(edgvVersion, postgisDB)
-        spatialiteDbStructure = self.utils.getStructureDict(spatialiteDB, edgvVersion, True)
-        aggregationColumns = self.utils.getAggregationAttributes(postgisDB,False)
- 
-        invalidated['nullLine'] = dict()       
-        invalidated['nullPk'] = dict()
-        invalidated['notInDomain'] = dict()
-        invalidated['nullAttribute'] = dict()
-        return invalidated
-    
-    def validateWithOutputDatabaseSchema(self,outputdb):
-        invalidated = self.buildInvalidatedDict()
-        outputdbStructure = outputdb.getStructureDict()
-        domainDict = self.getDomainDict()
-        classes = self.listClassesWithElementsFromDatabase()
-        notNullDict = self.getNotNullDict()
-        
-        for cl in classes:
-            if cl in outputdbStructure.keys():
-                schema = cl.split('_')[0]
-                table = '_'.join(cl.split('_')[1::])
-                pgClass = schema + '.' + table
-                allAttrList = outputdbStructure[cl].keys()
-                if schema == 'complexos':
-                    attrList = ['id']
-                else:
-                    attrList = ['OGC_FID']
-                for att in allAttrList:
-                    if att not in attrList:
-                        attrList.append(att)
-                sql = self.gen.getFeaturesWithSQL(cl,attrList) 
-                query = QSqlQuery(sql, spatialiteDB)
-                
-                while query.next():
-                    id = query.value(0)
-                    #detects null lines
-                    for i in range(len(attrList)):
-                        nullLine = True
-                        value = query.value(i)
-                        if value <> None:
-                            nullLine = False
-                            break
-                    if nullLine:
-                        if cl not in invalidated['nullLine'].keys():
-                            invalidated['nullLine'][cl]=0
-                        invalidated['nullLine'][cl]+=1
-                    
-                    #validates pks
-                    if id == None and (not nullLine):
-                        if cl not in invalidated['nullPk'].keys():
-                            invalidated['nullPk'][cl]=0
-                        invalidated['nullPk'][cl]+=1
-                    
-                    for i in range(len(attrList)):
-                        value = query.value(i)
-                        #validates domain
-                        invalidated = self.utils.buildNestedDict(invalidated, ['notInDomain',cl,id,attrList[i]], value)
-                        #validates not nulls
-                        if pgClass in notNullDict.keys():
-                            if pgClass in domainDict.keys():
-                                if attrList[i] in notNullDict[pgClass] and attrList[i] not in domainDict[pgClass].keys():
-                                    if (value == None) and (not nullLine) and (attrList[i] not in domainDict[pgClass].keys()):
-                                        invalidated = self.utils.buildOneNestedDict(invalidated, ['nullAttribute',cl,id,attrList[i]], value)             
-                            else:
-                                if attrList[i] in notNullDict[pgClass]:
-                                    if (value == None) and (not nullLine) and (attrList[i] not in domainDict[pgClass].keys()):
-                                        invalidated = self.utils.buildOneNestedDict(invalidated, ['nullAttribute',cl,id,attrList[i]], value)
-
-        return invalidated
 
     def translateOGRLayerNameToOutputFormat(self,lyr,ogrOutput):
         if ogrOutput.GetDriver().name == 'SQLite':
@@ -294,17 +222,13 @@ class PostgisDb(AbstractDb):
         return (schema,className)
 
     #TODO: treat each case (hammer time and don't touch my data)
-    def convertToPostgis(self, outputAbstractDb,type):
+    def convertToPostgis(self, outputAbstractDb,type=None):
         return None
     
-    def convertToSpatialite(self, outputAbstractDb,type):
-        self.checkAndOpenDb()
-        outputAbstractDb.checkAndOpenDb()
-        fieldMap = self.buildFieldMap()
-        inputOgrDb = self.buildOgrDatabase()
-        outputOgrDb = outputAbstractDb.buildOgrDatabase()
-        outputType = outputAbstractDb.getType()
-        inputLayerList = self.listClassesWithElementsFromDatabase()
-        self.buildReadSummary(inputOgrDb,outputAbstractDb,inputLayerList)
+    def convertToSpatialite(self, outputAbstractDb,type=None):
+        (inputOgrDb, outputOgrDb, fieldMap, inputLayerList) = self.prepareForConversion(outputAbstractDb)
         status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList)
         return status
+    
+    def translateDSWithDataFix(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, invalidated):
+        return None

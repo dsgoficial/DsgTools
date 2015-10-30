@@ -162,7 +162,7 @@ class AbstractDb(QObject):
         fieldMap = self.getStructureDict()
         return fieldMap
 
-    def validateWithOutputDatabaseSchema(self,outputdb):
+    def validateWithOutputDatabaseSchema(self,outputAbstractDb):
         return None
     
     def convertDatabase(self,outputAbstractDb,type):
@@ -227,6 +227,19 @@ class AbstractDb(QObject):
                                 valueList += ','+str(invalidatedDataDict[key][cl][id][attr])
                             valueList += ')\n'
                             self.signals.updateLog.emit(attrCommaList+valueList)
+                            
+                if key == 'classNotFoundInOutput' and len(invalidatedDataDict[key].keys())>0:
+                    self.signals.updateLog.emit(self.tr('\n\nClasses with classes that have elements but do not have output equivalent:\n\n'))
+                    for cl in invalidatedDataDict[key]:
+                            self.signals.updateLog.emit(self.tr('Class: ')+cl+'\n')
+                
+                if key == 'attributeNotFoundInOutput' and len(invalidatedDataDict[key].keys())>0:
+                    self.signals.updateLog.emit(self.tr('\n\nClasses with attributes that have no output attribute equivalent:\n\n'))
+                    for cl in invalidatedDataDict[key].keys():
+                        self.signals.updateLog.emit(self.tr('Class: ')+cl+'\n')
+                        valueList = '('+','.join(invalidatedDataDict[key][cl])+')\n'
+                        self.signals.updateLog.emit(valueList)
+                
         return hasErrors
     
     def translateOGRLayerNameToOutputFormat(self,lyr,outputAbstractDb):
@@ -302,3 +315,27 @@ class AbstractDb(QObject):
             self.signals.updateLog.emit('{:<50}'.format(str(outputFileName))+str(diff)+','+str(iter)+'\n')
         outputDS.Destroy()
         return status
+    
+    def buildInvalidatedDict(self):
+        invalidated = dict()
+        invalidated['nullLine'] = dict()       
+        invalidated['nullPk'] = dict()
+        invalidated['notInDomain'] = dict()
+        invalidated['nullAttribute'] = dict()
+        invalidated['classNotFoundInOutput'] = []
+        invalidated['attributeNotFoundInOutput'] = dict()
+        return invalidated
+    
+    def prepareForConversion(self,outputAbstractDb):
+        self.checkAndOpenDb()
+        outputAbstractDb.checkAndOpenDb()
+        fieldMap = self.buildFieldMap()
+        inputOgrDb = self.buildOgrDatabase()
+        outputOgrDb = outputAbstractDb.buildOgrDatabase()
+        inputLayerList = self.listClassesWithElementsFromDatabase()
+        self.buildReadSummary(inputOgrDb,outputAbstractDb,inputLayerList)
+        return (inputOgrDb, outputOgrDb, fieldMap, inputLayerList)
+    
+    def translateDSWithDataFix(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, invalidated):
+        return None
+    
