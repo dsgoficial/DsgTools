@@ -188,25 +188,25 @@ class AbstractDb(QObject):
             if len(invalidatedDataDict[key].keys()) > 0:
                 hasErrors = True
         if hasErrors:
-            updateLog.emit('\n'+'{:-^60}'.format(self.tr('Validation Problems Summary')))
+            self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Validation Problems Summary')))
             for key in invalidatedDataDict.keys():
                 
                 if key == 'nullLine' and len(invalidatedDataDict[key].keys())>0:
-                    updateLog.emit(self.tr('\n\nClasses with null lines:\n'))
-                    updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
+                    self.signals.updateLog.emit(self.tr('\n\nClasses with null lines:\n'))
+                    self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
                     for cl in invalidatedDataDict[key].keys():
-                        updateLog.emit('{:<50}'.format(cl)+str(invalidatedDataDict[key][cl])+'\n')
+                        self.signals.updateLog.emit('{:<50}'.format(cl)+str(invalidatedDataDict[key][cl])+'\n')
 
                 if key == 'nullPk' and len(invalidatedDataDict[key].keys())>0:
-                    updateLog.emit(self.tr('\n\nClasses with null primary keys:\n'))
-                    updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
+                    self.signals.updateLog.emit(self.tr('\n\nClasses with null primary keys:\n'))
+                    self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
                     for cl in invalidatedDataDict[key].keys():
-                        updateLog.emit('{:<50}'.format(cl)+str(invalidatedDataDict[key][cl])+'\n')
+                        self.signals.updateLog.emit('{:<50}'.format(cl)+str(invalidatedDataDict[key][cl])+'\n')
 
                 if key == 'notInDomain' and len(invalidatedDataDict[key].keys())>0:
-                    updateLog.emit(self.tr('\n\nFeatures with attributes not in domain:\n\n'))
+                    self.signals.updateLog.emit(self.tr('\n\nFeatures with attributes not in domain:\n\n'))
                     for cl in invalidatedDataDict[key].keys():
-                        updateLog.emit(self.tr('\nClass: ')+cl+'\n')
+                        self.signals.updateLog.emit(self.tr('\nClass: ')+cl+'\n')
                         for id in invalidatedDataDict[key][cl].keys():
                             attrCommaList = '(id,'+','.join(invalidatedDataDict[key][cl][id].keys())+') = '
                             at = invalidatedDataDict[key][cl][id].keys()
@@ -214,19 +214,19 @@ class AbstractDb(QObject):
                             for i in range(len(at)):
                                 valueList += ','+str(invalidatedDataDict[key][cl][id][at[i]])
                             valueList += ')\n'
-                            updateLog.emit(attrCommaList+valueList)
+                            self.signals.updateLog.emit(attrCommaList+valueList)
 
                 if key == 'nullAttribute' and len(invalidatedDataDict[key].keys())>0:
-                    updateLog.emit(self.tr('\n\nFeatures with null attributes in a not null field:\n\n'))
+                    self.signals.updateLog.emit(self.tr('\n\nFeatures with null attributes in a not null field:\n\n'))
                     for cl in invalidatedDataDict[key].keys():
-                        updateLog.emit(self.tr('Class: ')+cl+'\n')
+                        self.signals.updateLog.emit(self.tr('Class: ')+cl+'\n')
                         for id in invalidatedDataDict[key][cl].keys():
                             attrCommaList = '(id,'+','.join(invalidatedDataDict[key][cl][id].keys())+') = '
                             valueList = '('+str(id)
                             for attr in invalidatedDataDict[key][cl][id].keys():
                                 valueList += ','+str(invalidatedDataDict[key][cl][id][attr])
                             valueList += ')\n'
-                            updateLog.emit(attrCommaList+valueList)
+                            self.signals.updateLog.emit(attrCommaList+valueList)
         return hasErrors
     
     def translateOGRLayerNameToOutputFormat(self,lyr,outputAbstractDb):
@@ -235,20 +235,17 @@ class AbstractDb(QObject):
     def getTableSchema(self,lyr):
         return None
             
-    def buildReadSummary(self,outputAbstractDb,classDict):
-        clearLog.emit() #Clears log
-        inputType = self.conversionTypeDict[self.driverName()]
-        outputType = self.conversionTypeDict[output.drivername()]
-        updateLog.emit(self.tr('Conversion type: ')+inputType+'2'+outputType+'\n')
-        updateLog.emit(self.tr('\nInput database: ')+self.databaseName()+'\n')
-        updateLog.emit(self.tr('\nOutput database: ')+output.databaseName()+'\n')
-        updateLog.emit('\n'+'{:-^60}'.format(self.tr('Read Summary')))
-        updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
-        classes = classesDict.keys()
-        classes.sort()
-        clStr = ''
-        for i in classes:
-            updateLog.emit('{:<50}'.format(i)+str(classesDict[i])+'\n')
+    def buildReadSummary(self,inputOgrDb,outputAbstractDb,classList):
+        self.signals.clearLog.emit() #Clears log
+        inputType = self.conversionTypeDict[self.db.driverName()]
+        outputType = self.conversionTypeDict[outputAbstractDb.db.driverName()]
+        self.signals.updateLog.emit(self.tr('Conversion type: ')+inputType+'2'+outputType+'\n')
+        self.signals.updateLog.emit(self.tr('\nInput database: ')+self.db.databaseName()+'\n')
+        self.signals.updateLog.emit(self.tr('\nOutput database: ')+outputAbstractDb.db.databaseName()+'\n')
+        self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Read Summary')))
+        self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
+        for cl in classList:
+            self.signals.updateLog.emit('{:<50}'.format(cl)+str(inputOgrDb.GetLayerByName(str(cl)).GetFeatureCount())+'\n')
         return None
     
     def makeTranslationMap(self, layerName, layer, outLayer, fieldMapper):
@@ -267,19 +264,21 @@ class AbstractDb(QObject):
                 panMap.append(-1)
         return panMap
     
-    def translateLayer(self, inputLayer, inputLayerName, outputLayer, outFileName, layerPanMap, defaults={}, translateValues={}):
+    def translateLayer(self, inputLayer, inputLayerName, outputLayer, outputFileName, layerPanMap, defaults={}, translateValues={}):
         inputLayer.ResetReading()
+        initialCount = outputLayer.GetFeatureCount()
         count = 0
         for feat in inputLayer:
             newFeat=ogr.Feature(outputLayer.GetLayerDefn())
             newFeat.SetFromWithMap(feat,True,layerPanMap)
             outputLayer.CreateFeature(newFeat)
             count += 1
-        self.updateLog.emit('{:<50}'.format(count)+str(outputFileName)+'\n')
+        return (count, outputLayer.GetFeatureCount()-initialCount)
     
     def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList): 
         self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Write Summary')))
         self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
+        status = False
         for inputLyr in inputLayerList:
             schema = self.getTableSchema(inputLyr)
             attr = fieldMap[inputLyr].keys()
@@ -295,6 +294,11 @@ class AbstractDb(QObject):
             outputLayer=outputDS.GetLayerByName(outputFileName)
             #order conversion here
             layerPanMap=self.makeTranslationMap(inputLyr, inputOgrLayer,outputLayer, fieldMap)
-            self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap)
+            (iter,diff)=self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap)
+            if iter == diff:
+                status = True
+            else:
+                status = False
+            self.signals.updateLog.emit('{:<50}'.format(str(outputFileName))+str(diff)+','+str(iter)+'\n')
         outputDS.Destroy()
-        return True
+        return status

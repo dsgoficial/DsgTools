@@ -25,8 +25,10 @@ from osgeo import ogr
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
+from PyQt4.QtCore import Qt
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
+from PyQt4.QtGui import QApplication, QCursor
 
 # DSGTools imports
 from DsgTools.Utils.utils import Utils
@@ -121,9 +123,15 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
             return
         
         self.widget.abstractDb.signals.updateLog.connect(self.logUpdated)
+        converted = False
         self.widget.abstractDb.signals.clearLog.connect(self.logCleared)
-
-        converted = self.widget.abstractDb.convertDatabase(self.widget_2.abstractDb,'')
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            converted = self.widget.abstractDb.convertDatabase(self.widget_2.abstractDb,'')
+            QApplication.restoreOverrideCursor()
+        except:
+            QApplication.restoreOverrideCursor()
+            converted = False
         if converted:
             QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Conversion complete! Ololo! Ololo! Ololo!'))
         else:

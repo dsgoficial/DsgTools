@@ -305,5 +305,6 @@ class PostgisDb(AbstractDb):
         outputOgrDb = outputAbstractDb.buildOgrDatabase()
         outputType = outputAbstractDb.getType()
         inputLayerList = self.listClassesWithElementsFromDatabase()
-        self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList)
-        return None
+        self.buildReadSummary(inputOgrDb,outputAbstractDb,inputLayerList)
+        status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList)
+        return status
