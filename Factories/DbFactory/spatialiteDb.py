@@ -56,7 +56,7 @@ class SpatialiteDb(AbstractDb):
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
         while query.next():
-            tableName = query.value(0)
+            tableName = str(query.value(0))
             layerName = tableName
             classList.append(layerName)
         return classList
@@ -67,7 +67,7 @@ class SpatialiteDb(AbstractDb):
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
         while query.next():
-                tableName = query.value(0)
+                tableName = str(query.value(0))
                 layerName = tableName
                 tableSchema = layerName.split('_')[0]
                 classList.append(layerName)
@@ -86,18 +86,19 @@ class SpatialiteDb(AbstractDb):
     def getStructureDict(self):
         self.checkAndOpenDb()
         classDict = dict()
-        sql = self.gen.getStructure(self.dbVersion)        
+        sql = self.gen.getStructure(self.getDatabaseVersion())        
         query = QSqlQuery(sql, self.db)
         while query.next():
-            className = query.value(0).toString()
-            classSql = query.value(1).toString()
-            if className not in classDict.keys():
-                classDict[className]=dict()
-            classSql = classSql.split(className)[1]
-            sqlList = classSql.replace('(','').replace(')','').replace('\"','').replace('\'','').split(',')
-            for s in sqlList:
-                 fieldName = str(s.strip().split(' ')[0])
-                 classDict[className][fieldName]=fieldName
+            className = str(query.value(0))
+            classSql = str(query.value(1))
+            if className.split('_')[0] == 'complexos' or className.split('_')[-1] in ['p','l','a']:
+                if className not in classDict.keys():
+                    classDict[className]=dict()
+                classSql = classSql.split(className)[1]
+                sqlList = classSql.replace('(','').replace(')','').replace('\"','').replace('\'','').split(',')
+                for s in sqlList:
+                     fieldName = str(s.strip().split(' ')[0])
+                     classDict[className][fieldName]=fieldName
 
         return classDict
     
@@ -118,11 +119,11 @@ class SpatialiteDb(AbstractDb):
     def validateWithOutputDatabaseSchema(self,outputAbstractDb):
         invalidated = self.buildInvalidatedDict()
         outputdbStructure = outputAbstractDb.getStructureDict()
-        domainDict = self.getDomainDict()
-        classes = self.listClassesWithElementsFromDatabase()
-        notNullDict = self.getNotNullDict()
+        domainDict = outputAbstractDb.getDomainDict()
+        classes =  self.listClassesWithElementsFromDatabase()
+        notNullDict = outputAbstractDb.getNotNullDict()
         
-        for cl in classes:
+        for cl in classes.keys():
             if cl in outputdbStructure.keys():
                 (schema,table) = self.getTableSchema(cl)
                 outputClass = self.translateOGRLayerNameToOutputFormat(cl,outputAbstractDb)
@@ -222,7 +223,18 @@ class SpatialiteDb(AbstractDb):
     def translateDSWithDataFix(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, invalidated):
         return None
     
-
+    def getDatabaseVersion(self):
+        self.checkAndOpenDb()
+        version = '2.1.3'
+        try:
+            sqlVersion = self.gen.getEDGVVersion()
+            queryVersion =  QSqlQuery(sqlVersion, self.db)
+            while queryVersion.next():
+                version = queryVersion.value(0)
+        except:
+            version = '2.1.3'
+                    
+        return version
     
 
     

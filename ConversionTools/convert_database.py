@@ -121,13 +121,18 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         if self.widget.dbVersion <> self.widget_2.dbVersion:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Version mismatch!\nConversion must be between databases with the same version!'))
             return
+        type = ''
+        if self.allDataRadioButton.isChecked():
+            type = 'untouchedData'
+        if self.fixDataRadioButton.isChecked():
+            type = 'fixData'
         
         self.widget.abstractDb.signals.updateLog.connect(self.logUpdated)
         converted = False
         self.widget.abstractDb.signals.clearLog.connect(self.logCleared)
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            converted = self.widget.abstractDb.convertDatabase(self.widget_2.abstractDb,'')
+            converted = self.widget.abstractDb.convertDatabase(self.widget_2.abstractDb,type)
             QApplication.restoreOverrideCursor()
         except:
             QApplication.restoreOverrideCursor()
@@ -136,19 +141,7 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
             QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Conversion complete! Ololo! Ololo! Ololo!'))
         else:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not performed! Check log for details.'))
-
-    def makeConversion(self, type, classesDict):
-        self.logDisplay.clear()
-        #insert here read summary
     
-    def convert2postgisWithDataFix(self, classes, invalidatedDataDict, hasFieldMapper=False):
-        if not hasFieldMapper:
-            fieldMap = self.buildFieldMap(self.widget.db, self.widget.dbVersion, self.widget.isSpatialite)
-        inputOgrDb = ogr.Open(self.widget.filename)
-        conn = self.utils.makeOgrPostGISConn(self.widget_2.db)        
-        self.outputOgrDb = ogr.Open(conn)
-        inputLayerList = classes
-        return self.utils.translateDSWithDataFix(inputOgrDb, self.outputOgrDb, fieldMap, inputLayerList, self.widget.isSpatialite,invalidatedDataDict)
     
     @pyqtSlot(str)
     def logUpdated(self,text):

@@ -88,13 +88,15 @@ class AbstractDb(QObject):
         self.checkAndOpenDb()
         listaQuantidades = []
         for layer in layers:
-            sql = self.gen.getElementCountFromLayer(layer)
-            query = QSqlQuery(sql,self.db)
-            query.next()
-            number = query.value(0)
-            if not query.exec_(sql):
-                QgsMessageLog.logMessage(self.tr("Problem counting elements: ")+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            listaQuantidades.append([layer, number])
+            (table,schema)=self.getTableSchema(layer)
+            if layer.split('_')[-1] in ['p','l','a'] or schema == 'complexos':
+                sql = self.gen.getElementCountFromLayer(layer)
+                query = QSqlQuery(sql,self.db)
+                query.next()
+                number = query.value(0)
+                if not query.exec_(sql):
+                    QgsMessageLog.logMessage(self.tr("Problem counting elements: ")+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                listaQuantidades.append([layer, number])
         return listaQuantidades     
 
     def findEPSG(self):
@@ -182,10 +184,10 @@ class AbstractDb(QObject):
     def buildInvalidatedDict(self):
         return None
     
-    def makeValidationSummary(self,invalidated):
+    def makeValidationSummary(self,invalidatedDataDict):
         hasErrors = False
         for key in invalidatedDataDict.keys():
-            if len(invalidatedDataDict[key].keys()) > 0:
+            if len(invalidatedDataDict[key]) > 0:
                 hasErrors = True
         if hasErrors:
             self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Validation Problems Summary')))

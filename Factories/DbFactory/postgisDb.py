@@ -141,11 +141,12 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getStructure(self.getDatabaseVersion())        
         query = QSqlQuery(sql, self.db)
         while query.next():
-            className = query.value(0)+'.'+query.value(1)
-            fieldName = query.value(2)
-            if className not in classDict.keys():
-                classDict[className]=dict()
-            classDict[str(className)][str(fieldName)]=str(fieldName)
+            className = str(query.value(0))+'.'+str(query.value(1))
+            fieldName = str(query.value(2))
+            if str(query.value(0)) == 'complexos' or className.split('_')[-1] in ['p','l','a']:
+                if className not in classDict.keys():
+                    classDict[className]=dict()
+                classDict[className][fieldName]=fieldName
         return classDict
     
     def makeOgrConn(self):
@@ -164,7 +165,7 @@ class PostgisDb(AbstractDb):
 
     def getNotNullDict(self):
         self.checkAndOpenDb()
-        if self.dbVersion == '2.1.3':
+        if self.getDatabaseVersion() == '2.1.3':
             schemaList = ['cb','complexos']
         else:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Operation not defined for this database version!'))
@@ -173,9 +174,9 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         notNullDict = dict()
         while query.next():
-            schemaName = query.value(0).toString()
-            className = query.value(1).toString()
-            attName = query.value(2).toString()
+            schemaName = str(query.value(0))
+            className = str(query.value(1))
+            attName = str(query.value(2))
             cl = schemaName+'.'+className
             if cl not in notNullDict.keys():
                 notNullDict[cl]=[]
@@ -194,16 +195,16 @@ class PostgisDb(AbstractDb):
         classDict = dict()
         domainDict = dict()
         while query.next():
-            schemaName = query.value(0).toString()
-            className = query.value(1).toString()
-            attName = query.value(2).toString()
-            domainName = query.value(3).toString()
-            domainTable = query.value(4).toString()
-            domainQuery = query.value(5).toString()
+            schemaName = str(query.value(0))
+            className = str(query.value(1))
+            attName = str(query.value(2))
+            domainName = str(query.value(3))
+            domainTable = str(query.value(4))
+            domainQuery = str(query.value(5))
             cl = schemaName+'.'+className
             query2 = QSqlQuery(domainQuery,self.db)
             while query2.next():
-                value = query2.value(0).toInt()[0]
+                value = int(query2.value(0))
                 classDict = self.utils.buildNestedDict(classDict,[str(cl),str(attName)],[value])
         return classDict
     
