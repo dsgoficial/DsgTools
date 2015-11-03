@@ -283,12 +283,14 @@ class AbstractDb(QObject):
         inputLayer.ResetReading()
         initialCount = outputLayer.GetFeatureCount()
         count = 0
+        outputLayer.BeginTransaction()
         for feat in inputLayer:
             newFeat=ogr.Feature(outputLayer.GetLayerDefn())
             newFeat.SetFromWithMap(feat,True,layerPanMap)
             outputLayer.CreateFeature(newFeat)
             count += 1
-        return (count, outputLayer.GetFeatureCount()-initialCount)
+        outputLayer.CommitTransaction()
+        return count
     
     def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList): 
         self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Write Summary')))
@@ -309,7 +311,8 @@ class AbstractDb(QObject):
             outputLayer=outputDS.GetLayerByName(outputFileName)
             #order conversion here
             layerPanMap=self.makeTranslationMap(inputLyr, inputOgrLayer,outputLayer, fieldMap)
-            (iter,diff)=self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap)
+            ini = outputLayer.GetFeatureCount()
+            iter=self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap)
             if iter == diff:
                 status = True
             else:
