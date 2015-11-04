@@ -285,7 +285,7 @@ class AbstractDb(QObject):
         while feat:
             newFeat=ogr.Feature(outputLayer.GetLayerDefn())
             newFeat.SetFromWithMap(feat,True,layerPanMap)
-            outputLayer.CreateFeature(newFeat)
+            out=outputLayer.CreateFeature(newFeat)
             count += 1
             feat=inputLayer.GetNextFeature()
             
@@ -312,11 +312,12 @@ class AbstractDb(QObject):
             layerPanMap=self.makeTranslationMap(inputLyr, inputOgrLayer,outputLayer, fieldMap)
             ini = outputLayer.GetFeatureCount()
             iter=self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap)
+            diff = outputLayer.GetFeatureCount()-ini
             if iter == diff:
                 status = True
             else:
                 status = False
-            self.signals.updateLog.emit('{:<50}'.format(str(outputFileName))+str(diff)+','+str(iter)+'\n')
+            self.signals.updateLog.emit('{:<50}'.format(str(outputFileName))+str(diff)+'\n')
         outputDS.Destroy()
         return status
     
@@ -342,6 +343,18 @@ class AbstractDb(QObject):
     
     def translateDSWithDataFix(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, invalidated):
         return None
+
+    def translateLayerWithDataFix(self, inputLayer, inputLayerName, outputLayer, outputFileName, layerPanMap, defaults={}, translateValues={}):
+        '''casos e tratamentos:
+        1. nullLine: os atributos devem ser varridos e, caso seja linha nula, ignorar o envio
+        2. nullPk: caso seja complexo, gerar uma chave
+        3. notInDomain: excluir do mapeamento aquele atributo caso ele seja mapeado
+        4. nullAttribute: excluir do mapeamento aquele atributo caso ele seja não nulo
+        5. classNotFoundInOutput: pular classe na conversão e mostrar no warning
+        6. attributeNotFoundInOutput: pular atributo e mostrar no warning para todas as feicoes
+        '''        
+        return None
+
     
     def buildOgrDatabase(self):
         con = self.makeOgrConn()
