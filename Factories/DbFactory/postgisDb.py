@@ -157,11 +157,7 @@ class PostgisDb(AbstractDb):
         dbPort = str(self.db.port())
         constring = 'PG: dbname=\''+dbName+'\' user=\''+dbUser+'\' host=\''+dbHost+'\' password=\''+dbPass+'\' port='+dbPort
         return constring
-    
-    def buildOgrDatabase(self):
-        con = self.makeOgrConn()
-        ogrDb = ogr.Open(con)
-        return ogrDb
+
 
     def getNotNullDict(self):
         self.checkAndOpenDb()

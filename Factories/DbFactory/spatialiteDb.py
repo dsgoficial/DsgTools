@@ -106,10 +106,6 @@ class SpatialiteDb(AbstractDb):
         constring = self.db.databaseName()
         return constring
 
-    def buildOgrDatabase(self):
-        con = self.makeOgrConn()
-        return ogr.Open(con,update=1)
-
     def getNotNullDict(self):
         return None
 

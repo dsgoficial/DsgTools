@@ -151,9 +151,6 @@ class AbstractDb(QObject):
             columns.append(value)
         return columns
 
-    def buildOgrDatabase(self):
-        return None
-
     def getOgrDatabase(self):
         if self.ogrDb != None:
             self.buildOgrDatabase()
@@ -283,13 +280,15 @@ class AbstractDb(QObject):
         inputLayer.ResetReading()
         initialCount = outputLayer.GetFeatureCount()
         count = 0
-        outputLayer.BeginTransaction()
-        for feat in inputLayer:
+        feat=inputLayer.GetNextFeature()
+        #for feat in inputLayer:
+        while feat:
             newFeat=ogr.Feature(outputLayer.GetLayerDefn())
             newFeat.SetFromWithMap(feat,True,layerPanMap)
             outputLayer.CreateFeature(newFeat)
             count += 1
-        outputLayer.CommitTransaction()
+            feat=inputLayer.GetNextFeature()
+            
         return count
     
     def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList): 
@@ -343,4 +342,9 @@ class AbstractDb(QObject):
     
     def translateDSWithDataFix(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, invalidated):
         return None
+    
+    def buildOgrDatabase(self):
+        con = self.makeOgrConn()
+        ogrDb = ogr.Open(con,update=1)
+        return ogrDb
     
