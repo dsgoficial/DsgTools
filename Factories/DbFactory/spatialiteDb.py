@@ -114,33 +114,31 @@ class SpatialiteDb(AbstractDb):
 
     def validateWithOutputDatabaseSchema(self,outputAbstractDb):
         invalidated = self.buildInvalidatedDict()
+        inputStructure = self.getStructureDict()
         outputdbStructure = outputAbstractDb.getStructureDict()
         domainDict = outputAbstractDb.getDomainDict()
         classes =  self.listClassesWithElementsFromDatabase()
         notNullDict = outputAbstractDb.getNotNullDict()
         
-        for cl in classes.keys():
-            if cl in outputdbStructure.keys():
-                (schema,table) = self.getTableSchema(cl)
-                outputClass = self.translateOGRLayerNameToOutputFormat(cl,outputAbstractDb)
-                allAttrList = outputdbStructure[cl].keys()
-                if schema == 'complexos':
-                    attrList = ['id']
-                else:
-                    attrList = ['OGC_FID']
-                for att in allAttrList:
-                    if att not in attrList:
-                        attrList.append(att)
-                sql = self.gen.getFeaturesWithSQL(cl,attrList) 
-                query = QSqlQuery(sql, spatialiteDB)
-                
-                if cl not in domainDict.keys():
-                    invalidated['classNotFoundInOutput'].append(cl) 
+        for inputClass in classes.keys():
+            outputClass = self.translateAbstractDbLayerNameToOutputFormat(inputClass,outputAbstractDb)
+            (schema,className) = self.getTableSchema(inputClass)
+            if outputClass in outputdbStructure.keys():
+                outputAttrList = self.reorderTupleList(outputdbStructure[outputClass].keys())
+                inputAttrList = self.reorderTupleList(inputStructure[inputClass].keys())
+                            
+                sql = self.gen.getFeaturesWithSQL(inputClass,inputAttrList) 
+                query = QSqlQuery(sql, self.db)
+                                
+                if outputClass in domainDict.keys():
+                    for att in inputAttrList:
+                        if att not in outputAttrList:
+                            invalidated = self.utils.buildNestedDict(invalidated, ['attributeNotFoundInOutput',inputClass], [att]) 
                 
                 while query.next():
                     id = query.value(0)
                     #detects null lines
-                    for i in range(len(attrList)):
+                    for i in range(len(inputAttrList)):
                         nullLine = True
                         value = query.value(i)
                         if value <> None:
@@ -148,36 +146,44 @@ class SpatialiteDb(AbstractDb):
                             break
                     if nullLine:
                         if cl not in invalidated['nullLine'].keys():
-                            invalidated['nullLine'][cl]=0
-                        invalidated['nullLine'][cl]+=1
+                            invalidated['nullLine'][inputClass]=0
+                        invalidated['nullLine'][inputClass]+=1
                     
                     #validates pks
                     if id == None and (not nullLine):
                         if cl not in invalidated['nullPk'].keys():
-                            invalidated['nullPk'][cl]=0
-                        invalidated['nullPk'][cl]+=1
+                            invalidated['nullPk'][inputClass]=0
+                        invalidated['nullPk'][inputClass]+=1
                     
-                    for i in range(len(attrList)):
+                    for i in range(len(inputAttrList)):
                         value = query.value(i)
                         #validates domain
                         if outputClass in domainDict.keys():    
-                            if attrList[i] in domainDict[outputClass].keys():
-                                if value not in domainDict[outputClass][attrList[i]] and (not nullLine):
-                                    invalidated = self.utils.buildNestedDict(invalidated, ['notInDomain',cl,id,attrList[i]], value)
+                            if inputAttrList[i] in domainDict[outputClass].keys():
+                                if value not in domainDict[outputClass][inputAttrList[i]] and (not nullLine):
+                                    invalidated = self.utils.buildNestedDict(invalidated, ['notInDomain',inputClass,id,inputAttrList[i]], value)
                         #validates not nulls
                         if outputClass in notNullDict.keys():
                             if outputClass in domainDict.keys():
-                                if attrList[i] in notNullDict[outputClass] and attrList[i] not in domainDict[outputClass].keys():
-                                    if (value == None) and (not nullLine) and (attrList[i] not in domainDict[outputClass].keys()):
-                                        invalidated = self.utils.buildOneNestedDict(invalidated, ['nullAttribute',cl,id,attrList[i]], value)             
+                                if inputAttrList[i] in notNullDict[outputClass] and inputAttrList[i] not in domainDict[outputClass].keys():
+                                    if (value == None) and (not nullLine) and (inputAttrList[i] not in domainDict[outputClass].keys()):
+                                        invalidated = self.utils.buildOneNestedDict(invalidated, ['nullAttribute',inputClass,id,inputAttrList[i]], value)             
                             else:
-                                if attrList[i] in notNullDict[outputClass]:
-                                    if (value == None) and (not nullLine) and (attrList[i] not in domainDict[outputClass].keys()):
-                                        invalidated = self.utils.buildOneNestedDict(invalidated, ['nullAttribute',cl,id,attrList[i]], value)
+                                if inputAttrList[i] in notNullDict[outputClass]:
+                                    if (value == None) and (not nullLine) and (inputAttrList[i] not in domainDict[outputClass].keys()):
+                                        invalidated = self.utils.buildOneNestedDict(invalidated, ['nullAttribute',inputClass,id,inputAttrList[i]], value)
                         if outputClass in domainDict.keys():
-                            if attrList[i] not in domainDict[outputClass].keys():
-                                invalidated = self.utils.buildNestedDict(invalidated, ['attributeNotFoundInOutput',cl], [attrList[i]])
+                            if inputAttrList[i] not in domainDict[outputClass].keys():
+                                invalidated = self.utils.buildNestedDict(invalidated, ['attributeNotFoundInOutput',inputClass], [inputAttrList[i]])
+            else:
+                invalidated['classNotFoundInOutput'].append(inputAttrList)
         return invalidated
+    
+    def translateAbstractDbLayerNameToOutputFormat(self,lyr,outputAbstractDb):
+        if outputAbstractDb.db.driverName() == 'QSQLITE':
+            return lyr
+        if outputAbstractDb.db.driverName() == 'QPSQL':
+            return str(lyr.split('_')[0]+'.'+'_'.join(lyr.split('_')[1::]))
     
     def translateOGRLayerNameToOutputFormat(self,lyr,ogrOutput):
         if ogrOutput.GetDriver().name == 'SQLite':
@@ -187,11 +193,12 @@ class SpatialiteDb(AbstractDb):
     
     def getTableSchema(self,lyr):
         schema = lyr.split('_')[0]
-        className = lyr.split('_')[1::]
+        className = '_'.join(lyr.split('_')[1::])
         return (schema,className)
     
     #TODO: treat each case (hammer time and don't touch my data)
     def convertToPostgis(self, outputAbstractDb,type=None):
+        (inputOgrDb, outputOgrDb, fieldMap, inputLayerList) = self.prepareForConversion(outputAbstractDb)
         invalidated = self.validateWithOutputDatabaseSchema(outputAbstractDb)
         hasErrors = self.makeValidationSummary(invalidated)
         if type == 'untouchedData':
@@ -199,16 +206,13 @@ class SpatialiteDb(AbstractDb):
                 self.signals.updateLog.emit(self.tr('\n\n\nConversion not perfomed due to validation errors! Check log above for more information.'))
                 return False
             else:
-                (inputOgrDb, outputOgrDb, fieldMap, inputLayerList) = self.prepareForConversion(outputAbstractDb)
                 status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList)
                 return status
         if type == 'fixData':
             if hasErrors:
-                (inputOgrDb, outputOgrDb, fieldMap, inputLayerList) = self.prepareForConversion(outputAbstractDb)
                 status = self.translateDSWithDataFix(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, invalidated)
                 return status
             else:
-                (inputOgrDb, outputOgrDb, fieldMap, inputLayerList) = self.prepareForConversion(outputAbstractDb)
                 status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList)
                 return status
         return None

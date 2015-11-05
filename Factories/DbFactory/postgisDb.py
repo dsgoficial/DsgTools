@@ -207,6 +207,12 @@ class PostgisDb(AbstractDb):
     def validateWithOutputDatabaseSchema(self,outputAbstractDb):
         return None
 
+    def translateAbstractDbLayerNameToOutputFormat(self,lyr,outputAbstractDb):
+        if outputAbstractDb.db.driverName() == 'QSQLITE':
+            return str(lyr.split('.')[0]+'_'+'_'.join(lyr.split('.')[1::]))
+        if outputAbstractDb.db.driverName() == 'QPSQL':
+            return lyr
+
     def translateOGRLayerNameToOutputFormat(self,lyr,ogrOutput):
         if ogrOutput.GetDriver().name == 'SQLite':
             return str(lyr.split('.')[0]+'_'+'_'.join(lyr.split('.')[1::]))
@@ -215,7 +221,7 @@ class PostgisDb(AbstractDb):
 
     def getTableSchema(self,lyr):
         schema = lyr.split('.')[0]
-        className = lyr.split('.')[1::]
+        className = '_'.join(lyr.split('.')[1::])
         return (schema,className)
 
     #TODO: treat each case (hammer time and don't touch my data)

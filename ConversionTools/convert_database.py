@@ -130,6 +130,7 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         self.widget.abstractDb.signals.updateLog.connect(self.logUpdated)
         converted = False
         self.widget.abstractDb.signals.clearLog.connect(self.logCleared)
+        self.logCleared()
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             converted = self.widget.abstractDb.convertDatabase(self.widget_2.abstractDb,type)

@@ -240,8 +240,11 @@ class AbstractDb(QObject):
                         self.signals.updateLog.emit(valueList)
                 
         return hasErrors
+
+    def translateAbstractDbLayerNameToOutputFormat(self,lyr,outputAbstractDb):
+        return None
     
-    def translateOGRLayerNameToOutputFormat(self,lyr,outputAbstractDb):
+    def translateOGRLayerNameToOutputFormat(self,lyr,ogrOutput):
         return None
     
     def getTableSchema(self,lyr):
@@ -286,6 +289,9 @@ class AbstractDb(QObject):
             newFeat=ogr.Feature(outputLayer.GetLayerDefn())
             newFeat.SetFromWithMap(feat,True,layerPanMap)
             out=outputLayer.CreateFeature(newFeat)
+            if out <> 0:
+                outputLayer.RollbackTransaction()
+                return -1
             count += 1
             feat=inputLayer.GetNextFeature()
             
@@ -311,7 +317,12 @@ class AbstractDb(QObject):
             #order conversion here
             layerPanMap=self.makeTranslationMap(inputLyr, inputOgrLayer,outputLayer, fieldMap)
             ini = outputLayer.GetFeatureCount()
+            outputLayer.StartTransaction()
             iter=self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap)
+            if iter == -1:
+                status = False
+                self.signals.updateLog.emit('{:<50}'.format(self.tr('Error on layer ')+inputLyr.GetName()+self.tr('. Conversion not performed.')+'\n'))
+                return status
             diff = outputLayer.GetFeatureCount()-ini
             if iter == diff:
                 status = True
@@ -361,3 +372,13 @@ class AbstractDb(QObject):
         ogrDb = ogr.Open(con,update=1)
         return ogrDb
     
+    def reorderTupleList(self,ls):
+        if 'OGC_FID' in ls:
+            idField = 'OGC_FID'
+        else:
+            idField = 'id'
+        index = ls.index(idField)
+        reordered = [ls[index]]
+        reordered.extend(ls[0:index])
+        reordered.extend(ls[index+1::])
+        return reordered
