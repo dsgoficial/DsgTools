@@ -26,6 +26,7 @@ from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactor
 from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 from PyQt4.QtCore import QSettings, SIGNAL, pyqtSignal, QObject
 from DsgTools.Utils.utils import Utils
+from uuid import uuid4
 
 class DbSignals(QObject):
         updateLog = pyqtSignal(str)
@@ -297,7 +298,7 @@ class AbstractDb(QObject):
             
         return count
     
-    def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList): 
+    def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList,invalidated=None): 
         self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Write Summary')))
         self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
         status = False
@@ -318,7 +319,18 @@ class AbstractDb(QObject):
             layerPanMap=self.makeTranslationMap(inputLyr, inputOgrLayer,outputLayer, fieldMap)
             ini = outputLayer.GetFeatureCount()
             outputLayer.StartTransaction()
-            iter=self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap)
+            if invalidated <> None:
+                iter=self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap)
+            else:
+                needsFix = False
+                for key in invalidated.keys():
+                    if inputLyr in key.keys():
+                        needsFix = True
+                        break
+                if needsFix:
+                    iter = self.translateLayerWithDataFix(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap, invalidated)
+                else:
+                    iter=self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap)
             if iter == -1:
                 status = False
                 self.signals.updateLog.emit('{:<50}'.format(self.tr('Error on layer ')+inputLyr.GetName()+self.tr('. Conversion not performed.')+'\n'))
@@ -355,7 +367,7 @@ class AbstractDb(QObject):
     def translateDSWithDataFix(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, invalidated):
         return None
 
-    def translateLayerWithDataFix(self, inputLayer, inputLayerName, outputLayer, outputFileName, layerPanMap, defaults={}, translateValues={}):
+    def translateLayerWithDataFix(self, inputLayer, inputLayerName, outputLayer, outputFileName, layerPanMap, invalidated, defaults={}, translateValues={}):
         '''casos e tratamentos:
         1. nullLine: os atributos devem ser varridos e, caso seja linha nula, ignorar o envio
         2. nullPk: caso seja complexo, gerar uma chave
@@ -363,8 +375,40 @@ class AbstractDb(QObject):
         4. nullAttribute: excluir do mapeamento aquele atributo caso ele seja não nulo
         5. classNotFoundInOutput: pular classe na conversão e mostrar no warning
         6. attributeNotFoundInOutput: pular atributo e mostrar no warning para todas as feicoes
-        '''        
-        return None
+        '''
+        inputLayer.ResetReading()
+        fieldCount = inputLayer.GetFieldCount()
+        initialCount = outputLayer.GetFeatureCount()
+        count = 0
+        feat=inputLayer.GetNextFeature()
+        (schema,className) = self.getTableSchema(inputLayerName)
+        while feat:
+            nullLine = True
+            #Case 1: nullLine
+            for i in range(fieldCount):
+                if feat.GetField(i) <> None:
+                    nullLine = False
+            if not nullLine:
+                if inputLayerName not in invalidated['classNotFoundInOutput'].keys():
+                    newFeat=ogr.Feature(outputLayer.GetLayerDefn())
+                    inputId = feat.GetFid()
+                    #Case 2: nullPk in complex:
+                    if schema == 'complexos' and feat.GetFid() == -1:
+                        newFeat.SetFid(uuid4())
+                    newFeat.SetFromWithMap(feat,True,layerPanMap)
+                    #Case 3
+                    for i in range(outputLayer.GetFieldCount()):
+                        if inputLayerName in invalidated['notInDomain'].keys():
+                            if inputId in invalidated['notInDomain'][inputLayerName].keys():
+                                newFeat.SetField(i,None)
+                    out=outputLayer.CreateFeature(newFeat)
+                    if out <> 0:
+                        outputLayer.RollbackTransaction()
+                        return -1
+                    count += 1
+            feat=inputLayer.GetNextFeature()
+            
+        return count
 
     
     def buildOgrDatabase(self):
