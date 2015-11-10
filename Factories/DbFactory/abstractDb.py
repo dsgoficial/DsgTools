@@ -191,19 +191,19 @@ class AbstractDb(QObject):
             self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Validation Problems Summary')))
             for key in invalidatedDataDict.keys():
                 
-                if key == 'nullLine' and len(invalidatedDataDict[key].keys())>0:
+                if key == 'nullLine' and len(invalidatedDataDict[key])>0:
                     self.signals.updateLog.emit(self.tr('\n\nClasses with null lines:\n'))
                     self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
                     for cl in invalidatedDataDict[key].keys():
                         self.signals.updateLog.emit('{:<50}'.format(cl)+str(invalidatedDataDict[key][cl])+'\n')
 
-                if key == 'nullPk' and len(invalidatedDataDict[key].keys())>0:
+                if key == 'nullPk' and len(invalidatedDataDict[key])>0:
                     self.signals.updateLog.emit(self.tr('\n\nClasses with null primary keys:\n'))
                     self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
                     for cl in invalidatedDataDict[key].keys():
                         self.signals.updateLog.emit('{:<50}'.format(cl)+str(invalidatedDataDict[key][cl])+'\n')
 
-                if key == 'notInDomain' and len(invalidatedDataDict[key].keys())>0:
+                if key == 'notInDomain' and len(invalidatedDataDict[key])>0:
                     self.signals.updateLog.emit(self.tr('\n\nFeatures with attributes not in domain:\n\n'))
                     for cl in invalidatedDataDict[key].keys():
                         self.signals.updateLog.emit(self.tr('\nClass: ')+cl+'\n')
@@ -216,7 +216,7 @@ class AbstractDb(QObject):
                             valueList += ')\n'
                             self.signals.updateLog.emit(attrCommaList+valueList)
 
-                if key == 'nullAttribute' and len(invalidatedDataDict[key].keys())>0:
+                if key == 'nullAttribute' and len(invalidatedDataDict[key])>0:
                     self.signals.updateLog.emit(self.tr('\n\nFeatures with null attributes in a not null field:\n\n'))
                     for cl in invalidatedDataDict[key].keys():
                         self.signals.updateLog.emit(self.tr('Class: ')+cl+'\n')
@@ -228,12 +228,12 @@ class AbstractDb(QObject):
                             valueList += ')\n'
                             self.signals.updateLog.emit(attrCommaList+valueList)
                             
-                if key == 'classNotFoundInOutput' and len(invalidatedDataDict[key].keys())>0:
+                if key == 'classNotFoundInOutput' and len(invalidatedDataDict[key])>0:
                     self.signals.updateLog.emit(self.tr('\n\nClasses with classes that have elements but do not have output equivalent:\n\n'))
                     for cl in invalidatedDataDict[key]:
                             self.signals.updateLog.emit(self.tr('Class: ')+cl+'\n')
                 
-                if key == 'attributeNotFoundInOutput' and len(invalidatedDataDict[key].keys())>0:
+                if key == 'attributeNotFoundInOutput' and len(invalidatedDataDict[key])>0:
                     self.signals.updateLog.emit(self.tr('\n\nClasses with attributes that have no output attribute equivalent:\n\n'))
                     for cl in invalidatedDataDict[key].keys():
                         self.signals.updateLog.emit(self.tr('Class: ')+cl+'\n')
@@ -304,29 +304,32 @@ class AbstractDb(QObject):
         status = False
         for inputLyr in inputLayerList:
             schema = self.getTableSchema(inputLyr)
-            attr = fieldMap[inputLyr].keys()
-            attrList = []
-            for a in attr:
-                if schema == 'complexos':
-                    attrList.append(a)
-                elif a not in ['id']:
-                    attrList.append(a)
-            sql = self.gen.getFeaturesWithSQL(inputLyr,attrList) #order elements here
-            inputOgrLayer = inputDS.ExecuteSQL(sql.encode('utf-8'))
+            attrList = fieldMap[inputLyr].keys()
+            
+            #sql = self.gen.getFeaturesWithSQL(inputLyr,attrList) #order elements here
+            #inputOgrLayer = inputDS.ExecuteSQL(sql.encode('utf-8'))
+            #Here I had to change the way of loading because of features ids. I need to use inputDs.GetLayerByName
+            
+            inputOgrLayer = inputDS.GetLayerByName(inputLyr) #new way of loading layer. The old way was an attempt to make a general rule for conversion between edgv versions
             outputFileName = self.translateOGRLayerNameToOutputFormat(inputLyr,outputDS)
             outputLayer=outputDS.GetLayerByName(outputFileName)
             #order conversion here
             layerPanMap=self.makeTranslationMap(inputLyr, inputOgrLayer,outputLayer, fieldMap)
             ini = outputLayer.GetFeatureCount()
             outputLayer.StartTransaction()
-            if invalidated <> None:
+            if invalidated == None:
                 iter=self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap)
             else:
                 needsFix = False
-                for key in invalidated.keys():
-                    if inputLyr in key.keys():
-                        needsFix = True
-                        break
+                for keyDict in invalidated.values():
+                    if len(keyDict) > 0:
+                        if type(keyDict) == list:
+                            if inputLyr in keyDict:
+                                needsFix = True
+                        if type(keyDict) == dict:
+                            if inputLyr in keyDict.keys():
+                                needsFix = True
+                                break
                 if needsFix:
                     iter = self.translateLayerWithDataFix(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap, invalidated)
                 else:
@@ -377,38 +380,43 @@ class AbstractDb(QObject):
         6. attributeNotFoundInOutput: pular atributo e mostrar no warning para todas as feicoes
         '''
         inputLayer.ResetReading()
-        fieldCount = inputLayer.GetFieldCount()
+        fieldCount = inputLayer.GetLayerDefn().GetFieldCount()
         initialCount = outputLayer.GetFeatureCount()
         count = 0
         feat=inputLayer.GetNextFeature()
         (schema,className) = self.getTableSchema(inputLayerName)
-        while feat:
-            nullLine = True
-            #Case 1: nullLine
-            for i in range(fieldCount):
-                if feat.GetField(i) <> None:
-                    nullLine = False
-            if not nullLine:
-                if inputLayerName not in invalidated['classNotFoundInOutput'].keys():
-                    newFeat=ogr.Feature(outputLayer.GetLayerDefn())
-                    inputId = feat.GetFid()
-                    #Case 2: nullPk in complex:
-                    if schema == 'complexos' and feat.GetFid() == -1:
-                        newFeat.SetFid(uuid4())
-                    newFeat.SetFromWithMap(feat,True,layerPanMap)
-                    #Case 3
-                    for i in range(outputLayer.GetFieldCount()):
-                        if inputLayerName in invalidated['notInDomain'].keys():
-                            if inputId in invalidated['notInDomain'][inputLayerName].keys():
-                                newFeat.SetField(i,None)
-                    out=outputLayer.CreateFeature(newFeat)
-                    if out <> 0:
-                        outputLayer.RollbackTransaction()
-                        return -1
-                    count += 1
-            feat=inputLayer.GetNextFeature()
-            
-        return count
+        outputOgrLyrDict = self.getOgrLayerIndexDict(outputLayer)
+        if inputLayerName not in invalidated['classNotFoundInOutput']:
+            while feat:
+                nullLine = True
+                #Case 1: nullLine
+                for i in range(fieldCount):
+                    if feat.GetField(i) <> None:
+                        nullLine = False
+                        break
+                if not nullLine:
+                    if inputLayerName not in invalidated['classNotFoundInOutput']:
+                        newFeat=ogr.Feature(outputLayer.GetLayerDefn())
+                        inputId = feat.GetFID()
+                        #Case 2: nullPk in complex:
+                        newFeat.SetFromWithMap(feat,True,layerPanMap)
+                        if schema == 'complexos' and feat.GetFID() == -1:
+                            newFeat.SetFID(uuid4())
+                        #Case 3
+                        for j in range(inputLayer.GetLayerDefn().GetFieldCount()):
+                            if inputLayerName in invalidated['notInDomain'].keys():
+                                if inputId in invalidated['notInDomain'][inputLayerName].keys():
+                                    if outputLayer.GetLayerDefn(layerPanMap[j]) in invalidated['notInDomain'][inputLayerName][inputId].keys(): 
+                                        newFeat.UnsetField(j)
+                        out=outputLayer.CreateFeature(newFeat)
+                        if out <> 0:
+                            outputLayer.RollbackTransaction()
+                            return -1
+                        count += 1
+                feat=inputLayer.GetNextFeature()
+            return count
+        else:
+            return -1
 
     
     def buildOgrDatabase(self):
@@ -426,3 +434,10 @@ class AbstractDb(QObject):
         reordered.extend(ls[0:index])
         reordered.extend(ls[index+1::])
         return reordered
+    
+    def getOgrLayerIndexDict(self,lyr):
+        ogrDict = dict()
+        layerDef = lyr.GetLayerDefn()
+        for i in range(layerDef.GetFieldCount()):
+            ogrDict[i] = layerDef.GetFieldDefn(i).GetName() 
+        return ogrDict

@@ -100,6 +100,11 @@ class SpatialiteDb(AbstractDb):
                      fieldName = str(s.strip().split(' ')[0])
                      classDict[className][fieldName]=fieldName
 
+                if 'GEOMETRY' in classDict[className].keys():
+                    classDict[className]['GEOMETRY'] = 'geom'
+                if 'OGC_FID' in classDict[className].keys():
+                    classDict[className]['OGC_FID'] = 'id'
+
         return classDict
     
     def makeOgrConn(self):
@@ -114,7 +119,7 @@ class SpatialiteDb(AbstractDb):
 
     def validateWithOutputDatabaseSchema(self,outputAbstractDb):
         invalidated = self.buildInvalidatedDict()
-        inputStructure = self.getStructureDict()
+        inputdbStructure = self.getStructureDict()
         outputdbStructure = outputAbstractDb.getStructureDict()
         domainDict = outputAbstractDb.getDomainDict()
         classes =  self.listClassesWithElementsFromDatabase()
@@ -125,15 +130,10 @@ class SpatialiteDb(AbstractDb):
             (schema,className) = self.getTableSchema(inputClass)
             if outputClass in outputdbStructure.keys():
                 outputAttrList = self.reorderTupleList(outputdbStructure[outputClass].keys())
-                inputAttrList = self.reorderTupleList(inputStructure[inputClass].keys())
+                inputAttrList = self.reorderTupleList(inputdbStructure[inputClass].keys())
                             
                 sql = self.gen.getFeaturesWithSQL(inputClass,inputAttrList) 
                 query = QSqlQuery(sql, self.db)
-                                
-                if outputClass in domainDict.keys():
-                    for att in inputAttrList:
-                        if att not in outputAttrList:
-                            invalidated = self.utils.buildNestedDict(invalidated, ['attributeNotFoundInOutput',inputClass], [att]) 
                 
                 while query.next():
                     id = query.value(0)
@@ -173,8 +173,10 @@ class SpatialiteDb(AbstractDb):
                                     if (value == None) and (not nullLine) and (inputAttrList[i] not in domainDict[outputClass].keys()):
                                         invalidated = self.utils.buildOneNestedDict(invalidated, ['nullAttribute',inputClass,id,inputAttrList[i]], value)
                         if outputClass in domainDict.keys():
-                            if inputAttrList[i] not in domainDict[outputClass].keys():
-                                invalidated = self.utils.buildNestedDict(invalidated, ['attributeNotFoundInOutput',inputClass], [inputAttrList[i]])
+                            if (inputAttrList[i] not in ['geom','GEOMETRY','id','OGC_FID'] and schema <> 'complexos') or (schema == 'complexos' and inputAttrList[i] <> 'id'):
+                                if inputAttrList[i] not in outputdbStructure[outputClass].keys():
+                                    invalidated = self.utils.buildNestedDict(invalidated, ['attributeNotFoundInOutput',inputClass], [inputAttrList[i]])
+                            
             else:
                 invalidated['classNotFoundInOutput'].append(inputAttrList)
         return invalidated
@@ -210,7 +212,7 @@ class SpatialiteDb(AbstractDb):
                 return status
         if type == 'fixData':
             if hasErrors:
-                status = self.translateDSWithDataFix(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, invalidated)
+                status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, invalidated)
                 return status
             else:
                 status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList)
@@ -236,5 +238,4 @@ class SpatialiteDb(AbstractDb):
                     
         return version
     
-
     

@@ -147,6 +147,10 @@ class PostgisDb(AbstractDb):
                 if className not in classDict.keys():
                     classDict[className]=dict()
                 classDict[className][fieldName]=fieldName
+                if 'geom' in classDict[className].keys():
+                    classDict[className]['geom'] = 'GEOMETRY'
+                if str(query.value(0)) <> 'complexos' and 'id' in classDict[className].keys():
+                    classDict[className]['id'] = 'OGC_FID'
         return classDict
     
     def makeOgrConn(self):
