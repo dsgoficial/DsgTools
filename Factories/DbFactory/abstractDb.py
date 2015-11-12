@@ -406,7 +406,7 @@ class AbstractDb(QObject):
                         for j in range(inputLayer.GetLayerDefn().GetFieldCount()):
                             if inputLayerName in invalidated['notInDomain'].keys():
                                 if inputId in invalidated['notInDomain'][inputLayerName].keys():
-                                    if outputLayer.GetLayerDefn(layerPanMap[j]) in invalidated['notInDomain'][inputLayerName][inputId].keys(): 
+                                    if outputLayer.GetLayerDefn().GetFieldDefn(layerPanMap[j]).GetName() in invalidated['notInDomain'][inputLayerName][inputId].keys(): 
                                         newFeat.UnsetField(j)
                         out=outputLayer.CreateFeature(newFeat)
                         if out <> 0:
