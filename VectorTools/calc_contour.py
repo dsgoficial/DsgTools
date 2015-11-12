@@ -42,10 +42,8 @@ class CalcContour(QgsMapTool):
         myBlue = int(settings.value( "/qgis/default_measure_color_blue", 67 ))
 
         self.rubberBand = QgsRubberBand(self.canvas)
-        self.rubberBand.setColor( QColor( myRed, myGreen, myBlue, 100 ) );
+        self.rubberBand.setColor( QColor( 222, 155, 67, 100 ) );
         self.rubberBand.setWidth( 3 );        
-        self.rubberBand.setColor(Qt.red)
-        self.rubberBand.setWidth(1)
         
     def reset(self):
         self.isEmittingPoint = False
