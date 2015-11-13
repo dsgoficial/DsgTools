@@ -472,7 +472,7 @@ class DsgTools:
             icon_path,
             text=self.tr('Manage User Permissions'),
             callback=self.manageUserProfiles,
-            parent=self.dsgTools,
+            parent=database,
             add_to_menu=False,
             add_to_toolbar=False)
         database.addAction(action)
@@ -497,7 +497,7 @@ class DsgTools:
             icon_path,
             text=self.tr('User Permissions Editor'),
             callback=self.showProfileEditor,
-            parent=self.dsgTools,
+            parent=permissions,
             add_to_menu=False,
             add_to_toolbar=False)
         permissions.addAction(action)
@@ -507,7 +507,7 @@ class DsgTools:
             icon_path,
             text=self.tr('Install/Remove User Permissions'),
             callback=self.assignProfiles,
-            parent=self.dsgTools,
+            parent=permissions,
             add_to_menu=False,
             add_to_toolbar=False)
         permissions.addAction(action)
@@ -517,7 +517,7 @@ class DsgTools:
             icon_path,
             text=self.tr('Load by Category'),
             callback=self.loadByCategory,
-            parent=database,
+            parent=layers,
             add_to_menu=False,
             add_to_toolbar=False)
         layers.addAction(action)
@@ -529,7 +529,7 @@ class DsgTools:
             icon_path,
             text=self.tr('Load by Class'),
             callback=self.loadByClass,
-            parent=database,
+            parent=layers,
             add_to_menu=False,
             add_to_toolbar=False)
         layers.addAction(action)
@@ -540,7 +540,7 @@ class DsgTools:
             icon_path,
             text=self.tr('Create Frame'),
             callback=self.createFrame,
-            parent=database,
+            parent=layers,
             add_to_menu=False,
             add_to_toolbar=False)
         layers.addAction(action)
