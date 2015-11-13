@@ -94,7 +94,9 @@ class DsgTools:
         self.dsgTools = None
         self.menuBar = self.iface.mainWindow().menuBar()
 
+        #QDockWidgets
         self.complexWindow = ComplexWindow(iface)
+        self.contourDock = None
 
         self.processManager = ProcessManager(iface)
 
@@ -367,16 +369,6 @@ class DsgTools:
             add_to_toolbar=False)
         vectorIndex.addAction(action)
 
-#         icon_path = ':/plugins/DsgTools/icons/server.png'
-#         action = self.add_action(
-#             icon_path,
-#             text=self.tr('Server Settings'),
-#             callback=self.configurateServers,
-#             parent=self.dsgTools,
-#             add_to_menu=False,
-#             add_to_toolbar=False)
-#         server.addAction(action)
-
         icon_path = ':/plugins/DsgTools/icons/server.png'
         action = self.add_action(
             icon_path,
@@ -386,16 +378,6 @@ class DsgTools:
             add_to_menu=False,
             add_to_toolbar=False)
         server.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/calccontour.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Assign Contour Values'),
-            callback=self.showCalcContour,
-            parent=vectortools,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        vectortools.addAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/histogram.png'
         action = self.add_action(
@@ -460,6 +442,7 @@ class DsgTools:
         #QToolButtons
         self.databaseButton = self.createToolButton(self.toolbar, u'DatabaseTools')
         self.layerButton = self.createToolButton(self.toolbar, u'LayerTools')
+        self.vectorButton = self.createToolButton(self.toolbar, u'VectorTools')
 
         icon_path = ':/plugins/DsgTools/icons/spatialite.png'
         action = self.add_action(
@@ -494,6 +477,18 @@ class DsgTools:
             add_to_toolbar=False)
         database.addAction(action)
         self.databaseButton.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/calccontour.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Assign Contour Values'),
+            callback=self.showCalcContour,
+            parent=vectortools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        vectortools.addAction(action)
+        self.vectorButton.addAction(action)
+        self.vectorButton.setDefaultAction(action)
 
         #User Permissions submenu
         permissions = self.addMenu(database, u'layers', self.tr('User Permissions Tools'),':/plugins/DsgTools/icons/profile.png')
@@ -626,8 +621,11 @@ class DsgTools:
             self.processManager.createInventoryProcess(parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, isOnlyGeo)
             
     def showCalcContour(self):
-        self.dock = CalcContour(self.iface)
-        self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.dock)
+        if self.contourDock:
+            self.iface.removeDockWidget(self.contourDock)
+            del self.contourDock
+        self.contourDock = CalcContour(self.iface)
+        self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.contourDock)
             
     def installModelsAndScripts(self):
         dlg = ModelsAndScriptsInstaller()
