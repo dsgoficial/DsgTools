@@ -38,13 +38,9 @@ class DsgLineTool(QgsMapTool):
         self.defineRubberBand()
         self.reset()
 
-    def __del__(self):
-        self.deactivate()
-
     def deactivate(self):
         self.canvas.scene().removeItem(self.rubberBand)
         super(DsgLineTool, self).deactivate()
-        self.deactivated.emit()
         
     def defineRubberBand(self):
         settings = QSettings()

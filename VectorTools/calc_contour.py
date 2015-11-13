@@ -60,9 +60,6 @@ class CalcContour(QtGui.QDockWidget, FORM_CLASS):
 
         QgsMapLayerRegistry.instance().layersAdded.connect(self.addLayers)
 
-    def __del__(self):
-        self.iface.mapCanvas().unsetMapTool(self.tool)
-
     def addLayers(self, layers):
         for layer in layers:
             if layer.type() == QgsMapLayer.VectorLayer:
