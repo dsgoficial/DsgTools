@@ -5,6 +5,7 @@
     <mapping directory="$PROJECT_DIR$/../AzimuthDistanceCalculator" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../DSGManagementTools" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../GridZoneGenerator" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../OSMDownloader" vcs="Git" />
     <mapping directory="$USER_HOME$/Documents/MyWing" vcs="" />
   </component>
 </project>

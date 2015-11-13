@@ -689,13 +689,6 @@ class DsgTools:
         if result:
             pass
 
-#     def configurateServers(self):
-#         self.dlg = ServerConfigurator(self.iface)
-#         self.dlg.show()
-#         result = self.dlg.exec_()
-#         if result:
-#             pass
-
     def viewServers(self):
         self.dlg = ViewServers(self.iface)
         self.dlg.show()
