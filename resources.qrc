@@ -22,5 +22,7 @@
         <file>icons/assignProfile.png</file>
         <file>icons/removeProfile.png</file>
         <file>icons/manageUserProfiles.png</file>
+        <file>icons/calccontour.png</file>
+        <file>icons/vectortools.png</file>
     </qresource>
 </RCC>

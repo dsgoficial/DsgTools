@@ -31,13 +31,13 @@ class SpatialQuery():
         
         self.populateIndex()
         
-    def populateIndex():
+    def populateIndex(self):
         #spatial index
         self.index = QgsSpatialIndex()
         for feat in self.reference.getFeatures():
             self.index.insertFeature(feat)
             
-    def getCandidates(bbox):
+    def getCandidates(self, bbox):
         ids = self.index.intersects(bbox)
         candidates = []
         for id in ids:
@@ -78,8 +78,10 @@ class SpatialQuery():
         first_value = first.attribute(self.attribute)
         fieldIndex = [i for i in range(len(self.reference.dataProvider().fields())) if self.reference.dataProvider().fields()[i].name() == self.attribute]
         
-        if not self.reference.startEditing():
+        if not self.reference.isEditable():
             return False
+        else:
+            self.reference.startEditing()
         for i in range(1, len(ordered)):
             value = first_value + pace*i
             feature = ordered[i][1]
@@ -88,6 +90,6 @@ class SpatialQuery():
             #attribute pair that will be changed
             attrs = {fieldIndex[0]:value}
             #actual update in the database
-            layer.dataProvider().changeAttributeValues({id:attrs})
+            self.reference.dataProvider().changeAttributeValues({id:attrs})
             
         return self.reference.commitChanges()

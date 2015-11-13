@@ -218,6 +218,7 @@ class DsgTools:
         database = self.addMenu(self.dsgTools, u'database', self.tr('Database Tools'),':/plugins/DsgTools/icons/database.png')
         layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/icons/layers.png')
         bdgex = self.addMenu(self.dsgTools, u'bdgex', self.tr('BDGEx'),':/plugins/DsgTools/icons/eb.png')
+        vectortools = self.addMenu(self.dsgTools, u'vectortools', self.tr('Vector Tools'),':/plugins/DsgTools/icons/vectortools.png')
         topocharts = self.addMenu(bdgex, u'topocharts', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
         coverageLyr = self.addMenu(bdgex, u'coverageLyr', self.tr('Coverage Layers'),':/plugins/DsgTools/icons/eb.png')
         indexes = self.addMenu(bdgex, u'indexes', self.tr('Product Indexes'),':/plugins/DsgTools/icons/eb.png')
@@ -330,7 +331,7 @@ class DsgTools:
             icon_path,
             text=self.tr('1:250,000'),
             callback=self.load250kVectorIndex,
-            parent=rasterIndex,
+            parent=vectorIndex,
             add_to_menu=False,
             add_to_toolbar=False)
         vectorIndex.addAction(action)
@@ -340,7 +341,7 @@ class DsgTools:
             icon_path,
             text=self.tr('1:100,000'),
             callback=self.load100kVectorIndex,
-            parent=rasterIndex,
+            parent=vectorIndex,
             add_to_menu=False,
             add_to_toolbar=False)
         vectorIndex.addAction(action)
@@ -350,7 +351,7 @@ class DsgTools:
             icon_path,
             text=self.tr('1:50,000'),
             callback=self.load50kVectorIndex,
-            parent=rasterIndex,
+            parent=vectorIndex,
             add_to_menu=False,
             add_to_toolbar=False)
         vectorIndex.addAction(action)
@@ -360,7 +361,7 @@ class DsgTools:
             icon_path,
             text=self.tr('1:25,000'),
             callback=self.load25kVectorIndex,
-            parent=rasterIndex,
+            parent=vectorIndex,
             add_to_menu=False,
             add_to_toolbar=False)
         vectorIndex.addAction(action)
@@ -380,10 +381,20 @@ class DsgTools:
             icon_path,
             text=self.tr('View Server'),
             callback=self.viewServers,
-            parent=self.dsgTools,
+            parent=server,
             add_to_menu=False,
             add_to_toolbar=False)
         server.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/calccontour.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Assign Contour Values'),
+            callback=self.showCalcContour,
+            parent=vectortools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        vectortools.addAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/histogram.png'
         action = self.add_action(
@@ -612,6 +623,9 @@ class DsgTools:
             (parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, isOnlyGeo) = dlg.getParameters()
             #creating the separate process
             self.processManager.createInventoryProcess(parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, isOnlyGeo)
+            
+    def showCalcContour(self):
+        pass
             
     def installModelsAndScripts(self):
         dlg = ModelsAndScriptsInstaller()
