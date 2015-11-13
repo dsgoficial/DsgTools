@@ -22,61 +22,101 @@
 """
 import os
 
-from PyQt4.QtCore import Qt, QSettings
-from PyQt4.QtGui import QColor
-from qgis.gui import QgsMapTool, QgsRubberBand
+# Qt imports
+from PyQt4 import QtGui, uic
+from PyQt4.QtCore import pyqtSlot
+from PyQt4.QtGui import QMessageBox
 
-class CalcContour(QgsMapTool):
-    def __init__(self, canvas):
-        super(CalcContour, self).__init__(canvas)
-        
-        self.canvas = canvas
-        self.active = False
-        self.defineRubberBand()
-        self.reset()
-        
-    def defineRubberBand(self):
-        settings = QSettings()
-        myRed = int(settings.value( "/qgis/default_measure_color_red", 222 ))
-        myGreen = int(settings.value( "/qgis/default_measure_color_green", 155 ))
-        myBlue = int(settings.value( "/qgis/default_measure_color_blue", 67 ))
+# QGIS imports
+from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry
 
-        self.rubberBand = QgsRubberBand(self.canvas)
-        self.rubberBand.setColor( QColor( myRed, myGreen, myBlue, 100 ) );
-        self.rubberBand.setWidth( 3 );        
-        
-    def reset(self):
-        self.isEmittingPoint = False
-        self.rubberBand.reset(QGis.Line)
+#DSGTools imports
+from DsgTools.VectorTools.dsg_line_tool import DsgLineTool
+from DsgTools.VectorTools.contour_tool import ContourTool
 
-    def canvasPressEvent(self, e):
-        if self.isEmittingPoint:
-            point = self.snapPoint(e.pos())
-            self.rubberBand.addPoint(point, True)
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'calc_contour.ui'))
+
+class CalcContour(QtGui.QDockWidget, FORM_CLASS):
+    def __init__(self, iface, parent = None):
+        """Constructor."""
+        super(CalcContour, self).__init__(parent)
+        # Set up the user interface from Designer.
+        # After setupUI you can access any designer object by doing
+        # self.<objectname>, and you can use autoconnect slots - see
+        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
+        # #widgets-and-dialogs-with-auto-connect
+        self.setupUi(self)
+        
+        self.iface = iface
+        
+        self.populateLayers()
+
+        self.tool = DsgLineTool(iface.mapCanvas())
+        self.tool.lineCreated.connect(self.updateLayer)
+        iface.mapCanvas().setMapTool(self.tool)
+
+        self.contourTool = ContourTool()
+
+        QgsMapLayerRegistry.instance().layersAdded.connect(self.addLayers)
+
+    def __del__(self):
+        self.iface.mapCanvas().unsetMapTool(self.tool)
+
+    def addLayers(self, layers):
+        for layer in layers:
+            if layer.type() == QgsMapLayer.VectorLayer:
+                self.layerCombo.addItem(layer.name())
+
+    def populateLayers(self):
+        self.layerCombo.clear()
+        
+        self.layerCombo.addItem(self.tr('Select a Layer'))
+        
+        layers = self.iface.mapCanvas().layers()
+        for layer in layers:
+            if layer.type() == QgsMapLayer.VectorLayer:
+                self.layerCombo.addItem(layer.name())
+
+    def getLayer(self):
+        currentLayerName = self.layerCombo.currentText()
+
+        layers = self.iface.mapCanvas().layers()
+        for layer in layers:
+            if layer.name() == currentLayerName:
+                return layer
+
+        return None
+
+    @pyqtSlot(QgsGeometry)
+    def updateLayer(self, geom):
+        if self.layerCombo.currentIndex() == 0:
+            QMessageBox.information(None, self.tr('Information'), self.tr('A layer must be selected!'))
+            return
+
+        if self.attributeCombo.currentIndex() == 0:
+            QMessageBox.information(None, self.tr('Information'), self.tr('A field must be selected!'))
+            return
+
+        if self.contourTool.assignValues(self.attributeCombo.currentText(), self.spinBox.value(), geom):
+            QMessageBox.information(None, self.tr('Information'), self.tr('Layer successfully updated!'))
         else:
-            self.reset()
-
-        self.isEmittingPoint = True
+            QMessageBox.critical(None, self.tr('Critical'), self.tr('Error!'))
         
-    def canvasReleaseEvent(self, e):
-        point = self.snapPoint(e.pos())
-        if e.button() == Qt.RightButton:
-            self.isEmittingPoint = False
-        elif e.button() == Qt.LeftButton:
-            self.isEmittingPoint = True
-            
-        self.rubberBand.addPoint(point, True)
-
-    def canvasMoveEvent(self, e):
-        if not self.isEmittingPoint:
+    @pyqtSlot(int)
+    def on_layerCombo_currentIndexChanged(self):
+        if self.layerCombo.currentIndex() == 0:
             return
         
-        point = self.snapPoint(e.pos())
-        self.rubberBand.movePoint(point)
-        
-    def snapPoint(self, p):
-        m = self.canvas.snappingUtils().snapToMap(p)
-        if m.isValid():
-            return m.point()
-        else:
-            return self.canvas.getCoordinateTransform().toMapCoordinates(p)  
+        currentLayer = self.getLayer()
+        if not currentLayer:
+            return
+
+        #updating the reference layer
+        self.contourTool.updateReference(self.getLayer())
+
+        fields = currentLayer.pendingFields()
+        field_names = [field.name() for field in fields]
+        self.attributeCombo.clear()
+        self.attributeCombo.addItem('Select a field')
+        self.attributeCombo.addItems(field_names)

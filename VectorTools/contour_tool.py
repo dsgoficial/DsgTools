@@ -20,17 +20,14 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
 
-from qgis.core import QgsFeatureRequest, QgsVectorLayer, QgsGeometry, QGis
+from qgis.core import QgsFeatureRequest, QgsGeometry, QGis, QgsSpatialIndex
 
-class SpatialQuery():
-    def __init__(self, referenceLayer, attribute):
+class ContourTool():
+    def updateReference(self, referenceLayer):
         self.reference = referenceLayer
-        self.attribute = attribute
-        
         self.populateIndex()
-        
+
     def populateIndex(self):
         #spatial index
         self.index = QgsSpatialIndex()
@@ -38,13 +35,15 @@ class SpatialQuery():
             self.index.insertFeature(feat)
             
     def getCandidates(self, bbox):
+        #features that might satisfy the query
         ids = self.index.intersects(bbox)
         candidates = []
         for id in ids:
             candidates.append(self.reference.getFeatures(QgsFeatureRequest().setFilterFid(id)).next())
         return candidates            
             
-    def makeQuery(self, geom):
+    def getFeatures(self, geom):
+        #features that satisfy the query
         ret = []
         
         rect = geom.boundingBox()
@@ -60,10 +59,12 @@ class SpatialQuery():
         return item[0]
                 
     def sortFeatures(self, geom, features):
+        #sorting by distance
         distances = []
         
         firstPoint = geom.asPolyline()[0]
         pointGeom = QgsGeometry.fromPoint(firstPoint)
+
         for intersected in features:
             intersection = geom.intersection(intersected.geometry())
             if intersection.type() == QGis.Point:
@@ -71,17 +72,23 @@ class SpatialQuery():
                 distances.append((distance, intersected))
         
         ordered = sorted(distances, key=self.getKey)
+        #returning a list of tuples (distance, feature)
         return ordered
     
-    def assignValues(self, pace, ordered):
-        first = ordered[0][1]
-        first_value = first.attribute(self.attribute)
-        fieldIndex = [i for i in range(len(self.reference.dataProvider().fields())) if self.reference.dataProvider().fields()[i].name() == self.attribute]
-        
-        if not self.reference.isEditable():
-            return False
-        else:
-            self.reference.startEditing()
+    def assignValues(self, attribute, pace, geom):
+        features = self.getFeatures(geom)
+        ordered = self.sortFeatures(geom, features)
+
+        #the first feature must have the initial value already assigned
+        first_feature = ordered[0][1]
+        #getting the initial value
+        first_value = first_feature.attribute(attribute)
+
+        #getting the filed index that must be updated
+        fieldIndex = [i for i in range(len(self.reference.dataProvider().fields())) if self.reference.dataProvider().fields()[i].name() == attribute]
+
+
+        self.reference.startEditing()
         for i in range(1, len(ordered)):
             value = first_value + pace*i
             feature = ordered[i][1]
@@ -91,5 +98,4 @@ class SpatialQuery():
             attrs = {fieldIndex[0]:value}
             #actual update in the database
             self.reference.dataProvider().changeAttributeValues({id:attrs})
-            
         return self.reference.commitChanges()

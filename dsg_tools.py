@@ -50,6 +50,7 @@ from DsgTools.UserTools.assign_profiles import AssignProfiles
 from DsgTools.UserTools.user_profiles import ManageUserProfiles
 from DsgTools.ConversionTools.convert_database import ConvertDatabase
 from DsgTools.aboutdialog import AboutDialog
+from DsgTools.VectorTools.calc_contour import CalcContour
 from qgis.utils import showPluginHelp
 
 class DsgTools:
@@ -625,7 +626,8 @@ class DsgTools:
             self.processManager.createInventoryProcess(parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, isOnlyGeo)
             
     def showCalcContour(self):
-        pass
+        self.dock = CalcContour(self.iface)
+        self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.dock)
             
     def installModelsAndScripts(self):
         dlg = ModelsAndScriptsInstaller()
