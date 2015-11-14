@@ -59,6 +59,7 @@ class CalcContour(QtGui.QDockWidget, FORM_CLASS):
         self.contourTool = ContourTool()
 
         QgsMapLayerRegistry.instance().layersAdded.connect(self.addLayers)
+        QgsMapLayerRegistry.instance().layersRemoved.connect(self.populateLayers)
 
     def addLayers(self, layers):
         for layer in layers:
