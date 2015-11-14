@@ -49,15 +49,19 @@ class CalcContour(QtGui.QDockWidget, FORM_CLASS):
         self.setupUi(self)
         
         self.iface = iface
-        
+
+        #insert layers into the combobox
         self.populateLayers()
 
+        #instance of the QgsMapTool derived class (line tool)
         self.tool = DsgLineTool(iface.mapCanvas())
         self.tool.lineCreated.connect(self.updateLayer)
         iface.mapCanvas().setMapTool(self.tool)
 
+        #instance of the class responsible to update layer features
         self.contourTool = ContourTool()
 
+        #Connecting slot to deal with adition/removal of layers
         QgsMapLayerRegistry.instance().layersAdded.connect(self.addLayers)
         QgsMapLayerRegistry.instance().layersRemoved.connect(self.populateLayers)
 
@@ -96,6 +100,7 @@ class CalcContour(QtGui.QDockWidget, FORM_CLASS):
             QMessageBox.information(None, self.tr('Information'), self.tr('A field must be selected!'))
             return
 
+        #canvas crs to be used in case a reprojection is needed
         canvasCrs = self.iface.mapCanvas().mapRenderer().destinationCrs()
         if self.contourTool.assignValues(self.attributeCombo.currentText(), self.spinBox.value(), geom, canvasCrs):
             QMessageBox.information(None, self.tr('Information'), self.tr('Layer successfully updated!'))
