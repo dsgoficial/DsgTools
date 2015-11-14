@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-from qgis.core import QgsFeatureRequest, QgsGeometry, QGis, QgsSpatialIndex
+from qgis.core import QgsFeatureRequest, QgsGeometry, QGis, QgsSpatialIndex, QgsCoordinateTransform
 
 class ContourTool():
     def updateReference(self, referenceLayer):
@@ -74,8 +74,15 @@ class ContourTool():
         ordered = sorted(distances, key=self.getKey)
         #returning a list of tuples (distance, feature)
         return ordered
+
+    def reproject(self, geom, canvasCrs):
+        destCrs = self.reference.crs()
+        if canvasCrs.authid() != destCrs.authid():
+            coordinateTransformer = QgsCoordinateTransform(canvasCrs, destCrs)
+            geom.transform(coordinateTransformer)
     
-    def assignValues(self, attribute, pace, geom):
+    def assignValues(self, attribute, pace, geom, canvasCrs):
+        self.reproject(geom, canvasCrs)
         features = self.getFeatures(geom)
         ordered = self.sortFeatures(geom, features)
 

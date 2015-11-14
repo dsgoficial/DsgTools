@@ -96,7 +96,8 @@ class CalcContour(QtGui.QDockWidget, FORM_CLASS):
             QMessageBox.information(None, self.tr('Information'), self.tr('A field must be selected!'))
             return
 
-        if self.contourTool.assignValues(self.attributeCombo.currentText(), self.spinBox.value(), geom):
+        canvasCrs = self.iface.mapCanvas().mapRenderer().destinationCrs()
+        if self.contourTool.assignValues(self.attributeCombo.currentText(), self.spinBox.value(), geom, canvasCrs):
             QMessageBox.information(None, self.tr('Information'), self.tr('Layer successfully updated!'))
         else:
             QMessageBox.critical(None, self.tr('Critical'), self.tr('Error!'))
