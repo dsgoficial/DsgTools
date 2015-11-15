@@ -34,7 +34,6 @@ class DsgLineTool(QgsMapTool):
         super(DsgLineTool, self).__init__(canvas)
         
         self.canvas = canvas
-        self.active = False
         self.defineRubberBand()
         self.reset()
 

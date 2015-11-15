@@ -623,7 +623,9 @@ class DsgTools:
     def showCalcContour(self):
         if self.contourDock:
             self.iface.removeDockWidget(self.contourDock)
-        self.contourDock = CalcContour(self.iface)
+        else:
+            self.contourDock = CalcContour(self.iface)
+        self.contourDock.activateTool()
         self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.contourDock)
             
     def installModelsAndScripts(self):

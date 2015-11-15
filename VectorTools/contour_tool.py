@@ -29,6 +29,7 @@ class ContourTool():
         self.populateIndex()
 
     def populateIndex(self):
+        print 'build'
         #spatial index
         self.index = QgsSpatialIndex()
         for feat in self.reference.getFeatures():
