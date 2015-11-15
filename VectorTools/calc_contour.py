@@ -53,6 +53,10 @@ class CalcContour(QtGui.QDockWidget, FORM_CLASS):
         #insert layers into the combobox
         self.populateLayers()
 
+        #instance of the QgsMapTool derived class (line tool)
+        self.tool = DsgLineTool(self.iface.mapCanvas())
+        self.tool.lineCreated.connect(self.updateLayer)
+
         #instance of the class responsible to update layer features
         self.contourTool = ContourTool()
 
@@ -61,9 +65,7 @@ class CalcContour(QtGui.QDockWidget, FORM_CLASS):
         QgsMapLayerRegistry.instance().layersRemoved.connect(self.populateLayers)
 
     def activateTool(self):
-        #instance of the QgsMapTool derived class (line tool)
-        self.tool = DsgLineTool(self.iface.mapCanvas())
-        self.tool.lineCreated.connect(self.updateLayer)
+        self.tool.reset()
         self.iface.mapCanvas().setMapTool(self.tool)
 
     def addLayers(self, layers):

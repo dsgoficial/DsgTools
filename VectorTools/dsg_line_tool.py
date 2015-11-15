@@ -34,7 +34,7 @@ class DsgLineTool(QgsMapTool):
         super(DsgLineTool, self).__init__(canvas)
         
         self.canvas = canvas
-        self.defineRubberBand()
+        self.rubberBand = None
         self.reset()
 
     def deactivate(self):
@@ -52,8 +52,10 @@ class DsgLineTool(QgsMapTool):
         self.rubberBand.setWidth(3)
         
     def reset(self):
+        if self.rubberBand:
+            self.rubberBand.reset(QGis.Line)
         self.isEmittingPoint = False
-        self.rubberBand.reset(QGis.Line)
+        self.defineRubberBand()
 
     def canvasPressEvent(self, e):
         if self.isEmittingPoint:
