@@ -336,7 +336,7 @@ class AbstractDb(QObject):
                     iter=self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap)
             if iter == -1:
                 status = False
-                self.signals.updateLog.emit('{:<50}'.format(self.tr('Error on layer ')+inputLyr.GetName()+self.tr('. Conversion not performed.')+'\n'))
+                self.signals.updateLog.emit('{:<50}'.format(self.tr('Error on layer ')+inputLyr+self.tr('. Conversion not performed.')+'\n'))
                 return status
             diff = outputLayer.GetFeatureCount()-ini
             if iter == diff:
@@ -366,9 +366,6 @@ class AbstractDb(QObject):
         inputLayerList = self.listClassesWithElementsFromDatabase()
         self.buildReadSummary(inputOgrDb,outputAbstractDb,inputLayerList)
         return (inputOgrDb, outputOgrDb, fieldMap, inputLayerList)
-    
-    def translateDSWithDataFix(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, invalidated):
-        return None
 
     def translateLayerWithDataFix(self, inputLayer, inputLayerName, outputLayer, outputFileName, layerPanMap, invalidated, defaults={}, translateValues={}):
         '''casos e tratamentos:
@@ -404,10 +401,19 @@ class AbstractDb(QObject):
                             newFeat.SetFID(uuid4())
                         #Case 3
                         for j in range(inputLayer.GetLayerDefn().GetFieldCount()):
-                            if inputLayerName in invalidated['notInDomain'].keys():
-                                if inputId in invalidated['notInDomain'][inputLayerName].keys():
-                                    if outputLayer.GetLayerDefn().GetFieldDefn(layerPanMap[j]).GetName() in invalidated['notInDomain'][inputLayerName][inputId].keys(): 
-                                        newFeat.UnsetField(j)
+                            if layerPanMap[j] <> -1:
+                                if inputLayerName in invalidated['notInDomain'].keys():
+                                    if inputId in invalidated['notInDomain'][inputLayerName].keys():
+                                        if outputLayer.GetLayerDefn().GetFieldDefn(layerPanMap[j]).GetName() in invalidated['notInDomain'][inputLayerName][inputId].keys():
+                                            newFeat.UnsetField(layerPanMap[j])
+                                if inputLayerName in invalidated['nullAttribute'].keys():
+                                    if inputId in invalidated['nullAttribute'][inputLayerName].keys():
+                                        if outputLayer.GetLayerDefn().GetFieldDefn(layerPanMap[j]).GetName() in invalidated['nullAttribute'][inputLayerName][inputId].keys():
+                                            if outputLayer.GetLayerDefn().GetFieldDefn(layerPanMap[j]).GetTypeName() == 'String':
+                                                newFeat.SetField(layerPanMap[j],'-9999')
+                                            if outputLayer.GetLayerDefn().GetFieldDefn(layerPanMap[j]).GetTypeName() == 'Integer':
+                                                newFeat.SetField(layerPanMap[j],-9999)
+                                    
                         out=outputLayer.CreateFeature(newFeat)
                         if out <> 0:
                             outputLayer.RollbackTransaction()

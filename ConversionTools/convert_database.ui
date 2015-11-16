@@ -35,7 +35,7 @@
    <item row="4" column="0">
     <widget class="QRadioButton" name="allDataRadioButton">
      <property name="text">
-      <string>Only convert if all data is compatible (don't touch my data!)</string>
+      <string>Only convert if all data is compatible</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -45,7 +45,7 @@
    <item row="5" column="0">
     <widget class="QRadioButton" name="fixDataRadioButton">
      <property name="text">
-      <string>Convert fixing data (Stop! HAMMER TIME!!!)</string>
+      <string>Convert fixing data (Data not compatible will be changed to its default value and not null data in a not null field will be changed to -9999)</string>
      </property>
     </widget>
    </item>

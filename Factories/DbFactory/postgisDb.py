@@ -228,7 +228,6 @@ class PostgisDb(AbstractDb):
         className = '_'.join(lyr.split('.')[1::])
         return (schema,className)
 
-    #TODO: treat each case (hammer time and don't touch my data)
     def convertToPostgis(self, outputAbstractDb,type=None):
         return None
     
@@ -237,5 +236,3 @@ class PostgisDb(AbstractDb):
         status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList)
         return status
     
-    def translateDSWithDataFix(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, invalidated):
-        return None

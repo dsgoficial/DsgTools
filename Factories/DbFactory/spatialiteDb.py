@@ -167,11 +167,11 @@ class SpatialiteDb(AbstractDb):
                             if outputClass in domainDict.keys():
                                 if inputAttrList[i] in notNullDict[outputClass] and inputAttrList[i] not in domainDict[outputClass].keys():
                                     if (value == None) and (not nullLine) and (inputAttrList[i] not in domainDict[outputClass].keys()):
-                                        invalidated = self.utils.buildOneNestedDict(invalidated, ['nullAttribute',inputClass,id,inputAttrList[i]], value)             
+                                        invalidated = self.utils.buildNestedDict(invalidated, ['nullAttribute',inputClass,id,inputAttrList[i]], value)             
                             else:
                                 if inputAttrList[i] in notNullDict[outputClass]:
                                     if (value == None) and (not nullLine) and (inputAttrList[i] not in domainDict[outputClass].keys()):
-                                        invalidated = self.utils.buildOneNestedDict(invalidated, ['nullAttribute',inputClass,id,inputAttrList[i]], value)
+                                        invalidated = self.utils.buildNestedDict(invalidated, ['nullAttribute',inputClass,id,inputAttrList[i]], value)
                         if outputClass in domainDict.keys():
                             if (inputAttrList[i] not in ['geom','GEOMETRY','id','OGC_FID'] and schema <> 'complexos') or (schema == 'complexos' and inputAttrList[i] <> 'id'):
                                 if inputAttrList[i] not in outputdbStructure[outputClass].keys():
@@ -198,7 +198,6 @@ class SpatialiteDb(AbstractDb):
         className = '_'.join(lyr.split('_')[1::])
         return (schema,className)
     
-    #TODO: treat each case (hammer time and don't touch my data)
     def convertToPostgis(self, outputAbstractDb,type=None):
         (inputOgrDb, outputOgrDb, fieldMap, inputLayerList) = self.prepareForConversion(outputAbstractDb)
         invalidated = self.validateWithOutputDatabaseSchema(outputAbstractDb)
@@ -222,8 +221,6 @@ class SpatialiteDb(AbstractDb):
     def convertToSpatialite(self, outputAbstractDb,type=None):
         return None   
     
-    def translateDSWithDataFix(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, invalidated):
-        return None
     
     def getDatabaseVersion(self):
         self.checkAndOpenDb()

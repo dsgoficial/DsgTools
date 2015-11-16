@@ -52,7 +52,8 @@ class Utils:
                         if item not in output.keys():
                             output[item] = []
                         for i in value:
-                            output[item].append(i)
+                            if i not in output[item]:
+                                output[item].append(i)
                         output[item].extend(self.mergeDict(value, dictionary2.pop(item)))
                     else:
                         output[item] = self.mergeDict(value, dictionary2.pop(item))
@@ -84,7 +85,8 @@ class Utils:
             if type(value) == list:
                 inputDict[keyList[0]]=[]
                 for i in value:
-                    inputDict[keyList[0]].append(i)
+                    if i not in inputDict[keyList[0]]:
+                        inputDict[keyList[0]].append(i)
             else:
                 inputDict[keyList[0]]=value
             return inputDict
