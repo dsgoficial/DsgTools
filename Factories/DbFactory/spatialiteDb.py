@@ -199,7 +199,7 @@ class SpatialiteDb(AbstractDb):
         return (schema,className)
     
     def convertToPostgis(self, outputAbstractDb,type=None):
-        (inputOgrDb, outputOgrDb, fieldMap, inputLayerList) = self.prepareForConversion(outputAbstractDb)
+        (inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict) = self.prepareForConversion(outputAbstractDb)
         invalidated = self.validateWithOutputDatabaseSchema(outputAbstractDb)
         hasErrors = self.makeValidationSummary(invalidated)
         if type == 'untouchedData':
@@ -207,14 +207,14 @@ class SpatialiteDb(AbstractDb):
                 self.signals.updateLog.emit(self.tr('\n\n\nConversion not perfomed due to validation errors! Check log above for more information.'))
                 return False
             else:
-                status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList)
+                status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict)
                 return status
         if type == 'fixData':
             if hasErrors:
-                status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, invalidated)
+                status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, invalidated, errorDict)
                 return status
             else:
-                status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList)
+                status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict)
                 return status
         return None
     

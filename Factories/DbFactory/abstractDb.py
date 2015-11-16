@@ -280,25 +280,26 @@ class AbstractDb(QObject):
                 panMap.append(-1)
         return panMap
     
-    def translateLayer(self, inputLayer, inputLayerName, outputLayer, outputFileName, layerPanMap, defaults={}, translateValues={}):
+    def translateLayer(self, inputLayer, inputLayerName, outputLayer, outputFileName, layerPanMap, errorDict, defaults={}, translateValues={}):
         inputLayer.ResetReading()
         initialCount = outputLayer.GetFeatureCount()
         count = 0
         feat=inputLayer.GetNextFeature()
         #for feat in inputLayer:
         while feat:
+            inputId = feat.GetFID()
             newFeat=ogr.Feature(outputLayer.GetLayerDefn())
             newFeat.SetFromWithMap(feat,True,layerPanMap)
             out=outputLayer.CreateFeature(newFeat)
             if out <> 0:
-                outputLayer.RollbackTransaction()
-                return -1
-            count += 1
+                self.utils.buildNestedDict(errorDict, [inputLayerName], [inputId])
+            else:
+                count += 1
             feat=inputLayer.GetNextFeature()
             
         return count
     
-    def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList,invalidated=None): 
+    def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList,invalidated=None, errorDict): 
         self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Write Summary')))
         self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
         status = False
@@ -318,7 +319,7 @@ class AbstractDb(QObject):
             ini = outputLayer.GetFeatureCount()
             outputLayer.StartTransaction()
             if invalidated == None:
-                iter=self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap)
+                iter=self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap, errorDict)
             else:
                 needsFix = False
                 for keyDict in invalidated.values():
@@ -331,9 +332,9 @@ class AbstractDb(QObject):
                                 needsFix = True
                                 break
                 if needsFix:
-                    iter = self.translateLayerWithDataFix(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap, invalidated)
+                    iter = self.translateLayerWithDataFix(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap, invalidated, errorDict)
                 else:
-                    iter=self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap)
+                    iter=self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap, errorDict)
             if iter == -1:
                 status = False
                 self.signals.updateLog.emit('{:<50}'.format(self.tr('Error on layer ')+inputLyr+self.tr('. Conversion not performed.')+'\n'))
@@ -364,10 +365,11 @@ class AbstractDb(QObject):
         inputOgrDb = self.buildOgrDatabase()
         outputOgrDb = outputAbstractDb.buildOgrDatabase()
         inputLayerList = self.listClassesWithElementsFromDatabase()
+        errorDict = dict()
         self.buildReadSummary(inputOgrDb,outputAbstractDb,inputLayerList)
-        return (inputOgrDb, outputOgrDb, fieldMap, inputLayerList)
+        return (inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict)
 
-    def translateLayerWithDataFix(self, inputLayer, inputLayerName, outputLayer, outputFileName, layerPanMap, invalidated, defaults={}, translateValues={}):
+    def translateLayerWithDataFix(self, inputLayer, inputLayerName, outputLayer, outputFileName, layerPanMap, invalidated, errorDict, defaults={}, translateValues={}):
         '''casos e tratamentos:
         1. nullLine: os atributos devem ser varridos e, caso seja linha nula, ignorar o envio
         2. nullPk: caso seja complexo, gerar uma chave
@@ -416,9 +418,9 @@ class AbstractDb(QObject):
                                     
                         out=outputLayer.CreateFeature(newFeat)
                         if out <> 0:
-                            outputLayer.RollbackTransaction()
-                            return -1
-                        count += 1
+                            self.utils.buildNestedDict(errorDict, [inputLayerName], [inputId])
+                        else:
+                            count += 1
                 feat=inputLayer.GetNextFeature()
             return count
         else:
@@ -447,3 +449,6 @@ class AbstractDb(QObject):
         for i in range(layerDef.GetFieldCount()):
             ogrDict[i] = layerDef.GetFieldDefn(i).GetName() 
         return ogrDict
+    
+    def writeErrorLog(self,errorDict):
+        return None
