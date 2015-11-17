@@ -299,7 +299,7 @@ class AbstractDb(QObject):
             
         return count
     
-    def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList,invalidated=None, errorDict): 
+    def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList, errorDict,invalidated=None): 
         self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Write Summary')))
         self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
         status = False

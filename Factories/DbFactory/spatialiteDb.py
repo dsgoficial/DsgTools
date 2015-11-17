@@ -211,7 +211,7 @@ class SpatialiteDb(AbstractDb):
                 return status
         if type == 'fixData':
             if hasErrors:
-                status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, invalidated, errorDict)
+                status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict, invalidated)
                 return status
             else:
                 status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict)
