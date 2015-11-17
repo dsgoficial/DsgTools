@@ -345,6 +345,7 @@ class AbstractDb(QObject):
             else:
                 status = False
             self.signals.updateLog.emit('{:<50}'.format(str(outputFileName))+str(diff)+'\n')
+        self.writeErrorLog(errorDict)
         outputDS.Destroy()
         return status
     
@@ -451,4 +452,11 @@ class AbstractDb(QObject):
         return ogrDict
     
     def writeErrorLog(self,errorDict):
+        errorClasses = errorDict.keys()
+        if len(errorClasses)>0:
+            self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Features not converted')))
+            self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Feature id\n\n'))
+            for cl in errorClasses:
+                for id in errorDict[cl]:
+                    self.signals.updateLog.emit('\n\n'+'{:<50}'.format(cl+str(id)))
         return None
