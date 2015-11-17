@@ -24,7 +24,11 @@
 					UserTools/profile_editor.py \
 					UserTools/user_profiles.py \
 					UserTools/alter_user_password.py \
-					UserTools/create_user.py
+					UserTools/create_user.py \
+					VectorTools/calc_contour.py \
+					VectorTools/contour_tool.py \
+					VectorTools/dsg_line_tool.py
+					
 
  FORMS           =	ComplexTools/complexWindow_base.ui \
  					ComplexTools/ui_manageComplex.ui \
@@ -46,7 +50,8 @@
 					UserTools/profile_editor.ui \
 					UserTools/user_profiles.ui \
 					UserTools/alter_user_password.ui \
-					UserTools/create_user.ui
+					UserTools/create_user.ui \
+					VectorTools/calc_contour.ui
 
  TRANSLATIONS    = i18n/DsgTools_pt.ts
 

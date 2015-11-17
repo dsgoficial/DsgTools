@@ -167,6 +167,44 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>CalcContour</name>
+    <message>
+        <location filename="VectorTools/calc_contour.py" line="79"/>
+        <source>Select a Layer</source>
+        <translation>Selecione uma camada</translation>
+    </message>
+    <message>
+        <location filename="VectorTools/calc_contour.py" line="109"/>
+        <source>Information</source>
+        <translation>Informação</translation>
+    </message>
+    <message>
+        <location filename="VectorTools/calc_contour.py" line="99"/>
+        <source>A layer must be selected!</source>
+        <translation>Uma camada deve ser selecionada!</translation>
+    </message>
+    <message>
+        <location filename="VectorTools/calc_contour.py" line="103"/>
+        <source>A field must be selected!</source>
+        <translation>Um campo deve ser selecionado!</translation>
+    </message>
+    <message>
+        <location filename="VectorTools/calc_contour.py" line="109"/>
+        <source>Layer successfully updated!</source>
+        <translation>Camada atualizada com sucesso!</translation>
+    </message>
+    <message>
+        <location filename="VectorTools/calc_contour.py" line="111"/>
+        <source>Critical</source>
+        <translation>Crítico</translation>
+    </message>
+    <message>
+        <location filename="VectorTools/calc_contour.py" line="111"/>
+        <source>Error!</source>
+        <translation>Erro!</translation>
+    </message>
+</context>
+<context>
     <name>ComplexWindow</name>
     <message>
         <location filename="ComplexTools/complexWindow.py" line="123"/>
@@ -1147,6 +1185,26 @@ p, li { white-space: pre-wrap; }
         <source>Value</source>
         <translation>Valor</translation>
     </message>
+    <message>
+        <location filename="VectorTools/calc_contour.ui" line="14"/>
+        <source>Contour Settings</source>
+        <translation>Ajustes de Relevo</translation>
+    </message>
+    <message>
+        <location filename="VectorTools/calc_contour.ui" line="21"/>
+        <source>Layer:</source>
+        <translation>Camada:</translation>
+    </message>
+    <message>
+        <location filename="VectorTools/calc_contour.ui" line="44"/>
+        <source>Field:</source>
+        <translation>Campo:</translation>
+    </message>
+    <message>
+        <location filename="VectorTools/calc_contour.ui" line="67"/>
+        <source>Pace:</source>
+        <translation>Espaçamento:</translation>
+    </message>
 </context>
 <context>
     <name>DpiMessages</name>
@@ -1179,177 +1237,177 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DsgTools</name>
     <message>
-        <location filename="dsg_tools.py" line="547"/>
+        <location filename="dsg_tools.py" line="554"/>
         <source>&amp;DSG Tools</source>
         <translation>&amp;Ferramentas DSG</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="212"/>
+        <location filename="dsg_tools.py" line="215"/>
         <source>DSG Tools</source>
         <translation>Ferramentas DSG</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="217"/>
+        <location filename="dsg_tools.py" line="220"/>
         <source>Server Catalog</source>
         <translation>Catálogo de Servidores</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="218"/>
+        <location filename="dsg_tools.py" line="221"/>
         <source>Database Tools</source>
         <translation>Ferramentas de BD</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="219"/>
+        <location filename="dsg_tools.py" line="222"/>
         <source>Layer Tools</source>
         <translation>Ferramentas de Camadas</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="429"/>
+        <location filename="dsg_tools.py" line="423"/>
         <source>About</source>
         <translation>Sobre</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="453"/>
+        <location filename="dsg_tools.py" line="448"/>
         <source>Create Spatialite</source>
         <translation>Criar Spatialite</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="465"/>
+        <location filename="dsg_tools.py" line="460"/>
         <source>Create PostGIS</source>
         <translation>Criar PostGIS</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="509"/>
+        <location filename="dsg_tools.py" line="516"/>
         <source>Load by Category</source>
         <translation>Carregar por Categoria</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="521"/>
+        <location filename="dsg_tools.py" line="528"/>
         <source>Load by Class</source>
         <translation>Carregar por Classe</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="532"/>
+        <location filename="dsg_tools.py" line="539"/>
         <source>Create Frame</source>
         <translation>Criar Moldura</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="389"/>
+        <location filename="dsg_tools.py" line="383"/>
         <source>Image tools</source>
         <translation>Ferramentas para Imagens</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="439"/>
+        <location filename="dsg_tools.py" line="433"/>
         <source>Help</source>
         <translation>Ajuda</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="220"/>
+        <location filename="dsg_tools.py" line="223"/>
         <source>BDGEx</source>
         <translation>BDGEx</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="223"/>
+        <location filename="dsg_tools.py" line="227"/>
         <source>Product Indexes</source>
         <translation>Índices de Produtos</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="225"/>
+        <location filename="dsg_tools.py" line="229"/>
         <source>Vectorial Charts</source>
         <translation>Cartas Vetoriais</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="329"/>
+        <location filename="dsg_tools.py" line="333"/>
         <source>1:250,000</source>
         <translation>1:250.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="339"/>
+        <location filename="dsg_tools.py" line="343"/>
         <source>1:100,000</source>
         <translation>1:100.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="349"/>
+        <location filename="dsg_tools.py" line="353"/>
         <source>1:50,000</source>
         <translation>1:50.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="359"/>
+        <location filename="dsg_tools.py" line="363"/>
         <source>1:25,000</source>
         <translation>1:25.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="224"/>
+        <location filename="dsg_tools.py" line="228"/>
         <source>Topographic Charts</source>
         <translation>Cartas Topográficas</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="731"/>
+        <location filename="dsg_tools.py" line="739"/>
         <source>1:250k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="735"/>
+        <location filename="dsg_tools.py" line="743"/>
         <source>1:100k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="739"/>
+        <location filename="dsg_tools.py" line="747"/>
         <source>1:50k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="743"/>
+        <location filename="dsg_tools.py" line="751"/>
         <source>1:25k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:25k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="747"/>
+        <location filename="dsg_tools.py" line="755"/>
         <source>1:250k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="751"/>
+        <location filename="dsg_tools.py" line="759"/>
         <source>1:100k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="755"/>
+        <location filename="dsg_tools.py" line="763"/>
         <source>1:50k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="759"/>
+        <location filename="dsg_tools.py" line="767"/>
         <source>1:25k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:25k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="379"/>
+        <location filename="dsg_tools.py" line="373"/>
         <source>View Server</source>
         <translation>Visualizar Servidor</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="222"/>
+        <location filename="dsg_tools.py" line="226"/>
         <source>Coverage Layers</source>
         <translation>Camadas de Cobertura</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="269"/>
+        <location filename="dsg_tools.py" line="273"/>
         <source>Landsat 7</source>
         <translation>Landsat 7</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="279"/>
+        <location filename="dsg_tools.py" line="283"/>
         <source>RapidEye</source>
         <translation>RapidEye</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="399"/>
+        <location filename="dsg_tools.py" line="393"/>
         <source>Inventory tools</source>
         <translation>Ferramentas de Inventário</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="409"/>
+        <location filename="dsg_tools.py" line="403"/>
         <source>Models and Scripts Installer</source>
         <translation>Instalador de Modelos e Scripts</translation>
     </message>
@@ -1389,24 +1447,34 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Gerenciar Modelos de Perfil</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="476"/>
+        <location filename="dsg_tools.py" line="471"/>
         <source>Manage User Permissions</source>
         <translation>Gerenciar Permissões de Usuário</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="487"/>
+        <location filename="dsg_tools.py" line="494"/>
         <source>User Permissions Tools</source>
         <translation>Ferramentas de Permissões de Usuário</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="489"/>
+        <location filename="dsg_tools.py" line="496"/>
         <source>User Permissions Editor</source>
         <translation>Editor de Permissões de Usuário</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="499"/>
+        <location filename="dsg_tools.py" line="506"/>
         <source>Install/Remove User Permissions</source>
         <translation>Instalar/Remover Permissões de Usuário</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="224"/>
+        <source>Vector Tools</source>
+        <translation>Ferramentas Vetoriais</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="482"/>
+        <source>Assign Contour Values</source>
+        <translation>Linha Cotadora</translation>
     </message>
 </context>
 <context>
