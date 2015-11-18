@@ -35,6 +35,8 @@ from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactor
 
 from DsgTools.ServerTools.serverDBExplorer import ServerDBExplorer
 
+from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'connectionWidget.ui'))
 
@@ -73,6 +75,7 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.dbVersion = ''
         self.tabWidget.setCurrentIndex(0)
         self.factory = SqlGeneratorFactory()
+        self.abstractDbFactory = DbFactory()
         self.gen = self.factory.createSqlGenerator(self.isSpatialite)
         self.utils = Utils()
 
@@ -125,8 +128,15 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
                 self.spatialiteFileEdit.setText(self.filename)
                 self.dbVersion = self.utils.getDatabaseVersion(self.db)
                 self.edgvSpatialiteVersionEdit.setText(self.dbVersion)
+                self.abstractDb = self.abstractDbFactory.createDbFactory('QSQLITE')
+                self.abstractDb.connectDatabase(self.filename)
+                
         else:
             self.db = self.utils.getPostGISDatabase(self.comboBoxPostgis.currentText())
+            self.dbVersion = self.utils.getDatabaseVersion(self.db)
+            self.edgvPostgisVersionEdit.setText(self.dbVersion)
+            self.abstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
+            self.abstractDb.connectDatabase(self.comboBoxPostgis.currentText())
         try:
             if not self.db.open():
                 QgsMessageLog.logMessage(self.db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
@@ -134,7 +144,6 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
                 self.dbLoaded = True
                 self.setCRS()
                 self.dbVersion = self.utils.getDatabaseVersion(self.db)
-                self.edgvPostgisVersionEdit.setText(self.dbVersion)
         except:
             pass    
 

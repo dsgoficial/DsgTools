@@ -38,6 +38,71 @@ class Utils:
 
     def __del__(self):
         pass
+    
+    def mergeDict(self,dictionary1, dictionary2):
+        output = dict()
+        if type(dictionary1) <> dict or type(dictionary2) <> dict:
+            return dictionary2
+        for item, value in dictionary1.iteritems():
+            if dictionary2.has_key(item):
+                if isinstance(dictionary2[item], dict):
+                    output[item] = self.mergeDict(value, dictionary2.pop(item))
+                else:
+                    if type(value) == list:
+                        if item not in output.keys():
+                            output[item] = []
+                        for i in value:
+                            if i not in output[item]:
+                                output[item].append(i)
+                        output[item].extend(self.mergeDict(value, dictionary2.pop(item)))
+                    else:
+                        output[item] = self.mergeDict(value, dictionary2.pop(item))
+            else:
+                if type(value) == list:
+                    if item not in output.keys():
+                        output[item]=[]
+                    for i in value:
+                        if i not in output[item]:
+                            output[item].append(i)
+                else:
+                    output[item] = value
+        for item, value in dictionary2.iteritems():
+            if type(value) == list:
+                if item not in output.keys():
+                    output[item]=[]
+                for i in value:
+                    if i not in output[item]:
+                        output[item].append(i)
+            else:
+                output[item] = value
+        return output
+    
+    
+    def buildOneNestedDict(self,inputDict,keyList,value):
+        if len(keyList) == 1:
+            if keyList[0] not in inputDict.keys():
+                inputDict[keyList[0]] = dict()
+            if type(value) == list:
+                inputDict[keyList[0]]=[]
+                for i in value:
+                    if i not in inputDict[keyList[0]]:
+                        inputDict[keyList[0]].append(i)
+            else:
+                inputDict[keyList[0]]=value
+            return inputDict
+        else:
+            if keyList[0] not in inputDict.keys():
+                if len(inputDict.values()) == 0:
+                    inputDict[keyList[0]] = dict()
+            inputDict[keyList[0]] = self.buildOneNestedDict(inputDict[keyList[0]],keyList[1::],value)
+            return inputDict
+    
+    def buildNestedDict(self,inputDict,keyList,value):
+        if len(inputDict.keys())>0:
+            tempDict = self.buildOneNestedDict(dict(),keyList,value)
+            return self.mergeDict(inputDict, tempDict)
+        else:
+            return self.buildOneNestedDict(inputDict,keyList,value)
 
     def getQmlDir(self, db):
         currentPath = os.path.dirname(__file__)
@@ -53,6 +118,7 @@ class Utils:
             qmlPath = os.path.join(qmlVersionPath, 'edgv_213')
         return qmlPath
 
+    #Deprecated. Reimplemented in DbFactory
     def findEPSG(self, db):
         gen = self.factory.createSqlGenerator(self.isSpatialiteDB(db))
         sql = gen.getSrid()
@@ -79,7 +145,8 @@ class Utils:
         currentConnections = settings.childGroups()
         settings.endGroup()
         return currentConnections
-
+    
+    #Deprecated. Reimplemented in DbFactory as connectDatabaseWithGui
     def getSpatialiteDatabase(self):
         db = None
         fd = QFileDialog()
@@ -103,6 +170,7 @@ class Utils:
         db.setPassword(password)
         return db
 
+    #Deprecated. Reimplemented in DbFactory
     def getDatabaseVersion(self, db):
         gen = self.factory.createSqlGenerator(self.isSpatialiteDB(db))
         sqlVersion = gen.getEDGVVersion()
@@ -119,6 +187,7 @@ class Utils:
             isSpatialite = True
         return isSpatialite
     
+    #Deprecated. Reimplemented in DbFactory
     def getServerConfiguration(self, name):
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers/'+name)
@@ -129,6 +198,7 @@ class Utils:
         settings.endGroup()
         return (host, port, user, password)
     
+    #TODO: Reimplement in server_tools
     def browseServer(self,dbList,host,port,user,password):
         gen = self.factory.createSqlGenerator(False)
         edvgDbList = []
@@ -144,7 +214,8 @@ class Utils:
                     if version:
                         edvgDbList.append((database,version))
         return edvgDbList
-        
+    
+    #TODO: Reimplement in server_tools    
     def getDbsFromServer(self,name):
         gen = self.factory.createSqlGenerator(False)
         
@@ -160,7 +231,8 @@ class Utils:
         while query.next():
             dbList.append(query.value(0))
         return self.browseServer(dbList,host,port,user,password)
-    
+
+    #Deprecated. Reimplemented in DbFactory    
     def storeConnection(self, server, database):
         (host, port, user, password) = self.getServerConfiguration(server)
         
@@ -176,7 +248,8 @@ class Utils:
             settings.endGroup()
             return True
         return False
-    
+
+    #Deprecated. Reimplemented in DbFactory
     def listGeomClassesFromDatabase(self, db, isSpatialite):
         classList = []
         gen = self.factory.createSqlGenerator(isSpatialite)
@@ -197,6 +270,7 @@ class Utils:
         
         return classList
 
+    #Deprecated. Reimplemented in DbFactory
     def listComplexClassesFromDatabase(self, db, isSpatialite):
         classList = []
         gen = self.factory.createSqlGenerator(isSpatialite)
@@ -215,7 +289,8 @@ class Utils:
                 classList.append(layerName)
         
         return classList
-    
+
+    #Deprecated. Reimplemented in DbFactory    
     def countElements(self, layers, db, isSpatialite):
         listaQuantidades = []
         for layer in layers:
@@ -229,6 +304,7 @@ class Utils:
             listaQuantidades.append([layer, number])
         return listaQuantidades
 
+    #Deprecated. Reimplemented in DbFactory
     def listWithElementsFromDatabase(self, classList, db, isSpatialite):
         classListWithNumber = self.countElements(classList, db, isSpatialite)
         classesWithElements = dict()
@@ -237,6 +313,7 @@ class Utils:
                 classesWithElements[cl[0]]=cl[1]   
         return classesWithElements
     
+    #Deprecated. Already reimplemented in DbFactory as listClassesWithElementsFromDatabase
     def listClassesWithElementsFromDatabase(self, db, isSpatialite):
         geomClassList = self.listGeomClassesFromDatabase(db, isSpatialite)
         complexClassList = self.listComplexClassesFromDatabase(db, isSpatialite)
@@ -261,6 +338,7 @@ class Utils:
         constring = 'PG: dbname=\''+dbName+'\' user=\''+dbUser+'\' host=\''+dbHost+'\' password=\''+dbPass+'\' port='+dbPort
         return constring
     
+    #Deprecated. Reimplemented in DbFactory as getNotNullDict
     def getPostgisNotNullDict(self, edgvVersion, db):
         gen = self.factory.createSqlGenerator(False)
         if edgvVersion == '2.1.3':
@@ -280,7 +358,8 @@ class Utils:
                 notNullDict[cl]=[]
             notNullDict[cl].append(attName)
         return notNullDict
-
+    
+    #Deprecated. Reimplemented in DbFactory as getDomainDict
     def getPostgisDomainDict(self, edgvVersion, db):
         gen = self.factory.createSqlGenerator(False)
         if edgvVersion == '2.1.3':
@@ -313,6 +392,7 @@ class Utils:
 
         return classDict
     
+    #Deprecated. Reimplemented in DbFactory
     def getStructureDict(self, db, edgvVersion, isSpatialite):
         gen = self.factory.createSqlGenerator(isSpatialite)
         classDict = dict()
@@ -455,6 +535,7 @@ class Utils:
         outputDS.Destroy()
         return True
     
+    #Deprecated. Reimplemented in DbFactory
     def getAggregationAttributes(self,db,isSpatialite):
         columns = []
         gen = self.factory.createSqlGenerator(isSpatialite)
@@ -465,3 +546,17 @@ class Utils:
             value = query.value(0)
             columns.append(value)
         return columns
+
+if __name__ == '__main__':
+    from DsgTools.Utils.utils import Utils
+    utils = Utils()
+    di = dict()
+    ls = []
+    print utils.buildNestedDict(di, ['a','b','c','d'], 1)
+    print utils.buildNestedDict(utils.buildNestedDict(di, ['a','b','c','d'], 1), ['a','b','c','e'], 1)
+    x = utils.buildNestedDict(di, ['a','b','c','d'], [1,2])
+    print x
+    y = utils.buildNestedDict(x, ['e','f','g','h'], [3])
+    print y
+    z = utils.buildNestedDict(y, ['e','f','g','h'], [5])
+    print z
