@@ -416,12 +416,24 @@ class AbstractDb(QObject):
                                                 newFeat.SetField(layerPanMap[j],'-9999')
                                             if outputLayer.GetLayerDefn().GetFieldDefn(layerPanMap[j]).GetTypeName() == 'Integer':
                                                 newFeat.SetField(layerPanMap[j],-9999)
-                                    
-                        out=outputLayer.CreateFeature(newFeat)
-                        if out <> 0:
-                            self.utils.buildNestedDict(errorDict, [inputLayerName], [inputId])
+                        if newFeat.geometry().GetGeometryCount() > 1:
+                            #Deaggregator
+                            for geom in newFeat.geometry():
+                                auxGeom = ogr.Geometry(newFeat.geometry().GetGeometryType())
+                                auxGeom.AssignSpatialReference(newFeat.geometry().GetSpatialReference())
+                                auxGeom.AddGeometry(geom)
+                                newFeat.SetGeometry(auxGeom)
+                                out=outputLayer.CreateFeature(newFeat)
+                                if out <> 0:
+                                    self.utils.buildNestedDict(errorDict, [inputLayerName], [inputId])
+                                else:
+                                    count += 1
                         else:
-                            count += 1
+                            out=outputLayer.CreateFeature(newFeat)
+                            if out <> 0:
+                                self.utils.buildNestedDict(errorDict, [inputLayerName], [inputId])
+                            else:
+                                count += 1
                 feat=inputLayer.GetNextFeature()
             return count
         else:
