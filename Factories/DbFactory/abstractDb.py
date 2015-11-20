@@ -318,7 +318,6 @@ class AbstractDb(QObject):
             #order conversion here
             layerPanMap=self.makeTranslationMap(inputLyr, inputOgrLayer,outputLayer, fieldMap)
             ini = outputLayer.GetFeatureCount()
-            outputLayer.StartTransaction()
             if invalidated == None:
                 iter=self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap, errorDict)
             else:
