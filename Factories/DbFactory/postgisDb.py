@@ -233,6 +233,6 @@ class PostgisDb(AbstractDb):
     
     def convertToSpatialite(self, outputAbstractDb,type=None):
         (inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict) = self.prepareForConversion(outputAbstractDb)
-        status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, errorDict, inputLayerList)
+        status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict)
         return status
     

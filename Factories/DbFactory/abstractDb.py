@@ -40,6 +40,7 @@ class AbstractDb(QObject):
         self.conversionTypeDict = dict({'QPSQL':'postgis','QSQLITE':'spatialite'})
         self.utils = Utils()
         self.signals = DbSignals()
+        self.slotConnected = False
         pass
     
     def __del__(self):
@@ -303,7 +304,7 @@ class AbstractDb(QObject):
         self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Write Summary')))
         self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
         status = False
-        for inputLyr in inputLayerList:
+        for inputLyr in inputLayerList.keys():
             schema = self.getTableSchema(inputLyr)
             attrList = fieldMap[inputLyr].keys()
             
@@ -311,7 +312,7 @@ class AbstractDb(QObject):
             #inputOgrLayer = inputDS.ExecuteSQL(sql.encode('utf-8'))
             #Here I had to change the way of loading because of features ids. I need to use inputDs.GetLayerByName
             
-            inputOgrLayer = inputDS.GetLayerByName(inputLyr) #new way of loading layer. The old way was an attempt to make a general rule for conversion between edgv versions
+            inputOgrLayer = inputDS.GetLayerByName(str(inputLyr)) #new way of loading layer. The old way was an attempt to make a general rule for conversion between edgv versions
             outputFileName = self.translateOGRLayerNameToOutputFormat(inputLyr,outputDS)
             outputLayer=outputDS.GetLayerByName(outputFileName)
             #order conversion here

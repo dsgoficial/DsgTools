@@ -127,9 +127,11 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         if self.fixDataRadioButton.isChecked():
             type = 'fixData'
         
-        self.widget.abstractDb.signals.updateLog.connect(self.logUpdated)
+        if not self.widget.abstractDb.slotConnected:
+            self.widget.abstractDb.signals.updateLog.connect(self.logUpdated)
+            self.widget.abstractDb.signals.clearLog.connect(self.logCleared)
+            self.widget.abstractDb.slotConnected = True
         converted = False
-        self.widget.abstractDb.signals.clearLog.connect(self.logCleared)
         self.logCleared()
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
