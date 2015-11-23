@@ -27,7 +27,7 @@ from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
 # QGIS imports
-from qgis.core import QgsMapLayer
+from qgis.core import QgsMapLayer, QgsField
 from PyQt4.QtGui import QTableWidgetItem
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -54,11 +54,19 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         self.comboBox.clear()
         self.currLayer = self.iface.activeLayer()
         if self.currLayer:
-            fieldNames = [field.name() for field in self.currLayer.fields()]
-            self.comboBox.addItems(fieldNames)
+            for field in self.currLayer.fields():
+                valueDict, keys = self.getCodeListDict(field.name())
+                if len(keys) > 0:
+                    self.comboBox.addItem(field.name())
         self.comboBox.setCurrentIndex(0)
         
         self.loadCodeList()
+        
+    def getCodeListDict(self, field):
+        fieldIndex = self.currLayer.fieldNameIndex(field)
+        valueDict = self.currLayer.editorWidgetV2Config(fieldIndex) 
+        keys = [value for value in valueDict.keys() if not (value == 'UseHtml' or value == 'IsMultiline')]
+        return  valueDict, keys 
         
     @pyqtSlot(QgsMapLayer)
     def layerChanged(self, layer):
@@ -74,9 +82,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         self.tableWidget.setHorizontalHeaderLabels([self.tr('Value'), self.tr('Code')])
         
         field = self.comboBox.currentText()
-        fieldIndex = self.currLayer.fieldNameIndex(field)
-        valueDict =  self.currLayer.editorWidgetV2Config(fieldIndex)
-        keys = [value for value in valueDict.keys() if not (value == 'UseHtml' or value == 'IsMultiline')]
+        valueDict, keys = self.getCodeListDict(field)
         
         self.tableWidget.setRowCount(len(keys))
         
