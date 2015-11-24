@@ -42,7 +42,7 @@ class SpatialiteDb(AbstractDb):
     def connectDatabaseWithGui(self):
         fd = QFileDialog()
         filename = fd.getOpenFileName(filter='*.sqlite')
-        self.db.databaseName(filename)
+        self.db.setDatabaseName(filename)
     
     def connectDatabaseWithQSettings(self,name):
         return None
@@ -196,7 +196,7 @@ class SpatialiteDb(AbstractDb):
     def getTableSchema(self,lyr):
         schema = lyr.split('_')[0]
         className = '_'.join(lyr.split('_')[1::])
-        return (schema,className)
+        return (schema, className)
     
     def convertToPostgis(self, outputAbstractDb,type=None):
         (inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict) = self.prepareForConversion(outputAbstractDb)

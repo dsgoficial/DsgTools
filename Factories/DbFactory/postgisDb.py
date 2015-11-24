@@ -162,7 +162,6 @@ class PostgisDb(AbstractDb):
         constring = 'PG: dbname=\''+dbName+'\' user=\''+dbUser+'\' host=\''+dbHost+'\' password=\''+dbPass+'\' port='+dbPort
         return constring
 
-
     def getNotNullDict(self):
         self.checkAndOpenDb()
         if self.getDatabaseVersion() == '2.1.3':
@@ -226,7 +225,7 @@ class PostgisDb(AbstractDb):
     def getTableSchema(self,lyr):
         schema = lyr.split('.')[0]
         className = '_'.join(lyr.split('.')[1::])
-        return (schema,className)
+        return (schema, className)
 
     def convertToPostgis(self, outputAbstractDb,type=None):
         return None

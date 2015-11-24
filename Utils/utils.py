@@ -77,7 +77,6 @@ class Utils:
                 output[item] = value
         return output
     
-    
     def buildOneNestedDict(self,inputDict,keyList,value):
         if len(keyList) == 1:
             if keyList[0] not in inputDict.keys():
@@ -118,16 +117,6 @@ class Utils:
             qmlPath = os.path.join(qmlVersionPath, 'edgv_213')
         return qmlPath
 
-    #Deprecated. Reimplemented in DbFactory
-    def findEPSG(self, db):
-        gen = self.factory.createSqlGenerator(self.isSpatialiteDB(db))
-        sql = gen.getSrid()
-        query = QSqlQuery(sql, db)
-        srids = []
-        while query.next():
-            srids.append(query.value(0))
-        return srids[0]
-
     def getPostGISConnectionParameters(self, name):
         settings = QSettings()
         settings.beginGroup('PostgreSQL/connections/'+name)
@@ -146,16 +135,6 @@ class Utils:
         settings.endGroup()
         return currentConnections
     
-    #Deprecated. Reimplemented in DbFactory as connectDatabaseWithGui
-    def getSpatialiteDatabase(self):
-        db = None
-        fd = QFileDialog()
-        filename = fd.getOpenFileName(filter='*.sqlite')
-        if filename:
-            db = QSqlDatabase("QSQLITE")
-            db.setDatabaseName(filename)
-        return (filename, db)
-
     def getPostGISDatabase(self, postGISConnection):
         (database, host, port, user, password) = self.getPostGISConnectionParameters(postGISConnection)
         return self.getPostGISDatabaseWithParams(database, host, port, user, password)
@@ -170,33 +149,12 @@ class Utils:
         db.setPassword(password)
         return db
 
-    #Deprecated. Reimplemented in DbFactory
-    def getDatabaseVersion(self, db):
-        gen = self.factory.createSqlGenerator(self.isSpatialiteDB(db))
-        sqlVersion = gen.getEDGVVersion()
-        queryVersion =  QSqlQuery(sqlVersion, db)
-        version = '2.1.3'
-        while queryVersion.next():
-            version = queryVersion.value(0)
-        return version
-
     def isSpatialiteDB(self, db):
         if db.driverName() == 'QPSQL':
             isSpatialite = False
         elif db.driverName() == 'QSQLITE':
             isSpatialite = True
         return isSpatialite
-    
-    #Deprecated. Reimplemented in DbFactory
-    def getServerConfiguration(self, name):
-        settings = QSettings()
-        settings.beginGroup('PostgreSQL/servers/'+name)
-        host = settings.value('host')
-        port = settings.value('port')
-        user = settings.value('username')
-        password = settings.value('password')
-        settings.endGroup()
-        return (host, port, user, password)
     
     #TODO: Reimplement in server_tools
     def browseServer(self,dbList,host,port,user,password):
@@ -231,99 +189,6 @@ class Utils:
         while query.next():
             dbList.append(query.value(0))
         return self.browseServer(dbList,host,port,user,password)
-
-    #Deprecated. Reimplemented in DbFactory    
-    def storeConnection(self, server, database):
-        (host, port, user, password) = self.getServerConfiguration(server)
-        
-        connection = server+'_'+database
-        settings = QSettings()
-        if not settings.contains('PostgreSQL/connections/'+connection+'/database'):
-            settings.beginGroup('PostgreSQL/connections/'+connection)
-            settings.setValue('database', database)
-            settings.setValue('host', host)
-            settings.setValue('port', port)
-            settings.setValue('username', user)
-            settings.setValue('password', password)
-            settings.endGroup()
-            return True
-        return False
-
-    #Deprecated. Reimplemented in DbFactory
-    def listGeomClassesFromDatabase(self, db, isSpatialite):
-        classList = []
-        gen = self.factory.createSqlGenerator(isSpatialite)
-        sql = gen.getTablesFromDatabase()
-        query = QSqlQuery(sql, db)
-        while query.next():
-            if isSpatialite:
-                tableName = query.value(0).encode('utf-8')
-                layerName = tableName
-            else:
-                tableSchema = query.value(0).encode('utf-8')
-                tableName = query.value(1).encode('utf-8')
-                layerName = tableSchema+'.'+tableName
-            if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
-                or tableName.split("_")[-1] == "a":
-
-                classList.append(layerName)
-        
-        return classList
-
-    #Deprecated. Reimplemented in DbFactory
-    def listComplexClassesFromDatabase(self, db, isSpatialite):
-        classList = []
-        gen = self.factory.createSqlGenerator(isSpatialite)
-        sql = gen.getTablesFromDatabase()
-        query = QSqlQuery(sql, db)
-        while query.next():
-            if isSpatialite:
-                tableName = query.value(0).encode('utf-8')
-                layerName = tableName
-                tableSchema = layerName.split('_')[0]
-            else:
-                tableSchema = query.value(0).encode('utf-8')
-                tableName = query.value(1).encode('utf-8')
-                layerName = tableSchema+'.'+tableName
-            if tableSchema == 'complexos':
-                classList.append(layerName)
-        
-        return classList
-
-    #Deprecated. Reimplemented in DbFactory    
-    def countElements(self, layers, db, isSpatialite):
-        listaQuantidades = []
-        for layer in layers:
-            gen = self.factory.createSqlGenerator(isSpatialite)
-            sql = gen.getElementCountFromLayer(layer)
-            query = QSqlQuery(sql,db)
-            query.next()
-            number = query.value(0)
-            if not query.exec_(sql):
-                QgsMessageLog.logMessage(self.tr("Problem counting elements: ")+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            listaQuantidades.append([layer, number])
-        return listaQuantidades
-
-    #Deprecated. Reimplemented in DbFactory
-    def listWithElementsFromDatabase(self, classList, db, isSpatialite):
-        classListWithNumber = self.countElements(classList, db, isSpatialite)
-        classesWithElements = dict()
-        for cl in classListWithNumber:
-            if cl[1]>0:
-                classesWithElements[cl[0]]=cl[1]   
-        return classesWithElements
-    
-    #Deprecated. Already reimplemented in DbFactory as listClassesWithElementsFromDatabase
-    def listClassesWithElementsFromDatabase(self, db, isSpatialite):
-        geomClassList = self.listGeomClassesFromDatabase(db, isSpatialite)
-        complexClassList = self.listComplexClassesFromDatabase(db, isSpatialite)
-        classList = []
-        for g in geomClassList:
-            classList.append(g)
-        for c in complexClassList:
-            classList.append(c)
-        classList.sort()
-        return self.listWithElementsFromDatabase(classList,db,isSpatialite)
     
     def listComplexClassesWithElementsFromDatabase(self, db, isSpatialite):
         classList = self.listComplexClassesFromDatabase(db, isSpatialite)
@@ -337,91 +202,6 @@ class Utils:
         dbPort = str(db.port())
         constring = 'PG: dbname=\''+dbName+'\' user=\''+dbUser+'\' host=\''+dbHost+'\' password=\''+dbPass+'\' port='+dbPort
         return constring
-    
-    #Deprecated. Reimplemented in DbFactory as getNotNullDict
-    def getPostgisNotNullDict(self, edgvVersion, db):
-        gen = self.factory.createSqlGenerator(False)
-        if edgvVersion == '2.1.3':
-            schemaList = ['cb','complexos']
-        else:
-            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Operation not defined for this database version!'))
-            return
-        sql = gen.getNotNullFields(schemaList)
-        query = QSqlQuery(sql, db)
-        notNullDict = dict()
-        while query.next():
-            schemaName = query.value(0).encode('utf-8')
-            className = query.value(1).encode('utf-8')
-            attName = query.value(2).encode('utf-8')
-            cl = schemaName+'.'+className
-            if cl not in notNullDict.keys():
-                notNullDict[cl]=[]
-            notNullDict[cl].append(attName)
-        return notNullDict
-    
-    #Deprecated. Reimplemented in DbFactory as getDomainDict
-    def getPostgisDomainDict(self, edgvVersion, db):
-        gen = self.factory.createSqlGenerator(False)
-        if edgvVersion == '2.1.3':
-            schemaList = ['cb','complexos','dominios']
-        else:
-            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Operation not defined for this database version!'))
-            return
-        sql = gen.validateWithDomain(schemaList)
-
-        query = QSqlQuery(sql, db)
-        classDict = dict()
-        domainDict = dict()
-        
-        while query.next():
-            schemaName = query.value(0).encode('utf-8')
-            className = query.value(1).encode('utf-8')
-            attName = query.value(2).encode('utf-8')
-            domainName = query.value(3).encode('utf-8')
-            domainTable = query.value(4).encode('utf-8')
-            domainQuery = query.value(5).encode('utf-8')
-            cl = schemaName+'.'+className
-            if cl not in classDict.keys():
-                classDict[cl]=dict()
-            if attName not in classDict[cl].keys():
-                classDict[cl][attName]=[]
-                query2 = QSqlQuery(domainQuery,db)
-                while query2.next():
-                    value = query2.value(0)
-                    classDict[cl][attName].append(value)
-
-        return classDict
-    
-    #Deprecated. Reimplemented in DbFactory
-    def getStructureDict(self, db, edgvVersion, isSpatialite):
-        gen = self.factory.createSqlGenerator(isSpatialite)
-        classDict = dict()
-        sql = gen.getStructure(edgvVersion)        
-        query = QSqlQuery(sql, db)
-        
-        if isSpatialite:
-            while query.next():
-                className = query.value(0).encode('utf-8')
-                classSql = query.value(1).encode('utf-8')
-                
-                if className not in classDict.keys():
-                    classDict[className]=dict()
-                classSql = classSql.split(className)[1]
-                sqlList = classSql.replace('(','').replace(')','').replace('\"','').replace('\'','').split(',')
-                for s in sqlList:
-                     fieldName = str(s.strip().split(' ')[0])
-                     classDict[className][fieldName]=fieldName
-                     
-        if not isSpatialite:
-            while query.next():
-                className = query.value(0).encode('utf-8')+'.'+query.value(1).encode('utf-8')
-                fieldName = query.value(2).encode('utf-8')
-                if className not in classDict.keys():
-                    classDict[className]=dict()
-
-                classDict[className][fieldName]=fieldName
-
-        return classDict
 
     def makeTranslationMap(self, layerName, layer, outLayer, fieldMapper):
         layerFieldMapper=fieldMapper[layerName]
@@ -534,29 +314,3 @@ class Utils:
             self.translateLayerWithDataFix(inputLayer, filename, outputLayer, layerPanMap,invalidatedDataDict)
         outputDS.Destroy()
         return True
-    
-    #Deprecated. Reimplemented in DbFactory
-    def getAggregationAttributes(self,db,isSpatialite):
-        columns = []
-        gen = self.factory.createSqlGenerator(isSpatialite)
-        sql = gen.getAggregationColumn()
-        query = QSqlQuery(sql, db)
-        
-        while query.next():
-            value = query.value(0)
-            columns.append(value)
-        return columns
-
-if __name__ == '__main__':
-    from DsgTools.Utils.utils import Utils
-    utils = Utils()
-    di = dict()
-    ls = []
-    print utils.buildNestedDict(di, ['a','b','c','d'], 1)
-    print utils.buildNestedDict(utils.buildNestedDict(di, ['a','b','c','d'], 1), ['a','b','c','e'], 1)
-    x = utils.buildNestedDict(di, ['a','b','c','d'], [1,2])
-    print x
-    y = utils.buildNestedDict(x, ['e','f','g','h'], [3])
-    print y
-    z = utils.buildNestedDict(y, ['e','f','g','h'], [5])
-    print z

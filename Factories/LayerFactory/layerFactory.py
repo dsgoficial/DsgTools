@@ -22,14 +22,16 @@
 """
 import os
 
-from DsgTools.Factories.DbFactory.spatialiteDb import SpatialiteDb
-from DsgTools.Factories.DbFactory.postgisDb import PostgisDb
+from DsgTools.Factories.LayerFactory.postgis_layer import PostGISLayer
+from DsgTools.Factories.LayerFactory.spatialite_layer import SpatialiteLayer
+from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 
-class DbFactory:
-    def createDbFactory(self,driverName):
+class LayerFactory:
+    def makeLayer(self, abstractDb, codeList, table):
+        driverName = abstractDb.getType()
         if driverName == "QSQLITE":
-            return SpatialiteDb()
+            return SpatialiteLayer(abstractDb, codeList, table)
         if driverName == "QPSQL":
-            return PostgisDb()
+            return PostGISLayer(abstractDb, codeList, table)
         else:
             return None

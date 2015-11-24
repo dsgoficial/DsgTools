@@ -28,39 +28,26 @@ from PyQt4.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.Qt import QObject
 
 # QGIS imports
-from qgis.core import QgsMapLayerRegistry, QgsVectorLayer,QgsDataSourceURI
+from qgis.core import QgsMapLayerRegistry, QgsVectorLayer,QgsDataSourceURI, QgsMessageLog
 from qgis.utils import iface
 
-class EDGVLayer(QObject):
-    qmlLoaded = pyqtSignal()
-    
-    def __init__(self, codeList):
-        """Constructor."""
-        super(EDGVLayer, self).__init__()
-        
-        self.codeList = codeList
-        self.qmlLoaded.connect(self.codeList.setState)
+#DsgTools imports
+from DsgTools.Factories.LayerFactory.edgv_layer import EDGVLayer
 
-    def loadEDGVLayer(self, uri, layer_name, provider, crs, isSpatialite, dbVersion, qmlPath, idSubgrupo = None):
-        vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
-        vlayer.setCrs(crs)
+class SpatialiteLayer(EDGVLayer):
+    def __init__(self, abstractDb, codeList, table):
+        """Constructor."""
+        super(SpatialiteLayer, self).__init__(abstractDb, codeList)
         
-        QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
+        self.provider = 'spatialite'
         
-        if isSpatialite and (dbVersion == '3.0' or dbVersion == '2.1.3'):
-            lyr = '_'.join(layer_name.replace('\r', '').split('_')[1::])
+        self.schema, self.layer_name = abstractDb.getTableSchema(table)
+        
+        dbVersion = abstractDb.getDatabaseVersion()
+        if dbVersion == '3.0' or dbVersion == '2.1.3':
+            self.qmlName = '_'.join(table.replace('\r', '').split('_')[1::])
         else:
-            lyr = layer_name.replace('\r','')
+            self.qmlName = table.replace('\r','')
             
-        vlayerQml = os.path.join(qmlPath, lyr+'.qml')
-        vlayer.loadNamedStyle(vlayerQml, False)
-        
-        self.qmlLoaded.emit()
-        
-        QgsMapLayerRegistry.instance().addMapLayer(vlayer)
-        
-        if idSubgrupo:
-            iface.legendInterface().moveLayer(vlayer, idSubgrupo)
-            
-        if not vlayer.isValid():
-            QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.uri.setDatabase(abstractDb.db.databaseName())
+        self.uri.setDataSource('', table, 'GEOMETRY')

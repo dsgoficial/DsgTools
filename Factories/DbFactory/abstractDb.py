@@ -21,20 +21,26 @@
  ***************************************************************************/
 """
 import os
+from uuid import uuid4
+
 from osgeo import ogr
+
+# DsgTools imports
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.Utils.utils import Utils
+
+#PyQt imports
 from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 from PyQt4.QtCore import QSettings, SIGNAL, pyqtSignal, QObject
-from DsgTools.Utils.utils import Utils
-from uuid import uuid4
+
+#Qgis imports
+import qgis.core 
 
 class DbSignals(QObject):
         updateLog = pyqtSignal(str)
         clearLog = pyqtSignal()
 
 class AbstractDb(QObject):
-
-    
     def __init__(self):
         super(AbstractDb,self).__init__()
         self.conversionTypeDict = dict({'QPSQL':'postgis','QSQLITE':'spatialite'})
@@ -109,7 +115,6 @@ class AbstractDb(QObject):
         while query.next():
             srids.append(query.value(0))
         return srids[0]
-
 
     def listWithElementsFromDatabase(self, classList):
         self.checkAndOpenDb()
@@ -438,7 +443,6 @@ class AbstractDb(QObject):
             return count
         else:
             return -1
-
     
     def buildOgrDatabase(self):
         con = self.makeOgrConn()
@@ -472,3 +476,19 @@ class AbstractDb(QObject):
                 for id in errorDict[cl]:
                     self.signals.updateLog.emit('\n\n'+'{:<50}'.format(cl+str(id)))
         return None
+    
+    def getQmlDir(self):
+        self.checkAndOpenDb()
+        currentPath = os.path.dirname(__file__)
+        if qgis.core.QGis.QGIS_VERSION_INT >= 20600:
+            qmlVersionPath = os.path.join(currentPath, '..', '..', 'Qmls', 'qgis_26')
+        else:
+            qmlVersionPath = os.path.join(currentPath, '..', '..', 'Qmls', 'qgis_22')
+
+        version = self.getDatabaseVersion()
+        if version == '3.0':
+            qmlPath = os.path.join(qmlVersionPath, 'edgv_30')
+        elif version == '2.1.3':
+            qmlPath = os.path.join(qmlVersionPath, 'edgv_213')
+        return qmlPath
+    

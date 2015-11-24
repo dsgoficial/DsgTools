@@ -32,9 +32,7 @@ from PyQt4.QtSql import QSqlDatabase
 # DSGTools imports
 from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-
 from DsgTools.ServerTools.serverDBExplorer import ServerDBExplorer
-
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -60,9 +58,9 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.closeDatabase()
 
     def closeDatabase(self):
-        if self.db:
-            self.db.close()
-            self.db = None
+        if self.abstractDb:
+            del self.abstractDb
+            self.abstractDb = None
 
     def setInitialState(self):
         self.filename = ''
@@ -70,13 +68,10 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.epsg = 0
         self.crs = None
         
-        self.db = None
+        self.abstractDb = None
         self.isSpatialite = True
-        self.dbVersion = ''
         self.tabWidget.setCurrentIndex(0)
-        self.factory = SqlGeneratorFactory()
         self.abstractDbFactory = DbFactory()
-        self.gen = self.factory.createSqlGenerator(self.isSpatialite)
         self.utils = Utils()
 
         #populating the postgis combobox
@@ -117,39 +112,29 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         else:
             self.isSpatialite = False
 
-        #getting the sql generator according to the database type
-        self.gen = self.factory.createSqlGenerator(self.isSpatialite)
-
     def loadDatabase(self):
         self.closeDatabase()
         if self.isSpatialite:
-            (self.filename, self.db) = self.utils.getSpatialiteDatabase()
-            if self.filename:
-                self.spatialiteFileEdit.setText(self.filename)
-                self.dbVersion = self.utils.getDatabaseVersion(self.db)
-                self.edgvSpatialiteVersionEdit.setText(self.dbVersion)
-                self.abstractDb = self.abstractDbFactory.createDbFactory('QSQLITE')
-                self.abstractDb.connectDatabase(self.filename)
+            self.abstractDb = self.abstractDbFactory.createDbFactory('QSQLITE')
+            self.abstractDb.connectDatabase()
+            self.spatialiteFileEdit.setText(self.abstractDb.db.databaseName())
+            self.edgvSpatialiteVersionEdit.setText(self.abstractDb.getDatabaseVersion())
                 
         else:
-            self.db = self.utils.getPostGISDatabase(self.comboBoxPostgis.currentText())
-            self.dbVersion = self.utils.getDatabaseVersion(self.db)
-            self.edgvPostgisVersionEdit.setText(self.dbVersion)
             self.abstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
             self.abstractDb.connectDatabase(self.comboBoxPostgis.currentText())
+            self.edgvPostgisVersionEdit.setText(self.abstractDb.getDatabaseVersion())
         try:
-            if not self.db.open():
-                QgsMessageLog.logMessage(self.db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            else:
-                self.dbLoaded = True
-                self.setCRS()
-                self.dbVersion = self.utils.getDatabaseVersion(self.db)
-        except:
-            pass    
+            self.abstractDb.checkAndOpenDb()
+            self.dbLoaded = True
+            self.setCRS()
+            self.dbVersion = self.abstractDb.getDatabaseVersion()
+        except Exception as e:
+            QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)    
 
     def setCRS(self):
         try:
-            self.epsg = self.utils.findEPSG(self.db)
+            self.epsg = self.abstractDb.findEPSG()
             if self.epsg == -1:
                 self.problemOccurred.emit(self.tr('Coordinate Reference System not set or invalid!'))
             else:
@@ -172,12 +157,10 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         return self.dbLoaded
         
     def getDBVersion(self):
-        if self.isDBConnected():
-            return self.utils.getDatabaseVersion(self.db)
+        return self.abstractDb.getDatabaseVersion()
     
     def getQmlPath(self):
-        if self.isDBConnected():
-            return self.utils.getQmlDir(self.db)
+        return self.abstractDb.getQmlDir()
         
     @pyqtSlot(bool)
     def on_addConnectionButton_clicked(self):  
