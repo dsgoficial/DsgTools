@@ -29,13 +29,15 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtSql import QSqlQuery
 from PyQt4.QtGui import QApplication, QCursor
 
+from DsgTools.LayerTools.edgv_layer import EDGVLayer
+
 import os
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'load_by_class_base.ui'))
 
 class LoadByClass(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, parent=None):
+    def __init__(self, codeList, parent=None):
         """Constructor."""
         super(LoadByClass, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -62,6 +64,8 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
         QtCore.QObject.connect(self.pushButtonCancel, QtCore.SIGNAL(("clicked()")), self.cancel)
         QtCore.QObject.connect(self.selectAllCheck, QtCore.SIGNAL(("stateChanged(int)")), self.selectAll)
         QtCore.QObject.connect(self.pushButtonOk, QtCore.SIGNAL(("clicked()")), self.okSelected)
+        
+        self.edgvLayer = EDGVLayer(codeList)
 
     def restoreInitialState(self):
         self.selectedClasses = []
@@ -150,11 +154,11 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
                 for layer in self.selectedClasses:
                     split = layer.split('.')
                     schema = split[0]
-                    layerName = split[1]
+                    layer_name = split[1]
                     sql = self.widget.gen.loadLayerFromDatabase(layer)
-                    uri.setDataSource(schema, layerName, geom_column, sql,'id')
+                    uri.setDataSource(schema, layer_name, geom_column, sql,'id')
                     uri.disableSelectAtId(True)
-                    self.loadEDGVLayer(uri, layerName, 'postgres')
+                    self.edgvLayer.loadEDGVLayer(uri, layer_name, 'postgres', self.widget.crs, self.widget.isSpatialite, self.dbVersion, self.qmlPath)
                 self.restoreInitialState()
                 self.close()
             except:
@@ -172,24 +176,10 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
             try:
                 for layer_name in self.selectedClasses:
                     uri.setDataSource(schema, layer_name, geom_column)
-                    self.loadEDGVLayer(uri, layer_name, 'spatialite')
+                    self.edgvLayer.loadEDGVLayer(uri, layer_name, 'spatialite', self.widget.crs, self.widget.isSpatialite, self.dbVersion, self.qmlPath)
                 self.restoreInitialState()
                 self.close()
             except:
                 self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load the layer(s)!"), level=QgsMessageBar.CRITICAL)
         else:
             self.bar.pushMessage(self.tr("Warning!"), self.tr("Please select at least one layer!"), level=QgsMessageBar.WARNING)
-
-    def loadEDGVLayer(self, uri, layer_name, provider):
-        vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
-        vlayer.setCrs(self.widget.crs)
-        QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
-        if self.widget.isSpatialite and (self.dbVersion == '3.0' or self.dbVersion == '2.1.3'):
-            lyr = '_'.join(layer_name.replace('\r', '').split('_')[1::])
-        else:
-            lyr = layer_name.replace('\r','')
-        vlayerQml = os.path.join(self.qmlPath, lyr+'.qml')
-        vlayer.loadNamedStyle(vlayerQml, False)
-        QgsMapLayerRegistry.instance().addMapLayer(vlayer)
-        if not vlayer.isValid():
-            QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

@@ -667,7 +667,7 @@ class DsgTools:
             self.layerButton.setDefaultAction(self.toolbar.sender())
         except:
             pass
-        self.dlg = LoadByCategory()
+        self.dlg = LoadByCategory(self.codeList)
         self.dlg.show()
         result = self.dlg.exec_()
         if result:
@@ -678,7 +678,7 @@ class DsgTools:
             self.layerButton.setDefaultAction(self.toolbar.sender())
         except:
             pass
-        self.dlg = LoadByClass()
+        self.dlg = LoadByClass(self.codeList)
         self.dlg.show()
         result = self.dlg.exec_()
         if result:

@@ -31,13 +31,15 @@ from PyQt4.QtCore import  Qt
 from PyQt4.QtSql import QSqlQuery
 from PyQt4.QtGui import QApplication, QCursor
 
+from DsgTools.LayerTools.edgv_layer import EDGVLayer
+
 import os
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'load_by_category_dialog.ui'))
 
 class LoadByCategory(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, parent=None):
+    def __init__(self, codeList, parent=None):
         """Constructor."""
         super(LoadByCategory, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -83,6 +85,8 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         QtCore.QObject.connect(self.pushButtonSelectOne, QtCore.SIGNAL(("clicked()")), self.selectOne)
         QtCore.QObject.connect(self.pushButtonDeselectOne, QtCore.SIGNAL(("clicked()")), self.deselectOne)
         QtCore.QObject.connect(self.checkBoxAll, QtCore.SIGNAL(("stateChanged(int)")), self.setAllGroup)
+        
+        self.edgvLayer = EDGVLayer(codeList)
  
     def restoreInitialState(self):
         self.categories = []
@@ -242,21 +246,21 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
                 for i in range(self.listWidgetCategoryTo.__len__()):
                     categoriasSelecionadas.append(self.listWidgetCategoryTo.item(i).text())
     
-                try:
-                    if self.checkBoxPoint.isChecked():
-                        self.loadLayers('p',categoriasSelecionadas,ponto)
-                    if self.checkBoxLine.isChecked():
-                        self.loadLayers('l',categoriasSelecionadas,linha)
-                    if self.checkBoxPolygon.isChecked():
-                        self.loadLayers('a',categoriasSelecionadas,area)
-                    if self.checkBoxPoint.isChecked()== False and self.checkBoxLine.isChecked() == False and self.checkBoxPolygon.isChecked() == False:
-                        self.bar.pushMessage(self.tr("WARNING!"), self.tr("Please, select at least one type of layer!"), level=QgsMessageBar.WARNING)
-                    else:
-                        self.restoreInitialState()
-                        self.close()
-                except:
-                    qgis.utils.iface.messageBar().pushMessage(self.tr("CRITICAL!"), self.tr("Problem loading the categories!"), level=QgsMessageBar.CRITICAL)
-                    pass
+#                 try:
+                if self.checkBoxPoint.isChecked():
+                    self.loadLayers('p',categoriasSelecionadas,ponto)
+                if self.checkBoxLine.isChecked():
+                    self.loadLayers('l',categoriasSelecionadas,linha)
+                if self.checkBoxPolygon.isChecked():
+                    self.loadLayers('a',categoriasSelecionadas,area)
+                if self.checkBoxPoint.isChecked()== False and self.checkBoxLine.isChecked() == False and self.checkBoxPolygon.isChecked() == False:
+                    self.bar.pushMessage(self.tr("WARNING!"), self.tr("Please, select at least one type of layer!"), level=QgsMessageBar.WARNING)
+                else:
+                    self.restoreInitialState()
+                    self.close()
+#                 except:
+#                     qgis.utils.iface.messageBar().pushMessage(self.tr("CRITICAL!"), self.tr("Problem loading the categories!"), level=QgsMessageBar.CRITICAL)
+#                     pass
             else:
                 if self.widget.db and not self.widget.crs:
                     self.bar.pushMessage(self.tr("CRITICAL!"), self.tr("Could not determine the coordinate reference system!"), level=QgsMessageBar.CRITICAL)
@@ -347,7 +351,7 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
                 sql = self.widget.gen.loadLayerFromDatabase(layer_name)
                 uri.setDataSource(schema, name, geom_column, sql, 'id')
                 uri.disableSelectAtId(True)
-                self.loadEDGVLayer(uri, name, 'postgres', idSubgrupo)
+                self.edgvLayer.loadEDGVLayer(uri, name, 'postgres', self.widget.crs, self.widget.isSpatialite, self.dbVersion, self.qmlPath, idSubgrupo)
 
     def prepareSpatialiteToLoad(self, uri, categoria, layer_names, idGrupo, geom_column):
         idSubgrupo = qgis.utils.iface.legendInterface().addGroup(categoria, True, idGrupo)
@@ -360,7 +364,7 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
                 category = split[0]
             if category == categoria:
                 uri.setDataSource('', layer_name, geom_column)
-                self.loadEDGVLayer(uri, layer_name, 'spatialite', idSubgrupo)
+                self.edgvLayer.loadEDGVLayer(uri, layer_name, 'spatialite', self.widget.crs, self.widget.isSpatialite, self.dbVersion, self.qmlPath, idSubgrupo)
 
     def loadSpatialiteLayers(self, type, categories, layer_names):
         uri = QgsDataSourceURI()
@@ -382,18 +386,3 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
             idGrupo = qgis.utils.iface.legendInterface(). addGroup("Area", True, self.parentTreeNode)
             for categoria in categories:
                 self.prepareSpatialiteToLoad(uri, categoria, layer_names, idGrupo, geom_column)
-
-    def loadEDGVLayer(self, uri, layer_name, provider, idSubgrupo):
-        vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
-        vlayer.setCrs(self.widget.crs)
-        QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
-        if self.widget.isSpatialite and (self.dbVersion == '3.0' or self.dbVersion == '2.1.3'):
-            lyr = '_'.join(layer_name.replace('\r', '').split('_')[1::])
-        else:
-            lyr = layer_name.replace('\r','')
-        vlayerQml = os.path.join(self.qmlPath, lyr+'.qml')
-        vlayer.loadNamedStyle(vlayerQml, False)
-        QgsMapLayerRegistry.instance().addMapLayer(vlayer)
-        qgis.utils.iface.legendInterface().moveLayer(vlayer, idSubgrupo)
-        if not vlayer.isValid():
-            QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

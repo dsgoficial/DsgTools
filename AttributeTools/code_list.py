@@ -46,18 +46,21 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         
         self.iface = iface
         
-        self.iface.currentLayerChanged.connect(self.layerChanged)
+        self.iface.currentLayerChanged.connect(self.setState)
         
         self.setState()
         
+    @pyqtSlot()
     def setState(self):
         self.comboBox.clear()
         self.currLayer = self.iface.activeLayer()
-        if self.currLayer:
-            for field in self.currLayer.fields():
-                valueDict, keys = self.getCodeListDict(field.name())
-                if len(keys) > 0:
-                    self.comboBox.addItem(field.name())
+        if not self.currLayer:
+            return
+        
+        for field in self.currLayer.fields():
+            valueDict, keys = self.getCodeListDict(field.name())
+            if len(keys) > 0:
+                self.comboBox.addItem(field.name())
         self.comboBox.setCurrentIndex(0)
         
         self.loadCodeList()
@@ -67,10 +70,6 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         valueDict = self.currLayer.editorWidgetV2Config(fieldIndex) 
         keys = [value for value in valueDict.keys() if not (value == 'UseHtml' or value == 'IsMultiline')]
         return  valueDict, keys 
-        
-    @pyqtSlot(QgsMapLayer)
-    def layerChanged(self, layer):
-        self.setState()
         
     @pyqtSlot(int)
     def on_comboBox_currentIndexChanged(self):
