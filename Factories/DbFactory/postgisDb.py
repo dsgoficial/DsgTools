@@ -33,6 +33,9 @@ class PostgisDb(AbstractDb):
         self.db = QSqlDatabase('QPSQL')
         self.gen = SqlGeneratorFactory().createSqlGenerator(False)
         
+    def getDatabaseName(self):
+        return self.db.databaseName()
+    
     def connectDatabase(self,conn=None):
         if conn.split(':')[0] == 'PG':
             connSplit = conn.split(' ')

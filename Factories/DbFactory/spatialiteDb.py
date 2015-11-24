@@ -33,6 +33,9 @@ class SpatialiteDb(AbstractDb):
         self.db = QSqlDatabase('QSQLITE')
         self.gen = SqlGeneratorFactory().createSqlGenerator(True)
     
+    def getDatabaseName(self):
+        return self.db.databaseName().split('.sqlite')[0].split('/')[-1]
+    
     def connectDatabase(self,conn=None):
         if conn is None:
             self.connectDatabaseWithGui()

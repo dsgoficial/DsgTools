@@ -21,17 +21,20 @@
  *                                                                         *
  ***************************************************************************/
 """
+import os
+
+#Qgis imports
 from qgis.core import QgsDataSourceURI,QgsVectorLayer,QgsMapLayerRegistry,QgsMessageLog
 from qgis.gui import QgsMessageBar
 
+#PyQt imports
 from PyQt4 import QtGui, QtCore, uic
 from PyQt4.QtCore import Qt
 from PyQt4.QtSql import QSqlQuery
 from PyQt4.QtGui import QApplication, QCursor
 
+#DsgTools imports
 from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
-
-import os
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'load_by_class_base.ui'))
@@ -138,44 +141,3 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
                 self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load the selected classes!"), level=QgsMessageBar.CRITICAL)
         else:
             self.bar.pushMessage(self.tr("Warning!"), self.tr("Please, select at least one class!"), level=QgsMessageBar.WARNING)
-
-    def loadPostGISLayers(self):
-        self.getSelectedItems()
-        (database, host, port, user, password) = self.widget.utils.getPostGISConnectionParameters(self.widget.comboBoxPostgis.currentText())
-        uri = QgsDataSourceURI()
-        uri.setConnection(str(host),str(port), str(database), str(user), str(password))
-        if len(self.selectedClasses)>0:
-#             try:
-            geom_column = 'geom'
-            for layer in self.selectedClasses:
-                split = layer.split('.')
-                schema = split[0]
-                layer_name = split[1]
-                sql = self.widget.gen.loadLayerFromDatabase(layer)
-                uri.setDataSource(schema, layer_name, geom_column, sql,'id')
-                uri.disableSelectAtId(True)
-                self.edgvLayer.loadEDGVLayer(uri, layer_name, 'postgres', self.widget.crs, self.widget.isSpatialite, self.dbVersion, self.qmlPath)
-            self.restoreInitialState()
-            self.close()
-#             except:
-#                 self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load the selected classes!"), level=QgsMessageBar.CRITICAL)
-        else:
-            self.bar.pushMessage(self.tr("Warning!"), self.tr("Please, select at least one class!"), level=QgsMessageBar.WARNING)
-
-    def loadSpatialiteLayers(self):
-        self.getSelectedItems()
-        uri = QgsDataSourceURI()
-        uri.setDatabase(self.widget.abstractDb.db.databaseName())
-        schema = ''
-        geom_column = 'GEOMETRY'
-        if len(self.selectedClasses)>0:
-#             try:
-            for layer_name in self.selectedClasses:
-                uri.setDataSource(schema, layer_name, geom_column)
-                self.edgvLayer.loadEDGVLayer(uri, layer_name, 'spatialite', self.widget.crs, self.widget.isSpatialite, self.dbVersion, self.qmlPath)
-            self.restoreInitialState()
-            self.close()
-#             except:
-#                 self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load the layer(s)!"), level=QgsMessageBar.CRITICAL)
-        else:
-            self.bar.pushMessage(self.tr("Warning!"), self.tr("Please select at least one layer!"), level=QgsMessageBar.WARNING)

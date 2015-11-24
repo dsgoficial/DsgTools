@@ -53,6 +53,9 @@ class AbstractDb(QObject):
         if self.db.isOpen():
             self.db.close()
             self.db = None
+            
+    def getDatabaseName(self):
+        return None
     
     def checkAndOpenDb(self):
         if not self.db.isOpen():

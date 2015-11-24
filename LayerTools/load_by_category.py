@@ -22,18 +22,21 @@
  *                                                                         *
  ***************************************************************************/
 """
+import os
+
+#QGIS imports
 from qgis.core import QgsCoordinateReferenceSystem,QgsDataSourceURI,QgsVectorLayer,QgsMapLayerRegistry,QgsMessageLog
 from qgis.gui import QgsMessageBar
 import qgis as qgis
 
+#PyQt imports
 from PyQt4 import QtGui, QtCore, uic
 from PyQt4.QtCore import  Qt
 from PyQt4.QtSql import QSqlQuery
 from PyQt4.QtGui import QApplication, QCursor
 
-from DsgTools.LayerTools.edgv_layer import EDGVLayer
-
-import os
+#DsgTools imports
+from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'load_by_category_dialog.ui'))
@@ -86,7 +89,8 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         QtCore.QObject.connect(self.pushButtonDeselectOne, QtCore.SIGNAL(("clicked()")), self.deselectOne)
         QtCore.QObject.connect(self.checkBoxAll, QtCore.SIGNAL(("stateChanged(int)")), self.setAllGroup)
         
-        self.edgvLayer = EDGVLayer(codeList)
+        self.codeList = codeList
+        self.layerFactory = LayerFactory()
  
     def restoreInitialState(self):
         self.categories = []
@@ -110,44 +114,22 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
     def listCategoriesFromDatabase(self):
         self.listWidgetCategoryFrom.clear()
         self.listWidgetCategoryTo.clear()
-        sql = self.widget.gen.getTablesFromDatabase()
-        query = QSqlQuery(sql, self.widget.db)
 
         self.dbVersion = self.widget.getDBVersion()
         self.qmlPath = self.widget.getQmlPath()
-
-        while query.next():
-            if self.widget.isSpatialite:
-                tableName = query.value(0)
-                layerName = tableName
-                split = tableName.split('_')
-                if len(split) < 2:
-                    continue
-                if self.dbVersion == '3.0' or self.dbVersion == '2.1.3':
-                    schema = split[0]
-                    category = split[1]
-                    categoryName = schema+'.'+category
-                else:
-                    categoryName = split[0] #done this way to have back compatibility with spatialites already in production
-
-            else:
-                tableSchema = query.value(0)
-                tableName = query.value(1)
-                split = tableName.split('_')
-                category = split[0]
-                categoryName = tableSchema+'.'+category
-                layerName = tableSchema+'.'+tableName
-
+        classes = self.widget.abstractDb.listGeomClassesFromDatabase()
+        for table in classes:
+            schema, layerName = self.widget.abstractDb.getTableSchema(table)
+            category = layerName.split('_')[0]
+            categoryName = schema+'.'+category
             if layerName.split("_")[-1] == "p":
-                self.point.append(layerName)
+                self.point.append(table)
             if layerName.split("_")[-1] == "l":
-                self.line.append(layerName)
+                self.line.append(table)
             if layerName.split("_")[-1] == "a":
-                self.polygon.append(layerName)
+                self.polygon.append(table)
 
-            if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
-                or tableName.split("_")[-1] == "a":
-                self.insertIntoListView(categoryName)
+            self.insertIntoListView(categoryName)
         self.listWidgetCategoryFrom.sortItems()
         self.setCRS()
 
@@ -241,26 +223,22 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
                 linha = self.line
                 area = self.polygon
     
-            if self.widget.db and self.widget.crs and len(self.listWidgetCategoryTo)>0:
+            if len(self.listWidgetCategoryTo)>0:
                 categoriasSelecionadas = []
                 for i in range(self.listWidgetCategoryTo.__len__()):
                     categoriasSelecionadas.append(self.listWidgetCategoryTo.item(i).text())
     
-#                 try:
                 if self.checkBoxPoint.isChecked():
-                    self.loadLayers('p',categoriasSelecionadas,ponto)
+                    self.loadLayers('p', categoriasSelecionadas, ponto)
                 if self.checkBoxLine.isChecked():
-                    self.loadLayers('l',categoriasSelecionadas,linha)
+                    self.loadLayers('l', categoriasSelecionadas, linha)
                 if self.checkBoxPolygon.isChecked():
-                    self.loadLayers('a',categoriasSelecionadas,area)
+                    self.loadLayers('a', categoriasSelecionadas, area)
                 if self.checkBoxPoint.isChecked()== False and self.checkBoxLine.isChecked() == False and self.checkBoxPolygon.isChecked() == False:
                     self.bar.pushMessage(self.tr("WARNING!"), self.tr("Please, select at least one type of layer!"), level=QgsMessageBar.WARNING)
                 else:
                     self.restoreInitialState()
                     self.close()
-#                 except:
-#                     qgis.utils.iface.messageBar().pushMessage(self.tr("CRITICAL!"), self.tr("Problem loading the categories!"), level=QgsMessageBar.CRITICAL)
-#                     pass
             else:
                 if self.widget.db and not self.widget.crs:
                     self.bar.pushMessage(self.tr("CRITICAL!"), self.tr("Could not determine the coordinate reference system!"), level=QgsMessageBar.CRITICAL)
@@ -277,13 +255,6 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
             QApplication.restoreOverrideCursor()
         except:
             QApplication.restoreOverrideCursor()
-
-    def loadLayers(self, type, categories, layer_names):
-        if self.widget.isSpatialite:
-            self.loadSpatialiteLayers(type, categories, layer_names)
-        else:
-
-            self.loadPostGISLayers(type, categories, layer_names)
 
     def setLayersWithElements(self):
         self.pointWithElement = []
@@ -318,71 +289,28 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
             listaQuantidades.append([layer, number])
         return listaQuantidades
 
-    def loadPostGISLayers(self, type, categories, layer_names):
-        (database, host, port, user, password) = self.widget.utils.getPostGISConnectionParameters(self.widget.comboBoxPostgis.currentText())
-        uri = QgsDataSourceURI()
-        uri.setConnection(str(host),str(port), str(database), str(user), str(password))
-        geom_column = 'geom'
+    def loadLayers(self, type, categories, table_names):
         if self.parentTreeNode is None:
-            self.parentTreeNode = qgis.utils.iface.legendInterface (). addGroup (database, -1)
+            self.parentTreeNode = qgis.utils.iface.legendInterface (). addGroup (self.widget.abstractDb.getDatabaseName(), -1)
 
         if type == 'p':
-            idGrupo = qgis.utils.iface.legendInterface (). addGroup ("Ponto", True,self.parentTreeNode)
-            for categoria in categories:
-                self.preparePostGISToLoad(uri, categoria, layer_names, idGrupo, geom_column)
+            idGrupo = qgis.utils.iface.legendInterface (). addGroup (self.tr('Point'), True,self.parentTreeNode)
+            for category in categories:
+                self.prepareLayer(category, table_names, idGrupo)
         if type == 'l':
-            idGrupo = qgis.utils.iface.legendInterface (). addGroup ("Linha", True,self.parentTreeNode)
-            for categoria in categories:
-                self.preparePostGISToLoad(uri, categoria, layer_names, idGrupo, geom_column)
+            idGrupo = qgis.utils.iface.legendInterface (). addGroup (self.tr('Line'), True,self.parentTreeNode)
+            for category in categories:
+                self.prepareLayer(category, table_names, idGrupo)
         if type == 'a':
-            idGrupo = qgis.utils.iface.legendInterface (). addGroup ("Area", True,self.parentTreeNode)
-            for categoria in categories:
-                self.preparePostGISToLoad(uri, categoria, layer_names, idGrupo, geom_column)
-
-    def preparePostGISToLoad(self, uri, categoria, layer_names, idGrupo, geom_column):
-        idSubgrupo = qgis.utils.iface.legendInterface().addGroup(categoria, True, idGrupo)
-        layer_names.sort(reverse=True)
-        for layer_name in layer_names:
-            split = layer_name.split('_')
-            category = split[0]
-            schema = category.split('.')[0]
-            name = layer_name.replace(schema+'.', '')
-            if category == categoria:
-                sql = self.widget.gen.loadLayerFromDatabase(layer_name)
-                uri.setDataSource(schema, name, geom_column, sql, 'id')
-                uri.disableSelectAtId(True)
-                self.edgvLayer.loadEDGVLayer(uri, name, 'postgres', self.widget.crs, self.widget.isSpatialite, self.dbVersion, self.qmlPath, idSubgrupo)
-
-    def prepareSpatialiteToLoad(self, uri, categoria, layer_names, idGrupo, geom_column):
-        idSubgrupo = qgis.utils.iface.legendInterface().addGroup(categoria, True, idGrupo)
-        layer_names.sort(reverse=True)
-        for layer_name in layer_names:
-            split = layer_name.split('_')
-            if self.dbVersion == '3.0' or self.dbVersion == '2.1.3':
-                category = split[0]+'.'+split[1]
-            else:
-                category = split[0]
-            if category == categoria:
-                uri.setDataSource('', layer_name, geom_column)
-                self.edgvLayer.loadEDGVLayer(uri, layer_name, 'spatialite', self.widget.crs, self.widget.isSpatialite, self.dbVersion, self.qmlPath, idSubgrupo)
-
-    def loadSpatialiteLayers(self, type, categories, layer_names):
-        uri = QgsDataSourceURI()
-        uri.setDatabase(self.widget.filename)
-        geom_column = 'GEOMETRY'
-
-        if self.parentTreeNode is None:
-            self.parentTreeNode = qgis.utils.iface.legendInterface(). addGroup(self.widget.filename.split('.sqlite')[0].split('/')[-1], -1)
-
-        if type == 'p':
-            idGrupo = qgis.utils.iface.legendInterface(). addGroup("Ponto", True, self.parentTreeNode)
-            for categoria in categories:
-                self.prepareSpatialiteToLoad(uri, categoria, layer_names, idGrupo, geom_column)
-        if type == 'l':
-            idGrupo = qgis.utils.iface.legendInterface(). addGroup("Linha", True, self.parentTreeNode)
-            for categoria in categories:
-                self.prepareSpatialiteToLoad(uri, categoria, layer_names, idGrupo, geom_column)
-        if type == 'a':
-            idGrupo = qgis.utils.iface.legendInterface(). addGroup("Area", True, self.parentTreeNode)
-            for categoria in categories:
-                self.prepareSpatialiteToLoad(uri, categoria, layer_names, idGrupo, geom_column)
+            idGrupo = qgis.utils.iface.legendInterface (). addGroup (self.tr('Area'), True,self.parentTreeNode)
+            for category in categories:
+                self.prepareLayer(category, table_names, idGrupo)
+                
+    def prepareLayer(self, category, table_names, idGrupo):
+        idSubgrupo = qgis.utils.iface.legendInterface().addGroup(category, True, idGrupo)
+        table_names.sort(reverse=True)
+        for table_name in table_names:
+            schema, layerName = self.widget.abstractDb.getTableSchema(table_name)
+            if category.split('.')[1] == layerName.split('_')[0]:
+                edgvLayer = self.layerFactory.makeLayer(self.widget.abstractDb, self.codeList, table_name)
+                edgvLayer.load(self.widget.crs, idSubgrupo)
