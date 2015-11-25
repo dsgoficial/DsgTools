@@ -26,7 +26,7 @@ from qgis.core import QgsCoordinateReferenceSystem,QgsMessageLog
 
 # Qt imports
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
+from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
 from PyQt4.QtSql import QSqlDatabase
 
 # DSGTools imports
@@ -151,7 +151,7 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
     def populatePostGISConnectionsCombo(self):
         self.comboBoxPostgis.clear()
         self.comboBoxPostgis.addItem(self.tr('Select Database'))
-        self.comboBoxPostgis.addItems(self.utils.getPostGISConnections())
+        self.comboBoxPostgis.addItems(self.getPostGISConnections())
         
     def isDBConnected(self):
         return self.dbLoaded
@@ -168,3 +168,10 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         retvalue = newConnectionDialog.exec_()
         self.populatePostGISConnectionsCombo()
         return retvalue
+    
+    def getPostGISConnections(self):
+        settings = QSettings()
+        settings.beginGroup('PostgreSQL/connections')
+        currentConnections = settings.childGroups()
+        settings.endGroup()
+        return currentConnections

@@ -102,10 +102,3 @@ class Utils:
             return self.mergeDict(inputDict, tempDict)
         else:
             return self.buildOneNestedDict(inputDict,keyList,value)
-        
-    def getPostGISConnections(self):
-        settings = QSettings()
-        settings.beginGroup('PostgreSQL/connections')
-        currentConnections = settings.childGroups()
-        settings.endGroup()
-        return currentConnections
