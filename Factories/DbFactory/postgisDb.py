@@ -98,6 +98,7 @@ class PostgisDb(AbstractDb):
             layerName = tableSchema+'.'+tableName
             if tableSchema == 'complexos':
                 classList.append(layerName)
+        classList.sort()
         return classList
 
     def storeConnection(self, server):
@@ -243,6 +244,7 @@ class PostgisDb(AbstractDb):
         #query to obtain the link column between the complex and the feature layer
         sql = self.gen.getLinkColumn(complexClass, aggregatedClass)
         query = QSqlQuery(sql, self.db)
+        column_name = ''
         while query.next():
             column_name = query.value(0)
         return column_name

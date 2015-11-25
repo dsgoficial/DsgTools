@@ -125,23 +125,6 @@ class Utils:
         (database, host, port, user, password) = self.getPostGISConnectionParameters(postGISConnection)
         return self.getPostGISDatabaseWithParams(database, host, port, user, password)
     
-    def getPostGISDatabaseWithParams(self, database, host, port, user, password):
-        db = None
-        db = QSqlDatabase("QPSQL")
-        db.setDatabaseName(database)
-        db.setHostName(host)
-        db.setPort(int(port))
-        db.setUserName(user)
-        db.setPassword(password)
-        return db
-
-    def isSpatialiteDB(self, db):
-        if db.driverName() == 'QPSQL':
-            isSpatialite = False
-        elif db.driverName() == 'QSQLITE':
-            isSpatialite = True
-        return isSpatialite
-    
     #TODO: Reimplement in server_tools
     def browseServer(self,dbList,host,port,user,password):
         gen = self.factory.createSqlGenerator(False)
@@ -160,18 +143,3 @@ class Utils:
         return edvgDbList
     
     #TODO: Reimplement in server_tools    
-    def getDbsFromServer(self,name):
-        gen = self.factory.createSqlGenerator(False)
-        
-        (host, port, user, password) = self.getServerConfiguration(name)
-        database = 'postgres'
-        
-        db = self.getPostGISDatabaseWithParams(database,host,port,user,password)
-        if not db.open():
-            QgsMessageLog.logMessage(db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        
-        query = QSqlQuery(gen.getDatabasesFromServer(),db)
-        dbList = []
-        while query.next():
-            dbList.append(query.value(0))
-        return self.browseServer(dbList,host,port,user,password)

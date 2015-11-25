@@ -200,7 +200,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                     freq = QgsFeatureRequest()
                     freq.setFilterFid(int(id))
                     feature = layer.getFeatures( freq ).next()
-                    if j==0:
+                    if j==0 and i == 0:
                         bbox=feature.geometry().boundingBox()
                     bbox.combineExtentWith(feature.geometry().boundingBox())
 
