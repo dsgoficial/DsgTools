@@ -87,7 +87,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         
         for row, value in enumerate(keys):
             code = valueDict[value]
-            valueItem = QTableWidgetItem(str(value).decode('utf-8'))  
+            valueItem = QTableWidgetItem(str(value).decode('utf-8'))
             codeItem = QTableWidgetItem(str(code))
             self.tableWidget.setItem(row, 0, valueItem)
             self.tableWidget.setItem(row, 1, codeItem)

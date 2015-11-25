@@ -102,44 +102,10 @@ class Utils:
             return self.mergeDict(inputDict, tempDict)
         else:
             return self.buildOneNestedDict(inputDict,keyList,value)
-
-    def getPostGISConnectionParameters(self, name):
-        settings = QSettings()
-        settings.beginGroup('PostgreSQL/connections/'+name)
-        database = settings.value('database')
-        host = settings.value('host')
-        port = settings.value('port')
-        user = settings.value('username')
-        password = settings.value('password')
-        settings.endGroup()
-        return (database, host, port, user, password)
-
+        
     def getPostGISConnections(self):
         settings = QSettings()
         settings.beginGroup('PostgreSQL/connections')
         currentConnections = settings.childGroups()
         settings.endGroup()
         return currentConnections
-    
-    def getPostGISDatabase(self, postGISConnection):
-        (database, host, port, user, password) = self.getPostGISConnectionParameters(postGISConnection)
-        return self.getPostGISDatabaseWithParams(database, host, port, user, password)
-    
-    #TODO: Reimplement in server_tools
-    def browseServer(self,dbList,host,port,user,password):
-        gen = self.factory.createSqlGenerator(False)
-        edvgDbList = []
-        for database in dbList:
-            db = self.getPostGISDatabaseWithParams(database,host,port,user,password)
-            if not db.open():
-                qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+db.lastError().databaseText(), level=QgsMessageBar.CRITICAL)
-
-            query = QSqlQuery(db)
-            if query.exec_(gen.getEDGVVersion()):
-                while query.next():
-                    version = query.value(0)
-                    if version:
-                        edvgDbList.append((database,version))
-        return edvgDbList
-    
-    #TODO: Reimplement in server_tools    
