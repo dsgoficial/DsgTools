@@ -20,25 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtSql import QSqlDatabase,QSqlQuery
-
-import qgis as qgis
-from qgis.gui import QgsMessageBar
-from qgis.core import QgsMessageLog
-
-import os
-from osgeo import ogr
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-
 class Utils:
-    def __init__(self):
-        self.factory = SqlGeneratorFactory()
-
-    def __del__(self):
-        pass
-    
     def mergeDict(self,dictionary1, dictionary2):
         output = dict()
         if type(dictionary1) <> dict or type(dictionary2) <> dict:
