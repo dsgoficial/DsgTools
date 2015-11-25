@@ -20,19 +20,24 @@
  *                                                                         *
  ***************************************************************************/
 """
+import os
+
+#PyQt4 imports
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
 from PyQt4.QtGui import QTreeWidgetItem, QMessageBox
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
+#QGIS imports
 from qgis.core import *
 
-import os
+#DsgTools imports
+from DsgTools.ComplexTools.manageComplex import ManageComplexDialog
+from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'complexWindow_base.ui'))
-
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.ComplexTools.manageComplex import ManageComplexDialog
 
 class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
     def __init__(self, iface, parent=None):
@@ -47,27 +52,30 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         #self.enderecoLine.setText('186.228.51.52')
         #self.portaLine.setText('2101'
         self.iface = iface
+        
+        self.dbButton.clicked.connect(self.getDataSources)
+        self.dbCombo.activated.connect(self.updateComplexClass)
+        self.complexCombo.activated.connect(self.loadAssociatedFeatures)
+        self.iface.newProjectCreated.connect(self.clearDock)
 
-        QObject.connect(self.dbButton, SIGNAL(("clicked()")), self.getDataSources)
-        QObject.connect(self.dbCombo, SIGNAL("activated(int)"), self.updateComplexClass)
-        QObject.connect(self.complexCombo, SIGNAL("activated(int)"), self.loadAssociatedFeatures)
-        QObject.connect(self.iface, SIGNAL("newProjectCreated()"), self.clearDock)
-
-        self.db = None
+        self.abstractDb = None
         self.databases = None
-        self.factory = SqlGeneratorFactory()
-        self.gen = None
+        self.abstractDbFactory = DbFactory()
 
     def __del__(self):
-        if self.db:
-            self.db.close()
-            self.db = None
+        self.renewDb
+            
+    def renewDb(self):
+        if self.abstractDb:
+            del self.abstractDb
+            self.abstractDb = None
 
     def clearDock(self):
         self.treeWidget.clear()
         self.dbCombo.clear()
         self.complexCombo.clear()
 
+    #verificar se é necessario
     def isSpatialiteDatabase(self, dbName):
         (dataSourceUri, credentials) = self.databases[dbName]
         if dataSourceUri.host() == "":
@@ -88,34 +96,33 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         return (user, passwd)
 
     def updateComplexClass(self):
-        if self.db:
-            self.db.close()
-            self.db = None
+        self.renewDb()
 
         if self.dbCombo.currentIndex() == 0:
             return
 
         dbName = self.dbCombo.currentText()
-
-        #getting the sql generator
-        self.gen = self.factory.createSqlGenerator(self.isSpatialiteDatabase(dbName))
-
+        
         (dataSourceUri, credentials) = self.databases[dbName]
         #verifying the connection type
         if self.isSpatialiteDatabase(dbName):
-            self.db = QSqlDatabase("QSQLITE")
-            self.db.setDatabaseName(dbName)
+            self.abstractDb = self.abstractDbFactory.createDbFactory('QSQLITE')
+            self.abstractDb.connectDatabase(dataSourceUri.database())
         else:
-            self.db = QSqlDatabase("QPSQL")
-            self.db.setDatabaseName(dbName)
-            self.db.setHostName(dataSourceUri.host())
-            self.db.setPort(int(dataSourceUri.port()))
-            self.db.setUserName(credentials[0])
-            self.db.setPassword(credentials[1])
-        if not self.db.open():
-            print self.db.lastError().text()
-
-        self.populateComboBox()
+            self.abstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
+            
+            database = dbName
+            host = dataSourceUri.host()
+            port = int(dataSourceUri.port())
+            user = credentials[0]
+            password = credentials[1]
+            
+            self.abstractDb.connectDatabaseWithParameters(host,port,database,user,password)
+        try:
+            self.abstractDb.checkAndOpenDb()
+            self.populateComboBox()
+        except Exception as e:
+            QMessageBox.critical(self.iface.mainWindow(), self.tr("Critical!"), e.args[0])
 
     def populateComboBox(self):
         #getting all complex tables
@@ -124,11 +131,9 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
 
         dbName = self.dbCombo.currentText()
         (dataSourceUri, credentials) = self.databases[dbName]
-
-        #getting all complex tables
-        query = QSqlQuery(self.gen.getComplexTablesFromDatabase(), self.db)
-        while query.next():
-            self.complexCombo.addItem(query.value(0))
+        
+        complexClasses = self.abstractDb.listComplexClassesFromDatabase()
+        self.complexCombo.addItems(complexClasses)
 
     def getDataSources(self):
         self.dbCombo.clear()
@@ -141,7 +146,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         self.databases = dict()
         self.layers = self.iface.mapCanvas().layers()
         for layer in self.layers:
-            dataSourceUri = QgsDataSourceURI( layer.dataProvider().dataSourceUri() )
+            dataSourceUri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
             dbName = dataSourceUri.database()
             if dbName not in self.databases:
                 self.databases[dbName] = (dataSourceUri,self.getUserCredentials(layer))
@@ -151,15 +156,12 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_managePushButton_clicked(self):
         #opens a dialog to manage complexes
-        if self.isSpatialiteDatabase(self.dbCombo.currentText()):
-            self.dlg = ManageComplexDialog(self.iface, self.db, self.complexCombo.currentText())
-        else:
-            self.dlg = ManageComplexDialog(self.iface, self.db, 'complexos.'+self.complexCombo.currentText())
+        dlg = ManageComplexDialog(self.iface, self.abstractDb, self.complexCombo.currentText())
         #connects a signal to update the tree widget when done
-        QObject.connect(self.dlg, SIGNAL(("tableUpdated()")), self.loadAssociatedFeatures)
+        QObject.connect(dlg, SIGNAL(("tableUpdated()")), self.loadAssociatedFeatures)
         #connects a signal to disassociate features from complex before removal
-        QObject.connect(self.dlg, SIGNAL(("markedToRemove( PyQt_PyObject )")), self.disassociateFeatures)
-        result = self.dlg.exec_()
+        QObject.connect(dlg, SIGNAL(("markedToRemove( PyQt_PyObject )")), self.disassociateFeatures)
+        result = dlg.exec_()
         if result:
             pass
 
@@ -208,13 +210,6 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             QMessageBox.warning(self.iface.mainWindow(), self.tr("Warning!"), self.tr("Select a complex."))
             return
 
-    def getAdjustedComplexName(self, dbName, complex):
-        if self.isSpatialiteDatabase(dbName):
-            complex = '\''+complex.replace("complexos_","")+'\''
-        else:
-            complex = '\''+complex+'\''
-        return complex
-
     def disassociateFeatures(self, toBeRemoved):
         for uuid in toBeRemoved:
             items = self.treeWidget.findItems(uuid, Qt.MatchRecursive, 1)
@@ -229,8 +224,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         aggregated_class = item.text(0)
         uuid = item.parent().text(1)
         complex = item.parent().parent().text(0)
-        complex = self.getAdjustedComplexName(self.dbCombo.currentText(), complex)
-        link_column = self.obtainLinkColumn(complex, aggregated_class)
+        link_column = self.abstractDb.obtainLinkColumn(complex, aggregated_class)
 
         #getting the layer the needs to be updated
         aggregated_layer = None
@@ -253,8 +247,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         aggregated_class = item.parent().text(0)
         uuid = item.parent().parent().text(1)
         complex = item.parent().parent().parent().text(0)
-        complex = self.getAdjustedComplexName(self.dbCombo.currentText(), complex)
-        link_column = self.obtainLinkColumn(complex, aggregated_class)
+        link_column = self.abstractDb.obtainLinkColumn(complex, aggregated_class)
 
         #getting the layer the needs to be updated
         aggregated_layer = None
@@ -273,9 +266,8 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         self.updateLayerOnDisassociate(layer, aggregated_class, link_column, id)
 
     def updateLayerOnDisassociate(self, layer, aggregated_class, link_column, id):
-        if self.isComplexClass(aggregated_class):
-            sql = self.gen.disassociateComplexFromComplex(aggregated_class, link_column, id)
-            query = QSqlQuery(sql, self.db)
+        if self.abstractDb.isComplexClass(aggregated_class):
+            self.abstractDb.disassociateComplexFromComplex(aggregated_class, link_column, id)
         else:
             #field index that will be set to NULL
             fieldIndex = [i for i in range(len(layer.dataProvider().fields())) if layer.dataProvider().fields()[i].name() == link_column]
@@ -283,14 +275,6 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             attrs = {fieldIndex[0]:None}
             #actual update in the database
             layer.dataProvider().changeAttributeValues({int(id):attrs})
-
-    def isComplexClass(self, className):
-        #getting all complex tables
-        query = QSqlQuery(self.gen.getComplexTablesFromDatabase(), self.db)
-        while query.next():
-            if query.value(0) == className:
-                return True
-        return False
 
     @pyqtSlot(bool)
     def on_disassociatePushButton_clicked(self):
@@ -318,44 +302,15 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             return
 
         complex = self.complexCombo.currentText()
-        complex = self.getAdjustedComplexName(self.dbCombo.currentText(), complex)
-
-        #query to get the possible links to the selected complex in the combobox
-        sql = self.gen.getComplexLinks(complex)
-        query = QSqlQuery(sql, self.db)
-        while query.next():
-            #setting the variables
-            complex_schema = query.value(0)
-            complex = query.value(1)
-            aggregated_schema = query.value(2)
-            aggregated_class = query.value(3)
-            column_name = query.value(4)
-
-            #query to obtain the created complexes
-            sql = self.gen.getComplexData(complex_schema, complex)
-            complexQuery = QSqlQuery(sql, self.db)
-            while complexQuery.next():
-                complex_uuid = complexQuery.value(0)
-                name = complexQuery.value(1)
-
-                if not (complex_uuid and name):
-                    continue
-                #adding the information in the tree widget case there are no associated features
-                if self.isSpatialiteDatabase(self.dbCombo.currentText()):
-                    self.addAssociatedFeature(complex_schema+"_"+complex, name, complex_uuid, None, None)
-                else:
-                    self.addAssociatedFeature(complex, name, complex_uuid, None, None)
-
-                #query to obtain the id of the associated feature
-                sql = self.gen.getAssociatedFeaturesData(aggregated_schema, aggregated_class, column_name, complex_uuid)
-                associatedQuery = QSqlQuery(sql, self.db)
-
-                while associatedQuery.next():
-                    ogc_fid = associatedQuery.value(0)
-                    #adding the information in the tree widget
-                    if self.isSpatialiteDatabase(self.dbCombo.currentText()):
-                        self.addAssociatedFeature(str(complex_schema+"_"+complex), str(name), complex_uuid, str(aggregated_schema+"_"+aggregated_class), ogc_fid)
-                    else:
+        
+        associatedDict = self.abstractDb.loadAssociatedFeatures(complex)
+        print associatedDict
+        
+        for name in associatedDict.keys():
+            for complex_uuid in associatedDict[name].keys():
+                self.addAssociatedFeature(str(complex), str(name), complex_uuid, None, None)
+                for aggregated_class in associatedDict[name][complex_uuid]:
+                    for ogc_fid in associatedDict[name][complex_uuid][aggregated_class]:
                         self.addAssociatedFeature(str(complex), str(name), complex_uuid, str(aggregated_class), ogc_fid)
 
     def depth(self, item):
@@ -365,15 +320,6 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             item = item.parent()
             depth += 1
         return depth
-
-    def obtainLinkColumn(self, complexClass, aggregatedClass):
-        #query to obtain the link column between the complex and the feature layer
-        sql = self.gen.getLinkColumn(complexClass, aggregatedClass)
-        query = QSqlQuery(sql, self.db)
-        column_name = ""
-        while query.next():
-            column_name = query.value(0)
-        return column_name
 
     def associateFeatures(self):
         #case no item is selected we should warn the user
@@ -388,8 +334,6 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             return
 
         complex = self.complexCombo.currentText()
-        #surrounding the name with ''
-        complex = self.getAdjustedComplexName(self.dbCombo.currentText(), complex)
 
         #uuid to be adjust on the selected features
         uuid = item.text(1)
@@ -404,7 +348,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                 continue
 
             #obtaining the link column
-            column_name = self.obtainLinkColumn(complex, layer.name())
+            column_name = self.abstractDb.obtainLinkColumn(complex, layer.name())
 
             #storing the names of the incompatible layers
             if column_name == "":

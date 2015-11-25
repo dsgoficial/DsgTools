@@ -64,7 +64,6 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         self.widget_2.tabWidget.setTabEnabled(1,False)
         self.allDataRadioButton.setEnabled(False)
         self.fixDataRadioButton.setEnabled(False)   
-        
 
     def setConversion(self,conversionType):
         self.widget.setInitialState()

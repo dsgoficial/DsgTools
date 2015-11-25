@@ -31,7 +31,7 @@ import qgis as qgis
 
 #PyQt imports
 from PyQt4 import QtGui, QtCore, uic
-from PyQt4.QtCore import  Qt
+from PyQt4.QtCore import Qt
 from PyQt4.QtSql import QSqlQuery
 from PyQt4.QtGui import QApplication, QCursor
 
@@ -78,16 +78,18 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         self.layout().addWidget(self.bar, 0,0,1,1)
  
         #Objects Connections
-        QtCore.QObject.connect(self.widget, QtCore.SIGNAL(("connectionChanged()")), self.listCategoriesFromDatabase)
-        QtCore.QObject.connect(self.widget, QtCore.SIGNAL(("problemOccurred()")), self.pushMessage)
+        self.widget.connectionChanged.connect(self.listCategoriesFromDatabase)
+        self.widget.problemOccurred.connect(self.pushMessage)
         
-        QtCore.QObject.connect(self.pushButtonCancel, QtCore.SIGNAL(("clicked()")), self.cancel)
-        QtCore.QObject.connect(self.pushButtonOk, QtCore.SIGNAL(("clicked()")), self.okSelected)
-        QtCore.QObject.connect(self.pushButtonSelectAll, QtCore.SIGNAL(("clicked()")), self.selectAll)
-        QtCore.QObject.connect(self.pushButtonDeselectAll, QtCore.SIGNAL(("clicked()")), self.deselectAll)
-        QtCore.QObject.connect(self.pushButtonSelectOne, QtCore.SIGNAL(("clicked()")), self.selectOne)
-        QtCore.QObject.connect(self.pushButtonDeselectOne, QtCore.SIGNAL(("clicked()")), self.deselectOne)
-        QtCore.QObject.connect(self.checkBoxAll, QtCore.SIGNAL(("stateChanged(int)")), self.setAllGroup)
+        self.pushButtonCancel.clicked.connect(self.cancel)
+        self.pushButtonOk.clicked.connect(self.okSelected)
+        self.pushButtonSelectAll.clicked.connect(self.selectAll)
+        self.pushButtonDeselectAll.clicked.connect(self.deselectAll)
+        self.pushButtonSelectOne.clicked.connect(self.selectOne)
+        self.pushButtonDeselectOne.clicked.connect(self.deselectOne)
+        self.checkBoxAll.stateChanged.connect(self.setAllGroup)
+        
+        self.widget.tabWidget.currentChanged.connect(self.restoreInitialState)
         
         self.codeList = codeList
         self.layerFactory = LayerFactory()

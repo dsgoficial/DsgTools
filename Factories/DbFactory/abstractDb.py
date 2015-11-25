@@ -495,3 +495,15 @@ class AbstractDb(QObject):
             qmlPath = os.path.join(qmlVersionPath, 'edgv_213')
         return qmlPath
     
+    def obtainLinkColumn(self, complexClass, aggregatedClass):
+        return None
+    
+    def loadAssociatedFeatures(self, complex):
+        return None
+    
+    def isComplexClass(self, className):
+        return None
+    
+    def disassociateComplexFromComplex(aggregated_class, link_column, id):
+        pass
+    

@@ -238,3 +238,59 @@ class PostgisDb(AbstractDb):
         status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict)
         return status
     
+    def obtainLinkColumn(self, complexClass, aggregatedClass):
+        complexClass = complexClass.replace('complexos.', '')
+        #query to obtain the link column between the complex and the feature layer
+        sql = self.gen.getLinkColumn(complexClass, aggregatedClass)
+        query = QSqlQuery(sql, self.db)
+        while query.next():
+            column_name = query.value(0)
+        return column_name
+
+    def loadAssociatedFeatures(self, complex):
+        associatedDict = dict()
+        complex = complex.replace('complexos.', '')
+        #query to get the possible links to the selected complex in the combobox
+        sql = self.gen.getComplexLinks(complex)
+        query = QSqlQuery(sql, self.db)
+        while query.next():
+            #setting the variables
+            complex_schema = query.value(0)
+            complex = query.value(1)
+            aggregated_schema = query.value(2)
+            aggregated_class = query.value(3)
+            column_name = query.value(4)
+
+            #query to obtain the created complexes
+            sql = self.gen.getComplexData(complex_schema, complex)
+            complexQuery = QSqlQuery(sql, self.db)
+            while complexQuery.next():
+                complex_uuid = complexQuery.value(0)
+                name = complexQuery.value(1)
+
+                if not (complex_uuid and name):
+                    continue
+                
+                associatedDict = self.utils.buildNestedDict(associatedDict, [name, complex_uuid, aggregated_class], [])
+                
+                #query to obtain the id of the associated feature
+                sql = self.gen.getAssociatedFeaturesData(aggregated_schema, aggregated_class, column_name, complex_uuid)
+                associatedQuery = QSqlQuery(sql, self.db)
+
+                while associatedQuery.next():
+                    ogc_fid = associatedQuery.value(0)
+                    associatedDict = self.utils.buildNestedDict(associatedDict, [name, complex_uuid, aggregated_class], [ogc_fid])
+        return associatedDict
+    
+    def isComplexClass(self, className):
+        #getting all complex tables
+        query = QSqlQuery(self.gen.getComplexTablesFromDatabase(), self.db)
+        while query.next():
+            if query.value(0) == className:
+                return True
+        return False
+
+    def disassociateComplexFromComplex(aggregated_class, link_column, id):
+        sql = self.gen.disassociateComplexFromComplex(aggregated_class, link_column, id)
+        query = QSqlQuery(sql, self.db)
+    

@@ -68,6 +68,8 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
         QtCore.QObject.connect(self.selectAllCheck, QtCore.SIGNAL(("stateChanged(int)")), self.selectAll)
         QtCore.QObject.connect(self.pushButtonOk, QtCore.SIGNAL(("clicked()")), self.okSelected)
         
+        self.widget.tabWidget.currentChanged.connect(self.restoreInitialState)
+        
         self.codeList = codeList
         self.layerFactory = LayerFactory()
 

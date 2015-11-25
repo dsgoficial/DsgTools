@@ -24,7 +24,7 @@ from DsgTools.Factories.SqlFactory.sqlGenerator import SqlGenerator
 
 class PostGISSqlGenerator(SqlGenerator):
     def getComplexLinks(self, complex):
-        sql = "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_schema where complex = "+complex
+        sql = "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_schema where complex = \'"+complex+'\''
         return sql
 
     def getComplexTablesFromDatabase(self):
@@ -40,7 +40,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getLinkColumn(self, complexClass, aggregatedClass):
-        sql = "SELECT column_name from complex_schema where complex = "+complexClass+" and aggregated_class = "+'\''+aggregatedClass+'\''
+        sql = "SELECT column_name from complex_schema where complex = \'"+complexClass+'\''+" and aggregated_class = "+'\''+aggregatedClass+'\''
         return sql
 
     def getSrid(self):

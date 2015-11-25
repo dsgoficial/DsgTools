@@ -20,18 +20,21 @@
  *                                                                         *
  ***************************************************************************/
 """
-# Import the PyQt and QGIS libraries
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-
-from PyQt4.QtSql import QSqlTableModel, QSqlDatabase
-
-from ui_manageComplex import Ui_Dialog
+import os
 from uuid import uuid4
 
-import os
+# Import the PyQt and QGIS libraries
+from PyQt4 import uic, QtGui, QtCore
+from PyQt4.QtCore import Qt, SIGNAL
+from PyQt4.QtGui import QStyledItemDelegate, QComboBox, QItemDelegate, QDialog, QMessageBox
+from PyQt4.QtSql import QSqlTableModel, QSqlDatabase
+
+#DsgTools imports
 from DsgTools.QmlTools.qmlParser import QmlParser
-from DsgTools.Utils.utils import Utils
+from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
+
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'ui_manageComplex.ui'))
 
 class CustomTableModel(QSqlTableModel):
     def __init__(self, domainDict, parent=None, db=QSqlDatabase):
@@ -97,8 +100,8 @@ class ComboBoxDelegate(QStyledItemDelegate):
             # use default
             QItemDelegate.setModelData(self, editor, model, index)
 
-class ManageComplexDialog(QDialog, Ui_Dialog):
-    def __init__(self, iface, db, table):
+class ManageComplexDialog(QDialog, FORM_CLASS):
+    def __init__(self, iface, abstractDb, table):
         """Constructor.
         """
         QDialog.__init__( self )
@@ -108,7 +111,7 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         self.iface = iface
 
         #database conenction
-        self.db = db
+        self.db = abstractDb.db
         #table name
         self.table = table
         #rows that are marked for removal
@@ -119,8 +122,7 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         fileName = fileName.split('.')[-1]+'.qml'
 
         #obtaining the qml file path
-        self.utils = Utils()
-        qmlDirPath = self.utils.getQmlDir(db)
+        qmlDirPath = abstractDb.getQmlDir()
         qmlPath = os.path.join(qmlDirPath, fileName)
 
         #getting the domain dictionary that will be used to generate the comboboxes
@@ -130,11 +132,11 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
         except:
             self.domainDict = dict()
             pass
-
-        QObject.connect(self.addRow, SIGNAL(("clicked()")), self.addComplex)
-        QObject.connect(self.removeRow, SIGNAL(("clicked()")), self.removeComplex)
-        QObject.connect(self.updateButton, SIGNAL(("clicked()")), self.updateTable)
-        QObject.connect(self.cancelButton, SIGNAL(("clicked()")), self.cancel)
+        
+        self.addRow.clicked.connect(self.addComplex)
+        self.removeRow.clicked.connect(self.removeComplex)
+        self.updateButton.clicked.connect(self.updateTable)
+        self.cancelButton.clicked.connect(self.cancel)
 
         self.updateTableView()
 
@@ -218,8 +220,6 @@ class ManageComplexDialog(QDialog, Ui_Dialog):
     def updateTable(self):
         #checking if the name field is filled
         #Now the database checks the field "nome", therefore the method checkComplexNameField() is no longer needed
-#         if not self.checkComplexNameField():
-#             return
 
         #emit the signal to disassocite all features from the complexes marked for removal
         self.emit(SIGNAL("markedToRemove( PyQt_PyObject )"), self.toBeRemoved)
