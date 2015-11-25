@@ -304,7 +304,6 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         complex = self.complexCombo.currentText()
         
         associatedDict = self.abstractDb.loadAssociatedFeatures(complex)
-        print associatedDict
         
         for name in associatedDict.keys():
             for complex_uuid in associatedDict[name].keys():

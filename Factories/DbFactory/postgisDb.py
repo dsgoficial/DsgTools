@@ -290,7 +290,7 @@ class PostgisDb(AbstractDb):
                 return True
         return False
 
-    def disassociateComplexFromComplex(aggregated_class, link_column, id):
+    def disassociateComplexFromComplex(self, aggregated_class, link_column, id):
         sql = self.gen.disassociateComplexFromComplex(aggregated_class, link_column, id)
         query = QSqlQuery(sql, self.db)
     
