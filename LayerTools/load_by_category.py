@@ -263,9 +263,9 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         self.lineWithElement = []
         self.polygonWithElement = []
 
-        pontoAux = self.countElements(self.point)
-        linhaAux = self.countElements(self.line)
-        areaAux = self.countElements(self.polygon)
+        pontoAux = self.widget.abstractDb.countElements(self.point)
+        linhaAux = self.widget.abstractDb.countElements(self.line)
+        areaAux = self.widget.abstractDb.countElements(self.polygon)
 
         for i in pontoAux:
             if i[1] > 0:
@@ -278,18 +278,6 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         for i in areaAux:
             if i[1] > 0:
                 self.polygonWithElement.append(i[0])
-
-    def countElements(self, layers):
-        listaQuantidades = []
-        for layer in layers:
-            sql = self.widget.gen.getElementCountFromLayer(layer)
-            query = QSqlQuery(sql,self.widget.db)
-            query.next()
-            number = query.value(0)
-            if not query.exec_(sql):
-                QgsMessageLog.logMessage(self.tr("Problem counting elements: ")+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            listaQuantidades.append([layer, number])
-        return listaQuantidades
 
     def loadLayers(self, type, categories, table_names):
         if self.parentTreeNode is None:

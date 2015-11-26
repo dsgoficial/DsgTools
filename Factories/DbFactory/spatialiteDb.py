@@ -61,7 +61,9 @@ class SpatialiteDb(AbstractDb):
         while query.next():
             tableName = str(query.value(0))
             layerName = tableName
-            classList.append(layerName)
+            if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
+                or tableName.split("_")[-1] == "a":
+                classList.append(layerName)
         return classList
     
     def listComplexClassesFromDatabase(self):
