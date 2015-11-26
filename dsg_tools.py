@@ -643,9 +643,8 @@ class DsgTools:
             self.databaseButton.setDefaultAction(self.toolbar.sender())
         except:
             pass
-        self.dlg = CriaSpatialiteDialog()
-        self.dlg.show()
-        result = self.dlg.exec_()
+        dlg = CriaSpatialiteDialog()
+        result = dlg.exec_()
         if result:
             pass
 
@@ -654,11 +653,10 @@ class DsgTools:
             self.databaseButton.setDefaultAction(self.toolbar.sender())
         except:
             pass
-        self.dlg = PostgisDBTool(self.iface)
-        self.dlg.show()
-        result = self.dlg.exec_()
+        dlg = PostgisDBTool(self.iface)
+        result = dlg.exec_()
         if result == 1:
-            (db, version, epsg) = self.dlg.getParameters()
+            (db, version, epsg) = dlg.getParameters()
             #creating the separate process
             self.processManager.createPostgisDatabaseProcess(db, version, epsg)
 
@@ -667,9 +665,9 @@ class DsgTools:
             self.layerButton.setDefaultAction(self.toolbar.sender())
         except:
             pass
-        self.dlg = LoadByCategory(self.codeList)
-        self.dlg.show()
-        result = self.dlg.exec_()
+        dlg = LoadByCategory(self.codeList)
+        dlg.show()
+        result = dlg.exec_()
         if result:
             pass
 
@@ -678,9 +676,9 @@ class DsgTools:
             self.layerButton.setDefaultAction(self.toolbar.sender())
         except:
             pass
-        self.dlg = LoadByClass(self.codeList)
-        self.dlg.show()
-        result = self.dlg.exec_()
+        dlg = LoadByClass(self.codeList)
+        dlg.show()
+        result = dlg.exec_()
         if result:
             pass
 
@@ -689,16 +687,16 @@ class DsgTools:
             self.layerButton.setDefaultAction(self.toolbar.sender())
         except:
             pass
-        self.dlg = CreateInomDialog(self.iface)
-        self.dlg.show()
-        result = self.dlg.exec_()
+        dlg = CreateInomDialog(self.iface)
+        dlg.show()
+        result = dlg.exec_()
         if result:
             pass
 
     def viewServers(self):
-        self.dlg = ViewServers(self.iface)
-        self.dlg.show()
-        result = self.dlg.exec_()
+        dlg = ViewServers(self.iface)
+        dlg.show()
+        result = dlg.exec_()
         if result:
             pass
 
