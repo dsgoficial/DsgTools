@@ -91,4 +91,5 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
             codeItem = QTableWidgetItem(str(code))
             self.tableWidget.setItem(row, 0, valueItem)
             self.tableWidget.setItem(row, 1, codeItem)
+        self.tableWidget.sortItems(1)
         
