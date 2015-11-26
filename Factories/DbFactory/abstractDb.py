@@ -60,7 +60,7 @@ class AbstractDb(QObject):
     def checkAndOpenDb(self):
         if not self.db.isOpen():
             if not self.db.open():
-                raise Exception(self.tr('Error when openning datatabase.\n')+self.db.lastError().text())
+                raise Exception(self.tr('Error when opening database.')+'\n'+self.db.lastError().text())
 
     def connectDatabase(self,conn=None):
         return None
@@ -201,21 +201,21 @@ class AbstractDb(QObject):
             for key in invalidatedDataDict.keys():
                 
                 if key == 'nullLine' and len(invalidatedDataDict[key])>0:
-                    self.signals.updateLog.emit(self.tr('\n\nClasses with null lines:\n'))
-                    self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
+                    self.signals.updateLog.emit('\n\n'+self.tr('Classes with null lines:')+'\n')
+                    self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements')+'\n\n')
                     for cl in invalidatedDataDict[key].keys():
                         self.signals.updateLog.emit('{:<50}'.format(cl)+str(invalidatedDataDict[key][cl])+'\n')
 
                 if key == 'nullPk' and len(invalidatedDataDict[key])>0:
-                    self.signals.updateLog.emit(self.tr('\n\nClasses with null primary keys:\n'))
-                    self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
+                    self.signals.updateLog.emit('\n\n'+self.tr('Classes with null primary keys:')+'\n')
+                    self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements')+'\n\n')
                     for cl in invalidatedDataDict[key].keys():
                         self.signals.updateLog.emit('{:<50}'.format(cl)+str(invalidatedDataDict[key][cl])+'\n')
 
                 if key == 'notInDomain' and len(invalidatedDataDict[key])>0:
-                    self.signals.updateLog.emit(self.tr('\n\nFeatures with attributes not in domain:\n\n'))
+                    self.signals.updateLog.emit('\n\n'+self.tr('Features with attributes not in domain:')+'\n\n')
                     for cl in invalidatedDataDict[key].keys():
-                        self.signals.updateLog.emit(self.tr('\nClass: ')+cl+'\n')
+                        self.signals.updateLog.emit('\n'+self.tr('Class: ')+cl+'\n')
                         for id in invalidatedDataDict[key][cl].keys():
                             attrCommaList = '(id,'+','.join(invalidatedDataDict[key][cl][id].keys())+') = '
                             at = invalidatedDataDict[key][cl][id].keys()
@@ -226,7 +226,7 @@ class AbstractDb(QObject):
                             self.signals.updateLog.emit(attrCommaList+valueList)
 
                 if key == 'nullAttribute' and len(invalidatedDataDict[key])>0:
-                    self.signals.updateLog.emit(self.tr('\n\nFeatures with null attributes in a not null field:\n\n'))
+                    self.signals.updateLog.emit('\n\n'+self.tr('Features with null attributes in a not null field:')+'\n\n')
                     for cl in invalidatedDataDict[key].keys():
                         self.signals.updateLog.emit(self.tr('Class: ')+cl+'\n')
                         for id in invalidatedDataDict[key][cl].keys():
@@ -238,12 +238,12 @@ class AbstractDb(QObject):
                             self.signals.updateLog.emit(attrCommaList+valueList)
                             
                 if key == 'classNotFoundInOutput' and len(invalidatedDataDict[key])>0:
-                    self.signals.updateLog.emit(self.tr('\n\nClasses with classes that have elements but do not have output equivalent:\n\n'))
+                    self.signals.updateLog.emit('\n\n'+self.tr('Classes with classes that have elements but do not have output equivalent:')+'\n\n')
                     for cl in invalidatedDataDict[key]:
                             self.signals.updateLog.emit(self.tr('Class: ')+cl+'\n')
                 
                 if key == 'attributeNotFoundInOutput' and len(invalidatedDataDict[key])>0:
-                    self.signals.updateLog.emit(self.tr('\n\nClasses with attributes that have no output attribute equivalent:\n\n'))
+                    self.signals.updateLog.emit('\n\n'+self.tr('Classes with attributes that have no output attribute equivalent:')+'\n\n')
                     for cl in invalidatedDataDict[key].keys():
                         self.signals.updateLog.emit(self.tr('Class: ')+cl+'\n')
                         valueList = '('+','.join(invalidatedDataDict[key][cl])+')\n'
@@ -265,10 +265,10 @@ class AbstractDb(QObject):
         inputType = self.conversionTypeDict[self.db.driverName()]
         outputType = self.conversionTypeDict[outputAbstractDb.db.driverName()]
         self.signals.updateLog.emit(self.tr('Conversion type: ')+inputType+'2'+outputType+'\n')
-        self.signals.updateLog.emit(self.tr('\nInput database: ')+self.db.databaseName()+'\n')
-        self.signals.updateLog.emit(self.tr('\nOutput database: ')+outputAbstractDb.db.databaseName()+'\n')
+        self.signals.updateLog.emit('\n'+self.tr('Input database: ')+self.db.databaseName()+'\n')
+        self.signals.updateLog.emit('\n'+self.tr('Output database: ')+outputAbstractDb.db.databaseName()+'\n')
         self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Read Summary')))
-        self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
+        self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements')+'\n\n')
         for cl in classList:
             self.signals.updateLog.emit('{:<50}'.format(cl)+str(inputOgrDb.GetLayerByName(str(cl)).GetFeatureCount())+'\n')
         return None
@@ -310,7 +310,7 @@ class AbstractDb(QObject):
     
     def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList, errorDict,invalidated=None): 
         self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Write Summary')))
-        self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements\n\n'))
+        self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements')+'\n\n')
         status = False
         for inputLyr in inputLayerList.keys():
             schema = self.getTableSchema(inputLyr)
@@ -474,7 +474,7 @@ class AbstractDb(QObject):
         errorClasses = errorDict.keys()
         if len(errorClasses)>0:
             self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Features not converted')))
-            self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Feature id\n\n'))
+            self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Feature id')+'\n\n')
             for cl in errorClasses:
                 for id in errorDict[cl]:
                     self.signals.updateLog.emit('\n\n'+'{:<50}'.format(cl+str(id)))

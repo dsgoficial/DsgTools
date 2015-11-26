@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1339</width>
+    <width>874</width>
     <height>471</height>
    </rect>
   </property>
@@ -45,7 +45,8 @@
    <item row="5" column="0">
     <widget class="QRadioButton" name="fixDataRadioButton">
      <property name="text">
-      <string>Convert fixing data (Data not compatible will be changed to its default value and not null data in a not null field will be changed to -9999)</string>
+      <string>Convert fixing data (Data not compatible will be changed to its default value.
+Null data in a not null field will be changed to -9999)</string>
      </property>
     </widget>
    </item>

@@ -33,6 +33,114 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>AbstractDb</name>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="63"/>
+        <source>Error when opening database.</source>
+        <translation>Erro abrindo banco de dados.</translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="109"/>
+        <source>Problem counting elements: </source>
+        <translation>Problema na contagem dos elementos: </translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="200"/>
+        <source>Validation Problems Summary</source>
+        <translation>Resumo de Problemas de Validação</translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="204"/>
+        <source>Classes with null lines:</source>
+        <translation>Classes com linhas nulas:</translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="477"/>
+        <source>Class</source>
+        <translation>Classe</translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="313"/>
+        <source>Elements</source>
+        <translation>Elementos</translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="210"/>
+        <source>Classes with null primary keys:</source>
+        <translation>Classes com chaves primárias nulas: </translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="216"/>
+        <source>Features with attributes not in domain:</source>
+        <translation>Feições com atributos fora do domínio:</translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="248"/>
+        <source>Class: </source>
+        <translation>Classe: </translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="229"/>
+        <source>Features with null attributes in a not null field:</source>
+        <translation>Feições com atributos nulos em campo não nulo:</translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="241"/>
+        <source>Classes with classes that have elements but do not have output equivalent:</source>
+        <translation>Classes com classes que tem elementos mas não tem equivalente de saída:</translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="246"/>
+        <source>Classes with attributes that have no output attribute equivalent:</source>
+        <translation>Classes com atributos que não possuem atributo de saída equivalente:</translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="267"/>
+        <source>Conversion type: </source>
+        <translation>Tipo de Conversão: </translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="268"/>
+        <source>Input database: </source>
+        <translation>Banco de dados de entrada: </translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="269"/>
+        <source>Output database: </source>
+        <translation>Banco de dados de saída: </translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="270"/>
+        <source>Read Summary</source>
+        <translation>Resumo de Leitura</translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="312"/>
+        <source>Write Summary</source>
+        <translation>Resumo de Escrita</translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="348"/>
+        <source>Error on layer </source>
+        <translation>Erro na camada </translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="348"/>
+        <source>. Conversion not performed.</source>
+        <translation>. Conversão não realizada.</translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="476"/>
+        <source>Features not converted</source>
+        <translation>Feições não convertidas</translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="477"/>
+        <source>Feature id</source>
+        <translation>Id da Feição</translation>
+    </message>
+</context>
+<context>
     <name>AlterUserPassword</name>
     <message>
         <location filename="UserTools/alter_user_password.ui" line="14"/>
@@ -144,6 +252,14 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>AttributesViewer</name>
+    <message>
+        <location filename="AttributeTools/attributes_viewer.py" line="56"/>
+        <source>Select a Layer</source>
+        <translation>Selecione uma camada</translation>
+    </message>
+</context>
+<context>
     <name>BDGExTools</name>
     <message>
         <location filename="BDGExTools/BDGExTools.py" line="95"/>
@@ -205,69 +321,142 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>CodeList</name>
+    <message>
+        <location filename="AttributeTools/code_list.py" line="81"/>
+        <source>Value</source>
+        <translation>Valor</translation>
+    </message>
+    <message>
+        <location filename="AttributeTools/code_list.py" line="81"/>
+        <source>Code</source>
+        <translation>Código</translation>
+    </message>
+</context>
+<context>
     <name>ComplexWindow</name>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="123"/>
+        <location filename="ComplexTools/complexWindow.py" line="130"/>
         <source>select a complex class</source>
         <translation>selecione a classe complexa</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="135"/>
+        <location filename="ComplexTools/complexWindow.py" line="140"/>
         <source>select a database</source>
         <translation>selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="431"/>
+        <location filename="ComplexTools/complexWindow.py" line="373"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="174"/>
+        <location filename="ComplexTools/complexWindow.py" line="176"/>
         <source>Please, select an item to zoom.</source>
         <translation>Por favor, selecione um item para aproximar.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="193"/>
+        <location filename="ComplexTools/complexWindow.py" line="195"/>
         <source>The associated classes must be loaded in the table of contents.</source>
         <translation>As classes associadas precisam ser carregadas na tabela de conteúdo.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="208"/>
+        <location filename="ComplexTools/complexWindow.py" line="210"/>
         <source>Select a complex.</source>
         <translation>Selecione um complexo.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="268"/>
+        <location filename="ComplexTools/complexWindow.py" line="261"/>
         <source>The class you&apos;re trying to disassociate must loaded in the table of contents.</source>
         <translation>A classe que você está tentando desassociar precisa ser carregada na tabela de conteúdo.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="309"/>
+        <location filename="ComplexTools/complexWindow.py" line="293"/>
         <source>Please, select an aggregated class or aggregated id.</source>
         <translation>Por favor, selecione uma classe agregada ou o identificador dela.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="388"/>
+        <location filename="ComplexTools/complexWindow.py" line="332"/>
         <source>Please, select a complex.</source>
         <translation>Por favor, selecione um complexo.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="428"/>
+        <location filename="ComplexTools/complexWindow.py" line="370"/>
         <source>The following layers cannot be associated to complexes from </source>
         <translation>As camadas a seguir não podem ser associadas a complexos de</translation>
+    </message>
+    <message>
+        <location filename="ComplexTools/complexWindow.py" line="125"/>
+        <source>Critical!</source>
+        <translation>Crítico!</translation>
     </message>
 </context>
 <context>
     <name>ConnectionWidget</name>
     <message>
-        <location filename="CustomWidgets/connectionWidget.py" line="149"/>
+        <location filename="CustomWidgets/connectionWidget.py" line="142"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.py" line="163"/>
+        <location filename="CustomWidgets/connectionWidget.py" line="156"/>
         <source>Select Database</source>
         <translation>Selecione o Banco de Dados</translation>
+    </message>
+</context>
+<context>
+    <name>ConvertDatabase</name>
+    <message>
+        <location filename="ConversionTools/convert_database.py" line="58"/>
+        <source>Select a conversion</source>
+        <translation>Selecione uma conversão</translation>
+    </message>
+    <message>
+        <location filename="ConversionTools/convert_database.py" line="59"/>
+        <source>postgis2spatialite</source>
+        <translation>postgis2spatialite</translation>
+    </message>
+    <message>
+        <location filename="ConversionTools/convert_database.py" line="60"/>
+        <source>spatialite2postgis</source>
+        <translation>spatialite2postgis</translation>
+    </message>
+    <message>
+        <location filename="ConversionTools/convert_database.py" line="146"/>
+        <source>Error!</source>
+        <translation>Erro!</translation>
+    </message>
+    <message>
+        <location filename="ConversionTools/convert_database.py" line="115"/>
+        <source>Enter input database!</source>
+        <translation>Entre com o bancos de dados de entrada!</translation>
+    </message>
+    <message>
+        <location filename="ConversionTools/convert_database.py" line="118"/>
+        <source>Enter output database!</source>
+        <translation>Entre com o banco de dados de saída!</translation>
+    </message>
+    <message>
+        <location filename="ConversionTools/convert_database.py" line="121"/>
+        <source>Version mismatch!
+Conversion must be between databases with the same version!</source>
+        <translation>Erro de versão!
+A conversão deve ser entre bancos de dados com a mesma versão!</translation>
+    </message>
+    <message>
+        <location filename="ConversionTools/convert_database.py" line="144"/>
+        <source>Success!</source>
+        <translation>Sucesso!</translation>
+    </message>
+    <message>
+        <location filename="ConversionTools/convert_database.py" line="144"/>
+        <source>Conversion successfully completed!</source>
+        <translation>Conversão completada com sucesso!</translation>
+    </message>
+    <message>
+        <location filename="ConversionTools/convert_database.py" line="146"/>
+        <source>Conversion not performed! Check log for details.</source>
+        <translation>Conversão não realizada! Verifique o log para detalhes.</translation>
     </message>
 </context>
 <context>
@@ -973,7 +1162,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Abrir Editor de Perfil</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="141"/>
+        <location filename="ConversionTools/convert_database.ui" line="29"/>
         <source>Close</source>
         <translation>Fechar</translation>
     </message>
@@ -1132,6 +1321,48 @@ p, li { white-space: pre-wrap; }
         <source>Remove User</source>
         <translation>Remover Usuário</translation>
     </message>
+    <message>
+        <location filename="ConversionTools/convert_database.ui" line="14"/>
+        <source>Convert Database</source>
+        <translation>Converter Banco de Dados</translation>
+    </message>
+    <message>
+        <location filename="ConversionTools/convert_database.ui" line="22"/>
+        <source>Convert</source>
+        <translation>Converter</translation>
+    </message>
+    <message>
+        <location filename="ConversionTools/convert_database.ui" line="38"/>
+        <source>Only convert if all data is compatible</source>
+        <translation>Somente converter caso todos os dados sejam compatíveis</translation>
+    </message>
+    <message>
+        <location filename="ConversionTools/convert_database.ui" line="48"/>
+        <source>Convert fixing data (Data not compatible will be changed to its default value and not null data in a not null field will be changed to -9999)</source>
+        <translation type="obsolete">Converter corrigindo os dados (Dados não compatíveis serão modificados para seus valores padrão e dados nulos em campos não nulos serão modificados para -9999)</translation>
+    </message>
+    <message>
+        <location filename="ConversionTools/convert_database.ui" line="64"/>
+        <source>Select the conversion type</source>
+        <translation>Selecione um tipo de conversão</translation>
+    </message>
+    <message>
+        <location filename="ConversionTools/convert_database.ui" line="76"/>
+        <source>Conversion Log</source>
+        <translation>Log da Conversão</translation>
+    </message>
+    <message>
+        <location filename="ConversionTools/convert_database.ui" line="48"/>
+        <source>Convert fixing data (Data not compatible will be changed to its default value and null data in a not null field will be changed to -9999)</source>
+        <translation type="obsolete">Converter corrigindo os dados (Dados não compatíveis serão modificados para seus valores padrão e dados nulos em campos não nulos serão modificados para -9999)</translation>
+    </message>
+    <message>
+        <location filename="ConversionTools/convert_database.ui" line="48"/>
+        <source>Convert fixing data (Data not compatible will be changed to its default value.
+Null data in a not null field will be changed to -9999)</source>
+        <translation type="unfinished">Converter corrigindo os dados (Dados não compatíveis serão modificados para seus valores padrão.
+Dados nulos em campos não nulos serão modificados para -9999)</translation>
+    </message>
 </context>
 <context>
     <name>DockWidget</name>
@@ -1181,7 +1412,7 @@ p, li { white-space: pre-wrap; }
         <translation>Nome</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow_base.ui" line="98"/>
+        <location filename="AttributeTools/code_list.ui" line="45"/>
         <source>Value</source>
         <translation>Valor</translation>
     </message>
@@ -1196,7 +1427,7 @@ p, li { white-space: pre-wrap; }
         <translation>Camada:</translation>
     </message>
     <message>
-        <location filename="VectorTools/calc_contour.ui" line="44"/>
+        <location filename="AttributeTools/code_list.ui" line="21"/>
         <source>Field:</source>
         <translation>Campo:</translation>
     </message>
@@ -1204,6 +1435,26 @@ p, li { white-space: pre-wrap; }
         <location filename="VectorTools/calc_contour.ui" line="67"/>
         <source>Pace:</source>
         <translation>Espaçamento:</translation>
+    </message>
+    <message>
+        <location filename="AttributeTools/attributes_viewer.ui" line="14"/>
+        <source>Attributes Viewer</source>
+        <translation>Visualizador de Atributos</translation>
+    </message>
+    <message>
+        <location filename="AttributeTools/attributes_viewer.ui" line="23"/>
+        <source>Vector Layer:</source>
+        <translation>Camada Vetorial:</translation>
+    </message>
+    <message>
+        <location filename="AttributeTools/code_list.ui" line="14"/>
+        <source>Code List Viewer</source>
+        <translation>Visualizador de Code List</translation>
+    </message>
+    <message>
+        <location filename="AttributeTools/code_list.ui" line="50"/>
+        <source>Code</source>
+        <translation>Código</translation>
     </message>
 </context>
 <context>
@@ -1237,177 +1488,177 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DsgTools</name>
     <message>
-        <location filename="dsg_tools.py" line="554"/>
+        <location filename="dsg_tools.py" line="557"/>
         <source>&amp;DSG Tools</source>
         <translation>&amp;Ferramentas DSG</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="215"/>
+        <location filename="dsg_tools.py" line="217"/>
         <source>DSG Tools</source>
         <translation>Ferramentas DSG</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="220"/>
+        <location filename="dsg_tools.py" line="222"/>
         <source>Server Catalog</source>
         <translation>Catálogo de Servidores</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="221"/>
+        <location filename="dsg_tools.py" line="223"/>
         <source>Database Tools</source>
         <translation>Ferramentas de BD</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="222"/>
+        <location filename="dsg_tools.py" line="224"/>
         <source>Layer Tools</source>
         <translation>Ferramentas de Camadas</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="423"/>
+        <location filename="dsg_tools.py" line="425"/>
         <source>About</source>
         <translation>Sobre</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="448"/>
+        <location filename="dsg_tools.py" line="450"/>
         <source>Create Spatialite</source>
         <translation>Criar Spatialite</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="460"/>
+        <location filename="dsg_tools.py" line="462"/>
         <source>Create PostGIS</source>
         <translation>Criar PostGIS</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="516"/>
+        <location filename="dsg_tools.py" line="518"/>
         <source>Load by Category</source>
         <translation>Carregar por Categoria</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="528"/>
+        <location filename="dsg_tools.py" line="530"/>
         <source>Load by Class</source>
         <translation>Carregar por Classe</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="539"/>
+        <location filename="dsg_tools.py" line="541"/>
         <source>Create Frame</source>
         <translation>Criar Moldura</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="383"/>
+        <location filename="dsg_tools.py" line="385"/>
         <source>Image tools</source>
         <translation>Ferramentas para Imagens</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="433"/>
+        <location filename="dsg_tools.py" line="435"/>
         <source>Help</source>
         <translation>Ajuda</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="223"/>
+        <location filename="dsg_tools.py" line="225"/>
         <source>BDGEx</source>
         <translation>BDGEx</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="227"/>
+        <location filename="dsg_tools.py" line="229"/>
         <source>Product Indexes</source>
         <translation>Índices de Produtos</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="229"/>
+        <location filename="dsg_tools.py" line="231"/>
         <source>Vectorial Charts</source>
         <translation>Cartas Vetoriais</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="333"/>
+        <location filename="dsg_tools.py" line="335"/>
         <source>1:250,000</source>
         <translation>1:250.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="343"/>
+        <location filename="dsg_tools.py" line="345"/>
         <source>1:100,000</source>
         <translation>1:100.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="353"/>
+        <location filename="dsg_tools.py" line="355"/>
         <source>1:50,000</source>
         <translation>1:50.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="363"/>
+        <location filename="dsg_tools.py" line="365"/>
         <source>1:25,000</source>
         <translation>1:25.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="228"/>
+        <location filename="dsg_tools.py" line="230"/>
         <source>Topographic Charts</source>
         <translation>Cartas Topográficas</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="739"/>
+        <location filename="dsg_tools.py" line="743"/>
         <source>1:250k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="743"/>
+        <location filename="dsg_tools.py" line="747"/>
         <source>1:100k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="747"/>
+        <location filename="dsg_tools.py" line="751"/>
         <source>1:50k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="751"/>
+        <location filename="dsg_tools.py" line="755"/>
         <source>1:25k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:25k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="755"/>
+        <location filename="dsg_tools.py" line="759"/>
         <source>1:250k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="759"/>
+        <location filename="dsg_tools.py" line="763"/>
         <source>1:100k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="763"/>
+        <location filename="dsg_tools.py" line="767"/>
         <source>1:50k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="767"/>
+        <location filename="dsg_tools.py" line="771"/>
         <source>1:25k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:25k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="373"/>
+        <location filename="dsg_tools.py" line="375"/>
         <source>View Server</source>
         <translation>Visualizar Servidor</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="226"/>
+        <location filename="dsg_tools.py" line="228"/>
         <source>Coverage Layers</source>
         <translation>Camadas de Cobertura</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="273"/>
+        <location filename="dsg_tools.py" line="275"/>
         <source>Landsat 7</source>
         <translation>Landsat 7</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="283"/>
+        <location filename="dsg_tools.py" line="285"/>
         <source>RapidEye</source>
         <translation>RapidEye</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="393"/>
+        <location filename="dsg_tools.py" line="395"/>
         <source>Inventory tools</source>
         <translation>Ferramentas de Inventário</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="403"/>
+        <location filename="dsg_tools.py" line="405"/>
         <source>Models and Scripts Installer</source>
         <translation>Instalador de Modelos e Scripts</translation>
     </message>
@@ -1432,9 +1683,9 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Gerenciar Perfis de Usuário</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="419"/>
+        <location filename="dsg_tools.py" line="415"/>
         <source>Convert Database</source>
-        <translation type="obsolete">Converter Banco de Dados</translation>
+        <translation>Converter Banco de Dados</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="487"/>
@@ -1447,32 +1698,32 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Gerenciar Modelos de Perfil</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="471"/>
+        <location filename="dsg_tools.py" line="473"/>
         <source>Manage User Permissions</source>
         <translation>Gerenciar Permissões de Usuário</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="494"/>
+        <location filename="dsg_tools.py" line="496"/>
         <source>User Permissions Tools</source>
         <translation>Ferramentas de Permissões de Usuário</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="496"/>
+        <location filename="dsg_tools.py" line="498"/>
         <source>User Permissions Editor</source>
         <translation>Editor de Permissões de Usuário</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="506"/>
+        <location filename="dsg_tools.py" line="508"/>
         <source>Install/Remove User Permissions</source>
         <translation>Instalar/Remover Permissões de Usuário</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="224"/>
+        <location filename="dsg_tools.py" line="226"/>
         <source>Vector Tools</source>
         <translation>Ferramentas Vetoriais</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="482"/>
+        <location filename="dsg_tools.py" line="484"/>
         <source>Assign Contour Values</source>
         <translation>Linha Cotadora</translation>
     </message>
@@ -1684,12 +1935,12 @@ p, li { white-space: pre-wrap; }
         <translation>Agrupar por Geometria</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category_dialog.ui" line="104"/>
+        <location filename="LayerTools/load_by_category.py" line="299"/>
         <source>Point</source>
         <translation>Ponto</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category_dialog.ui" line="111"/>
+        <location filename="LayerTools/load_by_category.py" line="303"/>
         <source>Line</source>
         <translation>Linha</translation>
     </message>
@@ -1719,47 +1970,47 @@ p, li { white-space: pre-wrap; }
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="202"/>
+        <location filename="LayerTools/load_by_category.py" line="190"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="267"/>
+        <location filename="LayerTools/load_by_category.py" line="251"/>
         <source>WARNING!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="253"/>
+        <location filename="LayerTools/load_by_category.py" line="240"/>
         <source>Please, select at least one type of layer!</source>
         <translation>Por favor, selecione pelo menos um tipo de camada!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="265"/>
+        <location filename="LayerTools/load_by_category.py" line="249"/>
         <source>CRITICAL!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_category.py" line="258"/>
         <source>Problem loading the categories!</source>
-        <translation>Problema na carga das categorias!</translation>
+        <translation type="obsolete">Problema na carga das categorias!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="265"/>
+        <location filename="LayerTools/load_by_category.py" line="249"/>
         <source>Could not determine the coordinate reference system!</source>
         <translation>Não foi possível determinar o Sistema de Coordenadas de Referência!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="264"/>
+        <location filename="LayerTools/load_by_category.py" line="248"/>
         <source>Database not loaded properly!</source>
         <translation>Banco de dados não foi carregado corretamente!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="267"/>
+        <location filename="LayerTools/load_by_category.py" line="251"/>
         <source>Please, select at least one category!</source>
         <translation>Por favor, selecione pelo menos uma categoria!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="313"/>
+        <location filename="LayerTools/load_by_category.py" line="290"/>
         <source>Problem counting elements: </source>
         <translation>Problema na contagem dos elementos:</translation>
     </message>
@@ -1772,6 +2023,11 @@ p, li { white-space: pre-wrap; }
         <location filename="LayerTools/load_by_category_dialog.ui" line="75"/>
         <source>&lt;&lt;</source>
         <translation>&lt;&lt;</translation>
+    </message>
+    <message>
+        <location filename="LayerTools/load_by_category.py" line="307"/>
+        <source>Area</source>
+        <translation>Área</translation>
     </message>
 </context>
 <context>
@@ -1832,7 +2088,7 @@ p, li { white-space: pre-wrap; }
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="108"/>
+        <location filename="LayerTools/load_by_class.py" line="105"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
@@ -1842,34 +2098,34 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="180"/>
+        <location filename="LayerTools/load_by_class.py" line="143"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="161"/>
+        <location filename="LayerTools/load_by_class.py" line="143"/>
         <source>Could not load the selected classes!</source>
         <translation>Não foi possível carregar as classes selecionadas!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="182"/>
+        <location filename="LayerTools/load_by_class.py" line="145"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="163"/>
+        <location filename="LayerTools/load_by_class.py" line="145"/>
         <source>Please, select at least one class!</source>
         <translation>Por favor, selecione pelo menos uma classe!</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_class.py" line="180"/>
         <source>Could not load the layer(s)!</source>
-        <translation>Não foi possível carregar a(s) camada(s)!</translation>
+        <translation type="obsolete">Não foi possível carregar a(s) camada(s)!</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_class.py" line="182"/>
         <source>Please select at least one layer!</source>
-        <translation>Por favor, selecione pelo menos uma camada!</translation>
+        <translation type="obsolete">Por favor, selecione pelo menos uma camada!</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_class_base.ui" line="48"/>
@@ -1880,17 +2136,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ManageComplexDialog</name>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="191"/>
+        <location filename="ComplexTools/manageComplex.py" line="193"/>
         <source>edit this field</source>
         <translation>edite este campo</translation>
     </message>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="214"/>
+        <location filename="ComplexTools/manageComplex.py" line="216"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="214"/>
+        <location filename="ComplexTools/manageComplex.py" line="216"/>
         <source>The field: &apos;nome&apos; must be filled in all rows. Please, check and try again.</source>
         <translation>O campo &apos;nome&apos; precisa ser preenchido em todas as linhas. Por favor, verifique e tente novamente.</translation>
     </message>
@@ -1972,6 +2228,19 @@ p, li { white-space: pre-wrap; }
         <location filename="DbTools/PostGISTool/postgisDBTool.py" line="97"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
+    </message>
+</context>
+<context>
+    <name>PostgisDb</name>
+    <message>
+        <location filename="Factories/DbFactory/postgisDb.py" line="194"/>
+        <source>Error!</source>
+        <translation>Erro!</translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/postgisDb.py" line="194"/>
+        <source>Operation not defined for this database version!</source>
+        <translation>Operação não definida para esta versão de banco de dados!</translation>
     </message>
 </context>
 <context>
@@ -2165,25 +2434,25 @@ Olhe o Terminal Python para detalhes.</translation>
 <context>
     <name>ServerDBExplorer</name>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="88"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="156"/>
         <source>Select Server</source>
         <translation>Selecione Servidor</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="118"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="186"/>
         <source>Information:
 </source>
         <translation>Informação:
 </translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="120"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="188"/>
         <source>The following databases connections already exist:
 </source>
         <translation>Os seguintes conexões de bancos de dados já existem:</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="124"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="192"/>
         <source>
 The following databases connections were created successfully!:
 </source>
@@ -2191,9 +2460,17 @@ The following databases connections were created successfully!:
 As seguintes conexões de bancos de dados foram criadas com sucesso!:</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="127"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="195"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
+    </message>
+</context>
+<context>
+    <name>SpatialiteDb</name>
+    <message>
+        <location filename="Factories/DbFactory/spatialiteDb.py" line="211"/>
+        <source>Conversion not perfomed due to validation errors! Check log above for more information.</source>
+        <translation>Conversão não realizada devido à erros de validação! Verifique o log para maiores informações.</translation>
     </message>
 </context>
 <context>

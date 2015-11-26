@@ -208,7 +208,7 @@ class SpatialiteDb(AbstractDb):
         hasErrors = self.makeValidationSummary(invalidated)
         if type == 'untouchedData':
             if hasErrors:
-                self.signals.updateLog.emit(self.tr('\n\n\nConversion not perfomed due to validation errors! Check log above for more information.'))
+                self.signals.updateLog.emit('\n\n\n'+self.tr('Conversion not perfomed due to validation errors! Check log above for more information.'))
                 return False
             else:
                 status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict)

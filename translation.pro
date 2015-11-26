@@ -27,8 +27,13 @@
 					UserTools/create_user.py \
 					VectorTools/calc_contour.py \
 					VectorTools/contour_tool.py \
-					VectorTools/dsg_line_tool.py
-					
+					VectorTools/dsg_line_tool.py \
+					ConversionTools/convert_database.py \
+					AttributeTools/attributes_viewer.py \
+					AttributeTools/code_list.py \
+					Factories/DbFactory/abstractDb.py \
+					Factories/DbFactory/postgisDb.py \
+					Factories/DbFactory/spatialiteDb.py
 
  FORMS           =	ComplexTools/complexWindow_base.ui \
  					ComplexTools/ui_manageComplex.ui \
@@ -51,7 +56,10 @@
 					UserTools/user_profiles.ui \
 					UserTools/alter_user_password.ui \
 					UserTools/create_user.ui \
-					VectorTools/calc_contour.ui
+					VectorTools/calc_contour.ui \
+					ConversionTools/convert_database.ui \
+					AttributeTools/attributes_viewer.ui \
+					AttributeTools/code_list.ui
 
  TRANSLATIONS    = i18n/DsgTools_pt.ts
 

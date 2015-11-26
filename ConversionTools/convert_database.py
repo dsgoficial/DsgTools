@@ -140,7 +140,7 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
             QApplication.restoreOverrideCursor()
             converted = False
         if converted:
-            QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Conversion complete! Ololo! Ololo! Ololo!'))
+            QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Conversion successfully completed!'))
         else:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not performed! Check log for details.'))
     

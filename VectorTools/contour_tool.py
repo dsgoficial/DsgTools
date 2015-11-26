@@ -92,8 +92,7 @@ class ContourTool():
         first_value = first_feature.attribute(attribute)
 
         #getting the filed index that must be updated
-        fieldIndex = [i for i in range(len(self.reference.dataProvider().fields())) if self.reference.dataProvider().fields()[i].name() == attribute]
-
+        fieldIndex = self.reference.fieldNameIndex(attribute)
 
         self.reference.startEditing()
         for i in range(1, len(ordered)):
@@ -102,7 +101,7 @@ class ContourTool():
             #feature id that will be updated
             id = feature.id()
             #attribute pair that will be changed
-            attrs = {fieldIndex[0]:value}
+            attrs = {fieldIndex:value}
             #actual update in the database
             self.reference.dataProvider().changeAttributeValues({id:attrs})
         return self.reference.commitChanges()
