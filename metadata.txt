@@ -10,7 +10,7 @@
 name=DSG Tools
 qgisMinimumVersion=2.6
 description=Brazilian Army Cartographic Production Tools
-version=1.6
+version=1.7
 author=Brazilian Army - Geographic Service Bureau
 email=suporte.dsgtools@dsg.eb.mil.br
 about=
@@ -25,7 +25,10 @@ about=
 	-Database role management. Access profile (i.e. Read/Write permissions by table in database ).
 	-Database user profile management (e.g. Grant/Revoke predifined roles to/from user ).
 	-Create/Remove PostgreSQL users.
-	-Alter PostgreSQL user Password. 
+	-Alter PostgreSQL user Password.
+	-Conversion tools between postgis and spatialite EDGV databases.
+	-Tool to assign elevation values to contour lines in a simple way.
+	-EDGV code list viewer to aid attributes queries using our EDGV databases.
 	Requirements for LINUX (Ubuntu/Debian):
 	Install the following packages as follows:
 	sudo apt-get install python-qt4-sql
@@ -48,6 +51,7 @@ changelog=
 	1.4.1 - RapidEye Tile Cache service back on air.
 	1.5 - Improvements on the Inventory Tool. New server browser for EDGV databases. Minor bug fixes.
 	1.6 - Database role management. Database user profile management. Create/Remove PostgreSQL users. Alter PostgreSQL user Password.
+	1.7 - Conversion tools between postgis and spatialite EDGV databases. Tool to assign elevation values to contour lines. EDGV code list viewer to aid attributes queries using our EDGV databases.
 
 # Tags are comma separated with spaces allowed
 tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script
