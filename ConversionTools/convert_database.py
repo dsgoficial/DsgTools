@@ -111,10 +111,10 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_convertButton_clicked(self):
-        if not self.widget.db:
+        if not self.widget.abstractDb:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Enter input database!'))
             return
-        if not self.widget_2.db:
+        if not self.widget_2.abstractDb:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Enter output database!'))
             return
         if self.widget.dbVersion <> self.widget_2.dbVersion:
