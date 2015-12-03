@@ -169,7 +169,6 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
             self.listWidgetCategoryFrom.addItem(item)
         self.listWidgetCategoryFrom.sortItems()
 
-
     def setAllGroup(self):
         if self.checkBoxAll.isChecked():
             self.checkBoxPoint.setCheckState(2)
@@ -301,6 +300,6 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         table_names.sort(reverse=True)
         for table_name in table_names:
             schema, layerName = self.widget.abstractDb.getTableSchema(table_name)
-            if category.split('.')[1] == layerName.split('_')[0]:
+            if (category.split('.')[1] == layerName.split('_')[0]) and (category.split('.')[0] == schema):
                 edgvLayer = self.layerFactory.makeLayer(self.widget.abstractDb, self.codeList, table_name)
                 edgvLayer.load(self.widget.crs, idSubgrupo)
