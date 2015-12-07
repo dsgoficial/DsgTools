@@ -342,7 +342,7 @@ class PostgisDb(AbstractDb):
     def createRole(self, role, dict):
         sql = self.gen.createRole(role, dict)
         split = sql.split(';')
-        query = QSqlQuery(self.widget.db)
+        query = QSqlQuery(self.db)
 
         for inner in split:
             if not query.exec_(inner):
