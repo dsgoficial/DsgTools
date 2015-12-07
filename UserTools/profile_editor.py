@@ -49,12 +49,6 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.treeWidget.setColumnWidth(0, 400)
         
-        self.db = None
-        
-        self.factory = SqlGeneratorFactory()
-        self.gen = self.factory.createSqlGenerator(True)
-        self.utils = Utils()
-
         self.folder = os.path.join(os.path.dirname(__file__), 'profiles')
         self.getProfiles()
         self.setInitialState()

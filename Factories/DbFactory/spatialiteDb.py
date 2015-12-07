@@ -293,3 +293,17 @@ class SpatialiteDb(AbstractDb):
         sql = self.gen.disassociateComplexFromComplex(aggregated_class, link_column, id)
         query = QSqlQuery(sql, self.db)
     
+    def getUsers(self):
+        return None
+    
+    def getUserRelatedRoles(self, username):
+        return None
+    
+    def getRoles(self):
+        return None
+    
+    def createRole(self, role, dict):
+        pass
+
+    def dropRole(self, role):
+        pass 

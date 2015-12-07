@@ -296,3 +296,57 @@ class PostgisDb(AbstractDb):
         sql = self.gen.disassociateComplexFromComplex(aggregated_class, link_column, id)
         query = QSqlQuery(sql, self.db)
     
+    def getUsers(self):
+        ret = []
+        
+        sql = self.gen.getUsers()
+        query = QSqlQuery(sql, self.db)
+
+        while query.next():
+            ret.append(query.value(0))
+            
+        ret.sort()
+        return ret
+
+    def getUserRelatedRoles(self, username):
+        installed = []
+        assigned = []
+
+        sql = self.gen.getUserRelatedRoles(username)
+        query = QSqlQuery(sql, self.db)
+
+        while query.next():
+            rolname = query.value(0)
+            usename = query.value(1)
+            if not usename:
+                installed.append(rolname)
+            else:
+                assigned.append(rolname)
+
+        installed.sort()
+        assigned.sort()
+        return installed, assigned
+    
+    def getRoles(self):
+        ret = []
+
+        sql = self.gen.getRoles()
+        query = QSqlQuery(sql, self.db)
+
+        while query.next():
+            ret.append(query.value(0))
+
+        ret.sort()
+        return ret
+
+    def createRole(self, role, dict):
+        sql = self.gen.createRole(role, dict)
+        split = sql.split(';')
+        query = QSqlQuery(self.widget.db)
+
+        for inner in split:
+            if not query.exec_(inner):
+                raise Exception(self.tr('Problem assigning profile: ') +role+'\n'+query.lastError().text())
+    
+    def dropRole(self, role):
+        pass     

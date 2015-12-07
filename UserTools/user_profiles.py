@@ -53,28 +53,17 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.widget.tabWidget.setTabEnabled(0, False)
         
-        self.factory = SqlGeneratorFactory()
-        self.gen = self.factory.createSqlGenerator(False)
-        self.utils = Utils()
-        
         #Objects Connections
         QtCore.QObject.connect(self.widget, QtCore.SIGNAL(("connectionChanged()")), self.populateUsers)
         
     def populateUsers(self):
         self.comboBox.clear()
         
-        if not self.widget.db:
+        if not self.widget.abstractDb:
             return
         
-        ret = []
+        ret = self.widget.abstractDb.getUsers()
         
-        sql = self.gen.getUsers()
-        query = QSqlQuery(sql, self.widget.db)
-
-        while query.next():
-            ret.append(query.value(0))
-            
-        ret.sort()
         self.comboBox.addItem(self.tr('Select a User'))
         self.comboBox.addItems(ret)
                 
@@ -85,25 +74,11 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         if self.comboBox.currentIndex() == 0:
             return
         
-        if not self.widget.db:
+        if not self.widget.abstractDb:
             return
         
-        self.installed = []
-        self.assigned = []
+        self.installed, self.assigned = self.widget.abstractDb.getUserRelatedRoles()
 
-        sql = self.gen.getUserRelatedRoles(username)
-        query = QSqlQuery(sql, self.widget.db)
-
-        while query.next():
-            rolname = query.value(0)
-            usename = query.value(1)
-            if not usename:
-                self.installed.append(rolname)
-            else:
-                self.assigned.append(rolname)
-
-        self.installed.sort()
-        self.assigned.sort()
         self.installedProfiles.addItems(self.installed)
         self.assignedProfiles.addItems(self.assigned)
         
@@ -115,7 +90,7 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_createUserButton_clicked(self):
-        if not self.widget.db:
+        if not self.widget.abstractDb:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
             return
         dlg = CreateUser(self.comboBox.currentText(),self.widget.db)
@@ -125,7 +100,7 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)    
     def on_removeUserButton_clicked(self):
         user = self.comboBox.currentText()
-        if not self.widget.db:
+        if not self.widget.abstractDb:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
             return
         if self.comboBox.currentIndex() == 0:
@@ -148,7 +123,7 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_alterPasswordButton_clicked(self):
         user = self.comboBox.currentText()
-        if not self.widget.db:
+        if not self.widget.abstractDb:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
             return
         if self.comboBox.currentIndex() == 0:

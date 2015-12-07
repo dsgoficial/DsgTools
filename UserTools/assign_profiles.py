@@ -88,18 +88,11 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
     def getInstalledProfiles(self):
         self.assignedProfiles.clear()
         
-        if not self.widget.db:
+        if not self.widget.abstractDb:
             return
         
-        ret = []
+        ret = self.widget.abstractDb.getRoles()
 
-        sql = self.gen.getRoles()
-        query = QSqlQuery(sql, self.widget.db)
-
-        while query.next():
-            ret.append(query.value(0))
-
-        ret.sort()
         self.assignedProfiles.addItems(ret)
 
     @pyqtSlot(bool)
@@ -108,15 +101,12 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
             role = item.text()
             profile = os.path.join(self.folder, role +'.json')
             dict = self.parseJson(profile)
-
-            sql = self.gen.createRole(role, dict)
-            split = sql.split(';')
-            query = QSqlQuery(self.widget.db)
-
-            for inner in split:
-                if not query.exec_(inner):
-                    QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem assigning profile: ') +role+'\n'+query.lastError().text())
-                    return
+            
+            try:
+                self.widget.abstractDb.createRole(role, dict)
+            except Exception as e:
+                QtGui.QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+                return
             
         QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles assigned successfully!'))    
         
