@@ -306,4 +306,31 @@ class SpatialiteDb(AbstractDb):
         pass
 
     def dropRole(self, role):
-        pass 
+        pass
+
+    def alterUserPass(self, user, newpassword):
+        pass
+
+    def createUser(self, user, password, isSuperUser):
+        pass
+
+    def removeUser(self, user):
+        pass
+
+    def grantRole(self, user, role):
+        pass
+
+    def revokeRole(self, user, role):
+        pass
+
+    def getTablesFromDatabase(self):
+        ret = []
+
+        sql = self.gen.getTablesFromDatabase()
+        query = QSqlQuery(sql, self.db)
+
+        while query.next():
+            #table name
+            ret.append(query.value(0))
+
+        return ret

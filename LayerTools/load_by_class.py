@@ -24,13 +24,11 @@
 import os
 
 #Qgis imports
-from qgis.core import QgsDataSourceURI,QgsVectorLayer,QgsMapLayerRegistry,QgsMessageLog
 from qgis.gui import QgsMessageBar
 
 #PyQt imports
 from PyQt4 import QtGui, QtCore, uic
 from PyQt4.QtCore import Qt
-from PyQt4.QtSql import QSqlQuery
 from PyQt4.QtGui import QApplication, QCursor
 
 #DsgTools imports
@@ -102,7 +100,7 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
         self.close()
         
     def pushMessage(self, msg):
-        self.bar.pushMessage("", self.tr("Coordinate Reference System not set or invalid!"), level=QgsMessageBar.WARNING)
+        self.bar.pushMessage("", msg, level=QgsMessageBar.WARNING)
 
     def selectAll(self):
         if self.selectAllCheck.isChecked():

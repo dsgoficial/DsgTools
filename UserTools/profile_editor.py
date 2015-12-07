@@ -24,12 +24,9 @@ import os
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
-from PyQt4.QtSql import QSqlDatabase, QSqlQuery
+from PyQt4.QtCore import pyqtSlot
 
 # DSGTools imports
-from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.UserTools.create_profile import CreateProfile
 
 import json
@@ -75,8 +72,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         else:
             profile = os.path.join(self.folder, self.jsonCombo.currentText()+'.json')
             self.readJsonFile(profile)
-#         self.treeWidget.setSortingEnabled(True)
-        self.treeWidget.sortByColumn(0,QtCore.Qt.AscendingOrder)
+        self.treeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
         
     def createItem(self, parent, text):
         item = QtGui.QTreeWidgetItem(parent)

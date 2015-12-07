@@ -47,18 +47,16 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.folder = os.path.join(os.path.dirname(__file__), 'profiles')
-        self.db = None
 
-        self.factory = SqlGeneratorFactory()
-        self.gen = self.factory.createSqlGenerator(True)
-        self.utils = Utils()
-        
+        self.abstractDb = None
+        self.abstractDbFactory = DbFactory()
+
         self.populateTreeDict()
         
     def __del__(self):
-        if self.db:
-            self.db.close()
-            self.db = None
+        if self.abstractDb:
+            del self.abstractDb
+            self.abstractDb = None
         
     def getDbInfo(self):
         currentPath = os.path.dirname(__file__)
@@ -67,25 +65,22 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
         else:
             edgvPath = os.path.join(currentPath, '..', 'DbTools', 'SpatialiteTool', 'template', '30', 'seed_edgv30.sqlite')
 
-        self.db = QSqlDatabase("QSQLITE")
-        self.db.setDatabaseName(edgvPath)
-        if not self.db.open():
-            #QgsMessageLog.logMessage(self.db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            print self.db.lastError().text()
-        
+        self.abstractDb = self.abstractDbFactory.createDbFactory('QSQLITE')
+        self.abstractDb.connectDatabase(edgvPath)
+
+        try:
+            self.abstractDb.checkAndOpenDb()
+        except Exception as e:
+            print e.args[0]
+
     def populateTreeDict(self):
         self.getDbInfo()
-        
-        sql = self.gen.getTablesFromDatabase()
-        query = QSqlQuery(sql, self.db)
+
+        tables = self.abstractDb.getTablesFromDatabase()
         
         self.profile = dict()
-        
         categories = dict()
-        while query.next():
-            #table name
-            tableName = query.value(0)
-            
+        for tableName in tables:
             #proceed only for edgv tables
             if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" or tableName.split("_")[-1] == "a" or tableName.split("_")[0] == 'complexos':
                 layerName = tableName.split('_')[0]+'.'+'_'.join(tableName.split('_')[1::])
@@ -125,4 +120,3 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(int)
     def on_versionCombo_currentIndexChanged(self):
          self.populateTreeDict()
-                 

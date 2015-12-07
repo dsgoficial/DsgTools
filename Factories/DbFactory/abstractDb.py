@@ -76,7 +76,7 @@ class AbstractDb(QObject):
     
     def getDatabaseVersion(self):
         return None
-    
+
     def getType(self):
         return self.db.driverName()
     
@@ -520,4 +520,22 @@ class AbstractDb(QObject):
         pass
     
     def dropRole(self, role):
-        pass 
+        pass
+
+    def alterUserPass(self, user, newpassword):
+        pass
+
+    def createUser(self, user, password, isSuperUser):
+        pass
+
+    def removeUser(self, user):
+        pass
+
+    def grantRole(self, user, role):
+        pass
+
+    def revokeRole(self, user, role):
+        pass
+
+    def getTablesFromDatabase(self):
+        return None

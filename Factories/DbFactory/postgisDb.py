@@ -349,4 +349,57 @@ class PostgisDb(AbstractDb):
                 raise Exception(self.tr('Problem assigning profile: ') +role+'\n'+query.lastError().text())
     
     def dropRole(self, role):
-        pass     
+        sql = self.gen.dropRole(role)
+        split = sql.split('#')
+        query = QSqlQuery(self.db)
+
+        for inner in split:
+            if not query.exec_(inner):
+                raise Exception(self.tr('Problem removing profile: ') +role+'\n'+query.lastError().text())
+
+    def alterUserPass(self, user, newpassword):
+        sql = self.gen.alterUserPass(user, newpassword)
+        query = QSqlQuery(self.db)
+
+        if not query.exec_(sql):
+            raise Exception(self.tr('Problem altering user\'s password: ') +user+'\n'+query.lastError().text())
+
+    def createUser(self, user, password, isSuperUser):
+        sql = self.gen.createUser(user, password, isSuperUser)
+        query = QSqlQuery(self.db)
+
+        if not query.exec_(sql):
+            raise Exception(self.tr('Problem creating user: ') +user+'\n'+query.lastError().text())
+
+    def removeUser(self, user):
+        sql = self.gen.removeUser(user)
+        query = QSqlQuery(self.db)
+
+        if not query.exec_(sql):
+            raise Exception(self.tr('Problem removing user: ') +user+'\n'+query.lastError().text())
+
+    def grantRole(self, user, role):
+        sql = self.gen.grantRole(user, role)
+        query = QSqlQuery(self.db)
+
+        if not query.exec_(sql):
+            raise Exception(self.tr('Problem granting profile: ') +role+'\n'+query.lastError().text())
+
+    def revokeRole(self, user, role):
+        sql = self.gen.revokeRole(user, role)
+        query = QSqlQuery(self.db)
+
+        if not query.exec_(sql):
+            raise Exception(self.tr('Problem revoking profile: ') +role+'\n'+query.lastError().text())
+
+    def getTablesFromDatabase(self):
+        ret = []
+
+        sql = self.gen.getTablesFromDatabase()
+        query = QSqlQuery(sql, self.db)
+
+        while query.next():
+            #table name
+            ret.append(query.value(0))
+
+        return ret

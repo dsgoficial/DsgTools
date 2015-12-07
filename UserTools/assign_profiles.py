@@ -24,13 +24,9 @@ import os
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
-from PyQt4.QtSql import QSqlDatabase, QSqlQuery
+from PyQt4.QtCore import pyqtSlot
 
 # DSGTools imports
-from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.UserTools.create_profile import CreateProfile
 from DsgTools.UserTools.profile_editor import ProfileEditor
 
 import json
@@ -51,10 +47,6 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
         self.widget.tabWidget.setTabEnabled(0, False)
         if index:
             self.widget.comboBoxPostgis.setCurrentIndex(index)
-        
-        self.factory = SqlGeneratorFactory()
-        self.gen = self.factory.createSqlGenerator(False)
-        self.utils = Utils()        
         
         self.folder = os.path.join(os.path.dirname(__file__), 'profiles')
         self.getModelProfiles()
@@ -128,15 +120,12 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
         for item in self.assignedProfiles.selectedItems():
             role = item.text()
 
-            sql = self.gen.dropRole(role)
-            split = sql.split('#')
-            query = QSqlQuery(self.widget.db)
+            try:
+                self.widget.abstractDb.dropRole(role)
+            except Exception as e:
+                QtGui.QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+                problem = True
 
-            for inner in split:
-                if not query.exec_(inner):
-                    QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem removing profile: ') +role+'\n'+query.lastError().text())
-                    problem = True
-            
         if not problem:
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles removed successfully!'))
         

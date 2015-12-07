@@ -24,8 +24,8 @@ import os
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
-from PyQt4.QtSql import QSqlDatabase, QSqlQuery
+from PyQt4.QtCore import pyqtSlot
+from PyQt4.QtSql import QSqlQuery
 
 # DSGTools imports
 from DsgTools.Utils.utils import Utils
@@ -34,9 +34,6 @@ from DsgTools.UserTools.create_profile import CreateProfile
 from DsgTools.UserTools.assign_profiles import AssignProfiles
 from DsgTools.UserTools.create_user import CreateUser
 from DsgTools.UserTools.alter_user_password import AlterUserPassword
-
-
-import json
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'user_profiles.ui'))
@@ -77,7 +74,7 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         if not self.widget.abstractDb:
             return
         
-        self.installed, self.assigned = self.widget.abstractDb.getUserRelatedRoles()
+        self.installed, self.assigned = self.widget.abstractDb.getUserRelatedRoles(username)
 
         self.installedProfiles.addItems(self.installed)
         self.assignedProfiles.addItems(self.assigned)
@@ -93,7 +90,7 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         if not self.widget.abstractDb:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
             return
-        dlg = CreateUser(self.comboBox.currentText(),self.widget.db)
+        dlg = CreateUser(self.comboBox.currentText(),self.widget.abstractDb)
         dlg.exec_()
         self.populateUsers()
     
@@ -106,16 +103,14 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         if self.comboBox.currentIndex() == 0:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a user to remove!'))
             return
-        
-        
-        sql = self.gen.removeUser(user)
-        query = QSqlQuery(self.widget.db)
 
-        if not query.exec_(sql):
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem removing user: ') +user+'\n'+query.lastError().text())
+        try:
+            self.widget.abstractDb.removeUser(user)
+        except Exception as e:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
             self.getProfiles(user)
             return
-                
+
         self.getProfiles(user)
         QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('User removed successfully!'))
         self.populateUsers()               
@@ -129,9 +124,8 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         if self.comboBox.currentIndex() == 0:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a user!'))
             return
-        dlg = AlterUserPassword(user,self.widget.db)
+        dlg = AlterUserPassword(user, self.widget.abstractDb)
         dlg.exec_()
-
 
     @pyqtSlot(int)
     def on_comboBox_currentIndexChanged(self):
@@ -163,25 +157,22 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
                 revoke.append(role)
             
         for role in grant:
-            sql = self.gen.grantRole(user, role)
-            query = QSqlQuery(self.widget.db)
-
-            if not query.exec_(sql):
-                QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem granting profile: ') +role+'\n'+query.lastError().text())
+            try:
+                self.widget.abstractDb.grantRole(user, role)
+            except Exception as e:
+                QtGui.QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
                 self.getProfiles(user)
                 return
 
         for role in revoke:
-            sql = self.gen.revokeRole(user, role)
-            query = QSqlQuery(self.widget.db)
-
-            if not query.exec_(sql):
-                QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem revoking profile: ') +role+'\n'+query.lastError().text())
+            try:
+                self.widget.abstractDb.revokeRole(user, role)
+            except Exception as e:
+                QtGui.QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
                 self.getProfiles(user)
                 return
-                
+
         self.getProfiles(user)
-        
         QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('User updated successfully!'))
         
     @pyqtSlot(bool)

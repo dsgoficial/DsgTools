@@ -23,22 +23,15 @@
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
-from PyQt4.QtSql import QSqlDatabase, QSqlQuery
-
-# DSGTools imports
-from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.UserTools.profile_editor import ProfileEditor
-
-import json
+from PyQt4 import QtGui, uic
+from PyQt4.QtCore import pyqtSlot
+from PyQt4.QtSql import QSqlQuery
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'create_user.ui'))
 
 class CreateUser(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, user = None, db = None, parent = None):
+    def __init__(self, user = None, abstractDb = None, parent = None):
         """Constructor."""
         super(CreateUser, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -47,13 +40,8 @@ class CreateUser(QtGui.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.db = db
-        self.factory = SqlGeneratorFactory()
-        self.gen = self.factory.createSqlGenerator(False)
-        
-        
-        self.utils = Utils()   
-        self.refreshScreen()     
+        self.abstractDb = abstractDb
+        self.refreshScreen()
     
     def refreshScreen(self):
         self.userLineEdit.setText('')
@@ -76,17 +64,17 @@ class CreateUser(QtGui.QDialog, FORM_CLASS):
             isSuperUser = True
         else:
             isSuperUser = False
-        sql = self.gen.createUser(user,password,isSuperUser)
-        query = QSqlQuery(self.db)
 
-        if not query.exec_(sql):
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem creating user: ') +user+'\n'+query.lastError().text())
+        try:
+            self.abstractDb.createUser(user, password, isSuperUser)
+        except Exception as e:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
             self.refreshScreen()
             return
-        else:
-            QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('User ') +user+self.tr(' created successfully on database ')+self.db.databaseName()+'!')
-            self.refreshScreen()
-            return
+
+        QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('User ') +user+self.tr(' created successfully on database ')+self.abstractDb.getDatabaseName()+'!')
+        self.refreshScreen()
+        return
 
     @pyqtSlot(bool)
     def on_closeButton_clicked(self):
