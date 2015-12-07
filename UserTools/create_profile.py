@@ -23,13 +23,11 @@
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
-from PyQt4.QtSql import QSqlDatabase, QSqlQuery
+from PyQt4 import QtGui, uic
+from PyQt4.QtCore import pyqtSlot
 
 # DSGTools imports
-from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 
 import json
 
