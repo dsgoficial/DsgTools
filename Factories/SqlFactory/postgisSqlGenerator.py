@@ -165,7 +165,7 @@ class PostGISSqlGenerator(SqlGenerator):
         sql =   '''select rolname, usename from 
                     (select * from pg_roles as r where r.rolcanlogin = \'f\' and r.rolname<>\'postgres\') as listaRoles left join 
                     (select * from pg_auth_members as m join pg_user as u on m.member = u.usesysid and u.usename=\'%s\') 
-                    as euTenho on euTenho.roleid=listaRoles.oid
+                    as euTenho on euTenho.roleid=listaRoles.oid  where rolname in (select split_part(unnest(nspacl)::text, \'=\', 1) from pg_namespace where nspname = \'pg_catalog\')
                 ''' % username
         return sql
     
