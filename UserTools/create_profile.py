@@ -24,7 +24,7 @@ import os
 
 # Qt imports
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot
+from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
 # DSGTools imports
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
@@ -35,6 +35,8 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'create_profile.ui'))
 
 class CreateProfile(QtGui.QDialog, FORM_CLASS):
+    profileCreated = pyqtSignal(str)
+    
     def __init__(self, parent = None):
         """Constructor."""
         super(CreateProfile, self).__init__(parent)
@@ -108,12 +110,13 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Fill the profile name!'))
             return
         else:
-            profile = self.lineEdit.text()
+            profileName = self.lineEdit.text()
             
-        path = os.path.join(self.folder, profile+'.json')
+        path = os.path.join(self.folder, profileName+'.json')
         
         with open(path, 'w') as outfile:
             json.dump(self.profile, outfile, sort_keys=True, indent=4)
+            self.profileCreated.emit(profileName)
 
     @pyqtSlot(int)
     def on_versionCombo_currentIndexChanged(self):

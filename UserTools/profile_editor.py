@@ -50,7 +50,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         self.getProfiles()
         self.setInitialState()
         
-    def getProfiles(self):
+    def getProfiles(self, profileName = None):
         ret = []
         for root, dirs, files in os.walk(self.folder):
             for file in files:
@@ -62,6 +62,10 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         self.jsonCombo.clear()
         self.jsonCombo.addItem(self.tr('Select a profile'))
         self.jsonCombo.addItems(ret)
+        
+        index = self.jsonCombo.findText(profileName)
+        if index != -1:
+            self.jsonCombo.setCurrentIndex(index)
 
     def setInitialState(self):
         self.treeWidget.clear()
@@ -155,9 +159,8 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_createButton_clicked(self):
         dlg = CreateProfile()
-        result = dlg.exec_()
-        if result:
-            self.getProfiles()
+        dlg.profileCreated.connect(self.getProfiles)
+        dlg.exec_()
             
     @pyqtSlot(bool)
     def on_clearButton_clicked(self):
