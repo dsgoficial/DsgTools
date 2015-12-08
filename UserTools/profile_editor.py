@@ -66,8 +66,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         index = self.jsonCombo.findText(profileName)
         if index != -1:
             self.jsonCombo.setCurrentIndex(index)
-            profile = os.path.join(self.folder, self.jsonCombo.currentText()+'.json')
-            self.readJsonFile(profile)
+        self.setInitialState()
 
     def setInitialState(self):
         self.treeWidget.clear()

@@ -116,7 +116,7 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
         
         with open(path, 'w') as outfile:
             json.dump(self.profile, outfile, sort_keys=True, indent=4)
-            self.profileCreated.emit(profileName)
+        self.profileCreated.emit(profileName)
 
     @pyqtSlot(int)
     def on_versionCombo_currentIndexChanged(self):
