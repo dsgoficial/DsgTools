@@ -146,7 +146,7 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_removeJson_clicked(self):
-        if not QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to remove selected profile models?')):
+        if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to remove selected profile models?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
             return
         
         for item in self.possibleProfiles.selectedItems():
