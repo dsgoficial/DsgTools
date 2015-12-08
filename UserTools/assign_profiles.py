@@ -22,9 +22,12 @@
 """
 import os
 
+#PyQt imports
+from PyQt4.QtGui import QApplication, QCursor
+
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot
+from PyQt4.QtCore import pyqtSlot, Qt
 
 # DSGTools imports
 from DsgTools.UserTools.profile_editor import ProfileEditor
@@ -89,6 +92,8 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_installButton_clicked(self):
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+
         for item in self.possibleProfiles.selectedItems():
             role = item.text()
             profile = os.path.join(self.folder, role +'.json')
@@ -97,12 +102,15 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
             try:
                 self.widget.abstractDb.createRole(role, dict)
             except Exception as e:
+                QApplication.restoreOverrideCursor()
                 QtGui.QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
                 return
             
         QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles assigned successfully!'))    
         
-        self.getInstalledProfiles()            
+        self.getInstalledProfiles()
+
+        QApplication.restoreOverrideCursor()
         
     @pyqtSlot(bool)
     def on_closeButton_clicked(self):
@@ -116,6 +124,8 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_removeButton_clicked(self):
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+
         problem = False
         for item in self.assignedProfiles.selectedItems():
             role = item.text()
@@ -123,6 +133,7 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
             try:
                 self.widget.abstractDb.dropRole(role)
             except Exception as e:
+                QApplication.restoreOverrideCursor()
                 QtGui.QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
                 problem = True
 
@@ -130,6 +141,8 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles removed successfully!'))
         
         self.getInstalledProfiles()
+
+        QApplication.restoreOverrideCursor()
 
     @pyqtSlot(bool)
     def on_removeJson_clicked(self):
