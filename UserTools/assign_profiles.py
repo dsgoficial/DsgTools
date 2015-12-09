@@ -53,6 +53,7 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
         
         self.folder = os.path.join(os.path.dirname(__file__), 'profiles')
         self.getModelProfiles()
+        self.getInstalledProfiles()
         
         #Objects Connections
         QtCore.QObject.connect(self.widget, QtCore.SIGNAL(("connectionChanged()")), self.getInstalledProfiles)
