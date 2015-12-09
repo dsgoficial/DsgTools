@@ -57,7 +57,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         if not self.currLayer:
             return
         
-        for field in self.currLayer.fields():
+        for field in self.currLayer.pendingFields():
             valueDict, keys = self.getCodeListDict(field.name())
             if len(keys) > 0:
                 self.comboBox.addItem(field.name())
@@ -87,8 +87,8 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         
         for row, value in enumerate(keys):
             code = valueDict[value]
-            valueItem = QTableWidgetItem(str(value).decode('utf-8'))
-            codeItem = QTableWidgetItem(str(code))
+            valueItem = QTableWidgetItem(value)
+            codeItem = QTableWidgetItem(code)
             self.tableWidget.setItem(row, 0, valueItem)
             self.tableWidget.setItem(row, 1, codeItem)
         self.tableWidget.sortItems(1)
