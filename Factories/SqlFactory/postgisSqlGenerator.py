@@ -158,9 +158,9 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
         
     def getRoles(self):
-        sql = 'SELECT rolname FROM pg_roles WHERE rolname <> \'postgres\' AND rolcanlogin = \'f\''
+        sql = 'SELECT rolname FROM pg_roles WHERE rolname <> \'postgres\' AND rolcanlogin = \'f\' AND rolname in (select split_part(unnest(nspacl)::text, \'=\', 1) from pg_namespace where nspname = \'pg_catalog\')'
         return sql
-    
+
     def getUserRelatedRoles(self, username):
         sql =   '''select rolname, usename from 
                     (select * from pg_roles as r where r.rolcanlogin = \'f\' and r.rolname<>\'postgres\') as listaRoles left join 
