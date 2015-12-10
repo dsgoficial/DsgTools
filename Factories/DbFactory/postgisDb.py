@@ -359,7 +359,11 @@ class PostgisDb(AbstractDb):
 
         for inner in split:
             if not query.exec_(inner):
-                raise Exception(self.tr('Problem removing profile: ') +role+'\n'+query.lastError().text())
+                if '2BP01' in query.lastError().text():
+                    #In this case the role is still used by other databases, therefore it shouldn't be dropped.
+                    continue
+                else:
+                    raise Exception(self.tr('Problem removing profile: ') +role+'\n'+query.lastError().text())
 
     def alterUserPass(self, user, newpassword):
         sql = self.gen.alterUserPass(user, newpassword)

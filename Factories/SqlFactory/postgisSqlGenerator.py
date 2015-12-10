@@ -140,13 +140,13 @@ class PostGISSqlGenerator(SqlGenerator):
                             EXECUTE s;
                         END LOOP;
                         EXECUTE 'REVOKE ALL ON db_metadata FROM '|| name;
-                        EXECUTE 'DROP ROLE IF EXISTS '||name;
                         RETURN;
                         
                     END
                 $BODY$ LANGUAGE plpgsql;#
             '''
-        sql += 'SELECT droprole(\''+role+'\')'
+        sql += 'SELECT droprole(\''+role+'\')#'
+        sql += 'DROP ROLE IF EXISTS '+role
         return sql
     
     def grantRole(self, user, role):
