@@ -346,8 +346,8 @@ class PostgisDb(AbstractDb):
 
         for inner in split:
             if not query.exec_(inner):
-                #In this case the role is already created (duplicate object error). We just need to proceed executing the grants.
-                if query.lastError().number() == 42710:
+                if '42710' in query.lastError().text():
+                    #In this case the role is already created (duplicate object error). We just need to proceed executing the grants.
                     continue
                 else:
                     raise Exception(self.tr('Problem assigning profile: ') +role+'\n'+query.lastError().text())
