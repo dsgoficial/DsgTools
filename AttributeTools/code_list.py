@@ -45,9 +45,9 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         self.setupUi(self)
         
         self.iface = iface
-        
+          
         self.iface.currentLayerChanged.connect(self.setState)
-        
+          
         self.setState()
         
     @pyqtSlot()
@@ -67,6 +67,8 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         
     def getCodeListDict(self, field):
         fieldIndex = self.currLayer.fieldNameIndex(field)
+        if fieldIndex == -1:
+            return None, None
         valueDict = self.currLayer.editorWidgetV2Config(fieldIndex) 
         keys = [value for value in valueDict.keys() if not (value == 'UseHtml' or value == 'IsMultiline')]
         return  valueDict, keys 
