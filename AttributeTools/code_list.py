@@ -68,10 +68,10 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
     def getCodeListDict(self, field):
         fieldIndex = self.currLayer.fieldNameIndex(field)
         if fieldIndex == -1:
-            return None, None
+            return dict(), list()
         valueDict = self.currLayer.editorWidgetV2Config(fieldIndex) 
         keys = [value for value in valueDict.keys() if not (value == 'UseHtml' or value == 'IsMultiline')]
-        return  valueDict, keys 
+        return valueDict, keys
         
     @pyqtSlot(int)
     def on_comboBox_currentIndexChanged(self):
