@@ -257,3 +257,8 @@ class PostGISSqlGenerator(SqlGenerator):
                     LANGUAGE plpgsql;
                     '''
         return sql
+    
+    def getRolePrivileges(self, role, dbname):
+        sql = 'SELECT * FROM information_schema.role_table_grants where grantee = \'%s\' and table_catalog = \'%s\' ORDER BY table_name' % (role, dbname)
+        return sql
+        

@@ -539,3 +539,7 @@ class AbstractDb(QObject):
 
     def getTablesFromDatabase(self):
         return None
+
+    def getRolePrivileges(self, role, dbname):
+        return None
+    

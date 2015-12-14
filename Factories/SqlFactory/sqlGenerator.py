@@ -117,3 +117,7 @@ class SqlGenerator:
     
     def createCustomSort(self):
         return None
+    
+    def getRolePrivileges(self, role, dbname):
+        return None
+    

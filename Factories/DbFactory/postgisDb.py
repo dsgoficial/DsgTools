@@ -411,3 +411,46 @@ class PostgisDb(AbstractDb):
             ret.append(query.value(0))
 
         return ret
+
+    def getRolePrivileges(self, role, dbname):
+        privilegesDict = dict()
+        
+        sql = self.gen.getRolePrivileges(role, dbname)
+        query = QSqlQuery(sql, self.db)
+        
+        while query.next():
+            schema = query.value(3)
+            table = query.value(4)
+            privilege = query.value(5)
+            
+            if schema in ['cb', 'public', 'complexos']:
+                privilegesDict = self.utils.buildNestedDict(privilegesDict, [schema, table], [privilege])
+            
+        permissionsDict = dict()
+        for schema in privilegesDict.keys():
+            for table in privilegesDict[schema].keys():
+                split = table.split('_')
+                category = split[0]
+                layerName = schema+'.'+table
+                
+                if schema not in permissionsDict.keys():
+                    permissionsDict[schema] = dict()
+                    
+                if category not in permissionsDict[schema].keys():
+                    permissionsDict[schema][category] = dict()
+
+                privileges = privilegesDict[schema][table]
+                write = ['DELETE', 'INSERT', 'SELECT', 'UPDATE', 'TRUNCATE', 'REFERENCES', 'TRIGGER']
+                if all((permission in privileges for permission in write)):
+                    if layerName not in permissionsDict[schema][category]:
+                        permissionsDict[schema][category][layerName] = dict()
+                        permissionsDict[schema][category][layerName]['read'] = '2'#read yes
+                        permissionsDict[schema][category][layerName]['write'] = '2'#write yes
+                else:
+                    if layerName not in permissionsDict[schema][category]:
+                        permissionsDict[schema][category][layerName] = dict()
+                        permissionsDict[schema][category][layerName]['read'] = '2'#read yes
+                        permissionsDict[schema][category][layerName]['write'] = '0'#write no
+                        
+        return permissionsDict    
+                    

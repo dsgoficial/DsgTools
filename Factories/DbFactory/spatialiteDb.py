@@ -334,3 +334,7 @@ class SpatialiteDb(AbstractDb):
             ret.append(query.value(0))
 
         return ret
+
+    def getRolePrivileges(self, role, dbname):
+        return None
+    

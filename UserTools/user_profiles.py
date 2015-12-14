@@ -24,8 +24,9 @@ import os
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot
+from PyQt4.QtCore import pyqtSlot, Qt
 from PyQt4.QtSql import QSqlQuery
+from PyQt4.QtGui import QMenu
 
 # DSGTools imports
 from DsgTools.Utils.utils import Utils
@@ -34,6 +35,7 @@ from DsgTools.UserTools.create_profile import CreateProfile
 from DsgTools.UserTools.assign_profiles import AssignProfiles
 from DsgTools.UserTools.create_user import CreateUser
 from DsgTools.UserTools.alter_user_password import AlterUserPassword
+from DsgTools.UserTools.permission_properties import PermissionProperties
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'user_profiles.ui'))
@@ -52,6 +54,28 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         
         #Objects Connections
         QtCore.QObject.connect(self.widget, QtCore.SIGNAL(("connectionChanged()")), self.populateUsers)
+        
+        self.installedProfiles.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.installedProfiles.customContextMenuRequested.connect(self.createMenu)
+        
+    def createMenu(self, position):
+        menu = QMenu()
+        
+        item = self.installedProfiles.itemAt(position)
+
+        if item:        
+            menu.addAction(self.tr('Show properties'), self.showProperties)
+            
+        menu.exec_(self.installedProfiles.viewport().mapToGlobal(position))
+        
+    def showProperties(self):
+        listedItems = self.installedProfiles.selectedItems()
+        permission = listedItems[0].text()
+        dbname = self.widget.abstractDb.getDatabaseName()
+        permissionsDict = self.widget.abstractDb.getRolePrivileges(permission, dbname)
+        
+        dlg = PermissionProperties(permissionsDict)
+        dlg.exec_()
         
     def populateUsers(self):
         self.comboBox.clear()
