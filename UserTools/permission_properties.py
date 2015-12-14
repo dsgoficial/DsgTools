@@ -25,6 +25,7 @@ import os
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSlot
+from PyQt4.QtGui import QAbstractItemView
 
 # DSGTools imports
 
@@ -49,6 +50,9 @@ class PermissionProperties(QtGui.QDialog, FORM_CLASS):
         dbItem = self.createItem(rootItem, 'database')
 
         self.createChildrenItems(dbItem, permissionsDict)
+        
+        self.treeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+        self.treeWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         
     def createItem(self, parent, text):
         item = QtGui.QTreeWidgetItem(parent)
