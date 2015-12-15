@@ -25,6 +25,7 @@ from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 from PyQt4.QtCore import QSettings
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from osgeo import ogr
+from uuid import uuid4
 
 class PostgisDb(AbstractDb):
     
@@ -340,6 +341,10 @@ class PostgisDb(AbstractDb):
         return ret
 
     def createRole(self, role, dict):
+        #making this so the instaciated permissions stay with different names
+        uuid = str(uuid4()).replace('-', '_')
+        role += '_'+uuid
+
         sql = self.gen.createRole(role, dict)
         split = sql.split(';')
         query = QSqlQuery(self.db)
