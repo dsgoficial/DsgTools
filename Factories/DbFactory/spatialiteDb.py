@@ -337,4 +337,6 @@ class SpatialiteDb(AbstractDb):
 
     def getRolePrivileges(self, role, dbname):
         return None
-    
+
+    def getFrameLayerName(self):
+        return 'public_aux_moldura_a'

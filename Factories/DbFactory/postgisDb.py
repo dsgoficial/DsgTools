@@ -459,4 +459,6 @@ class PostgisDb(AbstractDb):
                         permissionsDict[schema][category][layerName]['write'] = '0'#write no
                         
         return permissionsDict    
-                    
+
+    def getFrameLayerName(self):
+        return 'public.aux_moldura_a'

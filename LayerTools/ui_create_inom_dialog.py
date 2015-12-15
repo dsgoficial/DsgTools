@@ -30,10 +30,12 @@ import os
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_create_inom_dialog_base.ui'))
 
+#DsgTools imports
 from DsgTools.LayerTools.map_index import UtmGrid
+from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
 
 class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, iface, parent=None):
+    def __init__(self, iface, codeList, parent=None):
         """Constructor."""
         super(CreateInomDialog, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -43,14 +45,12 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.iface = iface
-
         self.map_index = UtmGrid()
-
         self.disableAll()
-
         self.setValidCharacters()
-
         self.setMask()
+        self.codeList = codeList
+        self.layerFactory = LayerFactory()
 
     @pyqtSlot()
     def on_okButton_clicked(self):
@@ -70,7 +70,16 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         self.dbVersion = self.widget.getDBVersion()
         self.qmlPath = self.widget.getQmlPath()
 
-        layer = self.getFrameLayer()
+        
+
+        layer = self.getFrameLayer(self.iface.legendInterface().layers())
+        
+
+        if layer == None:
+            lyrName = self.widget.abstractDb.getFrameLayerName()
+            edgvLayer = self.layerFactory.makeLayer(self.widget.abstractDb, self.codeList, lyrName)
+            layer = edgvLayer.load(self.widget.crs)
+        
         if not layer:
             return
 
@@ -91,24 +100,14 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         self.iface.mapCanvas().setExtent(bbox)
         self.iface.mapCanvas().refresh()
 
-    def getFrameLayer(self):
-        for lyr in self.iface.legendInterface().layers():
-            if lyr.name() == 'public_aux_moldura_a' or lyr.name() == 'aux_moldura_a':
+    def getFrameLayer(self,ifaceLayers):
+        for lyr in ifaceLayers:
+            if 'aux_moldura_a' in lyr.name():
                 dbname = self.getDBNameFromLayer(lyr)
-                if self.widget.isSpatialite and dbname == self.widget.filename:
+                if dbname == self.widget.abstractDb.getDatabaseName():
                     return lyr
-                if not self.widget.isSpatialite:
-                    (database, host, port, user, password) = self.widget.utils.getPostGISConnectionParameters(self.widget.comboBoxPostgis.currentText())
-                    if dbname == database:
-                        return lyr
-
-        if self.widget.isSpatialite:
-            return self.loadSpatialiteFrame()
-        else:
-            return self.loadPostGISFrame()
-
         return None
-
+    
     def getDBNameFromLayer(self, lyr):
         dbname = None
         splitUri = lyr.dataProvider().dataSourceUri().split(' ')
@@ -120,54 +119,6 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
                 if len(dbnameSplit) > 1:
                     dbname = dbnameSplit[1]
         return dbname
-
-    def loadPostGISFrame(self):
-        self.selectedClasses = ['public.aux_moldura_a']
-        (database, host, port, user, password) = self.widget.utils.getPostGISConnectionParameters(self.widget.comboBoxPostgis.currentText())
-        uri = QgsDataSourceURI()
-        uri.setConnection(str(host),str(port), str(database), str(user), str(password))
-        if len(self.selectedClasses)>0:
-            try:
-                geom_column = 'geom'
-                for layer in self.selectedClasses:
-                    split = layer.split('.')
-                    schema = split[0]
-                    layerName = split[1]
-                    sql = self.widget.gen.loadLayerFromDatabase(layer)
-                    uri.setDataSource(schema, layerName, geom_column, sql,'id')
-                    uri.disableSelectAtId(True)
-                    return self.loadEDGVLayer(uri, layerName, 'postgres')
-            except:
-                self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load the selected frame!"), level=QgsMessageBar.CRITICAL)
-        else:
-            self.bar.pushMessage(self.tr("Warning!"), self.tr("Please, select at least one class!"), level=QgsMessageBar.WARNING)
-
-    def loadSpatialiteFrame(self):
-        self.selectedClasses = ['public_aux_moldura_a']
-        uri = QgsDataSourceURI()
-        uri.setDatabase(self.widget.filename)
-        schema = ''
-        geom_column = 'GEOMETRY'
-        if len(self.selectedClasses)>0:
-            for layer_name in self.selectedClasses:
-                uri.setDataSource(schema, layer_name, geom_column)
-                return self.loadEDGVLayer(uri, layer_name, 'spatialite')
-
-    def loadEDGVLayer(self, uri, layer_name, provider):
-        vlayer = QgsVectorLayer(uri.uri(), layer_name, provider)
-        vlayer.setCrs(self.widget.crs)
-        QgsMapLayerRegistry.instance().addMapLayer(vlayer) #added due to api changes
-        if self.widget.isSpatialite and (self.dbVersion == '3.0' or self.dbVersion == '2.1.3'):
-            lyr = '_'.join(layer_name.replace('\r','').split('_')[1::])
-        else:
-            lyr = layer_name.replace('\r','')
-        vlayerQml = os.path.join(self.qmlPath, lyr+'.qml')
-        vlayer.loadNamedStyle(vlayerQml,False)
-        QgsMapLayerRegistry.instance().addMapLayer(vlayer)
-        if not vlayer.isValid():
-            QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            return None
-        return vlayer
 
     @pyqtSlot()
     def on_cancelButton_clicked(self):

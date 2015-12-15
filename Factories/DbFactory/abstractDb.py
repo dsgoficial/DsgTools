@@ -543,3 +543,5 @@ class AbstractDb(QObject):
     def getRolePrivileges(self, role, dbname):
         return None
     
+    def getFrameLayerName(self):
+        return None

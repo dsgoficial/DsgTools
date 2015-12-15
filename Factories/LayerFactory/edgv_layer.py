@@ -52,7 +52,7 @@ class EDGVLayer(QObject):
 
         vlayer = iface.addVectorLayer(self.uri.uri(), self.layer_name, self.provider)
         if not vlayer:
-            return
+            return None
 
         vlayer.setCrs(crs)
         vlayer.loadNamedStyle(vlayerQml, False)
@@ -64,3 +64,5 @@ class EDGVLayer(QObject):
             
         if not vlayer.isValid():
             QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+
+        return vlayer

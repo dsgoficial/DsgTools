@@ -687,7 +687,7 @@ class DsgTools:
             self.layerButton.setDefaultAction(self.toolbar.sender())
         except:
             pass
-        dlg = CreateInomDialog(self.iface)
+        dlg = CreateInomDialog(self.iface,self.codeList)
         dlg.show()
         result = dlg.exec_()
         if result:
