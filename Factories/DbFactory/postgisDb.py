@@ -343,6 +343,12 @@ class PostgisDb(AbstractDb):
         sql = self.gen.createRole(role, dict)
         split = sql.split(';')
         query = QSqlQuery(self.db)
+        
+        #try to revoke the permissions
+        try:
+            self.dropRole(role)
+        except:
+            pass
 
         for inner in split:
             if not query.exec_(inner):

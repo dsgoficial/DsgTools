@@ -56,7 +56,7 @@ class PermissionProperties(QtGui.QDialog, FORM_CLASS):
         
     def createItem(self, parent, text):
         item = QtGui.QTreeWidgetItem(parent)
-        item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsTristate | QtCore.Qt.ItemIsUserCheckable)
+        item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsTristate)
         item.setCheckState(1, QtCore.Qt.Unchecked)
         item.setCheckState(2, QtCore.Qt.Unchecked)
         item.setText(0, text)
