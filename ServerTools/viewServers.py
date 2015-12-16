@@ -109,9 +109,9 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         test = self.testServer(name)
         QApplication.restoreOverrideCursor()
         if test:
-            QMessageBox.warning(self, self.tr('Info!'), self.tr('Server Online.'))
+            QMessageBox.warning(self, self.tr('Info!'), self.tr('Connection online.'))
         else:
-            QMessageBox.warning(self, self.tr('Info!'), self.tr('Server Offline.'))
+            QMessageBox.warning(self, self.tr('Info!'), self.tr('Connection was not successful. Check log for details.'))
         
     def getServers(self):
         settings = QSettings()
@@ -140,17 +140,21 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
     def testServer(self, name):
         (host, port, user, password) = self.getServerConfiguration(name)
         db = None
-        db = QSqlDatabase('QPSQL')
-        db.setConnectOptions('connect_timeout=50')
-        db.setDatabaseName('postgres')
-        db.setHostName(host)
-        db.setPort(int(port))
-        db.setUserName(user)
-        db.setPassword(password)
-        ok = db.open()
-        if not ok:
+        if (not 'QPSQL' in QSqlDatabase.drivers()): #Driver wasn't loaded
+          QgsMessageLog.logMessage(db.lastError().text()+'\n is QT PSQL driver installed?', 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+          return False
+        else:
+          db = QSqlDatabase('QPSQL') #trying to use PGSQL driver.
+          db.setConnectOptions('connect_timeout=50')
+          db.setDatabaseName('postgres')
+          db.setHostName(host)
+          db.setPort(int(port))
+          db.setUserName(user)
+          db.setPassword(password)
+          ok = db.open()
+          if not ok:
             QgsMessageLog.logMessage(db.lastError().text(), 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
-        return ok
+          return ok
     
     def returnSelectedName(self):
         if len(self.tableWidget.selectedItems())==0:
