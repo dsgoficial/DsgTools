@@ -57,18 +57,20 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         
         self.installedProfiles.setContextMenuPolicy(Qt.CustomContextMenu)
         self.installedProfiles.customContextMenuRequested.connect(self.createMenu)
-        
-    def createMenu(self, position):
+        self.assignedProfiles.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.assignedProfiles.customContextMenuRequested.connect(self.createMenu)
+
+    def createMenuInstalled(self, position):
         menu = QMenu()
         
         item = self.installedProfiles.itemAt(position)
 
         if item:        
-            menu.addAction(self.tr('Show properties'), self.showProperties)
+            menu.addAction(self.tr('Show properties'), self.showInstalledProperties)
             
         menu.exec_(self.installedProfiles.viewport().mapToGlobal(position))
         
-    def showProperties(self):
+    def showInstalledProperties(self):
         listedItems = self.installedProfiles.selectedItems()
         permission = listedItems[0].text()
         dbname = self.widget.abstractDb.getDatabaseName()
@@ -77,6 +79,25 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         dlg = PermissionProperties(permissionsDict)
         dlg.exec_()
         
+    def createMenuAssigned(self, position):
+        menu = QMenu()
+
+        item = self.assignedProfiles.itemAt(position)
+
+        if item:
+            menu.addAction(self.tr('Show properties'), self.showAssignedProperties)
+
+        menu.exec_(self.assignedProfiles.viewport().mapToGlobal(position))
+
+    def showAssignedProperties(self):
+        listedItems = self.assignedProfiles.selectedItems()
+        permission = listedItems[0].text()
+        dbname = self.widget.abstractDb.getDatabaseName()
+        permissionsDict = self.widget.abstractDb.getRolePrivileges(permission, dbname)
+
+        dlg = PermissionProperties(permissionsDict)
+        dlg.exec_()
+
     def populateUsers(self):
         self.comboBox.clear()
         
