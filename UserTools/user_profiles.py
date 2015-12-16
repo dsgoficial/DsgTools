@@ -56,9 +56,9 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         QtCore.QObject.connect(self.widget, QtCore.SIGNAL(("connectionChanged()")), self.populateUsers)
         
         self.installedProfiles.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.installedProfiles.customContextMenuRequested.connect(self.createMenu)
+        self.installedProfiles.customContextMenuRequested.connect(self.createMenuInstalled)
         self.assignedProfiles.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.assignedProfiles.customContextMenuRequested.connect(self.createMenu)
+        self.assignedProfiles.customContextMenuRequested.connect(self.createMenuAssigned)
 
     def createMenuInstalled(self, position):
         menu = QMenu()
