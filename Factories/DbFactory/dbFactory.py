@@ -22,11 +22,22 @@
 """
 import os
 
+from PyQt4.QtSql import QSqlDatabase
+
+#DSG Tools imports
 from DsgTools.Factories.DbFactory.spatialiteDb import SpatialiteDb
 from DsgTools.Factories.DbFactory.postgisDb import PostgisDb
 
 class DbFactory:
     def createDbFactory(self,driverName):
+        #TODO Treat none return
+        if not ('QPSQL' in QSqlDatabase.drivers()): #Driver wasn't loaded
+            QgsMessageLog.logMessage('QT PSQL driver not installed!', 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            return None
+        if not ('QSQLITE' in QSqlDatabase.drivers()): #Driver wasn't loaded
+            QgsMessageLog.logMessage('QT QSQLITE driver not installed!', 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            return None        
+        
         if driverName == "QSQLITE":
             return SpatialiteDb()
         if driverName == "QPSQL":

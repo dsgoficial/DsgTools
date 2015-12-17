@@ -96,7 +96,10 @@ class AbstractDb(QObject):
         return None
 
     def countElements(self, layers):
-        self.checkAndOpenDb()
+        try:
+            self.checkAndOpenDb()
+        except:
+            return []
         listaQuantidades = []
         for layer in layers:
             (table,schema)=self.getTableSchema(layer)
@@ -111,7 +114,10 @@ class AbstractDb(QObject):
         return listaQuantidades     
 
     def findEPSG(self):
-        self.checkAndOpenDb()    
+        try:
+            self.checkAndOpenDb()
+        except:
+            return -1   
         sql = self.gen.getSrid()
         query = QSqlQuery(sql, self.db)
         srids = []
@@ -120,7 +126,10 @@ class AbstractDb(QObject):
         return srids[0]
 
     def listWithElementsFromDatabase(self, classList):
-        self.checkAndOpenDb()
+        try:
+            self.checkAndOpenDb()
+        except:
+            return dict()
         classListWithNumber = self.countElements(classList)
         classesWithElements = dict()
         for cl in classListWithNumber:
@@ -152,7 +161,10 @@ class AbstractDb(QObject):
         return None
 
     def getAggregationAttributes(self):
-        self.checkAndOpenDb()       
+        try:
+            self.checkAndOpenDb()
+        except:
+            return []       
         columns = []
         sql = self.gen.getAggregationColumn()
         query = QSqlQuery(sql, self.db)
@@ -167,7 +179,10 @@ class AbstractDb(QObject):
             return self.ogrDb
 
     def buildFieldMap(self):
-        self.checkAndOpenDb()
+        try:
+            self.checkAndOpenDb()
+        except:
+            return dict()
         fieldMap = self.getStructureDict()
         return fieldMap
 
@@ -368,8 +383,11 @@ class AbstractDb(QObject):
         return invalidated
     
     def prepareForConversion(self,outputAbstractDb):
-        self.checkAndOpenDb()
-        outputAbstractDb.checkAndOpenDb()
+        try:
+            self.checkAndOpenDb()
+            outputAbstractDb.checkAndOpenDb()
+        except:
+            return (None, None, dict(), [], dict())
         fieldMap = self.buildFieldMap()
         inputOgrDb = self.buildOgrDatabase()
         outputOgrDb = outputAbstractDb.buildOgrDatabase()
@@ -481,7 +499,10 @@ class AbstractDb(QObject):
         return None
     
     def getQmlDir(self):
-        self.checkAndOpenDb()
+        try:
+            self.checkAndOpenDb()
+        except:
+            return ''
         currentPath = os.path.dirname(__file__)
         if qgis.core.QGis.QGIS_VERSION_INT >= 20600:
             qmlVersionPath = os.path.join(currentPath, '..', '..', 'Qmls', 'qgis_26')
@@ -544,4 +565,7 @@ class AbstractDb(QObject):
         return None
     
     def getFrameLayerName(self):
+        return None
+
+    def getEDGVDbsFromServer(self,name):
         return None

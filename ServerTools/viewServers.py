@@ -30,6 +30,9 @@ from serverConfigurator import ServerConfigurator
 
 from qgis.core import QgsMessageLog
 
+from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_viewServers.ui'))
 
@@ -44,7 +47,7 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.iface = iface
-        
+        self.abstractDbFactory = DbFactory()
         self.initGui()
     
     def initGui(self):
@@ -62,7 +65,7 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
             self.tableWidget.setItem(i,2,QTableWidgetItem(port))
             self.tableWidget.setItem(i,3,QTableWidgetItem(user))
             if len(password)==0:
-                self.tableWidget.setItem(i,4,QTableWidgetItem(self.tr('Clear')))
+                self.tableWidget.setItem(i,4,QTableWidgetItem(self.tr('Not Saved')))
             else:
                 self.tableWidget.setItem(i,4,QTableWidgetItem(self.tr('Saved')))
         
@@ -105,9 +108,12 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         if(selectedItem is None):
             return
         name = selectedItem.text()
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        test = self.testServer(name)
-        QApplication.restoreOverrideCursor()
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            test = self.testServer(name)
+            QApplication.restoreOverrideCursor()
+        except:
+            QApplication.restoreOverrideCursor()
         if test:
             QMessageBox.warning(self, self.tr('Info!'), self.tr('Connection online.'))
         else:
@@ -138,23 +144,17 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         settings.endGroup()
         
     def testServer(self, name):
-        (host, port, user, password) = self.getServerConfiguration(name)
-        db = None
-        if (not 'QPSQL' in QSqlDatabase.drivers()): #Driver wasn't loaded
-          QgsMessageLog.logMessage('QT PSQL driver installed!', 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
-          return False
-        else:
-          db = QSqlDatabase('QPSQL') #trying to use PGSQL driver.
-          db.setConnectOptions('connect_timeout=50')
-          db.setDatabaseName('postgres')
-          db.setHostName(host)
-          db.setPort(int(port))
-          db.setUserName(user)
-          db.setPassword(password)
-          ok = db.open()
-          if not ok:
-            QgsMessageLog.logMessage(db.lastError().text(), 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
-          return ok
+        abstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
+        if not abstractDb:
+            return False
+        (host, port, user, password) = abstractDb.getServerConfiguration(name)
+        abstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
+        try:
+            abstractDb.checkAndOpenDb()
+        except Exception as e:
+            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            return False
+        return True
     
     def returnSelectedName(self):
         if len(self.tableWidget.selectedItems())==0:
