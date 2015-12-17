@@ -141,7 +141,7 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         (host, port, user, password) = self.getServerConfiguration(name)
         db = None
         if (not 'QPSQL' in QSqlDatabase.drivers()): #Driver wasn't loaded
-          QgsMessageLog.logMessage(db.lastError().text()+'\n is QT PSQL driver installed?', 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+          QgsMessageLog.logMessage('QT PSQL driver installed!', 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
           return False
         else:
           db = QSqlDatabase('QPSQL') #trying to use PGSQL driver.
