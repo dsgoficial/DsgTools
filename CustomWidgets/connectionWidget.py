@@ -127,8 +127,11 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         try:
             self.abstractDb.checkAndOpenDb()
             self.dbLoaded = True
-            self.setCRS()
             self.dbVersion = self.abstractDb.getDatabaseVersion()
+            if self.dbVersion == '-1':
+                self.problemOccurred.emit(self.tr('This is not a valid DsgTools database!'))
+            else:
+                self.setCRS()
         except Exception as e:
             QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)    
 
