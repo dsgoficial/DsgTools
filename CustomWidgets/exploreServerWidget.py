@@ -22,15 +22,14 @@
 """
 import os
 
-from qgis.core import QgsCoordinateReferenceSystem,QgsMessageLog
+from qgis.core import QgsMessageLog
 
 # Qt imports
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
-from PyQt4.QtSql import QSqlDatabase
+from PyQt4.QtSql import QSqlQuery
 
 # DSGTools imports
-from DsgTools.Utils.utils import Utils
 from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
@@ -52,8 +51,6 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.dbFactory = DbFactory()
 
-
-
     #TODO
     def getServers(self):
         settings = QSettings()
@@ -67,7 +64,7 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         gen = self.factory.createSqlGenerator(False)
         edvgDbList = []
         for database in dbList:
-            db = self.getPostGISDatabaseWithParams(database,host,port,user,password)
+            db = self.getPostGISDatabaseWithParams(database, host, port, user, password)
             if not db.open():
                 qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+db.lastError().databaseText(), level=QgsMessageBar.CRITICAL)
 
@@ -76,7 +73,7 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
                 while query.next():
                     version = query.value(0)
                     if version:
-                        edvgDbList.append((database,version))
+                        edvgDbList.append((database, version))
         return edvgDbList
     
     #TODO
@@ -86,15 +83,15 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         (host, port, user, password) = self.getServerConfiguration(name)
         database = 'postgres'
         
-        db = self.getPostGISDatabaseWithParams(database,host,port,user,password)
+        db = self.getPostGISDatabaseWithParams(database, host, port, user, password)
         if not db.open():
             QgsMessageLog.logMessage(db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         
-        query = QSqlQuery(gen.getDatabasesFromServer(),db)
+        query = QSqlQuery(gen.getDatabasesFromServer(), db)
         dbList = []
         while query.next():
             dbList.append(query.value(0))
-        return self.browseServer(dbList,host,port,user,password)
+        return self.browseServer(dbList, host, port, user, password)
     
     @pyqtSlot(bool)
     def on_createNewServerPushButton_clicked(self):  
@@ -112,11 +109,8 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(int)
     def on_serversCombo_currentIndexChanged(self):
         self.clearWidgets.emit()
-        if self.serversCombo.currentIndex() <> 0:
+        if self.serversCombo.currentIndex() != 0:
             self.abstractDb = self.dbFactory.createDbFactory('QPSQL')
             (host, port, user, password) = self.abstractDb.getServerConfiguration(self.serversCombo.currentText())
             self.abstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
             self.abstractDbLoaded.emit()
-        
-
-    

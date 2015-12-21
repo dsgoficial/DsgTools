@@ -265,4 +265,3 @@ class PostGISSqlGenerator(SqlGenerator):
     def isSuperUser(self,user):
         sql = 'SELECT rolsuper FROM pg_roles WHERE rolname = \'%s\'' % user 
         return sql
-        

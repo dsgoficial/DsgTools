@@ -56,7 +56,6 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
         self.serverWidget.populateServersCombo()
         self.serverWidget.abstractDbLoaded.connect(self.populateListWithDatabasesFromServer)
     
-    
     def storeConnection(self, server, database):
         (host, port, user, password) = self.getServerConfiguration(server)
         connection = server+'_'+database

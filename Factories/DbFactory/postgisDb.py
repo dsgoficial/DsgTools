@@ -38,11 +38,6 @@ class PostgisDb(AbstractDb):
     def getDatabaseName(self):
         return self.db.databaseName()
     
-    def getCredentials(self,originalUser,conInfo):
-        
-        # Put the credentials back (for yourself and the provider), as QGIS removes it when you "get" it
-        return (success,user, passwd)
-    
     def connectDatabase(self,conn=None):
         if conn.split(':')[0] == 'PG':
             connSplit = conn.split(' ')
@@ -57,9 +52,9 @@ class PostgisDb(AbstractDb):
     def connectDatabaseWithGui(self):
         return None
 
-    def connectDatabaseWithParameters(self,host,port,database,user,password):
+    def connectDatabaseWithParameters(self, host, port, database, user, password):
         self.db.setHostName(host)
-        if type(port) <> 'int':
+        if type(port) != 'int':
             self.db.setPort(int(port))
         else:
             self.db.setPort(port)
@@ -70,23 +65,23 @@ class PostgisDb(AbstractDb):
             check = False
             while not check:
                 try:
-                    (success, user, password) = QgsCredentials.instance().get( conInfo, user, None )
+                    (success, user, password) = QgsCredentials.instance().get(conInfo, user, None)
                     if not success:
                         return 
                     self.db.setPassword(password)
                     self.checkAndOpenDb()                    
                     check = True
-                    QgsCredentials.instance().put( conInfo, originalUser, passwd )
+                    QgsCredentials.instance().put(conInfo, user, password)
                 except:
                     pass
         else:
             self.db.setPassword(password)
         
 
-    def connectDatabaseWithQSettings(self,name):
+    def connectDatabaseWithQSettings(self, name):
         (host, port, database, user, password) = self.getConnectionFromQSettings(name)
         self.db.setHostName(host)
-        if type(port) <> 'int':
+        if type(port) != 'int':
             self.db.setPort(int(port))
         else:
             self.db.setPort(port)
@@ -97,13 +92,13 @@ class PostgisDb(AbstractDb):
             check = False
             while not check:
                 try:
-                    (success, user, password) = QgsCredentials.instance().get( conInfo, user, None )
+                    (success, user, password) = QgsCredentials.instance().get(conInfo, user, None)
                     if not success:
                         return 
                     self.db.setPassword(password)
                     self.checkAndOpenDb()       
                     check = True
-                    QgsCredentials.instance().put( conInfo, originalUser, passwd )
+                    QgsCredentials.instance().put(conInfo, user, password)
                 except:
                     pass
         else:
@@ -114,9 +109,9 @@ class PostgisDb(AbstractDb):
         try:
             self.checkAndOpenDb()
         except:
-            return None
+            return '-1'
         sqlVersion = self.gen.getEDGVVersion()
-        queryVersion =  QSqlQuery(sqlVersion, self.db)
+        queryVersion = QSqlQuery(sqlVersion, self.db)
         while queryVersion.next():
             version = queryVersion.value(0)
         return version
@@ -190,8 +185,7 @@ class PostgisDb(AbstractDb):
         user = settings.value('username')
         password = settings.value('password')
         settings.endGroup()
-        return (host, port, user, password)        
-
+        return (host, port, user, password)
 
     def getStructureDict(self):
         try:
@@ -229,7 +223,7 @@ class PostgisDb(AbstractDb):
         except:
             return dict()
         if self.getDatabaseVersion() == '2.1.3':
-            schemaList = ['cb','complexos']
+            schemaList = ['cb', 'complexos']
         else:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Operation not defined for this database version!'))
             return None
@@ -242,7 +236,7 @@ class PostgisDb(AbstractDb):
             attName = str(query.value(2))
             cl = schemaName+'.'+className
             if cl not in notNullDict.keys():
-                notNullDict[cl]=[]
+                notNullDict[cl] = []
             notNullDict[cl].append(attName)
         return notNullDict
 
@@ -252,7 +246,7 @@ class PostgisDb(AbstractDb):
         except:
             return dict()
         if self.getDatabaseVersion() == '2.1.3':
-            schemaList = ['cb','complexos','dominios']
+            schemaList = ['cb', 'complexos', 'dominios']
         else:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Operation not defined for this database version!'))
             return
@@ -369,7 +363,9 @@ class PostgisDb(AbstractDb):
 
     def disassociateComplexFromComplex(self, aggregated_class, link_column, id):
         sql = self.gen.disassociateComplexFromComplex(aggregated_class, link_column, id)
-        query = QSqlQuery(sql, self.db)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr('Problem disassociating complex from complex: ') + '\n' + query.lastError().text())
     
     def getUsers(self):
         try:
@@ -391,7 +387,7 @@ class PostgisDb(AbstractDb):
         try:
             self.checkAndOpenDb()
         except:
-            return [],[]
+            return [], []
         installed = []
         assigned = []
 
@@ -627,23 +623,20 @@ class PostgisDb(AbstractDb):
             self.checkAndOpenDb()
         except:
             return False
-        
         query = QSqlQuery(self.db)
         if query.exec_(self.gen.isSuperUser(self.db.userName())):
             query.next()
             value = query.value(0)
             return value
-
-        return None
+        return False
     
-    def dropDatabase(self,candidateName):
+    def dropDatabase(self, candidateName):
         try:
             self.checkAndOpenDb()
         except:
-            return False
+            return
         if self.checkSuperUser():
             sql = self.gen.dropDatabase(candidateName)
             query = QSqlQuery(self.db)
             if not query.exec_(sql):
-                raise Exception(self.tr('Problem dropping database: ') +query.lastError().text())
-        return True
+                raise Exception(self.tr('Problem dropping database: ') + query.lastError().text())

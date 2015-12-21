@@ -514,6 +514,8 @@ class AbstractDb(QObject):
             qmlPath = os.path.join(qmlVersionPath, 'edgv_30')
         elif version == '2.1.3':
             qmlPath = os.path.join(qmlVersionPath, 'edgv_213')
+        else:
+            qmlPath = ''
         return qmlPath
     
     def obtainLinkColumn(self, complexClass, aggregatedClass):

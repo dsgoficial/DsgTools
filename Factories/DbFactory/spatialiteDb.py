@@ -36,7 +36,7 @@ class SpatialiteDb(AbstractDb):
     def getDatabaseName(self):
         return self.db.databaseName().split('.sqlite')[0].split('/')[-1]
     
-    def connectDatabase(self,conn=None):
+    def connectDatabase(self, conn = None):
         if conn is None:
             self.connectDatabaseWithGui()
         else:
@@ -47,10 +47,10 @@ class SpatialiteDb(AbstractDb):
         filename = fd.getOpenFileName(filter='*.sqlite')
         self.db.setDatabaseName(filename)
     
-    def connectDatabaseWithQSettings(self,name):
+    def connectDatabaseWithQSettings(self, name):
         return None
 
-    def connectDatabaseWithParameters(self,host,port,database,user,password):
+    def connectDatabaseWithParameters(self, host, port, database, user, password):
         return None
     
     def listGeomClassesFromDatabase(self):
@@ -93,7 +93,6 @@ class SpatialiteDb(AbstractDb):
         
     def getServerConfiguration(self, name):
         return None
-
 
     def getStructureDict(self):
         try:
@@ -221,7 +220,7 @@ class SpatialiteDb(AbstractDb):
         try:
             self.checkAndOpenDb()
         except:
-            return None
+            return False
         (inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict) = self.prepareForConversion(outputAbstractDb)
         invalidated = self.validateWithOutputDatabaseSchema(outputAbstractDb)
         hasErrors = self.makeValidationSummary(invalidated)
@@ -239,11 +238,10 @@ class SpatialiteDb(AbstractDb):
             else:
                 status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict)
                 return status
-        return None
+        return False
     
     def convertToSpatialite(self, outputAbstractDb,type=None):
-        return None   
-    
+        return None
     
     def getDatabaseVersion(self):
         try:
@@ -258,7 +256,6 @@ class SpatialiteDb(AbstractDb):
                 version = queryVersion.value(0)
         except:
             version = '2.1.3'
-                    
         return version
     
     def obtainLinkColumn(self, complexClass, aggregatedClass):
@@ -323,7 +320,9 @@ class SpatialiteDb(AbstractDb):
 
     def disassociateComplexFromComplex(aggregated_class, link_column, id):
         sql = self.gen.disassociateComplexFromComplex(aggregated_class, link_column, id)
-        query = QSqlQuery(sql, self.db)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr('Problem disassociating complex from complex: ') + '\n' + query.lastError().text())
     
     def getUsers(self):
         return None
@@ -364,11 +363,9 @@ class SpatialiteDb(AbstractDb):
 
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
-
         while query.next():
             #table name
             ret.append(query.value(0))
-
         return ret
 
     def getRolePrivileges(self, role, dbname):

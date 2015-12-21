@@ -22,18 +22,13 @@
 """
 import os
 
-from qgis.core import QgsMessageLog
-
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal, QSettings
+from PyQt4.QtCore import pyqtSlot, Qt, QSettings
 from PyQt4.QtGui import QListWidgetItem, QMessageBox, QMenu, QApplication, QCursor
-from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
 # DSGTools imports
 from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.UserTools.permission_properties import PermissionProperties
 
@@ -60,15 +55,13 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
         self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.treeWidget.customContextMenuRequested.connect(self.createMenuAssigned)
         
-        
     def populateListWithDatabasesFromServer(self):
         dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer()
         dbList.sort()
         for (dbname, dbversion) in dbList:
-            item =  QListWidgetItem(self.dbListWidget)
+            item = QListWidgetItem(self.dbListWidget)
             item.setText(dbname+' (EDGV v. '+dbversion+')')
             item.setData(Qt.UserRole, dbname)
-    
     
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
@@ -97,8 +90,8 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
         item.setText(column, text)
         return item
     
-    @pyqtSlot(QListWidgetItem,QListWidgetItem)
-    def on_dbListWidget_currentItemChanged(self,current,previous):
+    @pyqtSlot(QListWidgetItem, QListWidgetItem)
+    def on_dbListWidget_currentItemChanged(self, current, previous):
         self.treeWidget.clear()
         if not current:
             return

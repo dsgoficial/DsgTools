@@ -59,15 +59,13 @@ class ServerConfigurator(QDialog, FORM_CLASS):
             self.done(1)
         else:
             QMessageBox.warning(self, self.tr("Warning!"), self.tr("Fill all parameters."))
-        
 
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
         self.done(0)
 
     def checkFields(self):
-        if self.hostEdit.text() == '' or self.portEdit.text() == '' \
-            or self.userEdit.text() == '':
+        if self.hostEdit.text() == '' or self.portEdit.text() == '' or self.userEdit.text() == '':
             return False
         return True
 

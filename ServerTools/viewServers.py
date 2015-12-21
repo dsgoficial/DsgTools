@@ -59,15 +59,15 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         currentConnections = self.getServers()
         self.tableWidget.setRowCount(len(currentConnections))
         for i, connection in enumerate(currentConnections):
-            self.tableWidget.setItem(i,0,QTableWidgetItem(connection))
+            self.tableWidget.setItem(i, 0, QTableWidgetItem(connection))
             (host, port, user, password) = self.getServerConfiguration(connection)
-            self.tableWidget.setItem(i,1,QTableWidgetItem(host))
-            self.tableWidget.setItem(i,2,QTableWidgetItem(port))
-            self.tableWidget.setItem(i,3,QTableWidgetItem(user))
-            if len(password)==0:
-                self.tableWidget.setItem(i,4,QTableWidgetItem(self.tr('Not Saved')))
+            self.tableWidget.setItem(i, 1, QTableWidgetItem(host))
+            self.tableWidget.setItem(i, 2, QTableWidgetItem(port))
+            self.tableWidget.setItem(i, 3, QTableWidgetItem(user))
+            if len(password) == 0:
+                self.tableWidget.setItem(i, 4, QTableWidgetItem(self.tr('Not Saved')))
             else:
-                self.tableWidget.setItem(i,4,QTableWidgetItem(self.tr('Saved')))
+                self.tableWidget.setItem(i, 4, QTableWidgetItem(self.tr('Saved')))
         
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
@@ -76,7 +76,6 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_addButton_clicked(self):
         dlg = ServerConfigurator(self)
-        #dlg.show()
         result = dlg.exec_()
         if result:
             self.populateTable()
@@ -84,11 +83,10 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_editButton_clicked(self):
         selectedItem = self.returnSelectedName()
-        if(selectedItem is None):
+        if not selectedItem:
             return
         dlg = ServerConfigurator(self)
         dlg.setServerConfiguration(selectedItem.text())
-        #dlg.show()
         result = dlg.exec_()
         if result:
             self.populateTable()
@@ -96,7 +94,7 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_removeButton_clicked(self):
         selectedItem = self.returnSelectedName()
-        if(selectedItem is None):
+        if not selectedItem:
             return
         self.removeServerConfiguration(selectedItem.text())
         self.tableWidget.removeRow(selectedItem.row())
@@ -105,7 +103,7 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_testButton_clicked(self):
         selectedItem = self.returnSelectedName()
-        if(selectedItem is None):
+        if not selectedItem:
             return
         name = selectedItem.text()
         try:
@@ -157,7 +155,7 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         return True
     
     def returnSelectedName(self):
-        if len(self.tableWidget.selectedItems())==0:
+        if len(self.tableWidget.selectedItems()) == 0:
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select one server.'))
             return
         return self.tableWidget.selectedItems()[0]
