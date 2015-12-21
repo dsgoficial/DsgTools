@@ -40,6 +40,7 @@ from DsgTools.DbTools.SpatialiteTool.cria_spatialite_dialog import CriaSpatialit
 from DsgTools.DbTools.PostGISTool.postgisDBTool import PostgisDBTool
 from DsgTools.ComplexTools.complexWindow import ComplexWindow
 from DsgTools.ServerTools.viewServers import ViewServers
+from DsgTools.ServerTools.exploreDb import ExploreDb
 from DsgTools.ImageTools.processingTools import ProcessingTools
 from DsgTools.ProcessingTools.processManager import ProcessManager
 from DsgTools.BDGExTools.BDGExTools import BDGExTools
@@ -381,6 +382,16 @@ class DsgTools:
             add_to_toolbar=False)
         server.addAction(action)
 
+        icon_path = ':/plugins/DsgTools/icons/server.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Explore Server'),
+            callback=self.exploreDB,
+            parent=server,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        server.addAction(action)
+
         icon_path = ':/plugins/DsgTools/icons/histogram.png'
         action = self.add_action(
             icon_path,
@@ -695,6 +706,13 @@ class DsgTools:
 
     def viewServers(self):
         dlg = ViewServers(self.iface)
+        dlg.show()
+        result = dlg.exec_()
+        if result:
+            pass
+    
+    def exploreDB(self):
+        dlg = ExploreDb()
         dlg.show()
         result = dlg.exec_()
         if result:

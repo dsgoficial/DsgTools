@@ -54,7 +54,10 @@ class SpatialiteDb(AbstractDb):
         return None
     
     def listGeomClassesFromDatabase(self):
-        self.checkAndOpenDb()
+        try:
+            self.checkAndOpenDb()
+        except:
+            return []
         classList = []
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
@@ -67,7 +70,10 @@ class SpatialiteDb(AbstractDb):
         return classList
     
     def listComplexClassesFromDatabase(self):
-        self.checkAndOpenDb()
+        try:
+            self.checkAndOpenDb()
+        except:
+            return []
         classList = []
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
@@ -90,7 +96,10 @@ class SpatialiteDb(AbstractDb):
 
 
     def getStructureDict(self):
-        self.checkAndOpenDb()
+        try:
+            self.checkAndOpenDb()
+        except:
+            return dict()
         classDict = dict()
         sql = self.gen.getStructure(self.getDatabaseVersion())        
         query = QSqlQuery(sql, self.db)
@@ -124,6 +133,10 @@ class SpatialiteDb(AbstractDb):
         return None 
 
     def validateWithOutputDatabaseSchema(self,outputAbstractDb):
+        try:
+            self.checkAndOpenDb()
+        except:
+            return dict()
         invalidated = self.buildInvalidatedDict()
         inputdbStructure = self.getStructureDict()
         outputdbStructure = outputAbstractDb.getStructureDict()
@@ -205,6 +218,10 @@ class SpatialiteDb(AbstractDb):
         return (schema, className)
     
     def convertToPostgis(self, outputAbstractDb,type=None):
+        try:
+            self.checkAndOpenDb()
+        except:
+            return None
         (inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict) = self.prepareForConversion(outputAbstractDb)
         invalidated = self.validateWithOutputDatabaseSchema(outputAbstractDb)
         hasErrors = self.makeValidationSummary(invalidated)
@@ -229,7 +246,10 @@ class SpatialiteDb(AbstractDb):
     
     
     def getDatabaseVersion(self):
-        self.checkAndOpenDb()
+        try:
+            self.checkAndOpenDb()
+        except:
+            return None
         version = '2.1.3'
         try:
             sqlVersion = self.gen.getEDGVVersion()
@@ -242,6 +262,10 @@ class SpatialiteDb(AbstractDb):
         return version
     
     def obtainLinkColumn(self, complexClass, aggregatedClass):
+        try:
+            self.checkAndOpenDb()
+        except:
+            return ''
         #query to obtain the link column between the complex and the feature layer
         sql = self.gen.getLinkColumn(complexClass, aggregatedClass)
         query = QSqlQuery(sql, self.db)
@@ -251,6 +275,10 @@ class SpatialiteDb(AbstractDb):
         return column_name
 
     def loadAssociatedFeatures(self, complex):
+        try:
+            self.checkAndOpenDb()
+        except:
+            return dict()
         associatedDict = dict()
         #query to get the possible links to the selected complex in the combobox
         sql = self.gen.getComplexLinks(complex)
@@ -282,6 +310,10 @@ class SpatialiteDb(AbstractDb):
         return associatedDict
     
     def isComplexClass(self, className):
+        try:
+            self.checkAndOpenDb()
+        except:
+            return False
         #getting all complex tables
         query = QSqlQuery(self.gen.getComplexTablesFromDatabase(), self.db)
         while query.next():
@@ -324,6 +356,10 @@ class SpatialiteDb(AbstractDb):
         pass
 
     def getTablesFromDatabase(self):
+        try:
+            self.checkAndOpenDb()
+        except:
+            return []
         ret = []
 
         sql = self.gen.getTablesFromDatabase()
@@ -340,3 +376,12 @@ class SpatialiteDb(AbstractDb):
 
     def getFrameLayerName(self):
         return 'public_aux_moldura_a'
+
+    def getEDGVDbsFromServer(self,name):
+        return None
+
+    def checkSuperUser(self):
+        return None
+
+    def dropDatabase(self,abstractCandidate):
+        return None

@@ -22,6 +22,8 @@
 """
 import os
 
+from qgis.core import QgsMessageLog
+
 # Qt imports
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, Qt, QSettings
@@ -40,7 +42,7 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
     
     def __init__(self, parent = None):
         """Constructor."""
-        super(ServerDBExplorer, self).__init__(parent)
+        super(self.__class__, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
@@ -48,39 +50,15 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.utils = Utils()
-        
         self.factory = SqlGeneratorFactory()
         #setting the sql generator
         self.gen = self.factory.createSqlGenerator(False)
-        
-        self.populateServersCombo()
-        
-    def getServers(self):
-        settings = QSettings()
-        settings.beginGroup('PostgreSQL/servers')
-        currentConnections = settings.childGroups()
-        settings.endGroup()
-        return currentConnections
+        self.serverWidget.populateServersCombo()
+        self.serverWidget.abstractDbLoaded.connect(self.populateListWithDatabasesFromServer)
     
-    def browseServer(self,dbList,host,port,user,password):
-        gen = self.factory.createSqlGenerator(False)
-        edvgDbList = []
-        for database in dbList:
-            db = self.getPostGISDatabaseWithParams(database,host,port,user,password)
-            if not db.open():
-                qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+db.lastError().databaseText(), level=QgsMessageBar.CRITICAL)
-
-            query = QSqlQuery(db)
-            if query.exec_(gen.getEDGVVersion()):
-                while query.next():
-                    version = query.value(0)
-                    if version:
-                        edvgDbList.append((database,version))
-        return edvgDbList
     
     def storeConnection(self, server, database):
         (host, port, user, password) = self.getServerConfiguration(server)
-        
         connection = server+'_'+database
         settings = QSettings()
         if not settings.contains('PostgreSQL/connections/'+connection+'/database'):
@@ -93,23 +71,7 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
             settings.endGroup()
             return True
         return False
-    
-    def getDbsFromServer(self,name):
-        gen = self.factory.createSqlGenerator(False)
-        
-        (host, port, user, password) = self.getServerConfiguration(name)
-        database = 'postgres'
-        
-        db = self.getPostGISDatabaseWithParams(database,host,port,user,password)
-        if not db.open():
-            QgsMessageLog.logMessage(db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        
-        query = QSqlQuery(gen.getDatabasesFromServer(),db)
-        dbList = []
-        while query.next():
-            dbList.append(query.value(0))
-        return self.browseServer(dbList,host,port,user,password)
-    
+
     def getServerConfiguration(self, name):
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers/'+name)
@@ -119,22 +81,11 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
         password = settings.value('password')
         settings.endGroup()
         return (host, port, user, password)
-    
-    def getPostGISDatabaseWithParams(self, database, host, port, user, password):
-        db = None
-        db = QSqlDatabase("QPSQL")
-        db.setDatabaseName(database)
-        db.setHostName(host)
-        db.setPort(int(port))
-        db.setUserName(user)
-        db.setPassword(password)
-        return db
-    
+
     def storeConnectionConfiguration(self, server, database):
         name = self.connectionEdit.text()
         
         (host, port, user, password) = self.getServerConfiguration(server)
-        
         settings = QSettings()
         if not settings.contains('PostgreSQL/servers/'+name+'/host'):
             settings.beginGroup('PostgreSQL/connections/'+name)
@@ -145,26 +96,8 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
             settings.setValue('password', password)
             settings.endGroup()
     
-    @pyqtSlot(bool)
-    def on_createNewServerPushButton_clicked(self):  
-        createNewServer = ViewServers(self)
-        createNewServer.exec_()
-        self.populateServersCombo()
-
-    def populateServersCombo(self):
-        self.serversCombo.clear()
-        self.serversCombo.addItem(self.tr('Select Server'))
-        currentConnections = self.getServers()
-        for connection in currentConnections:
-            self.serversCombo.addItem(connection)
-    
-    @pyqtSlot(int)
-    def on_serversCombo_currentIndexChanged(self):
-        self.serverListWidget.clear()
-        if not self.serversCombo.currentIndex() > 0:
-            return
-        
-        dbList = self.getDbsFromServer(self.serversCombo.currentText())
+    def populateListWithDatabasesFromServer(self):
+        dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer()
         for (dbname, dbversion) in dbList:
             item =  QListWidgetItem(self.serverListWidget)
             item.setText(dbname+' (EDGV v. '+dbversion+')')
@@ -177,7 +110,7 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
         newConnections = []
         for item in items:
             dbname = item.data(Qt.UserRole)
-            ret = self.storeConnection(self.serversCombo.currentText(), dbname)
+            ret = self.storeConnection(self.serverWidget.serversCombo.currentText(), dbname)
             if not ret:
                 existentConnections.append(dbname)
             else:

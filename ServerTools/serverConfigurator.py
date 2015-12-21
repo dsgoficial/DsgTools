@@ -67,7 +67,7 @@ class ServerConfigurator(QDialog, FORM_CLASS):
 
     def checkFields(self):
         if self.hostEdit.text() == '' or self.portEdit.text() == '' \
-            or self.userEdit.text() == '' or self.passwordEdit.text() == '':
+            or self.userEdit.text() == '':
             return False
         return True
 
