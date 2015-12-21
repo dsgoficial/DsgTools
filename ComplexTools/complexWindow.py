@@ -88,10 +88,10 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             return (None, None)
 
         connInfo = dataSourceUri.connectionInfo()
-        (success, user, passwd ) = QgsCredentials.instance().get( connInfo, None, None )
+        (success, user, passwd ) = QgsCredentials.instance().get(connInfo, None, None)
         # Put the credentials back (for yourself and the provider), as QGIS removes it when you "get" it
         if success:
-            QgsCredentials.instance().put( connInfo, user, passwd )
+            QgsCredentials.instance().put(connInfo, user, passwd)
 
         return (user, passwd)
 
@@ -148,8 +148,8 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         for layer in self.layers:
             dataSourceUri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
             dbName = dataSourceUri.database()
-            if dbName not in self.databases:
-                self.databases[dbName] = (dataSourceUri,self.getUserCredentials(layer))
+            if dbName not in self.databases.keys():
+                self.databases[dbName] = (dataSourceUri, self.getUserCredentials(layer))
                 #populating the combo
                 self.dbCombo.addItem(dbName)
 
@@ -305,9 +305,9 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             return
 
         complex = self.complexCombo.currentText()
-        
+
         associatedDict = self.abstractDb.loadAssociatedFeatures(complex)
-        
+
         for name in associatedDict.keys():
             for complex_uuid in associatedDict[name].keys():
                 self.addAssociatedFeature(str(complex), str(name), complex_uuid, None, None)

@@ -264,7 +264,8 @@ class SpatialiteDb(AbstractDb):
         except:
             return ''
         #query to obtain the link column between the complex and the feature layer
-        sql = self.gen.getLinkColumn(complexClass, aggregatedClass)
+        sql = self.gen.getLinkColumn(complexClass.replace('complexos_', ''), aggregatedClass)
+        print sql
         query = QSqlQuery(sql, self.db)
         column_name = ""
         while query.next():
@@ -278,7 +279,8 @@ class SpatialiteDb(AbstractDb):
             return dict()
         associatedDict = dict()
         #query to get the possible links to the selected complex in the combobox
-        sql = self.gen.getComplexLinks(complex)
+        complexName = complex.replace('complexos_', '')
+        sql = self.gen.getComplexLinks(complexName)
         query = QSqlQuery(sql, self.db)
         while query.next():
             #setting the variables
@@ -297,6 +299,9 @@ class SpatialiteDb(AbstractDb):
 
                 if not (complex_uuid and name):
                     continue
+
+                associatedDict = self.utils.buildNestedDict(associatedDict, [name, complex_uuid, aggregated_class], [])
+
                 #query to obtain the id of the associated feature
                 sql = self.gen.getAssociatedFeaturesData(aggregated_schema, aggregated_class, column_name, complex_uuid)
                 associatedQuery = QSqlQuery(sql, self.db)
