@@ -180,7 +180,7 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
             self.checkBoxPolygon.setCheckState(0)
             
     def pushMessage(self, msg):
-        self.bar.pushMessage("", self.tr("Coordinate Reference System not set or invalid!"), level=QgsMessageBar.WARNING)
+        self.bar.pushMessage('', msg, level=QgsMessageBar.WARNING)
 
     def setCRS(self):
         try:
