@@ -145,4 +145,6 @@ class SpatialiteSqlGenerator(SqlGenerator):
     
     def getRolePrivileges(self, role, dbname):
         return None
-        
+
+    def isSuperUser(self,user):
+        return None

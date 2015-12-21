@@ -31,6 +31,7 @@ from PyQt4.QtSql import QSqlDatabase
 
 # DSGTools imports
 from DsgTools.Utils.utils import Utils
+from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 
@@ -39,6 +40,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
     abstractDbLoaded = pyqtSignal()
+    clearWidgets = pyqtSignal()
     def __init__(self, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
@@ -109,6 +111,7 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
     
     @pyqtSlot(int)
     def on_serversCombo_currentIndexChanged(self):
+        self.clearWidgets.emit()
         if self.serversCombo.currentIndex() <> 0:
             self.abstractDb = self.dbFactory.createDbFactory('QPSQL')
             (host, port, user, password) = self.abstractDb.getServerConfiguration(self.serversCombo.currentText())

@@ -50,7 +50,7 @@ class PostgisDb(AbstractDb):
             for i in connSplit[1::]:
                 par = i.split('=')
                 parDict[par[0]]=par[1]
-            self.connectDatabaseWithParameters(parDict['host'], parDict['port'], parDict['database'], parDict['user'], parDict['password'])
+            self.connectDatabaseWithParameters(parDict['host'], parDict['port'], parDict['dbname'], parDict['user'], parDict['password'])
         else:
             self.connectDatabaseWithQSettings(conn)
 
@@ -622,3 +622,28 @@ class PostgisDb(AbstractDb):
                         edvgDbList.append((database,version))
         return edvgDbList
     
+    def checkSuperUser(self):
+        try:
+            self.checkAndOpenDb()
+        except:
+            return False
+        
+        query = QSqlQuery(self.db)
+        if query.exec_(self.gen.isSuperUser(self.db.userName())):
+            query.next()
+            value = query.value(0)
+            return value
+
+        return None
+    
+    def dropDatabase(self,candidateName):
+        try:
+            self.checkAndOpenDb()
+        except:
+            return False
+        if self.checkSuperUser():
+            sql = self.gen.dropDatabase(candidateName)
+            query = QSqlQuery(self.db)
+            if not query.exec_(sql):
+                raise Exception(self.tr('Problem dropping database: ') +query.lastError().text())
+        return True

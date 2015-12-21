@@ -379,3 +379,9 @@ class SpatialiteDb(AbstractDb):
 
     def getEDGVDbsFromServer(self,name):
         return None
+
+    def checkSuperUser(self):
+        return None
+
+    def dropDatabase(self,abstractCandidate):
+        return None
