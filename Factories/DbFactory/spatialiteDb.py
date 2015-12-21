@@ -318,7 +318,7 @@ class SpatialiteDb(AbstractDb):
                 return True
         return False
 
-    def disassociateComplexFromComplex(aggregated_class, link_column, id):
+    def disassociateComplexFromComplex(self, aggregated_class, link_column, id):
         sql = self.gen.disassociateComplexFromComplex(aggregated_class, link_column, id)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):

@@ -267,7 +267,10 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
 
     def updateLayerOnDisassociate(self, layer, aggregated_class, link_column, id):
         if self.abstractDb.isComplexClass(aggregated_class):
-            self.abstractDb.disassociateComplexFromComplex(aggregated_class, link_column, id)
+            try:
+                self.abstractDb.disassociateComplexFromComplex(aggregated_class, link_column, id)
+            except Exception as e:
+                QMessageBox.critical(self.iface.mainWindow(), self.tr("Critical!"), e.args[0])
         else:
             #field index that will be set to NULL
             fieldIndex = [i for i in range(len(layer.dataProvider().fields())) if layer.dataProvider().fields()[i].name() == link_column]
