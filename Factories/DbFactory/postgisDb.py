@@ -76,7 +76,6 @@ class PostgisDb(AbstractDb):
                     pass
         else:
             self.db.setPassword(password)
-        
 
     def connectDatabaseWithQSettings(self, name):
         (host, port, database, user, password) = self.getConnectionFromQSettings(name)
@@ -103,7 +102,6 @@ class PostgisDb(AbstractDb):
                     pass
         else:
             self.db.setPassword(password)
-
 
     def getDatabaseVersion(self):
         try:

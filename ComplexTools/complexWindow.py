@@ -83,15 +83,18 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         return False
 
     def getUserCredentials(self, lyr):
-        dataSourceUri = QgsDataSourceURI( lyr.dataProvider().dataSourceUri() )
-        if dataSourceUri.host() == "":
+        dataSourceUri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
+        if dataSourceUri.host() == '':
             return (None, None)
 
-        connInfo = dataSourceUri.connectionInfo()
-        (success, user, passwd ) = QgsCredentials.instance().get(connInfo, None, None)
-        # Put the credentials back (for yourself and the provider), as QGIS removes it when you "get" it
-        if success:
-            QgsCredentials.instance().put(connInfo, user, passwd)
+        if dataSourceUri.password() == '':
+            connInfo = dataSourceUri.connectionInfo()
+            (success, user, passwd ) = QgsCredentials.instance().get(connInfo, dataSourceUri.username(), None)
+            # Put the credentials back (for yourself and the provider), as QGIS removes it when you "get" it
+            if success:
+                QgsCredentials.instance().put(connInfo, user, passwd)
+            else:
+                return (None, None)
 
         return (user, passwd)
 
@@ -117,7 +120,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             user = credentials[0]
             password = credentials[1]
             
-            self.abstractDb.connectDatabaseWithParameters(host,port,database,user,password)
+            self.abstractDb.connectDatabaseWithParameters(host, port, database, user, password)
         try:
             self.abstractDb.checkAndOpenDb()
             self.populateComboBox()
@@ -129,9 +132,6 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         self.complexCombo.clear()
         self.complexCombo.addItem(self.tr("select a complex class"))
 
-        dbName = self.dbCombo.currentText()
-        (dataSourceUri, credentials) = self.databases[dbName]
-        
         complexClasses = self.abstractDb.listComplexClassesFromDatabase()
         self.complexCombo.addItems(complexClasses)
 
