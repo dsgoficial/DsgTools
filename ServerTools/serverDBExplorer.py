@@ -96,6 +96,7 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
             settings.endGroup()
     
     def populateListWithDatabasesFromServer(self):
+        self.serverListWidget.clear()
         dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer()
         for (dbname, dbversion) in dbList:
             item =  QListWidgetItem(self.serverListWidget)
@@ -141,7 +142,10 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
         candidates = settings.childGroups()
         settings.endGroup()
         removedConn = []
-        dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer()
+        dbListTuple = self.serverWidget.abstractDb.getEDGVDbsFromServer()
+        dbList = []
+        for i in dbListTuple:
+            dbList.append(i[0])
         for candidate in candidates:
             if candidate.split('_')[0] not in servers:  
                 self.removeConnections(candidate, removedConn)
@@ -153,7 +157,9 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
                     self.removeConnections(candidate, removedConn)
         if len(removedConn)>0:
             msg = self.tr('\nThe following databases connections were removed successfully:\n')+', '.join(removedConn)
-            QMessageBox.warning(self, self.tr("Warning!"), msg)
+        else:
+            msg = self.tr('No connections were removed.')
+        QMessageBox.warning(self, self.tr("Warning!"), msg)
     
     def removeConnections(self,candidate,removedConn):
         candidateSettings = QSettings()

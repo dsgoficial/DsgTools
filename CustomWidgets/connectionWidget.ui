@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>561</width>
-    <height>280</height>
+    <width>543</width>
+    <height>290</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabSpatialite">
       <attribute name="title">
@@ -41,7 +41,7 @@
               <enum>Qt::Horizontal</enum>
              </property>
              <property name="sizeType">
-              <enum>QSizePolicy::Minimum</enum>
+              <enum>QSizePolicy::Fixed</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -154,7 +154,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Add connection</string>
+                 <string>Configure Connections</string>
                 </property>
                </widget>
               </item>
@@ -170,7 +170,36 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="postGISCrsEdit"/>
+               <spacer name="horizontalSpacer_5">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>11</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="postGISCrsEdit">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>350</width>
+                  <height>0</height>
+                 </size>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -189,18 +218,31 @@
                  <enum>Qt::Horizontal</enum>
                 </property>
                 <property name="sizeType">
-                 <enum>QSizePolicy::Fixed</enum>
+                 <enum>QSizePolicy::Expanding</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
-                  <width>33</width>
+                  <width>40</width>
                   <height>20</height>
                  </size>
                 </property>
                </spacer>
               </item>
               <item>
-               <widget class="QLineEdit" name="edgvPostgisVersionEdit"/>
+               <widget class="QLineEdit" name="edgvPostgisVersionEdit">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>350</width>
+                  <height>0</height>
+                 </size>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
