@@ -87,14 +87,16 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         if dataSourceUri.host() == '':
             return (None, None)
 
-        if dataSourceUri.password() == '':
-            connInfo = dataSourceUri.connectionInfo()
-            (success, user, passwd ) = QgsCredentials.instance().get(connInfo, dataSourceUri.username(), None)
-            # Put the credentials back (for yourself and the provider), as QGIS removes it when you "get" it
-            if success:
-                QgsCredentials.instance().put(connInfo, user, passwd)
-            else:
-                return (None, None)
+        if dataSourceUri.password() != '':
+            return
+
+        connInfo = dataSourceUri.connectionInfo()
+        (success, user, passwd ) = QgsCredentials.instance().get(connInfo, dataSourceUri.username(), None)
+        # Put the credentials back (for yourself and the provider), as QGIS removes it when you "get" it
+        if success:
+            QgsCredentials.instance().put(connInfo, user, passwd)
+        else:
+            return (None, None)
 
         return (user, passwd)
 
