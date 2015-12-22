@@ -88,7 +88,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             return (None, None)
 
         if dataSourceUri.password() != '':
-            return
+            return (dataSourceUri.username(), dataSourceUri.password())
 
         connInfo = dataSourceUri.connectionInfo()
         (success, user, passwd ) = QgsCredentials.instance().get(connInfo, dataSourceUri.username(), None)
