@@ -265,7 +265,6 @@ class SpatialiteDb(AbstractDb):
             return ''
         #query to obtain the link column between the complex and the feature layer
         sql = self.gen.getLinkColumn(complexClass.replace('complexos_', ''), aggregatedClass)
-        print sql
         query = QSqlQuery(sql, self.db)
         column_name = ""
         while query.next():
@@ -319,12 +318,12 @@ class SpatialiteDb(AbstractDb):
         #getting all complex tables
         query = QSqlQuery(self.gen.getComplexTablesFromDatabase(), self.db)
         while query.next():
-            if query.value(0) == className:
+            if query.value(0) == 'complexos_'+className:
                 return True
         return False
 
     def disassociateComplexFromComplex(self, aggregated_class, link_column, id):
-        sql = self.gen.disassociateComplexFromComplex(aggregated_class, link_column, id)
+        sql = self.gen.disassociateComplexFromComplex('complexos_'+aggregated_class, link_column, id)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr('Problem disassociating complex from complex: ') + '\n' + query.lastError().text())

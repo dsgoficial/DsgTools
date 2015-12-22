@@ -230,7 +230,8 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         aggregated_layer = None
         layers = self.iface.mapCanvas().layers()
         for layer in layers:
-            if layer.name() == aggregated_class:
+            #in case of spatialite databases when a complex class is added as a layer it's name has 'complexos_'
+            if layer.name() == aggregated_class or layer.name() == 'complexos_'+aggregated_class:
                 aggregated_layer = layer
                 break
 
@@ -253,7 +254,8 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         aggregated_layer = None
         layers = self.iface.mapCanvas().layers()
         for layer in layers:
-            if layer.name() == aggregated_class:
+            #in case of spatialite databases when a complex class is added as a layer it's name has 'complexos_'
+            if layer.name() == aggregated_class or layer.name() == 'complexos_'+aggregated_class:
                 aggregated_layer = layer
                 break
 
