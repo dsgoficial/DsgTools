@@ -20,7 +20,9 @@
  *                                                                         *
  ***************************************************************************/
 """
+import os
 # Import the PyQt and QGIS libraries
+from PyQt4 import uic
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
@@ -30,9 +32,10 @@ from qgis.gui import QgsGenericProjectionSelector
 
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 
-from ui_postgisDBTool import Ui_Dialog
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'ui_postgisDBTool.ui'))
 
-class PostgisDBTool(QDialog, Ui_Dialog):
+class PostgisDBTool(QDialog, FORM_CLASS):
     def __init__(self, iface):
         """Constructor."""
         super(PostgisDBTool, self).__init__()
