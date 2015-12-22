@@ -2600,7 +2600,7 @@ Olhe o Terminal Python para detalhes.</translation>
 <context>
     <name>ServerConfigurator</name>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="81"/>
+        <location filename="ServerTools/serverConfigurator.py" line="86"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
@@ -2620,9 +2620,14 @@ Olhe o Terminal Python para detalhes.</translation>
         <translation>Servidor armazenado.</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="81"/>
+        <location filename="ServerTools/serverConfigurator.py" line="86"/>
         <source>Already has a server with this name.</source>
         <translation>Já existe um servidor com este nome.</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/serverConfigurator.py" line="75"/>
+        <source>Server name cannot contain the character &quot;_&quot;.</source>
+        <translation>O nome do servidor não pode conter o caractere &quot;_&quot;.</translation>
     </message>
 </context>
 <context>

@@ -70,6 +70,11 @@ class ServerConfigurator(QDialog, FORM_CLASS):
         return True
 
     def storeServerConfiguration(self, name, host, port, user, password):
+        if '_' in name:
+            QMessageBox.warning(self, self.tr("Warning!"), self.tr("Server name cannot contain the character \"_\"."))
+            self.servEdit.setStyleSheet('background-color: rgb(255, 150, 150)')
+            return 0
+        
         settings = QSettings()
         if self.isEdit:
             settings.beginGroup('PostgreSQL/servers/'+self.oldName)
