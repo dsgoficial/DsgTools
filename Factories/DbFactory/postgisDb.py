@@ -638,3 +638,5 @@ class PostgisDb(AbstractDb):
             query = QSqlQuery(self.db)
             if not query.exec_(sql):
                 raise Exception(self.tr('Problem dropping database: ') + query.lastError().text())
+    
+        

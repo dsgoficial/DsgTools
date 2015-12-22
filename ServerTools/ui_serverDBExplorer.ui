@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>397</width>
-    <height>281</height>
+    <width>482</width>
+    <height>308</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,6 +20,13 @@
       <widget class="QPushButton" name="createConnectionPushButton">
        <property name="text">
         <string>Create Conection</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="removeMissingPushButton">
+       <property name="text">
+        <string>Remove Connections to Missing Databases</string>
        </property>
       </widget>
      </item>

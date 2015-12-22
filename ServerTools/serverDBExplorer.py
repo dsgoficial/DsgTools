@@ -119,9 +119,9 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
         if len(existentConnections) > 0:
             msg += self.tr('The following databases connections already exist:\n')  
             for conn in existentConnections:
-                msg += conn+', '
+                msg += conn + ', '
         if len(newConnections) > 0:
-            msg += self.tr('\nThe following databases connections were created successfully!:\n')  
+            msg += self.tr('\nThe following databases connections were created successfully:\n')  
             for conn in newConnections:
                 msg += conn+', '
         QMessageBox.warning(self, self.tr("Warning!"), msg)
@@ -131,4 +131,33 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
         count = self.serverListWidget.count()
         for row in range(count):
             item = self.serverListWidget.item(row)
-            item.setSelected(True)        
+            item.setSelected(True)       
+
+    @pyqtSlot(bool)
+    def on_removeMissingPushButton_clicked(self):
+        servers = self.serverWidget.getServers()
+        settings = QSettings()
+        settings.beginGroup('PostgreSQL/connections')
+        candidates = settings.childGroups()
+        settings.endGroup()
+        removedConn = []
+        dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer()
+        for candidate in candidates:
+            if candidate.split('_')[0] not in servers:  
+                self.removeConnections(candidate, removedConn)
+            else:
+                candidateSettings = QSettings()
+                candidateSettings.beginGroup('PostgreSQL/connections/'+candidate)
+                candidateDb = candidateSettings.value('database')
+                if candidateDb not in dbList:
+                    self.removeConnections(candidate, removedConn)
+        if len(removedConn)>0:
+            msg = self.tr('\nThe following databases connections were removed successfully:\n')+', '.join(removedConn)
+            QMessageBox.warning(self, self.tr("Warning!"), msg)
+    
+    def removeConnections(self,candidate,removedConn):
+        candidateSettings = QSettings()
+        candidateSettings.beginGroup('PostgreSQL/connections/'+candidate)
+        candidateSettings.remove('')
+        removedConn.append(candidate)
+        candidateSettings.endGroup()

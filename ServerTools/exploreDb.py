@@ -137,5 +137,13 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
         except Exception as e:
             QApplication.restoreOverrideCursor()            
             QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+        self.clearQSettings(localDbName)
         self.clearAll()
         self.populateListWithDatabasesFromServer()
+    
+    def clearQSettings(self,database):
+        name = self.serverWidget.serversCombo.currentText()+'_'+database
+        settings = QSettings()
+        settings.beginGroup('PostgreSQL/connections/'+name)
+        settings.remove('')
+        settings.endGroup()
