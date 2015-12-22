@@ -24,7 +24,7 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 from PyQt4.QtCore import QSettings
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from qgis.core import QgsCredentials
+from qgis.core import QgsCredentials, QgsMessageLog
 from osgeo import ogr
 from uuid import uuid4
 
@@ -223,7 +223,7 @@ class PostgisDb(AbstractDb):
         if self.getDatabaseVersion() == '2.1.3':
             schemaList = ['cb', 'complexos']
         else:
-            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Operation not defined for this database version!'))
+            QgsMessageLog.logMessage(self.tr('Operation not defined for this database version!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return None
         sql = self.gen.getNotNullFields(schemaList)
         query = QSqlQuery(sql, self.db)
@@ -246,7 +246,7 @@ class PostgisDb(AbstractDb):
         if self.getDatabaseVersion() == '2.1.3':
             schemaList = ['cb', 'complexos', 'dominios']
         else:
-            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Operation not defined for this database version!'))
+            QgsMessageLog.logMessage(self.tr('Operation not defined for this database version!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return
         sql = self.gen.validateWithDomain(schemaList)
         query = QSqlQuery(sql, self.db)
@@ -606,7 +606,7 @@ class PostgisDb(AbstractDb):
             db.setUserName(self.db.userName())
             db.setPassword(self.db.password())
             if not db.open():
-                QtGui.QMessageBox.critical(self, self.tr('Error!'), 'DB :'+database+'| msg: '+db.lastError().databaseText())
+                QgsMessageLog.logMessage('DB :'+database+'| msg: '+db.lastError().databaseText(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
             query2 = QSqlQuery(db)
             if query2.exec_(self.gen.getEDGVVersion()):
@@ -614,6 +614,8 @@ class PostgisDb(AbstractDb):
                     version = query2.value(0)
                     if version:
                         edvgDbList.append((database,version))
+            else:
+                QgsMessageLog.logMessage(self.tr('Problem accessing database: ') +database+'\n'+query2.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         return edvgDbList
     
     def checkSuperUser(self):

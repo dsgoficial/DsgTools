@@ -1160,7 +1160,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Criar Conexão</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_serverDBExplorer.ui" line="29"/>
+        <location filename="ServerTools/ui_serverDBExplorer.ui" line="36"/>
         <source>Select All</source>
         <translation>Selecionar Todos</translation>
     </message>
@@ -1430,6 +1430,11 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <location filename="UserTools/permission_properties.ui" line="14"/>
         <source>Permission Properties</source>
         <translation>Propriedades da Permissão</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/ui_serverDBExplorer.ui" line="29"/>
+        <source>Remove Connections to Missing Databases</source>
+        <translation>Remover Conexões para Bancos de Dados faltantes</translation>
     </message>
 </context>
 <context>
@@ -1880,7 +1885,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Pesquisar</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.ui" line="162"/>
+        <location filename="CustomWidgets/connectionWidget.ui" line="168"/>
         <source>Coordinate System</source>
         <translation>Sistema de Coordenadas</translation>
     </message>
@@ -1895,12 +1900,12 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Conexões</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.ui" line="151"/>
+        <location filename="CustomWidgets/connectionWidget.ui" line="157"/>
         <source>Add connection</source>
         <translation>Adicionar Conexão</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.ui" line="176"/>
+        <location filename="CustomWidgets/connectionWidget.ui" line="182"/>
         <source>EDGV Version</source>
         <translation>Versão da EDGV</translation>
     </message>
@@ -2655,13 +2660,31 @@ Olhe o Terminal Python para detalhes.</translation>
         <source>
 The following databases connections were created successfully!:
 </source>
-        <translation>
+        <translation type="obsolete">
 As seguintes conexões de bancos de dados foram criadas com sucesso!:</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="127"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="156"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/serverDBExplorer.py" line="124"/>
+        <source>
+The following databases connections were created successfully:
+</source>
+        <translation>
+As seguintes conexões de banco de dados foram criadas com sucesso:
+</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/serverDBExplorer.py" line="155"/>
+        <source>
+The following databases connections were removed successfully:
+</source>
+        <translation>
+As seguintes conexões de banco de dados foram removidas com sucesso:
+</translation>
     </message>
 </context>
 <context>
