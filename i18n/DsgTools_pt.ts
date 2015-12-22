@@ -1902,12 +1902,17 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="CustomWidgets/connectionWidget.ui" line="157"/>
         <source>Add connection</source>
-        <translation>Adicionar Conexão</translation>
+        <translation type="obsolete">Adicionar Conexão</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.ui" line="182"/>
+        <location filename="CustomWidgets/connectionWidget.ui" line="211"/>
         <source>EDGV Version</source>
         <translation>Versão da EDGV</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/connectionWidget.ui" line="157"/>
+        <source>Configure Connections</source>
+        <translation>Configurar Conexões</translation>
     </message>
 </context>
 <context>
@@ -2389,7 +2394,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="611"/>
         <source>Error!</source>
-        <translation>Erro!</translation>
+        <translation type="obsolete">Erro!</translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="249"/>
@@ -2437,9 +2442,14 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Problema ao revogar perfil: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="642"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="644"/>
         <source>Problem dropping database: </source>
         <translation>Problema apagando o banco de dados: </translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/postgisDb.py" line="620"/>
+        <source>Problem accessing database: </source>
+        <translation>Problema acessando banco de dados: </translation>
     </message>
 </context>
 <context>
@@ -2643,14 +2653,14 @@ Olhe o Terminal Python para detalhes.</translation>
         <translation type="obsolete">Selecione Servidor</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="118"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="119"/>
         <source>Information:
 </source>
         <translation>Informação:
 </translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="120"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="121"/>
         <source>The following databases connections already exist:
 </source>
         <translation>Os seguintes conexões de bancos de dados já existem:</translation>
@@ -2664,12 +2674,12 @@ The following databases connections were created successfully!:
 As seguintes conexões de bancos de dados foram criadas com sucesso!:</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="156"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="162"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="124"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="125"/>
         <source>
 The following databases connections were created successfully:
 </source>
@@ -2678,13 +2688,18 @@ As seguintes conexões de banco de dados foram criadas com sucesso:
 </translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="155"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="159"/>
         <source>
 The following databases connections were removed successfully:
 </source>
         <translation>
 As seguintes conexões de banco de dados foram removidas com sucesso:
 </translation>
+    </message>
+    <message>
+        <location filename="ServerTools/serverDBExplorer.py" line="161"/>
+        <source>No connections were removed.</source>
+        <translation>Nenhuma conexão foi removida.</translation>
     </message>
 </context>
 <context>
