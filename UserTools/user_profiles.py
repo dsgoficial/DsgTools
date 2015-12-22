@@ -227,6 +227,10 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_insertAllButton_clicked(self):
         tam = self.installedProfiles.__len__()
+        if tam == 0:
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('No profiles installed! Install at least one and try again.'))
+            return
+        
         for i in range(tam+1,1,-1):
             item = self.installedProfiles.takeItem(i-2)
             self.assignedProfiles.addItem(item)
@@ -237,6 +241,10 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_removeAllButton_clicked(self):
         tam = self.assignedProfiles.__len__()
+        if tam == 0:
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('No profiles assigned! Assign at least one and try again.'))
+            return
+        
         for i in range(tam+1,1,-1):
             item = self.assignedProfiles.takeItem(i-2)
             self.installedProfiles.addItem(item)
@@ -247,6 +255,10 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_insertButton_clicked(self):
         listedItems = self.installedProfiles.selectedItems()
+        if len(listedItems) == 0:
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select a profile first!'))
+            return
+        
         for i in listedItems:
             item = self.installedProfiles.takeItem(self.installedProfiles.row(i))
             self.assignedProfiles.addItem(item)
@@ -257,6 +269,10 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_removeButton_clicked(self):
         listedItems = self.assignedProfiles.selectedItems()
+        if len(listedItems) == 0:
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select a profile first!'))
+            return
+        
         for i in listedItems:
             item = self.assignedProfiles.takeItem(self.assignedProfiles.row(i))
             self.installedProfiles.addItem(item)

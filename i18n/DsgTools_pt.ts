@@ -229,7 +229,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AssignProfiles</name>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="160"/>
+        <location filename="UserTools/assign_profiles.py" line="170"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -239,12 +239,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Problema atribuindo perfil: </translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="142"/>
+        <location filename="UserTools/assign_profiles.py" line="157"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="110"/>
+        <location filename="UserTools/assign_profiles.py" line="115"/>
         <source>Profiles assigned successfully!</source>
         <translation>Perfis atribuídos com sucesso!</translation>
     </message>
@@ -254,24 +254,29 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Problema ao remover perfil: </translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="142"/>
+        <location filename="UserTools/assign_profiles.py" line="150"/>
         <source>Profiles removed successfully!</source>
         <translation>Perfis removidos com sucesso!</translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="150"/>
+        <location filename="UserTools/assign_profiles.py" line="160"/>
         <source>Question</source>
         <translation>Questão</translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="150"/>
+        <location filename="UserTools/assign_profiles.py" line="160"/>
         <source>Do you really want to remove selected profile models?</source>
         <translation>Você deseja realmente remover os modelos de perfil selecionados?</translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="160"/>
+        <location filename="UserTools/assign_profiles.py" line="170"/>
         <source>Problem removing profile model: </source>
         <translation>Problema removendo o modelo de perfil: </translation>
+    </message>
+    <message>
+        <location filename="UserTools/assign_profiles.py" line="157"/>
+        <source>Select at least one profile and try again!</source>
+        <translation>Selecione pelo menos uma permissão de usuário e tente de novo!</translation>
     </message>
 </context>
 <context>
@@ -2303,7 +2308,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Problema ao revogar perfil: </translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="221"/>
+        <location filename="UserTools/user_profiles.py" line="273"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
@@ -2341,6 +2346,21 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <location filename="UserTools/user_profiles.py" line="88"/>
         <source>Show properties</source>
         <translation>Mostrar propriedades</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.py" line="231"/>
+        <source>No profiles installed! Install at least one and try again.</source>
+        <translation>Não há permissões de usuário instaladas! Instale pelo menos uma e tente de novo.</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.py" line="245"/>
+        <source>No profiles assigned! Assign at least one and try again.</source>
+        <translation>Não há permissões de usuário atribuídas! Atribua pelo menos uma e tente de novo.</translation>
+    </message>
+    <message>
+        <location filename="UserTools/user_profiles.py" line="273"/>
+        <source>Select a profile first!</source>
+        <translation>Selecione uma permissão de usuário primeiro!</translation>
     </message>
 </context>
 <context>

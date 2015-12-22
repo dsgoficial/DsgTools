@@ -93,6 +93,10 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_installButton_clicked(self):
+        if len(self.possibleProfiles.selectedItems()) == 0:
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one profile and try again!'))
+            return 
+        
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
 
         for item in self.possibleProfiles.selectedItems():
@@ -107,11 +111,10 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
                 QtGui.QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
                 return
             
+        QApplication.restoreOverrideCursor()
         QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles assigned successfully!'))    
         
         self.getInstalledProfiles()
-
-        QApplication.restoreOverrideCursor()
         
     @pyqtSlot(bool)
     def on_closeButton_clicked(self):
@@ -125,6 +128,10 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_removeButton_clicked(self):
+        if len(self.assignedProfiles.selectedItems()) == 0:
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one profile and try again!'))
+            return 
+        
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
 
         problem = False
@@ -134,19 +141,22 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
             try:
                 self.widget.abstractDb.dropRole(role)
             except Exception as e:
+                problem = True
                 QApplication.restoreOverrideCursor()
                 QtGui.QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
-                problem = True
 
         if not problem:
+            QApplication.restoreOverrideCursor()
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles removed successfully!'))
         
         self.getInstalledProfiles()
 
-        QApplication.restoreOverrideCursor()
-
     @pyqtSlot(bool)
     def on_removeJson_clicked(self):
+        if len(self.possibleProfiles.selectedItems()) == 0:
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one profile and try again!'))
+            return 
+        
         if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to remove selected profile models?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
             return
         
