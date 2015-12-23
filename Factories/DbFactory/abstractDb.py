@@ -23,7 +23,7 @@
 import os
 from uuid import uuid4
 
-from osgeo import ogr
+from osgeo import ogr, osr
 
 # DsgTools imports
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
@@ -306,6 +306,11 @@ class AbstractDb(QObject):
     
     def translateLayer(self, inputLayer, inputLayerName, outputLayer, outputFileName, layerPanMap, errorDict, defaults={}, translateValues={}):
         inputLayer.ResetReading()
+        inSpatialRef = inputLayer.GetSpatialRef()
+        outSpatialRef = outputLayer.GetSpatialRef()
+        coordTrans = None
+        if inSpatialRef <> outSpatialRef:
+            coordTrans = osr.CoordinateTransformation(inSpatialRef, outSpatialRef)
         initialCount = outputLayer.GetFeatureCount()
         count = 0
         feat=inputLayer.GetNextFeature()
@@ -314,11 +319,30 @@ class AbstractDb(QObject):
             inputId = feat.GetFID()
             newFeat=ogr.Feature(outputLayer.GetLayerDefn())
             newFeat.SetFromWithMap(feat,True,layerPanMap)
-            out=outputLayer.CreateFeature(newFeat)
-            if out <> 0:
-                self.utils.buildNestedDict(errorDict, [inputLayerName], [inputId])
+            if newFeat.geometry().GetGeometryCount() > 1:
+                #Deaggregator
+                for geom in newFeat.geometry():
+                    auxGeom = ogr.Geometry(newFeat.geometry().GetGeometryType())
+                    auxGeom.AssignSpatialReference(newFeat.geometry().GetSpatialReference())
+                    auxGeom.AddGeometry(geom)
+                    if coordTrans <> None:
+                        auxGeom.Transform(coordTrans)
+                    newFeat.SetGeometry(auxGeom)
+                    out=outputLayer.CreateFeature(newFeat)
+                    if out <> 0:
+                        self.utils.buildNestedDict(errorDict, [inputLayerName], [inputId])
+                    else:
+                        count += 1
             else:
-                count += 1
+                if coordTrans <> None:
+                    geom = feat.GetGeometryRef()
+                    geom.Transform(coordTrans)
+                    newFeat.SetGeometry(geom)
+                out=outputLayer.CreateFeature(newFeat)
+                if out <> 0:
+                    self.utils.buildNestedDict(errorDict, [inputLayerName], [inputId])
+                else:
+                    count += 1
             feat=inputLayer.GetNextFeature()
             
         return count
@@ -408,6 +432,11 @@ class AbstractDb(QObject):
         inputLayer.ResetReading()
         fieldCount = inputLayer.GetLayerDefn().GetFieldCount()
         initialCount = outputLayer.GetFeatureCount()
+        inSpatialRef = inputLayer.GetSpatialRef()
+        outSpatialRef = outputLayer.GetSpatialRef()
+        coordTrans = None
+        if inSpatialRef <> outSpatialRef:
+            coordTrans = osr.CoordinateTransformation(inSpatialRef, outSpatialRef)
         count = 0
         feat=inputLayer.GetNextFeature()
         (schema,className) = self.getTableSchema(inputLayerName)
@@ -420,6 +449,8 @@ class AbstractDb(QObject):
                     if feat.GetField(i) <> None:
                         nullLine = False
                         break
+                if feat.GetFID() <> -1 or feat.geometry() <> None:
+                    nullLine = False
                 if not nullLine:
                     if inputLayerName not in invalidated['classNotFoundInOutput']:
                         newFeat=ogr.Feature(outputLayer.GetLayerDefn())
@@ -448,6 +479,8 @@ class AbstractDb(QObject):
                                 auxGeom = ogr.Geometry(newFeat.geometry().GetGeometryType())
                                 auxGeom.AssignSpatialReference(newFeat.geometry().GetSpatialReference())
                                 auxGeom.AddGeometry(geom)
+                                if coordTrans <> None:
+                                    auxGeom.Transform(coordTrans)
                                 newFeat.SetGeometry(auxGeom)
                                 out=outputLayer.CreateFeature(newFeat)
                                 if out <> 0:
@@ -455,6 +488,10 @@ class AbstractDb(QObject):
                                 else:
                                     count += 1
                         else:
+                            if coordTrans <> None:
+                                geom = feat.GetGeometryRef()
+                                geom.Transform(coordTrans)
+                                newFeat.SetGeometry(geom)
                             out=outputLayer.CreateFeature(newFeat)
                             if out <> 0:
                                 self.utils.buildNestedDict(errorDict, [inputLayerName], [inputId])

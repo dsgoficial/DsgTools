@@ -133,9 +133,11 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         converted = False
         self.logCleared()
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            converted = self.widget.abstractDb.convertDatabase(self.widget_2.abstractDb,type)
-            QApplication.restoreOverrideCursor()
+            if self.widget.crs <> self.widget_2.crs:
+                if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Databases CRS are different. Conversor will reproject spatial data. Do you want to proceed?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
+                    QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+                    converted = self.widget.abstractDb.convertDatabase(self.widget_2.abstractDb,type)
+                    QApplication.restoreOverrideCursor()
         except:
             QApplication.restoreOverrideCursor()
             converted = False
