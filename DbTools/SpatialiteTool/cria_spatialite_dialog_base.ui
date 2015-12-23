@@ -45,7 +45,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="pastaDestinoCriaSpatialiteLineEdit"/>
+        <widget class="QLineEdit" name="pastaDestinoCriaSpatialiteLineEdit">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <spacer name="horizontalSpacer_6">
@@ -82,7 +86,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="coordSysCriaSpatialiteLineEdit"/>
+        <widget class="QLineEdit" name="coordSysCriaSpatialiteLineEdit">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <spacer name="horizontalSpacer_7">

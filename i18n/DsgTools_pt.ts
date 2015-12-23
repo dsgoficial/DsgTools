@@ -78,12 +78,12 @@ p, li { white-space: pre-wrap; }
         <translation>Classes com linhas nulas:</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="495"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="532"/>
         <source>Class</source>
         <translation>Classe</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="328"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="352"/>
         <source>Elements</source>
         <translation>Elementos</translation>
     </message>
@@ -138,27 +138,27 @@ p, li { white-space: pre-wrap; }
         <translation>Resumo de Leitura</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="327"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="351"/>
         <source>Write Summary</source>
         <translation>Resumo de Escrita</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="363"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="387"/>
         <source>Error on layer </source>
         <translation>Erro na camada </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="363"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="387"/>
         <source>. Conversion not performed.</source>
         <translation>. Conversão não realizada.</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="494"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="531"/>
         <source>Features not converted</source>
         <translation>Feições não convertidas</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="495"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="532"/>
         <source>Feature id</source>
         <translation>Id da Feição</translation>
     </message>
@@ -422,17 +422,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ConnectionWidget</name>
     <message>
-        <location filename="CustomWidgets/connectionWidget.py" line="155"/>
+        <location filename="CustomWidgets/connectionWidget.py" line="159"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.py" line="169"/>
+        <location filename="CustomWidgets/connectionWidget.py" line="173"/>
         <source>Select Database</source>
         <translation>Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.py" line="145"/>
+        <location filename="CustomWidgets/connectionWidget.py" line="149"/>
         <source>This is not a valid DsgTools database!</source>
         <translation>Este não é um banco DsgTools válido!</translation>
     </message>
@@ -455,7 +455,7 @@ p, li { white-space: pre-wrap; }
         <translation>spatialite2postgis</translation>
     </message>
     <message>
-        <location filename="ConversionTools/convert_database.py" line="146"/>
+        <location filename="ConversionTools/convert_database.py" line="148"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
@@ -477,19 +477,29 @@ Conversion must be between databases with the same version!</source>
 A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
     <message>
-        <location filename="ConversionTools/convert_database.py" line="144"/>
+        <location filename="ConversionTools/convert_database.py" line="146"/>
         <source>Success!</source>
         <translation>Sucesso!</translation>
     </message>
     <message>
-        <location filename="ConversionTools/convert_database.py" line="144"/>
+        <location filename="ConversionTools/convert_database.py" line="146"/>
         <source>Conversion successfully completed!</source>
         <translation>Conversão completada com sucesso!</translation>
     </message>
     <message>
-        <location filename="ConversionTools/convert_database.py" line="146"/>
+        <location filename="ConversionTools/convert_database.py" line="148"/>
         <source>Conversion not performed! Check log for details.</source>
         <translation>Conversão não realizada! Verifique o log para detalhes.</translation>
+    </message>
+    <message>
+        <location filename="ConversionTools/convert_database.py" line="138"/>
+        <source>Question</source>
+        <translation>Questão</translation>
+    </message>
+    <message>
+        <location filename="ConversionTools/convert_database.py" line="138"/>
+        <source>Databases CRS are different. Conversor will reproject spatial data. Do you want to proceed?</source>
+        <translation>Os Sistemas de Referência Espacial dos bancos são diferentes. O Conversor reprojetará os dados espaciais. Você deseja prosseguir?</translation>
     </message>
 </context>
 <context>
@@ -629,37 +639,37 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Selecionar Pasta</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="106"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="114"/>
         <source>Search</source>
         <translation>Pesquisar</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="80"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="84"/>
         <source>Coordinate System</source>
         <translation>Sistema de Coordenadas</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="117"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="125"/>
         <source>File Name</source>
         <translation>Nome do Arquivo</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="193"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="201"/>
         <source>Ok</source>
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="216"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="224"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="147"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="155"/>
         <source>EDGV Version:</source>
         <translation>Versão da EDGV:</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="155"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="163"/>
         <source>2.1.3</source>
         <translation>2.1.3</translation>
     </message>
@@ -895,7 +905,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Porta:</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="84"/>
+        <location filename="UserTools/user_profiles.ui" line="87"/>
         <source>User:</source>
         <translation>Usuário:</translation>
     </message>
@@ -1195,7 +1205,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation type="obsolete">Abrir Editor de Perfil</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="141"/>
+        <location filename="UserTools/user_profiles.ui" line="144"/>
         <source>Close</source>
         <translation>Fechar</translation>
     </message>
@@ -1260,22 +1270,22 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation type="obsolete">Perfis instalados</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="46"/>
+        <location filename="UserTools/user_profiles.ui" line="49"/>
         <source>&gt;&gt;</source>
         <translation>&gt;&gt;</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="53"/>
+        <location filename="UserTools/user_profiles.ui" line="56"/>
         <source>&gt;</source>
         <translation>&gt;</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="60"/>
+        <location filename="UserTools/user_profiles.ui" line="63"/>
         <source>&lt;</source>
         <translation>&lt;</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="67"/>
+        <location filename="UserTools/user_profiles.ui" line="70"/>
         <source>&lt;&lt;</source>
         <translation>&lt;&lt;</translation>
     </message>
@@ -1300,7 +1310,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Modelos de Permissões de Usuário Existentes</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="25"/>
+        <location filename="UserTools/user_profiles.ui" line="28"/>
         <source>Installed User Permissions</source>
         <translation>Permissões de Usuário Instaladas</translation>
     </message>
@@ -1320,17 +1330,17 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Editor de Permissões de Usuário</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="14"/>
+        <location filename="UserTools/user_profiles.ui" line="17"/>
         <source>Manage User Permissions</source>
         <translation>Gerenciar Permissões de Usuário</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="76"/>
+        <location filename="UserTools/user_profiles.ui" line="79"/>
         <source>Assigned User Permissions</source>
         <translation>Permissões de Usuário Atribuídas</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="134"/>
+        <location filename="UserTools/user_profiles.ui" line="137"/>
         <source>Install New User Permission</source>
         <translation>Instalar Nova Permissão de Usuário</translation>
     </message>
@@ -1340,17 +1350,17 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Abrir Editor de Permissões de Usuário</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="101"/>
+        <location filename="UserTools/user_profiles.ui" line="104"/>
         <source>Create User</source>
         <translation>Criar Usuário</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="108"/>
+        <location filename="UserTools/user_profiles.ui" line="111"/>
         <source>Alter Password</source>
         <translation>Alterar Password</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.ui" line="115"/>
+        <location filename="UserTools/user_profiles.ui" line="118"/>
         <source>Remove User</source>
         <translation>Remover Usuário</translation>
     </message>
