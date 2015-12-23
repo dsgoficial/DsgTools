@@ -125,17 +125,25 @@ class PostgisDBTool(QDialog, FORM_CLASS):
 
         if password == '':
             conInfo = 'host='+host+' port='+port+' dbname='+database
-            (success, user, password) = QgsCredentials.instance().get(conInfo, user, None)
-            if not success:
-                return db
-            else:
-                QgsCredentials.instance().put(conInfo, user, password)
+            self.setCredentials(db, conInfo, user)
+        else:
+            db.setPassword(password)
 
-        db.setPassword(password)
         if not db.open():
             QgsMessageLog.logMessage(db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
         return db
+
+    def setCredentials(self, db, conInfo, user):
+        (success, user, password) = QgsCredentials.instance().get(conInfo, user, None)
+        if not success:
+            return
+        else:
+            if not db.open():
+                self.setCredentials(db, conInfo, user)
+            else:
+                QgsCredentials.instance().put(conInfo, user, password)
+                db.setPassword(password)
 
     def updateConnectionName(self):
         server = self.serversCombo.currentText()
@@ -152,8 +160,7 @@ class PostgisDBTool(QDialog, FORM_CLASS):
         self.updateConnectionName()
 
     def checkFields(self):
-        if self.serversCombo.currentText() == '' or self.databaseEdit.text() == '' \
-            or self.srsEdit.text() == '':
+        if self.serversCombo.currentText() == '' or self.databaseEdit.text() == '' or self.srsEdit.text() == '':
             return False
         return True
 
