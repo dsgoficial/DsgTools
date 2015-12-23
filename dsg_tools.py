@@ -375,7 +375,7 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/icons/server.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('View Server'),
+            text=self.tr('Configure Servers'),
             callback=self.viewServers,
             parent=server,
             add_to_menu=False,

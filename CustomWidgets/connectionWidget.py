@@ -76,7 +76,12 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
 
         #populating the postgis combobox
         self.comboBoxPostgis.setCurrentIndex(0)
-        self.populatePostGISConnectionsCombo()        
+        self.populatePostGISConnectionsCombo()
+        self.spatialiteFileEdit.setReadOnly(True)   
+        self.postGISCrsEdit.setReadOnly(True)
+        self.spatialiteCrsEdit.setReadOnly(True)   
+        self.edgvSpatialiteVersionEdit.setReadOnly(True)
+        self.edgvPostgisVersionEdit.setReadOnly(True)       
 
     @pyqtSlot(int)
     def on_comboBoxPostgis_currentIndexChanged(self):
@@ -93,19 +98,24 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(int)
     def on_tabWidget_currentChanged(self):
         self.filename = ''
+        self.comboBoxPostgis.setCurrentIndex(0)
         self.dbLoaded = False
         self.epsg = 0
         self.crs = None
         self.dbVersion = ''
         
+        self.spatialiteFileEdit.setReadOnly(True)
         self.spatialiteFileEdit.setText(self.filename)
         self.postGISCrsEdit.setText('')
         self.postGISCrsEdit.setReadOnly(True)
         self.spatialiteCrsEdit.setText('')
         self.spatialiteCrsEdit.setReadOnly(True)   
         self.edgvSpatialiteVersionEdit.setText('')
-        self.edgvPostgisVersionEdit.setText('')     
-    
+        self.edgvSpatialiteVersionEdit.setReadOnly(True)
+        self.edgvPostgisVersionEdit.setText('')
+        self.edgvPostgisVersionEdit.setReadOnly(True)     
+        
+        
         #Setting the database type
         if self.tabWidget.currentIndex() == 0:
             self.isSpatialite = True

@@ -27,10 +27,13 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
+#QGIS Imports
 from qgis.core import QgsCoordinateReferenceSystem, QgsMessageLog
 from qgis.gui import QgsGenericProjectionSelector
 
+#DsgTools Imports
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.ServerTools.viewServers import ViewServers
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_postgisDBTool.ui'))
@@ -72,6 +75,14 @@ class PostgisDBTool(QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
         self.done(-1)
+
+    @pyqtSlot(bool)
+    def on_configureServerButton_clicked(self):
+        dlg = ViewServers(self.iface)
+        dlg.show()
+        result = dlg.exec_()
+        self.populateServersCombo()
+        
 
     @pyqtSlot(bool)
     def on_srsButton_clicked(self):

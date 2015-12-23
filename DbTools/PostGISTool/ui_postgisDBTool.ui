@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>291</width>
+    <width>398</width>
     <height>251</height>
    </rect>
   </property>
@@ -56,6 +56,19 @@
      </item>
      <item>
       <widget class="QComboBox" name="serversCombo"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="configureServerButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Configure Server</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

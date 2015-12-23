@@ -44,7 +44,7 @@ class SpatialiteDb(AbstractDb):
     
     def connectDatabaseWithGui(self):
         fd = QFileDialog()
-        filename = fd.getOpenFileName(filter='*.sqlite')
+        filename = fd.getOpenFileName(caption=self.tr('Select a DSGTools Spatialite file'),filter=self.tr('Spatialite file databases (*.sqlite)'))
         self.db.setDatabaseName(filename)
     
     def connectDatabaseWithQSettings(self, name):
