@@ -139,11 +139,12 @@ class PostgisDBTool(QDialog, FORM_CLASS):
         if not success:
             return
         else:
+            db.setPassword(password)
             if not db.open():
                 self.setCredentials(db, conInfo, user)
             else:
                 QgsCredentials.instance().put(conInfo, user, password)
-                db.setPassword(password)
+
 
     def updateConnectionName(self):
         server = self.serversCombo.currentText()
