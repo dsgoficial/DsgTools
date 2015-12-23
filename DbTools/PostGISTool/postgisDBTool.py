@@ -28,7 +28,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
 #QGIS Imports
-from qgis.core import QgsCoordinateReferenceSystem, QgsMessageLog
+from qgis.core import QgsCoordinateReferenceSystem, QgsMessageLog, QgsCredentials
 from qgis.gui import QgsGenericProjectionSelector
 
 #DsgTools Imports
@@ -116,6 +116,18 @@ class PostgisDBTool(QDialog, FORM_CLASS):
 
     def getDatabase(self, database = 'postgres'):
         (host, port, user, password) = self.getServerConfiguration(self.serversCombo.currentText())
+        if password == '':
+            conInfo = 'host='+host+' port='+port+' dbname='+database
+            check = False
+            while not check:
+                try:
+                    (success, user, password) = QgsCredentials.instance().get(conInfo, user, None)
+                    if not success:
+                        return                   
+                    check = True
+                    QgsCredentials.instance().put(conInfo, user, password)
+                except:
+                    pass
 
         db = QSqlDatabase("QPSQL")
         db.setDatabaseName(database)

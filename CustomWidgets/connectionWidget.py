@@ -86,6 +86,10 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(int)
     def on_comboBoxPostgis_currentIndexChanged(self):
         if self.comboBoxPostgis.currentIndex() > 0:
+            self.postGISCrsEdit.setText('')
+            self.postGISCrsEdit.setReadOnly(True)
+            self.edgvPostgisVersionEdit.setText('')
+            self.edgvPostgisVersionEdit.setReadOnly(True)  
             self.loadDatabase()
             self.connectionChanged.emit()
         
