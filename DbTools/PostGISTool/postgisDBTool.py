@@ -116,26 +116,22 @@ class PostgisDBTool(QDialog, FORM_CLASS):
 
     def getDatabase(self, database = 'postgres'):
         (host, port, user, password) = self.getServerConfiguration(self.serversCombo.currentText())
-        if password == '':
-            conInfo = 'host='+host+' port='+port+' dbname='+database
-            check = False
-            while not check:
-                try:
-                    (success, user, password) = QgsCredentials.instance().get(conInfo, user, None)
-                    if not success:
-                        return                   
-                    check = True
-                    QgsCredentials.instance().put(conInfo, user, password)
-                except:
-                    pass
-
         db = QSqlDatabase("QPSQL")
+        db.setConnectOptions('connect_timeout=10')
         db.setDatabaseName(database)
         db.setHostName(host)
         db.setPort(int(port))
         db.setUserName(user)
+
+        if password == '':
+            conInfo = 'host='+host+' port='+port+' dbname='+database
+            (success, user, password) = QgsCredentials.instance().get(conInfo, user, None)
+            if not success:
+                return db
+            else:
+                QgsCredentials.instance().put(conInfo, user, password)
+
         db.setPassword(password)
-        db.setConnectOptions('connect_timeout=10')
         if not db.open():
             QgsMessageLog.logMessage(db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
