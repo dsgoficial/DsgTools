@@ -422,17 +422,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ConnectionWidget</name>
     <message>
-        <location filename="CustomWidgets/connectionWidget.py" line="145"/>
+        <location filename="CustomWidgets/connectionWidget.py" line="155"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.py" line="159"/>
+        <location filename="CustomWidgets/connectionWidget.py" line="169"/>
         <source>Select Database</source>
         <translation>Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.py" line="135"/>
+        <location filename="CustomWidgets/connectionWidget.py" line="145"/>
         <source>This is not a valid DsgTools database!</source>
         <translation>Este não é um banco DsgTools válido!</translation>
     </message>
@@ -720,7 +720,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Atualizar Tabela</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="112"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="115"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
@@ -740,12 +740,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Servidor:</translation>
     </message>
     <message>
-        <location filename="DbTools/PostGISTool/ui_postgisDBTool.ui" line="67"/>
+        <location filename="DbTools/PostGISTool/ui_postgisDBTool.ui" line="80"/>
         <source>Database:</source>
         <translation>Banco de Dados:</translation>
     </message>
     <message>
-        <location filename="DbTools/PostGISTool/ui_postgisDBTool.ui" line="119"/>
+        <location filename="DbTools/PostGISTool/ui_postgisDBTool.ui" line="132"/>
         <source>EDGV version:</source>
         <translation>Versão da EDGV:</translation>
     </message>
@@ -875,7 +875,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="14"/>
+        <location filename="ServerTools/ui_serverConfigurator.ui" line="14"/>
         <source>Configurate Servers</source>
         <translation>Configurar Servidores</translation>
     </message>
@@ -905,12 +905,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Senha:</translation>
     </message>
     <message>
-        <location filename="DbTools/PostGISTool/ui_postgisDBTool.ui" line="94"/>
+        <location filename="DbTools/PostGISTool/ui_postgisDBTool.ui" line="107"/>
         <source>CRS:</source>
         <translation>SRC:</translation>
     </message>
     <message>
-        <location filename="DbTools/PostGISTool/ui_postgisDBTool.ui" line="101"/>
+        <location filename="DbTools/PostGISTool/ui_postgisDBTool.ui" line="114"/>
         <source>Search CRS</source>
         <translation>Pesquisar SRC</translation>
     </message>
@@ -920,42 +920,42 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Remover</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="41"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="44"/>
         <source>Server Name</source>
         <translation>Nome do Servidor</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="46"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="49"/>
         <source>Address</source>
         <translation>Endereço</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="51"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="54"/>
         <source>Port</source>
         <translation>Porta</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="56"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="59"/>
         <source>User</source>
         <translation>Usuário</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="71"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="74"/>
         <source>Add</source>
         <translation>Adicionar</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="85"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="88"/>
         <source>Edit</source>
         <translation>Editar</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="61"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="64"/>
         <source>Password</source>
         <translation>Senha</translation>
     </message>
     <message>
-        <location filename="ServerTools/ui_viewServers.ui" line="92"/>
+        <location filename="ServerTools/ui_viewServers.ui" line="95"/>
         <source>Test</source>
         <translation>Testa</translation>
     </message>
@@ -1436,6 +1436,16 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <source>Remove Connections to Missing Databases</source>
         <translation>Remover Conexões para Bancos de Dados faltantes</translation>
     </message>
+    <message>
+        <location filename="DbTools/PostGISTool/ui_postgisDBTool.ui" line="69"/>
+        <source>Configure Server</source>
+        <translation>Configurar Servidor</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/ui_viewServers.ui" line="17"/>
+        <source>Configure Servers</source>
+        <translation>Configurar Servidores</translation>
+    </message>
 </context>
 <context>
     <name>DockWidget</name>
@@ -1708,7 +1718,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="dsg_tools.py" line="376"/>
         <source>View Server</source>
-        <translation>Visualizar Servidor</translation>
+        <translation type="obsolete">Visualizar Servidor</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="229"/>
@@ -1805,6 +1815,11 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <source>Explore Server</source>
         <translation>Explorar Servidor</translation>
     </message>
+    <message>
+        <location filename="dsg_tools.py" line="376"/>
+        <source>Configure Servers</source>
+        <translation>Configurar Servidores</translation>
+    </message>
 </context>
 <context>
     <name>ExploreDb</name>
@@ -1875,27 +1890,27 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Spatialite</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.ui" line="34"/>
+        <location filename="CustomWidgets/connectionWidget.ui" line="40"/>
         <source>File                    </source>
         <translation>Arquivo</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.ui" line="60"/>
+        <location filename="CustomWidgets/connectionWidget.ui" line="66"/>
         <source>Search</source>
         <translation>Pesquisar</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.ui" line="168"/>
+        <location filename="CustomWidgets/connectionWidget.ui" line="192"/>
         <source>Coordinate System</source>
         <translation>Sistema de Coordenadas</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.ui" line="132"/>
+        <location filename="CustomWidgets/connectionWidget.ui" line="150"/>
         <source>PostGIS</source>
         <translation>PostGIS</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.ui" line="138"/>
+        <location filename="CustomWidgets/connectionWidget.ui" line="156"/>
         <source>Connections</source>
         <translation>Conexões</translation>
     </message>
@@ -1905,12 +1920,12 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Adicionar Conexão</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.ui" line="211"/>
+        <location filename="CustomWidgets/connectionWidget.ui" line="241"/>
         <source>EDGV Version</source>
         <translation>Versão da EDGV</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.ui" line="157"/>
+        <location filename="CustomWidgets/connectionWidget.ui" line="175"/>
         <source>Configure Connections</source>
         <translation>Configurar Conexões</translation>
     </message>
@@ -2384,7 +2399,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>PostgisDBTool</name>
     <message>
-        <location filename="DbTools/PostGISTool/postgisDBTool.py" line="100"/>
+        <location filename="DbTools/PostGISTool/postgisDBTool.py" line="111"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
@@ -2713,6 +2728,16 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
         <location filename="Factories/DbFactory/spatialiteDb.py" line="331"/>
         <source>Problem disassociating complex from complex: </source>
         <translation>Problema disassociando complexo de complexo: </translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/spatialiteDb.py" line="47"/>
+        <source>Select a DSGTools Spatialite file</source>
+        <translation>Selecione um arquivo spatialite DsgTools</translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/spatialiteDb.py" line="47"/>
+        <source>Spatialite file databases (*.sqlite)</source>
+        <translation>Banco de dados Spatialite (*.sqlite)</translation>
     </message>
 </context>
 <context>
