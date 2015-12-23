@@ -145,7 +145,6 @@ class PostgisDBTool(QDialog, FORM_CLASS):
             else:
                 QgsCredentials.instance().put(conInfo, user, password)
 
-
     def updateConnectionName(self):
         server = self.serversCombo.currentText()
         database = self.databaseEdit.text()
