@@ -60,7 +60,7 @@ class PostgisDb(AbstractDb):
             self.db.setPort(port)
         self.db.setDatabaseName(database)
         self.db.setUserName(user)
-        if password == '':
+        if not password or password == '':
             conInfo = 'host='+host+' port='+port+' dbname='+database
             check = False
             while not check:
@@ -86,7 +86,7 @@ class PostgisDb(AbstractDb):
             self.db.setPort(port)
         self.db.setDatabaseName(database)
         self.db.setUserName(user)
-        if password == '':
+        if not password or password == '':
             conInfo = 'host='+host+' port='+port+' dbname='+database
             check = False
             while not check:
