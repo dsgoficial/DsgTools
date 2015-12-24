@@ -69,8 +69,8 @@ class PostgisDb(AbstractDb):
                     if not success:
                         return 
                     self.db.setPassword(password)
-                    self.checkAndOpenDb()                    
                     check = True
+                    self.checkAndOpenDb()
                     QgsCredentials.instance().put(conInfo, user, password)
                 except:
                     pass
@@ -95,8 +95,8 @@ class PostgisDb(AbstractDb):
                     if not success:
                         return 
                     self.db.setPassword(password)
-                    self.checkAndOpenDb()       
                     check = True
+                    self.checkAndOpenDb()
                     QgsCredentials.instance().put(conInfo, user, password)
                 except:
                     pass
