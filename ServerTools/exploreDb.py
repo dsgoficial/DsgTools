@@ -134,10 +134,10 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
             self.serverWidget.abstractDb.dropDatabase(localDbName)
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Success!'), self.tr('Database ')+localDbName+self.tr(' dropped successfully!'))
+            self.clearQSettings(localDbName)
         except Exception as e:
             QApplication.restoreOverrideCursor()            
             QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
-        self.clearQSettings(localDbName)
         self.clearAll()
         self.populateListWithDatabasesFromServer()
     
