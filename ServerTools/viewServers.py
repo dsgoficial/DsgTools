@@ -64,7 +64,7 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
             self.tableWidget.setItem(i, 1, QTableWidgetItem(host))
             self.tableWidget.setItem(i, 2, QTableWidgetItem(port))
             self.tableWidget.setItem(i, 3, QTableWidgetItem(user))
-            if len(password) == 0:
+            if not password or len(password) == 0:
                 self.tableWidget.setItem(i, 4, QTableWidgetItem(self.tr('Not Saved')))
             else:
                 self.tableWidget.setItem(i, 4, QTableWidgetItem(self.tr('Saved')))
