@@ -51,7 +51,7 @@ changelog=
 	1.4.1 - RapidEye Tile Cache service back on air.
 	1.5 - Improvements on the Inventory Tool. New server browser for EDGV databases. Minor bug fixes.
 	1.6 - Database role management. Database user profile management. Create/Remove PostgreSQL users. Alter PostgreSQL user Password.
-	1.7 - Conversion tools between postgis and spatialite EDGV databases. Tool to assign elevation values to contour lines. EDGV code list viewer to aid attributes queries using our EDGV databases.
+	1.7 - Conversion tools between postgis and spatialite EDGV databases. Tool to assign elevation values to contour lines. EDGV code list viewer to aid attributes queries using our EDGV databases. Drop/Manage databases. View permissions details.
 
 # Tags are comma separated with spaces allowed
 tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script
