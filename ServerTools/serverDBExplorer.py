@@ -142,19 +142,13 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
         candidates = settings.childGroups()
         settings.endGroup()
         removedConn = []
-        dbListTuple = self.serverWidget.abstractDb.getEDGVDbsFromServer()
-        dbList = []
-        for i in dbListTuple:
-            dbList.append(i[0])
+        dbList = self.serverWidget.abstractDb.getDbsFromServer()
         for candidate in candidates:
-            if candidate.split('_')[0] not in servers:  
+            candidateSettings = QSettings()
+            candidateSettings.beginGroup('PostgreSQL/connections/'+candidate)
+            candidateDb = candidateSettings.value('database')
+            if candidateDb not in dbList:
                 self.removeConnections(candidate, removedConn)
-            else:
-                candidateSettings = QSettings()
-                candidateSettings.beginGroup('PostgreSQL/connections/'+candidate)
-                candidateDb = candidateSettings.value('database')
-                if candidateDb not in dbList:
-                    self.removeConnections(candidate, removedConn)
         if len(removedConn)>0:
             msg = self.tr('\nThe following databases connections were removed successfully:\n')+', '.join(removedConn)
         else:

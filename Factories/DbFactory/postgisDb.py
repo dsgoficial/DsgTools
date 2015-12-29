@@ -618,6 +618,19 @@ class PostgisDb(AbstractDb):
                 QgsMessageLog.logMessage(self.tr('Problem accessing database: ') +database+'\n'+query2.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         return edvgDbList
     
+    def getDbsFromServer(self):
+        #Can only be used in postgres database.
+        try:
+            self.checkAndOpenDb()
+        except:
+            return []
+        query = QSqlQuery(self.gen.getDatabasesFromServer(),self.db)
+        dbList = []
+        
+        while query.next():
+            dbList.append(query.value(0))
+        return dbList
+    
     def checkSuperUser(self):
         try:
             self.checkAndOpenDb()

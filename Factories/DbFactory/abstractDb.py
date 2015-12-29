@@ -609,6 +609,9 @@ class AbstractDb(QObject):
     def getEDGVDbsFromServer(self,name):
         return None
 
+    def getDbsFromServer(self):
+        return None
+    
     def checkSuperUser(self):
         return None
 
