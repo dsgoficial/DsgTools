@@ -28,8 +28,8 @@ from qgis.core import *
 
 import sys, os
 from uuid import uuid4
-currentPath = 'C:/Users/luiz/.qgis2/python/plugins/DsgTools'
-# currentPath = '/home/dsgdev/.qgis2/python/plugins/DsgTools'
+# currentPath = 'C:/Users/luiz/.qgis2/python/plugins/DsgTools'
+currentPath = '/home/luiz/.qgis2/python/plugins/DsgTools'
 sys.path.append(os.path.join(currentPath, 'QmlTools'))
 sys.path.append(os.path.join(currentPath, 'Utils'))
 from qmlParser import QmlParser
@@ -42,8 +42,9 @@ class CreateFeatureTest():
     def __init__(self, layers, geomClass = True):
         self.geomClass = geomClass
 
+        #Connecting to the database that will be tested
         self.db = QSqlDatabase("QPSQL")
-        self.db.setDatabaseName('edgv213')
+        self.db.setDatabaseName('edgvfter')
         self.db.setHostName('localhost')
         self.db.setPort(5432)
         self.db.setUserName('postgres')
@@ -54,13 +55,15 @@ class CreateFeatureTest():
         #obtaining the qml file path
         qmlVersionPath = os.path.join(currentPath, 'Qmls', 'qgis_26')
 
+        #Going through all loaded layers
         size = len(layers)
         count = 1
         for layer in layers:
             layerName = layer.name()
             fileName = layerName+'.qml'
 
-            qmlPath = os.path.join(qmlVersionPath, 'edgv_213', fileName)
+#             qmlPath = os.path.join(qmlVersionPath, 'edgv_213', fileName)
+            qmlPath = os.path.join(qmlVersionPath, 'FTer_2a_Ed', fileName)
             parser = QmlParser(qmlPath)
             domainDict = parser.getDomainDict()
 
@@ -69,39 +72,84 @@ class CreateFeatureTest():
             count += 1
 
     def createFeatures(self, layer, domainDict):
+        #Getting the layer provider
         provider = layer.dataProvider()
+        #Getting all fields
         fields = provider.fields()
+        #Getting layer schema
+        schema = str(QgsDataSourceURI(layer.dataProvider().dataSourceUri()).schema())
 
-        file = open(os.path.join(currentPath, 'LayerTools', 'Problemas', layer.name()+'_relatorio_banco_2015_03_21.txt'), 'w')
+        #Creating the log file
+        file = open(os.path.join(currentPath, 'LayerTools', 'Problemas', layer.name()+'_relatorio_banco_2016_01_12.txt'), 'w')
         filetext = ''
+        #Iterate on every field
         for field in fields:
+            #Check if the field name is inside the qml dict
             if field.name() in domainDict.keys():
-                valueMap = domainDict[field.name()]
-                for value in valueMap.values():
-                    sql = ''
-                    if self.geomClass:
-                        geom = self.createGeom(layer)
-                        ewkt = '\''+geom.exportToWkt()+'\','+str(31982)
-                        sql += 'INSERT INTO cb.'+layer.name()
-                        columns = '(geom,'+field.name()+')'
-                        values = ' VALUES(ST_GeomFromText('+ewkt+'),'+value+')'
-                        sql += columns+values
-                    else:
-                        sql += 'INSERT INTO complexos.'+layer.name()
-                        columns = '(nome,'+field.name()+')'
-                        values = ' VALUES(\'teste\','+value+')'
-                        sql += columns+values
-                    query = QSqlQuery(self.db)
-                    if not query.exec_(sql):
-                        filetext += 'SQL rodada: '+sql+'\n'
-                        filetext += 'Erro obtido: '+query.lastError().text()+'\n'
-                        aux = filetext
-                        QgsMessageLog.logMessage('Deu merda: '+aux, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                        filetext += '-------------------------------------------\n'
+                #Getting a obj for the field in analysis
+                obj = domainDict[field.name()]
+                #Test if the field is a dict
+                if isinstance(obj, dict):
+                    valueMap = obj
+                    #Make a sql for each value in the dict
+                    for value in valueMap.values():
+                        sql = ''
+                        if self.geomClass:
+                            # if the class is a geometric class we must create a dummy geometry
+                            geom = self.createGeom(layer)
+                            #Exporting the geometry to wkt
+                            ewkt = '\''+geom.exportToWkt()+'\','+str(31982)
+                            #Start the query
+                            sql += 'INSERT INTO %s.%s' % (schema, layer.name())
+                            columns = '(geom,'+field.name()+')'
+                            values = ' VALUES(ST_GeomFromText('+ewkt+'),'+value+')'
+                            sql += columns+values
+                        else:
+                            sql += 'INSERT INTO complexos.'+layer.name()
+                            columns = '(nome,'+field.name()+')'
+                            values = ' VALUES(\'teste\','+value+')'
+                            sql += columns+values
+                        query = QSqlQuery(self.db)
+                        self.executeSql(query, sql, filetext)
+                elif isinstance(obj, list):
+                    filter_keys = obj
+                    for key in filter_keys:
+                        sql = ''
+                        if self.geomClass:
+                            # if the class is a geometric class we must create a dummy geometry
+                            geom = self.createGeom(layer)
+                            #Exporting the geometry to wkt
+                            ewkt = '\''+geom.exportToWkt()+'\','+str(31982)
+                            #Start the query
+                            sql += 'INSERT INTO %s.%s' % (schema, layer.name())
+                            columns = '(geom,'+field.name()+')'
+                            values = ' VALUES(ST_GeomFromText('+ewkt+'),ARRAY['+key+'])'
+                            sql += columns+values
+                        else:
+                            sql += 'INSERT INTO complexos.'+layer.name()
+                            columns = '(nome,'+field.name()+')'
+                            values = ' VALUES(\'teste\',ARRAY['+value+'])'
+                            sql += columns+values
+                        query = QSqlQuery(self.db)
+                        self.executeSql(query, sql, filetext)
         file.write(filetext)
         file.close()
+        
+    def executeSql(self, query, sql, filetext):
+        # try to execute the query
+        if not query.exec_(sql):
+            #Make error message
+            filetext += 'SQL rodada: '+sql+'\n'
+            filetext += 'Erro obtido: '+query.lastError().text()+'\n'
+            aux = filetext
+            #Write log on QGIS
+            QgsMessageLog.logMessage('Deu merda: '+aux, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            #Finish error message
+            filetext += '-------------------------------------------\n'
 
     def createGeom(self, layer):
+        #Creating dummy geometries
+        geom = None
         if layer.name().split('_')[-1] == 'p':
             geom = QgsGeometry.fromMultiPoint([QgsPoint(50,50)])
         if layer.name().split('_')[-1] == 'l':

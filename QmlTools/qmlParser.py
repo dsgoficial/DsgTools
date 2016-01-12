@@ -66,6 +66,13 @@ class QmlParser:
                 #print 'value: '+valueText
                 valueMapDict[keyText] = valueText
             self.domainDict[name] = valueMapDict
+        elif type == "ValueRelation":
+            name = edittypeElement.attribute("name")
+            nodes = edittypeElement.elementsByTagName("widgetv2config")
+            widgetv2configElement = nodes.item(0).toElement()
+            filter = widgetv2configElement.attribute("FilterExpression")
+            filter_keys = filter.replace("code in (", "").replace(")", "").split(",")
+            self.domainDict[name] = filter_keys
 
     def getDomainDict(self):
         self.domainDict.clear()
