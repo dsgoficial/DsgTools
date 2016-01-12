@@ -551,6 +551,9 @@ class AbstractDb(QObject):
             qmlPath = os.path.join(qmlVersionPath, 'edgv_30')
         elif version == '2.1.3':
             qmlPath = os.path.join(qmlVersionPath, 'edgv_213')
+        elif version == 'FTer_2a_Ed':
+            qmlPath = os.path.join(qmlVersionPath, 'FTer_2a_Ed')
+        
         else:
             qmlPath = ''
         return qmlPath

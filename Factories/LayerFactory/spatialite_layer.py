@@ -52,3 +52,5 @@ class SpatialiteLayer(EDGVLayer):
         self.uri.setDatabase(abstractDb.db.databaseName())
         self.uri.setDataSource('', table, 'GEOMETRY')
 
+    def loadDomainTable(self,name):
+        pass

@@ -55,3 +55,6 @@ class PostGISLayer(EDGVLayer):
         self.uri.setConnection(str(host),str(port), str(database), str(user), str(password))
         self.uri.setDataSource(self.schema, self.layer_name, 'geom', sql, 'id')
         self.uri.disableSelectAtId(True)
+    
+    def loadDomainTable(self,name):
+        pass

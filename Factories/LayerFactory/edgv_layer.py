@@ -56,7 +56,22 @@ class EDGVLayer(QObject):
 
         vlayer.setCrs(crs)
         vlayer.loadNamedStyle(vlayerQml, False)
-        
+        attrList = vlayer.attributeList()
+        for i in attrList:
+            if vlayer.editorWidgetV2(i) == 'ValueRelation':
+                valueRelationDict = vlayer.editorWidgetV2Config(i)
+                domainTableName = valueRelationDict['Layer']
+                host = self.abstractDb.db.hostName()
+                port = self.abstractDb.db.port()
+                database = self.abstractDb.db.databaseName()
+                user = self.abstractDb.db.userName()
+                password = self.abstractDb.db.password()
+                uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (database, host, port, user, password, domainTableName)
+                #TODO Load domain layer into a group
+                domLayer = iface.addVectorLayer(uri, domainTableName, self.provider)
+                valueRelationDict['Layer'] = domLayer.id()
+                vlayer.setEditorWidgetV2Config(i,valueRelationDict)
+
         self.qmlLoaded.emit()
         
         if idSubgrupo:
@@ -66,3 +81,6 @@ class EDGVLayer(QObject):
             QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
         return vlayer
+
+    def loadDomainTable(self,name):
+        pass

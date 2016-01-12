@@ -222,6 +222,8 @@ class PostgisDb(AbstractDb):
             return dict()
         if self.getDatabaseVersion() == '2.1.3':
             schemaList = ['cb', 'complexos']
+        elif self.getDatabaseVersion() == 'FTer_2a_Ed':
+            schemaList = ['pe','ge','ct', 'complexos']
         else:
             QgsMessageLog.logMessage(self.tr('Operation not defined for this database version!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return None
@@ -245,6 +247,8 @@ class PostgisDb(AbstractDb):
             return dict()
         if self.getDatabaseVersion() == '2.1.3':
             schemaList = ['cb', 'complexos', 'dominios']
+        elif self.getDatabaseVersion() == 'FTer_2a_Ed':
+            schemaList = ['pe','ge','ct', 'complexos']
         else:
             QgsMessageLog.logMessage(self.tr('Operation not defined for this database version!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return
