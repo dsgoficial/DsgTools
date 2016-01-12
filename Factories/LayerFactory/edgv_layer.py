@@ -66,9 +66,18 @@ class EDGVLayer(QObject):
                 database = self.abstractDb.db.databaseName()
                 user = self.abstractDb.db.userName()
                 password = self.abstractDb.db.password()
-                uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (database, host, port, user, password, domainTableName)
-                #TODO Load domain layer into a group
-                domLayer = iface.addVectorLayer(uri, domainTableName, self.provider)
+                loadedLayers = iface.legendInterface().layers()
+                domainLoaded = False
+                for ll in loadedLayers:
+                    if ll.name() == domainTableName:
+                        candidateUri = QgsDataSourceURI(ll.dataProvider().dataSourceUri())
+                        if host == candidateUri.host() and database == candidateUri.database() and port == int(candidateUri.port()):
+                            domainLoaded = True
+                            domLayer = ll
+                if not domainLoaded:
+                    uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (database, host, port, user, password, domainTableName)
+                    #TODO Load domain layer into a group
+                    domLayer = iface.addVectorLayer(uri, domainTableName, self.provider)
                 valueRelationDict['Layer'] = domLayer.id()
                 vlayer.setEditorWidgetV2Config(i,valueRelationDict)
 
