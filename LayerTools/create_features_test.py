@@ -110,7 +110,7 @@ class CreateFeatureTest():
                             values = ' VALUES(\'teste\','+value+')'
                             sql += columns+values
                         query = QSqlQuery(self.db)
-                        self.executeSql(query, sql, filetext)
+                        filetext += self.executeSql(query, sql)
                 elif isinstance(obj, list):
                     filter_keys = obj
                     for key in filter_keys:
@@ -131,21 +131,22 @@ class CreateFeatureTest():
                             values = ' VALUES(\'teste\',ARRAY['+value+'])'
                             sql += columns+values
                         query = QSqlQuery(self.db)
-                        self.executeSql(query, sql, filetext)
+                        filetext += self.executeSql(query, sql)
         file.write(filetext)
         file.close()
         
-    def executeSql(self, query, sql, filetext):
+    def executeSql(self, query, sql):
         # try to execute the query
+        text = ''
         if not query.exec_(sql):
             #Make error message
-            filetext += 'SQL rodada: '+sql+'\n'
-            filetext += 'Erro obtido: '+query.lastError().text()+'\n'
-            aux = filetext
+            text += 'SQL rodada: '+sql+'\n'
+            text += 'Erro obtido: '+query.lastError().text()+'\n'
             #Write log on QGIS
-            QgsMessageLog.logMessage('Deu merda: '+aux, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage('Deu merda: '+text, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             #Finish error message
-            filetext += '-------------------------------------------\n'
+            text += '-------------------------------------------\n'
+        return text
 
     def createGeom(self, layer):
         #Creating dummy geometries
