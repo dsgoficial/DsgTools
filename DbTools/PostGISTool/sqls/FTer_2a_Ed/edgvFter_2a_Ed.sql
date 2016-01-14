@@ -2353,7 +2353,7 @@ CREATE TABLE complexos.laz_complexo_recreativo(
 ) INHERITS(complexos.laz_complexo_desportivo_lazer)
 #
 CREATE TABLE complexos.laz_jardim_botanico(
-	CONSTRAINT laz_jardim_botanico_pk PRIMARY KEY (nome)
+	CONSTRAINT laz_jardim_botanico_pk PRIMARY KEY (id)
 ) INHERITS(complexos.laz_complexo_recreativo)
 #
 CREATE TABLE pe.lpal_pais_a(
@@ -2363,27 +2363,27 @@ CREATE TABLE pe.lpal_pais_a(
 ) INHERITS(pe.lpal_area_politico_adm_a)
 #
 CREATE TABLE complexos.laz_parque_aquatico(
-	CONSTRAINT laz_parque_aquatico_pk PRIMARY KEY (nome)
+	CONSTRAINT laz_parque_aquatico_pk PRIMARY KEY (id)
 ) INHERITS(complexos.laz_complexo_recreativo)
 #
 CREATE TABLE complexos.laz_jardim_zoologico(
-	CONSTRAINT laz_jardim_zoologico_pk PRIMARY KEY (nome)
+	CONSTRAINT laz_jardim_zoologico_pk PRIMARY KEY (id)
 ) INHERITS(complexos.laz_complexo_recreativo)
 #
 CREATE TABLE complexos.laz_parque_tematico(
-	CONSTRAINT laz_parque_tematico_pk PRIMARY KEY (nome)
+	CONSTRAINT laz_parque_tematico_pk PRIMARY KEY (id)
 ) INHERITS(complexos.laz_complexo_recreativo)
 #
 CREATE TABLE complexos.laz_marina(
-	CONSTRAINT laz_marina_pk PRIMARY KEY (nome)
+	CONSTRAINT laz_marina_pk PRIMARY KEY (id)
 ) INHERITS(complexos.laz_complexo_recreativo)
 #
 CREATE TABLE complexos.laz_pesque_pague(
-	CONSTRAINT laz_pesque_pague_pk PRIMARY KEY (nome)
+	CONSTRAINT laz_pesque_pague_pk PRIMARY KEY (id)
 ) INHERITS(complexos.laz_complexo_recreativo)
 #
 CREATE TABLE complexos.laz_parque_urbano(
-	CONSTRAINT laz_parque_urbano_pk PRIMARY KEY (nome)
+	CONSTRAINT laz_parque_urbano_pk PRIMARY KEY (id)
 ) INHERITS(complexos.laz_complexo_recreativo)
 #
 CREATE TABLE ge.laz_arquibancada(
@@ -3176,9 +3176,10 @@ CREATE TABLE complexos.adm_instituicao_publica(
 )#
 CREATE TABLE complexos.sau_especialidade_medica(
 	id uuid NOT NULL,
-	nome smallint NOT NULL,
+	nomeespecialidade smallint NOT NULL,
 	numeromedicos integer,
-	id_org_saude uuid
+	id_org_saude uuid,
+	CONSTRAINT sau_especialidade_medica_pk PRIMARY KEY (id)
 )#
 CREATE TABLE ge.cb_area_industrial_a(
 	id serial NOT NULL,
@@ -7019,7 +7020,7 @@ ALTER TABLE complexos.rod_estacao_rodoviaria ADD CONSTRAINT rod_estacao_rodoviar
 ALTER TABLE complexos.rod_estacao_rodoviaria ADD CONSTRAINT rod_estacao_rodoviaria_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.rod_estacao_rodoviaria ADD CONSTRAINT rod_estacao_rodoviaria_tipoestrut_fk FOREIGN KEY (tipoestrut) REFERENCES dominios.tipo_estrut(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.rod_estacao_rodoviaria ADD CONSTRAINT rod_estacao_rodoviaria_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE complexos.sau_especialidade_medica ADD CONSTRAINT sau_especialidade_medica_nome_fk FOREIGN KEY (nome) REFERENCES dominios.nome_especialidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE complexos.sau_especialidade_medica ADD CONSTRAINT sau_especialidade_medica_nomeespecialidade_fk FOREIGN KEY (nomeespecialidade) REFERENCES dominios.nome_especialidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.sau_org_servico_social_pub ADD CONSTRAINT sau_org_servico_social_pub_classeativecon_fk FOREIGN KEY (classeativecon) REFERENCES dominios.classe_ativ_econ(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.sau_org_servico_social_pub ADD CONSTRAINT sau_org_servico_social_pub_grupoativecon_fk FOREIGN KEY (grupoativecon) REFERENCES dominios.grupo_ativ_econ(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.sau_org_servico_social_pub ADD CONSTRAINT sau_org_servico_social_pub_tipoorgsvsocial_fk FOREIGN KEY (tipoorgsvsocial) REFERENCES dominios.tipo_org_sv_social(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -9420,9 +9421,6 @@ ALTER TABLE complexos.cb_assentamento_precario ADD CONSTRAINT cb_assentamento_pr
 ALTER TABLE complexos.lpal_capital ADD CONSTRAINT lpal_capital_tipocapital_check CHECK (tipocapital = ANY(ARRAY[2::SMALLINT,3::SMALLINT]))#
 ALTER TABLE complexos.lpal_capital ADD CONSTRAINT lpal_capital_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE complexos.enc_complexo_comunicacao ADD CONSTRAINT enc_complexo_comunicacao_classeativecon_check CHECK (classeativecon = ANY(ARRAY[6::SMALLINT,99::SMALLINT]))#
-ALTER TABLE complexos.edu_org_ensino ADD CONSTRAINT edu_org_ensino_grupoativecon_check CHECK (grupoativecon = ANY(ARRAY[16::SMALLINT,19::SMALLINT,20::SMALLINT,23::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE complexos.edu_org_ensino ADD CONSTRAINT edu_org_ensino_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE complexos.edu_org_ensino ADD CONSTRAINT edu_org_ensino_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE complexos.adm_org_pub_civil ADD CONSTRAINT adm_org_pub_civil_classeativecon_check CHECK (classeativecon = ANY(ARRAY[10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
 ALTER TABLE complexos.adm_org_pub_civil ADD CONSTRAINT adm_org_pub_civil_administracaodireta_check CHECK (administracaodireta = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE complexos.adm_org_pub_civil ADD CONSTRAINT adm_org_pub_civil_poderpublico_check CHECK (poderpublico = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
@@ -9466,13 +9464,9 @@ ALTER TABLE complexos.rod_estacao_rodoviaria ADD CONSTRAINT rod_estacao_rodoviar
 ALTER TABLE complexos.rod_estacao_rodoviaria ADD CONSTRAINT rod_estacao_rodoviaria_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE complexos.rod_estacao_rodoviaria ADD CONSTRAINT rod_estacao_rodoviaria_tipoestrut_check CHECK (tipoestrut = ANY(ARRAY[1::SMALLINT]))#
 ALTER TABLE complexos.rod_estacao_rodoviaria ADD CONSTRAINT rod_estacao_rodoviaria_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE complexos.laz_clube_social ADD CONSTRAINT laz_clube_social_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE complexos.laz_clube_social ADD CONSTRAINT laz_clube_social_divisaoativecon_check CHECK (divisaoativecon = ANY(ARRAY[92::SMALLINT]))#
-ALTER TABLE complexos.laz_clube_social ADD CONSTRAINT laz_clube_social_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE complexos.laz_clube_social ADD CONSTRAINT laz_clube_social_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE complexos.laz_clube_social ADD CONSTRAINT laz_clube_social_turistico_check CHECK (turistico = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE complexos.sau_org_servico_social_pub ADD CONSTRAINT sau_org_servico_social_pub_classeativecon_check CHECK (classeativecon = ANY(ARRAY[33::SMALLINT,34::SMALLINT,8::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE complexos.sau_org_servico_social_pub ADD CONSTRAINT sau_org_servico_social_pub_grupoativecon_check CHECK (grupoativecon = ANY(ARRAY[15::SMALLINT,32::SMALLINT,6::SMALLINT,8::SMALLINT,99::SMALLINT]))#
+ALTER TABLE complexos.sau_especialidade_medica ADD CONSTRAINT sau_especialidade_medica_nomeespecialidade_check CHECK (nomeespecialidade = ANY(ARRAY[10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,4::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,44::SMALLINT,45::SMALLINT,46::SMALLINT,47::SMALLINT,48::SMALLINT,49::SMALLINT,5::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,53::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT]))#
+ALTER TABLE complexos.sau_org_servico_social_pub ADD CONSTRAINT sau_org_servico_social_pub_classeativecon_check CHECK (classeativecon = ANY(ARRAY[33::SMALLINT,34::SMALLINT,8::SMALLINT,99::SMALLINT]))#
+ALTER TABLE complexos.sau_org_servico_social_pub ADD CONSTRAINT sau_org_servico_social_pub_grupoativecon_check CHECK (grupoativecon = ANY(ARRAY[15::SMALLINT,32::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE complexos.sau_org_servico_social_pub ADD CONSTRAINT sau_org_servico_social_pub_tipoorgsvsocial_check CHECK (tipoorgsvsocial = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE complexos.sau_org_servico_social_pub ADD CONSTRAINT sau_org_servico_social_pub_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE complexos.lpal_aglom_rural_de_ext_urbana ADD CONSTRAINT lpal_aglom_rural_de_ext_urbana_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
@@ -9512,7 +9506,7 @@ ALTER TABLE complexos.emu_terminal_rodoviario ADD CONSTRAINT emu_terminal_rodovi
 ALTER TABLE complexos.emu_terminal_rodoviario ADD CONSTRAINT emu_terminal_rodoviario_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE complexos.emu_terminal_rodoviario ADD CONSTRAINT emu_terminal_rodoviario_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
 ALTER TABLE complexos.emu_terminal_rodoviario ADD CONSTRAINT emu_terminal_rodoviario_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE complexos.emu_terminal_rodoviario ADD CONSTRAINT emu_terminal_rodoviario_tipoestrut_check CHECK (tipoestrut = ANY(ARRAY[1::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE complexos.emu_terminal_rodoviario ADD CONSTRAINT emu_terminal_rodoviario_tipoestrut_check CHECK (tipoestrut = ANY(ARRAY[1::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE complexos.emu_terminal_rodoviario ADD CONSTRAINT emu_terminal_rodoviario_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE complexos.laz_parque_tematico ADD CONSTRAINT laz_parque_tematico_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE complexos.laz_parque_tematico ADD CONSTRAINT laz_parque_tematico_divisaoativecon_check CHECK (divisaoativecon = ANY(ARRAY[92::SMALLINT]))#
@@ -9564,7 +9558,16 @@ ALTER TABLE complexos.laz_jardim_botanico ADD CONSTRAINT laz_jardim_botanico_div
 ALTER TABLE complexos.laz_jardim_botanico ADD CONSTRAINT laz_jardim_botanico_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE complexos.laz_jardim_botanico ADD CONSTRAINT laz_jardim_botanico_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE complexos.laz_jardim_botanico ADD CONSTRAINT laz_jardim_botanico_turistico_check CHECK (turistico = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE complexos.sau_especialidade_medica ADD CONSTRAINT sau_especialidade_medica_nome_check CHECK (nome = ANY(ARRAY[10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,4::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,44::SMALLINT,45::SMALLINT,46::SMALLINT,47::SMALLINT,48::SMALLINT,49::SMALLINT,5::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,53::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT]))#
+ALTER TABLE complexos.laz_clube_social ADD CONSTRAINT laz_clube_social_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE complexos.laz_clube_social ADD CONSTRAINT laz_clube_social_divisaoativecon_check CHECK (divisaoativecon = ANY(ARRAY[92::SMALLINT]))#
+ALTER TABLE complexos.laz_clube_social ADD CONSTRAINT laz_clube_social_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE complexos.laz_clube_social ADD CONSTRAINT laz_clube_social_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE complexos.laz_clube_social ADD CONSTRAINT laz_clube_social_turistico_check CHECK (turistico = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE complexos.laz_pesque_pague ADD CONSTRAINT laz_pesque_pague_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE complexos.laz_pesque_pague ADD CONSTRAINT laz_pesque_pague_divisaoativecon_check CHECK (divisaoativecon = ANY(ARRAY[92::SMALLINT]))#
+ALTER TABLE complexos.laz_pesque_pague ADD CONSTRAINT laz_pesque_pague_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE complexos.laz_pesque_pague ADD CONSTRAINT laz_pesque_pague_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE complexos.laz_pesque_pague ADD CONSTRAINT laz_pesque_pague_turistico_check CHECK (turistico = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE complexos.tra_estrut_apoio ADD CONSTRAINT tra_estrut_apoio_tipoexposicao_check CHECK (tipoexposicao = ANY(ARRAY[3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE complexos.tra_estrut_apoio ADD CONSTRAINT tra_estrut_apoio_modaluso_check CHECK (modaluso <@ ARRAY[10::SMALLINT,14::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
 ALTER TABLE complexos.tra_estrut_apoio ADD CONSTRAINT tra_estrut_apoio_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -9586,7 +9589,7 @@ ALTER TABLE complexos.edu_org_ensino_pub ADD CONSTRAINT edu_org_ensino_pub_grupo
 ALTER TABLE complexos.edu_org_ensino_pub ADD CONSTRAINT edu_org_ensino_pub_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
 ALTER TABLE complexos.edu_org_ensino_pub ADD CONSTRAINT edu_org_ensino_pub_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE complexos.sau_org_saude_pub ADD CONSTRAINT sau_org_saude_pub_classeativecon_check CHECK (classeativecon = ANY(ARRAY[10::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,32::SMALLINT,36::SMALLINT,7::SMALLINT,99::SMALLINT]))#
-ALTER TABLE complexos.sau_org_saude_pub ADD CONSTRAINT sau_org_saude_pub_grupoativecon_check CHECK (grupoativecon = ANY(ARRAY[30::SMALLINT,31::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE complexos.sau_org_saude_pub ADD CONSTRAINT sau_org_saude_pub_grupoativecon_check CHECK (grupoativecon = ANY(ARRAY[30::SMALLINT,31::SMALLINT,99::SMALLINT]))#
 ALTER TABLE complexos.sau_org_saude_pub ADD CONSTRAINT sau_org_saude_pub_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE complexos.edu_org_ensino_militar ADD CONSTRAINT edu_org_ensino_militar_grupoativecon_check CHECK (grupoativecon = ANY(ARRAY[16::SMALLINT,19::SMALLINT,20::SMALLINT,23::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE complexos.edu_org_ensino_militar ADD CONSTRAINT edu_org_ensino_militar_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
@@ -9594,13 +9597,14 @@ ALTER TABLE complexos.edu_org_ensino_militar ADD CONSTRAINT edu_org_ensino_milit
 ALTER TABLE complexos.ver_area_verde ADD CONSTRAINT ver_area_verde_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE complexos.ver_area_verde ADD CONSTRAINT ver_area_verde_paisagismo_check CHECK (paisagismo = ANY(ARRAY[1::SMALLINT]))#
 ALTER TABLE complexos.lpal_cidade ADD CONSTRAINT lpal_cidade_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE complexos.enc_subest_transm_distrib_energia_eletrica ADD CONSTRAINT enc_subest_transm_distrib_energia_eletrica_classeativecon_check CHECK (classeativecon = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,99::SMALLINT]))#
-ALTER TABLE complexos.enc_subest_transm_distrib_energia_eletrica ADD CONSTRAINT enc_subest_transm_distrib_energia_eletrica_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE complexos.laz_pesque_pague ADD CONSTRAINT laz_pesque_pague_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE complexos.laz_pesque_pague ADD CONSTRAINT laz_pesque_pague_divisaoativecon_check CHECK (divisaoativecon = ANY(ARRAY[92::SMALLINT]))#
-ALTER TABLE complexos.laz_pesque_pague ADD CONSTRAINT laz_pesque_pague_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE complexos.laz_pesque_pague ADD CONSTRAINT laz_pesque_pague_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE complexos.laz_pesque_pague ADD CONSTRAINT laz_pesque_pague_turistico_check CHECK (turistico = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE complexos.laz_complexo_desportivo_lazer ADD CONSTRAINT laz_complexo_desportivo_lazer_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE complexos.laz_complexo_desportivo_lazer ADD CONSTRAINT laz_complexo_desportivo_lazer_divisaoativecon_check CHECK (divisaoativecon = ANY(ARRAY[92::SMALLINT]))#
+ALTER TABLE complexos.laz_complexo_desportivo_lazer ADD CONSTRAINT laz_complexo_desportivo_lazer_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE complexos.laz_complexo_desportivo_lazer ADD CONSTRAINT laz_complexo_desportivo_lazer_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE complexos.laz_complexo_desportivo_lazer ADD CONSTRAINT laz_complexo_desportivo_lazer_turistico_check CHECK (turistico = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE complexos.edu_org_ensino ADD CONSTRAINT edu_org_ensino_grupoativecon_check CHECK (grupoativecon = ANY(ARRAY[16::SMALLINT,19::SMALLINT,20::SMALLINT,23::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE complexos.edu_org_ensino ADD CONSTRAINT edu_org_ensino_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
+ALTER TABLE complexos.edu_org_ensino ADD CONSTRAINT edu_org_ensino_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE complexos.fer_estacao_ferroviaria ADD CONSTRAINT fer_estacao_ferroviaria_tipoexposicao_check CHECK (tipoexposicao = ANY(ARRAY[3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE complexos.fer_estacao_ferroviaria ADD CONSTRAINT fer_estacao_ferroviaria_modaluso_check CHECK (modaluso <@ ARRAY[5::SMALLINT])#
 ALTER TABLE complexos.fer_estacao_ferroviaria ADD CONSTRAINT fer_estacao_ferroviaria_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -9611,8 +9615,8 @@ ALTER TABLE complexos.fer_estacao_ferroviaria ADD CONSTRAINT fer_estacao_ferrovi
 ALTER TABLE complexos.adm_instituicao_publica ADD CONSTRAINT adm_instituicao_publica_poderpublico_check CHECK (poderpublico = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
 ALTER TABLE complexos.adm_instituicao_publica ADD CONSTRAINT adm_instituicao_publica_grupoativecon_check CHECK (grupoativecon = ANY(ARRAY[15::SMALLINT,16::SMALLINT,19::SMALLINT,20::SMALLINT,23::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
 ALTER TABLE complexos.adm_instituicao_publica ADD CONSTRAINT adm_instituicao_publica_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE complexos.sau_org_servico_social ADD CONSTRAINT sau_org_servico_social_classeativecon_check CHECK (classeativecon = ANY(ARRAY[33::SMALLINT,34::SMALLINT,8::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE complexos.sau_org_servico_social ADD CONSTRAINT sau_org_servico_social_grupoativecon_check CHECK (grupoativecon = ANY(ARRAY[15::SMALLINT,32::SMALLINT,6::SMALLINT,8::SMALLINT,99::SMALLINT]))#
+ALTER TABLE complexos.sau_org_servico_social ADD CONSTRAINT sau_org_servico_social_classeativecon_check CHECK (classeativecon = ANY(ARRAY[33::SMALLINT,34::SMALLINT,8::SMALLINT,99::SMALLINT]))#
+ALTER TABLE complexos.sau_org_servico_social ADD CONSTRAINT sau_org_servico_social_grupoativecon_check CHECK (grupoativecon = ANY(ARRAY[15::SMALLINT,32::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE complexos.sau_org_servico_social ADD CONSTRAINT sau_org_servico_social_tipoorgsvsocial_check CHECK (tipoorgsvsocial = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE complexos.sau_org_servico_social ADD CONSTRAINT sau_org_servico_social_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE complexos.aer_complexo_aeroportuario ADD CONSTRAINT aer_complexo_aeroportuario_modaluso_check CHECK (modaluso <@ ARRAY[9::SMALLINT])#
@@ -9622,11 +9626,8 @@ ALTER TABLE complexos.aer_complexo_aeroportuario ADD CONSTRAINT aer_complexo_aer
 ALTER TABLE complexos.aer_complexo_aeroportuario ADD CONSTRAINT aer_complexo_aeroportuario_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE complexos.aer_complexo_aeroportuario ADD CONSTRAINT aer_complexo_aeroportuario_classificacao_check CHECK (classificacao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
 ALTER TABLE complexos.aer_complexo_aeroportuario ADD CONSTRAINT aer_complexo_aeroportuario_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE complexos.laz_complexo_desportivo_lazer ADD CONSTRAINT laz_complexo_desportivo_lazer_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE complexos.laz_complexo_desportivo_lazer ADD CONSTRAINT laz_complexo_desportivo_lazer_divisaoativecon_check CHECK (divisaoativecon = ANY(ARRAY[92::SMALLINT]))#
-ALTER TABLE complexos.laz_complexo_desportivo_lazer ADD CONSTRAINT laz_complexo_desportivo_lazer_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE complexos.laz_complexo_desportivo_lazer ADD CONSTRAINT laz_complexo_desportivo_lazer_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE complexos.laz_complexo_desportivo_lazer ADD CONSTRAINT laz_complexo_desportivo_lazer_turistico_check CHECK (turistico = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE complexos.enc_subest_transm_distrib_energia_eletrica ADD CONSTRAINT enc_subest_transm_distrib_energia_eletrica_classeativecon_check CHECK (classeativecon = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,99::SMALLINT]))#
+ALTER TABLE complexos.enc_subest_transm_distrib_energia_eletrica ADD CONSTRAINT enc_subest_transm_distrib_energia_eletrica_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE complexos.emu_terminal_hidroviario ADD CONSTRAINT emu_terminal_hidroviario_tipoexposicao_check CHECK (tipoexposicao = ANY(ARRAY[3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE complexos.emu_terminal_hidroviario ADD CONSTRAINT emu_terminal_hidroviario_modaluso_check CHECK (modaluso <@ ARRAY[10::SMALLINT])#
 ALTER TABLE complexos.emu_terminal_hidroviario ADD CONSTRAINT emu_terminal_hidroviario_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -12635,8 +12636,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_pesque_pague','ge','edf_posto_fiscal_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_pub_civil_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','aer_complexo_aeroportuario','ge','edf_edif_constr_aeroportuaria_a','id_complexo_aeroportuario')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_energia_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_saneamento_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_energia_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','hdv_complexo_portuario','ge','cb_area_estrut_transporte_a','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_pesque_pague','ge','laz_ruina_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_jardim_zoologico','ge','edf_edif_pub_civil_p','id_complexo_desportivo_lazer')#
@@ -12646,8 +12647,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_privada','pe','tra_patio_p','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','fer_estacao_ferroviaria','ge','cb_area_estrut_transporte_a','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_banheiro_publico_p','id_assentamento_precario')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_saude_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_posto_fiscal_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_saude_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','emu_terminal_rodoviario','ge','edf_posto_fiscal_a','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_desportivo','ge','laz_ruina_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_comerc_serv','complexos','laz_kartodromo','id_org_comerc_serv')#
@@ -12723,8 +12724,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','rdr_elemento_hidrografico','complexos','rdr_trecho_curso_dagua','id_elemento_hidrografico')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_privada','ge','edf_edif_ensino_p','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','hid_arquipelago','pe','hid_ilha_a','id_arquipelago')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_pub_militar_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_hab_indigena_p','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_pub_militar_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_pub','ge','edf_edif_ensino_a','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','emu_terminal_hidroviario','pe','eco_deposito_geral_a','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_clube_social','ge','laz_pista_competicao_l','id_complexo_desportivo_lazer')#
@@ -13108,8 +13109,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edificacao_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_militar','complexos','laz_jardim_botanico','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_privada','complexos','laz_velodromo','id_org_ensino')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_energia_a','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_saneamento_a','id_assentamento_precario')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_energia_a','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_constr_portuaria_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_pub_civil_p','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_habitacional_a','id_complexo_habitacional')#
@@ -13134,8 +13135,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_campo_aeromodelismo','ge','cb_area_ruinas_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_campo_de_golfe','ge','edf_edif_constr_lazer_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_velodromo','ge','laz_ruina','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_hab_indigena_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_pub_militar_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_hab_indigena_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_constr_turistica_a','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','hdv_complexo_portuario','ge','edf_posto_fiscal_a','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_aquatico','ge','edf_edif_constr_lazer_a','id_complexo_desportivo_lazer')#
@@ -13241,8 +13242,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_recreativo','ge','edf_posto_fiscal_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_constr_lazer_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_jardim_zoologico','ge','edf_edif_constr_turistica_p','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_saude_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_posto_fiscal_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_saude_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_constr_turistica_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','enc_complexo_gerador_energia_eletrica','pe','enc_hidreletrica_p','id_complexo_gerador_energia_eletrica')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','eco_madeireira','complexos','adm_org_agropec_ext_veg_pesca','id_org_industrial')#
@@ -13259,8 +13260,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','hdv_complexo_portuario','pe','tra_patio','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_desportivo','ge','laz_arquibancada_l','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_jardim_botanico','ge','laz_pista_competicao_p','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_posto_fiscal_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_saude_p','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_posto_fiscal_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_posto_policia_rod_federal_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_kartodromo','ge','edf_edif_constr_turistica_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_constr_turistica_p','id_complexo_habitacional')#
@@ -13787,8 +13788,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_tematico','ge','laz_ruina','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_habitacional_a','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_pub_civil_p','id_complexo_habitacional')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_energia_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_saneamento_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_energia_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','rtr_via_ferrea','pe','tra_passagem_elevada_viaduto_l','id_via_ferrea')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_pub_civil','complexos','laz_parque_urbano','id_org_pub_civil')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_pub_militar','complexos','laz_complexo_desportivo','id_org_pub_militar')#
@@ -13931,8 +13932,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','ver_area_verde','pe','veg_veg_restinga_a','id_area_verde')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_pub_civil','complexos','laz_velodromo','id_org_pub_civil')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_industrial_a','id_assentamento_precario')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_religiosa_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_saude_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_religiosa_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_agropec_ext_veg_pesca_p','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipodromo','ge','laz_arquibancada_l','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_capital','pe','lpal_posic_geo_localidade_p','id_localidade')#
@@ -14583,7 +14584,7 @@ ALTER TABLE ONLY ge.ver_descontinuidade_geometrica_p ALTER COLUMN geometriaaprox
 ALTER TABLE ONLY ge.ver_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY complexos.laz_parque_urbano ALTER COLUMN divisaoativecon SET DEFAULT 92#
 ALTER TABLE ONLY complexos.laz_parque_urbano ALTER COLUMN administracao SET DEFAULT 95#
-ALTER TABLE ONLY complexos.sau_org_saude ALTER COLUMN classeativecon SET DEFAULT 95#
+ALTER TABLE ONLY complexos.sau_org_saude ALTER COLUMN classeativecon SET DEFAULT 99#
 ALTER TABLE ONLY complexos.sau_org_saude ALTER COLUMN grupoativecon SET DEFAULT 95#
 ALTER TABLE ONLY complexos.sau_org_saude ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY complexos.laz_complexo_desportivo ALTER COLUMN divisaoativecon SET DEFAULT 92#
@@ -14611,7 +14612,7 @@ ALTER TABLE ONLY complexos.adm_org_pub_civil ALTER COLUMN administracao SET DEFA
 ALTER TABLE ONLY complexos.adm_org_pub_civil ALTER COLUMN tipoorgcivil SET DEFAULT 95#
 ALTER TABLE ONLY complexos.laz_complexo_recreativo ALTER COLUMN divisaoativecon SET DEFAULT 92#
 ALTER TABLE ONLY complexos.laz_complexo_recreativo ALTER COLUMN administracao SET DEFAULT 95#
-ALTER TABLE ONLY complexos.sau_org_saude_militar ALTER COLUMN classeativecon SET DEFAULT 95#
+ALTER TABLE ONLY complexos.sau_org_saude_militar ALTER COLUMN classeativecon SET DEFAULT 99#
 ALTER TABLE ONLY complexos.sau_org_saude_militar ALTER COLUMN grupoativecon SET DEFAULT 95#
 ALTER TABLE ONLY complexos.sau_org_saude_militar ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY complexos.adm_org_pub_militar ALTER COLUMN classeativecon SET DEFAULT 95#
@@ -14634,8 +14635,8 @@ ALTER TABLE ONLY complexos.rod_estacao_rodoviaria ALTER COLUMN modaluso SET DEFA
 ALTER TABLE ONLY complexos.rod_estacao_rodoviaria ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY complexos.rod_estacao_rodoviaria ALTER COLUMN tipoestrut SET DEFAULT 1#
 ALTER TABLE ONLY complexos.rod_estacao_rodoviaria ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY complexos.sau_especialidade_medica ALTER COLUMN nome SET DEFAULT 17#
-ALTER TABLE ONLY complexos.sau_org_servico_social_pub ALTER COLUMN classeativecon SET DEFAULT 95#
+ALTER TABLE ONLY complexos.sau_especialidade_medica ALTER COLUMN nomeespecialidade SET DEFAULT 17#
+ALTER TABLE ONLY complexos.sau_org_servico_social_pub ALTER COLUMN classeativecon SET DEFAULT 99#
 ALTER TABLE ONLY complexos.sau_org_servico_social_pub ALTER COLUMN grupoativecon SET DEFAULT 95#
 ALTER TABLE ONLY complexos.sau_org_servico_social_pub ALTER COLUMN tipoorgsvsocial SET DEFAULT 5#
 ALTER TABLE ONLY complexos.sau_org_servico_social_pub ALTER COLUMN administracao SET DEFAULT 95#
@@ -14682,7 +14683,7 @@ ALTER TABLE ONLY complexos.laz_campo_de_golfe ALTER COLUMN administracao SET DEF
 ALTER TABLE ONLY complexos.adm_instituicao_publica ALTER COLUMN poderpublico SET DEFAULT 95#
 ALTER TABLE ONLY complexos.adm_instituicao_publica ALTER COLUMN grupoativecon SET DEFAULT 95#
 ALTER TABLE ONLY complexos.adm_instituicao_publica ALTER COLUMN administracao SET DEFAULT 95#
-ALTER TABLE ONLY complexos.sau_org_saude_privada ALTER COLUMN classeativecon SET DEFAULT 95#
+ALTER TABLE ONLY complexos.sau_org_saude_privada ALTER COLUMN classeativecon SET DEFAULT 99#
 ALTER TABLE ONLY complexos.sau_org_saude_privada ALTER COLUMN grupoativecon SET DEFAULT 95#
 ALTER TABLE ONLY complexos.sau_org_saude_privada ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY complexos.laz_parque_aquatico ALTER COLUMN divisaoativecon SET DEFAULT 92#
@@ -14710,8 +14711,8 @@ ALTER TABLE ONLY complexos.fer_estacao_metroviaria ALTER COLUMN operacional SET 
 ALTER TABLE ONLY complexos.edu_org_ensino_pub ALTER COLUMN grupoativecon SET DEFAULT 95#
 ALTER TABLE ONLY complexos.edu_org_ensino_pub ALTER COLUMN jurisdicao SET DEFAULT 95#
 ALTER TABLE ONLY complexos.edu_org_ensino_pub ALTER COLUMN administracao SET DEFAULT 95#
-ALTER TABLE ONLY complexos.sau_org_saude_pub ALTER COLUMN classeativecon SET DEFAULT 95#
-ALTER TABLE ONLY complexos.sau_org_saude_pub ALTER COLUMN grupoativecon SET DEFAULT 95#
+ALTER TABLE ONLY complexos.sau_org_saude_pub ALTER COLUMN classeativecon SET DEFAULT 99#
+ALTER TABLE ONLY complexos.sau_org_saude_pub ALTER COLUMN grupoativecon SET DEFAULT 99#
 ALTER TABLE ONLY complexos.sau_org_saude_pub ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY complexos.edu_org_ensino_militar ALTER COLUMN grupoativecon SET DEFAULT 95#
 ALTER TABLE ONLY complexos.edu_org_ensino_militar ALTER COLUMN jurisdicao SET DEFAULT 95#
@@ -14730,7 +14731,7 @@ ALTER TABLE ONLY complexos.fer_estacao_ferroviaria ALTER COLUMN situacaofisica S
 ALTER TABLE ONLY complexos.fer_estacao_ferroviaria ALTER COLUMN tipoestrut SET DEFAULT 1#
 ALTER TABLE ONLY complexos.fer_estacao_ferroviaria ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY complexos.eco_madeireira ALTER COLUMN secaoativecon SET DEFAULT 95#
-ALTER TABLE ONLY complexos.sau_org_servico_social ALTER COLUMN classeativecon SET DEFAULT 95#
+ALTER TABLE ONLY complexos.sau_org_servico_social ALTER COLUMN classeativecon SET DEFAULT 99#
 ALTER TABLE ONLY complexos.sau_org_servico_social ALTER COLUMN grupoativecon SET DEFAULT 95#
 ALTER TABLE ONLY complexos.sau_org_servico_social ALTER COLUMN tipoorgsvsocial SET DEFAULT 95#
 ALTER TABLE ONLY complexos.sau_org_servico_social ALTER COLUMN administracao SET DEFAULT 95#
@@ -15171,8 +15172,11 @@ ALTER TABLE ONLY pe.hdv_eclusa ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.hdv_eclusa ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY pe.hdv_eclusa ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.rel_isolinha_hipsometrica ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.fer_ponto_ferroviario_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.fer_ponto_ferroviario_p ALTER COLUMN relacionado SET DEFAULT 30#
+ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN tipoestgerad SET DEFAULT 9#
+ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN tipocombustivel SET DEFAULT 95#
 ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN modaluso SET DEFAULT ARRAY[4::SMALLINT]#
 ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN tipopavimentacao SET DEFAULT 95#
@@ -15372,11 +15376,7 @@ ALTER TABLE ONLY pe.tra_tunel_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.tra_tunel_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.tra_tunel_p ALTER COLUMN tipotunel SET DEFAULT 1#
 ALTER TABLE ONLY pe.tra_tunel_p ALTER COLUMN posicaopista SET DEFAULT 95#
-ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN tipoestgerad SET DEFAULT 9#
-ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN tipocombustivel SET DEFAULT 95#
+ALTER TABLE ONLY pe.fer_ponto_ferroviario_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.fer_girador_ferroviario_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.fer_girador_ferroviario_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.fer_girador_ferroviario_p ALTER COLUMN administracao SET DEFAULT 95#
