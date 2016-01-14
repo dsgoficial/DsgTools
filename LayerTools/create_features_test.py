@@ -128,7 +128,7 @@ class CreateFeatureTest():
                         else:
                             sql += 'INSERT INTO complexos.'+layer.name()
                             columns = '(nome,'+field.name()+')'
-                            values = ' VALUES(\'teste\',ARRAY['+value+'])'
+                            values = ' VALUES(\'teste\',ARRAY['+key+'])'
                             sql += columns+values
                         query = QSqlQuery(self.db)
                         filetext += self.executeSql(query, sql)
@@ -210,5 +210,5 @@ class CreateFeatureTest():
                 QgsMessageLog.logMessage(filetext, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
 layers = iface.mapCanvas().layers()
-creator = CreateFeatureTest(layers, True)
+creator = CreateFeatureTest(layers, False)
 # creator.testComplexAggregation() #to run this method QGIS TOC (layers tree) must be empty
