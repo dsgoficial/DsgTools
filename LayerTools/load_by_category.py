@@ -279,19 +279,39 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
                 self.polygonWithElement.append(i[0])
 
     def loadLayers(self, type, categories, table_names):
-        if self.parentTreeNode is None:
-            self.parentTreeNode = qgis.utils.iface.legendInterface (). addGroup (self.widget.abstractDb.getDatabaseName(), -1)
+        dbName = self.widget.abstractDb.getDatabaseName()
+        groupList = qgis.utils.iface.legendInterface().groups()
+        groupRelationshipList = qgis.utils.iface.legendInterface().groupLayerRelationship()
+        if dbName not in groupList:
+            self.parentTreeNode = qgis.utils.iface.legendInterface (). addGroup (dbName, -1)
+        else:
+            self.parentTreeNode = groupList.index(dbName)
 
         if type == 'p':
-            idGrupo = qgis.utils.iface.legendInterface (). addGroup (self.tr('Point'), True,self.parentTreeNode)
+            if len(groupList[self.parentTreeNode::]) == 0:
+                idGrupo = qgis.utils.iface.legendInterface (). addGroup (self.tr('Point'), True,self.parentTreeNode)
+            elif self.tr('Point') not in groupRelationshipList[self.parentTreeNode][1]:
+                idGrupo = qgis.utils.iface.legendInterface (). addGroup (self.tr('Point'), True,self.parentTreeNode)
+            else:
+                idGrupo = groupList[self.parentTreeNode::].index(self.tr('Point'))
             for category in categories:
                 self.prepareLayer(category, table_names, idGrupo)
         if type == 'l':
-            idGrupo = qgis.utils.iface.legendInterface (). addGroup (self.tr('Line'), True,self.parentTreeNode)
+            if len(groupList[self.parentTreeNode::]) == 0:
+                idGrupo = qgis.utils.iface.legendInterface (). addGroup (self.tr('Line'), True,self.parentTreeNode)
+            elif self.tr('Line') not in groupRelationshipList[self.parentTreeNode][1]:
+                idGrupo = qgis.utils.iface.legendInterface (). addGroup (self.tr('Line'), True,self.parentTreeNode)
+            else:
+                idGrupo = groupList[self.parentTreeNode::].index(self.tr('Line'))
             for category in categories:
                 self.prepareLayer(category, table_names, idGrupo)
         if type == 'a':
-            idGrupo = qgis.utils.iface.legendInterface (). addGroup (self.tr('Area'), True,self.parentTreeNode)
+            if len(groupList[self.parentTreeNode::]) == 0:
+                idGrupo = qgis.utils.iface.legendInterface (). addGroup (self.tr('Area'), True,self.parentTreeNode)
+            elif self.tr('Area') not in groupRelationshipList[self.parentTreeNode][1]:
+                idGrupo = qgis.utils.iface.legendInterface (). addGroup (self.tr('Area'), True,self.parentTreeNode)
+            else:
+                idGrupo = groupList[self.parentTreeNode::].index(self.tr('Area'))
             for category in categories:
                 self.prepareLayer(category, table_names, idGrupo)
                 

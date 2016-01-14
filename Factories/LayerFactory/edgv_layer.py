@@ -28,7 +28,7 @@ from PyQt4.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.Qt import QObject
 
 # QGIS imports
-from qgis.core import QgsMapLayerRegistry, QgsVectorLayer,QgsDataSourceURI, QgsMessageLog, QgsProject
+from qgis.core import QgsVectorLayer,QgsDataSourceURI, QgsMessageLog
 from qgis.utils import iface
 
 #DsgTools imports
@@ -55,14 +55,6 @@ class EDGVLayer(QObject):
         database = self.abstractDb.db.databaseName()
         user = self.abstractDb.db.userName()
         password = self.abstractDb.db.password()
-        
-        treeRoot = QgsProject.instance().layerTreeRoot()
-        databaseRoot = treeRoot.findGroup(database)
-        lnGroup = databaseRoot.findGroup("Dominios")
-        if not lnGroup:
-            databaseRoot.addGroup("Dominios")
-            lnGroup = databaseRoot.findGroup("Dominios")
-        idx = iface.legendInterface().groups().index('Dominios')
 
         vlayer = iface.addVectorLayer(self.uri.uri(), self.layer_name, self.provider)
         if not vlayer:
@@ -73,28 +65,40 @@ class EDGVLayer(QObject):
         attrList = vlayer.attributeList()
         for i in attrList:
             if vlayer.editorWidgetV2(i) == 'ValueRelation':
+                groupList = iface.legendInterface().groups()
+                groupRelationshipList = iface.legendInterface().groupLayerRelationship()
+                if database not in groupList:
+                    idx = iface.legendInterface().addGroup(database, True,-1)
+                    domainIdGroup = iface.legendInterface().addGroup(self.tr("Dominios"), True, idx)
+                else:
+                    idx = groupList.index(database)
+                    if "Dominios" not in groupList[idx::]:
+                        domainIdGroup = iface.legendInterface().addGroup(self.tr("Dominios"), True, idx)
+                    else:
+                        domainIdGroup = groupList[idx::].index("Dominios")
+
                 valueRelationDict = vlayer.editorWidgetV2Config(i)
                 domainTableName = valueRelationDict['Layer']
-                loadedLayers = QgsProject.instance().layerTreeRoot().findLayers()
+                loadedLayers = iface.legendInterface().layers()
                 domainLoaded = False
                 for ll in loadedLayers:
-                    if ll.layer().name() == domainTableName:
-                        candidateUri = QgsDataSourceURI(ll.layer().dataProvider().dataSourceUri())
+                    if ll.name() == domainTableName:
+                        candidateUri = QgsDataSourceURI(ll.dataProvider().dataSourceUri())
                         if host == candidateUri.host() and database == candidateUri.database() and port == int(candidateUri.port()):
                             domainLoaded = True
-                            domLayer = ll.layer()
+                            domLayer = ll
                 if not domainLoaded:
                     uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (database, host, port, user, password, domainTableName)
                     #TODO Load domain layer into a group
                     domLayer = iface.addVectorLayer(uri, domainTableName, self.provider)
-                    iface.legendInterface().moveLayer(domLayer, idx)
+                    iface.legendInterface().moveLayer(domLayer, domainIdGroup)
                 valueRelationDict['Layer'] = domLayer.id()
                 vlayer.setEditorWidgetV2Config(i,valueRelationDict)
 
         self.qmlLoaded.emit()
         
-        if idSubgrupo:
-            iface.legendInterface().moveLayer(vlayer, idSubgrupo)
+
+        iface.legendInterface().moveLayer(vlayer, idSubgrupo)
             
         if not vlayer.isValid():
             QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

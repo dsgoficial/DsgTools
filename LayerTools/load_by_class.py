@@ -30,6 +30,7 @@ from qgis.gui import QgsMessageBar
 from PyQt4 import QtGui, QtCore, uic
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QApplication, QCursor
+import qgis as qgis
 
 #DsgTools imports
 from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
@@ -133,8 +134,14 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
         if len(self.selectedClasses)>0:
             try:
                 for layer in self.selectedClasses:
+                    dbName = self.widget.abstractDb.getDatabaseName()
+                    groupList =  qgis.utils.iface.legendInterface().groups()
                     edgvLayer = self.layerFactory.makeLayer(self.widget.abstractDb, self.codeList, layer)
-                    edgvLayer.load(self.widget.crs)
+                    if dbName in groupList:
+                        edgvLayer.load(self.widget.crs,groupList.index(dbName))
+                    else:
+                        self.parentTreeNode = qgis.utils.iface.legendInterface().addGroup(self.widget.abstractDb.getDatabaseName(), -1)
+                        edgvLayer.load(self.widget.crs,self.parentTreeNode)
                 self.restoreInitialState()
                 self.close()
             except:

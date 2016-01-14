@@ -22,6 +22,7 @@ encoding//LayerTools/create_features_test.py=utf-8
 encoding//LayerTools/load_by_category.py=utf-8
 encoding//LayerTools/load_by_class.py=utf-8
 encoding//LayerTools/ui_create_inom_dialog.py=utf-8
+encoding//QmlTools/qml_creator.py=utf-8
 encoding//ServerTools/exploreDb.py=utf-8
 encoding//ServerTools/serverConfigurator.py=utf-8
 encoding//ServerTools/serverDBExplorer.py=utf-8
