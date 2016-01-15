@@ -62,8 +62,9 @@ class EDGVLayer(QObject):
 
         vlayer.setCrs(crs)
         vlayer.loadNamedStyle(vlayerQml, False)
-        attrList = vlayer.attributeList()
-        for i in attrList:
+        attrList = vlayer.pendingFields()
+        for field in attrList:
+            i = vlayer.fieldNameIndex(field.name())
             if vlayer.editorWidgetV2(i) == 'ValueRelation':
                 groupList = iface.legendInterface().groups()
                 groupRelationshipList = iface.legendInterface().groupLayerRelationship()

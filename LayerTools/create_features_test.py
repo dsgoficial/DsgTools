@@ -80,7 +80,7 @@ class CreateFeatureTest():
         schema = str(QgsDataSourceURI(layer.dataProvider().dataSourceUri()).schema())
 
         #Creating the log file
-        file = open(os.path.join(currentPath, 'LayerTools', 'Problemas', layer.name()+'_relatorio_banco_2016_01_12.txt'), 'w')
+        file = open(os.path.join(currentPath, 'LayerTools', 'Problemas', layer.name()+'_relatorio_banco_2016_01_15.txt'), 'w')
         filetext = ''
         #Iterate on every field
         for field in fields:
@@ -179,6 +179,9 @@ class CreateFeatureTest():
         return geom
     
     def testComplexAggregation(self):
+        #Creating the log file
+        file = open(os.path.join(currentPath, 'LayerTools', 'Problemas', 'complexos_relatorio_banco_2016_01_15.txt'), 'w')
+        
         sql = 'SELECT * from public.complex_schema order by complex asc'
         query = QSqlQuery(sql, self.db)
         while query.next():
@@ -208,7 +211,9 @@ class CreateFeatureTest():
                 filetext += 'Erro obtido: '+query3.lastError().text()+'\n'
                 filetext += '-------------------------------------------\n'
                 QgsMessageLog.logMessage(filetext, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                file.write(filetext)
+        file.close()
 
 layers = iface.mapCanvas().layers()
-creator = CreateFeatureTest(layers, False)
-# creator.testComplexAggregation() #to run this method QGIS TOC (layers tree) must be empty
+#creator = CreateFeatureTest(layers, False)
+creator.testComplexAggregation() #to run this method QGIS TOC (layers tree) must be empty
