@@ -27,8 +27,9 @@ from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsField
+from qgis.core import QgsMapLayer, QgsField, QgsDataSourceURI
 from PyQt4.QtGui import QTableWidgetItem
+from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'code_list.ui'))
@@ -75,6 +76,40 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         valueDict = self.currLayer.editorWidgetV2Config(fieldIndex) 
         keys = [value for value in valueDict.keys() if not (value == 'UseHtml' or value == 'IsMultiline')]
         return valueDict, keys
+    
+    def makeValueRelationDict(self, valueDict):
+        ret = dict()
+
+        codes = valueDict['FilterExpression'].replace('code in (', '').replace(')','').split(',')
+        keyColumn = valueDict['Key']
+        valueColumn = valueDict['Value']
+        table = valueDict['Layer'][:-17]#removing the date-time characters
+        
+        uri = QgsDataSourceURI(self.currLayer.dataProvider().dataSourceUri())
+        if uri.host() == '':
+            db = QSqlDatabase('QSQLITE')
+            db.setDatabaseName(uri.database())
+        else:
+            db = QSqlDatabase('QPSQL')
+            db.setHostName(uri.host())
+            db.setPort(int(uri.port()))
+            db.setDatabaseName(uri.database())
+            db.setUserName(uri.username())
+            db.setPassword(uri.password())
+        
+        if not db.open():
+            db.close()
+            return ret
+        
+        query = QSqlQuery('select code, code_name from dominios.%s' % table, db)
+        while query.next():
+            code = str(query.value(0)).decode('UTF-8')
+            code_name = str(query.value(1)).decode('UTF-8')
+            ret[code_name] = code
+            
+        db.close()
+                
+        return ret
         
     @pyqtSlot(int)
     def on_comboBox_currentIndexChanged(self):
@@ -88,6 +123,10 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         field = self.comboBox.currentText()
         valueDict, keys = self.getCodeListDict(field)
         
+        if 'FilterExpression' in keys:
+            valueDict = self.makeValueRelationDict(valueDict)
+            keys = valueDict.keys()
+
         self.tableWidget.setRowCount(len(keys))
         
         for row, value in enumerate(keys):
