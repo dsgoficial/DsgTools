@@ -4760,7 +4760,7 @@ INSERT INTO dominios.tipo_alter_antrop (code,code_name) values (24,'Caixa de emp
 INSERT INTO dominios.tipo_alter_antrop (code,code_name) values (25,'Área Aterrada')#
 INSERT INTO dominios.tipo_alter_antrop (code,code_name) values (26,'Corte')#
 INSERT INTO dominios.tipo_alter_antrop (code,code_name) values (27,'Aterro')#
-INSERT INTO dominios.tipo_alter_antrop (code,code_name) values (32,'Área de extração mineral abandonada')#
+INSERT INTO dominios.tipo_alter_antrop (code,code_name) values (32,'Área de extração mineral')#
 INSERT INTO dominios.tipo_alter_antrop (code,code_name) values (31,'Vala')#
 INSERT INTO dominios.tipo_alter_antrop (code,code_name) values (30,'Canal')#
 INSERT INTO dominios.tipo_alter_antrop (code,code_name) values (28,'Resíduo de bota-fora')#
@@ -10049,7 +10049,7 @@ ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_procextracao_c
 ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoproduto_check CHECK (tipoproduto <@ ARRAY[100::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,45::SMALLINT,46::SMALLINT,47::SMALLINT,48::SMALLINT,49::SMALLINT,5::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,53::SMALLINT,54::SMALLINT,55::SMALLINT,56::SMALLINT,57::SMALLINT,58::SMALLINT,59::SMALLINT,6::SMALLINT,60::SMALLINT,61::SMALLINT,62::SMALLINT,63::SMALLINT,64::SMALLINT,65::SMALLINT,66::SMALLINT,67::SMALLINT,68::SMALLINT,69::SMALLINT,70::SMALLINT,71::SMALLINT,72::SMALLINT,73::SMALLINT,74::SMALLINT,75::SMALLINT,76::SMALLINT,77::SMALLINT,78::SMALLINT,79::SMALLINT,80::SMALLINT,81::SMALLINT,82::SMALLINT,83::SMALLINT,84::SMALLINT,85::SMALLINT,86::SMALLINT,87::SMALLINT,88::SMALLINT,89::SMALLINT,90::SMALLINT,91::SMALLINT,92::SMALLINT,93::SMALLINT,94::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[99::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[32::SMALLINT]))#
 ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_formaextracao_check CHECK (formaextracao = ANY(ARRAY[5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.lpal_descontinuidade_geometrica_p ADD CONSTRAINT lpal_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.lpal_descontinuidade_geometrica_p ADD CONSTRAINT lpal_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
@@ -10092,7 +10092,7 @@ ALTER TABLE pe.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_procextracao_c
 ALTER TABLE pe.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_tipoproduto_check CHECK (tipoproduto <@ ARRAY[100::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,45::SMALLINT,46::SMALLINT,47::SMALLINT,48::SMALLINT,49::SMALLINT,5::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,53::SMALLINT,54::SMALLINT,55::SMALLINT,56::SMALLINT,57::SMALLINT,58::SMALLINT,59::SMALLINT,6::SMALLINT,60::SMALLINT,61::SMALLINT,62::SMALLINT,63::SMALLINT,64::SMALLINT,65::SMALLINT,66::SMALLINT,67::SMALLINT,68::SMALLINT,69::SMALLINT,70::SMALLINT,71::SMALLINT,72::SMALLINT,73::SMALLINT,74::SMALLINT,75::SMALLINT,76::SMALLINT,77::SMALLINT,78::SMALLINT,79::SMALLINT,80::SMALLINT,81::SMALLINT,82::SMALLINT,83::SMALLINT,84::SMALLINT,85::SMALLINT,86::SMALLINT,87::SMALLINT,88::SMALLINT,89::SMALLINT,90::SMALLINT,91::SMALLINT,92::SMALLINT,93::SMALLINT,94::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[99::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[32::SMALLINT]))#
 ALTER TABLE pe.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_formaextracao_check CHECK (formaextracao = ANY(ARRAY[5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_a ADD CONSTRAINT aer_pista_ponto_pouso_a_usopista_check CHECK (usopista = ANY(ARRAY[11::SMALLINT,12::SMALLINT,13::SMALLINT,6::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_a ADD CONSTRAINT aer_pista_ponto_pouso_a_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT]))#
@@ -10547,7 +10547,7 @@ ALTER TABLE pe.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_procextracao_c
 ALTER TABLE pe.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_tipoproduto_check CHECK (tipoproduto <@ ARRAY[100::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,45::SMALLINT,46::SMALLINT,47::SMALLINT,48::SMALLINT,49::SMALLINT,5::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,53::SMALLINT,54::SMALLINT,55::SMALLINT,56::SMALLINT,57::SMALLINT,58::SMALLINT,59::SMALLINT,6::SMALLINT,60::SMALLINT,61::SMALLINT,62::SMALLINT,63::SMALLINT,64::SMALLINT,65::SMALLINT,66::SMALLINT,67::SMALLINT,68::SMALLINT,69::SMALLINT,70::SMALLINT,71::SMALLINT,72::SMALLINT,73::SMALLINT,74::SMALLINT,75::SMALLINT,76::SMALLINT,77::SMALLINT,78::SMALLINT,79::SMALLINT,80::SMALLINT,81::SMALLINT,82::SMALLINT,83::SMALLINT,84::SMALLINT,85::SMALLINT,86::SMALLINT,87::SMALLINT,88::SMALLINT,89::SMALLINT,90::SMALLINT,91::SMALLINT,92::SMALLINT,93::SMALLINT,94::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[99::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[32::SMALLINT]))#
 ALTER TABLE pe.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_formaextracao_check CHECK (formaextracao = ANY(ARRAY[5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rel_gruta_caverna_p ADD CONSTRAINT rel_gruta_caverna_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_gruta_caverna_p ADD CONSTRAINT rel_gruta_caverna_p_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[15::SMALLINT,20::SMALLINT]))#
@@ -12683,8 +12683,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','rtr_via_ferrea','pe','tra_passagem_elevada_viaduto','id_via_ferrea')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_pub_civil_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_pub','complexos','laz_marina','id_org_ensino')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_energia_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_saneamento_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_energia_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','sau_org_saude_pub','ge','cb_area_saude_a','id_org_saude')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_residencial_p','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aglomerado_rural','complexos','cb_complexo_habitacional','id_localidade')#
@@ -12724,8 +12724,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','rdr_elemento_hidrografico','complexos','rdr_trecho_curso_dagua','id_elemento_hidrografico')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_privada','ge','edf_edif_ensino_p','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','hid_arquipelago','pe','hid_ilha_a','id_arquipelago')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_pub_militar_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_hab_indigena_p','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_pub_militar_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_pub','ge','edf_edif_ensino_a','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','emu_terminal_hidroviario','pe','eco_deposito_geral_a','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_clube_social','ge','laz_pista_competicao_l','id_complexo_desportivo_lazer')#
@@ -12995,12 +12995,12 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','emu_terminal_ferroviario','ge','cb_area_estrut_transporte_a','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','aer_complexo_aeroportuario','ge','edf_edif_comerc_serv_p','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_desenv_social_p','id_complexo_habitacional')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_religiosa_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_saude_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_religiosa_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','sb_complexo_abast_agua','ge','edf_edif_abast_agua_p','id_complexo_abast_agua')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_comerc_serv_a','id_assentamento_precario')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_saude_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_religiosa_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_saude_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipodromo','ge','laz_ruina_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','eco_frigorifico_matadouro','pe','eco_deposito_geral_a','id_org_industrial')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_urbano','ge','laz_ruina_a','id_complexo_desportivo_lazer')#
@@ -13109,8 +13109,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edificacao_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_militar','complexos','laz_jardim_botanico','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_privada','complexos','laz_velodromo','id_org_ensino')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_energia_a','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_saneamento_a','id_assentamento_precario')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_energia_a','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_constr_portuaria_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_pub_civil_p','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_habitacional_a','id_complexo_habitacional')#
@@ -13150,8 +13150,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_clube_social','ge','laz_piscina_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_privada','ge','edf_edif_ensino_a','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipica','ge','laz_arquibancada_l','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_hab_indigena_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_pub_militar_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_hab_indigena_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_pesque_pague','ge','cb_largo_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino','complexos','laz_parque_urbano','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_pub','complexos','laz_estande_de_tiro','id_org_ensino')#
@@ -13265,8 +13265,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_posto_policia_rod_federal_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_kartodromo','ge','edf_edif_constr_turistica_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_constr_turistica_p','id_complexo_habitacional')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_posto_fiscal_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_saude_p','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_posto_fiscal_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_instituicao_publica','complexos','adm_org_pub_militar','id_instituicao_publica')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_pub','pe','tra_patio_p','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_pesque_pague','ge','edf_edif_pub_civil_p','id_complexo_desportivo_lazer')#
@@ -13298,8 +13298,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_marina','ge','laz_ruina_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_saneamento_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_constr_portuaria_p','id_assentamento_precario')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_saneamento_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_energia_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_saneamento_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_saneamento_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','fer_estacao_metroviaria','ge','edf_edif_comerc_serv_p','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','sau_org_servico_social','ge','edf_edif_servico_social_p','id_org_servico_social')#
@@ -13335,8 +13335,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_agropec_ext_veg_pesca_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_recreativo','ge','edf_edif_policia_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_industrial_a','id_complexo_habitacional')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_comerc_serv','pe','enc_trecho_comunic_l','id_org_comerc_serv')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_comerc_serv','complexos','laz_complexo_desportivo','id_org_comerc_serv')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_comerc_serv','pe','enc_trecho_comunic_l','id_org_comerc_serv')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_industrial','ge','cb_area_industrial_a','id_org_industrial')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_posto_policia_militar_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino','ge','edf_edif_ensino_a','id_org_ensino')#
@@ -13721,8 +13721,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','fer_estacao_metroviaria','pe','eco_deposito_geral','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','fer_estacao_ferroviaria','ge','cb_estacionamento_a','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_aquatico','ge','laz_ruina_p','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_saude_a','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_religiosa_a','id_assentamento_precario')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_saude_a','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_comerc_serv_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_recreativo','ge','cb_area_ruinas_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','sau_org_saude_pub','ge','edf_edif_saude_a','id_org_saude')#
@@ -13932,8 +13932,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','ver_area_verde','pe','veg_veg_restinga_a','id_area_verde')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_pub_civil','complexos','laz_velodromo','id_org_pub_civil')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_industrial_a','id_assentamento_precario')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_religiosa_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_saude_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_religiosa_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_agropec_ext_veg_pesca_p','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipodromo','ge','laz_arquibancada_l','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_capital','pe','lpal_posic_geo_localidade_p','id_localidade')#
@@ -15106,7 +15106,7 @@ ALTER TABLE ONLY pe.eco_ext_mineral_l ALTER COLUMN tipoextmin SET DEFAULT 95#
 ALTER TABLE ONLY pe.eco_ext_mineral_l ALTER COLUMN tipopocomina SET DEFAULT 95#
 ALTER TABLE ONLY pe.eco_ext_mineral_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.eco_ext_mineral_l ALTER COLUMN tipoproduto SET DEFAULT ARRAY[95::SMALLINT]#
-ALTER TABLE ONLY pe.eco_ext_mineral_l ALTER COLUMN tipoalterantrop SET DEFAULT 99#
+ALTER TABLE ONLY pe.eco_ext_mineral_l ALTER COLUMN tipoalterantrop SET DEFAULT 32#
 ALTER TABLE ONLY pe.eco_ext_mineral_l ALTER COLUMN formaextracao SET DEFAULT 5#
 ALTER TABLE ONLY pe.aer_pista_ponto_pouso_a ALTER COLUMN usopista SET DEFAULT 95#
 ALTER TABLE ONLY pe.aer_pista_ponto_pouso_a ALTER COLUMN revestimento SET DEFAULT 95#
@@ -15128,7 +15128,7 @@ ALTER TABLE ONLY pe.eco_ext_mineral_a ALTER COLUMN tipoextmin SET DEFAULT 95#
 ALTER TABLE ONLY pe.eco_ext_mineral_a ALTER COLUMN tipopocomina SET DEFAULT 95#
 ALTER TABLE ONLY pe.eco_ext_mineral_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.eco_ext_mineral_a ALTER COLUMN tipoproduto SET DEFAULT ARRAY[95::SMALLINT]#
-ALTER TABLE ONLY pe.eco_ext_mineral_a ALTER COLUMN tipoalterantrop SET DEFAULT 99#
+ALTER TABLE ONLY pe.eco_ext_mineral_a ALTER COLUMN tipoalterantrop SET DEFAULT 32#
 ALTER TABLE ONLY pe.eco_ext_mineral_a ALTER COLUMN formaextracao SET DEFAULT 5#
 ALTER TABLE ONLY pe.tra_ponto_rodoviario_ferrov ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.tra_ponto_rodoviario_ferrov ALTER COLUMN relacionado SET DEFAULT 28#
@@ -15493,7 +15493,7 @@ ALTER TABLE ONLY pe.eco_ext_mineral_p ALTER COLUMN tipoextmin SET DEFAULT 95#
 ALTER TABLE ONLY pe.eco_ext_mineral_p ALTER COLUMN tipopocomina SET DEFAULT 95#
 ALTER TABLE ONLY pe.eco_ext_mineral_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.eco_ext_mineral_p ALTER COLUMN tipoproduto SET DEFAULT ARRAY[95::SMALLINT]#
-ALTER TABLE ONLY pe.eco_ext_mineral_p ALTER COLUMN tipoalterantrop SET DEFAULT 99#
+ALTER TABLE ONLY pe.eco_ext_mineral_p ALTER COLUMN tipoalterantrop SET DEFAULT 32#
 ALTER TABLE ONLY pe.eco_ext_mineral_p ALTER COLUMN formaextracao SET DEFAULT 5#
 ALTER TABLE ONLY pe.rel_gruta_caverna_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.rel_gruta_caverna_p ALTER COLUMN tipoelemnat SET DEFAULT 20#
@@ -15657,4 +15657,3611 @@ ALTER TABLE ONLY pe.tra_travessia_pedestre_p ALTER COLUMN operacional SET DEFAUL
 ALTER TABLE ONLY pe.tra_travessia_pedestre_p ALTER COLUMN tipotravessiaped SET DEFAULT 95#
 ALTER TABLE ONLY pe.tra_travessia_pedestre_p ALTER COLUMN matconstr SET DEFAULT 95#
 ALTER TABLE ONLY pe.tra_travessia_pedestre_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.tra_travessia_pedestre_p ALTER COLUMN situacaofisica SET DEFAULT 95
+ALTER TABLE ONLY pe.tra_travessia_pedestre_p ALTER COLUMN situacaofisica SET DEFAULT 95#
+CREATE OR REPLACE FUNCTION edf_edif_pub_civil_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifpubcivil = '{}' THEN
+                            NEW.tipoedifpubcivil = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_pub_civil_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_pub_civil_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_pub_civil_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_constr_lazer_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_constr_lazer_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_constr_lazer_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_constr_lazer_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_posto_fiscal_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifpubcivil = '{}' THEN
+                            NEW.tipoedifpubcivil = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_posto_fiscal_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_posto_fiscal_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_posto_fiscal_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_industrial_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_industrial_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_industrial_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_industrial_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_comunic_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.modalidade = '{}' THEN
+                            NEW.modalidade = NULL;
+                          END IF;
+                    IF NEW.tipoedifcomunic = '{}' THEN
+                            NEW.tipoedifcomunic = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_comunic_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_comunic_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_comunic_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_servico_social_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_servico_social_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_servico_social_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_servico_social_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION cb_passeio_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.pavimentacao = '{}' THEN
+                            NEW.pavimentacao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER cb_passeio_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.cb_passeio
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE cb_passeio_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_constr_turistica_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_constr_turistica_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_constr_turistica_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_constr_turistica_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_comunic_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.modalidade = '{}' THEN
+                            NEW.modalidade = NULL;
+                          END IF;
+                    IF NEW.tipoedifcomunic = '{}' THEN
+                            NEW.tipoedifcomunic = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_comunic_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_comunic_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_comunic_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_pub_civil_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifpubcivil = '{}' THEN
+                            NEW.tipoedifpubcivil = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_pub_civil_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_pub_civil_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_pub_civil_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_posto_fiscal_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifpubcivil = '{}' THEN
+                            NEW.tipoedifpubcivil = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_posto_fiscal_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_posto_fiscal_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_posto_fiscal_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_industrial_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_industrial_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_industrial_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_industrial_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_servico_social_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_servico_social_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_servico_social_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_servico_social_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION cb_passagem_elevada_viaduto_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER cb_passagem_elevada_viaduto_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.cb_passagem_elevada_viaduto_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE cb_passagem_elevada_viaduto_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edificacao_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edificacao_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edificacao_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edificacao_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_ensino_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_ensino_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_ensino_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_ensino_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_saneamento_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_saneamento_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_saneamento_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_saneamento_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_desenv_social_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_desenv_social_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_desenv_social_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_desenv_social_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_abast_agua_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_abast_agua_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_abast_agua_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_abast_agua_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_energia_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifenergia = '{}' THEN
+                            NEW.tipoedifenergia = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_energia_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_energia_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_energia_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION cb_trecho_arruamento_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.tipopavimentacao = '{}' THEN
+                            NEW.tipopavimentacao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER cb_trecho_arruamento_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.cb_trecho_arruamento
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE cb_trecho_arruamento_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_religiosa_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_religiosa_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_religiosa_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_religiosa_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_posto_guarda_municipal_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifpubcivil = '{}' THEN
+                            NEW.tipoedifpubcivil = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_posto_guarda_municipal_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_posto_guarda_municipal_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_posto_guarda_municipal_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_metro_ferroviaria_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifmetroferrov = '{}' THEN
+                            NEW.tipoedifmetroferrov = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_metro_ferroviaria_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_metro_ferroviaria_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_metro_ferroviaria_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION ver_jardim_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.cultivopredominante = '{}' THEN
+                            NEW.cultivopredominante = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER ver_jardim_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.ver_jardim_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE ver_jardim_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edificacao_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edificacao_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edificacao
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edificacao_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_ensino_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_ensino_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_ensino_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_ensino_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_desenv_social_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_desenv_social_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_desenv_social_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_desenv_social_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_saneamento_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_saneamento_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_saneamento_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_saneamento_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_energia_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifenergia = '{}' THEN
+                            NEW.tipoedifenergia = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_energia_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_energia_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_energia_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_religiosa_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_religiosa_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_religiosa_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_religiosa_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_residencial_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_residencial_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_residencial_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_residencial_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION cb_ponte_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER cb_ponte_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.cb_ponte_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE cb_ponte_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_habitacional_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_habitacional_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_habitacional_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_habitacional_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_constr_turistica_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_constr_turistica_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_constr_turistica_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_constr_turistica_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_metro_ferroviaria_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifmetroferrov = '{}' THEN
+                            NEW.tipoedifmetroferrov = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_metro_ferroviaria_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_metro_ferroviaria_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_metro_ferroviaria_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_banheiro_publico_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_banheiro_publico_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_banheiro_publico_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_banheiro_publico_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION cb_trecho_arruamento_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.tipopavimentacao = '{}' THEN
+                            NEW.tipopavimentacao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER cb_trecho_arruamento_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.cb_trecho_arruamento_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE cb_trecho_arruamento_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_posto_policia_rod_federal_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifpubcivil = '{}' THEN
+                            NEW.tipoedifpubcivil = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_posto_policia_rod_federal_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_posto_policia_rod_federal_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_posto_policia_rod_federal_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_saude_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_saude_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_saude_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_saude_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_posto_combustivel_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.finalidade = '{}' THEN
+                            NEW.finalidade = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifcomercserv = '{}' THEN
+                            NEW.tipoedifcomercserv = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_posto_combustivel_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_posto_combustivel_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_posto_combustivel_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION cb_poste_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.tipoposte = '{}' THEN
+                            NEW.tipoposte = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER cb_poste_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.cb_poste_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE cb_poste_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION cb_passeio_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.pavimentacao = '{}' THEN
+                            NEW.pavimentacao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER cb_passeio_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.cb_passeio_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE cb_passeio_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_policia_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifpubcivil = '{}' THEN
+                            NEW.tipoedifpubcivil = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_policia_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_policia_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_policia_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edificacao_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edificacao_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edificacao_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edificacao_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_hab_indigena_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_hab_indigena_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_hab_indigena_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_hab_indigena_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_posto_policia_militar_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_posto_policia_militar_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_posto_policia_militar_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_posto_policia_militar_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_habitacional_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_habitacional_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_habitacional_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_habitacional_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_representacao_diplomatica_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_representacao_diplomatica_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_representacao_diplomatica_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_representacao_diplomatica_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_banheiro_publico_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_banheiro_publico_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_banheiro_publico_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_banheiro_publico_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_posto_policia_rod_federal_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifpubcivil = '{}' THEN
+                            NEW.tipoedifpubcivil = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_posto_policia_rod_federal_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_posto_policia_rod_federal_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_posto_policia_rod_federal_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_saude_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_saude_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_saude_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_saude_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_policia_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifpubcivil = '{}' THEN
+                            NEW.tipoedifpubcivil = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_policia_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_policia_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_policia_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_posto_policia_militar_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_posto_policia_militar_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_posto_policia_militar_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_posto_policia_militar_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_hab_indigena_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_hab_indigena_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_hab_indigena_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_hab_indigena_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION cb_trecho_arruamento_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.tipopavimentacao = '{}' THEN
+                            NEW.tipopavimentacao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER cb_trecho_arruamento_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.cb_trecho_arruamento_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE cb_trecho_arruamento_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_representacao_diplomatica_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_representacao_diplomatica_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_representacao_diplomatica_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_representacao_diplomatica_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_residencial_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_residencial_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_residencial_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_residencial_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_agropec_ext_veg_pesca_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifagropec = '{}' THEN
+                            NEW.tipoedifagropec = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_agropec_ext_veg_pesca_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_agropec_ext_veg_pesca_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_agropec_ext_veg_pesca_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_abast_agua_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_abast_agua_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_abast_agua_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_abast_agua_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_posto_combustivel_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.finalidade = '{}' THEN
+                            NEW.finalidade = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifcomercserv = '{}' THEN
+                            NEW.tipoedifcomercserv = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_posto_combustivel_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_posto_combustivel_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_posto_combustivel_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_rodoviaria_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifrod = '{}' THEN
+                            NEW.tipoedifrod = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_rodoviaria_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_rodoviaria_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_rodoviaria_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_posto_guarda_municipal_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifpubcivil = '{}' THEN
+                            NEW.tipoedifpubcivil = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_posto_guarda_municipal_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_posto_guarda_municipal_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_posto_guarda_municipal_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_constr_lazer_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_constr_lazer_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_constr_lazer_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_constr_lazer_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_comerc_serv_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.finalidade = '{}' THEN
+                            NEW.finalidade = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifcomercserv = '{}' THEN
+                            NEW.tipoedifcomercserv = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_comerc_serv_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_comerc_serv_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_comerc_serv_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_constr_aeroportuaria_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifaero = '{}' THEN
+                            NEW.tipoedifaero = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_constr_aeroportuaria_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_constr_aeroportuaria_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_constr_aeroportuaria_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_pub_militar_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_pub_militar_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_pub_militar_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_pub_militar_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_constr_est_med_fen_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_constr_est_med_fen_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_constr_est_med_fen_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_constr_est_med_fen_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_constr_portuaria_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_constr_portuaria_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_constr_portuaria_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_constr_portuaria_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION cb_tunel_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER cb_tunel_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.cb_tunel_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE cb_tunel_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION cb_estacionamento_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.finalidadepatio = '{}' THEN
+                            NEW.finalidadepatio = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER cb_estacionamento_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.cb_estacionamento_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE cb_estacionamento_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_agropec_ext_veg_pesca_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifagropec = '{}' THEN
+                            NEW.tipoedifagropec = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_agropec_ext_veg_pesca_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_agropec_ext_veg_pesca_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_agropec_ext_veg_pesca_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION emu_poste_sinalizacao_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.tipoposte = '{}' THEN
+                            NEW.tipoposte = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER emu_poste_sinalizacao_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.emu_poste_sinalizacao_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE emu_poste_sinalizacao_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION cb_passeio_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.pavimentacao = '{}' THEN
+                            NEW.pavimentacao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER cb_passeio_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.cb_passeio_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE cb_passeio_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_rodoviaria_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifrod = '{}' THEN
+                            NEW.tipoedifrod = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_rodoviaria_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_rodoviaria_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_rodoviaria_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_ext_mineral_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_ext_mineral_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_ext_mineral_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_ext_mineral_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_constr_est_med_fen_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_constr_est_med_fen_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_constr_est_med_fen_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_constr_est_med_fen_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_comerc_serv_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.finalidade = '{}' THEN
+                            NEW.finalidade = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifcomercserv = '{}' THEN
+                            NEW.tipoedifcomercserv = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_comerc_serv_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_comerc_serv_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_comerc_serv_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_constr_aeroportuaria_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifaero = '{}' THEN
+                            NEW.tipoedifaero = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_constr_aeroportuaria_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_constr_aeroportuaria_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_constr_aeroportuaria_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_pub_militar_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_pub_militar_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_pub_militar_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_pub_militar_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_constr_portuaria_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifport = '{}' THEN
+                            NEW.tipoedifport = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_constr_portuaria_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_constr_portuaria_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_constr_portuaria_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION cb_delimitacao_fisica_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER cb_delimitacao_fisica_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.cb_delimitacao_fisica_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE cb_delimitacao_fisica_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_ext_mineral_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_ext_mineral_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_ext_mineral_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_ext_mineral_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_estrut_apoio_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER tra_estrut_apoio_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON complexos.tra_estrut_apoio
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE tra_estrut_apoio_avoid_empty_array()#CREATE OR REPLACE FUNCTION fer_estacao_metroviaria_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER fer_estacao_metroviaria_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON complexos.fer_estacao_metroviaria
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE fer_estacao_metroviaria_avoid_empty_array()#CREATE OR REPLACE FUNCTION hdv_complexo_portuario_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hdv_complexo_portuario_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON complexos.hdv_complexo_portuario
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hdv_complexo_portuario_avoid_empty_array()#CREATE OR REPLACE FUNCTION emu_terminal_hidroviario_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER emu_terminal_hidroviario_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON complexos.emu_terminal_hidroviario
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE emu_terminal_hidroviario_avoid_empty_array()#CREATE OR REPLACE FUNCTION rod_estacao_rodoviaria_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER rod_estacao_rodoviaria_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON complexos.rod_estacao_rodoviaria
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE rod_estacao_rodoviaria_avoid_empty_array()#CREATE OR REPLACE FUNCTION emu_terminal_rodoviario_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER emu_terminal_rodoviario_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON complexos.emu_terminal_rodoviario
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE emu_terminal_rodoviario_avoid_empty_array()#CREATE OR REPLACE FUNCTION fer_estacao_ferroviaria_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER fer_estacao_ferroviaria_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON complexos.fer_estacao_ferroviaria
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE fer_estacao_ferroviaria_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_estrut_transporte_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER tra_estrut_transporte_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON complexos.tra_estrut_transporte
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE tra_estrut_transporte_avoid_empty_array()#CREATE OR REPLACE FUNCTION aer_complexo_aeroportuario_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER aer_complexo_aeroportuario_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON complexos.aer_complexo_aeroportuario
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE aer_complexo_aeroportuario_avoid_empty_array()#CREATE OR REPLACE FUNCTION emu_terminal_ferroviario_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER emu_terminal_ferroviario_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON complexos.emu_terminal_ferroviario
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE emu_terminal_ferroviario_avoid_empty_array()#CREATE OR REPLACE FUNCTION veg_veg_area_contato_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.tipovegcontato = '{}' THEN
+                            NEW.tipovegcontato = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER veg_veg_area_contato_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.veg_veg_area_contato_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE veg_veg_area_contato_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_patio_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.finalidadepatio = '{}' THEN
+                            NEW.finalidadepatio = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER tra_patio_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.tra_patio_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE tra_patio_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION sb_dep_saneamento_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    IF NEW.tipoconteudo = '{}' THEN
+                            NEW.tipoconteudo = NULL;
+                          END IF;
+                    IF NEW.tipoprodutoresiduo = '{}' THEN
+                            NEW.tipoprodutoresiduo = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER sb_dep_saneamento_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.sb_dep_saneamento
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE sb_dep_saneamento_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_patio_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.finalidadepatio = '{}' THEN
+                            NEW.finalidadepatio = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER tra_patio_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.tra_patio_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE tra_patio_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION hdv_eclusa_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hdv_eclusa_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hdv_eclusa_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hdv_eclusa_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_ponte_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER tra_ponte_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.tra_ponte_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE tra_ponte_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_tunel_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER tra_tunel_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.tra_tunel_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE tra_tunel_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION eco_deposito_geral_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    IF NEW.tipodepgeral = '{}' THEN
+                            NEW.tipodepgeral = NULL;
+                          END IF;
+                    IF NEW.tipoconteudo = '{}' THEN
+                            NEW.tipoconteudo = NULL;
+                          END IF;
+                    IF NEW.tipoprodutoresiduo = '{}' THEN
+                            NEW.tipoprodutoresiduo = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER eco_deposito_geral_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.eco_deposito_geral_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE eco_deposito_geral_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_patio_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.finalidadepatio = '{}' THEN
+                            NEW.finalidadepatio = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER tra_patio_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.tra_patio
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE tra_patio_avoid_empty_array()#CREATE OR REPLACE FUNCTION dut_galeria_bueiro_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.mattransp = '{}' THEN
+                            NEW.mattransp = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER dut_galeria_bueiro_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.dut_galeria_bueiro_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE dut_galeria_bueiro_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_vala_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hid_vala_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hid_vala_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hid_vala_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION hdv_eclusa_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hdv_eclusa_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hdv_eclusa_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hdv_eclusa_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_ponte_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER tra_ponte_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.tra_ponte_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE tra_ponte_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION dut_trecho_duto_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.mattransp = '{}' THEN
+                            NEW.mattransp = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER dut_trecho_duto_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.dut_trecho_duto_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE dut_trecho_duto_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION rel_corte_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER rel_corte_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.rel_corte_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE rel_corte_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_obra_de_arte_viaria_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER tra_obra_de_arte_viaria_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.tra_obra_de_arte_viaria
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE tra_obra_de_arte_viaria_avoid_empty_array()#CREATE OR REPLACE FUNCTION eco_deposito_geral_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    IF NEW.tipodepgeral = '{}' THEN
+                            NEW.tipodepgeral = NULL;
+                          END IF;
+                    IF NEW.tipoconteudo = '{}' THEN
+                            NEW.tipoconteudo = NULL;
+                          END IF;
+                    IF NEW.tipoprodutoresiduo = '{}' THEN
+                            NEW.tipoprodutoresiduo = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER eco_deposito_geral_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.eco_deposito_geral_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE eco_deposito_geral_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_vala_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hid_vala_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hid_vala_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hid_vala_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION hdv_atracadouro_terminal_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.aptidaooperacional = '{}' THEN
+                            NEW.aptidaooperacional = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hdv_atracadouro_terminal_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hdv_atracadouro_terminal_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hdv_atracadouro_terminal_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_barragem_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hid_barragem_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hid_barragem_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hid_barragem_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_quebramar_molhe_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hid_quebramar_molhe_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hid_quebramar_molhe_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hid_quebramar_molhe_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_quebramar_molhe_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hid_quebramar_molhe_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hid_quebramar_molhe_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hid_quebramar_molhe_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION rel_corte_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER rel_corte_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.rel_corte_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE rel_corte_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION lpal_limite_politico_adm_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.tipolimpol = '{}' THEN
+                            NEW.tipolimpol = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER lpal_limite_politico_adm_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.lpal_limite_politico_adm_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE lpal_limite_politico_adm_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION sb_dep_abast_agua_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER sb_dep_abast_agua_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.sb_dep_abast_agua
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE sb_dep_abast_agua_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_tunel_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER tra_tunel_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.tra_tunel
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE tra_tunel_avoid_empty_array()#CREATE OR REPLACE FUNCTION hdv_atracadouro_terminal_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.aptidaooperacional = '{}' THEN
+                            NEW.aptidaooperacional = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hdv_atracadouro_terminal_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hdv_atracadouro_terminal_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hdv_atracadouro_terminal_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_barragem_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hid_barragem_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hid_barragem_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hid_barragem_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_barragem_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hid_barragem_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hid_barragem_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hid_barragem_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_dique_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hid_dique_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hid_dique_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hid_dique_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION dut_condutor_hidrico_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.mattransp = '{}' THEN
+                            NEW.mattransp = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER dut_condutor_hidrico_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.dut_condutor_hidrico_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE dut_condutor_hidrico_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION veg_reflorestamento_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.cultivopredominante = '{}' THEN
+                            NEW.cultivopredominante = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER veg_reflorestamento_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.veg_reflorestamento_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE veg_reflorestamento_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_passagem_elevada_viaduto_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER tra_passagem_elevada_viaduto_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.tra_passagem_elevada_viaduto_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE tra_passagem_elevada_viaduto_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION hdv_atracadouro_terminal_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.aptidaooperacional = '{}' THEN
+                            NEW.aptidaooperacional = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hdv_atracadouro_terminal_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hdv_atracadouro_terminal_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hdv_atracadouro_terminal_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION hdv_atracadouro_terminal_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.aptidaooperacional = '{}' THEN
+                            NEW.aptidaooperacional = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hdv_atracadouro_terminal_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hdv_atracadouro_terminal
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hdv_atracadouro_terminal_avoid_empty_array()#CREATE OR REPLACE FUNCTION enc_torre_comunic_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modalidade = '{}' THEN
+                            NEW.modalidade = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER enc_torre_comunic_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.enc_torre_comunic_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE enc_torre_comunic_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION rel_aterro_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER rel_aterro_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.rel_aterro_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE rel_aterro_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_passagem_elevada_viaduto_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER tra_passagem_elevada_viaduto_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.tra_passagem_elevada_viaduto
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE tra_passagem_elevada_viaduto_avoid_empty_array()#CREATE OR REPLACE FUNCTION eco_ext_mineral_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.tipoproduto = '{}' THEN
+                            NEW.tipoproduto = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER eco_ext_mineral_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.eco_ext_mineral_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE eco_ext_mineral_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_ponte_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER tra_ponte_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.tra_ponte
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE tra_ponte_avoid_empty_array()#CREATE OR REPLACE FUNCTION eco_ext_mineral_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.tipoproduto = '{}' THEN
+                            NEW.tipoproduto = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER eco_ext_mineral_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.eco_ext_mineral_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE eco_ext_mineral_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION hdv_eclusa_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hdv_eclusa_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hdv_eclusa
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hdv_eclusa_avoid_empty_array()#CREATE OR REPLACE FUNCTION rel_aterro_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER rel_aterro_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.rel_aterro_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE rel_aterro_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION hdv_eclusa_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hdv_eclusa_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hdv_eclusa_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hdv_eclusa_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION veg_veg_cultivada_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.cultivopredominante = '{}' THEN
+                            NEW.cultivopredominante = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER veg_veg_cultivada_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.veg_veg_cultivada_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE veg_veg_cultivada_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_dique_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hid_dique_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hid_dique
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hid_dique_avoid_empty_array()#CREATE OR REPLACE FUNCTION eco_ext_mineral_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.tipoproduto = '{}' THEN
+                            NEW.tipoproduto = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER eco_ext_mineral_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.eco_ext_mineral_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE eco_ext_mineral_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION eco_deposito_geral_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    IF NEW.tipodepgeral = '{}' THEN
+                            NEW.tipodepgeral = NULL;
+                          END IF;
+                    IF NEW.tipoconteudo = '{}' THEN
+                            NEW.tipoconteudo = NULL;
+                          END IF;
+                    IF NEW.tipoprodutoresiduo = '{}' THEN
+                            NEW.tipoprodutoresiduo = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER eco_deposito_geral_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.eco_deposito_geral
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE eco_deposito_geral_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_tunel_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER tra_tunel_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.tra_tunel_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE tra_tunel_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_canal_vala_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hid_canal_vala_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hid_canal_vala_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hid_canal_vala_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION sb_dep_abast_agua_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER sb_dep_abast_agua_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.sb_dep_abast_agua_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE sb_dep_abast_agua_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION eco_equip_agropec_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER eco_equip_agropec_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.eco_equip_agropec_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE eco_equip_agropec_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_dique_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hid_dique_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hid_dique_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hid_dique_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION rel_aterro_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER rel_aterro_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.rel_aterro_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE rel_aterro_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_quebramar_molhe_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hid_quebramar_molhe_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hid_quebramar_molhe
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hid_quebramar_molhe_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_barragem_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hid_barragem_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hid_barragem
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hid_barragem_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_canal_vala_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hid_canal_vala_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hid_canal_vala_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hid_canal_vala_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION sb_dep_saneamento_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    IF NEW.tipoconteudo = '{}' THEN
+                            NEW.tipoconteudo = NULL;
+                          END IF;
+                    IF NEW.tipoprodutoresiduo = '{}' THEN
+                            NEW.tipoprodutoresiduo = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER sb_dep_saneamento_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.sb_dep_saneamento_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE sb_dep_saneamento_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION eco_equip_agropec_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER eco_equip_agropec_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.eco_equip_agropec_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE eco_equip_agropec_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_dique_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hid_dique_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hid_dique_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hid_dique_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION eco_equip_agropec_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER eco_equip_agropec_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.eco_equip_agropec_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE eco_equip_agropec_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION sb_dep_abast_agua_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER sb_dep_abast_agua_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.sb_dep_abast_agua_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE sb_dep_abast_agua_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_passagem_elevada_viaduto_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER tra_passagem_elevada_viaduto_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.tra_passagem_elevada_viaduto_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE tra_passagem_elevada_viaduto_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_canal_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hid_canal_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hid_canal_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hid_canal_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_canal_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER hid_canal_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.hid_canal_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE hid_canal_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION sb_dep_saneamento_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    IF NEW.tipoconteudo = '{}' THEN
+                            NEW.tipoconteudo = NULL;
+                          END IF;
+                    IF NEW.tipoprodutoresiduo = '{}' THEN
+                            NEW.tipoprodutoresiduo = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER sb_dep_saneamento_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.sb_dep_saneamento_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE sb_dep_saneamento_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION eco_equip_agropec_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER eco_equip_agropec_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.eco_equip_agropec
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE eco_equip_agropec_avoid_empty_array()#CREATE OR REPLACE FUNCTION rel_corte_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER rel_corte_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.rel_corte_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE rel_corte_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION dut_galeria_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.mattransp = '{}' THEN
+                            NEW.mattransp = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER dut_galeria_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.dut_galeria_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE dut_galeria_l_avoid_empty_array()
