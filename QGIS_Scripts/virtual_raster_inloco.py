@@ -5,9 +5,9 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2015-05-15
+        begin                : 2016-01-18
         git sha              : $Format:%H$
-        copyright            : (C) 2015 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
+        copyright            : (C) 2016 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
         email                : luiz.claudio@dsg.eb.mil.br
  ***************************************************************************/
 
@@ -29,8 +29,8 @@
 import processing
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
 from qgis.core import QgsVectorLayer, QgsRasterLayer, QgsSpatialIndex, QgsFeatureRequest, QgsCoordinateTransform, QgsFeature, QgsCoordinateReferenceSystem
+from PyQt4.QtCore import QSettings
 import os
-import shutil, stat
 
 #script methods
 def createVrt(inventario, vrt):
@@ -46,7 +46,7 @@ def createVrt(inventario, vrt):
         filename = feature['fileName']
         
         raster = QgsRasterLayer(filename, filename)
-        raster.setCrs( QgsCoordinateReferenceSystem(32723, QgsCoordinateReferenceSystem.EpsgCrsId) )
+        raster.setCrs( QgsCoordinateReferenceSystem(int(CRS.split(':')[-1]), QgsCoordinateReferenceSystem.EpsgCrsId) )
            
         rasterList.append(raster)
         ovr = filename+'.ovr'
@@ -60,9 +60,15 @@ def createVrt(inventario, vrt):
             progress.setPercentage(p)    
         count += 1
     progress.setText('Fazendo raster virtual...')
-    processing.runalg('gdalogr:buildvirtualraster', rasterList, 0, False, False, vrt)
+    processing.runalg('gdalogr:buildvirtualraster', rasterList, 0, False, False, '/media/luiz/ENIO VERAS/HD_CIF/cif.vrt')
 #end of script methods
         
 #Making the actual work
+s = QSettings()
+oldValidation = s.value( "/Projections/defaultBehaviour")
+s.setValue( "/Projections/defaultBehaviour", "useGlobal" )
+
 createVrt(Inventario, VRT)
+
+s.setValue( "/Projections/defaultBehaviour", oldValidation )
 #ending the actual work
