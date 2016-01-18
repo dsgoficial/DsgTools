@@ -57,7 +57,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         if not self.currLayer:
             return
         
-        if self.currLayer.type() == QgsMapLayer.RasterLayer:
+        if self.currLayer.type() != QgsMapLayer.VectorLayer:
             return
         
         for field in self.currLayer.pendingFields():
