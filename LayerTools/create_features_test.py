@@ -44,7 +44,7 @@ class CreateFeatureTest():
 
         #Connecting to the database that will be tested
         self.db = QSqlDatabase("QPSQL")
-        self.db.setDatabaseName('edgvfter')
+        self.db.setDatabaseName('teste')
         self.db.setHostName('localhost')
         self.db.setPort(5432)
         self.db.setUserName('postgres')

@@ -98,6 +98,7 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
     def populateListWithDatabasesFromServer(self):
         self.serverListWidget.clear()
         dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer()
+        dbList.sort()
         for (dbname, dbversion) in dbList:
             item =  QListWidgetItem(self.serverListWidget)
             item.setText(dbname+' (EDGV v. '+dbversion+')')
