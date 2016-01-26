@@ -691,7 +691,7 @@ class PostgisDb(AbstractDb):
         dbVersion = self.getDatabaseVersion()
         file = None
         if dbVersion == '2.1.3':
-            pass
+            file = os.path.join(currentPath,'..','..','DbTools','PostGISTool', 'sqls', '213', 'views_213.sql')
         if dbVersion == 'FTer_2a_Ed':
             file = os.path.join(currentPath,'..','..','DbTools','PostGISTool', 'sqls', 'FTer_2a_Ed', 'views_edgvFter_2a_Ed.sql')
         return file
