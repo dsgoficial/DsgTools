@@ -61,42 +61,43 @@ class EDGVLayer(QObject):
             return None
 
         vlayer.setCrs(crs)
-        vlayer.loadNamedStyle(vlayerQml, False)
-        attrList = vlayer.pendingFields()
-        for field in attrList:
-            i = vlayer.fieldNameIndex(field.name())
-            if vlayer.editorWidgetV2(i) == 'ValueRelation':
-                groupList = iface.legendInterface().groups()
-                groupRelationshipList = iface.legendInterface().groupLayerRelationship()
-                if database not in groupList:
-                    idx = iface.legendInterface().addGroup(database, True,-1)
-                    domainIdGroup = iface.legendInterface().addGroup(self.tr("Dominios"), True, idx)
-                else:
-                    idx = groupList.index(database)
-                    if "Dominios" not in groupList[idx::]:
+        if self.schema <> 'views':
+            vlayer.loadNamedStyle(vlayerQml, False)
+            attrList = vlayer.pendingFields()
+            for field in attrList:
+                i = vlayer.fieldNameIndex(field.name())
+                if vlayer.editorWidgetV2(i) == 'ValueRelation':
+                    groupList = iface.legendInterface().groups()
+                    groupRelationshipList = iface.legendInterface().groupLayerRelationship()
+                    if database not in groupList:
+                        idx = iface.legendInterface().addGroup(database, True,-1)
                         domainIdGroup = iface.legendInterface().addGroup(self.tr("Dominios"), True, idx)
                     else:
-                        domainIdGroup = groupList[idx::].index("Dominios")
-
-                valueRelationDict = vlayer.editorWidgetV2Config(i)
-                domainTableName = valueRelationDict['Layer']
-                loadedLayers = iface.legendInterface().layers()
-                domainLoaded = False
-                for ll in loadedLayers:
-                    if ll.name() == domainTableName:
-                        candidateUri = QgsDataSourceURI(ll.dataProvider().dataSourceUri())
-                        if host == candidateUri.host() and database == candidateUri.database() and port == int(candidateUri.port()):
-                            domainLoaded = True
-                            domLayer = ll
-                if not domainLoaded:
-                    uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (database, host, port, user, password, domainTableName)
-                    #TODO Load domain layer into a group
-                    domLayer = iface.addVectorLayer(uri, domainTableName, self.provider)
-                    iface.legendInterface().moveLayer(domLayer, domainIdGroup)
-                valueRelationDict['Layer'] = domLayer.id()
-                vlayer.setEditorWidgetV2Config(i,valueRelationDict)
-
-        self.qmlLoaded.emit()
+                        idx = groupList.index(database)
+                        if "Dominios" not in groupList[idx::]:
+                            domainIdGroup = iface.legendInterface().addGroup(self.tr("Dominios"), True, idx)
+                        else:
+                            domainIdGroup = groupList[idx::].index("Dominios")
+    
+                    valueRelationDict = vlayer.editorWidgetV2Config(i)
+                    domainTableName = valueRelationDict['Layer']
+                    loadedLayers = iface.legendInterface().layers()
+                    domainLoaded = False
+                    for ll in loadedLayers:
+                        if ll.name() == domainTableName:
+                            candidateUri = QgsDataSourceURI(ll.dataProvider().dataSourceUri())
+                            if host == candidateUri.host() and database == candidateUri.database() and port == int(candidateUri.port()):
+                                domainLoaded = True
+                                domLayer = ll
+                    if not domainLoaded:
+                        uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (database, host, port, user, password, domainTableName)
+                        #TODO Load domain layer into a group
+                        domLayer = iface.addVectorLayer(uri, domainTableName, self.provider)
+                        iface.legendInterface().moveLayer(domLayer, domainIdGroup)
+                    valueRelationDict['Layer'] = domLayer.id()
+                    vlayer.setEditorWidgetV2Config(i,valueRelationDict)
+    
+            self.qmlLoaded.emit()
         
 
         iface.legendInterface().moveLayer(vlayer, idSubgrupo)
