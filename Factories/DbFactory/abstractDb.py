@@ -620,3 +620,9 @@ class AbstractDb(QObject):
 
     def dropDatabase(self,abstractCandidate):
         return None
+
+    def createResolvedDomainViews(self, createViewClause, fromClause):
+        pass
+    
+    def getSqlViewFile(self):
+        pass

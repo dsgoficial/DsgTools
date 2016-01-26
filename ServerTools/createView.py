@@ -24,16 +24,16 @@ import os
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot
-from PyQt4.QtGui import QAbstractItemView
-
+from PyQt4.QtCore import pyqtSlot, Qt
+from PyQt4.QtGui import QAbstractItemView, QApplication, QCursor, QMessageBox
+from psycopg2.tests.testconfig import dbname
 # DSGTools imports
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'permission_properties.ui'))
+    os.path.dirname(__file__), 'createView.ui'))
 
-class PermissionProperties(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, permissionsDict, parent = None):
+class CreateView(QtGui.QDialog, FORM_CLASS):
+    def __init__(self, abstractDb, dbName, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -42,40 +42,22 @@ class PermissionProperties(QtGui.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.treeWidget.setColumnWidth(0, 400)
-        
-        #invisible root item
-        rootItem = self.treeWidget.invisibleRootItem()
-        #database item
-        dbItem = self.createItem(rootItem, 'database')
-
-        self.createChildrenItems(dbItem, permissionsDict)
-        
-        self.treeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
-        self.treeWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        
-    def createItem(self, parent, text):
-        item = QtGui.QTreeWidgetItem(parent)
-        item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsTristate)
-        item.setCheckState(1, QtCore.Qt.Unchecked)
-        item.setCheckState(2, QtCore.Qt.Unchecked)
-        item.setText(0, text)
-        return item
+        self.abstractDb = abstractDb
+        self.dBLineEdit.setText(dbName)
+        self.dBLineEdit.setReadOnly(True)
+        self.viewTypeDict = {0:'VIEW',1:'MATERIALIZED VIEW'}
+        self.inheritanceType = {0:'FROM ONLY',1:'FROM'}
     
-    def createChildrenItems(self, parent, mydict):
-        #permissions
-        lista = ['read', 'write']
-        for key in mydict.keys():
-            if key in lista:
-                self.setItemCheckState(parent, mydict, key)
-            else:
-                itemText = key
-                item = self.createItem(parent, itemText)
-                self.createChildrenItems(item, mydict[key])
-                
-    def setItemCheckState(self, item, mydict, key):
-        if key == 'read':
-            item.setCheckState(1, int(mydict[key]))
-        elif key == 'write':
-            item.setCheckState(2, int(mydict[key]))
+    @pyqtSlot()
+    def on_buttonBox_accepted(self):
+        createViewClause = self.viewTypeDict[self.viewTypeComboBox.currentIndex()]
+        fromClause = self.inheritanceType[self.inheritanceTypeComboBox.currentIndex()]
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.abstractDb.createResolvedDomainViews(createViewClause, fromClause)
+            QApplication.restoreOverrideCursor()
+            QMessageBox.information(self, self.tr('Success!'), self.tr('Views created successfully on database ')+self.dBLineEdit.text())
+        except Exception as e:
+            QApplication.restoreOverrideCursor()            
+            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
             

@@ -389,3 +389,9 @@ class SpatialiteDb(AbstractDb):
 
     def dropDatabase(self,abstractCandidate):
         return None
+
+    def createResolvedDomainViews(self, createViewClause, fromClause):
+        pass
+
+    def getSqlViewFile(self):
+        pass

@@ -31,6 +31,7 @@ from PyQt4.QtGui import QListWidgetItem, QMessageBox, QMenu, QApplication, QCurs
 from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.UserTools.permission_properties import PermissionProperties
+from DsgTools.ServerTools.createView import CreateView
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'exploreDb.ui'))
@@ -140,6 +141,15 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
             QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
         self.clearAll()
         self.populateListWithDatabasesFromServer()
+
+    @pyqtSlot(bool)
+    def on_createViewsPushButton_clicked(self):
+        if not self.localDb:
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a database to create view'))
+            return
+        dlg = CreateView(self.localDb,self.dbListWidget.currentItem().text())
+        dlg.exec_()
+        pass
     
     def clearQSettings(self,database):
         name = self.serverWidget.serversCombo.currentText()+'_'+database

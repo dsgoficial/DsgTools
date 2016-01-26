@@ -27,6 +27,7 @@ from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactor
 from qgis.core import QgsCredentials, QgsMessageLog
 from osgeo import ogr
 from uuid import uuid4
+import codecs, os
 
 class PostgisDb(AbstractDb):
     
@@ -657,4 +658,40 @@ class PostgisDb(AbstractDb):
             query = QSqlQuery(self.db)
             if not query.exec_(sql):
                 raise Exception(self.tr('Problem dropping database: ') + query.lastError().text())
-        
+    
+    def createResolvedDomainViews(self, createViewClause, fromClause):
+        try:
+            self.checkAndOpenDb()
+        except:
+            return
+        if self.checkSuperUser():
+            filename = self.getSqlViewFile()
+            if filename <> None:
+                file = codecs.open(filename, encoding='utf-8', mode="r")
+                sql = file.read()
+                sql = sql.replace('[VIEW]', createViewClause).replace('[FROM]', fromClause)
+                file.close()
+                commands = sql.split('#')
+                self.db.transaction()
+                query = QSqlQuery(self.db)
+                for command in commands:
+                    if not query.exec_(command):
+                        self.db.rollback()
+                        self.db.close()
+                        raise Exception(self.tr('Problem creating views: ') + str(query.lastError().text()))
+                self.db.commit()
+                self.db.close()
+
+    def getSqlViewFile(self):
+        try:
+            self.checkAndOpenDb()
+        except:
+            return
+        currentPath = os.path.dirname(__file__)
+        dbVersion = self.getDatabaseVersion()
+        file = None
+        if dbVersion == '2.1.3':
+            pass
+        if dbVersion == 'FTer_2a_Ed':
+            file = os.path.join(currentPath,'..','..','DbTools','PostGISTool', 'sqls', 'FTer_2a_Ed', 'views_edgvFter_2a_Ed.sql')
+        return file
