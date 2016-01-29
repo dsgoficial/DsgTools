@@ -34,6 +34,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 from DsgTools.LayerTools.map_index import UtmGrid
 from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
 
+#qgis imports
+import qgis as qgis
+
 class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
     def __init__(self, iface, codeList, parent=None):
         """Constructor."""
@@ -76,9 +79,15 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         
 
         if layer == None:
-            lyrName = self.widget.abstractDb.getFrameLayerName()
+            lyrName = self.widget.abstractDb.getFrameLayerName()          
+            dbName = self.widget.abstractDb.getDatabaseName()
+            groupList =  qgis.utils.iface.legendInterface().groups()
             edgvLayer = self.layerFactory.makeLayer(self.widget.abstractDb, self.codeList, lyrName)
-            layer = edgvLayer.load(self.widget.crs)
+            if dbName in groupList:
+                layer = edgvLayer.load(self.widget.crs,groupList.index(dbName))
+            else:
+                self.parentTreeNode = qgis.utils.iface.legendInterface().addGroup(self.widget.abstractDb.getDatabaseName(), -1)
+                layer = edgvLayer.load(self.widget.crs,self.parentTreeNode)
         
         if not layer:
             return
