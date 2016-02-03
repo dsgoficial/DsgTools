@@ -10,7 +10,7 @@
 name=DSG Tools
 qgisMinimumVersion=2.6
 description=Brazilian Army Cartographic Production Tools
-version=2.0rc04
+version=2.0rc05
 author=Brazilian Army - Geographic Service Bureau
 email=suporte.dsgtools@dsg.eb.mil.br
 about=
@@ -59,6 +59,8 @@ changelog=
 	2.0rc01 - Database creation using Spatialite and PostGIS according to EDGV version FTer_2a_ed (cadaster). Layer loading by category and class as defined by EDGV version FTer_2a_ed (cadaster)
 	2.0rc02 - Databases are now sorted
 	2.0rc03 - Minor bug fix on EDGV FTer
+	2.0rc04 - Minor bug fix on EDGV FTer
+	2.0rc05 - Returning file removed by error
 
 # Tags are comma separated with spaces allowed
 tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script
