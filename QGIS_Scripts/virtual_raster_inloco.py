@@ -22,6 +22,7 @@
 """
 ##DSG=group
 ##Inventario=vector
+##Override_CRS=boolean False
 ##CRS=crs
 ##VRT=output raster
 
@@ -46,7 +47,8 @@ def createVrt(inventario, vrt):
         filename = feature['fileName']
         
         raster = QgsRasterLayer(filename, filename)
-        raster.setCrs( QgsCoordinateReferenceSystem(int(CRS.split(':')[-1]), QgsCoordinateReferenceSystem.EpsgCrsId) )
+        if Override_CRS:
+            raster.setCrs( QgsCoordinateReferenceSystem(int(CRS.split(':')[-1]), QgsCoordinateReferenceSystem.EpsgCrsId) )
            
         rasterList.append(raster)
         ovr = filename+'.ovr'
