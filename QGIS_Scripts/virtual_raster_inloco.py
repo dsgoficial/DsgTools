@@ -60,7 +60,7 @@ def createVrt(inventario, vrt):
             progress.setPercentage(p)    
         count += 1
     progress.setText('Fazendo raster virtual...')
-    processing.runalg('gdalogr:buildvirtualraster', rasterList, 0, False, False, '/media/luiz/ENIO VERAS/HD_CIF/cif.vrt')
+    processing.runalg('gdalogr:buildvirtualraster', rasterList, 0, False, False, VRT)
 #end of script methods
         
 #Making the actual work
