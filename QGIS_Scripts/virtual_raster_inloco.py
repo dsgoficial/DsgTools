@@ -22,6 +22,7 @@
 """
 ##DSG=group
 ##Inventario=vector
+##Override_CRS=boolean False
 ##CRS=crs
 ##VRT=output raster
 
@@ -46,7 +47,8 @@ def createVrt(inventario, vrt):
         filename = feature['fileName']
         
         raster = QgsRasterLayer(filename, filename)
-        raster.setCrs( QgsCoordinateReferenceSystem(int(CRS.split(':')[-1]), QgsCoordinateReferenceSystem.EpsgCrsId) )
+        if Override_CRS:
+            raster.setCrs( QgsCoordinateReferenceSystem(int(CRS.split(':')[-1]), QgsCoordinateReferenceSystem.EpsgCrsId) )
            
         rasterList.append(raster)
         ovr = filename+'.ovr'
@@ -60,7 +62,7 @@ def createVrt(inventario, vrt):
             progress.setPercentage(p)    
         count += 1
     progress.setText('Fazendo raster virtual...')
-    processing.runalg('gdalogr:buildvirtualraster', rasterList, 0, False, False, '/media/luiz/ENIO VERAS/HD_CIF/cif.vrt')
+    processing.runalg('gdalogr:buildvirtualraster', rasterList, 0, False, False, VRT)
 #end of script methods
         
 #Making the actual work
