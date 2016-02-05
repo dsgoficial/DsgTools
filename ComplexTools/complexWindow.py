@@ -49,8 +49,6 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        #self.enderecoLine.setText('186.228.51.52')
-        #self.portaLine.setText('2101'
         self.iface = iface
         
         self.dbButton.clicked.connect(self.getDataSources)
