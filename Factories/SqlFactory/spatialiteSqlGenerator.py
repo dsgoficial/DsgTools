@@ -142,9 +142,18 @@ class SpatialiteSqlGenerator(SqlGenerator):
     
     def createCustomSort(self):
         return None
-    
+
     def getRolePrivileges(self, role, dbname):
         return None
 
     def isSuperUser(self,user):
+        return None
+
+    def getInvalidGeom(self, tableSchema, tableName):
+        return None
+
+    def checkValidationStructure(self):
+        return None
+
+    def createValidationStructure(self,srid):
         return None

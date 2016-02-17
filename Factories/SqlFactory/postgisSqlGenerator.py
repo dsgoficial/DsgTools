@@ -265,3 +265,21 @@ class PostGISSqlGenerator(SqlGenerator):
     def isSuperUser(self,user):
         sql = 'SELECT rolsuper FROM pg_roles WHERE rolname = \'%s\'' % user 
         return sql
+
+    def getInvalidGeom(self, tableSchema, tableName):
+        return "select  f.id as id,(reason(ST_IsValidDetail(f.geom,1))), (location(ST_IsValidDetail(f.geom,1))) as geom from only (select id, geom from %s.%s  where ST_IsValid(geom) = 'f') as f" % (tableSchema,tableName)
+    
+    def checkValidationStructure(self):
+        return "select count(*) from information_schema.columns where table_name = 'aux_flags_validacao_p'"
+
+    def createValidationStructure(self,srid):
+        sql = """CREATE TABLE public.aux_flags_validacao_p (
+            id serial NOT NULL,
+            layer varchar(200) NOT NULL,
+            feat_id smallint NOT NULL,
+            reason varchar(200) NOT NULL,
+            geom geometry(MULTIPOINT, %s) NOT NULL,
+            CONSTRAINT aux_flags_validacao_p_pk PRIMARY KEY (id)
+             WITH (FILLFACTOR = 100)
+        );""" % str(srid)
+        return sql

@@ -395,3 +395,12 @@ class SpatialiteDb(AbstractDb):
 
     def getSqlViewFile(self):
         pass
+    
+    def getInvalidGeom(self):
+        pass
+
+    def checkInvalidGeom(self):
+        pass
+    
+    def checkAndCreateValidationStructure(self):
+        pass

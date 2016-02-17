@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>567</width>
-    <height>290</height>
+    <width>386</width>
+    <height>172</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -16,6 +22,12 @@
   <layout class="QGridLayout" name="gridLayout_6">
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="currentIndex">
       <number>1</number>
      </property>
@@ -152,6 +164,12 @@
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="title">
           <string>Connections</string>
          </property>
@@ -161,15 +179,37 @@
             <item row="0" column="0">
              <layout class="QHBoxLayout" name="horizontalLayout_3">
               <item>
-               <widget class="QComboBox" name="comboBoxPostgis"/>
+               <widget class="QComboBox" name="comboBoxPostgis">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>10</width>
+                  <height>0</height>
+                 </size>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QPushButton" name="addConnectionButton">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>10</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string extracomment="Configure Connections"/>
                 </property>
                 <property name="text">
                  <string>Configure Connections</string>
@@ -183,7 +223,7 @@
               <item>
                <widget class="QLabel" name="label_7">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -212,14 +252,14 @@
               <item>
                <widget class="QLineEdit" name="postGISCrsEdit">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
                 <property name="minimumSize">
                  <size>
-                  <width>350</width>
+                  <width>100</width>
                   <height>0</height>
                  </size>
                 </property>
@@ -232,7 +272,7 @@
               <item>
                <widget class="QLabel" name="label_4">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                   <horstretch>50</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -252,7 +292,7 @@
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
-                  <width>55</width>
+                  <width>35</width>
                   <height>20</height>
                  </size>
                 </property>
@@ -261,14 +301,14 @@
               <item>
                <widget class="QLineEdit" name="edgvPostgisVersionEdit">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
                 <property name="minimumSize">
                  <size>
-                  <width>350</width>
+                  <width>100</width>
                   <height>0</height>
                  </size>
                 </property>

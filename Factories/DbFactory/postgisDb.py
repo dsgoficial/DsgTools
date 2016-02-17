@@ -695,3 +695,63 @@ class PostgisDb(AbstractDb):
         if dbVersion == 'FTer_2a_Ed':
             file = os.path.join(currentPath,'..','..','DbTools','PostGISTool', 'sqls', 'FTer_2a_Ed', 'views_edgvFter_2a_Ed.sql')
         return file
+    
+    
+    def getInvalidGeom(self):
+        try:
+            self.checkAndOpenDb()
+        except:
+            return
+        geomList = self.listGeomClassesFromDatabase()
+        invalidRecordsList = []
+        for lyr in geomList:
+            tableSchema, tableName = self.getTableSchema(lyr)
+            sql = self.gen.getInvalidGeom(tableSchema, tableName)
+            query = QSqlQuery(sql, self.db)
+            while query.next():
+                featId = query.value(0)
+                reason = query.value(1)
+                geom = query.value(2)
+                invalidRecordsList.append( (tableSchema+'.'+tableName,featId,reason,geom) )
+        return invalidRecordsList
+    
+    def checkInvalidGeom(self):
+        try:
+            self.checkAndOpenDb()
+        except:
+            return
+        invalidGeomList = self.getInvalidGeom()
+        if len(invalidGeomList) > 0:
+            self.db.transaction()
+            query = QSqlQuery(self.db)
+            for record in invalidGeomList:
+                sql = "INSERT INTO public.aux_flags_validacao_p (layer, feat_id, reason, geom) values (%s,%s,%s,%s);" % (record[0], str(record[1]), record[2], record[3])
+                if not query.exec_(sql):
+                    self.db.rollback()
+                    self.db.close()
+                    raise Exception(self.tr('Problem inserting geometries: ') + str(query.lastError().text()))
+            return len(invalidGeomList)
+        else:
+            return 0
+    
+    def checkAndCreateValidationStructure(self):
+        try:
+            self.checkAndOpenDb()
+        except:
+            return
+        sql = self.gen.checkValidationStructure()
+        query = QSqlQuery(sql, self.db)
+        created = True
+        while query.next():
+            if query.value(0) == 0:
+                created = False
+        if not created:
+            sql2 = self.gen.createValidationStructure(self.findEPSG())
+            self.db.transaction()
+            query2 = QSqlQuery(self.db)
+            if not query.exec_(sql2):
+                self.db.rollback()
+                self.db.close()
+                raise Exception(self.tr('Problem creating structure: ') + str(query.lastError().text()))
+            self.db.commit()
+            self.db.close()

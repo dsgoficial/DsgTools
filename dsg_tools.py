@@ -53,6 +53,7 @@ from DsgTools.ConversionTools.convert_database import ConvertDatabase
 from DsgTools.aboutdialog import AboutDialog
 from DsgTools.VectorTools.calc_contour import CalcContour
 from DsgTools.AttributeTools.code_list import CodeList
+from DsgTools.ValidationTools.validation_toolbox import ValidationToolbox
 from qgis.utils import showPluginHelp
 
 class DsgTools:
@@ -99,6 +100,7 @@ class DsgTools:
         #QDockWidgets
         self.complexWindow = ComplexWindow(iface)
         self.codeList = CodeList(iface)
+        self.validationToolbox = ValidationToolbox(iface,self.codeList)
         self.contourDock = None
 
         self.processManager = ProcessManager(iface)
@@ -572,6 +574,7 @@ class DsgTools:
 
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.codeList)
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.validationToolbox)
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""

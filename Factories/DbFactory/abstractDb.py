@@ -626,3 +626,12 @@ class AbstractDb(QObject):
     
     def getSqlViewFile(self):
         pass
+    
+    def getInvalidGeom(self):
+        pass
+
+    def checkInvalidGeom(self):
+        pass
+
+    def checkAndCreateValidationStructure(self):
+        pass
