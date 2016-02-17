@@ -138,6 +138,10 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
                     QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
                     converted = self.widget.abstractDb.convertDatabase(self.widget_2.abstractDb,type)
                     QApplication.restoreOverrideCursor()
+            else:
+                QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+                converted = self.widget.abstractDb.convertDatabase(self.widget_2.abstractDb,type)
+                QApplication.restoreOverrideCursor()
         except:
             QApplication.restoreOverrideCursor()
             converted = False
