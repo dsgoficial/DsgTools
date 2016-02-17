@@ -225,6 +225,7 @@ class DsgTools:
         layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/icons/layers.png')
         bdgex = self.addMenu(self.dsgTools, u'bdgex', self.tr('BDGEx'),':/plugins/DsgTools/icons/eb.png')
         vectortools = self.addMenu(self.dsgTools, u'vectortools', self.tr('Vector Tools'),':/plugins/DsgTools/icons/vectortools.png')
+        validationtools = self.addMenu(self.dsgTools, u'validationtools', self.tr('Validation Tools'),':/plugins/DsgTools/icons/database.png')
         topocharts = self.addMenu(bdgex, u'topocharts', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
         coverageLyr = self.addMenu(bdgex, u'coverageLyr', self.tr('Coverage Layers'),':/plugins/DsgTools/icons/eb.png')
         indexes = self.addMenu(bdgex, u'indexes', self.tr('Product Indexes'),':/plugins/DsgTools/icons/eb.png')
@@ -503,6 +504,16 @@ class DsgTools:
         self.vectorButton.addAction(action)
         self.vectorButton.setDefaultAction(action)
 
+        icon_path = ':/plugins/DsgTools/icons/database.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Detect invalid geometry'),
+            callback=self.detectInvalidGeom,
+            parent=validationtools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        validationtools.addAction(action)
+
         #User Permissions submenu
         permissions = self.addMenu(database, u'layers', self.tr('User Permissions Tools'),':/plugins/DsgTools/icons/profile.png')
         icon_path = ':/plugins/DsgTools/icons/profile.png'
@@ -642,6 +653,9 @@ class DsgTools:
             self.contourDock = CalcContour(self.iface)
         self.contourDock.activateTool()
         self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.contourDock)
+
+    def detectInvalidGeom(self):
+        pass
             
     def installModelsAndScripts(self):
         dlg = ModelsAndScriptsInstaller()
