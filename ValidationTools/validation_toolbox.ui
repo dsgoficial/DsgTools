@@ -39,12 +39,12 @@
       </column>
       <column>
        <property name="text">
-        <string>Process</string>
+        <string>Processo</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>Status</string>
+        <string>Situação</string>
        </property>
       </column>
       <item>
@@ -52,10 +52,10 @@
         <string>1</string>
        </property>
        <property name="text">
-        <string>Remove Invalid Geometry</string>
+        <string>Remover geometrias inválidas</string>
        </property>
        <property name="text">
-        <string>Not Performed</string>
+        <string>Não Pronto</string>
        </property>
       </item>
      </widget>
@@ -63,14 +63,14 @@
     <item row="2" column="0">
      <widget class="QPushButton" name="openFlagsButton">
       <property name="text">
-       <string>Open Flags</string>
+       <string>Abrir Flags</string>
       </property>
      </widget>
     </item>
     <item row="2" column="1">
      <widget class="QPushButton" name="runButton">
       <property name="text">
-       <string>Run Selected Process</string>
+       <string>Executar processo</string>
       </property>
      </widget>
     </item>

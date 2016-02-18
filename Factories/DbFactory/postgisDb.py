@@ -755,3 +755,16 @@ class PostgisDb(AbstractDb):
                 raise Exception(self.tr('Problem creating structure: ') + str(query.lastError().text()))
             self.db.commit()
             self.db.close()
+    
+    def insertFlag(self,layer,feat_id,reason,geom):
+        try:
+            self.checkAndOpenDb()
+        except:
+            return
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        sql = "INSERT INTO public.aux_flags_validacao_p (layer, feat_id, reason, geom) values (%s,%s,%s,%s);" % (layer,feat_id,reason,geom)
+        if not query.exec_(sql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem inserting geometries: ') + str(query.lastError().text()))

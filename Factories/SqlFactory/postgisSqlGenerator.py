@@ -273,7 +273,8 @@ class PostGISSqlGenerator(SqlGenerator):
         return "select count(*) from information_schema.columns where table_name = 'aux_flags_validacao_p'"
 
     def createValidationStructure(self,srid):
-        sql = """CREATE TABLE public.aux_flags_validacao_p (
+        sql = """CREATE SCHEMA IF NOT EXISTS validacao;
+        CREATE TABLE validacao.aux_flags_validacao_p (
             id serial NOT NULL,
             layer varchar(200) NOT NULL,
             feat_id smallint NOT NULL,
@@ -281,5 +282,29 @@ class PostGISSqlGenerator(SqlGenerator):
             geom geometry(MULTIPOINT, %s) NOT NULL,
             CONSTRAINT aux_flags_validacao_p_pk PRIMARY KEY (id)
              WITH (FILLFACTOR = 100)
-        );""" % str(srid)
+        );
+        
+        CREATE TABLE validacao.status
+        (
+          id smallint NOT NULL,
+          status character varying(200),
+          CONSTRAINT status_pk PRIMARY KEY (id)
+        );
+        CREATE TABLE validacao.process_history (
+            id serial NOT NULL,
+            process_name varchar(200) NOT NULL,
+            log text NOT NULL,
+            status int NOT NULL,
+            finished timestamp NOT NULL default now(),
+            CONSTRAINT process_history_pk PRIMARY KEY (id),
+            CONSTRAINT process_history_status_fk FOREIGN KEY (status) REFERENCES validacao.status (id) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION
+        
+        );
+
+        INSERT INTO validacao.status(id,status) VALUES (0,'Not Runned yet'), (1,'Finished'), (2,'Failed'), (3,'Running'), (4,'Finished with flags');  
+        """ % str(srid)
         return sql
+    
+    def getValidationStatus(self, processName):
+        sql = "SELECT "
+        return None
