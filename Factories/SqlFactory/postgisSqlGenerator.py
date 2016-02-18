@@ -273,8 +273,8 @@ class PostGISSqlGenerator(SqlGenerator):
         return "select count(*) from information_schema.columns where table_name = 'aux_flags_validacao_p'"
 
     def createValidationStructure(self,srid):
-        sql = """CREATE SCHEMA IF NOT EXISTS validacao;
-        CREATE TABLE validacao.aux_flags_validacao_p (
+        sql = """CREATE SCHEMA IF NOT EXISTS validation;
+        CREATE TABLE validation.aux_flags_validacao_p (
             id serial NOT NULL,
             layer varchar(200) NOT NULL,
             feat_id smallint NOT NULL,
@@ -282,29 +282,37 @@ class PostGISSqlGenerator(SqlGenerator):
             geom geometry(MULTIPOINT, %s) NOT NULL,
             CONSTRAINT aux_flags_validacao_p_pk PRIMARY KEY (id)
              WITH (FILLFACTOR = 100)
-        );
+        )#
         
-        CREATE TABLE validacao.status
+        CREATE TABLE validation.status
         (
           id smallint NOT NULL,
           status character varying(200),
           CONSTRAINT status_pk PRIMARY KEY (id)
-        );
-        CREATE TABLE validacao.process_history (
+        )#
+        CREATE TABLE validation.process_history (
             id serial NOT NULL,
             process_name varchar(200) NOT NULL,
             log text NOT NULL,
             status int NOT NULL,
             finished timestamp NOT NULL default now(),
             CONSTRAINT process_history_pk PRIMARY KEY (id),
-            CONSTRAINT process_history_status_fk FOREIGN KEY (status) REFERENCES validacao.status (id) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION
+            CONSTRAINT process_history_status_fk FOREIGN KEY (status) REFERENCES validation.status (id) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION
         
-        );
+        )#
 
-        INSERT INTO validacao.status(id,status) VALUES (0,'Not Runned yet'), (1,'Finished'), (2,'Failed'), (3,'Running'), (4,'Finished with flags');  
+        INSERT INTO validation.status(id,status) VALUES (0,'Not yet ran'), (1,'Finished'), (2,'Failed'), (3,'Running'), (4,'Finished with flags')  
         """ % str(srid)
         return sql
     
-    def getValidationStatus(self, processName):
-        sql = "SELECT "
-        return None
+    def validationStatus(self, processName):
+        sql = "SELECT status FROM validation.process_history where process_name = '%s' ORDER BY finished DESC LIMIT 1; " % processName
+        return sql
+    
+    def validationStatusText(self, processName):
+        sql = "SELECT sta.status FROM validation.process_history as hist left join validation.status as sta on sta.id = hist.status where hist.process_name = '%s' ORDER BY hist.finished DESC LIMIT 1 " % processName
+        return sql
+    
+    def setValidationStatusQuery(self, processName,log,status):
+        sql = "INSERT INTO validation.process_history (process_name, log, status) values ('%s','%s',%s)" % (processName,log,status)
+        return sql

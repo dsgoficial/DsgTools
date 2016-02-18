@@ -26,8 +26,7 @@ class ValidationProcess(object):
         object.__init__(self)
         self.abstractDb = postgisDb
         self.log = ''
-        self.statusDict = {0:'Not Runned yet', 1:'Finished', 2:'Failed', 3:'Running', 4:'Finished with flags'}
-        self.status = 0
+        self.classesToBeDisplayedAfterProcess = []
     
     def execute(self):
         #abstract method. MUST be reimplemented.
@@ -45,7 +44,14 @@ class ValidationProcess(object):
     
     def getClassesToBeDisplayedAfterProcess(self):
         #returns classes to be loaded to TOC after executing this process.
-        return []
+        return self.classesToBeDisplayedAfterProcess
+    
+    def addClassesToBeDisplayedList(self,className):
+        if className not in self.classesToBeDisplayedAfterProcess:
+            self.classesToBeDisplayedAfterProcess.append(className)
+    
+    def clearClassesToBeDisplayedAfterProcess(self):
+        self.classesToBeDisplayedAfterProcess = []
     
     def dependsOn(self):
         #Abstract method. Should be reimplemented if necessary.
@@ -57,22 +63,23 @@ class ValidationProcess(object):
     def getLog(self):
         return self.log
     
-    def addFlag(self,layer,feat_id,reason,geom):
+    def addFlag(self,flagTupleList):
         try:
-            self.abstractDb.insertFlag(layer,feat_id,reason,geom)
+            return self.abstractDb.insertFlags(flagTupleList)
         except Exception as e:
-            self.addLogMessage(str(e))
+            self.addLogMessage(str(e.args[0]))
     
     def getStatus(self):
-        self.status = self.abstractDb.getValidationStatus(self.getName())
-        return self.status
+        return self.abstractDb.getValidationStatus(self.getName())
     
     def getStatusMessage(self):
-        return self.statusDict[self.status]
+        return self.abstractDb.getValidationStatusText(self.getName())
     
+    def setStatus(self,status):
+        self.abstractDb.setValidationProcessStatus(self.getName(),self.getLog(),status)
     
-
-if __name__ == '__main__':
-    
-    teste = ValidationProcess(None)
-    print teste.getName()
+    def finishedWithError(self):
+        self.addLogMessage('Process finished with errors.\n')
+        self.setStatus(2) #Failed status
+        self.clearClassesToBeDisplayedAfterProcess()
+        

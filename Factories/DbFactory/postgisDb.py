@@ -30,7 +30,7 @@ from uuid import uuid4
 import codecs, os
 
 class PostgisDb(AbstractDb):
-    
+    #TODO: raise all database connection problems
     def __init__(self):
         super(PostgisDb,self).__init__()
         self.db = QSqlDatabase('QPSQL')
@@ -696,13 +696,9 @@ class PostgisDb(AbstractDb):
             file = os.path.join(currentPath,'..','..','DbTools','PostGISTool', 'sqls', 'FTer_2a_Ed', 'views_edgvFter_2a_Ed.sql')
         return file
     
-    
-    def getInvalidGeom(self):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return
-        geomList = self.listGeomClassesFromDatabase()
+    def getInvalidGeomRecords(self):
+        self.checkAndOpenDb()
+        geomList = self.listClassesWithElementsFromDatabase()
         invalidRecordsList = []
         for lyr in geomList:
             tableSchema, tableName = self.getTableSchema(lyr)
@@ -715,30 +711,23 @@ class PostgisDb(AbstractDb):
                 invalidRecordsList.append( (tableSchema+'.'+tableName,featId,reason,geom) )
         return invalidRecordsList
     
-    def checkInvalidGeom(self):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return
-        invalidGeomList = self.getInvalidGeom()
-        if len(invalidGeomList) > 0:
+    def insertFlags(self, flagTupleList):
+        self.checkAndOpenDb()
+        if len(flagTupleList) > 0:
             self.db.transaction()
             query = QSqlQuery(self.db)
-            for record in invalidGeomList:
-                sql = "INSERT INTO public.aux_flags_validacao_p (layer, feat_id, reason, geom) values (%s,%s,%s,%s);" % (record[0], str(record[1]), record[2], record[3])
+            for record in flagTupleList:
+                sql = "INSERT INTO validation.aux_flags_validacao_p (layer, feat_id, reason, geom) values (%s,%s,%s,%s);" % (record[0], str(record[1]), record[2], record[3])
                 if not query.exec_(sql):
                     self.db.rollback()
                     self.db.close()
                     raise Exception(self.tr('Problem inserting geometries: ') + str(query.lastError().text()))
-            return len(invalidGeomList)
+            return len(flagTupleList)
         else:
             return 0
     
     def checkAndCreateValidationStructure(self):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return
+        self.checkAndOpenDb()
         sql = self.gen.checkValidationStructure()
         query = QSqlQuery(sql, self.db)
         created = True
@@ -746,25 +735,39 @@ class PostgisDb(AbstractDb):
             if query.value(0) == 0:
                 created = False
         if not created:
-            sql2 = self.gen.createValidationStructure(self.findEPSG())
+            sqltext = self.gen.createValidationStructure(self.findEPSG())
+            sqlList = sqltext.split('#')
             self.db.transaction()
-            query2 = QSqlQuery(self.db)
-            if not query.exec_(sql2):
-                self.db.rollback()
-                self.db.close()
-                raise Exception(self.tr('Problem creating structure: ') + str(query.lastError().text()))
+            for sql2 in sqlList:
+                if not query2.exec_(sql2):
+                    self.db.rollback()
+                    self.db.close()
+                    raise Exception(self.tr('Problem creating structure: ') + str(query.lastError().text()))
             self.db.commit()
             self.db.close()
     
-    def insertFlag(self,layer,feat_id,reason,geom):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return
-        self.db.transaction()
+    def getValidationStatus(self, processName):
+        self.checkAndOpenDb()
+        sql = self.gen.validationStatus(processName)
         query = QSqlQuery(self.db)
-        sql = "INSERT INTO public.aux_flags_validacao_p (layer, feat_id, reason, geom) values (%s,%s,%s,%s);" % (layer,feat_id,reason,geom)
         if not query.exec_(sql):
-            self.db.rollback()
             self.db.close()
-            raise Exception(self.tr('Problem inserting geometries: ') + str(query.lastError().text()))
+            raise Exception(self.tr('Problem acquiring status: ') + str(query.lastError().text()))
+        return query.value(0)
+
+    def getValidationStatusText(self, processName):
+        self.checkAndOpenDb()
+        sql = self.gen.validationStatusText(processName)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            self.db.close()
+            raise Exception(self.tr('Problem acquiring status: ') + str(query.lastError().text()))
+        return query.value(0)
+
+    def setValidationProcessStatus(self,processName,log,status):
+        self.checkAndOpenDb()
+        sql = self.gen.setValidationStatusQuery(processName,log,status)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            self.db.close()
+            raise Exception(self.tr('Problem acquiring status: ') + str(query.lastError().text()))
