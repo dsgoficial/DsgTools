@@ -29,6 +29,7 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
     
     def execute(self):
         #abstract method. MUST be reimplemented.
+        self.setStatus(3) #now I'm running!
         self.addLogMessage('Starting '+self.getName()+'Process.\n')
         try:
             invalidGeomRecordList = self.abstractDb.getInvalidGeomRecords() #list only classes with elements.
@@ -46,6 +47,6 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
             self.setStatus(4) #Finished with flags
             return
         else:
-            self.addLogMessage('All features are invalid.\n')
-            self.setStatus(0) #Finished
+            self.addLogMessage('All features are valid.\n')
+            self.setStatus(1) #Finished
 

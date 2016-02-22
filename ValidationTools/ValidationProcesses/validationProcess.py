@@ -37,7 +37,7 @@ class ValidationProcess(object):
         return False
     
     def getName(self):
-        return str(self.__class__).split('.')[1].split('Process')[0]
+        return str(self.__class__).split('.')[-1].split('Process')[0]
     
     def getProcessGroup(self):
         return 'Ungrouped'
@@ -82,4 +82,7 @@ class ValidationProcess(object):
         self.addLogMessage('Process finished with errors.\n')
         self.setStatus(2) #Failed status
         self.clearClassesToBeDisplayedAfterProcess()
+    
+    def checkIdle(self):
+        return self.abstractDb.checkIdle()
         

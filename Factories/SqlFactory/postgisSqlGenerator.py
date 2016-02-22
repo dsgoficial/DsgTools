@@ -316,3 +316,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def setValidationStatusQuery(self, processName,log,status):
         sql = "INSERT INTO validation.process_history (process_name, log, status) values ('%s','%s',%s)" % (processName,log,status)
         return sql
+    
+    def checkIdle(self):
+        sql = "SELECT process_name FROM validation.process_history where status = 3 LIMIT 1;"
+        return sql

@@ -53,10 +53,10 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.layerFactory = LayerFactory()
         self.iface = iface
         self.codeList = codeList
-        self.widget.tabWidget.setTabEnabled(1,True)
-        self.widget.tabWidget.setTabEnabled(0,False)
-        self.widget.tabWidget.setCurrentIndex(1)
-        self.widget.connectionChanged.connect(self.listProcesses)
+#         self.widget.tabWidget.setTabEnabled(1,True)
+#         self.widget.tabWidget.setTabEnabled(0,False)
+#         self.widget.tabWidget.setCurrentIndex(1)
+#         self.widget.connectionChanged.connect(self.listProcesses)
         self.processList = ['identifyInvalidGeom']
     
     @pyqtSlot()
