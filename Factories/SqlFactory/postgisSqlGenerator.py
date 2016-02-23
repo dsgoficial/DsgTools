@@ -308,7 +308,7 @@ class PostGISSqlGenerator(SqlGenerator):
             CONSTRAINT settings_pk PRIMARY KEY (id)
         )#
 
-        INSERT INTO validation.status(id,status) VALUES (0,'Not yet ran'), (1,'Finished'), (2,'Failed'), (3,'Running'), (4,'Finished with flags')  
+        INSERT INTO validation.status(id,status) VALUES (0,'Not yet ran'), (1,'Finished'), (2,'Failed'), (3,'Running'), (4,'Finished with flags')   
         """ % str(srid)
         return sql
     

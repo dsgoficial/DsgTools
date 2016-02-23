@@ -74,6 +74,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         pass
     
     def populateProcessList(self):
+        self.processTreeWidget.clear()
         rootItem = self.processTreeWidget.invisibleRootItem()
         procList = self.validationManager.processList
         for i in range(len(procList)):
@@ -83,7 +84,17 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             item.setText(2, procList[i].getStatusMessage())
         pass
     
-    def runProcess(self):
+    @pyqtSlot(bool)
+    def on_runButton_clicked(self):
+        index = self.processTreeWidget.selectedItems()[0].text(0)
+        processName = self.validationManager.processList[i].getName()
+        procReturn = self.validationManager.executeProcess(processName)
+        if procReturn == 0:
+            #abrir o log e cuspir a cagada
+            pass
+        else:
+            #executou! show!
+            pass
         pass
 
     def createItem(self, parent, text):

@@ -737,6 +737,7 @@ class PostgisDb(AbstractDb):
         if not created:
             sqltext = self.gen.createValidationStructure(self.findEPSG())
             sqlList = sqltext.split('#')
+            query2 = QSqlQuery(sql, self.db)
             self.db.transaction()
             for sql2 in sqlList:
                 if not query2.exec_(sql2):
@@ -762,6 +763,7 @@ class PostgisDb(AbstractDb):
         if not query.exec_(sql):
             self.db.close()
             raise Exception(self.tr('Problem acquiring status: ') + str(query.lastError().text()))
+        query.next()
         return query.value(0)
 
     def setValidationProcessStatus(self,processName,log,status):
