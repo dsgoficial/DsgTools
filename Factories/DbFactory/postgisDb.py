@@ -711,22 +711,34 @@ class PostgisDb(AbstractDb):
                 invalidRecordsList.append( (tableSchema+'.'+tableName,featId,reason,geom) )
         return invalidRecordsList
     
-    def insertFlags(self, flagTupleList):
+    def insertFlags(self, flagTupleList, processName):
         self.checkAndOpenDb()
         srid = self.findEPSG()
         if len(flagTupleList) > 0:
             self.db.transaction()
             query = QSqlQuery(self.db)
             for record in flagTupleList:
-                sql = self.gen.insertFlagIntoDb(record[0], str(record[1]), record[2], record[3], srid)
+                sql = self.gen.insertFlagIntoDb(record[0], str(record[1]), record[2], record[3], srid, processName)
                 if not query.exec_(sql):
                     self.db.rollback()
                     self.db.close()
-                    raise Exception(self.tr('Problem inserting geometries: ') + str(query.lastError().text()))
+                    raise Exception(self.tr('Problem inserting geometries: ') + str(query.lastError().text())) + '\n'
                 self.db.commit()
             return len(flagTupleList)
         else:
             return 0
+    
+    def deleteProcessFlags(self, processName):
+        self.checkAndOpenDb()
+        sql = self.gen.deleteFlags(processName)
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem deleting geometries: ') + str(query.lastError().text())) + '\n'
+        self.db.commit()
+        return 0
     
     def checkAndCreateValidationStructure(self):
         self.checkAndOpenDb()

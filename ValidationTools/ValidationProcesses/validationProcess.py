@@ -66,7 +66,7 @@ class ValidationProcess(object):
     
     def addFlag(self,flagTupleList):
         try:
-            return self.abstractDb.insertFlags(flagTupleList)
+            return self.abstractDb.insertFlags(flagTupleList,self.getName())
         except Exception as e:
             self.addLogMessage(str(e.args[0]))
     

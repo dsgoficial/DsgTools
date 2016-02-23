@@ -277,6 +277,7 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """CREATE SCHEMA IF NOT EXISTS validation#
         CREATE TABLE validation.aux_flags_validacao_p (
             id serial NOT NULL,
+            process_name varchar(200) NOT NULL,
             layer varchar(200) NOT NULL,
             feat_id smallint NOT NULL,
             reason varchar(200) NOT NULL,
@@ -325,9 +326,14 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "INSERT INTO validation.process_history (process_name, log, status) values ('%s','%s',%s)" % (processName,log,status)
         return sql
     
-    def insertFlagIntoDb(self,layer,feat_id,reason,geom,srid):
-        sql = "INSERT INTO validation.aux_flags_validacao_p (layer, feat_id, reason, geom) values ('%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s));" % (layer, str(feat_id), reason, geom, srid)
+    def insertFlagIntoDb(self,layer,feat_id,reason,geom,srid,processName):
+        sql = "INSERT INTO validation.aux_flags_validacao_p (process_name, layer, feat_id, reason, geom) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s));" % (processName, layer, str(feat_id), reason, geom, srid)
         return sql
     
     def getRunningProc(self):
-        sql = "SELECT process_name FROM validation.process_history where status = 3 ORDER BY finished DESC LIMIT 1;" 
+        sql = "SELECT process_name FROM validation.process_history where status = 3 ORDER BY finished DESC LIMIT 1;"
+        return sql
+    
+    def deleteFlags(self, processName):
+        sql = "DELETE FROM validation.aux_flags_validacao_p WHERE id in (SELECT id FROM validation.aux_flags_validacao_p where process_name = '%s'" % processName
+        return sql

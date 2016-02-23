@@ -30,6 +30,7 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
     def execute(self):
         #abstract method. MUST be reimplemented.
         self.setStatus(3) #now I'm running!
+        self.abstractDb.deleteProcessFlags(self.getName())
         self.addLogMessage('Starting '+self.getName()+'Process.\n')
         try:
             invalidGeomRecordList = self.abstractDb.getInvalidGeomRecords() #list only classes with elements.
