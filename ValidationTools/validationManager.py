@@ -59,8 +59,8 @@ class ValidationManager(object):
                         return 0
                 else:
                     #check status
-                    isIdle = self.currProc.checkIdle()
-                    if isIdle == None: #process is idle, I can now execute it.
+                    runningProc = self.getRunningProc()
+                    if runningProc == None: #process is idle, I can now execute it.
                         self.currProc.execute() #run bitch run!
                         status = self.currProc.getStatus() #must set status
                         self.log += 'Process ran with status %s\n' % self.currProc.getStatusMessage()
@@ -70,13 +70,16 @@ class ValidationManager(object):
                         return 1
                         #self.getClassesToBeDisplayedAfterProcess()
                     else:
-                        self.log += 'Unable to run process due to process %s being executed.' % isIdle
+                        self.log += 'Unable to run process due to process %s being executed.' % runningProc
                         return 0
                     pass
             else:
                 self.log += 'Unable to run process.\n'
                 self.log += self.currProc.getLog()
                 return 0
+    
+    def getRunningProc(self):
+        return self.postgisDb.getRunningProc()
     
     def getLog(self):
         return self.log

@@ -325,10 +325,9 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "INSERT INTO validation.process_history (process_name, log, status) values ('%s','%s',%s)" % (processName,log,status)
         return sql
     
-    def checkIdle(self):
-        sql = "SELECT process_name FROM validation.process_history where status <> 3  LIMIT 1;"
-        return sql
-    
     def insertFlagIntoDb(self,layer,feat_id,reason,geom,srid):
         sql = "INSERT INTO validation.aux_flags_validacao_p (layer, feat_id, reason, geom) values ('%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s));" % (layer, str(feat_id), reason, geom, srid)
         return sql
+    
+    def getRunningProc(self):
+        sql = "SELECT process_name FROM validation.process_history where status = 3 ORDER BY finished DESC LIMIT 1;" 

@@ -776,9 +776,9 @@ class PostgisDb(AbstractDb):
             self.db.close()
             raise Exception(self.tr('Problem acquiring status: ') + str(query.lastError().text()))
     
-    def checkIdle(self):
+    def getRunningProc(self):
         self.checkAndOpenDb()
-        sql = self.gen.checkIdle()
+        sql = self.gen.getRunningProc()
         query = QSqlQuery(sql, self.db)
         while query.next():
             return query.value(0)

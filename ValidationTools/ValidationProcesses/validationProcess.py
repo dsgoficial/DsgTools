@@ -84,6 +84,5 @@ class ValidationProcess(object):
         self.setStatus(2) #Failed status
         self.clearClassesToBeDisplayedAfterProcess()
     
-    def checkIdle(self):
-        return self.abstractDb.checkIdle()
+        
         
