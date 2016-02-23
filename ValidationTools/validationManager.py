@@ -66,6 +66,7 @@ class ValidationManager(object):
                         self.log += 'Process ran with status %s\n' % self.currProc.getStatusMessage()
                         self.log += 'Process Log:\n'
                         self.log += self.currProc.getLog()
+                        self.currProc = None
                         return 1
                         #self.getClassesToBeDisplayedAfterProcess()
                     else:
@@ -79,6 +80,9 @@ class ValidationManager(object):
     
     def getLog(self):
         return self.log
+    
+    def clearLog(self):
+        self.log = ''
     
     def getProcessIndex(self, processName):
         procNameList = []

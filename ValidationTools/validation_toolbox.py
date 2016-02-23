@@ -23,8 +23,10 @@
 import os
 
 # Qt imports
+from PyQt4.QtCore import Qt
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
+from PyQt4.QtGui import QApplication, QCursor
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsField, QgsDataSourceURI
@@ -32,6 +34,7 @@ from PyQt4.QtGui import QTableWidgetItem
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
 import qgis as qgis
+from qgis.core import QgsMessageLog
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'validation_toolbox.ui'))
@@ -86,13 +89,18 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_runButton_clicked(self):
-        index = self.processTreeWidget.selectedItems()[0].text(0)
-        processName = self.validationManager.processList[i].getName()
+        index = int(self.processTreeWidget.selectedItems()[0].text(0))-1
+        processName = self.validationManager.processList[index].getName()
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         procReturn = self.validationManager.executeProcess(processName)
+        QApplication.restoreOverrideCursor()
+        self.populateProcessList()
         if procReturn == 0:
-            #abrir o log e cuspir a cagada
-            pass
+            QgsMessageLog.logMessage(self.validationManager.getLog(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Process %s returned error. Check log for details.'))
+            self.validationManager.clearLog()
         else:
+            QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Process successfully executed!'))
             #executou! show!
             pass
         pass

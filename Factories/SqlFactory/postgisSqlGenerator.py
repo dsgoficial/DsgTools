@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 from DsgTools.Factories.SqlFactory.sqlGenerator import SqlGenerator
+from reportlab.lib import geomutils
 
 class PostGISSqlGenerator(SqlGenerator):
     def getComplexLinks(self, complex):
@@ -267,7 +268,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getInvalidGeom(self, tableSchema, tableName):
-        return "select  f.id as id,(reason(ST_IsValidDetail(f.geom,1))), (location(ST_IsValidDetail(f.geom,1))) as geom from only (select id, geom from %s.%s  where ST_IsValid(geom) = 'f') as f" % (tableSchema,tableName)
+        return "select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only %s.%s  where ST_IsValid(geom) = 'f') as f" % (tableSchema,tableName)
     
     def checkValidationStructure(self):
         return "select count(*) from information_schema.columns where table_name = 'aux_flags_validacao_p'"
@@ -325,5 +326,9 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def checkIdle(self):
-        sql = "SELECT process_name FROM validation.process_history where status = 3 LIMIT 1;"
+        sql = "SELECT process_name FROM validation.process_history where status <> 3  LIMIT 1;"
+        return sql
+    
+    def insertFlagIntoDb(self,layer,feat_id,reason,geom,srid):
+        sql = "INSERT INTO validation.aux_flags_validacao_p (layer, feat_id, reason, geom) values ('%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s));" % (layer, str(feat_id), reason, geom, srid)
         return sql

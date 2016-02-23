@@ -713,15 +713,17 @@ class PostgisDb(AbstractDb):
     
     def insertFlags(self, flagTupleList):
         self.checkAndOpenDb()
+        srid = self.findEPSG()
         if len(flagTupleList) > 0:
             self.db.transaction()
             query = QSqlQuery(self.db)
             for record in flagTupleList:
-                sql = "INSERT INTO validation.aux_flags_validacao_p (layer, feat_id, reason, geom) values (%s,%s,%s,%s);" % (record[0], str(record[1]), record[2], record[3])
+                sql = self.gen.insertFlagIntoDb(record[0], str(record[1]), record[2], record[3], srid)
                 if not query.exec_(sql):
                     self.db.rollback()
                     self.db.close()
                     raise Exception(self.tr('Problem inserting geometries: ') + str(query.lastError().text()))
+                self.db.commit()
             return len(flagTupleList)
         else:
             return 0
