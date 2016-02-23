@@ -273,12 +273,13 @@ class PostGISSqlGenerator(SqlGenerator):
         return "select count(*) from information_schema.columns where table_name = 'aux_flags_validacao_p'"
 
     def createValidationStructure(self,srid):
-        sql = """CREATE SCHEMA IF NOT EXISTS validation;
+        sql = """CREATE SCHEMA IF NOT EXISTS validation#
         CREATE TABLE validation.aux_flags_validacao_p (
             id serial NOT NULL,
             layer varchar(200) NOT NULL,
             feat_id smallint NOT NULL,
             reason varchar(200) NOT NULL,
+            user_fixed boolean NOT NULL DEFAULT FALSE,
             geom geometry(MULTIPOINT, %s) NOT NULL,
             CONSTRAINT aux_flags_validacao_p_pk PRIMARY KEY (id)
              WITH (FILLFACTOR = 100)
@@ -287,7 +288,7 @@ class PostGISSqlGenerator(SqlGenerator):
         CREATE TABLE validation.status
         (
           id smallint NOT NULL,
-          status character varying(200),
+          status character varying(200) NOT NULL,
           CONSTRAINT status_pk PRIMARY KEY (id)
         )#
         CREATE TABLE validation.process_history (
@@ -299,6 +300,12 @@ class PostGISSqlGenerator(SqlGenerator):
             CONSTRAINT process_history_pk PRIMARY KEY (id),
             CONSTRAINT process_history_status_fk FOREIGN KEY (status) REFERENCES validation.status (id) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION
         
+        )#
+        CREATE TABLE validation.settings(
+            id serial NOT NULL,
+            scale character varying(10) NOT NULL,
+            tolerance float NOT NULL,
+            CONSTRAINT settings_pk PRIMARY KEY (id)
         )#
 
         INSERT INTO validation.status(id,status) VALUES (0,'Not yet ran'), (1,'Finished'), (2,'Failed'), (3,'Running'), (4,'Finished with flags')  

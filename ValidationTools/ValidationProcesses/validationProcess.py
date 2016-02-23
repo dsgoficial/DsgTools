@@ -27,6 +27,7 @@ class ValidationProcess(object):
         self.abstractDb = postgisDb
         self.log = ''
         self.classesToBeDisplayedAfterProcess = []
+        self.setStatus(0)
     
     def execute(self):
         #abstract method. MUST be reimplemented.

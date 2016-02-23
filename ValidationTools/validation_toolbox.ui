@@ -36,7 +36,7 @@
          <widget class="QLineEdit" name="databaseLineEdit"/>
         </item>
         <item row="0" column="3">
-         <widget class="QPushButton" name="openpushButton">
+         <widget class="QPushButton" name="openDbPushButton">
           <property name="text">
            <string>Open</string>
           </property>
@@ -71,17 +71,6 @@
             <string>Situação</string>
            </property>
           </column>
-          <item>
-           <property name="text">
-            <string>1</string>
-           </property>
-           <property name="text">
-            <string>Remover geometrias inválidas</string>
-           </property>
-           <property name="text">
-            <string>Não Pronto</string>
-           </property>
-          </item>
          </widget>
         </item>
         <item row="2" column="0" colspan="2">
@@ -106,7 +95,7 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="0">
-         <widget class="QTreeWidget" name="processTreeWidget_2">
+         <widget class="QTreeWidget" name="flagTreeWidget">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -114,37 +103,36 @@
            </size>
           </property>
           <attribute name="headerMinimumSectionSize">
-           <number>5</number>
+           <number>1</number>
           </attribute>
           <attribute name="headerStretchLastSection">
            <bool>false</bool>
           </attribute>
           <column>
            <property name="text">
-            <string>#</string>
+            <string>id</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>Processo</string>
+            <string>layer</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>Situação</string>
+            <string>feat_id</string>
            </property>
           </column>
-          <item>
+          <column>
            <property name="text">
-            <string>1</string>
+            <string>reason</string>
            </property>
+          </column>
+          <column>
            <property name="text">
-            <string>Remover geometrias inválidas</string>
+            <string>user_fixed</string>
            </property>
-           <property name="text">
-            <string>Não Pronto</string>
-           </property>
-          </item>
+          </column>
          </widget>
         </item>
         <item row="1" column="0">

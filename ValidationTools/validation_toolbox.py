@@ -4,11 +4,11 @@
  DsgTools
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
-                             -------------------
-        begin                : 2015-11-23
+                              -------------------
+        begin                : 2016-02-18
         git sha              : $Format:%H$
-        copyright            : (C) 2015 by Brazilian Army - Geographic Service Bureau
-        email                : suporte.dsgtools@dsg.eb.mil.br
+        copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        email                : borba@dsg.eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -38,6 +38,8 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 #DsgTools imports
 from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
+from DsgTools.ValidationTools.validation_config import ValidationConfig
+from DsgTools.ValidationTools.validationManager import ValidationManager
 
 class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     def __init__(self, iface, codeList):
@@ -53,39 +55,37 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.layerFactory = LayerFactory()
         self.iface = iface
         self.codeList = codeList
-#         self.widget.tabWidget.setTabEnabled(1,True)
-#         self.widget.tabWidget.setTabEnabled(0,False)
-#         self.widget.tabWidget.setCurrentIndex(1)
-#         self.widget.connectionChanged.connect(self.listProcesses)
-        self.processList = ['identifyInvalidGeom']
+        self.databaseLineEdit.setReadOnly(True)
+        self.configWindow = ValidationConfig()
+        self.configWindow.widget.connectionChanged.connect(self.updateDbLineEdit)
+        self.validationManager = None
+
+    @pyqtSlot(bool)
+    def on_openDbPushButton_clicked(self):
+        self.configWindow.show()
     
     @pyqtSlot()
-    def listProcesses(self):
-        print 'lalala'
+    def updateDbLineEdit(self):
+        self.databaseLineEdit.setText(self.configWindow.widget.comboBoxPostgis.currentText())
+        self.scale = self.configWindow.scaleComboBox.currentText()
+        self.tolerance = self.configWindow.toleranceLineEdit.text()
+        self.validationManager = ValidationManager(self.configWindow.widget.abstractDb)
+        self.populateProcessList()
+        pass
+    
+    def populateProcessList(self):
+        rootItem = self.processTreeWidget.invisibleRootItem()
+        procList = self.validationManager.processList
+        for i in range(len(procList)):
+            item = QtGui.QTreeWidgetItem(rootItem)
+            item.setText(0, str(i+1))
+            item.setText(1,procList[i].getName())
+            item.setText(2, procList[i].getStatusMessage())
         pass
     
     def runProcess(self):
         pass
-    
-    @pyqtSlot(bool)
-    def on_openFlagsButton_clicked(self):
-        self.loadFlags()
-    
-    def loadFlags(self):
-        try:
-            self.widget.abstractDb.checkAndCreateValidationStructure()
-        except Exception as e:
-            raise e
-        dbName = self.widget.abstractDb.getDatabaseName()
-        groupList =  self.iface.legendInterface().groups()
-        edgvLayer = self.layerFactory.makeLayer(self.widget.abstractDb, self.codeList, 'public.aux_flags_validacao_p')
-        if dbName in groupList:
-            edgvLayer.load(self.widget.crs,groupList.index(dbName))
-        else:
-            self.parentTreeNode = qgis.utils.iface.legendInterface().addGroup(self.widget.abstractDb.getDatabaseName(), -1)
-            edgvLayer.load(self.widget.crs,self.parentTreeNode)
-    
-    def identifyInvalidGeom(self):
-        if self.widget.abstractDb.checkInvalidGeom() > 0:
-            self.loadFlags()
-            
+
+    def createItem(self, parent, text):
+        
+        return item

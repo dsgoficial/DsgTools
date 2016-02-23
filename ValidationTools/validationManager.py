@@ -26,11 +26,17 @@ from DsgTools.ValidationTools.ValidationProcesses.identifyInvalidGeometriesProce
 class ValidationManager(object):
     def __init__(self,postgisDb):
         object.__init__(self)
+        self.postgisDb = postgisDb
         self.currProc = None
         self.log = ''
-        self.processList = []
-        self.processList.append(IdentifyInvalidGeometriesProcess(postgisDb))
-    
+        try:
+            self.postgisDb.checkAndCreateValidationStructure()
+            self.processList = []
+            self.processList.append(IdentifyInvalidGeometriesProcess(self.postgisDb))
+        except Exception as e:
+            self.log+= e.args[0]
+            print self.log
+
     def executeProcess(self, processName):
         idx = self.getProcessIndex(processName)
         if self.currProc <> None:
