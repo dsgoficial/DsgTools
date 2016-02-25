@@ -103,8 +103,8 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         
         query = QSqlQuery('select code, code_name from dominios.%s' % table, db)
         while query.next():
-            code = str(query.value(0)).decode('UTF-8')
-            code_name = str(query.value(1)).decode('UTF-8')
+            code = str(query.value(0))
+            code_name = query.value(1)
             ret[code_name] = code
             
         db.close()
