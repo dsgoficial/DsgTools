@@ -26,12 +26,11 @@ import os
 from PyQt4.QtCore import Qt
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
-from PyQt4.QtGui import QApplication, QCursor
+from PyQt4.QtGui import QApplication, QCursor, QMenu, QTableWidgetItem
+from PyQt4.QtSql import QSqlTableModel, QSqlDatabase, QSqlQuery
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsField, QgsDataSourceURI
-from PyQt4.QtGui import QTableWidgetItem
-from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
 import qgis as qgis
 from qgis.core import QgsMessageLog
@@ -43,6 +42,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
 from DsgTools.ValidationTools.validation_config import ValidationConfig
 from DsgTools.ValidationTools.validationManager import ValidationManager
+from DsgTools.ValidationTools.validation_history import ValidationHistory
 
 class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     def __init__(self, iface, codeList):
@@ -54,18 +54,80 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        
+        #TODO enable tab when db is set
         self.layerFactory = LayerFactory()
+        self.edgvLayer = None
+        self.flagLyr = None
         self.iface = iface
         self.codeList = codeList
         self.databaseLineEdit.setReadOnly(True)
         self.configWindow = ValidationConfig()
         self.configWindow.widget.connectionChanged.connect(self.updateDbLineEdit)
         self.validationManager = None
+        self.tableView.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tableView.customContextMenuRequested.connect(self.createMenuEditFlagStatus)
+
+
+    def createMenuEditFlagStatus(self, position):
+        menu = QMenu()
+        item = self.tableView.indexAt(position)
+        if item:
+            menu.addAction(self.tr('Zoom to flag'), self.zoomToFlag)
+            menu.addAction(self.tr('Set Visited'), self.setFlagVisited)
+            menu.addAction(self.tr('Set Unvisited'), self.setFlagUnvisited)
+        menu.exec_(self.tableView.viewport().mapToGlobal(position))
+
+    
+    @pyqtSlot()
+    def on_theSelectionModel_selectionChanged(self):
+        print 'mudou'
+    
+    def setFlagVisited(self):
+        print 'visited'
+
+    def setFlagUnvisited(self):
+        print 'unvisited'
+    
+    def zoomToFlag(self):
+        idx =  self.tableView.selectionModel().selection().indexes()[0].data()
+        self.loadFlagLyr()
+        self.iface.mapCanvas().refresh()
+        self.flagLyr.select(idx)
+        bbox = self.flagLyr.boundingBoxOfSelected()
+        self.flagLyr.removeSelection()
+        self.iface.mapCanvas().setExtent(bbox)
+        self.iface.mapCanvas().refresh()
+    
+    def loadFlagLyr(self):
+        if self.checkFlagsLoaded() or self.edgvLayer == None:
+            dbName = self.configWindow.widget.abstractDb.getDatabaseName()
+            self.edgvLayer = self.layerFactory.makeLayer(self.configWindow.widget.abstractDb, self.codeList, 'validation.aux_flags_validacao_p')
+            groupList =  qgis.utils.iface.legendInterface().groups()
+            if dbName in groupList:
+                self.flagLyr =  self.edgvLayer.load(self.configWindow.widget.crs,groupList.index(dbName))
+            else:
+                parentTreeNode = qgis.utils.iface.legendInterface().addGroup(self.configWindow.widget.abstractDb.getDatabaseName(), -1)
+                self.flagLyr =  self.edgvLayer.load(self.configWindow.widget.crs,parentTreeNode)
+    
+    def checkFlagsLoaded(self):
+        loadedLayers = self.iface.mapCanvas().layers()
+        candidateLyrs = []
+        for lyr in loadedLayers:
+            if lyr.name() == 'aux_flags_validacao_p':
+                candidateLyrs.append(lyr)
+        for lyr in candidateLyrs:
+            if self.configWindow.widget.abstractDb.isLyrInDb(lyr):
+                return True
+        return False
 
     @pyqtSlot(bool)
     def on_openDbPushButton_clicked(self):
         self.configWindow.show()
+
+    @pyqtSlot(bool)
+    def on_historyButton_clicked(self):
+        historyWindow = ValidationHistory(self.configWindow.widget.abstractDb)
+        historyWindow.exec_()
     
     @pyqtSlot()
     def updateDbLineEdit(self):
@@ -78,6 +140,8 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     
     def populateProcessList(self):
         self.processTreeWidget.clear()
+        self.edgvLayer = None
+        self.flagLyr = None
         rootItem = self.processTreeWidget.invisibleRootItem()
         procList = self.validationManager.processList
         for i in range(len(procList)):
@@ -108,3 +172,12 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     def createItem(self, parent, text):
         
         return item
+
+    @pyqtSlot(int)
+    def on_validationTabWidget_currentChanged(self):
+        if self.validationTabWidget.currentIndex() == 1 and self.configWindow.widget.abstractDb <> None:
+            self.projectModel = QSqlTableModel(None,self.configWindow.widget.abstractDb.db)
+            self.projectModel.setTable('validation.aux_flags_validacao_p')
+            self.projectModel.select()
+            self.tableView.setModel(self.projectModel)
+        pass

@@ -24,7 +24,7 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 from PyQt4.QtCore import QSettings
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from qgis.core import QgsCredentials, QgsMessageLog
+from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceURI
 from osgeo import ogr
 from uuid import uuid4
 import codecs, os
@@ -795,4 +795,13 @@ class PostgisDb(AbstractDb):
         while query.next():
             return query.value(0)
         return None
-        
+    
+    def isLyrInDb(self,lyr):
+        candidateUri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
+        candidateHost = candidateUri.host()
+        candidatePort = candidateUri.port()
+        candidateDb = candidateUri.database()
+        if self.db.hostName() == candidateHost and self.db.port() == candidatePort and self.db.databaseName() == candidateDb:
+            return True
+        else:
+            return False

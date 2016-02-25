@@ -95,44 +95,25 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="0">
-         <widget class="QTreeWidget" name="flagTreeWidget">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>40</height>
-           </size>
+         <widget class="QTableView" name="tableView">
+          <property name="contextMenuPolicy">
+           <enum>Qt::CustomContextMenu</enum>
           </property>
-          <attribute name="headerMinimumSectionSize">
-           <number>1</number>
-          </attribute>
-          <attribute name="headerStretchLastSection">
+          <property name="acceptDrops">
            <bool>false</bool>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>60</number>
           </attribute>
-          <column>
-           <property name="text">
-            <string>id</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>layer</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>feat_id</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>reason</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>user_fixed</string>
-           </property>
-          </column>
          </widget>
         </item>
         <item row="1" column="0">

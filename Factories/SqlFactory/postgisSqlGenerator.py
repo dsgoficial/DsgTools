@@ -335,5 +335,5 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def deleteFlags(self, processName):
-        sql = "DELETE FROM validation.aux_flags_validacao_p WHERE id in (SELECT id FROM validation.aux_flags_validacao_p where process_name = '%s'" % processName
+        sql = "DELETE FROM validation.aux_flags_validacao_p WHERE id in (SELECT id FROM validation.aux_flags_validacao_p where process_name = '%s')" % processName
         return sql

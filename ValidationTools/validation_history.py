@@ -24,25 +24,27 @@ import os
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
-
+from PyQt4.QtSql import QSqlTableModel, QSqlDatabase, QSqlQuery
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'validation_config.ui'))
+    os.path.dirname(__file__), 'validation_history.ui'))
 
-class ValidationConfig(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, parent=None):
+class ValidationHistory(QtGui.QDialog, FORM_CLASS):
+    def __init__(self,postgisDb, parent=None):
         '''Constructor.'''
-        super(ValidationConfig, self).__init__(parent)
+        super(ValidationHistory, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.widget.tabWidget.setTabEnabled(1,True)
-        self.widget.tabWidget.setTabEnabled(0,False)
-        self.widget.tabWidget.setCurrentIndex(1)
+        self.postgisDb = postgisDb
+        self.projectModel = QSqlTableModel(None,self.postgisDb.db)
+        self.projectModel.setTable('validation.process_history')
+        self.projectModel.select()
+        self.tableView.setModel(self.projectModel)
     
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
