@@ -26,8 +26,8 @@ from uuid import uuid4
 # Import the PyQt and QGIS libraries
 from PyQt4 import uic, QtGui, QtCore
 from PyQt4.QtCore import Qt, SIGNAL
-from PyQt4.QtGui import QStyledItemDelegate, QComboBox, QItemDelegate, QDialog, QMessageBox
-from PyQt4.QtSql import QSqlTableModel, QSqlDatabase
+from PyQt4.QtGui import QStyledItemDelegate, QComboBox, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem
+from PyQt4.QtSql import QSqlTableModel, QSqlDatabase, QSqlQuery
 
 #DsgTools imports
 from DsgTools.QmlTools.qmlParser import QmlParser
@@ -100,6 +100,45 @@ class ComboBoxDelegate(QStyledItemDelegate):
             # use default
             QItemDelegate.setModelData(self, editor, model, index)
 
+class ListWidgetDelegate(QStyledItemDelegate):
+    def __init__(self, parent, itemsDict, column):
+        QItemDelegate.__init__(self, parent)
+        self.itemsDict = itemsDict
+        self.column = column
+
+    def createEditor(self, parent, option, index):
+        # special combobox for field type
+        if index.column() == self.column:
+            list = QListWidget(parent)
+            for item in self.itemsDict:
+                listItem = QListWidgetItem(item)
+                listItem.setData(Qt.UserRole, self.itemsDict[item])
+                listItem.setCheckState(Qt.Unchecked)
+                list.addItem(listItem)
+            return list
+        return QItemDelegate.createEditor(self, parent, option, index)
+
+    def setEditorData(self, editor, index):
+        """ load data from model to editor """
+        m = index.model()
+        try:
+            if index.column() == self.column:
+                txt = m.data(index, Qt.DisplayRole)
+                editor.setEditText(txt)
+            else:
+                # use default
+                QItemDelegate.setEditorData(self, editor, index)
+        except:
+            pass
+
+    def setModelData(self, editor, model, index):
+        """ save data from editor back to model """
+        if index.column() == self.column:
+            model.setData(index, editor.currentText())
+        else:
+            # use default
+            QItemDelegate.setModelData(self, editor, model, index)
+
 class ManageComplexDialog(QDialog, FORM_CLASS):
     def __init__(self, iface, abstractDb, table):
         """Constructor.
@@ -140,14 +179,34 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
 
         self.updateTableView()
 
-    def generateCombos(self):
-        self.combos = []
+    def generateDelegates(self):
         for key in self.domainDict:
-            self.generateCombo(key, self.domainDict[key])
+            if isinstance(self.domainDict[key], dict):
+                self.generateCombo(key, self.domainDict[key])
+            elif isinstance(self.domainDict[key], list):
+                self.generateList(key, self.domainDict[key])
 
     def generateCombo(self, column, domainValues):
-        combo = ComboBoxDelegate(self,domainValues, self.projectModel.fieldIndex(column))
+        combo = ComboBoxDelegate(self, domainValues, self.projectModel.fieldIndex(column))
         self.tableView.setItemDelegateForColumn(self.projectModel.fieldIndex(column), combo)
+
+    def generateList(self, column, codes):
+        valueRelation = self.makeValueRelationDict(codes)
+        list = ListWidgetDelegate(self, valueRelation, self.projectModel.fieldIndex(column))
+        self.tableView.setItemDelegateForColumn(self.projectModel.fieldIndex(column), list)
+
+    def makeValueRelationDict(self, codes):
+        ret = dict()
+
+        in_clause = '(%s)' % ",".join(map(str, codes))
+
+        query = QSqlQuery('select code, code_name from dominios.%s where code in %s' % (self.table, in_clause), self.db)
+        while query.next():
+            code = query.value(0)
+            code_name = query.value(1)
+            ret[code_name] = code
+
+        return {'um':1, 'dois':2, 'tres':3, 'quatro':4, 'cinco':5}
 
     def updateTableView(self):
         #setting the model in the view
@@ -158,8 +217,8 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         self.projectModel.setEditStrategy(QSqlTableModel.OnManualSubmit)
         #selecting all item from the table
         self.projectModel.select()
-        #creating the comboboxes to map the domain values
-        self.generateCombos()
+        #creating the comboboxes and listwidgets to map the domain values
+        self.generateDelegates()
 
         #case the first record is null we make some adjustments
         #this is not supposed to happen
