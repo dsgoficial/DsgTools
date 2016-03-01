@@ -112,4 +112,4 @@ class BDGExTools(QObject):
             count += 1
 
         tileMatrixSet = self.wmtsDict[layerName]+'-wmsc-'+str(qgsIndexDict[self.wmtsDict[layerName]])
-        return 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/gif&layers='+self.wmtsDict[layerName]+'&styles=&tileMatrixSet='+tileMatrixSet+'&url=http://www.geoportal.eb.mil.br/tiles?service=WMTS'
+        return 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/gif&layers='+self.wmtsDict[layerName]+'&styles=&tileMatrixSet='+tileMatrixSet+'&url=http://www.geoportal.eb.mil.br/tiles'
