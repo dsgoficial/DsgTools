@@ -100,8 +100,9 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         if not db.open():
             db.close()
             return ret
-        
-        query = QSqlQuery('select code, code_name from dominios.%s' % table, db)
+
+        in_clause = ','.join(map(str, codes))
+        query = QSqlQuery('select code, code_name from dominios.%s where code in (%s)' % (table, in_clause), db)
         while query.next():
             code = str(query.value(0))
             code_name = query.value(1)
