@@ -124,12 +124,10 @@ class ListWidgetDelegate(QStyledItemDelegate):
         try:
             if index.column() == self.column:
                 txt = m.data(index, Qt.DisplayRole)
-                editor = QListWidget(parent)
-                for item in self.itemsDict:
-                    editor = QListWidgetItem(item)
-                    editor.setData(Qt.UserRole, self.itemsDict[item])
-                    editor.setCheckState(Qt.Unchecked)
-                    editor.addItem(listItem)
+                checkList = str(txt)[1:-1].split(',')
+                for i in range(editor.count()):
+                    item = editor.item(i)
+                    item.setCheckState(Qt.Checked if str(item.text()) in checkList else Qt.Unchecked)
             else:
                 # use default
                 QItemDelegate.setEditorData(self, editor, index)
