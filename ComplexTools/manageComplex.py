@@ -134,7 +134,11 @@ class ListWidgetDelegate(QStyledItemDelegate):
     def setModelData(self, editor, model, index):
         """ save data from editor back to model """
         if index.column() == self.column:
-            model.setData(index, editor.currentText())
+            checkedItems = []
+            for item in editor.items():
+                if item.checkState() == Qt.Checked:
+                    checkedItems.append(item.data(Qt.UserRole))
+            model.setData(index, '(%s)' % ','.join(map(str, checkedItems)))
         else:
             # use default
             QItemDelegate.setModelData(self, editor, model, index)
