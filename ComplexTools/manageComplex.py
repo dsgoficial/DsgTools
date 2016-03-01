@@ -124,7 +124,12 @@ class ListWidgetDelegate(QStyledItemDelegate):
         try:
             if index.column() == self.column:
                 txt = m.data(index, Qt.DisplayRole)
-                editor.setEditText(txt)
+                editor = QListWidget(parent)
+                for item in self.itemsDict:
+                    editor = QListWidgetItem(item)
+                    editor.setData(Qt.UserRole, self.itemsDict[item])
+                    editor.setCheckState(Qt.Unchecked)
+                    editor.addItem(listItem)
             else:
                 # use default
                 QItemDelegate.setEditorData(self, editor, index)
@@ -138,7 +143,7 @@ class ListWidgetDelegate(QStyledItemDelegate):
             for i in range(editor.count()):
                 item = editor.item(i)
                 if item.checkState() == Qt.Checked:
-                    checkedItems.append(item.data(Qt.UserRole))
+                    checkedItems.append(item.text())
             model.setData(index, '(%s)' % ','.join(map(str, checkedItems)))
         else:
             # use default
