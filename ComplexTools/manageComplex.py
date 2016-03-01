@@ -227,6 +227,7 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         self.projectModel.select()
         #creating the comboboxes and listwidgets to map the domain values
         self.generateDelegates()
+        self.generateList('nomeabrev', [])
 
         #case the first record is null we make some adjustments
         #this is not supposed to happen
