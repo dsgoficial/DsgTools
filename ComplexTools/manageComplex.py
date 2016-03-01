@@ -142,7 +142,7 @@ class ListWidgetDelegate(QStyledItemDelegate):
                 item = editor.item(i)
                 if item.checkState() == Qt.Checked:
                     checkedItems.append(item.text())
-            model.setData(index, '(%s)' % ','.join(map(str, checkedItems)))
+            model.setData(index, '{%s}' % ','.join(map(str, checkedItems)))
         else:
             # use default
             QItemDelegate.setModelData(self, editor, model, index)
