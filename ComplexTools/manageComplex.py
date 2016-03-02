@@ -49,7 +49,7 @@ class CustomTableModel(QSqlTableModel):
 
         query = QSqlQuery('select code, code_name from dominios.modal_uso where code in %s' % (in_clause), self.db)
         while query.next():
-            code = query.value(0)
+            code = str(query.value(0))
             code_name = query.value(1)
             ret[code_name] = code
 
@@ -61,26 +61,28 @@ class CustomTableModel(QSqlTableModel):
         return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
     def data(self, index, role):
-        code = QSqlTableModel.data(self, index, role)
+        dbdata = QSqlTableModel.data(self, index, role)
         column = self.headerData(index.column(), Qt.Horizontal)
         if self.dict.has_key(column):
             if isinstance(self.dict[column], dict):
                 valueMap = self.dict[column]
-                if str(code) in valueMap.values():
-                    id = dict.values().index(str(code))
+                if str(dbdata) in valueMap.values():
+                    id = valueMap.values().index(str(dbdata))
                     return valueMap.keys()[id]
             elif isinstance(self.dict[column], list):
                 valueRelation = self.dict[column]
                 valueMap = self.makeValueRelationDict(valueRelation)
-                codes = str(code)[1:-1].split(',')
+                codes = str(dbdata)[1:-1].split(',')
                 code_names = list()
-                for code in codes:
-                    if str(code) in valueMap.values():
-                        id = valueMap.values().index(str(code))
+                for c in codes:
+                    if str(c) in valueMap.values():
+                        id = valueMap.values().index(str(c))
                         code_name = valueMap.keys()[id]
                         code_names.append(code_name)
-                return '{%s}' % ','.join(code_names)
-        return code
+                if dbdata:
+                    return '{%s}' % ','.join(code_names)
+                return None
+        return dbdata
 
     def setData(self, index, value, role=Qt.EditRole):
         column = self.headerData(index.column(), Qt.Horizontal)
@@ -95,9 +97,10 @@ class CustomTableModel(QSqlTableModel):
                 code_names = value[1:-1].split(',')
                 codes = []
                 for code_name in code_names:
-                    code = valueMap[code_name]
+                    code = valueMap[code_name.encode('utf-8')]
                     codes.append(code)
-                newValue = '{%s}' % ','.join(map(str, codes))
+                if value:
+                    newValue = '{%s}' % ','.join(map(str, codes))
         return QSqlTableModel.setData(self, index, newValue, role)
 
 class ComboBoxDelegate(QStyledItemDelegate):
