@@ -208,7 +208,7 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
 
         in_clause = '(%s)' % ",".join(map(str, codes))
 
-        query = QSqlQuery('select code, code_name from dominios.%s where code in %s' % (self.table, in_clause), self.db)
+        query = QSqlQuery('select code, code_name from dominios.modal_uso where code in %s' % (in_clause), self.db)
         while query.next():
             code = query.value(0)
             code_name = query.value(1)
@@ -227,7 +227,6 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         self.projectModel.select()
         #creating the comboboxes and listwidgets to map the domain values
         self.generateDelegates()
-        self.generateList('nomeabrev', [])
 
         #case the first record is null we make some adjustments
         #this is not supposed to happen
