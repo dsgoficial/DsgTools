@@ -50,7 +50,7 @@ class CustomTableModel(QSqlTableModel):
         query = QSqlQuery('select code, code_name from dominios.modal_uso where code in %s' % (in_clause), self.db)
         while query.next():
             code = str(query.value(0))
-            code_name = query.value(1)
+            code_name = query.value(1).encode('utf-8')
             ret[code_name] = code
 
         return ret
@@ -79,9 +79,8 @@ class CustomTableModel(QSqlTableModel):
                         id = valueMap.values().index(str(c))
                         code_name = valueMap.keys()[id]
                         code_names.append(code_name)
-                if dbdata:
+                if len(code_names) > 0:
                     return '{%s}' % ','.join(code_names)
-                return None
         return dbdata
 
     def setData(self, index, value, role=Qt.EditRole):
@@ -97,9 +96,9 @@ class CustomTableModel(QSqlTableModel):
                 code_names = value[1:-1].split(',')
                 codes = []
                 for code_name in code_names:
-                    code = valueMap[code_name.encode('utf-8')]
+                    code = valueMap[code_name]
                     codes.append(code)
-                if value:
+                if len(codes) > 0:
                     newValue = '{%s}' % ','.join(map(str, codes))
         return QSqlTableModel.setData(self, index, newValue, role)
 
@@ -250,7 +249,7 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         query = QSqlQuery('select code, code_name from dominios.modal_uso where code in %s' % (in_clause), self.db)
         while query.next():
             code = query.value(0)
-            code_name = query.value(1)
+            code_name = query.value(1).encode('utf-8')
             ret[code_name] = code
 
         return ret
