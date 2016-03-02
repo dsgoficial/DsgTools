@@ -65,19 +65,19 @@ class CustomTableModel(QSqlTableModel):
         column = self.headerData(index.column(), Qt.Horizontal)
         if self.dict.has_key(column):
             if isinstance(self.dict[column], dict):
-                dict = self.dict[column]
-                if str(code) in dict.values():
+                valueMap = self.dict[column]
+                if str(code) in valueMap.values():
                     id = dict.values().index(str(code))
-                    return dict.keys()[id]
+                    return valueMap.keys()[id]
             elif isinstance(self.dict[column], list):
-                list = self.dict[column]
-                dict = self.makeValueRelationDict(list)
+                valueRelation = self.dict[column]
+                valueMap = self.makeValueRelationDict(valueRelation)
                 codes = str(code)[1:-1].split(',')
                 code_names = list()
                 for code in codes:
-                    if str(code) in dict.values():
-                        id = dict.values().index(str(code))
-                        code_name = dict.keys()[id]
+                    if str(code) in valueMap.values():
+                        id = valueMap.values().index(str(code))
+                        code_name = valueMap.keys()[id]
                         code_names.append(code_name)
                 return '{%s}' % ','.join(code_names)
         return code
@@ -87,15 +87,15 @@ class CustomTableModel(QSqlTableModel):
         newValue = value
         if self.dict.has_key(column):
             if isinstance(self.dict[column], dict):
-                dict = self.dict[column]
-                newValue = int(dict[value])
+                valueMap = self.dict[column]
+                newValue = int(valueMap[value])
             elif isinstance(self.dict[column], list):
-                list = self.dict[column]
-                dict = self.makeValueRelationDict(list)
+                valueRelation = self.dict[column]
+                valueMap = self.makeValueRelationDict(valueRelation)
                 code_names = value[1:-1].split(',')
                 codes = []
                 for code_name in code_names:
-                    code = dict[code_name]
+                    code = valueMap[code_name]
                     codes.append(code)
                 newValue = '{%s}' % ','.join(map(str, codes))
         return QSqlTableModel.setData(self, index, newValue, role)
