@@ -40,6 +40,20 @@ class CustomTableModel(QSqlTableModel):
     def __init__(self, domainDict, parent=None, db=QSqlDatabase):
         QSqlTableModel.__init__(self, parent=parent, db=db)
         self.dict = domainDict
+        self.db = db
+
+    def makeValueRelationDict(self, codes):
+        ret = dict()
+
+        in_clause = '(%s)' % ",".join(map(str, codes))
+
+        query = QSqlQuery('select code, code_name from dominios.modal_uso where code in %s' % (in_clause), self.db)
+        while query.next():
+            code = query.value(0)
+            code_name = query.value(1)
+            ret[code_name] = code
+
+        return ret
 
     def flags(self, index):
         if index.column() == 0:
@@ -50,18 +64,40 @@ class CustomTableModel(QSqlTableModel):
         code = QSqlTableModel.data(self, index, role)
         column = self.headerData(index.column(), Qt.Horizontal)
         if self.dict.has_key(column):
-            dict = self.dict[column]
-            if str(code) in dict.values():
-                id = dict.values().index(str(code))
-                return dict.keys()[id]
+            if isinstance(self.dict[column], dict):
+                dict = self.dict[column]
+                if str(code) in dict.values():
+                    id = dict.values().index(str(code))
+                    return dict.keys()[id]
+            elif isinstance(self.dict[column], list):
+                list = self.dict[column]
+                dict = self.makeValueRelationDict(list)
+                codes = str(code)[1:-1].split(',')
+                code_names = list()
+                for code in codes:
+                    if str(code) in dict.values():
+                        id = dict.values().index(str(code))
+                        code_name = dict.keys()[id]
+                        code_names.append(code_name)
+                return '{%s}' % ','.join(code_names)
         return code
 
     def setData(self, index, value, role=Qt.EditRole):
         column = self.headerData(index.column(), Qt.Horizontal)
         newValue = value
         if self.dict.has_key(column):
-            dict = self.dict[column]
-            newValue = int(dict[value])
+            if isinstance(self.dict[column], dict):
+                dict = self.dict[column]
+                newValue = int(dict[value])
+            elif isinstance(self.dict[column], list):
+                list = self.dict[column]
+                dict = self.makeValueRelationDict(list)
+                code_names = value[1:-1].split(',')
+                codes = []
+                for code_name in code_names:
+                    code = dict[code_name]
+                    codes.append(code)
+                newValue = '{%s}' % ','.join(map(str, codes))
         return QSqlTableModel.setData(self, index, newValue, role)
 
 class ComboBoxDelegate(QStyledItemDelegate):
