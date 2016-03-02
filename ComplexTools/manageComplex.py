@@ -50,7 +50,7 @@ class CustomTableModel(QSqlTableModel):
         query = QSqlQuery('select code, code_name from dominios.modal_uso where code in %s' % (in_clause), self.db)
         while query.next():
             code = str(query.value(0))
-            code_name = query.value(1).encode('utf-8')
+            code_name = query.value(1)
             ret[code_name] = code
 
         return ret
@@ -249,7 +249,7 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         query = QSqlQuery('select code, code_name from dominios.modal_uso where code in %s' % (in_clause), self.db)
         while query.next():
             code = query.value(0)
-            code_name = query.value(1).encode('utf-8')
+            code_name = query.value(1)
             ret[code_name] = code
 
         return ret
