@@ -214,7 +214,7 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
             code_name = query.value(1)
             ret[code_name] = code
 
-        return {'um':1, 'dois':2, 'tres':3, 'quatro':4, 'cinco':5}
+        return ret
 
     def updateTableView(self):
         #setting the model in the view
