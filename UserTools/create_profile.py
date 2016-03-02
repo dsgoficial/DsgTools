@@ -62,8 +62,8 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
         currentPath = os.path.dirname(__file__)
         if self.versionCombo.currentText() == '2.1.3':
             edgvPath = os.path.join(currentPath, '..', 'DbTools', 'SpatialiteTool', 'template', '213', 'seed_edgv213.sqlite')
-        else:
-            edgvPath = os.path.join(currentPath, '..', 'DbTools', 'SpatialiteTool', 'template', '30', 'seed_edgv30.sqlite')
+        elif self.versionCombo.currentText() == 'FTer_2a_Ed':
+            edgvPath = os.path.join(currentPath, '..', 'DbTools', 'SpatialiteTool', 'template', 'FTer_2a_Ed', 'seed_edgvfter_2a_ed.sqlite')
 
         self.abstractDb = self.abstractDbFactory.createDbFactory('QSQLITE')
         self.abstractDb.connectDatabase(edgvPath)

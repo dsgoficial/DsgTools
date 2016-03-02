@@ -71,8 +71,9 @@ class QmlParser:
             nodes = edittypeElement.elementsByTagName("widgetv2config")
             widgetv2configElement = nodes.item(0).toElement()
             filter = widgetv2configElement.attribute("FilterExpression")
+            table = widgetv2configElement.attribute("Layer")
             filter_keys = filter.replace("code in (", "").replace(")", "").split(",")
-            self.domainDict[name] = filter_keys
+            self.domainDict[name] = (table, filter_keys)
 
     def getDomainDict(self):
         self.domainDict.clear()

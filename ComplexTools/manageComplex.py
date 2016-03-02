@@ -42,12 +42,12 @@ class CustomTableModel(QSqlTableModel):
         self.dict = domainDict
         self.db = db
 
-    def makeValueRelationDict(self, codes):
+    def makeValueRelationDict(self, table, codes):
         ret = dict()
 
         in_clause = '(%s)' % ",".join(map(str, codes))
 
-        query = QSqlQuery('select code, code_name from dominios.modal_uso where code in %s' % (in_clause), self.db)
+        query = QSqlQuery('select code, code_name from dominios.%s where code in %s' % (table, in_clause), self.db)
         while query.next():
             code = str(query.value(0))
             code_name = query.value(1)
@@ -69,9 +69,9 @@ class CustomTableModel(QSqlTableModel):
                 if str(dbdata) in valueMap.values():
                     id = valueMap.values().index(str(dbdata))
                     return valueMap.keys()[id]
-            elif isinstance(self.dict[column], list):
-                valueRelation = self.dict[column]
-                valueMap = self.makeValueRelationDict(valueRelation)
+            elif isinstance(self.dict[column], tuple):
+                tupla = self.dict[column]
+                valueMap = self.makeValueRelationDict(tupla[0], tupla[1])
                 codes = str(dbdata)[1:-1].split(',')
                 code_names = list()
                 for c in codes:
@@ -90,9 +90,9 @@ class CustomTableModel(QSqlTableModel):
             if isinstance(self.dict[column], dict):
                 valueMap = self.dict[column]
                 newValue = int(valueMap[value])
-            elif isinstance(self.dict[column], list):
-                valueRelation = self.dict[column]
-                valueMap = self.makeValueRelationDict(valueRelation)
+            elif isinstance(self.dict[column], tuple):
+                tupla = self.dict[column]
+                valueMap = self.makeValueRelationDict(tupla[0], tupla[1])
                 code_names = value[1:-1].split(',')
                 codes = []
                 for code_name in code_names:
@@ -150,7 +150,6 @@ class ListWidgetDelegate(QStyledItemDelegate):
             list = QListWidget(parent)
             for item in self.itemsDict:
                 listItem = QListWidgetItem(item)
-                listItem.setData(Qt.UserRole, self.itemsDict[item])
                 listItem.setCheckState(Qt.Unchecked)
                 list.addItem(listItem)
             return list
@@ -162,10 +161,10 @@ class ListWidgetDelegate(QStyledItemDelegate):
         try:
             if index.column() == self.column:
                 txt = m.data(index, Qt.DisplayRole)
-                checkList = str(txt)[1:-1].split(',')
+                checkList = txt[1:-1].split(',')
                 for i in range(editor.count()):
                     item = editor.item(i)
-                    item.setCheckState(Qt.Checked if str(item.text()) in checkList else Qt.Unchecked)
+                    item.setCheckState(Qt.Checked if item.text() in checkList else Qt.Unchecked)
             else:
                 # use default
                 QItemDelegate.setEditorData(self, editor, index)
@@ -180,7 +179,7 @@ class ListWidgetDelegate(QStyledItemDelegate):
                 item = editor.item(i)
                 if item.checkState() == Qt.Checked:
                     checkedItems.append(item.text())
-            model.setData(index, '{%s}' % ','.join(map(str, checkedItems)))
+            model.setData(index, '{%s}' % ','.join(checkedItems))
         else:
             # use default
             QItemDelegate.setModelData(self, editor, model, index)
@@ -228,25 +227,31 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
     def generateDelegates(self):
         for key in self.domainDict:
             if isinstance(self.domainDict[key], dict):
+                #self.domainDict[key] in this case is a dict
                 self.generateCombo(key, self.domainDict[key])
-            elif isinstance(self.domainDict[key], list):
+            elif isinstance(self.domainDict[key], tuple):
+                #self.domainDict[key] in this case is a tuple where index 0 is the domain table and index 1 are the codes
                 self.generateList(key, self.domainDict[key])
 
     def generateCombo(self, column, domainValues):
+        #creating the delegate
         combo = ComboBoxDelegate(self, domainValues, self.projectModel.fieldIndex(column))
         self.tableView.setItemDelegateForColumn(self.projectModel.fieldIndex(column), combo)
 
-    def generateList(self, column, codes):
-        valueRelation = self.makeValueRelationDict(codes)
+    def generateList(self, column, tupla):
+        #making a dict in the same way used for the Combobox delegate
+        valueRelation = self.makeValueRelationDict(tupla[0], tupla[1])
+        #creating the delagate
         list = ListWidgetDelegate(self, valueRelation, self.projectModel.fieldIndex(column))
         self.tableView.setItemDelegateForColumn(self.projectModel.fieldIndex(column), list)
 
-    def makeValueRelationDict(self, codes):
+    def makeValueRelationDict(self, table, codes):
+        #query to obtain the dict with code names and related codes
         ret = dict()
 
         in_clause = '(%s)' % ",".join(map(str, codes))
 
-        query = QSqlQuery('select code, code_name from dominios.modal_uso where code in %s' % (in_clause), self.db)
+        query = QSqlQuery('select code, code_name from dominios.%s where code in %s' % (table, in_clause), self.db)
         while query.next():
             code = query.value(0)
             code_name = query.value(1)
