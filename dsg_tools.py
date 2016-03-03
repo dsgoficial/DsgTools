@@ -100,7 +100,7 @@ class DsgTools:
         #QDockWidgets
         self.complexWindow = ComplexWindow(iface)
         self.codeList = CodeList(iface)
-        self.attributesViewer = AttributesViewer(iface)
+        #self.attributesViewer = AttributesViewer(iface)
         self.contourDock = None
 
         self.processManager = ProcessManager(iface)
@@ -578,7 +578,7 @@ class DsgTools:
 
             self.iface.removeDockWidget(self.complexWindow)
             self.iface.removeDockWidget(self.codeList)
-         #   self.iface.removeDockWidget(self.attributesViewer)
+            #self.iface.removeDockWidget(self.attributesViewer)
 
     def run(self):
         """Run method that performs all the real work"""

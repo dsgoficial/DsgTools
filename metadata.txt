@@ -10,7 +10,7 @@
 name=DSG Tools
 qgisMinimumVersion=2.6
 description=Brazilian Army Cartographic Production Tools
-version=2.0rc06
+version=2.0rc07
 author=Brazilian Army - Geographic Service Bureau
 email=suporte.dsgtools@dsg.eb.mil.br
 about=
@@ -62,6 +62,7 @@ changelog=
 	2.0rc04 - Minor bug fix on EDGV FTer
 	2.0rc05 - Returning file removed by error
 	2.0rc06 - minor fix on code lit viewer
+	2.0rc07 - Complexes working with valueRelation. Code List viewer adjusted.
 
 # Tags are comma separated with spaces allowed
 tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script
