@@ -48,34 +48,21 @@ class AttributesViewer(QtGui.QDockWidget, FORM_CLASS):
         
         self.iface = iface
         
-        self.populateLayers()
-        
-    def populateLayers(self):
-        self.layerCombo.clear()
-        
-        self.layerCombo.addItem(self.tr('Select a Layer'))
-        
-        layers = self.iface.mapCanvas().layers()
-        for layer in layers:
-            if layer.type() == QgsMapLayer.VectorLayer:
-                self.layerCombo.addItem(layer.name())
+        self.iface.currentLayerChanged.connect(self.loadTable)
         
     @pyqtSlot(int)
-    def on_layerCombo_currentIndexChanged(self):
-        if self.layerCombo.currentIndex() == 0:
+    def loadTable(self):
+        currLayer = self.iface.activeLayer()
+        if not currLayer:
             return
         
-        currentLayerName = self.layerCombo.currentText()
+        if currLayer.type() != QgsMapLayer.VectorLayer:
+            return
         
-        currentLayer = None
-        layers = self.iface.mapCanvas().layers()
-        for layer in layers:
-            if layer.name() == currentLayerName:
-                currentLayer = layer
-                break
-            
-        cache = QgsVectorLayerCache(currentLayer, 10)
+        cache = QgsVectorLayerCache(currLayer, 10)
         model = QgsAttributeTableModel(cache)
         model.loadLayer()
+        filterModel = QgsAttributeTableFilterModel(self.iface.mapCanvas(), model)
         
         self.tableView.setModel(model)
+        self.tableView.show()

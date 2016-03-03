@@ -53,6 +53,7 @@ from DsgTools.ConversionTools.convert_database import ConvertDatabase
 from DsgTools.aboutdialog import AboutDialog
 from DsgTools.VectorTools.calc_contour import CalcContour
 from DsgTools.AttributeTools.code_list import CodeList
+from DsgTools.AttributeTools.attributes_viewer import AttributesViewer
 from qgis.utils import showPluginHelp
 
 class DsgTools:
@@ -99,6 +100,7 @@ class DsgTools:
         #QDockWidgets
         self.complexWindow = ComplexWindow(iface)
         self.codeList = CodeList(iface)
+        self.attributesViewer = AttributesViewer(iface)
         self.contourDock = None
 
         self.processManager = ProcessManager(iface)
@@ -561,6 +563,7 @@ class DsgTools:
 
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.codeList)
+        #self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.attributesViewer)
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -575,6 +578,7 @@ class DsgTools:
 
             self.iface.removeDockWidget(self.complexWindow)
             self.iface.removeDockWidget(self.codeList)
+         #   self.iface.removeDockWidget(self.attributesViewer)
 
     def run(self):
         """Run method that performs all the real work"""
