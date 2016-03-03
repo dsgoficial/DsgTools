@@ -764,11 +764,14 @@ class PostgisDb(AbstractDb):
     def getValidationStatus(self, processName):
         self.checkAndOpenDb()
         sql = self.gen.validationStatus(processName)
-        query = QSqlQuery(self.db)
-        if not query.exec_(sql):
-            self.db.close()
-            raise Exception(self.tr('Problem acquiring status: ') + str(query.lastError().text()))
-        return query.value(0)
+        try:
+            query = QSqlQuery(sql,self.db)
+        except:
+            raise Exception(self.tr('Problem acquiring status: ') + str(query.lastError().text())) 
+        ret = None
+        while query.next():
+            ret = query.value(0)
+        return ret
 
     def getValidationStatusText(self, processName):
         self.checkAndOpenDb()

@@ -29,6 +29,7 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
     
     def execute(self):
         #abstract method. MUST be reimplemented.
+        self.log += 'Running %s' % self.getName()
         self.setStatus(3) #now I'm running!
         self.abstractDb.deleteProcessFlags(self.getName())
         self.addLogMessage('Starting '+self.getName()+'Process.\n')

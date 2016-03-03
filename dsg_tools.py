@@ -55,6 +55,7 @@ from DsgTools.VectorTools.calc_contour import CalcContour
 from DsgTools.AttributeTools.code_list import CodeList
 from DsgTools.ValidationTools.validation_toolbox import ValidationToolbox
 from qgis.utils import showPluginHelp
+from DsgTools.AttributeTools.attributes_viewer import AttributesViewer
 
 class DsgTools:
     """QGIS Plugin Implementation."""
@@ -100,6 +101,7 @@ class DsgTools:
         #QDockWidgets
         self.complexWindow = ComplexWindow(iface)
         self.codeList = CodeList(iface)
+        self.attributesViewer = AttributesViewer(iface)
         self.validationToolbox = ValidationToolbox(iface,self.codeList)
         self.contourDock = None
 
@@ -574,6 +576,7 @@ class DsgTools:
 
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.codeList)
+        self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.attributesViewer)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.validationToolbox)
 
     def unload(self):

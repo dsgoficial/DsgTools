@@ -26,8 +26,10 @@ class ValidationProcess(object):
         object.__init__(self)
         self.abstractDb = postgisDb
         self.log = ''
+        if self.getStatus() == None:
+            self.log += 'Instantianting process %s\n' % self.getName()
+            self.setStatus(0)
         self.classesToBeDisplayedAfterProcess = []
-        self.setStatus(0)
     
     def execute(self):
         #abstract method. MUST be reimplemented.
@@ -71,13 +73,22 @@ class ValidationProcess(object):
             self.addLogMessage(str(e.args[0]))
     
     def getStatus(self):
-        return self.abstractDb.getValidationStatus(self.getName())
+        try:
+            return self.abstractDb.getValidationStatus(self.getName())
+        except Exception as e:
+            self.addLogMessage(str(e.args[0]))
     
     def getStatusMessage(self):
-        return self.abstractDb.getValidationStatusText(self.getName())
+        try:
+            return self.abstractDb.getValidationStatusText(self.getName())
+        except Exception as e:
+            self.addLogMessage(str(e.args[0]))
     
     def setStatus(self,status):
-        self.abstractDb.setValidationProcessStatus(self.getName(),self.getLog(),status)
+        try:
+            self.abstractDb.setValidationProcessStatus(self.getName(),self.getLog(),status)
+        except Exception as e:
+            self.addLogMessage(str(e.args[0]))
     
     def finishedWithError(self):
         self.addLogMessage('Process finished with errors.\n')
