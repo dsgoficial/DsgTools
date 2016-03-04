@@ -20,22 +20,41 @@
  *                                                                         *
  ***************************************************************************/
 """
+import os
 from qgis.core import QgsMessageLog
-
-from DsgTools.ValidationTools.ValidationProcesses.identifyInvalidGeometriesProcess import IdentifyInvalidGeometriesProcess
 
 class ValidationManager(object):
     def __init__(self,postgisDb):
         object.__init__(self)
         self.postgisDb = postgisDb
-        self.processList = ['IdentifyInvalidGeometries']
+        self.postgisDb.checkAndCreateValidationStructure()
+        self.importFolder = ''
+        self.setAvailableProcesses()
+
+    def setAvailableProcesses(self):
+        ignoredFiles = ['__init__.py', 'validationProcess.py']
+        for root, dirs, files in os.walk(os.path.join(os.path.dirname(__file__), 'ValidationProcesses')):
+            for file in files:
+                if file in ignoredFiles or file.split('.')[-1] != 'py':
+                    continue
+                fileBaseName = file.split('.')[0]
+                chars = list(fileBaseName)
+                chars[0] = chars[0].upper()
+                processClass = ''.join(chars)
+                self.processList.append(processClass)
             
     def instantiateProcessByName(self, processName):
         currProc = None
-        if processName == 'IdentifyInvalidGeometries':
-            currProc = IdentifyInvalidGeometriesProcess(self.postgisDb)
-        return currProc
-        
+        for processClass in self.processList:
+            if processClass == processName:
+                chars = list(processClass)
+                chars[0] = chars[0].lower()
+                fileBaseName = ''.join(chars)
+                mod = __import__('DsgTools.ValidationTools.ValidationProcesses.'+fileBaseName, fromlist=[processClass])
+                klass = getattr(mod, processClass)
+                currProc = klass(self.postgisDb)
+                return currProc
+
     def executeProcess(self, processName):
         runningProc = self.getRunningProc()
         if runningProc != None:

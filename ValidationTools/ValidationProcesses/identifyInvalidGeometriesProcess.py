@@ -29,10 +29,10 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
     
     def execute(self):
         #abstract method. MUST be reimplemented.
-        self.setStatus('Running', 3) #now I'm running!
-        self.abstractDb.deleteProcessFlags(self.getName())
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
+            self.setStatus('Running', 3) #now I'm running!
+            self.abstractDb.deleteProcessFlags(self.getName())
             invalidGeomRecordList = self.abstractDb.getInvalidGeomRecords() #list only classes with elements.
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

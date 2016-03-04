@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 from DsgTools.Factories.SqlFactory.sqlGenerator import SqlGenerator
-from reportlab.lib import geomutils
 
 class PostGISSqlGenerator(SqlGenerator):
     def getComplexLinks(self, complex):
