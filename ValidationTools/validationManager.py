@@ -26,6 +26,7 @@ from qgis.core import QgsMessageLog
 class ValidationManager(object):
     def __init__(self,postgisDb):
         object.__init__(self)
+        self.processList = []
         self.postgisDb = postgisDb
         try:
             self.postgisDb.checkAndCreateValidationStructure()
