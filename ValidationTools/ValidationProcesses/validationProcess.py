@@ -20,15 +20,14 @@
  *                                                                         *
  ***************************************************************************/
 """
+from qgis.core import QgsMessageLog
 
 class ValidationProcess(object):
     def __init__(self, postgisDb):
         object.__init__(self)
         self.abstractDb = postgisDb
-        self.log = ''
         if self.getStatus() == None:
-            self.log += 'Instantianting process %s\n' % self.getName()
-            self.setStatus(0)
+            self.setStatus('Instantianting process', 0)
         self.classesToBeDisplayedAfterProcess = []
     
     def execute(self):
@@ -60,40 +59,30 @@ class ValidationProcess(object):
         #Abstract method. Should be reimplemented if necessary.
         return []
     
-    def addLogMessage(self,msg):
-        self.log += str(msg)
-    
-    def getLog(self):
-        return self.log
-    
-    def addFlag(self,flagTupleList):
+    def addFlag(self, flagTupleList):
         try:
             return self.abstractDb.insertFlags(flagTupleList,self.getName())
         except Exception as e:
-            self.addLogMessage(str(e.args[0]))
+            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
     def getStatus(self):
         try:
             return self.abstractDb.getValidationStatus(self.getName())
         except Exception as e:
-            self.addLogMessage(str(e.args[0]))
+            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
     def getStatusMessage(self):
         try:
             return self.abstractDb.getValidationStatusText(self.getName())
         except Exception as e:
-            self.addLogMessage(str(e.args[0]))
+            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
-    def setStatus(self,status):
+    def setStatus(self, msg, status):
         try:
-            self.abstractDb.setValidationProcessStatus(self.getName(),self.getLog(),status)
+            self.abstractDb.setValidationProcessStatus(self.getName(), msg, status)
         except Exception as e:
-            self.addLogMessage(str(e.args[0]))
+            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
     def finishedWithError(self):
-        self.addLogMessage('Process finished with errors.\n')
-        self.setStatus(2) #Failed status
-        self.clearClassesToBeDisplayedAfterProcess()
-    
-        
-        
+        self.setStatus('Process finished with errors.', 2) #Failed status
+        self.clearClassesToBeDisplayedAfterProcess()        

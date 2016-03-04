@@ -796,7 +796,10 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getRunningProc()
         query = QSqlQuery(sql, self.db)
         while query.next():
-            return query.value(0)
+            processName = query.value(0)
+            status = query.value(1)
+            if status == 3:
+                return processName
         return None
     
     def isLyrInDb(self,lyr):

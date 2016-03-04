@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-
+from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class IdentifyInvalidGeometriesProcess(ValidationProcess):
@@ -29,26 +29,23 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
     
     def execute(self):
         #abstract method. MUST be reimplemented.
-        self.log += 'Running %s' % self.getName()
-        self.setStatus(3) #now I'm running!
+        self.setStatus('Running', 3) #now I'm running!
         self.abstractDb.deleteProcessFlags(self.getName())
-        self.addLogMessage('Starting '+self.getName()+'Process.\n')
+        QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             invalidGeomRecordList = self.abstractDb.getInvalidGeomRecords() #list only classes with elements.
         except Exception as e:
-            self.addLogMessage(str(e.args[0]))
+            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
             return
 
         if len(invalidGeomRecordList) > 0:
             numberOfInvGeom = self.addFlag(invalidGeomRecordList)
-            self.addLogMessage('%s features are invalid. Check flags.\n' % numberOfInvGeom)
             for tuple in invalidGeomRecordList:
-                self.addClassesToBeDisplayedList(tuple[0])
-        
-            self.setStatus(4) #Finished with flags
+                self.addClassesToBeDisplayedList(tuple[0])        
+            self.setStatus('%s features are invalid. Check flags.\n' % numberOfInvGeom, 4) #Finished with flags
+            QgsMessageLog.logMessage('%s features are invalid. Check flags.\n' % numberOfInvGeom, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return
         else:
-            self.addLogMessage('All features are valid.\n')
-            self.setStatus(1) #Finished
-
+            self.setStatus('All features are valid.\n', 1) #Finished
+            QgsMessageLog.logMessage('All features are valid.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)

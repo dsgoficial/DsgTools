@@ -67,7 +67,6 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.tableView.setContextMenuPolicy(Qt.CustomContextMenu)
         self.tableView.customContextMenuRequested.connect(self.createMenuEditFlagStatus)
 
-
     def createMenuEditFlagStatus(self, position):
         menu = QMenu()
         item = self.tableView.indexAt(position)
@@ -76,7 +75,6 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             menu.addAction(self.tr('Set Visited'), self.setFlagVisited)
             menu.addAction(self.tr('Set Unvisited'), self.setFlagUnvisited)
         menu.exec_(self.tableView.viewport().mapToGlobal(position))
-
     
     @pyqtSlot()
     def on_theSelectionModel_selectionChanged(self):
@@ -147,31 +145,28 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         for i in range(len(procList)):
             item = QtGui.QTreeWidgetItem(rootItem)
             item.setText(0, str(i+1))
-            item.setText(1,procList[i].getName())
-            item.setText(2, procList[i].getStatusMessage())
+            item.setText(1, procList[i])
+            status = self.configWindow.widget.abstractDb.getValidationStatusText(procList[i])
+            if not status:
+                item.setText(2, 'Not yet ran')
+            else:
+                item.setText(2, status)
         pass
     
     @pyqtSlot(bool)
     def on_runButton_clicked(self):
-        index = int(self.processTreeWidget.selectedItems()[0].text(0))-1
-        processName = self.validationManager.processList[index].getName()
+        processName = self.processTreeWidget.selectedItems()[0].text(1)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         procReturn = self.validationManager.executeProcess(processName)
         QApplication.restoreOverrideCursor()
         self.populateProcessList()
         if procReturn == 0:
-            QgsMessageLog.logMessage(self.validationManager.getLog(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Process %s returned error. Check log for details.'))
-            self.validationManager.clearLog()
         else:
             QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Process successfully executed!'))
             #executou! show!
             pass
         pass
-
-    def createItem(self, parent, text):
-        
-        return item
 
     @pyqtSlot(int)
     def on_validationTabWidget_currentChanged(self):

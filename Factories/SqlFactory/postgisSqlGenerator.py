@@ -331,7 +331,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getRunningProc(self):
-        sql = "SELECT process_name FROM validation.process_history where status = 3 ORDER BY finished DESC LIMIT 1;"
+        sql = "SELECT process_name, status FROM validation.process_history ORDER BY finished DESC LIMIT 1;"
         return sql
     
     def deleteFlags(self, processName):
