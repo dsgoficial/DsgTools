@@ -27,8 +27,10 @@ class ValidationManager(object):
     def __init__(self,postgisDb):
         object.__init__(self)
         self.postgisDb = postgisDb
-        self.postgisDb.checkAndCreateValidationStructure()
-        self.importFolder = ''
+        try:
+            self.postgisDb.checkAndCreateValidationStructure()
+        except Exception as e:
+            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         self.setAvailableProcesses()
 
     def setAvailableProcesses(self):
