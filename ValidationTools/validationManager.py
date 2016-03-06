@@ -22,6 +22,7 @@
 """
 import os
 from qgis.core import QgsMessageLog
+from DsgTools.ValidationTools.processParametersDialog import ProcessParametersDialog
 
 class ValidationManager(object):
     def __init__(self,postgisDb):
@@ -78,6 +79,9 @@ class ValidationManager(object):
                     QgsMessageLog.logMessage('Unable to run process due to the following dependencies: %s\n' % ','.join(unmetDep), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     return 0
             else:
+                # setting parameters
+                dlg = ProcessParametersDialog(self, currProc.parameters, None, 'Process parameters setter')
+                dlg.exec_()
                 #check status
                 QgsMessageLog.logMessage('Process %s Log:\n' % currProc.getName(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 currProc.execute() #run bitch run!

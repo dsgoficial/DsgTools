@@ -26,6 +26,7 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 class IdentifyInvalidGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb):
         super(self.__class__,self).__init__(postgisDb)
+        self.parameters = {'id': 2, 'texto': 'hahaha', 'list': ['1', '2'], 'bool': True}
     
     def execute(self):
         #abstract method. MUST be reimplemented.
