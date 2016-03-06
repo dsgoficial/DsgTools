@@ -80,7 +80,7 @@ class ValidationManager(object):
                     return 0
             else:
                 # setting parameters
-                dlg = ProcessParametersDialog(self, currProc.parameters, None, 'Process parameters setter')
+                dlg = ProcessParametersDialog(None, currProc.parameters, None, 'Process parameters setter')
                 dlg.exec_()
                 #check status
                 QgsMessageLog.logMessage('Process %s Log:\n' % currProc.getName(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
