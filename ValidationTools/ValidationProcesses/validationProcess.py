@@ -29,6 +29,7 @@ class ValidationProcess(object):
         if self.getStatus() == None:
             self.setStatus('Instantianting process', 0)
         self.classesToBeDisplayedAfterProcess = []
+        self.parameters = None
         
     def setParameters(self, params):
         self.parameters = params
