@@ -237,7 +237,7 @@ class SpatialiteDb(AbstractDb):
         self.checkAndOpenDb()
         version = '2.1.3'
         sql = self.gen.getEDGVVersion()
-        query =  QSqlQuery(sqlVersion, self.db)
+        query =  QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting database version: ")+query.lastError().text())
         while query.next():
