@@ -146,7 +146,14 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             item = QtGui.QTreeWidgetItem(rootItem)
             item.setText(0, str(i+1))
             item.setText(1, procList[i])
-            status = self.configWindow.widget.abstractDb.getValidationStatusText(procList[i])
+            
+            status = None
+            try:
+                status = self.configWindow.widget.abstractDb.getValidationStatusText(procList[i])
+            except Exception as e:
+                QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+                QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                
             if not status:
                 item.setText(2, 'Not yet ran')
             else:
@@ -161,7 +168,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         QApplication.restoreOverrideCursor()
         self.populateProcessList()
         if procReturn == 0:
-            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Process %s returned error. Check log for details.'))
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Process %s returned error. Check log for details.'))
         else:
             QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Process successfully executed!'))
             #executou! show!

@@ -86,7 +86,14 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
         self.classesListWidget.clear()
         self.dbVersion = self.widget.getDBVersion()
         self.qmlPath = self.widget.getQmlPath()
-        self.classes = self.widget.abstractDb.listGeomClassesFromDatabase()
+
+        self.classes = []
+        try:
+            self.classes = self.widget.abstractDb.listGeomClassesFromDatabase()
+        except Exception as e:
+            self.bar.pushMessage(self.tr("CRITICAL!"), self.tr('A problem occurred! Check log for details.'), level=QgsMessageBar.CRITICAL)
+            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+
         self.classesListWidget.addItems(self.classes)
         self.classesListWidget.sortItems()
 
@@ -101,7 +108,7 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
         self.close()
         
     def pushMessage(self, msg):
-        self.bar.pushMessage("", msg, level=QgsMessageBar.WARNING)
+        self.bar.pushMessage("", msg, level=QgsMessageBar.CRITICAL)
 
     def selectAll(self):
         if self.selectAllCheck.isChecked():

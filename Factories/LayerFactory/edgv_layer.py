@@ -48,7 +48,15 @@ class EDGVLayer(QObject):
         self.qmlLoaded.connect(self.codeList.setState)        
         
     def load(self, crs, idSubgrupo = None):
-        vlayerQml = os.path.join(self.abstractDb.getQmlDir(), self.qmlName+'.qml')
+        qmldir = ''
+        try:
+            qmldir = self.abstractDb.getQmlDir()
+        except Exception as e:
+            self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return None
+
+        vlayerQml = os.path.join(qmldir, self.qmlName+'.qml')
         
         host = self.abstractDb.db.hostName()
         port = self.abstractDb.db.port()

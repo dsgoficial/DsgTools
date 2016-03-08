@@ -73,10 +73,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         self.dbVersion = self.widget.getDBVersion()
         self.qmlPath = self.widget.getQmlPath()
 
-        
-
         layer = self.getFrameLayer(self.iface.legendInterface().layers())
-        
 
         if layer == None:
             lyrName = self.widget.abstractDb.getFrameLayerName()          

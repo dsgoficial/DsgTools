@@ -24,14 +24,18 @@ import os
 from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.processParametersDialog import ProcessParametersDialog
 
-class ValidationManager(object):
+from PyQt4.QtGui import QMessageBox
+from PyQt4.Qt import QObject
+
+class ValidationManager(QObject):
     def __init__(self,postgisDb):
-        object.__init__(self)
+        super(ValidationManager, self).__init__()
         self.processList = []
         self.postgisDb = postgisDb
         try:
             self.postgisDb.checkAndCreateValidationStructure()
         except Exception as e:
+            QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         self.setAvailableProcesses()
 
@@ -60,7 +64,14 @@ class ValidationManager(object):
                 return currProc
 
     def executeProcess(self, processName):
-        runningProc = self.getRunningProc()
+        runningProc = None
+        try:
+            runningProc = self.postgisDb.getRunningProc()
+        except Exception as e:
+            QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return 0
+            
         if runningProc != None:
             QgsMessageLog.logMessage('Unable to run process %s. Process %s is already running.\n' % (processName, runningProc), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 0
@@ -94,10 +105,6 @@ class ValidationManager(object):
                 QgsMessageLog.logMessage('Process ran with status %s\n' % currProc.getStatusMessage(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
     
-    #this method gets the process name
-    def getRunningProc(self):
-        return self.postgisDb.getRunningProc()
-
 if __name__ == '__main__':
     from DsgTools.Factories.DbFactory.dbFactory import DbFactory
     abstractDb = DbFactory().createDbFactory('QPSQL')

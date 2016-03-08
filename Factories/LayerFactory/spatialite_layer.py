@@ -43,8 +43,13 @@ class SpatialiteLayer(EDGVLayer):
         
         self.schema, self.layer_name = abstractDb.getTableSchema(table)
         
-        dbVersion = abstractDb.getDatabaseVersion()
-        if dbVersion == '3.0' or dbVersion == '2.1.3':
+        try:
+            dbVersion = abstractDb.getDatabaseVersion()
+        except Exception as e:
+            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            return
+            
+        if dbVersion == '3.0' or dbVersion == '2.1.3' or dbVersion == 'FTer_2a_Ed':
             self.qmlName = '_'.join(table.replace('\r', '').split('_')[1::])
         else:
             self.qmlName = table.replace('\r','')

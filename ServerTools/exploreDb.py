@@ -57,7 +57,12 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
         self.treeWidget.customContextMenuRequested.connect(self.createMenuAssigned)
         
     def populateListWithDatabasesFromServer(self):
-        dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer()
+        dbList = []
+        try:
+            dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer()
+        except Exception as e:
+            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            
         dbList.sort()
         for (dbname, dbversion) in dbList:
             item = QListWidgetItem(self.dbListWidget)
@@ -79,11 +84,13 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
         self.renewDb()
     
     def checkSuperUser(self):
-        if self.serverWidget.abstractDb.checkSuperUser():
-            self.populateListWithDatabasesFromServer()
-        else:
-            QMessageBox.warning(self, self.tr('Info!'), self.tr('Connection refused. Connect with a super user to inspect server.'))
-        pass
+        try:
+            if self.serverWidget.abstractDb.checkSuperUser():
+                self.populateListWithDatabasesFromServer()
+            else:
+                QMessageBox.warning(self, self.tr('Info!'), self.tr('Connection refused. Connect with a super user to inspect server.'))
+        except Exception as e:
+            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
     
     def createItem(self, parent, text, column):
         item = QtGui.QTreeWidgetItem(parent)
@@ -99,9 +106,20 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
         self.localDb = self.dbFactory.createDbFactory('QPSQL')
         originalCon = self.serverWidget.abstractDb.makeOgrConn()
         self.localDb.connectDatabaseWithParameters(self.serverWidget.abstractDb.db.hostName(), self.serverWidget.abstractDb.db.port(), current.text().split(' ')[0], self.serverWidget.abstractDb.db.userName(), self.serverWidget.abstractDb.db.password())
-        candidateUserList = self.localDb.getUsers()
+
+        candidateUserList = []
+        try:
+            candidateUserList = self.localDb.getUsers()
+        except Exception as e:
+            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            
         for candidate in candidateUserList:
-            installed,assigned = self.localDb.getUserRelatedRoles(candidate)
+            installed,assigned = [], []
+            try:
+                installed,assigned = self.localDb.getUserRelatedRoles(candidate)
+            except Exception as e:
+                QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+
             if len(assigned)>0:
                 userItem = self.createItem(self.treeWidget.invisibleRootItem(), candidate,0)
                 for perm in assigned:
@@ -117,7 +135,13 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
     def showAssignedProperties(self):
         permission = self.treeWidget.currentItem().text(1)
         dbname = self.dbListWidget.currentItem().text().split(' ')[0]
-        permissionsDict = self.localDb.getRolePrivileges(permission, dbname)
+        
+        permissionsDict = dict()
+        try:
+            permissionsDict = self.localDb.getRolePrivileges(permission, dbname)
+        except Exception as e:
+            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            
         dlg = PermissionProperties(permissionsDict)
         dlg.exec_()
     

@@ -128,17 +128,18 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
 
     def loadDatabase(self):
         self.closeDatabase()
-        if self.isSpatialite:
-            self.abstractDb = self.abstractDbFactory.createDbFactory('QSQLITE')
-            self.abstractDb.connectDatabase()
-            self.spatialiteFileEdit.setText(self.abstractDb.db.databaseName())
-            self.edgvSpatialiteVersionEdit.setText(self.abstractDb.getDatabaseVersion())
-                
-        else:
-            self.abstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
-            self.abstractDb.connectDatabase(self.comboBoxPostgis.currentText())
-            self.edgvPostgisVersionEdit.setText(self.abstractDb.getDatabaseVersion())
         try:
+            if self.isSpatialite:
+                self.abstractDb = self.abstractDbFactory.createDbFactory('QSQLITE')
+                self.abstractDb.connectDatabase()
+                self.spatialiteFileEdit.setText(self.abstractDb.db.databaseName())
+                self.edgvSpatialiteVersionEdit.setText(self.abstractDb.getDatabaseVersion())
+                    
+            else:
+                self.abstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
+                self.abstractDb.connectDatabase(self.comboBoxPostgis.currentText())
+                self.edgvPostgisVersionEdit.setText(self.abstractDb.getDatabaseVersion())
+
             self.abstractDb.checkAndOpenDb()
             self.dbLoaded = True
             self.dbVersion = self.abstractDb.getDatabaseVersion()
@@ -147,6 +148,7 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
             else:
                 self.setCRS()
         except Exception as e:
+            self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)    
 
     def setCRS(self):
@@ -162,8 +164,9 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
                 else:
                     self.postGISCrsEdit.setText(self.crs.description())
                     self.postGISCrsEdit.setReadOnly(True)
-        except:
-            pass
+        except Exception as e:
+            self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
     def populatePostGISConnectionsCombo(self):
         self.comboBoxPostgis.clear()
@@ -174,10 +177,22 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         return self.dbLoaded
         
     def getDBVersion(self):
-        return self.abstractDb.getDatabaseVersion()
+        ret = ''
+        try:
+            ret = self.abstractDb.getDatabaseVersion()
+        except Exception as e:
+            self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        return ret
     
     def getQmlPath(self):
-        return self.abstractDb.getQmlDir()
+        ret = ''
+        try:
+            ret = self.abstractDb.getQmlDir()
+        except Exception as e:
+            self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        return ret
         
     @pyqtSlot(bool)
     def on_addConnectionButton_clicked(self):  

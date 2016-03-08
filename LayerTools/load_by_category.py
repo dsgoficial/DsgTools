@@ -119,7 +119,14 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
 
         self.dbVersion = self.widget.getDBVersion()
         self.qmlPath = self.widget.getQmlPath()
-        classes = self.widget.abstractDb.listGeomClassesFromDatabase()
+
+        classes = []
+        try:
+            classes = self.widget.abstractDb.listGeomClassesFromDatabase()
+        except Exception as e:
+            self.bar.pushMessage(self.tr("CRITICAL!"), self.tr('A problem occurred! Check log for details.'), level=QgsMessageBar.CRITICAL)
+            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            
         for table in classes:
             schema, layerName = self.widget.abstractDb.getTableSchema(table)
             category = layerName.split('_')[0]
@@ -133,7 +140,6 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
 
             self.insertIntoListView(categoryName)
         self.listWidgetCategoryFrom.sortItems()
-        self.setCRS()
 
     def insertIntoListView(self, item_name):
         found = self.listWidgetCategoryFrom.findItems(item_name, Qt.MatchExactly)
@@ -180,23 +186,7 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
             self.checkBoxPolygon.setCheckState(0)
             
     def pushMessage(self, msg):
-        self.bar.pushMessage('', msg, level=QgsMessageBar.WARNING)
-
-    def setCRS(self):
-        try:
-            self.epsg = self.utils.findEPSG(self.db)
-            if self.epsg == -1:
-                self.bar.pushMessage("", self.tr("Coordinate Reference System not set or invalid!"), level=QgsMessageBar.WARNING)
-            else:
-                self.crs = QgsCoordinateReferenceSystem(self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
-                if self.isSpatialite:
-                    self.spatialiteCrsEdit.setText(self.crs.description())
-                    self.spatialiteCrsEdit.setReadOnly(True)
-                else:
-                    self.postGISCrsEdit.setText(self.crs.description())
-                    self.postGISCrsEdit.setReadOnly(True)
-        except:
-            pass
+        self.bar.pushMessage('', msg, level=QgsMessageBar.CRITICAL)
 
     def cancel(self):
         self.restoreInitialState()
@@ -262,9 +252,14 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         self.lineWithElement = []
         self.polygonWithElement = []
 
-        pontoAux = self.widget.abstractDb.countElements(self.point)
-        linhaAux = self.widget.abstractDb.countElements(self.line)
-        areaAux = self.widget.abstractDb.countElements(self.polygon)
+        try:
+            pontoAux = self.widget.abstractDb.countElements(self.point)
+            linhaAux = self.widget.abstractDb.countElements(self.line)
+            areaAux = self.widget.abstractDb.countElements(self.polygon)
+        except Exception as e:
+            self.bar.pushMessage(self.tr('CRITICAL!'), self.tr('A problem occurred! Check log for details'), level=QgsMessageBar.CRITICAL)
+            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            return
 
         for i in pontoAux:
             if i[1] > 0:
