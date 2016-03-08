@@ -592,6 +592,8 @@ class DsgTools:
 
             self.iface.removeDockWidget(self.complexWindow)
             self.iface.removeDockWidget(self.codeList)
+            self.iface.removeDockWidget(self.attributesViewer)
+            self.iface.removeDockWidget(self.validationToolbox)
 
     def run(self):
         """Run method that performs all the real work"""
