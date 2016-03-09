@@ -25,8 +25,6 @@ import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
 
-
-
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'validation_config.ui'))
 
@@ -43,7 +41,7 @@ class ValidationConfig(QtGui.QDialog, FORM_CLASS):
         self.widget.tabWidget.setTabEnabled(1,True)
         self.widget.tabWidget.setTabEnabled(0,False)
         self.widget.tabWidget.setCurrentIndex(1)
-    
+
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
         self.hide()

@@ -129,12 +129,20 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     
     @pyqtSlot()
     def updateDbLineEdit(self):
-        self.databaseLineEdit.setText(self.configWindow.widget.comboBoxPostgis.currentText())
-        self.scale = self.configWindow.scaleComboBox.currentText()
-        self.tolerance = self.configWindow.toleranceLineEdit.text()
-        self.validationManager = ValidationManager(self.configWindow.widget.abstractDb)
-        self.populateProcessList()
-        pass
+        database, self.scale, self.tolerance = '', '', ''
+        try:
+            self.configWindow.widget.abstractDb.checkAndOpenDb()
+            database = self.configWindow.widget.comboBoxPostgis.currentText()
+            self.databaseLineEdit.setText(database)
+            self.scale = self.configWindow.scaleComboBox.currentText()
+            self.tolerance = self.configWindow.toleranceLineEdit.text()
+            self.validationManager = ValidationManager(self.configWindow.widget.abstractDb)
+            self.populateProcessList()
+        except Exception as e:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            self.processTreeWidget.clear()
+
+        self.databaseLineEdit.setText(database)
     
     def populateProcessList(self):
         self.processTreeWidget.clear()
