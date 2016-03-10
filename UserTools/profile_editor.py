@@ -186,8 +186,9 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         try:
             with open(path, 'w') as outfile:
                 json.dump(self.makeProfileDict(), outfile, sort_keys=True, indent=4)
-        except:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving file!'))
+        except Exception as e:
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving file! \n')+e.args[0])
+            return
             
         QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile saved successfully!'))
     

@@ -43,6 +43,7 @@ from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
 from DsgTools.ValidationTools.validation_config import ValidationConfig
 from DsgTools.ValidationTools.validationManager import ValidationManager
 from DsgTools.ValidationTools.validation_history import ValidationHistory
+from DsgTools.ValidationTools.rules_editor import RulesEditor
 
 class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     def __init__(self, iface, codeList):
@@ -191,4 +192,14 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.projectModel.setTable('validation.aux_flags_validacao_p')
             self.projectModel.select()
             self.tableView.setModel(self.projectModel)
-        pass
+        pass    
+    
+    @pyqtSlot(bool)
+    def on_rulesEditorButton_clicked(self):
+        try:
+            self.configWindow.widget.abstractDb.checkAndOpenDb()
+            dlg = RulesEditor(self.configWindow.widget.abstractDb)
+            dlg.exec_()
+        except Exception as e:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+str(e.args[0]))
+

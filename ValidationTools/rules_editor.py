@@ -34,7 +34,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'rules_editor.ui'))
 
 class RulesEditor(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, parent = None):
+    def __init__(self, postgisDb, parent = None):
         """Constructor."""
         super(RulesEditor, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -43,34 +43,86 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.tableWidget.setColumnCount(4)
         
-        self.rulesFile = os.path.join(os.path.dirname(__file__), 'ValidationRules', 'rules.json')
+        self.postgisDb = postgisDb
         
+        self.rulesFile = os.path.join(os.path.dirname(__file__), 'ValidationRules', 'ruleLibrary.rul')
+        self.fillLayers()
+        
+        self.readFile()
+        
+    def fillLayers(self):
+        classList = self.postgisDb.listGeomClassesFromDatabase()
+        classList.sort()
+        self.layer1Combo.addItems(classList)
+        self.layer2Combo.addItems(classList)
+        
+    @pyqtSlot(bool)
     def on_insertRuleButton_clicked(self):
-        layer1Item = QTableWidgetItem(self.layer1Combo.currentText())
-        layer2Item = QTableWidgetItem(self.layer2Combo.currentText())
-        necessityItem = QTableWidgetItem(self.necessityCombo.currentText())
-        predicateItem = QTableWidgetItem(self.predicateCombo.currentText())
+        self.insertRow(self.layer1Combo.currentText(), self.necessityCombo.currentText(), self.predicateCombo.currentText(), self.layer2Combo.currentText())
 
-        self.tableWidget.setItem(self.tableWidget.rowCount(), 0, layer1Item)
-        self.tableWidget.setItem(self.tableWidget.rowCount(), 1, necessityItem)        
-        self.tableWidget.setItem(self.tableWidget.rowCount(), 2, predicateItem)
-        self.tableWidget.setItem(self.tableWidget.rowCount(), 3, layer2Item)        
-        
+    @pyqtSlot(bool)
     def on_removeRuleButton_clicked(self):
         selectedItems = self.tableWidget.selectedItems()
         row = self.tableWidget.row(selectedItems[0])
-        self.tablwWidget.removeRow(row)
-    
-    def makeRulesDict(self):
-        pass
+        self.tableWidget.removeRow(row)
         
-    def writeJsonFile(self):
+    def insertRow(self, layer1, necessity, predicate, layer2):
+        layer1Item = QtGui.QTableWidgetItem(layer1)
+        layer2Item = QtGui.QTableWidgetItem(layer2)
+        necessityItem = QtGui.QTableWidgetItem(necessity)
+        predicateItem = QtGui.QTableWidgetItem(predicate)
+        
+        self.tableWidget.insertRow(self.tableWidget.rowCount())
+        
+        self.tableWidget.setItem(self.tableWidget.rowCount()-1, 0, layer1Item)
+        self.tableWidget.setItem(self.tableWidget.rowCount()-1, 1, necessityItem)        
+        self.tableWidget.setItem(self.tableWidget.rowCount()-1, 2, predicateItem)
+        self.tableWidget.setItem(self.tableWidget.rowCount()-1, 3, layer2Item)        
+
+    def readFile(self):
+        try:
+            with open(self.rulesFile, 'r') as f:
+                rules = [line.rstrip('\n') for line in f]
+        except Exception as e:
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem reading file! \n'))
+            return
+        
+        for line in rules:
+            split = line.split(',')
+            layer1 = split[0]    
+            necessity = split[1]
+            predicate = split[2]
+            layer2 = split[3]
+            self.insertRow(layer1, necessity, predicate, layer2)    
+
+    def makeRulesList(self):
+        rules = list()
+        for row in range(self.tableWidget.rowCount()):
+            layer1Item = self.tableWidget.item(row, 0)
+            necessityItem = self.tableWidget.item(row, 1)
+            predicateItem = self.tableWidget.item(row, 2)
+            layer2Item = self.tableWidget.item(row, 3)
+            
+            items = list()
+            items.append(layer1Item.text())
+            items.append(necessityItem.text())
+            items.append(predicateItem.text())
+            items.append(layer2Item.text())
+            
+            line = ','.join(items)
+            rules.append(line)
+            
+        return rules
+        
+    @pyqtSlot()
+    def on_buttonBox_accepted(self):
         try:
             with open(self.rulesFile, 'w') as outfile:
-                json.dump(self.makeRulesDict(), outfile, sort_keys=True, indent=4)
-        except:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving file!'))
+                for line in self.makeRulesList():
+                    outfile.write(line + '\n')
+        except Exception as e:
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving file! \n')+e.args[0])
+            return
             
         QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile saved successfully!'))
