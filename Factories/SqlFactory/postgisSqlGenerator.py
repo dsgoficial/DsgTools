@@ -338,9 +338,34 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def testSpatialRule(self, class_a, necessity, predicate_function, class_b, rule):
-        sql = """SELECT a.id id, 
-        \'Feature id \' || a.id || \' from %s violates rule \"%s\" with feature id \' || b.id || \' from %s \' as reason, 
-        ST_Centroid(ST_Intersection(a.geom,b.geom)) as geom
-        FROM %s as a, %s as b where %s(a.geom,b.geom) = %s
-        """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity)
+        if predicate_function != 'ST_Disjoint':
+            # in this case the centroid should be obtained from the feature itself
+            if necessity == '\'f\'':
+                sql = """SELECT a.id id, 
+                \'Feature id \' || a.id || \' from %s violates rule \"%s\" with feature id \' || b.id || \' from %s \' as reason, 
+                ST_Centroid(a.geom) as geom
+                FROM %s as a, %s as b where %s(a.geom,b.geom) = %s
+                """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity)
+            # in this case the centroid should be obtained from the intersection between features
+            elif necessity == '\'t\'':
+                sql = """SELECT a.id id, 
+                \'Feature id \' || a.id || \' from %s violates rule \"%s\" with feature id \' || b.id || \' from %s \' as reason, 
+                ST_Centroid(ST_Intersection(a.geom,b.geom)) as geom
+                FROM %s as a, %s as b where %s(a.geom,b.geom) = %s
+                """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity)
+        else:
+            # in this case the centroid should be obtained from the intersection between features
+            if necessity == '\'f\'':
+                sql = """SELECT a.id id, 
+                \'Feature id \' || a.id || \' from %s violates rule \"%s\" with feature id \' || b.id || \' from %s \' as reason, 
+                ST_Centroid(ST_Intersection(a.geom,b.geom)) as geom
+                FROM %s as a, %s as b where %s(a.geom,b.geom) = %s
+                """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity)            
+            # in this case the centroid should be obtained from the feature itself
+            elif necessity == '\'t\'':
+                sql = """SELECT a.id id, 
+                \'Feature id \' || a.id || \' from %s violates rule \"%s\" with feature id \' || b.id || \' from %s \' as reason, 
+                ST_Centroid(a.geom) as geom
+                FROM %s as a, %s as b where %s(a.geom,b.geom) = %s
+                """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity)
         return sql

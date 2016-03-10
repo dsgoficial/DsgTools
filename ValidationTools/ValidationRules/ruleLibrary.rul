@@ -1,2 +1,3 @@
 ge.emu_escadaria_a,must not (be),overlap,pe.dut_faixa_dominial_duto_a
 ge.emu_elevador_a,must (be),overlap,ge.emu_escadaria_a
+ge.emu_elevador_a,must not (be),disjoint,pe.dut_faixa_dominial_duto_a
