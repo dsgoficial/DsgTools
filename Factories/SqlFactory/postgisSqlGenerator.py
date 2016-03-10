@@ -337,11 +337,10 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "DELETE FROM validation.aux_flags_validacao_p WHERE id in (SELECT id FROM validation.aux_flags_validacao_p where process_name = '%s')" % processName
         return sql
     
-    def testSpatialRule(self, class_a, necessity, predicate_function, class_b):
+    def testSpatialRule(self, class_a, necessity, predicate_function, class_b, rule):
         sql = """SELECT a.id id, 
-        \'Feature id \' || a.id || \' from %s violates rule with feature id \' || b.id || \' from %s \' as reason, 
-        ST_Centroid(ST_Intersection(a.geom,b.geom)) as geom, 
-        ST_SRID(a.geom) as srid 
+        \'Feature id \' || a.id || \' from %s violates rule \"%s\" with feature id \' || b.id || \' from %s \' as reason, 
+        ST_Centroid(ST_Intersection(a.geom,b.geom)) as geom
         FROM %s as a, %s as b where %s(a.geom,b.geom) = %s
-        """ % (class_a, class_b, class_a, class_b, predicate_function, necessity)
+        """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity)
         return sql

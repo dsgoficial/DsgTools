@@ -63,7 +63,8 @@ class SpatialRuleProcess(ValidationProcess):
             necessity = self.necessity[split[1]]
             predicate = self.predicates[split[2]]
             layer2 = split[3]
-            ret.append((layer1, necessity, predicate, layer2))
+            rule = split[1]+' '+split[2]
+            ret.append((layer1, necessity, predicate, layer2, rule))
             
         return ret
 
@@ -76,20 +77,18 @@ class SpatialRuleProcess(ValidationProcess):
             
             rules = self.getRules()
             for rule in rules:
-                invalidGeomRecordList = self.abstractDb.testSpatialRule(rule[0], rule[1], rule[2], rule[3])
-                
+                invalidGeomRecordList = self.abstractDb.testSpatialRule(rule[0], rule[1], rule[2], rule[3], rule[4])
+                if len(invalidGeomRecordList) > 0:
+                    numberOfInvGeom = self.addFlag(invalidGeomRecordList)
+                    for tuple in invalidGeomRecordList:
+                        self.addClassesToBeDisplayedList(tuple[0])        
+                    self.setStatus('%s features are invalid. Check flags.\n' % numberOfInvGeom, 4) #Finished with flags
+                    QgsMessageLog.logMessage('%s features are invalid. Check flags.\n' % numberOfInvGeom, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                else:
+                    self.setStatus('All features are valid.\n', 1) #Finished
+                    QgsMessageLog.logMessage('All features are valid.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
             return
 
-        if len(invalidGeomRecordList) > 0:
-            numberOfInvGeom = self.addFlag(invalidGeomRecordList)
-            for tuple in invalidGeomRecordList:
-                self.addClassesToBeDisplayedList(tuple[0])        
-            self.setStatus('%s features are invalid. Check flags.\n' % numberOfInvGeom, 4) #Finished with flags
-            QgsMessageLog.logMessage('%s features are invalid. Check flags.\n' % numberOfInvGeom, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            return
-        else:
-            self.setStatus('All features are valid.\n', 1) #Finished
-            QgsMessageLog.logMessage('All features are valid.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
