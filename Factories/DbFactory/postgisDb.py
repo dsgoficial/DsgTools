@@ -778,7 +778,7 @@ class PostgisDb(AbstractDb):
     def isLyrInDb(self,lyr):
         candidateUri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
         candidateHost = candidateUri.host()
-        candidatePort = candidateUri.port()
+        candidatePort = int(candidateUri.port())
         candidateDb = candidateUri.database()
         if self.db.hostName() == candidateHost and self.db.port() == candidatePort and self.db.databaseName() == candidateDb:
             return True

@@ -270,9 +270,9 @@ class PostGISSqlGenerator(SqlGenerator):
         return "select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only %s.%s  where ST_IsValid(geom) = 'f') as f" % (tableSchema,tableName)
     
     def checkValidationStructure(self):
-        return "select count(*) from information_schema.columns where table_name = 'aux_flags_validacao_p'"
+        return "select count(*) from information_schema.columns where table_name = 'aux_flags_validacao'"
 
-    def createValidationStructure(self,srid):
+    def createValidationStructure(self, srid):
         sql = """CREATE SCHEMA IF NOT EXISTS validation#
         CREATE TABLE validation.aux_flags_validacao (
             id serial NOT NULL,
@@ -281,7 +281,7 @@ class PostGISSqlGenerator(SqlGenerator):
             feat_id smallint NOT NULL,
             reason varchar(200) NOT NULL,
             user_fixed boolean NOT NULL DEFAULT FALSE,
-            geom geometry(MULTIPOINT, %s) NOT NULL,
+            dimension smallint NOT NULL,
             CONSTRAINT aux_flags_validacao_pk PRIMARY KEY (id)
              WITH (FILLFACTOR = 100)
         )#
@@ -325,7 +325,7 @@ class PostGISSqlGenerator(SqlGenerator):
         )#
 
         INSERT INTO validation.status(id,status) VALUES (0,'Not yet ran'), (1,'Finished'), (2,'Failed'), (3,'Running'), (4,'Finished with flags')   
-        """ % str(srid, srid, srid, srid)
+        """ % (srid, srid, srid)
         return sql
     
     def validationStatus(self, processName):
@@ -343,11 +343,11 @@ class PostGISSqlGenerator(SqlGenerator):
     def insertFlagIntoDb(self,layer,feat_id,reason,geom,srid,processName, dimension):
         sql = ''
         if dimension == 0:
-            sql = "INSERT INTO validation.aux_flags_validacao_a (process_name, layer, feat_id, reason, geom) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s));" % (processName, layer, str(feat_id), reason, geom, srid)
+            sql = "INSERT INTO validation.aux_flags_validacao_p (process_name, layer, feat_id, reason, geom, dimension) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s), %s);" % (processName, layer, str(feat_id), reason, geom, srid, dimension)
         elif dimension == 1:
-            sql = "INSERT INTO validation.aux_flags_validacao_l (process_name, layer, feat_id, reason, geom) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s));" % (processName, layer, str(feat_id), reason, geom, srid)
+            sql = "INSERT INTO validation.aux_flags_validacao_l (process_name, layer, feat_id, reason, geom, dimension) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s), %s);" % (processName, layer, str(feat_id), reason, geom, srid, dimension)
         elif dimension == 2:
-            sql = "INSERT INTO validation.aux_flags_validacao_a (process_name, layer, feat_id, reason, geom) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s));" % (processName, layer, str(feat_id), reason, geom, srid)
+            sql = "INSERT INTO validation.aux_flags_validacao_a (process_name, layer, feat_id, reason, geom, dimension) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s), %s);" % (processName, layer, str(feat_id), reason, geom, srid, dimension)
         return sql
     
     def getRunningProc(self):

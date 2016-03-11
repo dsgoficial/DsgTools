@@ -89,30 +89,39 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     
     def zoomToFlag(self):
         idx =  self.tableView.selectionModel().selection().indexes()[0].data()
-        self.loadFlagLyr()
+        
+        dimension = self.tableView.selectionModel().selection().indexes()[6].data()
+        if dimension == 0:
+            layer = 'aux_flags_validacao_p'
+        elif dimension == 1:
+            layer = 'aux_flags_validacao_l'
+        elif dimension == 2:
+            layer = 'aux_flags_validacao_a'
+            
+        flagLyr = self.loadFlagLyr(layer)
         self.iface.mapCanvas().refresh()
-        self.flagLyr.select(idx)
-        bbox = self.flagLyr.boundingBoxOfSelected()
-        self.flagLyr.removeSelection()
+        flagLyr.select(idx)
+        bbox = flagLyr.boundingBoxOfSelected()
+        flagLyr.removeSelection()
         self.iface.mapCanvas().setExtent(bbox)
         self.iface.mapCanvas().refresh()
     
-    def loadFlagLyr(self):
-        if self.checkFlagsLoaded() or self.edgvLayer == None:
+    def loadFlagLyr(self, layer):
+        if not self.checkFlagsLoaded(layer):
             dbName = self.configWindow.widget.abstractDb.getDatabaseName()
-            self.edgvLayer = self.layerFactory.makeLayer(self.configWindow.widget.abstractDb, self.codeList, 'validation.aux_flags_validacao_p')
+            edgvLayer = self.layerFactory.makeLayer(self.configWindow.widget.abstractDb, self.codeList, 'validation.'+layer)
             groupList =  qgis.utils.iface.legendInterface().groups()
             if dbName in groupList:
-                self.flagLyr =  self.edgvLayer.load(self.configWindow.widget.crs,groupList.index(dbName))
+                return  edgvLayer.load(self.configWindow.widget.crs,groupList.index(dbName))
             else:
                 parentTreeNode = qgis.utils.iface.legendInterface().addGroup(self.configWindow.widget.abstractDb.getDatabaseName(), -1)
-                self.flagLyr =  self.edgvLayer.load(self.configWindow.widget.crs,parentTreeNode)
+                return  edgvLayer.load(self.configWindow.widget.crs,parentTreeNode)
     
-    def checkFlagsLoaded(self):
+    def checkFlagsLoaded(self, layer):
         loadedLayers = self.iface.mapCanvas().layers()
         candidateLyrs = []
         for lyr in loadedLayers:
-            if lyr.name() == 'aux_flags_validacao_p':
+            if lyr.name() == layer:
                 candidateLyrs.append(lyr)
         for lyr in candidateLyrs:
             if self.configWindow.widget.abstractDb.isLyrInDb(lyr):
@@ -189,7 +198,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     def on_validationTabWidget_currentChanged(self):
         if self.validationTabWidget.currentIndex() == 1 and self.configWindow.widget.abstractDb <> None:
             self.projectModel = QSqlTableModel(None,self.configWindow.widget.abstractDb.db)
-            self.projectModel.setTable('validation.aux_flags_validacao_p')
+            self.projectModel.setTable('validation.aux_flags_validacao')
             self.projectModel.select()
             self.tableView.setModel(self.projectModel)
         pass    
