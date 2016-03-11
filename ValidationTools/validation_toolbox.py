@@ -116,6 +116,11 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             else:
                 parentTreeNode = qgis.utils.iface.legendInterface().addGroup(self.configWindow.widget.abstractDb.getDatabaseName(), -1)
                 return  edgvLayer.load(self.configWindow.widget.crs,parentTreeNode)
+        else:
+            loadedLayers = self.iface.mapCanvas().layers()
+            for lyr in loadedLayers:
+                if lyr.name() == layer:
+                    return lyr
     
     def checkFlagsLoaded(self, layer):
         loadedLayers = self.iface.mapCanvas().layers()
