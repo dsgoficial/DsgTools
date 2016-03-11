@@ -701,14 +701,16 @@ class PostgisDb(AbstractDb):
     def deleteProcessFlags(self, processName):
         self.checkAndOpenDb()
         sql = self.gen.deleteFlags(processName)
-        self.db.transaction()
+        sqlList = sql.split('#')
         query = QSqlQuery(self.db)
-        if not query.exec_(sql):
-            self.db.rollback()
-            self.db.close()
-            raise Exception(self.tr('Problem process flags: ') + query.lastError().text())
+        self.db.transaction()
+        for inner in sqlList:
+            if not query.exec_(inner):
+                self.db.rollback()
+                self.db.close()
+                raise Exception(self.tr('Problem deleting flags: ') + query.lastError().text())
         self.db.commit()
-        return 0
+        self.db.close()
     
     def checkAndCreateValidationStructure(self):
         self.checkAndOpenDb()
@@ -723,7 +725,7 @@ class PostgisDb(AbstractDb):
         if not created:
             sqltext = self.gen.createValidationStructure(self.findEPSG())
             sqlList = sqltext.split('#')
-            query2 = QSqlQuery(sql, self.db)
+            query2 = QSqlQuery(self.db)
             self.db.transaction()
             for sql2 in sqlList:
                 if not query2.exec_(sql2):

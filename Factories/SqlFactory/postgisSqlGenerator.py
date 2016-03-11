@@ -355,7 +355,19 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def deleteFlags(self, processName):
-        sql = "DELETE FROM validation.aux_flags_validacao_p WHERE id in (SELECT id FROM validation.aux_flags_validacao_p where process_name = '%s')" % processName
+        sql = """
+        DELETE FROM validation.aux_flags_validacao_p 
+        WHERE id in 
+        (SELECT id FROM validation.aux_flags_validacao_p where process_name = '%s')#
+        
+        DELETE FROM validation.aux_flags_validacao_l 
+        WHERE id in 
+        (SELECT id FROM validation.aux_flags_validacao_l where process_name = '%s')#
+
+        DELETE FROM validation.aux_flags_validacao_a 
+        WHERE id in 
+        (SELECT id FROM validation.aux_flags_validacao_a where process_name = '%s')
+        """ % (processName, processName, processName)
         return sql
     
     def testSpatialRule(self, class_a, necessity, predicate_function, class_b, rule):
