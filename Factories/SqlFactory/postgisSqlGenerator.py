@@ -274,7 +274,7 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def createValidationStructure(self,srid):
         sql = """CREATE SCHEMA IF NOT EXISTS validation#
-        CREATE TABLE validation.aux_flags_validacao_p (
+        CREATE TABLE validation.aux_flags_validacao (
             id serial NOT NULL,
             process_name varchar(200) NOT NULL,
             layer varchar(200) NOT NULL,
@@ -282,9 +282,24 @@ class PostGISSqlGenerator(SqlGenerator):
             reason varchar(200) NOT NULL,
             user_fixed boolean NOT NULL DEFAULT FALSE,
             geom geometry(MULTIPOINT, %s) NOT NULL,
-            CONSTRAINT aux_flags_validacao_p_pk PRIMARY KEY (id)
+            CONSTRAINT aux_flags_validacao_pk PRIMARY KEY (id)
              WITH (FILLFACTOR = 100)
         )#
+        
+        CREATE TABLE validation.aux_flags_validacao_p (
+            geom geometry(MULTIPOINT, %s) NOT NULL,
+            CONSTRAINT aux_flags_validacao_p_pk PRIMARY KEY (id)
+        )INHERITS(validation.aux_flags_validacao)#
+        
+        CREATE TABLE validation.aux_flags_validacao_l (
+            geom geometry(MULTILINESTRING, %s) NOT NULL,
+            CONSTRAINT aux_flags_validacao_l_pk PRIMARY KEY (id)
+        )INHERITS(validation.aux_flags_validacao)#
+        
+        CREATE TABLE validation.aux_flags_validacao_a (
+            geom geometry(MULTIPOLYGON, %s) NOT NULL,
+            CONSTRAINT aux_flags_validacao_a_pk PRIMARY KEY (id)
+        )INHERITS(validation.aux_flags_validacao)#
         
         CREATE TABLE validation.status
         (
@@ -310,7 +325,7 @@ class PostGISSqlGenerator(SqlGenerator):
         )#
 
         INSERT INTO validation.status(id,status) VALUES (0,'Not yet ran'), (1,'Finished'), (2,'Failed'), (3,'Running'), (4,'Finished with flags')   
-        """ % str(srid)
+        """ % str(srid, srid, srid, srid)
         return sql
     
     def validationStatus(self, processName):
@@ -325,8 +340,14 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "INSERT INTO validation.process_history (process_name, log, status) values ('%s','%s',%s)" % (processName,log,status)
         return sql
     
-    def insertFlagIntoDb(self,layer,feat_id,reason,geom,srid,processName):
-        sql = "INSERT INTO validation.aux_flags_validacao_p (process_name, layer, feat_id, reason, geom) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s));" % (processName, layer, str(feat_id), reason, geom, srid)
+    def insertFlagIntoDb(self,layer,feat_id,reason,geom,srid,processName, dimension):
+        sql = ''
+        if dimension == 0:
+            sql = "INSERT INTO validation.aux_flags_validacao_a (process_name, layer, feat_id, reason, geom) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s));" % (processName, layer, str(feat_id), reason, geom, srid)
+        elif dimension == 1:
+            sql = "INSERT INTO validation.aux_flags_validacao_l (process_name, layer, feat_id, reason, geom) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s));" % (processName, layer, str(feat_id), reason, geom, srid)
+        elif dimension == 2:
+            sql = "INSERT INTO validation.aux_flags_validacao_a (process_name, layer, feat_id, reason, geom) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s));" % (processName, layer, str(feat_id), reason, geom, srid)
         return sql
     
     def getRunningProc(self):
@@ -343,14 +364,14 @@ class PostGISSqlGenerator(SqlGenerator):
             if necessity == '\'f\'':
                 sql = """SELECT a.id id, 
                 \'Feature id \' || a.id || \' from %s violates rule \"%s\" with feature id \' || b.id || \' from %s \' as reason, 
-                ST_Centroid(a.geom) as geom
+                a.geom as geom
                 FROM %s as a, %s as b where %s(a.geom,b.geom) = %s
                 """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity)
             # in this case the centroid should be obtained from the intersection between features
             elif necessity == '\'t\'':
                 sql = """SELECT a.id id, 
                 \'Feature id \' || a.id || \' from %s violates rule \"%s\" with feature id \' || b.id || \' from %s \' as reason, 
-                ST_Centroid(ST_Intersection(a.geom,b.geom)) as geom
+                ST_Intersection(a.geom,b.geom) as geom
                 FROM %s as a, %s as b where %s(a.geom,b.geom) = %s
                 """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity)
         else:
@@ -358,14 +379,18 @@ class PostGISSqlGenerator(SqlGenerator):
             if necessity == '\'f\'':
                 sql = """SELECT a.id id, 
                 \'Feature id \' || a.id || \' from %s violates rule \"%s\" with feature id \' || b.id || \' from %s \' as reason, 
-                ST_Centroid(ST_Intersection(a.geom,b.geom)) as geom
+                ST_Intersection(a.geom,b.geom) as geom
                 FROM %s as a, %s as b where %s(a.geom,b.geom) = %s
                 """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity)            
             # in this case the centroid should be obtained from the feature itself
             elif necessity == '\'t\'':
                 sql = """SELECT a.id id, 
                 \'Feature id \' || a.id || \' from %s violates rule \"%s\" with feature id \' || b.id || \' from %s \' as reason, 
-                ST_Centroid(a.geom) as geom
+                a.geom as geom
                 FROM %s as a, %s as b where %s(a.geom,b.geom) = %s
                 """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity)
+        return sql
+    
+    def getDimension(self, geom):
+        sql = "select ST_Dimension('%s')" % geom
         return sql

@@ -687,7 +687,8 @@ class PostgisDb(AbstractDb):
             self.db.transaction()
             query = QSqlQuery(self.db)
             for record in flagTupleList:
-                sql = self.gen.insertFlagIntoDb(record[0], str(record[1]), record[2], record[3], srid, processName)
+                dimension = self.getDimension(record[3]) # getting geometry dimension
+                sql = self.gen.insertFlagIntoDb(record[0], str(record[1]), record[2], record[3], srid, processName, dimension)
                 if not query.exec_(sql):
                     self.db.rollback()
                     self.db.close()
@@ -797,4 +798,16 @@ class PostgisDb(AbstractDb):
             geom = query.value(2)
             ret.append((class_a, feat_id, reason, geom))
         return ret
+
+    def getDimension(self, geom):
+        self.checkAndOpenDb()
+        sql = self.gen.getDimension(geom)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting dimension: ') + query.lastError().text()) 
+        dimension = 0
+        while query.next():
+            dimension = query.value(0)
+        return dimension
+    
         
