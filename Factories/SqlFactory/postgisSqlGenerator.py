@@ -269,6 +269,9 @@ class PostGISSqlGenerator(SqlGenerator):
     def getInvalidGeom(self, tableSchema, tableName):
         return "select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only %s.%s  where ST_IsValid(geom) = 'f') as f" % (tableSchema,tableName)
     
+    def getNonSimpleGeom(self, tableSchema, tableName):
+        return "select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only %s.%s  where ST_IsSimple(geom) = 'f') as f" % (tableSchema,tableName)
+    
     def checkValidationStructure(self):
         return "select count(*) from information_schema.columns where table_name = 'aux_flags_validacao'"
 
@@ -371,36 +374,41 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def testSpatialRule(self, class_a, necessity, predicate_function, class_b, rule):
+        if class_a!=class_b:
+            sameClassAndSQL=''
+        else:
+            sameClassAndSQL='AND a.id <> b.id'
+
         if predicate_function != 'ST_Disjoint':
             # in this case the centroid should be obtained from the feature itself
             if necessity == '\'f\'':
                 sql = """SELECT a.id id, 
                 \'Feature id \' || a.id || \' from %s violates rule \"%s\" with feature id \' || b.id || \' from %s \' as reason, 
                 a.geom as geom
-                FROM %s as a, %s as b where %s(a.geom,b.geom) = %s
-                """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity)
+                FROM %s as a, %s as b where %s(a.geom,b.geom) = %s %s
+                """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity, sameClassAndSQL)
             # in this case the centroid should be obtained from the intersection between features
             elif necessity == '\'t\'':
                 sql = """SELECT a.id id, 
                 \'Feature id \' || a.id || \' from %s violates rule \"%s\" with feature id \' || b.id || \' from %s \' as reason, 
                 ST_Intersection(a.geom,b.geom) as geom
-                FROM %s as a, %s as b where %s(a.geom,b.geom) = %s
-                """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity)
+                FROM %s as a, %s as b where %s(a.geom,b.geom) = %s %s
+                """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity, sameClassAndSQL)
         else:
             # in this case the centroid should be obtained from the intersection between features
             if necessity == '\'f\'':
                 sql = """SELECT a.id id, 
                 \'Feature id \' || a.id || \' from %s violates rule \"%s\" with feature id \' || b.id || \' from %s \' as reason, 
                 ST_Intersection(a.geom,b.geom) as geom
-                FROM %s as a, %s as b where %s(a.geom,b.geom) = %s
-                """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity)            
+                FROM %s as a, %s as b where %s(a.geom,b.geom) = %s %s
+                """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity, sameClassAndSQL)            
             # in this case the centroid should be obtained from the feature itself
             elif necessity == '\'t\'':
                 sql = """SELECT a.id id, 
                 \'Feature id \' || a.id || \' from %s violates rule \"%s\" with feature id \' || b.id || \' from %s \' as reason, 
                 a.geom as geom
-                FROM %s as a, %s as b where %s(a.geom,b.geom) = %s
-                """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity)
+                FROM %s as a, %s as b where %s(a.geom,b.geom) = %s %s
+                """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity, sameClassAndSQL)
         return sql
     
     def getDimension(self, geom):
