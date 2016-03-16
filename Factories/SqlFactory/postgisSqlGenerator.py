@@ -380,27 +380,11 @@ class PostGISSqlGenerator(SqlGenerator):
             sameClassAndSQL='AND a.id <> b.id'
             
         if necessity == '\'f\'':
-            sql = """SELECT DISTINCT foo.id, foo.geom 
-            FROM 
-            (SELECT a.id id, count(b.id), a.geom as geom
-                FROM %s as a, %s as b 
-                    WHERE %s(a.geom,b.geom) 
-                    GROUP BY a.id HAVING (count(b.id) < %s OR count(b.id) > %s)
-                UNION 
-                SELECT aa.id id, count(aa.id),
-                    aa.geom as geom
-                    FROM %s as aa, %s as bb 
-                        WHERE %s(aa.geom,bb.geom) = %s and aa.id 
-                        NOT IN 
-                        (SELECT DISTINCT (x.id) id 
-                            FROM %s as x, %s as y 
-                            WHERE %s(x.geom,y.geom)
-                        )
-                        GROUP BY aa.id
-            ) as foo
-            """ % (class_a, class_b, predicate_function, min_card, max_card, \
-                   class_a, class_b, predicate_function, necessity, \
-                   class_a, class_b, predicate_function)
+            sql = """SELECT DISTINCT foo.id, foo.geom FROM
+            (SELECT a.id id, SUM(CASE WHEN %s(a.geom,b.geom) THEN 1 ELSE 0 END) count, a.geom geom 
+                FROM %s as a,%s as b GROUP BY a.id) as foo
+            WHERE foo.count < %s OR foo.count > %s
+            """ % (predicate_function, class_a, class_b, min_card, max_card)
         elif necessity == '\'t\'':
             sql = """SELECT DISTINCT a.id id, a.geom as geom
             FROM %s as a, %s as b 

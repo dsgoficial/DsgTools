@@ -796,7 +796,7 @@ class PostgisDb(AbstractDb):
         ret = []
         while query.next():
             feat_id = query.value(0)
-            reason = 'Feature id %s from %s violates rule %s' % (feat_id, class_a, rule)
+            reason = 'Feature id %s from %s violates rule %s %s' % (feat_id, class_a, rule, class_b)
             geom = query.value(1)
             ret.append((class_a, feat_id, reason, geom))
         return ret
