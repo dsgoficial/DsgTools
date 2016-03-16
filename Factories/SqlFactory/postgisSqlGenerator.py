@@ -373,42 +373,39 @@ class PostGISSqlGenerator(SqlGenerator):
         """ % (processName, processName, processName)
         return sql
     
-    def testSpatialRule(self, class_a, necessity, predicate_function, class_b, rule):
+    def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card):
         if class_a!=class_b:
             sameClassAndSQL=''
         else:
             sameClassAndSQL='AND a.id <> b.id'
-
-        if predicate_function != 'ST_Disjoint':
-            # in this case the centroid should be obtained from the feature itself
-            if necessity == '\'f\'':
-                sql = """SELECT a.id id, 
-                \'Feature id \' || a.id || \' from %s violates rule \"%s\" with feature id \' || b.id || \' from %s \' as reason, 
-                a.geom as geom
-                FROM %s as a, %s as b where %s(a.geom,b.geom) = %s %s
-                """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity, sameClassAndSQL)
-            # in this case the centroid should be obtained from the intersection between features
-            elif necessity == '\'t\'':
-                sql = """SELECT a.id id, 
-                \'Feature id \' || a.id || \' from %s violates rule \"%s\" with feature id \' || b.id || \' from %s \' as reason, 
-                ST_Intersection(a.geom,b.geom) as geom
-                FROM %s as a, %s as b where %s(a.geom,b.geom) = %s %s
-                """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity, sameClassAndSQL)
-        else:
-            # in this case the centroid should be obtained from the intersection between features
-            if necessity == '\'f\'':
-                sql = """SELECT a.id id, 
-                \'Feature id \' || a.id || \' from %s violates rule \"%s\" with feature id \' || b.id || \' from %s \' as reason, 
-                ST_Intersection(a.geom,b.geom) as geom
-                FROM %s as a, %s as b where %s(a.geom,b.geom) = %s %s
-                """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity, sameClassAndSQL)            
-            # in this case the centroid should be obtained from the feature itself
-            elif necessity == '\'t\'':
-                sql = """SELECT a.id id, 
-                \'Feature id \' || a.id || \' from %s violates rule \"%s\" with feature id \' || b.id || \' from %s \' as reason, 
-                a.geom as geom
-                FROM %s as a, %s as b where %s(a.geom,b.geom) = %s %s
-                """ % (class_a, rule, class_b, class_a, class_b, predicate_function, necessity, sameClassAndSQL)
+            
+        if necessity == '\'f\'':
+            sql = """SELECT DISTINCT foo.id, foo.geom 
+            FROM 
+            (SELECT a.id id, count(b.id), a.geom as geom
+                FROM %s as a, %s as b 
+                    WHERE %s(a.geom,b.geom) 
+                    GROUP BY a.id HAVING (count(b.id) < %s OR count(b.id) > %s)
+                UNION 
+                SELECT aa.id id, count(aa.id),
+                    aa.geom as geom
+                    FROM %s as aa, %s as bb 
+                        WHERE %s(aa.geom,bb.geom) = %s and aa.id 
+                        NOT IN 
+                        (SELECT DISTINCT (x.id) id 
+                            FROM %s as x, %s as y 
+                            WHERE %s(x.geom,y.geom)
+                        )
+                        GROUP BY aa.id
+            ) as foo
+            """ % (class_a, class_b, predicate_function, min_card, max_card, \
+                   class_a, class_b, predicate_function, necessity, \
+                   class_a, class_b, predicate_function)
+        elif necessity == '\'t\'':
+            sql = """SELECT DISTINCT a.id id, a.geom as geom
+            FROM %s as a, %s as b 
+                WHERE %s(aa.geom,bb.geom) = %s
+            """ % (class_a, class_b, predicate_function, necessity)
         return sql
     
     def getDimension(self, geom):

@@ -787,17 +787,17 @@ class PostgisDb(AbstractDb):
         else:
             return False
         
-    def testSpatialRule(self, class_a, necessity, predicate_function, class_b, rule):
+    def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card, rule):
         self.checkAndOpenDb()
-        sql = self.gen.testSpatialRule(class_a, necessity, predicate_function, class_b, rule)
+        sql = self.gen.testSpatialRule(class_a, necessity, predicate_function, class_b, min_card, max_card)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr('Problem testing spatial rule: ') + query.lastError().text()) 
         ret = []
         while query.next():
             feat_id = query.value(0)
-            reason = query.value(1)
-            geom = query.value(2)
+            reason = 'Feature id %s from %s violates rule %s' % (feat_id, class_a, rule)
+            geom = query.value(1)
             ret.append((class_a, feat_id, reason, geom))
         return ret
 

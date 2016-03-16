@@ -63,8 +63,11 @@ class SpatialRuleProcess(ValidationProcess):
             necessity = self.necessity[split[1]]
             predicate = self.predicates[split[2]]
             layer2 = split[3]
+            cardinality = split[4]
+            min_card = cardinality.split('..')[0]
+            max_card = cardinality.split('..')[1]
             rule = split[1]+' '+split[2]
-            ret.append((layer1, necessity, predicate, layer2, rule))
+            ret.append((layer1, necessity, predicate, layer2, min_card, max_card, rule))
             
         return ret
 
@@ -77,7 +80,7 @@ class SpatialRuleProcess(ValidationProcess):
             
             rules = self.getRules()
             for rule in rules:
-                invalidGeomRecordList = self.abstractDb.testSpatialRule(rule[0], rule[1], rule[2], rule[3], rule[4])
+                invalidGeomRecordList = self.abstractDb.testSpatialRule(rule[0], rule[1], rule[2], rule[3], rule[4], rule[5], rule[6])
                 if len(invalidGeomRecordList) > 0:
                     numberOfInvGeom = self.addFlag(invalidGeomRecordList)
                     for tuple in invalidGeomRecordList:

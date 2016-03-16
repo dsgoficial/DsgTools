@@ -59,7 +59,9 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_insertRuleButton_clicked(self):
-        self.insertRow(self.layer1Combo.currentText(), self.necessityCombo.currentText(), self.predicateCombo.currentText(), self.layer2Combo.currentText())
+        self.insertRow(self.layer1Combo.currentText(), \
+                       self.necessityCombo.currentText(), self.predicateCombo.currentText(), \
+                       self.layer2Combo.currentText(), self.cardinalityEdit.text())
 
     @pyqtSlot(bool)
     def on_removeRuleButton_clicked(self):
@@ -67,11 +69,12 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
         row = self.tableWidget.row(selectedItems[0])
         self.tableWidget.removeRow(row)
         
-    def insertRow(self, layer1, necessity, predicate, layer2):
+    def insertRow(self, layer1, necessity, predicate, layer2, cardinality):
         layer1Item = QtGui.QTableWidgetItem(layer1)
-        layer2Item = QtGui.QTableWidgetItem(layer2)
         necessityItem = QtGui.QTableWidgetItem(necessity)
         predicateItem = QtGui.QTableWidgetItem(predicate)
+        layer2Item = QtGui.QTableWidgetItem(layer2)
+        cardinalityItem = QtGui.QTableWidgetItem(cardinality)
         
         self.tableWidget.insertRow(self.tableWidget.rowCount())
         
@@ -79,6 +82,7 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
         self.tableWidget.setItem(self.tableWidget.rowCount()-1, 1, necessityItem)        
         self.tableWidget.setItem(self.tableWidget.rowCount()-1, 2, predicateItem)
         self.tableWidget.setItem(self.tableWidget.rowCount()-1, 3, layer2Item)        
+        self.tableWidget.setItem(self.tableWidget.rowCount()-1, 4, cardinalityItem)        
 
     def readFile(self):
         try:
@@ -94,7 +98,8 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
             necessity = split[1]
             predicate = split[2]
             layer2 = split[3]
-            self.insertRow(layer1, necessity, predicate, layer2)    
+            cardinality = split[4]
+            self.insertRow(layer1, necessity, predicate, layer2, cardinality)    
 
     def makeRulesList(self):
         rules = list()
@@ -103,12 +108,14 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
             necessityItem = self.tableWidget.item(row, 1)
             predicateItem = self.tableWidget.item(row, 2)
             layer2Item = self.tableWidget.item(row, 3)
+            cardinalityItem = self.tableWidget.item(row, 4)
             
             items = list()
             items.append(layer1Item.text())
             items.append(necessityItem.text())
             items.append(predicateItem.text())
             items.append(layer2Item.text())
+            items.append(cardinalityItem.text())
             
             line = ','.join(items)
             rules.append(line)

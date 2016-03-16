@@ -22,10 +22,11 @@
 """
 from qgis.core import QgsMessageLog
 from PyQt4.QtGui import QMessageBox
+from PyQt4.Qt import QObject
 
-class ValidationProcess(object):
+class ValidationProcess(QObject):
     def __init__(self, postgisDb):
-        object.__init__(self)
+        super(ValidationProcess, self).__init__()
         self.abstractDb = postgisDb
         if self.getStatus() == None:
             self.setStatus('Instantianting process', 0)
@@ -68,28 +69,28 @@ class ValidationProcess(object):
         try:
             return self.abstractDb.insertFlags(flagTupleList,self.getName())
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
     def getStatus(self):
         try:
             return self.abstractDb.getValidationStatus(self.getName())
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
     def getStatusMessage(self):
         try:
             return self.abstractDb.getValidationStatusText(self.getName())
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
     def setStatus(self, msg, status):
         try:
             self.abstractDb.setValidationProcessStatus(self.getName(), msg, status)
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
     def finishedWithError(self):
