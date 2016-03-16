@@ -374,22 +374,27 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card):
-        if class_a!=class_b:
-            sameClassAndSQL=''
-        else:
-            sameClassAndSQL='AND a.id <> b.id'
-            
         if necessity == '\'f\'':
+            if class_a!=class_b:
+                sameClassAndSQL=''
+            else:
+                sameClassAndSQL=' WHERE a.id <> b.id '
+            
             sql = """SELECT DISTINCT foo.id, foo.geom FROM
             (SELECT a.id id, SUM(CASE WHEN %s(a.geom,b.geom) THEN 1 ELSE 0 END) count, a.geom geom 
-                FROM %s as a,%s as b GROUP BY a.id) as foo
+                FROM %s as a,%s as b %s GROUP BY a.id) as foo
             WHERE foo.count < %s OR foo.count > %s
-            """ % (predicate_function, class_a, class_b, min_card, max_card)
+            """ % (predicate_function, class_a, class_b, sameClassAndSQL, min_card, max_card)
         elif necessity == '\'t\'':
+            if class_a!=class_b:
+                sameClassAndSQL=''
+            else:
+                sameClassAndSQL=' AND a.id <> b.id '
+            
             sql = """SELECT DISTINCT a.id id, a.geom as geom
             FROM %s as a, %s as b 
-                WHERE %s(aa.geom,bb.geom) = %s
-            """ % (class_a, class_b, predicate_function, necessity)
+                WHERE %s(aa.geom,bb.geom) = %s %s
+            """ % (class_a, class_b, predicate_function, necessity, sameClassAndSQL)
         return sql
     
     def getDimension(self, geom):
