@@ -121,6 +121,15 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
             rules.append(line)
             
         return rules
+    
+    @pyqtSlot(int)
+    def on_predicateCombo_currentIndexChanged(self, id):
+        if self.predicateCombo.currentText() == 'disjoint':
+            self.cardinalityEdit.setText('-')
+            self.cardinalityEdit.setEnabled(False)
+        else:
+            self.cardinalityEdit.setEnabled(True)
+            self.cardinalityEdit.setText('1..1')
         
     @pyqtSlot()
     def on_buttonBox_accepted(self):
