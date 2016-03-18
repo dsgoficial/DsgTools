@@ -526,14 +526,15 @@ CREATE TABLE pe.rel_rocha_p(
 #
 CREATE TABLE ge.edf_edificacao(
 	id serial NOT NULL,
+	geometriaaproximada smallint NOT NULL,
 	nome varchar(80),
 	numero integer,
 	bloco varchar(80),
-	geometriaaproximada smallint NOT NULL,
 	operacional smallint,
 	situacaofisica smallint,
 	matconstr smallint,
-	numeropavimento float,
+	numeropavimentos integer,
+	alturaaproximada real,
 	turistica smallint,
 	cultura smallint,
 	administracao smallint[],
@@ -757,8 +758,7 @@ CREATE TABLE pe.rel_pico_p(
 ) INHERITS(pe.rel_elemento_fisiog_natural_p)
 #
 CREATE TABLE ge.edf_edif_residencial_p(
-	id_complexo_habitacional uuid,
-	CONSTRAINT edf_edif_residencial_p_pk PRIMARY KEY (id)
+	id_complexo_habitacional uuid
 ) INHERITS(ge.edf_edif_habitacional_p)
 #
 CREATE TABLE ge.edf_edif_habitacional_a(
@@ -860,8 +860,7 @@ CREATE TABLE ge.edf_edif_saude_a(
 ) INHERITS(ge.edf_edificacao_a)
 #
 CREATE TABLE ge.edf_edif_residencial_a(
-	id_complexo_habitacional uuid,
-	CONSTRAINT edf_edif_residencial_a_pk PRIMARY KEY (id)
+	id_complexo_habitacional uuid
 ) INHERITS(ge.edf_edif_habitacional_a)
 #
 CREATE TABLE ge.edf_edif_religiosa_a(
@@ -1148,7 +1147,7 @@ CREATE TABLE pe.enc_grupo_transformadores_a(
 	CONSTRAINT enc_grupo_transformadores_a_pk PRIMARY KEY (id)
 ) INHERITS(pe.enc_grupo_transformadores)
 #
-CREATE TABLE pe.enc_est_gerad_energia_eletr(
+CREATE TABLE pe.enc_est_gerad_energia_eletrica(
 	id serial NOT NULL,
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL,
@@ -1160,42 +1159,42 @@ CREATE TABLE pe.enc_est_gerad_energia_eletr(
 	CONSTRAINT enc_est_gerad_energia_eletrica_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
-CREATE TABLE pe.enc_est_gerad_energia_eletr_l(
+CREATE TABLE pe.enc_est_gerad_energia_eletrica_l(
 	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
-	CONSTRAINT enc_est_gerad_energia_eletr_l_pk PRIMARY KEY (id)
-) INHERITS(pe.enc_est_gerad_energia_eletr)
+	CONSTRAINT enc_est_gerad_energia_eletrica_l_pk PRIMARY KEY (id)
+) INHERITS(pe.enc_est_gerad_energia_eletrica)
 #
-CREATE TABLE pe.enc_est_gerad_energia_eletr_a(
+CREATE TABLE pe.enc_est_gerad_energia_eletrica_a(
 	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
-	CONSTRAINT enc_est_gerad_energia_eletr_a_pk PRIMARY KEY (id)
-) INHERITS(pe.enc_est_gerad_energia_eletr)
+	CONSTRAINT enc_est_gerad_energia_eletrica_a_pk PRIMARY KEY (id)
+) INHERITS(pe.enc_est_gerad_energia_eletrica)
 #
 CREATE TABLE pe.enc_termeletrica_l(
 	tipocombustivel smallint NOT NULL,
 	CONSTRAINT enc_termeletrica_l_pk PRIMARY KEY (id)
-) INHERITS(pe.enc_est_gerad_energia_eletr_l)
+) INHERITS(pe.enc_est_gerad_energia_eletrica_l)
 #
 CREATE TABLE pe.enc_termeletrica_a(
 	tipocombustivel smallint NOT NULL,
 	CONSTRAINT enc_termeletrica_a_pk PRIMARY KEY (id)
-) INHERITS(pe.enc_est_gerad_energia_eletr_a)
+) INHERITS(pe.enc_est_gerad_energia_eletrica_a)
 #
-CREATE TABLE pe.enc_est_gerad_energia_eletr_p(
+CREATE TABLE pe.enc_est_gerad_energia_eletrica_p(
 	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
-	CONSTRAINT enc_est_gerad_energia_eletr_p_pk PRIMARY KEY (id)
-) INHERITS(pe.enc_est_gerad_energia_eletr)
+	CONSTRAINT enc_est_gerad_energia_eletrica_p_pk PRIMARY KEY (id)
+) INHERITS(pe.enc_est_gerad_energia_eletrica)
 #
 CREATE TABLE pe.enc_hidreletrica_p(
 	CONSTRAINT enc_hidreletrica_p_pk PRIMARY KEY (id)
-) INHERITS(pe.enc_est_gerad_energia_eletr_p)
+) INHERITS(pe.enc_est_gerad_energia_eletrica_p)
 #
 CREATE TABLE pe.enc_hidreletrica_l(
 	CONSTRAINT enc_hidreletrica_l_pk PRIMARY KEY (id)
-) INHERITS(pe.enc_est_gerad_energia_eletr_l)
+) INHERITS(pe.enc_est_gerad_energia_eletrica_l)
 #
 CREATE TABLE pe.enc_hidreletrica_a(
 	CONSTRAINT enc_hidreletrica_a_pk PRIMARY KEY (id)
-) INHERITS(pe.enc_est_gerad_energia_eletr_a)
+) INHERITS(pe.enc_est_gerad_energia_eletrica_a)
 #
 CREATE TABLE ge.edf_edif_energia_p(
 	tipoedifenergia smallint[] NOT NULL,
@@ -1247,15 +1246,16 @@ CREATE TABLE ge.edf_edif_comunic_p(
 CREATE TABLE pe.aer_pista_ponto_pouso(
 	id serial NOT NULL,
 	nome varchar(80),
-	geometriaaproximada smallint NOT NULL DEFAULT 2,
+	geometriaaproximada smallint NOT NULL,
 	tipopista smallint NOT NULL,
-	revestimento smallint NOT NULL DEFAULT 0,
-	usopista smallint NOT NULL DEFAULT 0,
-	homologacao smallint NOT NULL DEFAULT 0,
-	operacional smallint NOT NULL DEFAULT 0,
-	situacaofisica smallint NOT NULL DEFAULT 0,
+	revestimento smallint NOT NULL,
+	usopista smallint NOT NULL,
+	homologacao smallint NOT NULL,
+	operacional smallint NOT NULL,
+	situacaofisica smallint NOT NULL,
 	largura float,
 	extensao float,
+	altitude real,
 	id_complexo_aeroportuario uuid,
 	CONSTRAINT aer_pista_ponto_pouso_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -1503,6 +1503,7 @@ CREATE TABLE complexos.sb_complexo_saneamento(
 	classeativecon smallint NOT NULL,
 	administracao smallint NOT NULL,
 	operacional smallint,
+	organizacao varchar(80),
 	id_org_comerc_serv uuid,
 	id_org_pub_civil uuid,
 	CONSTRAINT sb_complexo_saneamento_pk PRIMARY KEY (id)
@@ -1514,6 +1515,7 @@ CREATE TABLE complexos.sb_complexo_abast_agua(
 	classeativecon smallint NOT NULL,
 	administracao smallint NOT NULL,
 	operacional smallint,
+	organizacao varchar(80),
 	id_org_comerc_serv uuid,
 	id_org_pub_civil uuid,
 	CONSTRAINT sb_complexo_abast_agua_pk PRIMARY KEY (id)
@@ -1568,7 +1570,7 @@ CREATE TABLE pe.tra_obra_de_arte_viaria(
 	situacaofisica smallint NOT NULL,
 	necessitamanutencao smallint,
 	largura float,
-	entensao float,
+	extensao float,
 	nrfaixas integer,
 	nrpistas integer,
 	posicaopista smallint NOT NULL,
@@ -1582,13 +1584,14 @@ CREATE TABLE pe.tra_passagem_elevada_viaduto(
 	vaolivrehoriz float,
 	vaovertical float,
 	gabhorizsup float,
+	gabvertsup float,
 	cargasuportmaxima float,
 	CONSTRAINT tra_passagem_elevada_viaduto_pk PRIMARY KEY (id)
 ) INHERITS(pe.tra_obra_de_arte_viaria)
 #
 CREATE TABLE pe.tra_passagem_elevada_viaduto_l(
 	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
-	CONSTRAINT tra_passagem_elevada_viaduto_l_pk PRIMARY KEY (id)
+	CONSTRAINT tra_passagem_elevada_viaduto_l_pk PRIMARY KEY (cargasuportmaxima)
 ) INHERITS(pe.tra_passagem_elevada_viaduto)
 #
 CREATE TABLE complexos.adm_org_ext_mineral(
@@ -1682,7 +1685,7 @@ CREATE TABLE ge.emu_acesso_l(
 CREATE TABLE pe.enc_termeletrica_p(
 	tipocombustivel smallint NOT NULL,
 	CONSTRAINT enc_termeletrica_p_pk PRIMARY KEY (id)
-) INHERITS(pe.enc_est_gerad_energia_eletr_p)
+) INHERITS(pe.enc_est_gerad_energia_eletrica_p)
 #
 CREATE TABLE ge.emu_acesso_a(
 	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
@@ -1706,6 +1709,7 @@ CREATE TABLE complexos.enc_complexo_gerador_energia_eletrica(
 	id uuid NOT NULL,
 	nome varchar(80),
 	classeativecon smallint NOT NULL,
+	organizacao varchar(80),
 	id_org_comerc_serv uuid,
 	operacional smallint NOT NULL,
 	CONSTRAINT enc_complexo_gerador_energia_eletrica_pk PRIMARY KEY (id)
@@ -1765,12 +1769,12 @@ CREATE TABLE ge.cb_area_energia_eletrica_a(
 	CONSTRAINT cb_area_energia_eletrica_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
-CREATE TABLE pe.enc_zona_linhas_energia_com_a(
+CREATE TABLE pe.enc_zona_linhas_energia_comunicacao_a(
 	id serial NOT NULL,
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL DEFAULT 2,
 	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
-	CONSTRAINT enc_zona_lin_energ_comunic_a_pk PRIMARY KEY (id)
+	CONSTRAINT enc_zona_linhas_energia_comunicacao_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE pe.enc_torre_energia_p(
@@ -1818,6 +1822,7 @@ CREATE TABLE pe.enc_trecho_energia_l(
 	posicaorelativa smallint,
 	operacional smallint,
 	situacaofisica smallint,
+	organizacao varchar(80),
 	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
 	id_org_comerc_serv uuid,
 	CONSTRAINT enc_trecho_comunic_l_pk PRIMARY KEY (id)
@@ -1829,7 +1834,7 @@ CREATE TABLE pe.enc_trecho_comunic_l(
 	geometriaaproximada smallint NOT NULL,
 	tipotrechocomunic smallint NOT NULL,
 	posicaorelativa smallint NOT NULL,
-	matconstr smallint,
+	matcondutor smallint,
 	operacional smallint,
 	situacaofisica smallint,
 	emduto smallint,
@@ -2021,14 +2026,6 @@ CREATE TABLE pe.dut_ponto_duto_p(
 	CONSTRAINT dut_ponto_duto_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
-CREATE TABLE pe.dut_faixa_dominial_duto_a(
-	id serial NOT NULL,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
-	geometriaaproximada smallint NOT NULL,
-	largura float,
-	CONSTRAINT dut_faixa_dominial_duto_a_pk PRIMARY KEY (id)
-	 WITH (FILLFACTOR = 10)
-)#
 CREATE TABLE pe.lpal_linha_de_limite_l(
 	id serial NOT NULL,
 	nome varchar(80),
@@ -2042,7 +2039,7 @@ CREATE TABLE pe.lpal_linha_de_limite_l(
 )#
 CREATE TABLE pe.tra_passagem_elevada_viaduto_p(
 	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
-	CONSTRAINT tra_passagem_elevada_viaduto_p_pk PRIMARY KEY (id)
+	CONSTRAINT tra_passagem_elevada_viaduto_p_pk PRIMARY KEY (cargasuportmaxima)
 ) INHERITS(pe.tra_passagem_elevada_viaduto)
 #
 CREATE TABLE pe.lpal_limite_area_especial_l(
@@ -2115,6 +2112,7 @@ CREATE TABLE pe.lpal_area_especial_a(
 	nome varchar(80),
 	geometriaaproximada smallint NOT NULL,
 	codidentificadorunico varchar(80),
+	arealegal real,
 	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
 	CONSTRAINT lpal_area_especial_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
@@ -2191,19 +2189,10 @@ CREATE TABLE pe.lpal_terra_indigena_a(
 	CONSTRAINT lpal_terra_indigena_a_pk PRIMARY KEY (id)
 ) INHERITS(pe.lpal_terra_publica_a)
 #
-CREATE TABLE ge.ppb_area_dominial_a(
-	CONSTRAINT ppb_area_dominial_a_pk PRIMARY KEY (id)
-) INHERITS(pe.lpal_terra_publica_a)
-#
 CREATE TABLE pe.hdv_fundeadouro_p(
 	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
 	CONSTRAINT hdv_fundeadouro_p_pk PRIMARY KEY (id)
 ) INHERITS(pe.hdv_fundeadouro)
-#
-CREATE TABLE ge.ppb_faixa_dominio_rodovia_a(
-	largurapartireixo float,
-	CONSTRAINT ppb_faixa_dominio_rodovia_a_pk PRIMARY KEY (id)
-) INHERITS(ge.ppb_area_dominial_a)
 #
 CREATE TABLE pe.tra_caminho_carrocavel_l(
 	id serial NOT NULL,
@@ -2220,20 +2209,10 @@ CREATE TABLE pe.tra_trilha_picada_l(
 	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT tra_trilha_picada_l_pk PRIMARY KEY (id)
 )#
-CREATE TABLE ge.ppb_faixa_dominio_arruamento_a(
-	largurapartireixo float,
-	CONSTRAINT ppb_faixa_dominio_arruamento_a_pk PRIMARY KEY (id)
-) INHERITS(ge.ppb_area_dominial_a)
-#
 CREATE TABLE pe.hdv_obstaculo_navegacao_p(
 	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
 	CONSTRAINT hdv_obstaculo_navegacao_p_pk PRIMARY KEY (id)
 ) INHERITS(pe.hdv_obstaculo_navegacao)
-#
-CREATE TABLE ge.ppb_faixa_dominio_ferrovia_a(
-	largurapartireixo float,
-	CONSTRAINT ppb_faixa_dominio_ferrovia_a_pk PRIMARY KEY (id)
-) INHERITS(ge.ppb_area_dominial_a)
 #
 CREATE TABLE pe.tra_ponto_rodoviario_ferrov(
 	id serial NOT NULL,
@@ -2396,11 +2375,6 @@ CREATE TABLE ge.laz_arquibancada(
 	CONSTRAINT laz_arquibancada_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
-CREATE TABLE pe.lpal_area_desenv_controle_a(
-	classificacao varchar(80),
-	CONSTRAINT lpal_area_desenv_controle_a_pk PRIMARY KEY (id)
-) INHERITS(pe.lpal_area_especial_a)
-#
 CREATE TABLE ge.laz_arquibancada_l(
 	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
 	CONSTRAINT laz_arquibancada_l_pk PRIMARY KEY (id)
@@ -2658,11 +2632,6 @@ CREATE TABLE ge.cb_retorno_a(
 	CONSTRAINT cb_retorno_a_pk PRIMARY KEY (id)
 ) INHERITS(ge.cb_retorno)
 #
-CREATE TABLE ge.laz_arquibancada_p(
-	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
-	CONSTRAINT laz_arquibancada_p_pk PRIMARY KEY (id)
-) INHERITS(ge.laz_arquibancada)
-#
 CREATE TABLE ge.cb_canteiro_central(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
@@ -2743,7 +2712,7 @@ CREATE TABLE ge.laz_ruina_p(
 #
 CREATE TABLE ge.cb_passagem_elevada_viaduto_a(
 	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
-	CONSTRAINT cb_passagem_elevada_viaduto_a_pk PRIMARY KEY (id)
+	CONSTRAINT cb_passagem_elevada_viaduto_a_pk PRIMARY KEY (cargasuportmaxima)
 ) INHERITS(pe.tra_passagem_elevada_viaduto)
 #
 CREATE TABLE ge.cb_travessia_pedrestre_a(
@@ -2909,10 +2878,6 @@ CREATE TABLE pe.lpal_unidade_conservacao_a(
 	CONSTRAINT lpal_unidade_conservacao_a_pk PRIMARY KEY (id)
 ) INHERITS(pe.lpal_unidade_protegida_a)
 #
-CREATE TABLE pe.lpal_unidade_conservacao_snuc_a(
-	CONSTRAINT lpal_unidade_conservacao_snuc_a_pk PRIMARY KEY (id)
-) INHERITS(pe.lpal_unidade_conservacao_a)
-#
 CREATE TABLE ge.cb_area_habitacional_a(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
@@ -2962,13 +2927,6 @@ CREATE TABLE ge.cb_area_de_propriedade_particular_a(
 	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
 	CONSTRAINT cb_area_de_propriedade_particular_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
-)#
-CREATE TABLE ge.cb_area_servico_social_a(
-	id serial NOT NULL,
-	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
-	id_org_servico_social uuid,
-	CONSTRAINT cb_area_servico_social_a_pk PRIMARY KEY (id)
 )#
 CREATE TABLE ge.cb_area_saude_a(
 	id serial NOT NULL,
@@ -3027,30 +2985,21 @@ CREATE TABLE ge.cb_area_urbana_isolada_a(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE pe.lpal_unidade_conservacao_nao_snuc_a(
-	CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_pk PRIMARY KEY (id)
 ) INHERITS(pe.lpal_unidade_conservacao_a)
 #
 CREATE TABLE pe.lpal_unidade_protecao_integral_a(
-	CONSTRAINT lpal_unidade_protecao_integral_a_pk PRIMARY KEY (id)
-) INHERITS(pe.lpal_unidade_conservacao_snuc_a)
+	tipounidprotinteg smallint NOT NULL
+) INHERITS(pe.lpal_unidade_conservacao_a)
 #
 CREATE TABLE pe.lpal_unidade_uso_sustentavel_a(
-	CONSTRAINT lpal_unidade_uso_sustentavel_a_pk PRIMARY KEY (id)
-) INHERITS(pe.lpal_unidade_conservacao_snuc_a)
+	tipounidusosust smallint NOT NULL
+) INHERITS(pe.lpal_unidade_conservacao_a)
 #
 CREATE TABLE pe.fer_ponto_ferroviario_p(
 	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
 	CONSTRAINT fer_ponto_ferroviario_p_pk PRIMARY KEY (id)
 ) INHERITS(pe.tra_ponto_rodoviario_ferrov)
 #
-CREATE TABLE ge.cb_meio_fio_l(
-	id serial NOT NULL,
-	geometriaaproximada smallint NOT NULL DEFAULT 0,
-	comsargeta smallint NOT NULL DEFAULT 95,
-	geom geometry(MULTILINESTRING, [epsg]) NOT NULL,
-	CONSTRAINT cb_meio_fio_l_pk PRIMARY KEY (id)
-	 WITH (FILLFACTOR = 10)
-)#
 CREATE TABLE pe.rod_passagem_nivel_p(
 	nome varchar(80),
 	CONSTRAINT rod_passagem_nivel_p_pk PRIMARY KEY (id)
@@ -3290,9 +3239,10 @@ CREATE TABLE public.aux_moldura_a(
 )#
 CREATE TABLE public.db_metadata(
 	edgvversion varchar(20) NOT NULL DEFAULT 'FTer_2a_Ed',
+	implementationversion smallint NOT NULL,
 	CONSTRAINT edgvversioncheck CHECK (edgvversion = 'FTer_2a_Ed')
 )#
-INSERT INTO public.db_metadata (edgvversion) VALUES ('FTer_2a_Ed')#
+INSERT INTO public.db_metadata (edgvversion,implementationversion) VALUES ('FTer_2a_Ed',1)#
 CREATE TABLE pe.hid_canal_l(
 	CONSTRAINT hid_canal_l_pk PRIMARY KEY (id)
 ) INHERITS(pe.hid_canal_vala_l)
@@ -3398,15 +3348,13 @@ ALTER TABLE ge.edf_edif_desenv_social_a OWNER TO postgres#
 CREATE TABLE ge.edf_hab_indigena_p(
 	coletiva smallint NOT NULL,
 	isolada smallint NOT NULL,
-	id_aldeia_indigena uuid,
-	CONSTRAINT edf_hab_indigena_p_pk PRIMARY KEY (id)
+	id_aldeia_indigena uuid
 ) INHERITS(ge.edf_edif_habitacional_p)
 #
 CREATE TABLE ge.edf_hab_indigena_a(
 	coletiva smallint NOT NULL,
 	isolada smallint NOT NULL,
-	id_aldeia_indigena uuid,
-	CONSTRAINT edf_hab_indigena_a_pk PRIMARY KEY (id)
+	id_aldeia_indigena uuid
 ) INHERITS(ge.edf_edif_habitacional_a)
 #
 CREATE TABLE ge.emu_poste_sinalizacao_p(
@@ -3437,6 +3385,7 @@ CREATE TABLE public.aux_descontinuidade_geometrica(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
 	motivodescontinuidade smallint NOT NULL,
+	categoria smallint NOT NULL,
 	CONSTRAINT aux_descontinuidade_geometrica_pk PRIMARY KEY (id)
 )#
 ALTER TABLE public.aux_descontinuidade_geometrica OWNER TO postgres#
@@ -3452,277 +3401,6 @@ CREATE TABLE public.aux_descontinuidade_geometrica_l(
 ) INHERITS(public.aux_descontinuidade_geometrica)
 #
 ALTER TABLE public.aux_descontinuidade_geometrica_l OWNER TO postgres#
-CREATE TABLE public.aux_descontinuidade_geometrica_a(
-	geom geometry(MULTIPOLYGON, [epsg]) NOT NULL,
-	CONSTRAINT aux_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica)
-#
-ALTER TABLE public.aux_descontinuidade_geometrica_a OWNER TO postgres#
-CREATE TABLE pe.enc_descontinuidade_geometrica_p(
-	CONSTRAINT enc_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE pe.enc_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE pe.enc_descontinuidade_geometrica_a(
-	CONSTRAINT enc_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_a)
-#
-ALTER TABLE pe.enc_descontinuidade_geometrica_a OWNER TO postgres#
-CREATE TABLE pe.eco_descontinuidade_geometrica_p(
-	CONSTRAINT eco_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE pe.eco_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE pe.eco_descontinuidade_geometrica_l(
-	CONSTRAINT eco_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_l)
-#
-ALTER TABLE pe.eco_descontinuidade_geometrica_l OWNER TO postgres#
-CREATE TABLE pe.eco_descontinuidade_geometrica_a(
-	CONSTRAINT eco_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_a)
-#
-ALTER TABLE pe.eco_descontinuidade_geometrica_a OWNER TO postgres#
-CREATE TABLE pe.hid_descontinuidade_geometrica_p(
-	CONSTRAINT hid_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE pe.hid_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE pe.hid_descontinuidade_geometrica_l(
-	CONSTRAINT hid_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_l)
-#
-ALTER TABLE pe.hid_descontinuidade_geometrica_l OWNER TO postgres#
-CREATE TABLE pe.lpal_descontinuidade_geometrica_p(
-	CONSTRAINT lpal_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE pe.lpal_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE pe.lpal_descontinuidade_geometrica_l(
-	CONSTRAINT lpal_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_l)
-#
-ALTER TABLE pe.lpal_descontinuidade_geometrica_l OWNER TO postgres#
-CREATE TABLE pe.lpal_descontinuidade_geometrica_a(
-	CONSTRAINT lpal_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_a)
-#
-ALTER TABLE pe.lpal_descontinuidade_geometrica_a OWNER TO postgres#
-CREATE TABLE pe.pto_descontinuidade_geometrica_p(
-	CONSTRAINT pto_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE pe.pto_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE pe.pto_descontinuidade_geometrica_a(
-	CONSTRAINT pto_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_a)
-#
-ALTER TABLE pe.pto_descontinuidade_geometrica_a OWNER TO postgres#
-CREATE TABLE pe.rel_descontinuidade_geometrica_p(
-	CONSTRAINT rel_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE pe.rel_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE pe.rel_descontinuidade_geometrica_l(
-	CONSTRAINT rel_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_l)
-#
-ALTER TABLE pe.rel_descontinuidade_geometrica_l OWNER TO postgres#
-CREATE TABLE pe.rel_descontinuidade_geometrica_a(
-	CONSTRAINT rel_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_a)
-#
-ALTER TABLE pe.rel_descontinuidade_geometrica_a OWNER TO postgres#
-CREATE TABLE pe.sb_descontinuidade_geometrica_p(
-	CONSTRAINT sb_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE pe.sb_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE pe.sb_descontinuidade_geometrica_l(
-	CONSTRAINT sb_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_l)
-#
-ALTER TABLE pe.sb_descontinuidade_geometrica_l OWNER TO postgres#
-CREATE TABLE pe.sb_descontinuidade_geometrica_a(
-	CONSTRAINT sb_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_a)
-#
-ALTER TABLE pe.sb_descontinuidade_geometrica_a OWNER TO postgres#
-CREATE TABLE pe.tra_descontinuidade_geometrica_l(
-	CONSTRAINT tra_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_l)
-#
-ALTER TABLE pe.tra_descontinuidade_geometrica_l OWNER TO postgres#
-CREATE TABLE pe.tra_descontinuidade_geometrica_p(
-	CONSTRAINT tra_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE pe.tra_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE pe.tra_descontinuidade_geometrica_a(
-	CONSTRAINT tra_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_a)
-#
-ALTER TABLE pe.tra_descontinuidade_geometrica_a OWNER TO postgres#
-CREATE TABLE pe.veg_descontinuidade_geometrica_p(
-	CONSTRAINT veg_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE pe.veg_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE pe.veg_descontinuidade_geometrica_l(
-	CONSTRAINT veg_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_l)
-#
-ALTER TABLE pe.veg_descontinuidade_geometrica_l OWNER TO postgres#
-CREATE TABLE ge.ver_descontinuidade_geometrica_p(
-	CONSTRAINT ver_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE ge.ver_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE ge.ver_descontinuidade_geometrica_l(
-	CONSTRAINT ver_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_l)
-#
-ALTER TABLE ge.ver_descontinuidade_geometrica_l OWNER TO postgres#
-CREATE TABLE ge.ver_descontinuidade_geometrica_a(
-	CONSTRAINT ver_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_a)
-#
-ALTER TABLE ge.ver_descontinuidade_geometrica_a OWNER TO postgres#
-CREATE TABLE ge.cb_descontinuidade_geometrica_p(
-	CONSTRAINT cb_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE ge.cb_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE ge.cb_descontinuidade_geometrica_l(
-	CONSTRAINT cb_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_l)
-#
-ALTER TABLE ge.cb_descontinuidade_geometrica_l OWNER TO postgres#
-CREATE TABLE ge.cb_descontinuidade_geometrica_a(
-	CONSTRAINT cb_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_a)
-#
-ALTER TABLE ge.cb_descontinuidade_geometrica_a OWNER TO postgres#
-CREATE TABLE ge.laz_descontinuidade_geometrica_p(
-	CONSTRAINT laz_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE ge.laz_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE ge.laz_descontinuidade_geometrica_l(
-	CONSTRAINT laz_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_l)
-#
-ALTER TABLE ge.laz_descontinuidade_geometrica_l OWNER TO postgres#
-CREATE TABLE ge.laz_descontinuidade_geometrica_a(
-	CONSTRAINT laz_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_a)
-#
-ALTER TABLE ge.laz_descontinuidade_geometrica_a OWNER TO postgres#
-CREATE TABLE ge.edf_descontinuidade_geometrica_p(
-	CONSTRAINT edf_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE ge.edf_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE ge.edf_descontinuidade_geometrica_l(
-	CONSTRAINT edf_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_l)
-#
-ALTER TABLE ge.edf_descontinuidade_geometrica_l OWNER TO postgres#
-CREATE TABLE ge.edf_descontinuidade_geometrica_a(
-	CONSTRAINT edf_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_a)
-#
-ALTER TABLE ge.edf_descontinuidade_geometrica_a OWNER TO postgres#
-CREATE TABLE ge.emu_descontinuidade_geometrica_p(
-	CONSTRAINT emu_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE ge.emu_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE ge.emu_descontinuidade_geometrica_l(
-	CONSTRAINT emu_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_l)
-#
-ALTER TABLE ge.emu_descontinuidade_geometrica_l OWNER TO postgres#
-CREATE TABLE ge.emu_descontinuidade_geometrica_a(
-	CONSTRAINT emu_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_a)
-#
-ALTER TABLE ge.emu_descontinuidade_geometrica_a OWNER TO postgres#
-CREATE TABLE pe.rod_descontinuidade_geometrica_p(
-	CONSTRAINT rod_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE pe.rod_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE pe.aer_descontinuidade_geometrica_p(
-	CONSTRAINT aer_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE pe.aer_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE pe.hdv_descontinuidade_geometrica_p(
-	CONSTRAINT hdv_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE pe.hdv_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE pe.fer_descontinuidade_geometrica_p(
-	CONSTRAINT fer_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE pe.fer_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE pe.dut_descontinuidade_geometrica_p(
-	CONSTRAINT dut_descontinuidade_geometrica_p_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_p)
-#
-ALTER TABLE pe.dut_descontinuidade_geometrica_p OWNER TO postgres#
-CREATE TABLE pe.rod_descontinuidade_geometrica_l(
-	CONSTRAINT rod_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_l)
-#
-ALTER TABLE pe.rod_descontinuidade_geometrica_l OWNER TO postgres#
-CREATE TABLE pe.aer_descontinuidade_geometrica_l(
-	CONSTRAINT aer_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_l)
-#
-ALTER TABLE pe.aer_descontinuidade_geometrica_l OWNER TO postgres#
-CREATE TABLE pe.rod_descontinuidade_geometrica_a(
-	CONSTRAINT rod_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_a)
-#
-ALTER TABLE pe.rod_descontinuidade_geometrica_a OWNER TO postgres#
-CREATE TABLE pe.aer_descontinuidade_geometrica_a(
-	CONSTRAINT aer_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_a)
-#
-ALTER TABLE pe.aer_descontinuidade_geometrica_a OWNER TO postgres#
-CREATE TABLE pe.hdv_descontinuidade_geometrica_l(
-	CONSTRAINT hdv_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_l)
-#
-ALTER TABLE pe.hdv_descontinuidade_geometrica_l OWNER TO postgres#
-CREATE TABLE pe.hdv_descontinuidade_geometrica_a(
-	CONSTRAINT hdv_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_a)
-#
-ALTER TABLE pe.hdv_descontinuidade_geometrica_a OWNER TO postgres#
-CREATE TABLE pe.fer_descontinuidade_geometrica_l(
-	CONSTRAINT fer_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_l)
-#
-ALTER TABLE pe.fer_descontinuidade_geometrica_l OWNER TO postgres#
-CREATE TABLE pe.fer_descontinuidade_geometrica_a(
-	CONSTRAINT fer_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_a)
-#
-ALTER TABLE pe.fer_descontinuidade_geometrica_a OWNER TO postgres#
-CREATE TABLE pe.dut_descontinuidade_geometrica_l(
-	CONSTRAINT dut_descontinuidade_geometrica_l_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_l)
-#
-ALTER TABLE pe.dut_descontinuidade_geometrica_l OWNER TO postgres#
-CREATE TABLE pe.dut_descontinuidade_geometrica_a(
-	CONSTRAINT dut_descontinuidade_geometrica_a_pk PRIMARY KEY (id)
-) INHERITS(public.aux_descontinuidade_geometrica_a)
-#
-ALTER TABLE pe.dut_descontinuidade_geometrica_a OWNER TO postgres#
 CREATE TABLE dominios.situacao_marco
                     (
                     code smallint NOT NULL,
@@ -3782,6 +3460,12 @@ CREATE TABLE dominios.tipo_fundeadouro
                     code smallint NOT NULL,
                     code_name text NOT NULL,
                     CONSTRAINT tipo_fundeadouro_pk PRIMARY KEY (code)
+                                )#
+CREATE TABLE dominios.estado_fisico
+                    (
+                    code smallint NOT NULL,
+                    code_name text NOT NULL,
+                    CONSTRAINT estado_fisico_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_org_militar
                     (
@@ -3849,11 +3533,11 @@ CREATE TABLE dominios.grupo_ativ_econ
                     code_name text NOT NULL,
                     CONSTRAINT grupo_ativ_econ_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_edif_turist
+CREATE TABLE dominios.tipo_ponte
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_edif_turist_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_ponte_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_banco
                     (
@@ -3867,11 +3551,11 @@ CREATE TABLE dominios.tipo_lim_area_esp
                     code_name text NOT NULL,
                     CONSTRAINT tipo_lim_area_esp_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.causa
+CREATE TABLE dominios.tipo_localidade
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT causa_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_localidade_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.nivel_atencao
                     (
@@ -3933,11 +3617,11 @@ CREATE TABLE dominios.situacao_agua
                     code_name text NOT NULL,
                     CONSTRAINT situacao_agua_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_ext_min
+CREATE TABLE dominios.tipo_campo_quadra
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_ext_min_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_campo_quadra_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_lavoura
                     (
@@ -4029,6 +3713,12 @@ CREATE TABLE dominios.forma_rocha
                     code_name text NOT NULL,
                     CONSTRAINT forma_rocha_pk PRIMARY KEY (code)
                                 )#
+CREATE TABLE dominios.tipo_edif_comunic
+                    (
+                    code smallint NOT NULL,
+                    code_name text NOT NULL,
+                    CONSTRAINT tipo_edif_comunic_pk PRIMARY KEY (code)
+                                )#
 CREATE TABLE dominios.tipo_dep_geral
                     (
                     code smallint NOT NULL,
@@ -4065,11 +3755,11 @@ CREATE TABLE dominios.tipo_exposicao
                     code_name text NOT NULL,
                     CONSTRAINT tipo_exposicao_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_campo_quadra
+CREATE TABLE dominios.tipo_ext_min
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_campo_quadra_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_ext_min_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.modal_uso
                     (
@@ -4083,11 +3773,11 @@ CREATE TABLE dominios.tipo_estrut
                     code_name text NOT NULL,
                     CONSTRAINT tipo_estrut_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_localidade
+CREATE TABLE dominios.causa
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_localidade_pk PRIMARY KEY (code)
+                    CONSTRAINT causa_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.cultivo_predominante
                     (
@@ -4107,11 +3797,11 @@ CREATE TABLE dominios.proximidade
                     code_name text NOT NULL,
                     CONSTRAINT proximidade_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_terreno_exposto
+CREATE TABLE dominios.mat_condutor
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_terreno_exposto_pk PRIMARY KEY (code)
+                    CONSTRAINT mat_condutor_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.situacao_fisica
                     (
@@ -4136,6 +3826,12 @@ CREATE TABLE dominios.local_equip_desenv_social
                     code smallint NOT NULL,
                     code_name text NOT NULL,
                     CONSTRAINT local_equip_desenv_social_pk PRIMARY KEY (code)
+                                )#
+CREATE TABLE dominios.categoria_edgv
+                    (
+                    code smallint NOT NULL,
+                    code_name text NOT NULL,
+                    CONSTRAINT categoria_edgv_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.sigla_uf
                     (
@@ -4191,11 +3887,11 @@ CREATE TABLE dominios.tipo_arruamento
                     code_name text NOT NULL,
                     CONSTRAINT tipo_arruamento_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_lim_pol
+CREATE TABLE dominios.tipo_trecho_rod
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_lim_pol_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_trecho_rod_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_est_gerad
                     (
@@ -4220,12 +3916,6 @@ CREATE TABLE dominios.situacao_juridica
                     code smallint NOT NULL,
                     code_name text NOT NULL,
                     CONSTRAINT situacao_juridica_pk PRIMARY KEY (code)
-                                )#
-CREATE TABLE dominios.tipo_trecho_duto
-                    (
-                    code smallint NOT NULL,
-                    code_name text NOT NULL,
-                    CONSTRAINT tipo_trecho_duto_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_combustivel
                     (
@@ -4256,6 +3946,12 @@ CREATE TABLE dominios.tipo_caminho_aereo
                     code smallint NOT NULL,
                     code_name text NOT NULL,
                     CONSTRAINT tipo_caminho_aereo_pk PRIMARY KEY (code)
+                                )#
+CREATE TABLE dominios.tipo_org_civil
+                    (
+                    code smallint NOT NULL,
+                    code_name text NOT NULL,
+                    CONSTRAINT tipo_org_civil_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_instal_militar
                     (
@@ -4479,11 +4175,11 @@ CREATE TABLE dominios.tipo_elevador
                     code_name text NOT NULL,
                     CONSTRAINT tipo_elevador_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_trecho_rod
+CREATE TABLE dominios.tipo_lim_pol
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_trecho_rod_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_lim_pol_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_pista
                     (
@@ -4491,11 +4187,11 @@ CREATE TABLE dominios.tipo_pista
                     code_name text NOT NULL,
                     CONSTRAINT tipo_pista_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.estado_fisico
+CREATE TABLE dominios.tipo_edif_turist
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT estado_fisico_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_edif_turist_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_travessia_ped
                     (
@@ -4569,6 +4265,12 @@ CREATE TABLE dominios.tipo_trecho_massa
                     code_name text NOT NULL,
                     CONSTRAINT tipo_trecho_massa_pk PRIMARY KEY (code)
                                 )#
+CREATE TABLE dominios.tipo_unid_prot_integ
+                    (
+                    code smallint NOT NULL,
+                    code_name text NOT NULL,
+                    CONSTRAINT tipo_unid_prot_integ_pk PRIMARY KEY (code)
+                                )#
 CREATE TABLE dominios.finalidade_deposito
                     (
                     code smallint NOT NULL,
@@ -4581,11 +4283,11 @@ CREATE TABLE dominios.tipo_edif_port
                     code_name text NOT NULL,
                     CONSTRAINT tipo_edif_port_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_ponte
+CREATE TABLE dominios.tipo_trecho_duto
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_ponte_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_trecho_duto_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_quebra_molhe
                     (
@@ -4647,11 +4349,11 @@ CREATE TABLE dominios.destinado_a
                     code_name text NOT NULL,
                     CONSTRAINT destinado_a_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_org_civil
+CREATE TABLE dominios.tipo_unid_uso_sust
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_org_civil_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_unid_uso_sust_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_vegetacao
                     (
@@ -4664,6 +4366,12 @@ CREATE TABLE dominios.tipo_conteudo
                     code smallint NOT NULL,
                     code_name text NOT NULL,
                     CONSTRAINT tipo_conteudo_pk PRIMARY KEY (code)
+                                )#
+CREATE TABLE dominios.tipo_terreno_exposto
+                    (
+                    code smallint NOT NULL,
+                    code_name text NOT NULL,
+                    CONSTRAINT tipo_terreno_exposto_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.proc_extracao
                     (
@@ -4782,6 +4490,11 @@ INSERT INTO dominios.tipo_org_sv_social (code,code_name) values (4,'Casa de Repo
 INSERT INTO dominios.tipo_org_sv_social (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.tipo_fundeadouro (code,code_name) values (1,'Navio/Embarcação')#
 INSERT INTO dominios.tipo_fundeadouro (code,code_name) values (2,'Hidroavião')#
+INSERT INTO dominios.estado_fisico (code,code_name) values (1,'Líquido')#
+INSERT INTO dominios.estado_fisico (code,code_name) values (98,'Misto')#
+INSERT INTO dominios.estado_fisico (code,code_name) values (3,'Gasoso')#
+INSERT INTO dominios.estado_fisico (code,code_name) values (2,'Sólido')#
+INSERT INTO dominios.estado_fisico (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.tipo_org_militar (code,code_name) values (99,'Outros')#
 INSERT INTO dominios.tipo_org_militar (code,code_name) values (3,'Exército')#
 INSERT INTO dominios.tipo_org_militar (code,code_name) values (2,'Corpo de bombeiros')#
@@ -4849,18 +4562,11 @@ INSERT INTO dominios.grupo_ativ_econ (code,code_name) values (16,'Educação inf
 INSERT INTO dominios.grupo_ativ_econ (code,code_name) values (6,'Administração do estado e da política econômica e social')#
 INSERT INTO dominios.grupo_ativ_econ (code,code_name) values (8,'Serviços coletivos prestados pela administração')#
 INSERT INTO dominios.grupo_ativ_econ (code,code_name) values (95,'Desconhecido')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (11,'Mirante')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (10,'Estátua')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (13,'Panteão')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (12,'Monumento')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (15,'Chaminé')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (14,'Chafariz')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (17,'Obelisco')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (16,'Escultura')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (18,'Torre')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (99,'Outros')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (9,'Cruzeiro')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.tipo_ponte (code,code_name) values (1,'Móvel')#
+INSERT INTO dominios.tipo_ponte (code,code_name) values (3,'Fixa')#
+INSERT INTO dominios.tipo_ponte (code,code_name) values (2,'Pênsil')#
+INSERT INTO dominios.tipo_ponte (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.tipo_ponte (code,code_name) values (7,'Estaiada')#
 INSERT INTO dominios.tipo_banco (code,code_name) values (1,'Fluvial')#
 INSERT INTO dominios.tipo_banco (code,code_name) values (3,'Lacustre')#
 INSERT INTO dominios.tipo_banco (code,code_name) values (2,'Marítimo')#
@@ -4903,10 +4609,13 @@ INSERT INTO dominios.tipo_lim_area_esp (code,code_name) values (35,'Refúgio da 
 INSERT INTO dominios.tipo_lim_area_esp (code,code_name) values (34,'Reserva biológica - REBIO')#
 INSERT INTO dominios.tipo_lim_area_esp (code,code_name) values (33,'Monumento natural - MONA')#
 INSERT INTO dominios.tipo_lim_area_esp (code,code_name) values (18,'Reserva ecológica')#
-INSERT INTO dominios.causa (code,code_name) values (5,'Canalização')#
-INSERT INTO dominios.causa (code,code_name) values (2,'Absorção')#
-INSERT INTO dominios.causa (code,code_name) values (95,'Desconhecida')#
-INSERT INTO dominios.causa (code,code_name) values (4,'Gruta ou fenda')#
+INSERT INTO dominios.tipo_localidade (code,code_name) values (1,'Aglomerado rural')#
+INSERT INTO dominios.tipo_localidade (code,code_name) values (3,'Aglomerado rural isolado')#
+INSERT INTO dominios.tipo_localidade (code,code_name) values (2,'Aglomerado rural de extensão urbana')#
+INSERT INTO dominios.tipo_localidade (code,code_name) values (5,'Cidade')#
+INSERT INTO dominios.tipo_localidade (code,code_name) values (4,'Capital')#
+INSERT INTO dominios.tipo_localidade (code,code_name) values (6,'Vila')#
+INSERT INTO dominios.tipo_localidade (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.nivel_atencao (code,code_name) values (5,'Primário')#
 INSERT INTO dominios.nivel_atencao (code,code_name) values (7,'Terciário')#
 INSERT INTO dominios.nivel_atencao (code,code_name) values (6,'Secundário')#
@@ -5000,13 +4709,15 @@ INSERT INTO dominios.tipo_trecho_drenagem (code,code_name) values (4,'Curso dág
 INSERT INTO dominios.situacao_agua (code,code_name) values (95,'Desconhecida')#
 INSERT INTO dominios.situacao_agua (code,code_name) values (7,'Não tratada')#
 INSERT INTO dominios.situacao_agua (code,code_name) values (6,'Tratada')#
-INSERT INTO dominios.tipo_ext_min (code,code_name) values (99,'Outros')#
-INSERT INTO dominios.tipo_ext_min (code,code_name) values (1,'Poço para água subterrânea')#
-INSERT INTO dominios.tipo_ext_min (code,code_name) values (5,'Garimpo')#
-INSERT INTO dominios.tipo_ext_min (code,code_name) values (4,'Mina')#
-INSERT INTO dominios.tipo_ext_min (code,code_name) values (6,'Salina')#
-INSERT INTO dominios.tipo_ext_min (code,code_name) values (8,'Poço de petróleo')#
-INSERT INTO dominios.tipo_ext_min (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.tipo_campo_quadra (code,code_name) values (99,'Outros')#
+INSERT INTO dominios.tipo_campo_quadra (code,code_name) values (1,'Futebol')#
+INSERT INTO dominios.tipo_campo_quadra (code,code_name) values (3,'Voleibol')#
+INSERT INTO dominios.tipo_campo_quadra (code,code_name) values (2,'Basquetebol')#
+INSERT INTO dominios.tipo_campo_quadra (code,code_name) values (5,'Hipismo')#
+INSERT INTO dominios.tipo_campo_quadra (code,code_name) values (4,'Pólo')#
+INSERT INTO dominios.tipo_campo_quadra (code,code_name) values (7,'Tênis')#
+INSERT INTO dominios.tipo_campo_quadra (code,code_name) values (6,'Poliesportiva')#
+INSERT INTO dominios.tipo_campo_quadra (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.tipo_lavoura (code,code_name) values (1,'Perene')#
 INSERT INTO dominios.tipo_lavoura (code,code_name) values (3,'Anual')#
 INSERT INTO dominios.tipo_lavoura (code,code_name) values (2,'Semi-perene')#
@@ -5096,6 +4807,12 @@ INSERT INTO dominios.forma_rocha (code,code_name) values (95,'Desconhecida')#
 INSERT INTO dominios.forma_rocha (code,code_name) values (21,'Matacão - pedra')#
 INSERT INTO dominios.forma_rocha (code,code_name) values (22,'Penedo isolado')#
 INSERT INTO dominios.forma_rocha (code,code_name) values (23,'Área rochosa - lajedo')#
+INSERT INTO dominios.tipo_edif_comunic (code,code_name) values (99,'Outros')#
+INSERT INTO dominios.tipo_edif_comunic (code,code_name) values (1,'Centro de operações')#
+INSERT INTO dominios.tipo_edif_comunic (code,code_name) values (3,'Estação radio-base')#
+INSERT INTO dominios.tipo_edif_comunic (code,code_name) values (2,'Central comutação e transmissão')#
+INSERT INTO dominios.tipo_edif_comunic (code,code_name) values (4,'Estação repetidora')#
+INSERT INTO dominios.tipo_edif_comunic (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.tipo_dep_geral (code,code_name) values (11,'Depósito frigorífico')#
 INSERT INTO dominios.tipo_dep_geral (code,code_name) values (10,'Composteira')#
 INSERT INTO dominios.tipo_dep_geral (code,code_name) values (26,'Barracão industrial')#
@@ -5137,15 +4854,13 @@ INSERT INTO dominios.tipo_exposicao (code,code_name) values (5,'Céu aberto')#
 INSERT INTO dominios.tipo_exposicao (code,code_name) values (3,'Fechado')#
 INSERT INTO dominios.tipo_exposicao (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.tipo_exposicao (code,code_name) values (4,'Coberto')#
-INSERT INTO dominios.tipo_campo_quadra (code,code_name) values (99,'Outros')#
-INSERT INTO dominios.tipo_campo_quadra (code,code_name) values (1,'Futebol')#
-INSERT INTO dominios.tipo_campo_quadra (code,code_name) values (3,'Voleibol')#
-INSERT INTO dominios.tipo_campo_quadra (code,code_name) values (2,'Basquetebol')#
-INSERT INTO dominios.tipo_campo_quadra (code,code_name) values (5,'Hipismo')#
-INSERT INTO dominios.tipo_campo_quadra (code,code_name) values (4,'Pólo')#
-INSERT INTO dominios.tipo_campo_quadra (code,code_name) values (7,'Tênis')#
-INSERT INTO dominios.tipo_campo_quadra (code,code_name) values (6,'Poliesportiva')#
-INSERT INTO dominios.tipo_campo_quadra (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.tipo_ext_min (code,code_name) values (99,'Outros')#
+INSERT INTO dominios.tipo_ext_min (code,code_name) values (1,'Poço para água subterrânea')#
+INSERT INTO dominios.tipo_ext_min (code,code_name) values (5,'Garimpo')#
+INSERT INTO dominios.tipo_ext_min (code,code_name) values (4,'Mina')#
+INSERT INTO dominios.tipo_ext_min (code,code_name) values (6,'Salina')#
+INSERT INTO dominios.tipo_ext_min (code,code_name) values (8,'Poço de petróleo')#
+INSERT INTO dominios.tipo_ext_min (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.modal_uso (code,code_name) values (10,'Hidroviário')#
 INSERT INTO dominios.modal_uso (code,code_name) values (14,'Portuário')#
 INSERT INTO dominios.modal_uso (code,code_name) values (5,'Ferroviário')#
@@ -5162,13 +4877,10 @@ INSERT INTO dominios.tipo_estrut (code,code_name) values (4,'Porto seco')#
 INSERT INTO dominios.tipo_estrut (code,code_name) values (9,'Parada')#
 INSERT INTO dominios.tipo_estrut (code,code_name) values (8,'Integração')#
 INSERT INTO dominios.tipo_estrut (code,code_name) values (95,'Desconhecido')#
-INSERT INTO dominios.tipo_localidade (code,code_name) values (1,'Aglomerado rural')#
-INSERT INTO dominios.tipo_localidade (code,code_name) values (3,'Aglomerado rural isolado')#
-INSERT INTO dominios.tipo_localidade (code,code_name) values (2,'Aglomerado rural de extensão urbana')#
-INSERT INTO dominios.tipo_localidade (code,code_name) values (5,'Cidade')#
-INSERT INTO dominios.tipo_localidade (code,code_name) values (4,'Capital')#
-INSERT INTO dominios.tipo_localidade (code,code_name) values (6,'Vila')#
-INSERT INTO dominios.tipo_localidade (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.causa (code,code_name) values (5,'Canalização')#
+INSERT INTO dominios.causa (code,code_name) values (2,'Absorção')#
+INSERT INTO dominios.causa (code,code_name) values (95,'Desconhecida')#
+INSERT INTO dominios.causa (code,code_name) values (4,'Gruta ou fenda')#
 INSERT INTO dominios.cultivo_predominante (code,code_name) values (24,'Pastagem cultivada')#
 INSERT INTO dominios.cultivo_predominante (code,code_name) values (25,'Hortaliças')#
 INSERT INTO dominios.cultivo_predominante (code,code_name) values (26,'Bracatinga')#
@@ -5277,12 +4989,10 @@ INSERT INTO dominios.proximidade (code,code_name) values (15,'Adjacente')#
 INSERT INTO dominios.proximidade (code,code_name) values (95,'Desconhecida')#
 INSERT INTO dominios.proximidade (code,code_name) values (14,'Isolada')#
 INSERT INTO dominios.proximidade (code,code_name) values (16,'Coincidente')#
-INSERT INTO dominios.tipo_terreno_exposto (code,code_name) values (24,'Saibro')#
-INSERT INTO dominios.tipo_terreno_exposto (code,code_name) values (12,'Areia')#
-INSERT INTO dominios.tipo_terreno_exposto (code,code_name) values (23,'Terra')#
-INSERT INTO dominios.tipo_terreno_exposto (code,code_name) values (18,'Cascalho')#
-INSERT INTO dominios.tipo_terreno_exposto (code,code_name) values (4,'Pedregoso')#
-INSERT INTO dominios.tipo_terreno_exposto (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.mat_condutor (code,code_name) values (99,'Outros')#
+INSERT INTO dominios.mat_condutor (code,code_name) values (25,'Fibra ótica')#
+INSERT INTO dominios.mat_condutor (code,code_name) values (26,'Fio Metálico')#
+INSERT INTO dominios.mat_condutor (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.situacao_fisica (code,code_name) values (1,'Abandonada')#
 INSERT INTO dominios.situacao_fisica (code,code_name) values (3,'Em construção')#
 INSERT INTO dominios.situacao_fisica (code,code_name) values (2,'Destruída')#
@@ -5310,6 +5020,27 @@ INSERT INTO dominios.local_equip_desenv_social (code,code_name) values (4,'Rural
 INSERT INTO dominios.local_equip_desenv_social (code,code_name) values (7,'Outras Comunidades tradicionais')#
 INSERT INTO dominios.local_equip_desenv_social (code,code_name) values (6,'Urbana periférica')#
 INSERT INTO dominios.local_equip_desenv_social (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (11,'laz')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (10,'hid')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (13,'ppb')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (12,'lpal')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (15,'rel')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (14,'pto')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (17,'sb')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (16,'rod')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (19,'veg')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (18,'tra')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (1,'aer')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (3,'dut')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (2,'cb')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (5,'edf')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (4,'eco')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (7,'enc')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (6,'emu')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (9,'hdv')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (20,'ver')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (8,'fer')#
 INSERT INTO dominios.sigla_uf (code,code_name) values (24,'SC')#
 INSERT INTO dominios.sigla_uf (code,code_name) values (25,'SE')#
 INSERT INTO dominios.sigla_uf (code,code_name) values (26,'SP')#
@@ -5411,7 +5142,7 @@ INSERT INTO dominios.tipo_produto_residuo (code,code_name) values (41,'Forragem'
 INSERT INTO dominios.tipo_produto_residuo (code,code_name) values (3,'Petróleo')#
 INSERT INTO dominios.tipo_produto_residuo (code,code_name) values (5,'Gás')#
 INSERT INTO dominios.tipo_produto_residuo (code,code_name) values (36,'Escória')#
-INSERT INTO dominios.tipo_produto_residuo (code,code_name) values (6,'Grão')#
+INSERT INTO dominios.tipo_produto_residuo (code,code_name) values (6,'Grãos')#
 INSERT INTO dominios.tipo_produto_residuo (code,code_name) values (18,'Cascalho')#
 INSERT INTO dominios.tipo_produto_residuo (code,code_name) values (49,'Alexandrita')#
 INSERT INTO dominios.tipo_produto_residuo (code,code_name) values (83,'Rocha ornamental')#
@@ -5500,9 +5231,10 @@ INSERT INTO dominios.tipo_arruamento (code,code_name) values (3,'Entroncamento')
 INSERT INTO dominios.tipo_arruamento (code,code_name) values (2,'Beco')#
 INSERT INTO dominios.tipo_arruamento (code,code_name) values (5,'Servidão')#
 INSERT INTO dominios.tipo_arruamento (code,code_name) values (4,'Logradouro')#
-INSERT INTO dominios.tipo_lim_pol (code,code_name) values (1,'Internacional')#
-INSERT INTO dominios.tipo_lim_pol (code,code_name) values (3,'Municipal')#
-INSERT INTO dominios.tipo_lim_pol (code,code_name) values (2,'Estadual')#
+INSERT INTO dominios.tipo_trecho_rod (code,code_name) values (2,'Rodovia')#
+INSERT INTO dominios.tipo_trecho_rod (code,code_name) values (5,'Ligação entre pistas')#
+INSERT INTO dominios.tipo_trecho_rod (code,code_name) values (4,'Auto-estrada')#
+INSERT INTO dominios.tipo_trecho_rod (code,code_name) values (6,'Trecho de Entroncamento')#
 INSERT INTO dominios.tipo_est_gerad (code,code_name) values (99,'Outros')#
 INSERT INTO dominios.tipo_est_gerad (code,code_name) values (5,'Eólica')#
 INSERT INTO dominios.tipo_est_gerad (code,code_name) values (7,'Maré-motriz')#
@@ -5524,11 +5256,6 @@ INSERT INTO dominios.situacao_juridica (code,code_name) values (1,'Delimitada')#
 INSERT INTO dominios.situacao_juridica (code,code_name) values (3,'Homologada ou demarcada')#
 INSERT INTO dominios.situacao_juridica (code,code_name) values (2,'Declarada')#
 INSERT INTO dominios.situacao_juridica (code,code_name) values (4,'Regularizada')#
-INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (1,'Duto')#
-INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (95,'Desconhecido')#
-INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (3,'Correia transportadora')#
-INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (2,'Calha')#
-INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (5,'Galeria ou bueiro')#
 INSERT INTO dominios.tipo_combustivel (code,code_name) values (99,'Outros')#
 INSERT INTO dominios.tipo_combustivel (code,code_name) values (33,'Carvão')#
 INSERT INTO dominios.tipo_combustivel (code,code_name) values (1,'Nuclear')#
@@ -5553,6 +5280,25 @@ INSERT INTO dominios.referencial_grav (code,code_name) values (95,'Desconhecido'
 INSERT INTO dominios.referencial_grav (code,code_name) values (97,'Não aplicável')#
 INSERT INTO dominios.tipo_caminho_aereo (code,code_name) values (99,'Outros')#
 INSERT INTO dominios.tipo_caminho_aereo (code,code_name) values (12,'Teleférico')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (11,'Delegacia de policia civil')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (10,'Autarquia')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (13,'Fórum')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (12,'Educação')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (15,'Procuradoria')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (14,'Fundação')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (22,'Prefeitura')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (16,'Secretaria')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (99,'Outros')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (3,'Cartorial')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (2,'Prisional')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (5,'Eleitoral')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (4,'Gestão')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (7,'Seguridade social')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (6,'Produção e/ou pesquisa')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (9,'Assembleia legislativa')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (8,'Câmara municipal')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (1,'Policial')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.tipo_instal_militar (code,code_name) values (11,'Delegacia de  serviço militar')#
 INSERT INTO dominios.tipo_instal_militar (code,code_name) values (10,'Hotel de trânsito')#
 INSERT INTO dominios.tipo_instal_militar (code,code_name) values (13,'Posto de vigilância')#
@@ -5604,6 +5350,7 @@ INSERT INTO dominios.finalidade_galeria_bueiro (code,code_name) values (95,'Desc
 INSERT INTO dominios.tipo_sinal (code,code_name) values (1,'Bóia luminosa')#
 INSERT INTO dominios.tipo_sinal (code,code_name) values (3,'Bóia de amarração')#
 INSERT INTO dominios.tipo_sinal (code,code_name) values (2,'Bóia cega')#
+INSERT INTO dominios.tipo_sinal (code,code_name) values (5,'Barca farol')#
 INSERT INTO dominios.tipo_sinal (code,code_name) values (4,'Farol ou farolete')#
 INSERT INTO dominios.tipo_sinal (code,code_name) values (6,'Sinalização de margem')#
 INSERT INTO dominios.tipo_sinal (code,code_name) values (95,'Desconhecido')#
@@ -5677,10 +5424,11 @@ INSERT INTO dominios.modalidade (code,code_name) values (3,'Telefonia')#
 INSERT INTO dominios.modalidade (code,code_name) values (2,'Imagem')#
 INSERT INTO dominios.modalidade (code,code_name) values (5,'Som')#
 INSERT INTO dominios.modalidade (code,code_name) values (4,'Dados')#
-INSERT INTO dominios.modalidade (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.modalidade (code,code_name) values (95,'Desconhecida')#
 INSERT INTO dominios.tipo_edif_aero (code,code_name) values (26,'Terminal de passageiros')#
 INSERT INTO dominios.tipo_edif_aero (code,code_name) values (27,'Terminal de cargas')#
 INSERT INTO dominios.tipo_edif_aero (code,code_name) values (15,'Administrativa')#
+INSERT INTO dominios.tipo_edif_aero (code,code_name) values (30,'Serviço de Combate à Incêndios (SCI)')#
 INSERT INTO dominios.tipo_edif_aero (code,code_name) values (28,'Torre de controle')#
 INSERT INTO dominios.tipo_edif_aero (code,code_name) values (29,'Hangar')#
 INSERT INTO dominios.tipo_edif_aero (code,code_name) values (99,'Outros')#
@@ -5774,6 +5522,8 @@ INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (32,'Fabricação
 INSERT INTO dominios.tipo_unid_protegida (code,code_name) values (1,'Unidade de conservação não SNUC')#
 INSERT INTO dominios.tipo_unid_protegida (code,code_name) values (3,'Unidade de uso sustentável')#
 INSERT INTO dominios.tipo_unid_protegida (code,code_name) values (2,'Unidade de proteção integral')#
+INSERT INTO dominios.tipo_unid_protegida (code,code_name) values (5,'Outras unidades protegidas')#
+INSERT INTO dominios.tipo_unid_protegida (code,code_name) values (4,'Unidade de conservação')#
 INSERT INTO dominios.condicao_terreno (code,code_name) values (3,'Irrigado')#
 INSERT INTO dominios.condicao_terreno (code,code_name) values (2,'Seco')#
 INSERT INTO dominios.condicao_terreno (code,code_name) values (95,'Desconhecida')#
@@ -5794,18 +5544,24 @@ INSERT INTO dominios.tipo_erosao (code,code_name) values (4,'Ravina')#
 INSERT INTO dominios.tipo_erosao (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.tipo_elevador (code,code_name) values (3,'Vertical')#
 INSERT INTO dominios.tipo_elevador (code,code_name) values (2,'Inclinado')#
-INSERT INTO dominios.tipo_trecho_rod (code,code_name) values (2,'Rodovia')#
-INSERT INTO dominios.tipo_trecho_rod (code,code_name) values (5,'Ligação entre pistas')#
-INSERT INTO dominios.tipo_trecho_rod (code,code_name) values (4,'Auto-estrada')#
-INSERT INTO dominios.tipo_trecho_rod (code,code_name) values (6,'Trecho de Entroncamento')#
+INSERT INTO dominios.tipo_lim_pol (code,code_name) values (1,'Internacional')#
+INSERT INTO dominios.tipo_lim_pol (code,code_name) values (3,'Municipal')#
+INSERT INTO dominios.tipo_lim_pol (code,code_name) values (2,'Estadual')#
 INSERT INTO dominios.tipo_pista (code,code_name) values (11,'Heliponto')#
 INSERT INTO dominios.tipo_pista (code,code_name) values (9,'Pista de Pouso')#
 INSERT INTO dominios.tipo_pista (code,code_name) values (10,'Pista de taxiamento')#
-INSERT INTO dominios.estado_fisico (code,code_name) values (1,'Líquido')#
-INSERT INTO dominios.estado_fisico (code,code_name) values (98,'Misto')#
-INSERT INTO dominios.estado_fisico (code,code_name) values (3,'Gasoso')#
-INSERT INTO dominios.estado_fisico (code,code_name) values (2,'Sólido')#
-INSERT INTO dominios.estado_fisico (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (11,'Mirante')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (10,'Estátua')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (13,'Panteão')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (12,'Monumento')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (15,'Chaminé')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (14,'Chafariz')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (17,'Obelisco')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (16,'Escultura')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (18,'Torre')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (99,'Outros')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (9,'Cruzeiro')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.tipo_travessia_ped (code,code_name) values (9,'Pinguela')#
 INSERT INTO dominios.tipo_travessia_ped (code,code_name) values (8,'Passarela')#
 INSERT INTO dominios.tipo_travessia_ped (code,code_name) values (95,'Desconhecido')#
@@ -5862,7 +5618,7 @@ INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (16,'Resta
 INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (19,'Unidade de acolhimento para idosos')#
 INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (18,'Unidade de acolhimento para crianças e adolescentes (casa de passagem)')#
 INSERT INTO dominios.tipo_edif_abast (code,code_name) values (99,'Outros')#
-INSERT INTO dominios.tipo_edif_abast (code,code_name) values (1,'Captação')#
+INSERT INTO dominios.tipo_edif_abast (code,code_name) values (1,'Captação, tratamento e distribuição de água')#
 INSERT INTO dominios.tipo_edif_abast (code,code_name) values (98,'Misto')#
 INSERT INTO dominios.tipo_edif_abast (code,code_name) values (3,'Recalque')#
 INSERT INTO dominios.tipo_edif_abast (code,code_name) values (2,'Tratamento')#
@@ -5877,6 +5633,7 @@ INSERT INTO dominios.atividade (code,code_name) values (9,'Prospecção')#
 INSERT INTO dominios.atividade (code,code_name) values (10,'Produção')#
 INSERT INTO dominios.atividade (code,code_name) values (95,'Desconhecida')#
 INSERT INTO dominios.tipo_edif_comerc_serv (code,code_name) values (24,'Venda de veículos')#
+INSERT INTO dominios.tipo_edif_comerc_serv (code,code_name) values (25,'Restaurante')#
 INSERT INTO dominios.tipo_edif_comerc_serv (code,code_name) values (20,'Pousada')#
 INSERT INTO dominios.tipo_edif_comerc_serv (code,code_name) values (21,'Quiosque')#
 INSERT INTO dominios.tipo_edif_comerc_serv (code,code_name) values (22,'Quitanda')#
@@ -5904,6 +5661,11 @@ INSERT INTO dominios.tipo_trecho_massa (code,code_name) values (9,'Laguna')#
 INSERT INTO dominios.tipo_trecho_massa (code,code_name) values (99,'Outros')#
 INSERT INTO dominios.tipo_trecho_massa (code,code_name) values (1,'Rio')#
 INSERT INTO dominios.tipo_trecho_massa (code,code_name) values (10,'Represa/açude')#
+INSERT INTO dominios.tipo_unid_prot_integ (code,code_name) values (1,'Estação ecológica - ESEC ')#
+INSERT INTO dominios.tipo_unid_prot_integ (code,code_name) values (3,'Monumento natural – MONA')#
+INSERT INTO dominios.tipo_unid_prot_integ (code,code_name) values (2,'Parque – PAR')#
+INSERT INTO dominios.tipo_unid_prot_integ (code,code_name) values (5,'Refúgio da vida silvestre – RVS')#
+INSERT INTO dominios.tipo_unid_prot_integ (code,code_name) values (4,'Reserva biológica – REBIO')#
 INSERT INTO dominios.finalidade_deposito (code,code_name) values (8,'Armazenamento')#
 INSERT INTO dominios.finalidade_deposito (code,code_name) values (3,'Recalque')#
 INSERT INTO dominios.finalidade_deposito (code,code_name) values (2,'Tratamento')#
@@ -5920,11 +5682,11 @@ INSERT INTO dominios.tipo_edif_port (code,code_name) values (35,'Rampa transport
 INSERT INTO dominios.tipo_edif_port (code,code_name) values (34,'Dique de estaleiro')#
 INSERT INTO dominios.tipo_edif_port (code,code_name) values (99,'Outros')#
 INSERT INTO dominios.tipo_edif_port (code,code_name) values (95,'Desconhecido')#
-INSERT INTO dominios.tipo_ponte (code,code_name) values (1,'Móvel')#
-INSERT INTO dominios.tipo_ponte (code,code_name) values (3,'Fixa')#
-INSERT INTO dominios.tipo_ponte (code,code_name) values (2,'Pênsil')#
-INSERT INTO dominios.tipo_ponte (code,code_name) values (95,'Desconhecido')#
-INSERT INTO dominios.tipo_ponte (code,code_name) values (7,'Estaiada')#
+INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (1,'Duto')#
+INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (3,'Correia transportadora')#
+INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (2,'Calha')#
+INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (5,'Galeria ou bueiro')#
 INSERT INTO dominios.tipo_quebra_molhe (code,code_name) values (1,'Quebramar')#
 INSERT INTO dominios.tipo_quebra_molhe (code,code_name) values (2,'Molhe')#
 INSERT INTO dominios.tipo_quebra_molhe (code,code_name) values (95,'Desconhecido')#
@@ -5941,7 +5703,7 @@ INSERT INTO dominios.classe_ativ_econ (code,code_name) values (28,'Atendimento �
 INSERT INTO dominios.classe_ativ_econ (code,code_name) values (29,'Atenção ambulatorial (posto e centro de saúde)')#
 INSERT INTO dominios.classe_ativ_econ (code,code_name) values (3,'Transmissão de energia elétrica')#
 INSERT INTO dominios.classe_ativ_econ (code,code_name) values (2,'Produção de energia elétrica')#
-INSERT INTO dominios.classe_ativ_econ (code,code_name) values (5,'Captação')#
+INSERT INTO dominios.classe_ativ_econ (code,code_name) values (5,'Captação, tratamento e distribuição de água')#
 INSERT INTO dominios.classe_ativ_econ (code,code_name) values (4,'Distribuição de energia elétrica')#
 INSERT INTO dominios.classe_ativ_econ (code,code_name) values (7,'Administração pública em geral')#
 INSERT INTO dominios.classe_ativ_econ (code,code_name) values (6,'Telecomunicações')#
@@ -6014,39 +5776,25 @@ INSERT INTO dominios.tipo_edif_saneam (code,code_name) values (6,'Usina de recic
 INSERT INTO dominios.tipo_edif_saneam (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.destinado_a (code,code_name) values (39,'Jaborandi')#
 INSERT INTO dominios.destinado_a (code,code_name) values (38,'Coco')#
-INSERT INTO dominios.destinado_a (code,code_name) values (33,'Planta ornamental')#
 INSERT INTO dominios.destinado_a (code,code_name) values (18,'Açaí')#
 INSERT INTO dominios.destinado_a (code,code_name) values (44,'Pesca')#
-INSERT INTO dominios.destinado_a (code,code_name) values (42,'Marisco')#
+INSERT INTO dominios.destinado_a (code,code_name) values (37,'Carnaúba')#
 INSERT INTO dominios.destinado_a (code,code_name) values (43,'Pecuária')#
-INSERT INTO dominios.destinado_a (code,code_name) values (40,'Palmito')#
+INSERT INTO dominios.destinado_a (code,code_name) values (35,'Látex')#
 INSERT INTO dominios.destinado_a (code,code_name) values (41,'Babaçu')#
 INSERT INTO dominios.destinado_a (code,code_name) values (99,'Outros')#
-INSERT INTO dominios.destinado_a (code,code_name) values (35,'Látex')#
 INSERT INTO dominios.destinado_a (code,code_name) values (36,'Castanha')#
 INSERT INTO dominios.destinado_a (code,code_name) values (5,'Madeira')#
-INSERT INTO dominios.destinado_a (code,code_name) values (37,'Carnaúba')#
+INSERT INTO dominios.destinado_a (code,code_name) values (40,'Palmito')#
 INSERT INTO dominios.destinado_a (code,code_name) values (34,'Turfa')#
 INSERT INTO dominios.destinado_a (code,code_name) values (95,'Desconhecido')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (11,'Delegacia de policia civil')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (10,'Autarquia')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (13,'Fórum')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (12,'Educação')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (15,'Procuradoria')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (14,'Fundação')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (22,'Prefeitura')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (16,'Secretaria')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (99,'Outros')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (3,'Cartorial')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (2,'Prisional')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (5,'Eleitoral')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (4,'Gestão')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (7,'Seguridade social')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (6,'Produção e/ou pesquisa')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (9,'Assembleia legislativa')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (8,'Câmara municipal')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (1,'Policial')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (1,'Área de proteção ambiental – APA')#
+INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (3,'Floresta – FLO')#
+INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (2,'Área de relevante interesse ecológico – ARIE')#
+INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (5,'Reserva extrativista')#
+INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (4,'Reserva de desenvolvimento sustentável – RDS')#
+INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (7,'Reserva particular do patrimônio natural -  RPPN')#
+INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (6,'Reserva de fauna - REFAU')#
 INSERT INTO dominios.tipo_vegetacao (code,code_name) values (11,'Caatinga')#
 INSERT INTO dominios.tipo_vegetacao (code,code_name) values (10,'Vegetação de brejo ou pântano')#
 INSERT INTO dominios.tipo_vegetacao (code,code_name) values (3,'Floresta')#
@@ -6062,6 +5810,12 @@ INSERT INTO dominios.tipo_conteudo (code,code_name) values (1,'Insumo')#
 INSERT INTO dominios.tipo_conteudo (code,code_name) values (3,'Resíduo')#
 INSERT INTO dominios.tipo_conteudo (code,code_name) values (2,'Produto')#
 INSERT INTO dominios.tipo_conteudo (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.tipo_terreno_exposto (code,code_name) values (24,'Saibro')#
+INSERT INTO dominios.tipo_terreno_exposto (code,code_name) values (12,'Areia')#
+INSERT INTO dominios.tipo_terreno_exposto (code,code_name) values (23,'Terra')#
+INSERT INTO dominios.tipo_terreno_exposto (code,code_name) values (18,'Cascalho')#
+INSERT INTO dominios.tipo_terreno_exposto (code,code_name) values (4,'Pedregoso')#
+INSERT INTO dominios.tipo_terreno_exposto (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.proc_extracao (code,code_name) values (1,'Mecanizado')#
 INSERT INTO dominios.proc_extracao (code,code_name) values (2,'Manual')#
 INSERT INTO dominios.proc_extracao (code,code_name) values (95,'Desconhecido')#
@@ -6159,7 +5913,15 @@ ALTER TABLE ge.edf_edif_ext_mineral_p ADD CONSTRAINT edf_edif_ext_mineral_p_situ
 ALTER TABLE ge.edf_edif_ext_mineral_p ADD CONSTRAINT edf_edif_ext_mineral_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_ext_mineral_p ADD CONSTRAINT edf_edif_ext_mineral_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_area_ensino_a ADD CONSTRAINT cb_area_ensino_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_area_servico_social_a ADD CONSTRAINT cb_area_servico_social_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_tipousoedif_fk FOREIGN KEY (tipousoedif) REFERENCES dominios.tipo_uso_edif(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_saude_p ADD CONSTRAINT edf_edif_saude_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_saude_p ADD CONSTRAINT edf_edif_saude_p_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_saude_p ADD CONSTRAINT edf_edif_saude_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6169,16 +5931,10 @@ ALTER TABLE ge.edf_edif_saude_p ADD CONSTRAINT edf_edif_saude_p_situacaofisica_f
 ALTER TABLE ge.edf_edif_saude_p ADD CONSTRAINT edf_edif_saude_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_saude_p ADD CONSTRAINT edf_edif_saude_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_area_est_med_fenomenos_a ADD CONSTRAINT cb_area_est_med_fenomenos_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_descontinuidade_geometrica_a ADD CONSTRAINT cb_descontinuidade_geometrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_descontinuidade_geometrica_a ADD CONSTRAINT cb_descontinuidade_geometrica_a_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.ver_descontinuidade_geometrica_l ADD CONSTRAINT ver_descontinuidade_geometrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.ver_descontinuidade_geometrica_l ADD CONSTRAINT ver_descontinuidade_geometrica_l_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_descontinuidade_geometrica_l ADD CONSTRAINT cb_descontinuidade_geometrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_descontinuidade_geometrica_l ADD CONSTRAINT cb_descontinuidade_geometrica_l_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_posto_combustivel_p ADD CONSTRAINT edf_posto_combustivel_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_posto_combustivel_p ADD CONSTRAINT edf_posto_combustivel_p_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_posto_combustivel_p ADD CONSTRAINT edf_posto_combustivel_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_posto_combustivel_p ADD CONSTRAINT edf_posto_combustivel_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_posto_combustivel_p ADD CONSTRAINT edf_posto_combustivel_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_posto_combustivel_p ADD CONSTRAINT edf_posto_combustivel_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_posto_combustivel_p ADD CONSTRAINT edf_posto_combustivel_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_posto_combustivel_p ADD CONSTRAINT edf_posto_combustivel_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6200,12 +5956,10 @@ ALTER TABLE ge.edf_edif_saude_a ADD CONSTRAINT edf_edif_saude_a_geometriaaproxim
 ALTER TABLE ge.edf_edif_saude_a ADD CONSTRAINT edf_edif_saude_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_saude_a ADD CONSTRAINT edf_edif_saude_a_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_saude_a ADD CONSTRAINT edf_edif_saude_a_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_descontinuidade_geometrica_p ADD CONSTRAINT cb_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_descontinuidade_geometrica_p ADD CONSTRAINT cb_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_posto_combustivel_a ADD CONSTRAINT edf_posto_combustivel_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_posto_combustivel_a ADD CONSTRAINT edf_posto_combustivel_a_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_posto_combustivel_a ADD CONSTRAINT edf_posto_combustivel_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_posto_combustivel_a ADD CONSTRAINT edf_posto_combustivel_a_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_posto_combustivel_a ADD CONSTRAINT edf_posto_combustivel_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_posto_combustivel_a ADD CONSTRAINT edf_posto_combustivel_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_posto_combustivel_a ADD CONSTRAINT edf_posto_combustivel_a_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_posto_combustivel_a ADD CONSTRAINT edf_posto_combustivel_a_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6216,8 +5970,6 @@ ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_p ADD CONSTRAINT edf_edif_agropec_
 ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_p ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_p ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_p ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_meio_fio_l ADD CONSTRAINT cb_meio_fio_l_comsargeta_fk FOREIGN KEY (comsargeta) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_meio_fio_l ADD CONSTRAINT cb_meio_fio_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_arquibancada_l ADD CONSTRAINT laz_arquibancada_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_arquibancada_l ADD CONSTRAINT laz_arquibancada_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_arquibancada_l ADD CONSTRAINT laz_arquibancada_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6230,15 +5982,14 @@ ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_muni
 ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_tipousoedif_fk FOREIGN KEY (tipousoedif) REFERENCES dominios.tipo_uso_edif(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_tipousoedif_fk FOREIGN KEY (tipousoedif) REFERENCES dominios.tipo_uso_edif(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_tipoediflazer_fk FOREIGN KEY (tipoediflazer) REFERENCES dominios.tipo_edif_lazer(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_arquibancada_a ADD CONSTRAINT laz_arquibancada_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_arquibancada_a ADD CONSTRAINT laz_arquibancada_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_arquibancada_a ADD CONSTRAINT laz_arquibancada_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6288,9 +6039,6 @@ ALTER TABLE ge.laz_pista_competicao_a ADD CONSTRAINT laz_pista_competicao_a_geom
 ALTER TABLE ge.laz_pista_competicao_a ADD CONSTRAINT laz_pista_competicao_a_tipopistacomp_fk FOREIGN KEY (tipopistacomp) REFERENCES dominios.tipo_pista_comp(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_pista_competicao_a ADD CONSTRAINT laz_pista_competicao_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_pista_competicao_a ADD CONSTRAINT laz_pista_competicao_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.laz_arquibancada_p ADD CONSTRAINT laz_arquibancada_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.laz_arquibancada_p ADD CONSTRAINT laz_arquibancada_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.laz_arquibancada_p ADD CONSTRAINT laz_arquibancada_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_trecho_arruamento_l ADD CONSTRAINT cb_trecho_arruamento_l_revestimento_fk FOREIGN KEY (revestimento) REFERENCES dominios.revestimento(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_trecho_arruamento_l ADD CONSTRAINT cb_trecho_arruamento_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_trecho_arruamento_l ADD CONSTRAINT cb_trecho_arruamento_l_canteirodivisorio_fk FOREIGN KEY (canteirodivisorio) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6325,9 +6073,6 @@ ALTER TABLE ge.laz_sitio_arqueologico ADD CONSTRAINT laz_sitio_arqueologico_turi
 ALTER TABLE ge.laz_sitio_arqueologico ADD CONSTRAINT laz_sitio_arqueologico_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_passeio ADD CONSTRAINT cb_passeio_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_passeio ADD CONSTRAINT cb_passeio_calcada_fk FOREIGN KEY (calcada) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.ppb_faixa_dominio_rodovia_a ADD CONSTRAINT ppb_faixa_dominio_rodovia_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.ppb_faixa_dominio_rodovia_a ADD CONSTRAINT ppb_faixa_dominio_rodovia_a_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.ppb_faixa_dominio_rodovia_a ADD CONSTRAINT ppb_faixa_dominio_rodovia_a_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_ruina_a ADD CONSTRAINT laz_ruina_a_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_ruina_a ADD CONSTRAINT laz_ruina_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_ruina_a ADD CONSTRAINT laz_ruina_a_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6350,10 +6095,6 @@ ALTER TABLE ge.edf_edificacao_p ADD CONSTRAINT edf_edificacao_p_geometriaaproxim
 ALTER TABLE ge.edf_edificacao_p ADD CONSTRAINT edf_edificacao_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edificacao_p ADD CONSTRAINT edf_edificacao_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edificacao_p ADD CONSTRAINT edf_edificacao_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.emu_descontinuidade_geometrica_a ADD CONSTRAINT emu_descontinuidade_geometrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.emu_descontinuidade_geometrica_a ADD CONSTRAINT emu_descontinuidade_geometrica_a_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_descontinuidade_geometrica_a ADD CONSTRAINT edf_descontinuidade_geometrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_descontinuidade_geometrica_a ADD CONSTRAINT edf_descontinuidade_geometrica_a_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_residencial_p ADD CONSTRAINT edf_edif_residencial_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_residencial_p ADD CONSTRAINT edf_edif_residencial_p_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_residencial_p ADD CONSTRAINT edf_edif_residencial_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6374,8 +6115,6 @@ ALTER TABLE ge.edf_edif_religiosa_p ADD CONSTRAINT edf_edif_religiosa_p_situacao
 ALTER TABLE ge.edf_edif_religiosa_p ADD CONSTRAINT edf_edif_religiosa_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_religiosa_p ADD CONSTRAINT edf_edif_religiosa_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_retorno_p ADD CONSTRAINT cb_retorno_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.emu_descontinuidade_geometrica_l ADD CONSTRAINT emu_descontinuidade_geometrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.emu_descontinuidade_geometrica_l ADD CONSTRAINT emu_descontinuidade_geometrica_l_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edificacao ADD CONSTRAINT edf_edificacao_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edificacao ADD CONSTRAINT edf_edificacao_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edificacao ADD CONSTRAINT edf_edificacao_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6384,8 +6123,6 @@ ALTER TABLE ge.edf_edificacao ADD CONSTRAINT edf_edificacao_situacaofisica_fk FO
 ALTER TABLE ge.edf_edificacao ADD CONSTRAINT edf_edificacao_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edificacao ADD CONSTRAINT edf_edificacao_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_retorno_l ADD CONSTRAINT cb_retorno_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.emu_descontinuidade_geometrica_p ADD CONSTRAINT emu_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.emu_descontinuidade_geometrica_p ADD CONSTRAINT emu_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6393,8 +6130,6 @@ ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_geom
 ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_descontinuidade_geometrica_p ADD CONSTRAINT edf_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_descontinuidade_geometrica_p ADD CONSTRAINT edf_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_religiosa_a ADD CONSTRAINT edf_edif_religiosa_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_religiosa_a ADD CONSTRAINT edf_edif_religiosa_a_ensino_fk FOREIGN KEY (ensino) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_religiosa_a ADD CONSTRAINT edf_edif_religiosa_a_crista_fk FOREIGN KEY (crista) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6418,15 +6153,19 @@ ALTER TABLE ge.edf_banheiro_publico_p ADD CONSTRAINT edf_banheiro_publico_p_situ
 ALTER TABLE ge.edf_banheiro_publico_p ADD CONSTRAINT edf_banheiro_publico_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_banheiro_publico_p ADD CONSTRAINT edf_banheiro_publico_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_largo_a ADD CONSTRAINT cb_largo_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.laz_descontinuidade_geometrica_a ADD CONSTRAINT laz_descontinuidade_geometrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.laz_descontinuidade_geometrica_a ADD CONSTRAINT laz_descontinuidade_geometrica_a_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_area_industrial_a ADD CONSTRAINT cb_area_industrial_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_pista_competicao ADD CONSTRAINT laz_pista_competicao_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_pista_competicao ADD CONSTRAINT laz_pista_competicao_tipopistacomp_fk FOREIGN KEY (tipopistacomp) REFERENCES dominios.tipo_pista_comp(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_pista_competicao ADD CONSTRAINT laz_pista_competicao_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_pista_competicao ADD CONSTRAINT laz_pista_competicao_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.laz_descontinuidade_geometrica_l ADD CONSTRAINT laz_descontinuidade_geometrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.laz_descontinuidade_geometrica_l ADD CONSTRAINT laz_descontinuidade_geometrica_l_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_tipoedifabast_fk FOREIGN KEY (tipoedifabast) REFERENCES dominios.tipo_edif_abast(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_arquibancada ADD CONSTRAINT laz_arquibancada_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_arquibancada ADD CONSTRAINT laz_arquibancada_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_arquibancada ADD CONSTRAINT laz_arquibancada_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6444,16 +6183,7 @@ ALTER TABLE ge.edf_banheiro_publico_a ADD CONSTRAINT edf_banheiro_publico_a_geom
 ALTER TABLE ge.edf_banheiro_publico_a ADD CONSTRAINT edf_banheiro_publico_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_banheiro_publico_a ADD CONSTRAINT edf_banheiro_publico_a_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_banheiro_publico_a ADD CONSTRAINT edf_banheiro_publico_a_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.laz_descontinuidade_geometrica_p ADD CONSTRAINT laz_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.laz_descontinuidade_geometrica_p ADD CONSTRAINT laz_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_tipoedifabast_fk FOREIGN KEY (tipoedifabast) REFERENCES dominios.tipo_edif_abast(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.cb_area_ruinas_a ADD CONSTRAINT cb_area_ruinas_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6461,18 +6191,6 @@ ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_ge
 ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_revestimento_fk FOREIGN KEY (revestimento) REFERENCES dominios.revestimento(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_canteirodivisorio_fk FOREIGN KEY (canteirodivisorio) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_tipopavimentacao_fk FOREIGN KEY (tipopavimentacao) REFERENCES dominios.tipo_pavimentacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_trafego_fk FOREIGN KEY (trafego) REFERENCES dominios.trafego(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_trechoemperimetrourbano_fk FOREIGN KEY (trechoemperimetrourbano) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_acostamento_fk FOREIGN KEY (acostamento) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_tipotrechorod_fk FOREIGN KEY (tipotrechorod) REFERENCES dominios.tipo_trecho_rod(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_rodoviaria_p ADD CONSTRAINT edf_edif_rodoviaria_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_rodoviaria_p ADD CONSTRAINT edf_edif_rodoviaria_p_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_rodoviaria_p ADD CONSTRAINT edf_edif_rodoviaria_p_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6481,9 +6199,6 @@ ALTER TABLE ge.edf_edif_rodoviaria_p ADD CONSTRAINT edf_edif_rodoviaria_p_matcon
 ALTER TABLE ge.edf_edif_rodoviaria_p ADD CONSTRAINT edf_edif_rodoviaria_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_rodoviaria_p ADD CONSTRAINT edf_edif_rodoviaria_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_rodoviaria_p ADD CONSTRAINT edf_edif_rodoviaria_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.ppb_faixa_dominio_ferrovia_a ADD CONSTRAINT ppb_faixa_dominio_ferrovia_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.ppb_faixa_dominio_ferrovia_a ADD CONSTRAINT ppb_faixa_dominio_ferrovia_a_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.ppb_faixa_dominio_ferrovia_a ADD CONSTRAINT ppb_faixa_dominio_ferrovia_a_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_tunel_a ADD CONSTRAINT cb_tunel_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_tunel_a ADD CONSTRAINT cb_tunel_a_tipopavimentacao_fk FOREIGN KEY (tipopavimentacao) REFERENCES dominios.tipo_pavimentacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_tunel_a ADD CONSTRAINT cb_tunel_a_necessitamanutencao_fk FOREIGN KEY (necessitamanutencao) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6491,9 +6206,6 @@ ALTER TABLE ge.cb_tunel_a ADD CONSTRAINT cb_tunel_a_geometriaaproximada_fk FOREI
 ALTER TABLE ge.cb_tunel_a ADD CONSTRAINT cb_tunel_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_tunel_a ADD CONSTRAINT cb_tunel_a_tipotunel_fk FOREIGN KEY (tipotunel) REFERENCES dominios.tipo_tunel(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_tunel_a ADD CONSTRAINT cb_tunel_a_posicaopista_fk FOREIGN KEY (posicaopista) REFERENCES dominios.situacao_espacial(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.ppb_faixa_dominio_arruamento_a ADD CONSTRAINT ppb_faixa_dominio_arruamento_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.ppb_faixa_dominio_arruamento_a ADD CONSTRAINT ppb_faixa_dominio_arruamento_a_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.ppb_faixa_dominio_arruamento_a ADD CONSTRAINT ppb_faixa_dominio_arruamento_a_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.emu_poste_sinalizacao_p ADD CONSTRAINT emu_poste_sinalizacao_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.emu_poste_sinalizacao_p ADD CONSTRAINT emu_poste_sinalizacao_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_rodoviaria_a ADD CONSTRAINT edf_edif_rodoviaria_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6508,7 +6220,7 @@ ALTER TABLE ge.emu_ciclovia_l ADD CONSTRAINT emu_ciclovia_l_revestimento_fk FORE
 ALTER TABLE ge.emu_ciclovia_l ADD CONSTRAINT emu_ciclovia_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.emu_ciclovia_l ADD CONSTRAINT emu_ciclovia_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.emu_ciclovia_l ADD CONSTRAINT emu_ciclovia_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_area_saude_a ADD CONSTRAINT cb_area_saude_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.cb_area_lazer_a ADD CONSTRAINT cb_area_lazer_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_constr_lazer_a ADD CONSTRAINT edf_edif_constr_lazer_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_constr_lazer_a ADD CONSTRAINT edf_edif_constr_lazer_a_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_constr_lazer_a ADD CONSTRAINT edf_edif_constr_lazer_a_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6540,19 +6252,27 @@ ALTER TABLE ge.edf_edif_comunic_p ADD CONSTRAINT edf_edif_comunic_p_geometriaapr
 ALTER TABLE ge.edf_edif_comunic_p ADD CONSTRAINT edf_edif_comunic_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_comunic_p ADD CONSTRAINT edf_edif_comunic_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_comunic_p ADD CONSTRAINT edf_edif_comunic_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_tipoediflazer_fk FOREIGN KEY (tipoediflazer) REFERENCES dominios.tipo_edif_lazer(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_tipousoedif_fk FOREIGN KEY (tipousoedif) REFERENCES dominios.tipo_uso_edif(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_canteiro_central_l ADD CONSTRAINT cb_canteiro_central_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_canteiro_central_l ADD CONSTRAINT cb_canteiro_central_l_situacaoespacial_fk FOREIGN KEY (situacaoespacial) REFERENCES dominios.situacao_espacial(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_canteiro_central_a ADD CONSTRAINT cb_canteiro_central_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_canteiro_central_a ADD CONSTRAINT cb_canteiro_central_a_situacaoespacial_fk FOREIGN KEY (situacaoespacial) REFERENCES dominios.situacao_espacial(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_area_ruinas_a ADD CONSTRAINT cb_area_ruinas_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_tipoedifabast_fk FOREIGN KEY (tipoedifabast) REFERENCES dominios.tipo_edif_abast(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.emu_escadaria_l ADD CONSTRAINT emu_escadaria_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.emu_escadaria_l ADD CONSTRAINT emu_escadaria_l_situacaoespacial_fk FOREIGN KEY (situacaoespacial) REFERENCES dominios.situacao_espacial(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.emu_escadaria_l ADD CONSTRAINT emu_escadaria_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6566,14 +6286,6 @@ ALTER TABLE ge.edf_edif_saneamento_p ADD CONSTRAINT edf_edif_saneamento_p_situac
 ALTER TABLE ge.edf_edif_saneamento_p ADD CONSTRAINT edf_edif_saneamento_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_saneamento_p ADD CONSTRAINT edf_edif_saneamento_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_saneamento_p ADD CONSTRAINT edf_edif_saneamento_p_tipoedifsaneam_fk FOREIGN KEY (tipoedifsaneam) REFERENCES dominios.tipo_edif_saneam(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_tipoedifabast_fk FOREIGN KEY (tipoedifabast) REFERENCES dominios.tipo_edif_abast(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_energia_p ADD CONSTRAINT edf_edif_energia_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_energia_p ADD CONSTRAINT edf_edif_energia_p_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_energia_p ADD CONSTRAINT edf_edif_energia_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6591,8 +6303,8 @@ ALTER TABLE ge.emu_escadaria_a ADD CONSTRAINT emu_escadaria_a_situacaofisica_fk 
 ALTER TABLE ge.emu_escadaria_a ADD CONSTRAINT emu_escadaria_a_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.emu_escadaria_a ADD CONSTRAINT emu_escadaria_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_retorno ADD CONSTRAINT cb_retorno_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_entroncamento_area_a ADD CONSTRAINT cb_entroncamento_area_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_entroncamento_area_a ADD CONSTRAINT cb_entroncamento_area_a_tipoentroncamento_fk FOREIGN KEY (tipoentroncamento) REFERENCES dominios.tipo_entroncamento(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.laz_sitio_arqueologico_p ADD CONSTRAINT laz_sitio_arqueologico_p_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.laz_sitio_arqueologico_p ADD CONSTRAINT laz_sitio_arqueologico_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_saneamento_a ADD CONSTRAINT edf_edif_saneamento_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_saneamento_a ADD CONSTRAINT edf_edif_saneamento_a_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_saneamento_a ADD CONSTRAINT edf_edif_saneamento_a_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6626,9 +6338,6 @@ ALTER TABLE ge.emu_escadaria_p ADD CONSTRAINT emu_escadaria_p_situacaoespacial_f
 ALTER TABLE ge.emu_escadaria_p ADD CONSTRAINT emu_escadaria_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.emu_escadaria_p ADD CONSTRAINT emu_escadaria_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.emu_escadaria_p ADD CONSTRAINT emu_escadaria_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.ppb_area_dominial_a ADD CONSTRAINT ppb_area_dominial_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.ppb_area_dominial_a ADD CONSTRAINT ppb_area_dominial_a_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.ppb_area_dominial_a ADD CONSTRAINT ppb_area_dominial_a_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_area_comerc_serv_a ADD CONSTRAINT cb_area_comerc_serv_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_poste_p ADD CONSTRAINT cb_poste_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_poste_p ADD CONSTRAINT cb_poste_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6680,8 +6389,8 @@ ALTER TABLE ge.edf_representacao_diplomatica_p ADD CONSTRAINT edf_representacao_
 ALTER TABLE ge.edf_representacao_diplomatica_p ADD CONSTRAINT edf_representacao_diplomatica_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6721,8 +6430,8 @@ ALTER TABLE ge.edf_edif_constr_est_med_fen_p ADD CONSTRAINT edf_edif_constr_est_
 ALTER TABLE ge.edf_edif_constr_est_med_fen_p ADD CONSTRAINT edf_edif_constr_est_med_fen_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6748,8 +6457,8 @@ ALTER TABLE ge.emu_elevador_l ADD CONSTRAINT emu_elevador_l_geometriaaproximada_
 ALTER TABLE ge.emu_elevador_l ADD CONSTRAINT emu_elevador_l_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.emu_elevador_l ADD CONSTRAINT emu_elevador_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.emu_elevador_l ADD CONSTRAINT emu_elevador_l_tipoelevador_fk FOREIGN KEY (tipoelevador) REFERENCES dominios.tipo_elevador(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.laz_sitio_arqueologico_p ADD CONSTRAINT laz_sitio_arqueologico_p_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.laz_sitio_arqueologico_p ADD CONSTRAINT laz_sitio_arqueologico_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.cb_entroncamento_area_a ADD CONSTRAINT cb_entroncamento_area_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.cb_entroncamento_area_a ADD CONSTRAINT cb_entroncamento_area_a_tipoentroncamento_fk FOREIGN KEY (tipoentroncamento) REFERENCES dominios.tipo_entroncamento(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.emu_elevador_a ADD CONSTRAINT emu_elevador_a_situacaoespacial_fk FOREIGN KEY (situacaoespacial) REFERENCES dominios.situacao_espacial(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.emu_elevador_a ADD CONSTRAINT emu_elevador_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.emu_elevador_a ADD CONSTRAINT emu_elevador_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6761,15 +6470,6 @@ ALTER TABLE ge.emu_acesso_a ADD CONSTRAINT emu_acesso_a_situacaoespacial_fk FORE
 ALTER TABLE ge.emu_acesso_a ADD CONSTRAINT emu_acesso_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.emu_acesso_a ADD CONSTRAINT emu_acesso_a_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.emu_acesso_a ADD CONSTRAINT emu_acesso_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_tipousoedif_fk FOREIGN KEY (tipousoedif) REFERENCES dominios.tipo_uso_edif(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_sitio_arqueologico_a ADD CONSTRAINT laz_sitio_arqueologico_a_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.laz_sitio_arqueologico_a ADD CONSTRAINT laz_sitio_arqueologico_a_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.ver_arvore_isolada_p ADD CONSTRAINT ver_arvore_isolada_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6880,8 +6580,18 @@ ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_situacaofisi
 ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_isolada_fk FOREIGN KEY (isolada) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.ver_descontinuidade_geometrica_a ADD CONSTRAINT ver_descontinuidade_geometrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.ver_descontinuidade_geometrica_a ADD CONSTRAINT ver_descontinuidade_geometrica_a_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_revestimento_fk FOREIGN KEY (revestimento) REFERENCES dominios.revestimento(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_canteirodivisorio_fk FOREIGN KEY (canteirodivisorio) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_tipopavimentacao_fk FOREIGN KEY (tipopavimentacao) REFERENCES dominios.tipo_pavimentacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_trafego_fk FOREIGN KEY (trafego) REFERENCES dominios.trafego(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_trechoemperimetrourbano_fk FOREIGN KEY (trechoemperimetrourbano) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_acostamento_fk FOREIGN KEY (acostamento) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_tipotrechorod_fk FOREIGN KEY (tipotrechorod) REFERENCES dominios.tipo_trecho_rod(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_area_saneamento_a ADD CONSTRAINT cb_area_saneamento_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_hab_indigena_a ADD CONSTRAINT edf_hab_indigena_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_hab_indigena_a ADD CONSTRAINT edf_hab_indigena_a_coletiva_fk FOREIGN KEY (coletiva) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6913,8 +6623,8 @@ ALTER TABLE ge.edf_edif_pub_militar_a ADD CONSTRAINT edf_edif_pub_militar_a_tipo
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -6933,19 +6643,15 @@ ALTER TABLE ge.cb_estacionamento_a ADD CONSTRAINT cb_estacionamento_a_geometriaa
 ALTER TABLE ge.cb_estacionamento_a ADD CONSTRAINT cb_estacionamento_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_estacionamento_a ADD CONSTRAINT cb_estacionamento_a_publico_fk FOREIGN KEY (publico) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.cb_espelho_dagua_a ADD CONSTRAINT cb_espelho_dagua_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_descontinuidade_geometrica_l ADD CONSTRAINT edf_descontinuidade_geometrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_descontinuidade_geometrica_l ADD CONSTRAINT edf_descontinuidade_geometrica_l_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.cb_area_lazer_a ADD CONSTRAINT cb_area_lazer_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.ver_descontinuidade_geometrica_p ADD CONSTRAINT ver_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.ver_descontinuidade_geometrica_p ADD CONSTRAINT ver_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.cb_area_saude_a ADD CONSTRAINT cb_area_saude_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.laz_parque_urbano ADD CONSTRAINT laz_parque_urbano_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.laz_parque_urbano ADD CONSTRAINT laz_parque_urbano_divisaoativecon_fk FOREIGN KEY (divisaoativecon) REFERENCES dominios.divisao_ativ_econ(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.laz_parque_urbano ADD CONSTRAINT laz_parque_urbano_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7183,31 +6889,26 @@ ALTER TABLE complexos.emu_terminal_hidroviario ADD CONSTRAINT emu_terminal_hidro
 ALTER TABLE complexos.emu_terminal_hidroviario ADD CONSTRAINT emu_terminal_hidroviario_tipoestrut_fk FOREIGN KEY (tipoestrut) REFERENCES dominios.tipo_estrut(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.emu_terminal_hidroviario ADD CONSTRAINT emu_terminal_hidroviario_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE complexos.adm_org_ext_mineral ADD CONSTRAINT adm_org_ext_mineral_secaoativecon_fk FOREIGN KEY (secaoativecon) REFERENCES dominios.secao_ativ_econ(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE public.aux_descontinuidade_geometrica ADD CONSTRAINT aux_descontinuidade_geometrica_categoria_fk FOREIGN KEY (categoria) REFERENCES dominios.categoria_edgv(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE public.aux_descontinuidade_geometrica ADD CONSTRAINT aux_descontinuidade_geometrica_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE public.aux_descontinuidade_geometrica ADD CONSTRAINT aux_descontinuidade_geometrica_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE public.aux_descontinuidade_geometrica_l ADD CONSTRAINT aux_descontinuidade_geometrica_l_categoria_fk FOREIGN KEY (categoria) REFERENCES dominios.categoria_edgv(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE public.aux_descontinuidade_geometrica_l ADD CONSTRAINT aux_descontinuidade_geometrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE public.aux_descontinuidade_geometrica_l ADD CONSTRAINT aux_descontinuidade_geometrica_l_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE public.aux_descontinuidade_geometrica_p ADD CONSTRAINT aux_descontinuidade_geometrica_p_categoria_fk FOREIGN KEY (categoria) REFERENCES dominios.categoria_edgv(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE public.aux_descontinuidade_geometrica_p ADD CONSTRAINT aux_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE public.aux_descontinuidade_geometrica_p ADD CONSTRAINT aux_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE public.aux_descontinuidade_geometrica_a ADD CONSTRAINT aux_descontinuidade_geometrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE public.aux_descontinuidade_geometrica_a ADD CONSTRAINT aux_descontinuidade_geometrica_a_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_recife ADD CONSTRAINT hid_recife_tiporecife_fk FOREIGN KEY (tiporecife) REFERENCES dominios.tipo_recife(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_recife ADD CONSTRAINT hid_recife_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_recife ADD CONSTRAINT hid_recife_situacaocosta_fk FOREIGN KEY (situacaocosta) REFERENCES dominios.situacao_costa(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_recife ADD CONSTRAINT hid_recife_situacaoemagua_fk FOREIGN KEY (situacaoemagua) REFERENCES dominios.situacao_em_agua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_eclusa_p ADD CONSTRAINT hdv_eclusa_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_eclusa_p ADD CONSTRAINT hdv_eclusa_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_eclusa_p ADD CONSTRAINT hdv_eclusa_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_dique ADD CONSTRAINT hid_dique_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_tipoexposicao_fk FOREIGN KEY (tipoexposicao) REFERENCES dominios.tipo_exposicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_tipoequipdesenvsocial_fk FOREIGN KEY (tipoequipdesenvsocial) REFERENCES dominios.tipo_equip_desenv_social(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_unidadevolume_fk FOREIGN KEY (unidadevolume) REFERENCES dominios.unidade_volume(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_situacaoagua_fk FOREIGN KEY (situacaoagua) REFERENCES dominios.situacao_agua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_tipodepgeral_fk FOREIGN KEY (tipodepgeral) REFERENCES dominios.tipo_dep_geral(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_localizacaoequipdesenvsocial_fk FOREIGN KEY (localizacaoequipdesenvsocial) REFERENCES dominios.local_equip_desenv_social(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_finalidadedep_fk FOREIGN KEY (finalidadedep) REFERENCES dominios.finalidade_deposito(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_tratamento_fk FOREIGN KEY (tratamento) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.dut_ramificacao_p ADD CONSTRAINT dut_ramificacao_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.dut_ramificacao_p ADD CONSTRAINT dut_ramificacao_p_relacionado_fk FOREIGN KEY (relacionado) REFERENCES dominios.relacionado(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_antropizada_fk FOREIGN KEY (antropizada) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_secundaria_fk FOREIGN KEY (secundaria) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_classificacaoporte_fk FOREIGN KEY (classificacaoporte) REFERENCES dominios.classificacao_porte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_densidade_fk FOREIGN KEY (densidade) REFERENCES dominios.densidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_tipoveg_fk FOREIGN KEY (tipoveg) REFERENCES dominios.tipo_vegetacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_unidade_protegida_a ADD CONSTRAINT lpal_unidade_protegida_a_tipounidprotegida_fk FOREIGN KEY (tipounidprotegida) REFERENCES dominios.tipo_unid_protegida(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_unidade_protegida_a ADD CONSTRAINT lpal_unidade_protegida_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_unidade_protegida_a ADD CONSTRAINT lpal_unidade_protegida_a_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7225,11 +6926,7 @@ ALTER TABLE pe.rel_pico_p ADD CONSTRAINT rel_pico_p_tipoelemnat_fk FOREIGN KEY (
 ALTER TABLE pe.hdv_eclusa_l ADD CONSTRAINT hdv_eclusa_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_eclusa_l ADD CONSTRAINT hdv_eclusa_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_eclusa_l ADD CONSTRAINT hdv_eclusa_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_tipoexposicao_fk FOREIGN KEY (tipoexposicao) REFERENCES dominios.tipo_exposicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_unidadevolume_fk FOREIGN KEY (unidadevolume) REFERENCES dominios.unidade_volume(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.lpal_municipio_a ADD CONSTRAINT lpal_municipio_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_eclusa_a ADD CONSTRAINT hdv_eclusa_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_eclusa_a ADD CONSTRAINT hdv_eclusa_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_eclusa_a ADD CONSTRAINT hdv_eclusa_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7245,9 +6942,6 @@ ALTER TABLE pe.tra_obra_de_arte_viaria ADD CONSTRAINT tra_obra_de_arte_viaria_ne
 ALTER TABLE pe.tra_obra_de_arte_viaria ADD CONSTRAINT tra_obra_de_arte_viaria_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_obra_de_arte_viaria ADD CONSTRAINT tra_obra_de_arte_viaria_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_obra_de_arte_viaria ADD CONSTRAINT tra_obra_de_arte_viaria_posicaopista_fk FOREIGN KEY (posicaopista) REFERENCES dominios.situacao_espacial(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.fer_cremalheira_p ADD CONSTRAINT fer_cremalheira_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.fer_cremalheira_p ADD CONSTRAINT fer_cremalheira_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.fer_cremalheira_p ADD CONSTRAINT fer_cremalheira_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_elemento_fisiog_natural_l ADD CONSTRAINT rel_elemento_fisiog_natural_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_elemento_fisiog_natural_l ADD CONSTRAINT rel_elemento_fisiog_natural_l_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_barragem_p ADD CONSTRAINT hid_barragem_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7268,8 +6962,6 @@ ALTER TABLE pe.rod_trecho_rodoviario_l ADD CONSTRAINT rod_trecho_rodoviario_l_tr
 ALTER TABLE pe.rod_trecho_rodoviario_l ADD CONSTRAINT rod_trecho_rodoviario_l_acostamento_fk FOREIGN KEY (acostamento) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rod_trecho_rodoviario_l ADD CONSTRAINT rod_trecho_rodoviario_l_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rod_trecho_rodoviario_l ADD CONSTRAINT rod_trecho_rodoviario_l_tipotrechorod_fk FOREIGN KEY (tipotrechorod) REFERENCES dominios.tipo_trecho_rod(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.eco_descontinuidade_geometrica_p ADD CONSTRAINT eco_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.eco_descontinuidade_geometrica_p ADD CONSTRAINT eco_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_elemento_fisiog_natural_a ADD CONSTRAINT rel_elemento_fisiog_natural_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_elemento_fisiog_natural_a ADD CONSTRAINT rel_elemento_fisiog_natural_a_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_veg_natural_a ADD CONSTRAINT veg_veg_natural_a_antropizada_fk FOREIGN KEY (antropizada) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7278,6 +6970,7 @@ ALTER TABLE pe.veg_veg_natural_a ADD CONSTRAINT veg_veg_natural_a_classificacaop
 ALTER TABLE pe.veg_veg_natural_a ADD CONSTRAINT veg_veg_natural_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_veg_natural_a ADD CONSTRAINT veg_veg_natural_a_densidade_fk FOREIGN KEY (densidade) REFERENCES dominios.densidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_veg_natural_a ADD CONSTRAINT veg_veg_natural_a_tipoveg_fk FOREIGN KEY (tipoveg) REFERENCES dominios.tipo_vegetacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_terreno_suj_inundacao_a ADD CONSTRAINT hid_terreno_suj_inundacao_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_linha_de_limite_l ADD CONSTRAINT lpal_linha_de_limite_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_linha_de_limite_l ADD CONSTRAINT lpal_linha_de_limite_l_referenciallegal_fk FOREIGN KEY (referenciallegal) REFERENCES dominios.referencial_legal(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_ponto_inicio_drenagem_p ADD CONSTRAINT hid_ponto_inicio_drenagem_p_nascente_fk FOREIGN KEY (nascente) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7296,9 +6989,12 @@ ALTER TABLE pe.hid_barragem_l ADD CONSTRAINT hid_barragem_l_geometriaaproximada_
 ALTER TABLE pe.hid_barragem_l ADD CONSTRAINT hid_barragem_l_usoprincipal_fk FOREIGN KEY (usoprincipal) REFERENCES dominios.uso_principal(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_barragem_l ADD CONSTRAINT hid_barragem_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_barragem_l ADD CONSTRAINT hid_barragem_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_funicular_l ADD CONSTRAINT tra_funicular_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_funicular_l ADD CONSTRAINT tra_funicular_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_funicular_l ADD CONSTRAINT tra_funicular_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_brejo_pantano_a ADD CONSTRAINT veg_brejo_pantano_a_antropizada_fk FOREIGN KEY (antropizada) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_brejo_pantano_a ADD CONSTRAINT veg_brejo_pantano_a_secundaria_fk FOREIGN KEY (secundaria) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_brejo_pantano_a ADD CONSTRAINT veg_brejo_pantano_a_classificacaoporte_fk FOREIGN KEY (classificacaoporte) REFERENCES dominios.classificacao_porte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_brejo_pantano_a ADD CONSTRAINT veg_brejo_pantano_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_brejo_pantano_a ADD CONSTRAINT veg_brejo_pantano_a_densidade_fk FOREIGN KEY (densidade) REFERENCES dominios.densidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_brejo_pantano_a ADD CONSTRAINT veg_brejo_pantano_a_tipoveg_fk FOREIGN KEY (tipoveg) REFERENCES dominios.tipo_vegetacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_elemento_fisiog_natural_p ADD CONSTRAINT rel_elemento_fisiog_natural_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_elemento_fisiog_natural_p ADD CONSTRAINT rel_elemento_fisiog_natural_p_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.enc_torre_comunic_p ADD CONSTRAINT enc_torre_comunic_p_ovgd_fk FOREIGN KEY (ovgd) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7309,18 +7005,16 @@ ALTER TABLE pe.enc_torre_comunic_p ADD CONSTRAINT enc_torre_comunic_p_situacaofi
 ALTER TABLE pe.rel_terreno_exposto_a ADD CONSTRAINT rel_terreno_exposto_a_causaexposicao_fk FOREIGN KEY (causaexposicao) REFERENCES dominios.causa_exposicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_terreno_exposto_a ADD CONSTRAINT rel_terreno_exposto_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_terreno_exposto_a ADD CONSTRAINT rel_terreno_exposto_a_tipoterrexp_fk FOREIGN KEY (tipoterrexp) REFERENCES dominios.tipo_terreno_exposto(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_est_gerad_energia_eletr ADD CONSTRAINT enc_est_gerad_energia_eletr_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_est_gerad_energia_eletr ADD CONSTRAINT enc_est_gerad_energia_eletr_tipoestgerad_fk FOREIGN KEY (tipoestgerad) REFERENCES dominios.tipo_est_gerad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_est_gerad_energia_eletr ADD CONSTRAINT enc_est_gerad_energia_eletr_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_est_gerad_energia_eletr ADD CONSTRAINT enc_est_gerad_energia_eletr_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_destinacaocemiterio_fk FOREIGN KEY (destinacaocemiterio) REFERENCES dominios.destinacao_cemiterio(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_tipocemiterio_fk FOREIGN KEY (tipocemiterio) REFERENCES dominios.tipo_cemiterio(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_denominacaoassociada_fk FOREIGN KEY (denominacaoassociada) REFERENCES dominios.denominacao_associada(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_terreno_erodido_a ADD CONSTRAINT rel_terreno_erodido_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_terreno_erodido_a ADD CONSTRAINT rel_terreno_erodido_a_tipoerosao_fk FOREIGN KEY (tipoerosao) REFERENCES dominios.tipo_erosao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_terreno_erodido_a ADD CONSTRAINT rel_terreno_erodido_a_situacaoterreno_fk FOREIGN KEY (situacaoterreno) REFERENCES dominios.situacao_terreno(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_sumidouro_vertedouro_p ADD CONSTRAINT hid_sumidouro_vertedouro_p_causa_fk FOREIGN KEY (causa) REFERENCES dominios.causa(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_sumidouro_vertedouro_p ADD CONSTRAINT hid_sumidouro_vertedouro_p_tiposumvert_fk FOREIGN KEY (tiposumvert) REFERENCES dominios.tipo_sum_vert(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_sumidouro_vertedouro_p ADD CONSTRAINT hid_sumidouro_vertedouro_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_trilha_picada_l ADD CONSTRAINT tra_trilha_picada_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_rocha_p ADD CONSTRAINT rel_rocha_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_rocha_p ADD CONSTRAINT rel_rocha_p_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_rocha_p ADD CONSTRAINT rel_rocha_p_formarocha_fk FOREIGN KEY (formarocha) REFERENCES dominios.forma_rocha(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_travessia_pedestre ADD CONSTRAINT tra_travessia_pedestre_situacaoespacial_fk FOREIGN KEY (situacaoespacial) REFERENCES dominios.situacao_espacial(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_travessia_pedestre ADD CONSTRAINT tra_travessia_pedestre_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_travessia_pedestre ADD CONSTRAINT tra_travessia_pedestre_tipotravessiaped_fk FOREIGN KEY (tipotravessiaped) REFERENCES dominios.tipo_travessia_ped(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7331,15 +7025,17 @@ ALTER TABLE pe.rel_ponto_cotado_altimetrico_p ADD CONSTRAINT rel_ponto_cotado_al
 ALTER TABLE pe.rel_ponto_cotado_altimetrico_p ADD CONSTRAINT rel_ponto_cotado_altimetrico_p_cotacomprovada_fk FOREIGN KEY (cotacomprovada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_confluencia_p ADD CONSTRAINT hid_confluencia_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_confluencia_p ADD CONSTRAINT hid_confluencia_p_relacionado_fk FOREIGN KEY (relacionado) REFERENCES dominios.relacionado(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.dut_ramificacao_p ADD CONSTRAINT dut_ramificacao_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.dut_ramificacao_p ADD CONSTRAINT dut_ramificacao_p_relacionado_fk FOREIGN KEY (relacionado) REFERENCES dominios.relacionado(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_dique ADD CONSTRAINT hid_dique_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_patio ADD CONSTRAINT tra_patio_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_patio ADD CONSTRAINT tra_patio_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_patio ADD CONSTRAINT tra_patio_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.aer_descontinuidade_geometrica_a ADD CONSTRAINT aer_descontinuidade_geometrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.aer_descontinuidade_geometrica_a ADD CONSTRAINT aer_descontinuidade_geometrica_a_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_tipoexposicao_fk FOREIGN KEY (tipoexposicao) REFERENCES dominios.tipo_exposicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_unidadevolume_fk FOREIGN KEY (unidadevolume) REFERENCES dominios.unidade_volume(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.enc_trecho_comunic_l ADD CONSTRAINT enc_trecho_comunic_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_trecho_comunic_l ADD CONSTRAINT enc_trecho_comunic_l_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_trecho_comunic_l ADD CONSTRAINT enc_trecho_comunic_l_matcondutor_fk FOREIGN KEY (matcondutor) REFERENCES dominios.mat_condutor(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.enc_trecho_comunic_l ADD CONSTRAINT enc_trecho_comunic_l_emduto_fk FOREIGN KEY (emduto) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.enc_trecho_comunic_l ADD CONSTRAINT enc_trecho_comunic_l_posicaorelativa_fk FOREIGN KEY (posicaorelativa) REFERENCES dominios.posicao_relativa(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.enc_trecho_comunic_l ADD CONSTRAINT enc_trecho_comunic_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7366,11 +7062,16 @@ ALTER TABLE pe.hid_banco_areia_a ADD CONSTRAINT hid_banco_areia_a_geometriaaprox
 ALTER TABLE pe.hid_banco_areia_a ADD CONSTRAINT hid_banco_areia_a_materialpredominante_fk FOREIGN KEY (materialpredominante) REFERENCES dominios.material_predominante(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_banco_areia_a ADD CONSTRAINT hid_banco_areia_a_tipobanco_fk FOREIGN KEY (tipobanco) REFERENCES dominios.tipo_banco(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_banco_areia_a ADD CONSTRAINT hid_banco_areia_a_situacaoemagua_fk FOREIGN KEY (situacaoemagua) REFERENCES dominios.situacao_em_agua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.fer_descontinuidade_geometrica_p ADD CONSTRAINT fer_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.fer_descontinuidade_geometrica_p ADD CONSTRAINT fer_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_descontinuidade_geometrica_p ADD CONSTRAINT sb_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_descontinuidade_geometrica_p ADD CONSTRAINT sb_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_ponto_hipsometrico ADD CONSTRAINT rel_ponto_hipsometrico_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica ADD CONSTRAINT enc_est_gerad_energia_eletrica_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica ADD CONSTRAINT enc_est_gerad_energia_eletrica_tipoestgerad_fk FOREIGN KEY (tipoestgerad) REFERENCES dominios.tipo_est_gerad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica ADD CONSTRAINT enc_est_gerad_energia_eletrica_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica ADD CONSTRAINT enc_est_gerad_energia_eletrica_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_antropizada_fk FOREIGN KEY (antropizada) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_secundaria_fk FOREIGN KEY (secundaria) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_classificacaoporte_fk FOREIGN KEY (classificacaoporte) REFERENCES dominios.classificacao_porte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_densidade_fk FOREIGN KEY (densidade) REFERENCES dominios.densidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_tipoveg_fk FOREIGN KEY (tipoveg) REFERENCES dominios.tipo_vegetacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_canal_vala_a ADD CONSTRAINT hid_canal_vala_a_usoprincipal_fk FOREIGN KEY (usoprincipal) REFERENCES dominios.uso_principal(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_canal_vala_a ADD CONSTRAINT hid_canal_vala_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_canal_vala_a ADD CONSTRAINT hid_canal_vala_a_finalidade_fk FOREIGN KEY (finalidade) REFERENCES dominios.finalidade_galeria_bueiro(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7410,21 +7111,6 @@ ALTER TABLE pe.dut_galeria_l ADD CONSTRAINT dut_galeria_l_geometriaaproximada_fk
 ALTER TABLE pe.dut_galeria_l ADD CONSTRAINT dut_galeria_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.dut_galeria_l ADD CONSTRAINT dut_galeria_l_setor_fk FOREIGN KEY (setor) REFERENCES dominios.setor(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.dut_galeria_l ADD CONSTRAINT dut_galeria_l_tipotrechoduto_fk FOREIGN KEY (tipotrechoduto) REFERENCES dominios.tipo_trecho_duto(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_tipotrechomassadagua_fk FOREIGN KEY (tipotrechomassadagua) REFERENCES dominios.tipo_trecho_massa(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_dominialidade_fk FOREIGN KEY (dominialidade) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_salgada_fk FOREIGN KEY (salgada) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_artificial_fk FOREIGN KEY (artificial) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_tipomassadagua_fk FOREIGN KEY (tipomassadagua) REFERENCES dominios.tipo_massa_dagua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_regime_fk FOREIGN KEY (regime) REFERENCES dominios.regime(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_descontinuidade_geometrica_a ADD CONSTRAINT sb_descontinuidade_geometrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_descontinuidade_geometrica_a ADD CONSTRAINT sb_descontinuidade_geometrica_a_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_ponto_drenagem_p ADD CONSTRAINT hid_ponto_drenagem_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_ponto_drenagem_p ADD CONSTRAINT hid_ponto_drenagem_p_relacionado_fk FOREIGN KEY (relacionado) REFERENCES dominios.relacionado(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.fer_descontinuidade_geometrica_l ADD CONSTRAINT fer_descontinuidade_geometrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.fer_descontinuidade_geometrica_l ADD CONSTRAINT fer_descontinuidade_geometrica_l_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_descontinuidade_geometrica_l ADD CONSTRAINT sb_descontinuidade_geometrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_descontinuidade_geometrica_l ADD CONSTRAINT sb_descontinuidade_geometrica_l_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.sb_dep_saneamento_a ADD CONSTRAINT sb_dep_saneamento_a_tipoexposicao_fk FOREIGN KEY (tipoexposicao) REFERENCES dominios.tipo_exposicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.sb_dep_saneamento_a ADD CONSTRAINT sb_dep_saneamento_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.sb_dep_saneamento_a ADD CONSTRAINT sb_dep_saneamento_a_unidadevolume_fk FOREIGN KEY (unidadevolume) REFERENCES dominios.unidade_volume(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7444,15 +7130,18 @@ ALTER TABLE pe.hid_comporta_p ADD CONSTRAINT hid_comporta_p_geometriaaproximada_
 ALTER TABLE pe.hid_comporta_p ADD CONSTRAINT hid_comporta_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_comporta_p ADD CONSTRAINT hid_comporta_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_corredeira_p ADD CONSTRAINT hid_corredeira_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_tipocampo_fk FOREIGN KEY (tipocampo) REFERENCES dominios.tipo_campo(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_antropizada_fk FOREIGN KEY (antropizada) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_secundaria_fk FOREIGN KEY (secundaria) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_classificacaoporte_fk FOREIGN KEY (classificacaoporte) REFERENCES dominios.classificacao_porte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_densidade_fk FOREIGN KEY (densidade) REFERENCES dominios.densidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_tipoveg_fk FOREIGN KEY (tipoveg) REFERENCES dominios.tipo_vegetacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_descontinuidade_geometrica_p ADD CONSTRAINT veg_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_descontinuidade_geometrica_p ADD CONSTRAINT veg_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_tipoexposicao_fk FOREIGN KEY (tipoexposicao) REFERENCES dominios.tipo_exposicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_unidadevolume_fk FOREIGN KEY (unidadevolume) REFERENCES dominios.unidade_volume(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_estadofisico_fk FOREIGN KEY (estadofisico) REFERENCES dominios.estado_fisico(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_tipodepgeral_fk FOREIGN KEY (tipodepgeral) REFERENCES dominios.tipo_dep_geral(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_finalidadedep_fk FOREIGN KEY (finalidadedep) REFERENCES dominios.finalidade_deposito(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_tratamento_fk FOREIGN KEY (tratamento) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_corte_p ADD CONSTRAINT rel_corte_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_corte_p ADD CONSTRAINT rel_corte_p_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.sb_cemiterio ADD CONSTRAINT sb_cemiterio_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7469,29 +7158,22 @@ ALTER TABLE pe.tra_ponte_p ADD CONSTRAINT tra_ponte_p_posicaopista_fk FOREIGN KE
 ALTER TABLE pe.hdv_obstaculo_navegacao_a ADD CONSTRAINT hdv_obstaculo_navegacao_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_obstaculo_navegacao_a ADD CONSTRAINT hdv_obstaculo_navegacao_a_tipoobst_fk FOREIGN KEY (tipoobst) REFERENCES dominios.tipo_obst(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_obstaculo_navegacao_a ADD CONSTRAINT hdv_obstaculo_navegacao_a_situacaoemagua_fk FOREIGN KEY (situacaoemagua) REFERENCES dominios.situacao_em_agua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_situacaoespacial_fk FOREIGN KEY (situacaoespacial) REFERENCES dominios.situacao_espacial(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_posicaorelativa_fk FOREIGN KEY (posicaorelativa) REFERENCES dominios.posicao_relativa(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_setor_fk FOREIGN KEY (setor) REFERENCES dominios.setor(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_tipotrechoduto_fk FOREIGN KEY (tipotrechoduto) REFERENCES dominios.tipo_trecho_duto(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_tiporecife_fk FOREIGN KEY (tiporecife) REFERENCES dominios.tipo_recife(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_situacaocosta_fk FOREIGN KEY (situacaocosta) REFERENCES dominios.situacao_costa(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_situacaoemagua_fk FOREIGN KEY (situacaoemagua) REFERENCES dominios.situacao_em_agua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_tipoestgerad_fk FOREIGN KEY (tipoestgerad) REFERENCES dominios.tipo_est_gerad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_corredeira_a ADD CONSTRAINT hid_corredeira_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_queda_dagua_p ADD CONSTRAINT hid_queda_dagua_p_tipoqueda_fk FOREIGN KEY (tipoqueda) REFERENCES dominios.tipo_queda(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_queda_dagua_p ADD CONSTRAINT hid_queda_dagua_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_tipoponte_fk FOREIGN KEY (tipoponte) REFERENCES dominios.tipo_ponte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_tipopavimentacao_fk FOREIGN KEY (tipopavimentacao) REFERENCES dominios.tipo_pavimentacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_necessitamanutencao_fk FOREIGN KEY (necessitamanutencao) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_posicaopista_fk FOREIGN KEY (posicaopista) REFERENCES dominios.situacao_espacial(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_descontinuidade_geometrica_l ADD CONSTRAINT hid_descontinuidade_geometrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_descontinuidade_geometrica_l ADD CONSTRAINT hid_descontinuidade_geometrica_l_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_rocha_l ADD CONSTRAINT rel_rocha_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_rocha_l ADD CONSTRAINT rel_rocha_l_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_rocha_l ADD CONSTRAINT rel_rocha_l_formarocha_fk FOREIGN KEY (formarocha) REFERENCES dominios.forma_rocha(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_corte_a ADD CONSTRAINT rel_corte_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_corte_a ADD CONSTRAINT rel_corte_a_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_entroncamento_pto_p ADD CONSTRAINT tra_entroncamento_pto_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_entroncamento_pto_p ADD CONSTRAINT tra_entroncamento_pto_p_tipoentroncamento_fk FOREIGN KEY (tipoentroncamento) REFERENCES dominios.tipo_entroncamento(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_descontinuidade_geometrica_l ADD CONSTRAINT veg_descontinuidade_geometrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_descontinuidade_geometrica_l ADD CONSTRAINT veg_descontinuidade_geometrica_l_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_corte_l ADD CONSTRAINT rel_corte_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_corte_l ADD CONSTRAINT rel_corte_l_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_obstaculo_navegacao_p ADD CONSTRAINT hdv_obstaculo_navegacao_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7503,21 +7185,16 @@ ALTER TABLE pe.hid_comporta_l ADD CONSTRAINT hid_comporta_l_operacional_fk FOREI
 ALTER TABLE pe.lpal_unidade_uso_sustentavel_a ADD CONSTRAINT lpal_unidade_uso_sustentavel_a_tipounidprotegida_fk FOREIGN KEY (tipounidprotegida) REFERENCES dominios.tipo_unid_protegida(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_unidade_uso_sustentavel_a ADD CONSTRAINT lpal_unidade_uso_sustentavel_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_unidade_uso_sustentavel_a ADD CONSTRAINT lpal_unidade_uso_sustentavel_a_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.lpal_unidade_uso_sustentavel_a ADD CONSTRAINT lpal_unidade_uso_sustentavel_a_tipounidusosust_fk FOREIGN KEY (tipounidusosust) REFERENCES dominios.tipo_unid_uso_sust(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_unidade_uso_sustentavel_a ADD CONSTRAINT lpal_unidade_uso_sustentavel_a_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_atracadouro_terminal_p ADD CONSTRAINT hdv_atracadouro_terminal_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_atracadouro_terminal_p ADD CONSTRAINT hdv_atracadouro_terminal_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_atracadouro_terminal_p ADD CONSTRAINT hdv_atracadouro_terminal_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_atracadouro_terminal_p ADD CONSTRAINT hdv_atracadouro_terminal_p_tipoatracad_fk FOREIGN KEY (tipoatracad) REFERENCES dominios.tipo_atracad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_atracadouro_terminal_p ADD CONSTRAINT hdv_atracadouro_terminal_p_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_descontinuidade_geometrica_l ADD CONSTRAINT lpal_descontinuidade_geometrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_descontinuidade_geometrica_l ADD CONSTRAINT lpal_descontinuidade_geometrica_l_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_funicular ADD CONSTRAINT tra_funicular_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_funicular ADD CONSTRAINT tra_funicular_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_funicular ADD CONSTRAINT tra_funicular_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hdv_descontinuidade_geometrica_a ADD CONSTRAINT hdv_descontinuidade_geometrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hdv_descontinuidade_geometrica_a ADD CONSTRAINT hdv_descontinuidade_geometrica_a_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_descontinuidade_geometrica_a ADD CONSTRAINT lpal_descontinuidade_geometrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_descontinuidade_geometrica_a ADD CONSTRAINT lpal_descontinuidade_geometrica_a_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_travessia_pedestre_l ADD CONSTRAINT tra_travessia_pedestre_l_situacaoespacial_fk FOREIGN KEY (situacaoespacial) REFERENCES dominios.situacao_espacial(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_travessia_pedestre_l ADD CONSTRAINT tra_travessia_pedestre_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_travessia_pedestre_l ADD CONSTRAINT tra_travessia_pedestre_l_tipotravessiaped_fk FOREIGN KEY (tipotravessiaped) REFERENCES dominios.tipo_travessia_ped(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7543,10 +7220,17 @@ ALTER TABLE pe.hdv_atracadouro_terminal_a ADD CONSTRAINT hdv_atracadouro_termina
 ALTER TABLE pe.hdv_atracadouro_terminal_a ADD CONSTRAINT hdv_atracadouro_terminal_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_atracadouro_terminal_a ADD CONSTRAINT hdv_atracadouro_terminal_a_tipoatracad_fk FOREIGN KEY (tipoatracad) REFERENCES dominios.tipo_atracad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_atracadouro_terminal_a ADD CONSTRAINT hdv_atracadouro_terminal_a_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_alter_fisiog_antropica ADD CONSTRAINT rel_alter_fisiog_antropica_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_alter_fisiog_antropica ADD CONSTRAINT rel_alter_fisiog_antropica_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hdv_descontinuidade_geometrica_p ADD CONSTRAINT hdv_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hdv_descontinuidade_geometrica_p ADD CONSTRAINT hdv_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_tipoexposicao_fk FOREIGN KEY (tipoexposicao) REFERENCES dominios.tipo_exposicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_unidadevolume_fk FOREIGN KEY (unidadevolume) REFERENCES dominios.unidade_volume(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_situacaoespacial_fk FOREIGN KEY (situacaoespacial) REFERENCES dominios.situacao_espacial(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_tipotravessiaped_fk FOREIGN KEY (tipotravessiaped) REFERENCES dominios.tipo_travessia_ped(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_atividade_fk FOREIGN KEY (atividade) REFERENCES dominios.atividade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoextmin_fk FOREIGN KEY (tipoextmin) REFERENCES dominios.tipo_ext_min(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7557,8 +7241,6 @@ ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_geometriaaprox
 ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_formaextracao_fk FOREIGN KEY (formaextracao) REFERENCES dominios.forma_extracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_descontinuidade_geometrica_p ADD CONSTRAINT lpal_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_descontinuidade_geometrica_p ADD CONSTRAINT lpal_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_terra_indigena_a ADD CONSTRAINT lpal_terra_indigena_a_situacaojuridica_fk FOREIGN KEY (situacaojuridica) REFERENCES dominios.situacao_juridica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_terra_indigena_a ADD CONSTRAINT lpal_terra_indigena_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_terra_indigena_a ADD CONSTRAINT lpal_terra_indigena_a_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7614,22 +7296,7 @@ ALTER TABLE pe.aer_pista_ponto_pouso_l ADD CONSTRAINT aer_pista_ponto_pouso_l_si
 ALTER TABLE pe.lpal_distrito_a ADD CONSTRAINT lpal_distrito_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_ponto_rodoviario_ferrov ADD CONSTRAINT tra_ponto_rodoviario_ferrov_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_ponto_rodoviario_ferrov ADD CONSTRAINT tra_ponto_rodoviario_ferrov_relacionado_fk FOREIGN KEY (relacionado) REFERENCES dominios.relacionado(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_zona_linhas_energia_com_a ADD CONSTRAINT enc_zona_linhas_energia_com_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_tipoatracad_fk FOREIGN KEY (tipoatracad) REFERENCES dominios.tipo_atracad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_tipoexposicao_fk FOREIGN KEY (tipoexposicao) REFERENCES dominios.tipo_exposicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_unidadevolume_fk FOREIGN KEY (unidadevolume) REFERENCES dominios.unidade_volume(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_estadofisico_fk FOREIGN KEY (estadofisico) REFERENCES dominios.estado_fisico(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_tipodepgeral_fk FOREIGN KEY (tipodepgeral) REFERENCES dominios.tipo_dep_geral(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_finalidadedep_fk FOREIGN KEY (finalidadedep) REFERENCES dominios.finalidade_deposito(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_tratamento_fk FOREIGN KEY (tratamento) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_elemento_fisiografico ADD CONSTRAINT rel_elemento_fisiografico_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.lpal_area_construida_a ADD CONSTRAINT lpal_area_construida_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_usopista_fk FOREIGN KEY (usopista) REFERENCES dominios.uso_pista(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_revestimento_fk FOREIGN KEY (revestimento) REFERENCES dominios.revestimento(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7637,21 +7304,20 @@ ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_ho
 ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_tipopista_fk FOREIGN KEY (tipopista) REFERENCES dominios.tipo_pista(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_destinacaocemiterio_fk FOREIGN KEY (destinacaocemiterio) REFERENCES dominios.destinacao_cemiterio(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_tipocemiterio_fk FOREIGN KEY (tipocemiterio) REFERENCES dominios.tipo_cemiterio(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_denominacaoassociada_fk FOREIGN KEY (denominacaoassociada) REFERENCES dominios.denominacao_associada(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_rocha_a ADD CONSTRAINT rel_rocha_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_rocha_a ADD CONSTRAINT rel_rocha_a_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_rocha_a ADD CONSTRAINT rel_rocha_a_formarocha_fk FOREIGN KEY (formarocha) REFERENCES dominios.forma_rocha(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_travessia_p ADD CONSTRAINT tra_travessia_p_tipoembarcacao_fk FOREIGN KEY (tipoembarcacao) REFERENCES dominios.tipo_embarcacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_travessia_p ADD CONSTRAINT tra_travessia_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_travessia_p ADD CONSTRAINT tra_travessia_p_tipouso_fk FOREIGN KEY (tipouso) REFERENCES dominios.tipo_transporte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_travessia_p ADD CONSTRAINT tra_travessia_p_tipotravessia_fk FOREIGN KEY (tipotravessia) REFERENCES dominios.tipo_travessia(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_aterro_a ADD CONSTRAINT rel_aterro_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_aterro_a ADD CONSTRAINT rel_aterro_a_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.eco_plataforma ADD CONSTRAINT eco_plataforma_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.eco_plataforma ADD CONSTRAINT eco_plataforma_tipoplataforma_fk FOREIGN KEY (tipoplataforma) REFERENCES dominios.tipo_plataforma(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_area_umida_a ADD CONSTRAINT hid_area_umida_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_area_umida_a ADD CONSTRAINT hid_area_umida_a_tipoareaumida_fk FOREIGN KEY (tipoareaumida) REFERENCES dominios.tipo_area_umida(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_funicular_p ADD CONSTRAINT tra_funicular_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_funicular_p ADD CONSTRAINT tra_funicular_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_funicular_p ADD CONSTRAINT tra_funicular_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_duna_p ADD CONSTRAINT rel_duna_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_duna_p ADD CONSTRAINT rel_duna_p_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_duna_p ADD CONSTRAINT rel_duna_p_fixa_fk FOREIGN KEY (fixa) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_eclusa ADD CONSTRAINT hdv_eclusa_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_eclusa ADD CONSTRAINT hdv_eclusa_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_eclusa ADD CONSTRAINT hdv_eclusa_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7661,13 +7327,11 @@ ALTER TABLE pe.enc_termeletrica_l ADD CONSTRAINT enc_termeletrica_l_tipoestgerad
 ALTER TABLE pe.enc_termeletrica_l ADD CONSTRAINT enc_termeletrica_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.enc_termeletrica_l ADD CONSTRAINT enc_termeletrica_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.enc_termeletrica_l ADD CONSTRAINT enc_termeletrica_l_tipocombustivel_fk FOREIGN KEY (tipocombustivel) REFERENCES dominios.tipo_combustivel(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_tipopavimentacao_fk FOREIGN KEY (tipopavimentacao) REFERENCES dominios.tipo_pavimentacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_necessitamanutencao_fk FOREIGN KEY (necessitamanutencao) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_posicaopista_fk FOREIGN KEY (posicaopista) REFERENCES dominios.situacao_espacial(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_tipopassagviad_fk FOREIGN KEY (tipopassagviad) REFERENCES dominios.tipo_passag_viad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_tipoestgerad_fk FOREIGN KEY (tipoestgerad) REFERENCES dominios.tipo_est_gerad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_tipocombustivel_fk FOREIGN KEY (tipocombustivel) REFERENCES dominios.tipo_combustivel(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_quebramar_molhe ADD CONSTRAINT hid_quebramar_molhe_tipoquebramolhe_fk FOREIGN KEY (tipoquebramolhe) REFERENCES dominios.tipo_quebra_molhe(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_quebramar_molhe ADD CONSTRAINT hid_quebramar_molhe_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_quebramar_molhe ADD CONSTRAINT hid_quebramar_molhe_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7682,6 +7346,11 @@ ALTER TABLE pe.fer_cremalheira ADD CONSTRAINT fer_cremalheira_situacaofisica_fk 
 ALTER TABLE pe.fer_cremalheira ADD CONSTRAINT fer_cremalheira_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_plataforma_p ADD CONSTRAINT eco_plataforma_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_plataforma_p ADD CONSTRAINT eco_plataforma_p_tipoplataforma_fk FOREIGN KEY (tipoplataforma) REFERENCES dominios.tipo_plataforma(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_tipounidprotegida_fk FOREIGN KEY (tipounidprotegida) REFERENCES dominios.tipo_unid_protegida(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_tipounidprotinteg_fk FOREIGN KEY (tipounidprotinteg) REFERENCES dominios.tipo_unid_prot_integ(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.fer_trecho_ferroviario_l ADD CONSTRAINT fer_trecho_ferroviario_l_tipotrechoferrov_fk FOREIGN KEY (tipotrechoferrov) REFERENCES dominios.tipo_trecho_ferrov(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.fer_trecho_ferroviario_l ADD CONSTRAINT fer_trecho_ferroviario_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.fer_trecho_ferroviario_l ADD CONSTRAINT fer_trecho_ferroviario_l_eletrificada_fk FOREIGN KEY (eletrificada) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7705,19 +7374,13 @@ ALTER TABLE pe.eco_equip_agropec ADD CONSTRAINT eco_equip_agropec_tipoequipagrop
 ALTER TABLE pe.eco_equip_agropec ADD CONSTRAINT eco_equip_agropec_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_equip_agropec ADD CONSTRAINT eco_equip_agropec_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_equip_agropec ADD CONSTRAINT eco_equip_agropec_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_tipounidprotegida_fk FOREIGN KEY (tipounidprotegida) REFERENCES dominios.tipo_unid_protegida(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_alter_fisiog_antropica_p ADD CONSTRAINT rel_alter_fisiog_antropica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_alter_fisiog_antropica_p ADD CONSTRAINT rel_alter_fisiog_antropica_p_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_foz_maritima ADD CONSTRAINT hid_foz_maritima_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.fer_descontinuidade_geometrica_a ADD CONSTRAINT fer_descontinuidade_geometrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.fer_descontinuidade_geometrica_a ADD CONSTRAINT fer_descontinuidade_geometrica_a_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.enc_hidreletrica_l ADD CONSTRAINT enc_hidreletrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.enc_hidreletrica_l ADD CONSTRAINT enc_hidreletrica_l_tipoestgerad_fk FOREIGN KEY (tipoestgerad) REFERENCES dominios.tipo_est_gerad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.enc_hidreletrica_l ADD CONSTRAINT enc_hidreletrica_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.enc_hidreletrica_l ADD CONSTRAINT enc_hidreletrica_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_descontinuidade_geometrica_p ADD CONSTRAINT hid_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_descontinuidade_geometrica_p ADD CONSTRAINT hid_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_patio_p ADD CONSTRAINT tra_patio_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_patio_p ADD CONSTRAINT tra_patio_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_patio_p ADD CONSTRAINT tra_patio_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7732,9 +7395,6 @@ ALTER TABLE pe.eco_deposito_geral_a ADD CONSTRAINT eco_deposito_geral_a_operacio
 ALTER TABLE pe.eco_deposito_geral_a ADD CONSTRAINT eco_deposito_geral_a_unidadevolume_fk FOREIGN KEY (unidadevolume) REFERENCES dominios.unidade_volume(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_deposito_geral_a ADD CONSTRAINT eco_deposito_geral_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_deposito_geral_a ADD CONSTRAINT eco_deposito_geral_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_terreno_erodido_p ADD CONSTRAINT rel_terreno_erodido_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_terreno_erodido_p ADD CONSTRAINT rel_terreno_erodido_p_tipoerosao_fk FOREIGN KEY (tipoerosao) REFERENCES dominios.tipo_erosao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_terreno_erodido_p ADD CONSTRAINT rel_terreno_erodido_p_situacaoterreno_fk FOREIGN KEY (situacaoterreno) REFERENCES dominios.situacao_terreno(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_unidade_federacao_a ADD CONSTRAINT lpal_unidade_federacao_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_unidade_federacao_a ADD CONSTRAINT lpal_unidade_federacao_a_sigla_fk FOREIGN KEY (sigla) REFERENCES dominios.sigla_uf(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.sb_dep_abast_agua_a ADD CONSTRAINT sb_dep_abast_agua_a_tipoexposicao_fk FOREIGN KEY (tipoexposicao) REFERENCES dominios.tipo_exposicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7748,30 +7408,32 @@ ALTER TABLE pe.sb_dep_abast_agua_a ADD CONSTRAINT sb_dep_abast_agua_a_tipodepger
 ALTER TABLE pe.sb_dep_abast_agua_a ADD CONSTRAINT sb_dep_abast_agua_a_localizacaoequipdesenvsocial_fk FOREIGN KEY (localizacaoequipdesenvsocial) REFERENCES dominios.local_equip_desenv_social(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.sb_dep_abast_agua_a ADD CONSTRAINT sb_dep_abast_agua_a_finalidadedep_fk FOREIGN KEY (finalidadedep) REFERENCES dominios.finalidade_deposito(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.sb_dep_abast_agua_a ADD CONSTRAINT sb_dep_abast_agua_a_tratamento_fk FOREIGN KEY (tratamento) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_tipoestgerad_fk FOREIGN KEY (tipoestgerad) REFERENCES dominios.tipo_est_gerad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_tipocampo_fk FOREIGN KEY (tipocampo) REFERENCES dominios.tipo_campo(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_antropizada_fk FOREIGN KEY (antropizada) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_secundaria_fk FOREIGN KEY (secundaria) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_classificacaoporte_fk FOREIGN KEY (classificacaoporte) REFERENCES dominios.classificacao_porte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_densidade_fk FOREIGN KEY (densidade) REFERENCES dominios.densidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_tipoveg_fk FOREIGN KEY (tipoveg) REFERENCES dominios.tipo_vegetacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_situacaoespacial_fk FOREIGN KEY (situacaoespacial) REFERENCES dominios.situacao_espacial(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_posicaorelativa_fk FOREIGN KEY (posicaorelativa) REFERENCES dominios.posicao_relativa(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_setor_fk FOREIGN KEY (setor) REFERENCES dominios.setor(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_tipotrechoduto_fk FOREIGN KEY (tipotrechoduto) REFERENCES dominios.tipo_trecho_duto(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_fonte_dagua_p ADD CONSTRAINT hid_fonte_dagua_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_fonte_dagua_p ADD CONSTRAINT hid_fonte_dagua_p_qualidagua_fk FOREIGN KEY (qualidagua) REFERENCES dominios.qualid_agua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_fonte_dagua_p ADD CONSTRAINT hid_fonte_dagua_p_tipofontedagua_fk FOREIGN KEY (tipofontedagua) REFERENCES dominios.tipo_fonte_dagua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_fonte_dagua_p ADD CONSTRAINT hid_fonte_dagua_p_regime_fk FOREIGN KEY (regime) REFERENCES dominios.regime(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_dolina_p ADD CONSTRAINT rel_dolina_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_dolina_p ADD CONSTRAINT rel_dolina_p_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_tipoexposicao_fk FOREIGN KEY (tipoexposicao) REFERENCES dominios.tipo_exposicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_unidadevolume_fk FOREIGN KEY (unidadevolume) REFERENCES dominios.unidade_volume(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_alter_fisiog_antropica ADD CONSTRAINT rel_alter_fisiog_antropica_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_alter_fisiog_antropica ADD CONSTRAINT rel_alter_fisiog_antropica_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.pto_marco_de_limite_p ADD CONSTRAINT pto_marco_de_limite_p_sistemageodesico_fk FOREIGN KEY (sistemageodesico) REFERENCES dominios.sistema_geodesico(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.pto_marco_de_limite_p ADD CONSTRAINT pto_marco_de_limite_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.pto_marco_de_limite_p ADD CONSTRAINT pto_marco_de_limite_p_tipomarcolim_fk FOREIGN KEY (tipomarcolim) REFERENCES dominios.tipo_hierarquia(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.pto_marco_de_limite_p ADD CONSTRAINT pto_marco_de_limite_p_referencialaltim_fk FOREIGN KEY (referencialaltim) REFERENCES dominios.referencial_altim(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_queda_dagua_l ADD CONSTRAINT hid_queda_dagua_l_tipoqueda_fk FOREIGN KEY (tipoqueda) REFERENCES dominios.tipo_queda(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_queda_dagua_l ADD CONSTRAINT hid_queda_dagua_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_cerrado_a ADD CONSTRAINT veg_cerrado_a_antropizada_fk FOREIGN KEY (antropizada) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_cerrado_a ADD CONSTRAINT veg_cerrado_a_secundaria_fk FOREIGN KEY (secundaria) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_cerrado_a ADD CONSTRAINT veg_cerrado_a_classificacaoporte_fk FOREIGN KEY (classificacaoporte) REFERENCES dominios.classificacao_porte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7779,37 +7441,35 @@ ALTER TABLE pe.veg_cerrado_a ADD CONSTRAINT veg_cerrado_a_geometriaaproximada_fk
 ALTER TABLE pe.veg_cerrado_a ADD CONSTRAINT veg_cerrado_a_densidade_fk FOREIGN KEY (densidade) REFERENCES dominios.densidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_cerrado_a ADD CONSTRAINT veg_cerrado_a_vereda_fk FOREIGN KEY (vereda) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_cerrado_a ADD CONSTRAINT veg_cerrado_a_tipoveg_fk FOREIGN KEY (tipoveg) REFERENCES dominios.tipo_vegetacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_duna_p ADD CONSTRAINT rel_duna_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_duna_p ADD CONSTRAINT rel_duna_p_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_duna_p ADD CONSTRAINT rel_duna_p_fixa_fk FOREIGN KEY (fixa) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hdv_descontinuidade_geometrica_l ADD CONSTRAINT hdv_descontinuidade_geometrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hdv_descontinuidade_geometrica_l ADD CONSTRAINT hdv_descontinuidade_geometrica_l_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_funicular_p ADD CONSTRAINT tra_funicular_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_funicular_p ADD CONSTRAINT tra_funicular_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_funicular_p ADD CONSTRAINT tra_funicular_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_fundeadouro_a ADD CONSTRAINT hdv_fundeadouro_a_tipofundeadouro_fk FOREIGN KEY (tipofundeadouro) REFERENCES dominios.tipo_fundeadouro(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_fundeadouro_a ADD CONSTRAINT hdv_fundeadouro_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_fundeadouro_a ADD CONSTRAINT hdv_fundeadouro_a_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_ilha_p ADD CONSTRAINT hid_ilha_p_tipoilha_fk FOREIGN KEY (tipoilha) REFERENCES dominios.tipo_ilha(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_ilha_p ADD CONSTRAINT hid_ilha_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_ilha_p ADD CONSTRAINT hid_ilha_p_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_alter_fisiog_antropica_a ADD CONSTRAINT rel_alter_fisiog_antropica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_alter_fisiog_antropica_a ADD CONSTRAINT rel_alter_fisiog_antropica_a_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_ilha_l ADD CONSTRAINT hid_ilha_l_tipoilha_fk FOREIGN KEY (tipoilha) REFERENCES dominios.tipo_ilha(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_ilha_l ADD CONSTRAINT hid_ilha_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_ilha_l ADD CONSTRAINT hid_ilha_l_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_duna_a ADD CONSTRAINT rel_duna_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_duna_a ADD CONSTRAINT rel_duna_a_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_duna_a ADD CONSTRAINT rel_duna_a_fixa_fk FOREIGN KEY (fixa) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_aterro_p ADD CONSTRAINT rel_aterro_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_aterro_p ADD CONSTRAINT rel_aterro_p_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_antena_comunic_p ADD CONSTRAINT enc_antena_comunic_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_antena_comunic_p ADD CONSTRAINT enc_antena_comunic_p_posicaoreledific_fk FOREIGN KEY (posicaoreledific) REFERENCES dominios.posicao_rel_edific(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_obstaculo_navegacao ADD CONSTRAINT hdv_obstaculo_navegacao_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_obstaculo_navegacao ADD CONSTRAINT hdv_obstaculo_navegacao_tipoobst_fk FOREIGN KEY (tipoobst) REFERENCES dominios.tipo_obst(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_obstaculo_navegacao ADD CONSTRAINT hdv_obstaculo_navegacao_situacaoemagua_fk FOREIGN KEY (situacaoemagua) REFERENCES dominios.situacao_em_agua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.aer_descontinuidade_geometrica_p ADD CONSTRAINT aer_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.aer_descontinuidade_geometrica_p ADD CONSTRAINT aer_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_duna_l ADD CONSTRAINT rel_duna_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_duna_l ADD CONSTRAINT rel_duna_l_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_duna_l ADD CONSTRAINT rel_duna_l_fixa_fk FOREIGN KEY (fixa) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_tipounidprotegida_fk FOREIGN KEY (tipounidprotegida) REFERENCES dominios.tipo_unid_protegida(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_funicular_l ADD CONSTRAINT tra_funicular_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_funicular_l ADD CONSTRAINT tra_funicular_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_funicular_l ADD CONSTRAINT tra_funicular_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_destinacaocemiterio_fk FOREIGN KEY (destinacaocemiterio) REFERENCES dominios.destinacao_cemiterio(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_tipocemiterio_fk FOREIGN KEY (tipocemiterio) REFERENCES dominios.tipo_cemiterio(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_denominacaoassociada_fk FOREIGN KEY (denominacaoassociada) REFERENCES dominios.denominacao_associada(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_reflorestamento_a ADD CONSTRAINT veg_reflorestamento_a_terreno_fk FOREIGN KEY (terreno) REFERENCES dominios.condicao_terreno(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_reflorestamento_a ADD CONSTRAINT veg_reflorestamento_a_finalidade_fk FOREIGN KEY (finalidade) REFERENCES dominios.finalidade_cultura(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_reflorestamento_a ADD CONSTRAINT veg_reflorestamento_a_tipolavoura_fk FOREIGN KEY (tipolavoura) REFERENCES dominios.tipo_lavoura(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7819,12 +7479,11 @@ ALTER TABLE pe.veg_reflorestamento_a ADD CONSTRAINT veg_reflorestamento_a_tipove
 ALTER TABLE pe.hid_ilha_a ADD CONSTRAINT hid_ilha_a_tipoilha_fk FOREIGN KEY (tipoilha) REFERENCES dominios.tipo_ilha(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_ilha_a ADD CONSTRAINT hid_ilha_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_ilha_a ADD CONSTRAINT hid_ilha_a_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.eco_descontinuidade_geometrica_l ADD CONSTRAINT eco_descontinuidade_geometrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.eco_descontinuidade_geometrica_l ADD CONSTRAINT eco_descontinuidade_geometrica_l_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_limite_politico_adm_l ADD CONSTRAINT lpal_limite_politico_adm_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_limite_politico_adm_l ADD CONSTRAINT lpal_limite_politico_adm_l_referenciallegal_fk FOREIGN KEY (referenciallegal) REFERENCES dominios.referencial_legal(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.pto_descontinuidade_geometrica_p ADD CONSTRAINT pto_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.pto_descontinuidade_geometrica_p ADD CONSTRAINT pto_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_tipoatracad_fk FOREIGN KEY (tipoatracad) REFERENCES dominios.tipo_atracad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_rocha_em_agua_a ADD CONSTRAINT hid_rocha_em_agua_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_rocha_em_agua_a ADD CONSTRAINT hid_rocha_em_agua_a_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_rocha_em_agua_a ADD CONSTRAINT hid_rocha_em_agua_a_formarocha_fk FOREIGN KEY (formarocha) REFERENCES dominios.forma_rocha(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7854,21 +7513,18 @@ ALTER TABLE pe.aer_pista_ponto_pouso ADD CONSTRAINT aer_pista_ponto_pouso_homolo
 ALTER TABLE pe.aer_pista_ponto_pouso ADD CONSTRAINT aer_pista_ponto_pouso_tipopista_fk FOREIGN KEY (tipopista) REFERENCES dominios.tipo_pista(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.aer_pista_ponto_pouso ADD CONSTRAINT aer_pista_ponto_pouso_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.aer_pista_ponto_pouso ADD CONSTRAINT aer_pista_ponto_pouso_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.pto_descontinuidade_geometrica_a ADD CONSTRAINT pto_descontinuidade_geometrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.pto_descontinuidade_geometrica_a ADD CONSTRAINT pto_descontinuidade_geometrica_a_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.eco_descontinuidade_geometrica_a ADD CONSTRAINT eco_descontinuidade_geometrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.eco_descontinuidade_geometrica_a ADD CONSTRAINT eco_descontinuidade_geometrica_a_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_rocha_em_agua_p ADD CONSTRAINT hid_rocha_em_agua_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_rocha_em_agua_p ADD CONSTRAINT hid_rocha_em_agua_p_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_rocha_em_agua_p ADD CONSTRAINT hid_rocha_em_agua_p_formarocha_fk FOREIGN KEY (formarocha) REFERENCES dominios.forma_rocha(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_rocha_em_agua_p ADD CONSTRAINT hid_rocha_em_agua_p_situacaoemagua_fk FOREIGN KEY (situacaoemagua) REFERENCES dominios.situacao_em_agua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.dut_ponto_inicio_fim_duto_p ADD CONSTRAINT dut_ponto_inicio_fim_duto_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.dut_ponto_inicio_fim_duto_p ADD CONSTRAINT dut_ponto_inicio_fim_duto_p_relacionado_fk FOREIGN KEY (relacionado) REFERENCES dominios.relacionado(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_tiporecife_fk FOREIGN KEY (tiporecife) REFERENCES dominios.tipo_recife(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_situacaocosta_fk FOREIGN KEY (situacaocosta) REFERENCES dominios.situacao_costa(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_situacaoemagua_fk FOREIGN KEY (situacaoemagua) REFERENCES dominios.situacao_em_agua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_municipio_a ADD CONSTRAINT lpal_municipio_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_duna_l ADD CONSTRAINT rel_duna_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_duna_l ADD CONSTRAINT rel_duna_l_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_duna_l ADD CONSTRAINT rel_duna_l_fixa_fk FOREIGN KEY (fixa) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.fer_cremalheira_p ADD CONSTRAINT fer_cremalheira_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.fer_cremalheira_p ADD CONSTRAINT fer_cremalheira_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.fer_cremalheira_p ADD CONSTRAINT fer_cremalheira_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_tunel_p ADD CONSTRAINT tra_tunel_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_tunel_p ADD CONSTRAINT tra_tunel_p_tipopavimentacao_fk FOREIGN KEY (tipopavimentacao) REFERENCES dominios.tipo_pavimentacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_tunel_p ADD CONSTRAINT tra_tunel_p_necessitamanutencao_fk FOREIGN KEY (necessitamanutencao) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7891,7 +7547,10 @@ ALTER TABLE pe.veg_floresta_a ADD CONSTRAINT veg_floresta_a_densidade_fk FOREIGN
 ALTER TABLE pe.veg_floresta_a ADD CONSTRAINT veg_floresta_a_tipoveg_fk FOREIGN KEY (tipoveg) REFERENCES dominios.tipo_vegetacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_corredeira ADD CONSTRAINT hid_corredeira_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.enc_grupo_transformadores_p ADD CONSTRAINT enc_grupo_transformadores_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_terreno_suj_inundacao_a ADD CONSTRAINT hid_terreno_suj_inundacao_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_recife ADD CONSTRAINT hid_recife_tiporecife_fk FOREIGN KEY (tiporecife) REFERENCES dominios.tipo_recife(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_recife ADD CONSTRAINT hid_recife_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_recife ADD CONSTRAINT hid_recife_situacaocosta_fk FOREIGN KEY (situacaocosta) REFERENCES dominios.situacao_costa(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_recife ADD CONSTRAINT hid_recife_situacaoemagua_fk FOREIGN KEY (situacaoemagua) REFERENCES dominios.situacao_em_agua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_curva_batimetrica_l ADD CONSTRAINT rel_curva_batimetrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.dut_ponto_duto_p ADD CONSTRAINT dut_ponto_duto_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.dut_ponto_duto_p ADD CONSTRAINT dut_ponto_duto_p_relacionado_fk FOREIGN KEY (relacionado) REFERENCES dominios.relacionado(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7913,11 +7572,13 @@ ALTER TABLE pe.rod_trecho_rodoviario ADD CONSTRAINT rod_trecho_rodoviario_acosta
 ALTER TABLE pe.rod_trecho_rodoviario ADD CONSTRAINT rod_trecho_rodoviario_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rod_trecho_rodoviario ADD CONSTRAINT rod_trecho_rodoviario_tipotrechorod_fk FOREIGN KEY (tipotrechorod) REFERENCES dominios.tipo_trecho_rod(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_ponto_cotado_batimetrico_p ADD CONSTRAINT rel_ponto_cotado_batimetrico_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_tipoestgerad_fk FOREIGN KEY (tipoestgerad) REFERENCES dominios.tipo_est_gerad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_tipocombustivel_fk FOREIGN KEY (tipocombustivel) REFERENCES dominios.tipo_combustivel(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_tipopavimentacao_fk FOREIGN KEY (tipopavimentacao) REFERENCES dominios.tipo_pavimentacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_necessitamanutencao_fk FOREIGN KEY (necessitamanutencao) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_posicaopista_fk FOREIGN KEY (posicaopista) REFERENCES dominios.situacao_espacial(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_tipopassagviad_fk FOREIGN KEY (tipopassagviad) REFERENCES dominios.tipo_passag_viad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.enc_grupo_transformadores_a ADD CONSTRAINT enc_grupo_transformadores_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_canal_l ADD CONSTRAINT hid_canal_l_usoprincipal_fk FOREIGN KEY (usoprincipal) REFERENCES dominios.uso_principal(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_canal_l ADD CONSTRAINT hid_canal_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7925,9 +7586,6 @@ ALTER TABLE pe.hid_canal_l ADD CONSTRAINT hid_canal_l_finalidade_fk FOREIGN KEY 
 ALTER TABLE pe.hid_canal_l ADD CONSTRAINT hid_canal_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_canal_l ADD CONSTRAINT hid_canal_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_canal_l ADD CONSTRAINT hid_canal_l_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hdv_fundeadouro_p ADD CONSTRAINT hdv_fundeadouro_p_tipofundeadouro_fk FOREIGN KEY (tipofundeadouro) REFERENCES dominios.tipo_fundeadouro(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hdv_fundeadouro_p ADD CONSTRAINT hdv_fundeadouro_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hdv_fundeadouro_p ADD CONSTRAINT hdv_fundeadouro_p_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_nome_local_p ADD CONSTRAINT lpal_nome_local_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_canal_a ADD CONSTRAINT hid_canal_a_usoprincipal_fk FOREIGN KEY (usoprincipal) REFERENCES dominios.uso_principal(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_canal_a ADD CONSTRAINT hid_canal_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7939,7 +7597,9 @@ ALTER TABLE pe.tra_travessia_l ADD CONSTRAINT tra_travessia_l_tipoembarcacao_fk 
 ALTER TABLE pe.tra_travessia_l ADD CONSTRAINT tra_travessia_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_travessia_l ADD CONSTRAINT tra_travessia_l_tipouso_fk FOREIGN KEY (tipouso) REFERENCES dominios.tipo_transporte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_travessia_l ADD CONSTRAINT tra_travessia_l_tipotravessia_fk FOREIGN KEY (tipotravessia) REFERENCES dominios.tipo_travessia(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_area_desenv_controle_a ADD CONSTRAINT lpal_area_desenv_controle_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hdv_fundeadouro_p ADD CONSTRAINT hdv_fundeadouro_p_tipofundeadouro_fk FOREIGN KEY (tipofundeadouro) REFERENCES dominios.tipo_fundeadouro(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hdv_fundeadouro_p ADD CONSTRAINT hdv_fundeadouro_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hdv_fundeadouro_p ADD CONSTRAINT hdv_fundeadouro_p_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_gruta_caverna_l ADD CONSTRAINT rel_gruta_caverna_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_gruta_caverna_l ADD CONSTRAINT rel_gruta_caverna_l_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.enc_trecho_energia_l ADD CONSTRAINT enc_trecho_energia_l_especie_fk FOREIGN KEY (especie) REFERENCES dominios.especie_trecho_energia(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7947,15 +7607,20 @@ ALTER TABLE pe.enc_trecho_energia_l ADD CONSTRAINT enc_trecho_energia_l_geometri
 ALTER TABLE pe.enc_trecho_energia_l ADD CONSTRAINT enc_trecho_energia_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.enc_trecho_energia_l ADD CONSTRAINT enc_trecho_energia_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.enc_trecho_energia_l ADD CONSTRAINT enc_trecho_energia_l_posicaorelativa_fk FOREIGN KEY (posicaorelativa) REFERENCES dominios.posicao_relativa(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_corte_a ADD CONSTRAINT rel_corte_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_corte_a ADD CONSTRAINT rel_corte_a_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_tipoponte_fk FOREIGN KEY (tipoponte) REFERENCES dominios.tipo_ponte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_tipopavimentacao_fk FOREIGN KEY (tipopavimentacao) REFERENCES dominios.tipo_pavimentacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_necessitamanutencao_fk FOREIGN KEY (necessitamanutencao) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_posicaopista_fk FOREIGN KEY (posicaopista) REFERENCES dominios.situacao_espacial(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_sinalizacao_p ADD CONSTRAINT hdv_sinalizacao_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_sinalizacao_p ADD CONSTRAINT hdv_sinalizacao_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_sinalizacao_p ADD CONSTRAINT hdv_sinalizacao_p_tiposinal_fk FOREIGN KEY (tiposinal) REFERENCES dominios.tipo_sinal(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_sinalizacao_p ADD CONSTRAINT hdv_sinalizacao_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_descontinuidade_geometrica_p ADD CONSTRAINT enc_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_descontinuidade_geometrica_p ADD CONSTRAINT enc_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_pais_a ADD CONSTRAINT lpal_pais_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_vegetacao_a ADD CONSTRAINT veg_vegetacao_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_vegetacao_a ADD CONSTRAINT veg_vegetacao_a_tipoveg_fk FOREIGN KEY (tipoveg) REFERENCES dominios.tipo_vegetacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.veg_vegetacao_a ADD CONSTRAINT veg_vegetacao_a_classificacaoporte_fk FOREIGN KEY (classificacaoporte) REFERENCES dominios.classificacao_porte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_fundeadouro ADD CONSTRAINT hdv_fundeadouro_tipofundeadouro_fk FOREIGN KEY (tipofundeadouro) REFERENCES dominios.tipo_fundeadouro(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_fundeadouro ADD CONSTRAINT hdv_fundeadouro_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hdv_fundeadouro ADD CONSTRAINT hdv_fundeadouro_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7978,18 +7643,12 @@ ALTER TABLE pe.veg_veg_cultivada_a ADD CONSTRAINT veg_veg_cultivada_a_tipolavour
 ALTER TABLE pe.veg_veg_cultivada_a ADD CONSTRAINT veg_veg_cultivada_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_veg_cultivada_a ADD CONSTRAINT veg_veg_cultivada_a_classificacaoporte_fk FOREIGN KEY (classificacaoporte) REFERENCES dominios.classificacao_porte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_veg_cultivada_a ADD CONSTRAINT veg_veg_cultivada_a_tipoveg_fk FOREIGN KEY (tipoveg) REFERENCES dominios.tipo_vegetacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_area_construida_a ADD CONSTRAINT lpal_area_construida_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_vala_a ADD CONSTRAINT hid_vala_a_usoprincipal_fk FOREIGN KEY (usoprincipal) REFERENCES dominios.uso_principal(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_vala_a ADD CONSTRAINT hid_vala_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_vala_a ADD CONSTRAINT hid_vala_a_finalidade_fk FOREIGN KEY (finalidade) REFERENCES dominios.finalidade_galeria_bueiro(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_vala_a ADD CONSTRAINT hid_vala_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_vala_a ADD CONSTRAINT hid_vala_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_vala_a ADD CONSTRAINT hid_vala_a_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_tipoquebramolhe_fk FOREIGN KEY (tipoquebramolhe) REFERENCES dominios.tipo_quebra_molhe(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_situacaoemagua_fk FOREIGN KEY (situacaoemagua) REFERENCES dominios.situacao_em_agua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_comporta ADD CONSTRAINT hid_comporta_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_comporta ADD CONSTRAINT hid_comporta_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_comporta ADD CONSTRAINT hid_comporta_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -7999,8 +7658,6 @@ ALTER TABLE pe.veg_refugio_ecologico_a ADD CONSTRAINT veg_refugio_ecologico_a_cl
 ALTER TABLE pe.veg_refugio_ecologico_a ADD CONSTRAINT veg_refugio_ecologico_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_refugio_ecologico_a ADD CONSTRAINT veg_refugio_ecologico_a_densidade_fk FOREIGN KEY (densidade) REFERENCES dominios.densidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_refugio_ecologico_a ADD CONSTRAINT veg_refugio_ecologico_a_tipoveg_fk FOREIGN KEY (tipoveg) REFERENCES dominios.tipo_vegetacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_descontinuidade_geometrica_a ADD CONSTRAINT enc_descontinuidade_geometrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_descontinuidade_geometrica_a ADD CONSTRAINT enc_descontinuidade_geometrica_a_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_atividade_fk FOREIGN KEY (atividade) REFERENCES dominios.atividade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_tipoextmin_fk FOREIGN KEY (tipoextmin) REFERENCES dominios.tipo_ext_min(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -8013,23 +7670,22 @@ ALTER TABLE pe.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_tipoalterantro
 ALTER TABLE pe.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_formaextracao_fk FOREIGN KEY (formaextracao) REFERENCES dominios.forma_extracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_gruta_caverna_p ADD CONSTRAINT rel_gruta_caverna_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_gruta_caverna_p ADD CONSTRAINT rel_gruta_caverna_p_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_terreno_erodido_a ADD CONSTRAINT rel_terreno_erodido_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_terreno_erodido_a ADD CONSTRAINT rel_terreno_erodido_a_tipoerosao_fk FOREIGN KEY (tipoerosao) REFERENCES dominios.tipo_erosao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_terreno_erodido_a ADD CONSTRAINT rel_terreno_erodido_a_situacaoterreno_fk FOREIGN KEY (situacaoterreno) REFERENCES dominios.situacao_terreno(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_usoprincipal_fk FOREIGN KEY (usoprincipal) REFERENCES dominios.uso_principal(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_finalidade_fk FOREIGN KEY (finalidade) REFERENCES dominios.finalidade_galeria_bueiro(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rod_passagem_nivel_p ADD CONSTRAINT rod_passagem_nivel_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rod_passagem_nivel_p ADD CONSTRAINT rod_passagem_nivel_p_relacionado_fk FOREIGN KEY (relacionado) REFERENCES dominios.relacionado(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_antropizada_fk FOREIGN KEY (antropizada) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_secundaria_fk FOREIGN KEY (secundaria) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_classificacaoporte_fk FOREIGN KEY (classificacaoporte) REFERENCES dominios.classificacao_porte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_densidade_fk FOREIGN KEY (densidade) REFERENCES dominios.densidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_tipoveg_fk FOREIGN KEY (tipoveg) REFERENCES dominios.tipo_vegetacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_descontinuidade_geometrica_a ADD CONSTRAINT rel_descontinuidade_geometrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_descontinuidade_geometrica_a ADD CONSTRAINT rel_descontinuidade_geometrica_a_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_ponto_hipsometrico ADD CONSTRAINT rel_ponto_hipsometrico_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_barragem ADD CONSTRAINT hid_barragem_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_barragem ADD CONSTRAINT hid_barragem_usoprincipal_fk FOREIGN KEY (usoprincipal) REFERENCES dominios.uso_principal(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_barragem ADD CONSTRAINT hid_barragem_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_barragem ADD CONSTRAINT hid_barragem_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_terreno_erodido_l ADD CONSTRAINT rel_terreno_erodido_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_terreno_erodido_l ADD CONSTRAINT rel_terreno_erodido_l_tipoerosao_fk FOREIGN KEY (tipoerosao) REFERENCES dominios.tipo_erosao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_terreno_erodido_l ADD CONSTRAINT rel_terreno_erodido_l_situacaoterreno_fk FOREIGN KEY (situacaoterreno) REFERENCES dominios.situacao_terreno(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_curva_nivel_l ADD CONSTRAINT rel_curva_nivel_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_curva_nivel_l ADD CONSTRAINT rel_curva_nivel_l_tipocurvanivel_fk FOREIGN KEY (tipocurvanivel) REFERENCES dominios.tipo_curva_nivel(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_curva_nivel_l ADD CONSTRAINT rel_curva_nivel_l_depressao_fk FOREIGN KEY (depressao) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -8038,33 +7694,29 @@ ALTER TABLE pe.hid_quebramar_molhe_l ADD CONSTRAINT hid_quebramar_molhe_l_operac
 ALTER TABLE pe.hid_quebramar_molhe_l ADD CONSTRAINT hid_quebramar_molhe_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_quebramar_molhe_l ADD CONSTRAINT hid_quebramar_molhe_l_situacaoemagua_fk FOREIGN KEY (situacaoemagua) REFERENCES dominios.situacao_em_agua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_quebramar_molhe_l ADD CONSTRAINT hid_quebramar_molhe_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_descontinuidade_geometrica_l ADD CONSTRAINT rel_descontinuidade_geometrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_descontinuidade_geometrica_l ADD CONSTRAINT rel_descontinuidade_geometrica_l_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_brejo_pantano_a ADD CONSTRAINT veg_brejo_pantano_a_antropizada_fk FOREIGN KEY (antropizada) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_brejo_pantano_a ADD CONSTRAINT veg_brejo_pantano_a_secundaria_fk FOREIGN KEY (secundaria) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_brejo_pantano_a ADD CONSTRAINT veg_brejo_pantano_a_classificacaoporte_fk FOREIGN KEY (classificacaoporte) REFERENCES dominios.classificacao_porte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_brejo_pantano_a ADD CONSTRAINT veg_brejo_pantano_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_brejo_pantano_a ADD CONSTRAINT veg_brejo_pantano_a_densidade_fk FOREIGN KEY (densidade) REFERENCES dominios.densidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_brejo_pantano_a ADD CONSTRAINT veg_brejo_pantano_a_tipoveg_fk FOREIGN KEY (tipoveg) REFERENCES dominios.tipo_vegetacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_antropizada_fk FOREIGN KEY (antropizada) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_secundaria_fk FOREIGN KEY (secundaria) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_classificacaoporte_fk FOREIGN KEY (classificacaoporte) REFERENCES dominios.classificacao_porte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_densidade_fk FOREIGN KEY (densidade) REFERENCES dominios.densidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_tipoveg_fk FOREIGN KEY (tipoveg) REFERENCES dominios.tipo_vegetacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.lpal_limite_politico_adm_l ADD CONSTRAINT lpal_limite_politico_adm_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.lpal_limite_politico_adm_l ADD CONSTRAINT lpal_limite_politico_adm_l_referenciallegal_fk FOREIGN KEY (referenciallegal) REFERENCES dominios.referencial_legal(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_tipoexposicao_fk FOREIGN KEY (tipoexposicao) REFERENCES dominios.tipo_exposicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_tipoequipdesenvsocial_fk FOREIGN KEY (tipoequipdesenvsocial) REFERENCES dominios.tipo_equip_desenv_social(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_unidadevolume_fk FOREIGN KEY (unidadevolume) REFERENCES dominios.unidade_volume(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_situacaoagua_fk FOREIGN KEY (situacaoagua) REFERENCES dominios.situacao_agua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_tipodepgeral_fk FOREIGN KEY (tipodepgeral) REFERENCES dominios.tipo_dep_geral(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_localizacaoequipdesenvsocial_fk FOREIGN KEY (localizacaoequipdesenvsocial) REFERENCES dominios.local_equip_desenv_social(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_finalidadedep_fk FOREIGN KEY (finalidadedep) REFERENCES dominios.finalidade_deposito(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_tratamento_fk FOREIGN KEY (tratamento) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_unidade_conservacao_a ADD CONSTRAINT lpal_unidade_conservacao_a_tipounidprotegida_fk FOREIGN KEY (tipounidprotegida) REFERENCES dominios.tipo_unid_protegida(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_unidade_conservacao_a ADD CONSTRAINT lpal_unidade_conservacao_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_unidade_conservacao_a ADD CONSTRAINT lpal_unidade_conservacao_a_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_unidade_conservacao_a ADD CONSTRAINT lpal_unidade_conservacao_a_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_terreno_erodido_l ADD CONSTRAINT rel_terreno_erodido_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_terreno_erodido_l ADD CONSTRAINT rel_terreno_erodido_l_tipoerosao_fk FOREIGN KEY (tipoerosao) REFERENCES dominios.tipo_erosao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_terreno_erodido_l ADD CONSTRAINT rel_terreno_erodido_l_situacaoterreno_fk FOREIGN KEY (situacaoterreno) REFERENCES dominios.situacao_terreno(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_ponto_drenagem_p ADD CONSTRAINT hid_ponto_drenagem_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_ponto_drenagem_p ADD CONSTRAINT hid_ponto_drenagem_p_relacionado_fk FOREIGN KEY (relacionado) REFERENCES dominios.relacionado(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_banco_areia ADD CONSTRAINT hid_banco_areia_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_banco_areia ADD CONSTRAINT hid_banco_areia_materialpredominante_fk FOREIGN KEY (materialpredominante) REFERENCES dominios.material_predominante(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_banco_areia ADD CONSTRAINT hid_banco_areia_tipobanco_fk FOREIGN KEY (tipobanco) REFERENCES dominios.tipo_banco(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_banco_areia ADD CONSTRAINT hid_banco_areia_situacaoemagua_fk FOREIGN KEY (situacaoemagua) REFERENCES dominios.situacao_em_agua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_descontinuidade_geometrica_p ADD CONSTRAINT rel_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_descontinuidade_geometrica_p ADD CONSTRAINT rel_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_passagem_elevada_viaduto_l ADD CONSTRAINT tra_passagem_elevada_viaduto_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_passagem_elevada_viaduto_l ADD CONSTRAINT tra_passagem_elevada_viaduto_l_tipopavimentacao_fk FOREIGN KEY (tipopavimentacao) REFERENCES dominios.tipo_pavimentacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_passagem_elevada_viaduto_l ADD CONSTRAINT tra_passagem_elevada_viaduto_l_necessitamanutencao_fk FOREIGN KEY (necessitamanutencao) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -8079,12 +7731,7 @@ ALTER TABLE pe.dut_condutor_hidrico_l ADD CONSTRAINT dut_condutor_hidrico_l_geom
 ALTER TABLE pe.dut_condutor_hidrico_l ADD CONSTRAINT dut_condutor_hidrico_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.dut_condutor_hidrico_l ADD CONSTRAINT dut_condutor_hidrico_l_setor_fk FOREIGN KEY (setor) REFERENCES dominios.setor(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.dut_condutor_hidrico_l ADD CONSTRAINT dut_condutor_hidrico_l_tipotrechoduto_fk FOREIGN KEY (tipotrechoduto) REFERENCES dominios.tipo_trecho_duto(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_usoprincipal_fk FOREIGN KEY (usoprincipal) REFERENCES dominios.uso_principal(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_finalidade_fk FOREIGN KEY (finalidade) REFERENCES dominios.finalidade_galeria_bueiro(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_corredeira_l ADD CONSTRAINT hid_corredeira_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_mangue_a ADD CONSTRAINT veg_mangue_a_antropizada_fk FOREIGN KEY (antropizada) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_mangue_a ADD CONSTRAINT veg_mangue_a_secundaria_fk FOREIGN KEY (secundaria) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_mangue_a ADD CONSTRAINT veg_mangue_a_classificacaoporte_fk FOREIGN KEY (classificacaoporte) REFERENCES dominios.classificacao_porte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -8098,49 +7745,57 @@ ALTER TABLE pe.hid_limite_massa_dagua_l ADD CONSTRAINT hid_limite_massa_dagua_l_
 ALTER TABLE pe.hid_limite_massa_dagua_l ADD CONSTRAINT hid_limite_massa_dagua_l_tipolimmassa_fk FOREIGN KEY (tipolimmassa) REFERENCES dominios.tipo_lim_massa(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_aterro_l ADD CONSTRAINT rel_aterro_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.rel_aterro_l ADD CONSTRAINT rel_aterro_l_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_rocha_l ADD CONSTRAINT rel_rocha_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_rocha_l ADD CONSTRAINT rel_rocha_l_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_rocha_l ADD CONSTRAINT rel_rocha_l_formarocha_fk FOREIGN KEY (formarocha) REFERENCES dominios.forma_rocha(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_alter_fisiog_antropica_a ADD CONSTRAINT rel_alter_fisiog_antropica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_alter_fisiog_antropica_a ADD CONSTRAINT rel_alter_fisiog_antropica_a_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_queda_dagua_p ADD CONSTRAINT hid_queda_dagua_p_tipoqueda_fk FOREIGN KEY (tipoqueda) REFERENCES dominios.tipo_queda(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_queda_dagua_p ADD CONSTRAINT hid_queda_dagua_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_tipotrechomassadagua_fk FOREIGN KEY (tipotrechomassadagua) REFERENCES dominios.tipo_trecho_massa(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_dominialidade_fk FOREIGN KEY (dominialidade) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_salgada_fk FOREIGN KEY (salgada) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_artificial_fk FOREIGN KEY (artificial) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_tipomassadagua_fk FOREIGN KEY (tipomassadagua) REFERENCES dominios.tipo_massa_dagua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_regime_fk FOREIGN KEY (regime) REFERENCES dominios.regime(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.tra_caminho_carrocavel_l ADD CONSTRAINT tra_caminho_carrocavel_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_p ADD CONSTRAINT enc_est_gerad_energia_eletrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_p ADD CONSTRAINT enc_est_gerad_energia_eletrica_p_tipoestgerad_fk FOREIGN KEY (tipoestgerad) REFERENCES dominios.tipo_est_gerad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_p ADD CONSTRAINT enc_est_gerad_energia_eletrica_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_p ADD CONSTRAINT enc_est_gerad_energia_eletrica_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_alter_fisiog_antropica_l ADD CONSTRAINT rel_alter_fisiog_antropica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_alter_fisiog_antropica_l ADD CONSTRAINT rel_alter_fisiog_antropica_l_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_destinacaocemiterio_fk FOREIGN KEY (destinacaocemiterio) REFERENCES dominios.destinacao_cemiterio(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_tipocemiterio_fk FOREIGN KEY (tipocemiterio) REFERENCES dominios.tipo_cemiterio(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_denominacaoassociada_fk FOREIGN KEY (denominacaoassociada) REFERENCES dominios.denominacao_associada(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_aterro_a ADD CONSTRAINT rel_aterro_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_aterro_a ADD CONSTRAINT rel_aterro_a_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_queda_dagua_a ADD CONSTRAINT hid_queda_dagua_a_tipoqueda_fk FOREIGN KEY (tipoqueda) REFERENCES dominios.tipo_queda(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_queda_dagua_a ADD CONSTRAINT hid_queda_dagua_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_tipounidprotegida_fk FOREIGN KEY (tipounidprotegida) REFERENCES dominios.tipo_unid_protegida(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_a ADD CONSTRAINT enc_est_gerad_energia_eletrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_a ADD CONSTRAINT enc_est_gerad_energia_eletrica_a_tipoestgerad_fk FOREIGN KEY (tipoestgerad) REFERENCES dominios.tipo_est_gerad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_a ADD CONSTRAINT enc_est_gerad_energia_eletrica_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_a ADD CONSTRAINT enc_est_gerad_energia_eletrica_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_l ADD CONSTRAINT enc_est_gerad_energia_eletrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_l ADD CONSTRAINT enc_est_gerad_energia_eletrica_l_tipoestgerad_fk FOREIGN KEY (tipoestgerad) REFERENCES dominios.tipo_est_gerad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_l ADD CONSTRAINT enc_est_gerad_energia_eletrica_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_l ADD CONSTRAINT enc_est_gerad_energia_eletrica_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.fer_cremalheira_l ADD CONSTRAINT fer_cremalheira_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.fer_cremalheira_l ADD CONSTRAINT fer_cremalheira_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.fer_cremalheira_l ADD CONSTRAINT fer_cremalheira_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_alter_fisiog_antropica_l ADD CONSTRAINT rel_alter_fisiog_antropica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_alter_fisiog_antropica_l ADD CONSTRAINT rel_alter_fisiog_antropica_l_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_aterro_p ADD CONSTRAINT rel_aterro_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_aterro_p ADD CONSTRAINT rel_aterro_p_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_queda_dagua_l ADD CONSTRAINT hid_queda_dagua_l_tipoqueda_fk FOREIGN KEY (tipoqueda) REFERENCES dominios.tipo_queda(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_queda_dagua_l ADD CONSTRAINT hid_queda_dagua_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_terreno_erodido ADD CONSTRAINT rel_terreno_erodido_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_terreno_erodido ADD CONSTRAINT rel_terreno_erodido_tipoerosao_fk FOREIGN KEY (tipoerosao) REFERENCES dominios.tipo_erosao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_terreno_erodido ADD CONSTRAINT rel_terreno_erodido_situacaoterreno_fk FOREIGN KEY (situacaoterreno) REFERENCES dominios.situacao_terreno(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_elemento_fisiografico ADD CONSTRAINT rel_elemento_fisiografico_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_equip_agropec_a ADD CONSTRAINT eco_equip_agropec_a_tipoequipagropec_fk FOREIGN KEY (tipoequipagropec) REFERENCES dominios.tipo_equip_agropec(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_equip_agropec_a ADD CONSTRAINT eco_equip_agropec_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_equip_agropec_a ADD CONSTRAINT eco_equip_agropec_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_equip_agropec_a ADD CONSTRAINT eco_equip_agropec_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_rocha_a ADD CONSTRAINT rel_rocha_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_rocha_a ADD CONSTRAINT rel_rocha_a_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_rocha_a ADD CONSTRAINT rel_rocha_a_formarocha_fk FOREIGN KEY (formarocha) REFERENCES dominios.forma_rocha(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.eco_plataforma ADD CONSTRAINT eco_plataforma_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.eco_plataforma ADD CONSTRAINT eco_plataforma_tipoplataforma_fk FOREIGN KEY (tipoplataforma) REFERENCES dominios.tipo_plataforma(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_queda_dagua_a ADD CONSTRAINT hid_queda_dagua_a_tipoqueda_fk FOREIGN KEY (tipoqueda) REFERENCES dominios.tipo_queda(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_queda_dagua_a ADD CONSTRAINT hid_queda_dagua_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_alter_fisiog_antropica_p ADD CONSTRAINT rel_alter_fisiog_antropica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_alter_fisiog_antropica_p ADD CONSTRAINT rel_alter_fisiog_antropica_p_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.dut_faixa_dominial_duto_a ADD CONSTRAINT dut_faixa_dominial_duto_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.hid_corredeira_l ADD CONSTRAINT hid_corredeira_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_antena_comunic_p ADD CONSTRAINT enc_antena_comunic_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_antena_comunic_p ADD CONSTRAINT enc_antena_comunic_p_posicaoreledific_fk FOREIGN KEY (posicaoreledific) REFERENCES dominios.posicao_rel_edific(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_rocha_p ADD CONSTRAINT rel_rocha_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_rocha_p ADD CONSTRAINT rel_rocha_p_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_rocha_p ADD CONSTRAINT rel_rocha_p_formarocha_fk FOREIGN KEY (formarocha) REFERENCES dominios.forma_rocha(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_terreno_erodido ADD CONSTRAINT rel_terreno_erodido_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_terreno_erodido ADD CONSTRAINT rel_terreno_erodido_tipoerosao_fk FOREIGN KEY (tipoerosao) REFERENCES dominios.tipo_erosao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rel_terreno_erodido ADD CONSTRAINT rel_terreno_erodido_situacaoterreno_fk FOREIGN KEY (situacaoterreno) REFERENCES dominios.situacao_terreno(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rod_descontinuidade_geometrica_l ADD CONSTRAINT rod_descontinuidade_geometrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rod_descontinuidade_geometrica_l ADD CONSTRAINT rod_descontinuidade_geometrica_l_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_p ADD CONSTRAINT enc_est_gerad_energia_eletr_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_p ADD CONSTRAINT enc_est_gerad_energia_eletr_p_tipoestgerad_fk FOREIGN KEY (tipoestgerad) REFERENCES dominios.tipo_est_gerad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_p ADD CONSTRAINT enc_est_gerad_energia_eletr_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_p ADD CONSTRAINT enc_est_gerad_energia_eletr_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_vegetacao_a ADD CONSTRAINT veg_vegetacao_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_vegetacao_a ADD CONSTRAINT veg_vegetacao_a_tipoveg_fk FOREIGN KEY (tipoveg) REFERENCES dominios.tipo_vegetacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.veg_vegetacao_a ADD CONSTRAINT veg_vegetacao_a_classificacaoporte_fk FOREIGN KEY (classificacaoporte) REFERENCES dominios.classificacao_porte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_plataforma_a ADD CONSTRAINT eco_plataforma_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_plataforma_a ADD CONSTRAINT eco_plataforma_a_tipoplataforma_fk FOREIGN KEY (tipoplataforma) REFERENCES dominios.tipo_plataforma(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_dique_a ADD CONSTRAINT hid_dique_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -8150,60 +7805,40 @@ ALTER TABLE pe.veg_veg_area_contato_a ADD CONSTRAINT veg_veg_area_contato_a_clas
 ALTER TABLE pe.veg_veg_area_contato_a ADD CONSTRAINT veg_veg_area_contato_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_veg_area_contato_a ADD CONSTRAINT veg_veg_area_contato_a_densidade_fk FOREIGN KEY (densidade) REFERENCES dominios.densidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.veg_veg_area_contato_a ADD CONSTRAINT veg_veg_area_contato_a_tipoveg_fk FOREIGN KEY (tipoveg) REFERENCES dominios.tipo_vegetacao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_unidade_conservacao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_snuc_a_tipounidprotegida_fk FOREIGN KEY (tipounidprotegida) REFERENCES dominios.tipo_unid_protegida(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_unidade_conservacao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_snuc_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_unidade_conservacao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_snuc_a_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_unidade_conservacao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_snuc_a_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_dique_l ADD CONSTRAINT hid_dique_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.pto_pto_geod_topo_controle_p ADD CONSTRAINT pto_pto_geod_topo_controle_p_sistemageodesico_fk FOREIGN KEY (sistemageodesico) REFERENCES dominios.sistema_geodesico(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.pto_pto_geod_topo_controle_p ADD CONSTRAINT pto_pto_geod_topo_controle_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.pto_pto_geod_topo_controle_p ADD CONSTRAINT pto_pto_geod_topo_controle_p_tiporef_fk FOREIGN KEY (tiporef) REFERENCES dominios.tipo_ref(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.pto_pto_geod_topo_controle_p ADD CONSTRAINT pto_pto_geod_topo_controle_p_referencialaltim_fk FOREIGN KEY (referencialaltim) REFERENCES dominios.referencial_altim(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_area_pub_militar_a ADD CONSTRAINT lpal_area_pub_militar_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_area_pub_militar_a ADD CONSTRAINT lpal_area_pub_militar_a_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.lpal_area_pub_militar_a ADD CONSTRAINT lpal_area_pub_militar_a_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rod_descontinuidade_geometrica_a ADD CONSTRAINT rod_descontinuidade_geometrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rod_descontinuidade_geometrica_a ADD CONSTRAINT rod_descontinuidade_geometrica_a_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.dut_descontinuidade_geometrica_p ADD CONSTRAINT dut_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.dut_descontinuidade_geometrica_p ADD CONSTRAINT dut_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_tipoquebramolhe_fk FOREIGN KEY (tipoquebramolhe) REFERENCES dominios.tipo_quebra_molhe(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_situacaoemagua_fk FOREIGN KEY (situacaoemagua) REFERENCES dominios.situacao_em_agua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.lpal_pais_a ADD CONSTRAINT lpal_pais_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.enc_zona_linhas_energia_comunicacao_a ADD CONSTRAINT enc_zona_linhas_energia_comunicacao_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_equip_agropec_l ADD CONSTRAINT eco_equip_agropec_l_tipoequipagropec_fk FOREIGN KEY (tipoequipagropec) REFERENCES dominios.tipo_equip_agropec(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_equip_agropec_l ADD CONSTRAINT eco_equip_agropec_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_equip_agropec_l ADD CONSTRAINT eco_equip_agropec_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_equip_agropec_l ADD CONSTRAINT eco_equip_agropec_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.dut_descontinuidade_geometrica_l ADD CONSTRAINT dut_descontinuidade_geometrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.dut_descontinuidade_geometrica_l ADD CONSTRAINT dut_descontinuidade_geometrica_l_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_equip_agropec_p ADD CONSTRAINT eco_equip_agropec_p_tipoequipagropec_fk FOREIGN KEY (tipoequipagropec) REFERENCES dominios.tipo_equip_agropec(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_equip_agropec_p ADD CONSTRAINT eco_equip_agropec_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_equip_agropec_p ADD CONSTRAINT eco_equip_agropec_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.eco_equip_agropec_p ADD CONSTRAINT eco_equip_agropec_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_a ADD CONSTRAINT enc_est_gerad_energia_eletr_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_a ADD CONSTRAINT enc_est_gerad_energia_eletr_a_tipoestgerad_fk FOREIGN KEY (tipoestgerad) REFERENCES dominios.tipo_est_gerad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_a ADD CONSTRAINT enc_est_gerad_energia_eletr_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_a ADD CONSTRAINT enc_est_gerad_energia_eletr_a_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.hid_dique_p ADD CONSTRAINT hid_dique_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE pe.lpal_area_especial_a ADD CONSTRAINT lpal_area_especial_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.aer_descontinuidade_geometrica_l ADD CONSTRAINT aer_descontinuidade_geometrica_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.aer_descontinuidade_geometrica_l ADD CONSTRAINT aer_descontinuidade_geometrica_l_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.dut_descontinuidade_geometrica_a ADD CONSTRAINT dut_descontinuidade_geometrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.dut_descontinuidade_geometrica_a ADD CONSTRAINT dut_descontinuidade_geometrica_a_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rod_descontinuidade_geometrica_p ADD CONSTRAINT rod_descontinuidade_geometrica_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.rod_descontinuidade_geometrica_p ADD CONSTRAINT rod_descontinuidade_geometrica_p_motivodescontinuidade_fk FOREIGN KEY (motivodescontinuidade) REFERENCES dominios.motivodescontinuidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_l ADD CONSTRAINT enc_est_gerad_energia_eletr_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_l ADD CONSTRAINT enc_est_gerad_energia_eletr_l_tipoestgerad_fk FOREIGN KEY (tipoestgerad) REFERENCES dominios.tipo_est_gerad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_l ADD CONSTRAINT enc_est_gerad_energia_eletr_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_l ADD CONSTRAINT enc_est_gerad_energia_eletr_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_situacaoespacial_fk FOREIGN KEY (situacaoespacial) REFERENCES dominios.situacao_espacial(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.booleano_estendido(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_tipotravessiaped_fk FOREIGN KEY (tipotravessiaped) REFERENCES dominios.tipo_travessia_ped(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_matconstr_fk FOREIGN KEY (matconstr) REFERENCES dominios.mat_constr(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE ge.edf_edif_pub_civil_a ADD CONSTRAINT edf_edif_pub_civil_a_classeativecon_check CHECK (classeativecon <@ ARRAY[10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,5::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_pub_civil_a ADD CONSTRAINT edf_edif_pub_civil_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[15::SMALLINT,16::SMALLINT,19::SMALLINT,20::SMALLINT,23::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.rel_terreno_erodido_p ADD CONSTRAINT rel_terreno_erodido_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_terreno_erodido_p ADD CONSTRAINT rel_terreno_erodido_p_tipoerosao_fk FOREIGN KEY (tipoerosao) REFERENCES dominios.tipo_erosao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.rel_terreno_erodido_p ADD CONSTRAINT rel_terreno_erodido_p_situacaoterreno_fk FOREIGN KEY (situacaoterreno) REFERENCES dominios.situacao_terreno(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.lpal_area_pub_militar_a ADD CONSTRAINT lpal_area_pub_militar_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.lpal_area_pub_militar_a ADD CONSTRAINT lpal_area_pub_militar_a_jurisdicao_fk FOREIGN KEY (jurisdicao) REFERENCES dominios.jurisdicao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE pe.lpal_area_pub_militar_a ADD CONSTRAINT lpal_area_pub_militar_a_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE ge.edf_edif_pub_civil_a ADD CONSTRAINT edf_edif_pub_civil_a_classeativecon_check CHECK (classeativecon <@ ARRAY[10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,5::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,98::SMALLINT])#
+ALTER TABLE ge.edf_edif_pub_civil_a ADD CONSTRAINT edf_edif_pub_civil_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[15::SMALLINT,16::SMALLINT,19::SMALLINT,20::SMALLINT,23::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,98::SMALLINT])#
 ALTER TABLE ge.edf_edif_pub_civil_a ADD CONSTRAINT edf_edif_pub_civil_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_pub_civil_a ADD CONSTRAINT edf_edif_pub_civil_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_pub_civil_a ADD CONSTRAINT edf_edif_pub_civil_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_pub_civil_a ADD CONSTRAINT edf_edif_pub_civil_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_pub_civil_a ADD CONSTRAINT edf_edif_pub_civil_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_pub_civil_a ADD CONSTRAINT edf_edif_pub_civil_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_pub_civil_a ADD CONSTRAINT edf_edif_pub_civil_a_tipoedifpubcivil_check CHECK (tipoedifpubcivil <@ ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,2::SMALLINT,22::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_pub_civil_a ADD CONSTRAINT edf_edif_pub_civil_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
@@ -8213,11 +7848,10 @@ ALTER TABLE ge.edf_edif_pub_civil_a ADD CONSTRAINT edf_edif_pub_civil_a_proprioa
 ALTER TABLE ge.edf_edif_pub_civil_a ADD CONSTRAINT edf_edif_pub_civil_a_tipousoedif_check CHECK (tipousoedif = ANY(ARRAY[1::SMALLINT,2::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_pub_civil_a ADD CONSTRAINT edf_edif_pub_civil_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.edf_edif_industrial_p ADD CONSTRAINT edf_edif_industrial_p_chamine_check CHECK (chamine = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_edif_industrial_p ADD CONSTRAINT edf_edif_industrial_p_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_industrial_p ADD CONSTRAINT edf_edif_industrial_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_industrial_p ADD CONSTRAINT edf_edif_industrial_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_industrial_p ADD CONSTRAINT edf_edif_industrial_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_industrial_p ADD CONSTRAINT edf_edif_industrial_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_industrial_p ADD CONSTRAINT edf_edif_industrial_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,19::SMALLINT,20::SMALLINT,21::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,99::SMALLINT])#
+ALTER TABLE ge.edf_edif_industrial_p ADD CONSTRAINT edf_edif_industrial_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,19::SMALLINT,20::SMALLINT,21::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_industrial_p ADD CONSTRAINT edf_edif_industrial_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_industrial_p ADD CONSTRAINT edf_edif_industrial_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_industrial_p ADD CONSTRAINT edf_edif_industrial_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
@@ -8237,11 +7871,10 @@ ALTER TABLE ge.edf_edif_servico_social_p ADD CONSTRAINT edf_edif_servico_social_
 ALTER TABLE ge.edf_edif_servico_social_p ADD CONSTRAINT edf_edif_servico_social_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.cb_area_desenv_social_a ADD CONSTRAINT cb_area_desenv_social_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_industrial_a ADD CONSTRAINT edf_edif_industrial_a_chamine_check CHECK (chamine = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_edif_industrial_a ADD CONSTRAINT edf_edif_industrial_a_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_industrial_a ADD CONSTRAINT edf_edif_industrial_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_industrial_a ADD CONSTRAINT edf_edif_industrial_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_industrial_a ADD CONSTRAINT edf_edif_industrial_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_industrial_a ADD CONSTRAINT edf_edif_industrial_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_industrial_a ADD CONSTRAINT edf_edif_industrial_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,19::SMALLINT,20::SMALLINT,21::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,99::SMALLINT])#
+ALTER TABLE ge.edf_edif_industrial_a ADD CONSTRAINT edf_edif_industrial_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,19::SMALLINT,20::SMALLINT,21::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_industrial_a ADD CONSTRAINT edf_edif_industrial_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_industrial_a ADD CONSTRAINT edf_edif_industrial_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_industrial_a ADD CONSTRAINT edf_edif_industrial_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
@@ -8274,45 +7907,49 @@ ALTER TABLE ge.edf_posto_policia_militar_p ADD CONSTRAINT edf_posto_policia_mili
 ALTER TABLE ge.edf_posto_policia_militar_p ADD CONSTRAINT edf_posto_policia_militar_p_tipousoedif_check CHECK (tipousoedif = ANY(ARRAY[6::SMALLINT]))#
 ALTER TABLE ge.edf_posto_policia_militar_p ADD CONSTRAINT edf_posto_policia_militar_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.cb_area_de_propriedade_particular_a ADD CONSTRAINT cb_area_de_propriedade_particular_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_edif_ext_mineral_a ADD CONSTRAINT edf_edif_ext_mineral_a_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_ext_mineral_a ADD CONSTRAINT edf_edif_ext_mineral_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_ext_mineral_a ADD CONSTRAINT edf_edif_ext_mineral_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_ext_mineral_a ADD CONSTRAINT edf_edif_ext_mineral_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_ext_mineral_a ADD CONSTRAINT edf_edif_ext_mineral_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_ext_mineral_a ADD CONSTRAINT edf_edif_ext_mineral_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[10::SMALLINT,11::SMALLINT,13::SMALLINT,14::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_ext_mineral_a ADD CONSTRAINT edf_edif_ext_mineral_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.edf_edif_ext_mineral_a ADD CONSTRAINT edf_edif_ext_mineral_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[10::SMALLINT,11::SMALLINT,13::SMALLINT,14::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_ext_mineral_a ADD CONSTRAINT edf_edif_ext_mineral_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_edif_ext_mineral_a ADD CONSTRAINT edf_edif_ext_mineral_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_ext_mineral_a ADD CONSTRAINT edf_edif_ext_mineral_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.edf_edif_ext_mineral_a ADD CONSTRAINT edf_edif_ext_mineral_a_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_ext_mineral_a ADD CONSTRAINT edf_edif_ext_mineral_a_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_ext_mineral_a ADD CONSTRAINT edf_edif_ext_mineral_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_tipoedifturist_check CHECK (tipoedifturist = ANY(ARRAY[10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[92::SMALLINT])#
-ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_tombada_check CHECK (tombada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_ovgd_check CHECK (ovgd = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
+ALTER TABLE ge.ver_jardim_a ADD CONSTRAINT ver_jardim_a_terreno_check CHECK (terreno = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.ver_jardim_a ADD CONSTRAINT ver_jardim_a_tipolavoura_check CHECK (tipolavoura = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.ver_jardim_a ADD CONSTRAINT ver_jardim_a_finalidade_check CHECK (finalidade = ANY(ARRAY[4::SMALLINT]))#
+ALTER TABLE ge.ver_jardim_a ADD CONSTRAINT ver_jardim_a_cultivopredominante_check CHECK (cultivopredominante <@ ARRAY[106::SMALLINT,72::SMALLINT,96::SMALLINT,99::SMALLINT])#
+ALTER TABLE ge.ver_jardim_a ADD CONSTRAINT ver_jardim_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.ver_jardim_a ADD CONSTRAINT ver_jardim_a_classificacaoporte_check CHECK (classificacaoporte = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT]))#
+ALTER TABLE ge.ver_jardim_a ADD CONSTRAINT ver_jardim_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[2::SMALLINT]))#
 ALTER TABLE ge.cb_area_ext_mineral_a ADD CONSTRAINT cb_area_ext_mineral_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_edif_ext_mineral_p ADD CONSTRAINT edf_edif_ext_mineral_p_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_ext_mineral_p ADD CONSTRAINT edf_edif_ext_mineral_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_ext_mineral_p ADD CONSTRAINT edf_edif_ext_mineral_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_ext_mineral_p ADD CONSTRAINT edf_edif_ext_mineral_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_ext_mineral_p ADD CONSTRAINT edf_edif_ext_mineral_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_ext_mineral_p ADD CONSTRAINT edf_edif_ext_mineral_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[10::SMALLINT,11::SMALLINT,13::SMALLINT,14::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_ext_mineral_p ADD CONSTRAINT edf_edif_ext_mineral_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.edf_edif_ext_mineral_p ADD CONSTRAINT edf_edif_ext_mineral_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[10::SMALLINT,11::SMALLINT,13::SMALLINT,14::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_ext_mineral_p ADD CONSTRAINT edf_edif_ext_mineral_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_edif_ext_mineral_p ADD CONSTRAINT edf_edif_ext_mineral_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_ext_mineral_p ADD CONSTRAINT edf_edif_ext_mineral_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.edf_edif_ext_mineral_p ADD CONSTRAINT edf_edif_ext_mineral_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_ext_mineral_p ADD CONSTRAINT edf_edif_ext_mineral_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_ext_mineral_p ADD CONSTRAINT edf_edif_ext_mineral_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.cb_area_ensino_a ADD CONSTRAINT cb_area_ensino_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.cb_area_servico_social_a ADD CONSTRAINT cb_area_servico_social_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_classeativecon_check CHECK (classeativecon <@ ARRAY[12::SMALLINT,14::SMALLINT,15::SMALLINT,99::SMALLINT])#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_tipoedifpubcivil_check CHECK (tipoedifpubcivil <@ ARRAY[1::SMALLINT])#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_tipousoedif_check CHECK (tipousoedif = ANY(ARRAY[2::SMALLINT]))#
+ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT])#
 ALTER TABLE ge.edf_edif_saude_p ADD CONSTRAINT edf_edif_saude_p_classeativecon_check CHECK (classeativecon <@ ARRAY[27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,98::SMALLINT])#
 ALTER TABLE ge.edf_edif_saude_p ADD CONSTRAINT edf_edif_saude_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[30::SMALLINT,31::SMALLINT,6::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_saude_p ADD CONSTRAINT edf_edif_saude_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -8326,12 +7963,6 @@ ALTER TABLE ge.edf_edif_saude_p ADD CONSTRAINT edf_edif_saude_p_cultura_check CH
 ALTER TABLE ge.edf_edif_saude_p ADD CONSTRAINT edf_edif_saude_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_saude_p ADD CONSTRAINT edf_edif_saude_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.cb_area_est_med_fenomenos_a ADD CONSTRAINT cb_area_est_med_fenomenos_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.cb_descontinuidade_geometrica_a ADD CONSTRAINT cb_descontinuidade_geometrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.cb_descontinuidade_geometrica_a ADD CONSTRAINT cb_descontinuidade_geometrica_a_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE ge.ver_descontinuidade_geometrica_l ADD CONSTRAINT ver_descontinuidade_geometrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.ver_descontinuidade_geometrica_l ADD CONSTRAINT ver_descontinuidade_geometrica_l_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE ge.cb_descontinuidade_geometrica_l ADD CONSTRAINT cb_descontinuidade_geometrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.cb_descontinuidade_geometrica_l ADD CONSTRAINT cb_descontinuidade_geometrica_l_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE ge.edf_posto_combustivel_p ADD CONSTRAINT edf_posto_combustivel_p_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
 ALTER TABLE ge.edf_posto_combustivel_p ADD CONSTRAINT edf_posto_combustivel_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
 ALTER TABLE ge.edf_posto_combustivel_p ADD CONSTRAINT edf_posto_combustivel_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -8353,13 +7984,13 @@ ALTER TABLE ge.edf_posto_policia_rod_federal_a ADD CONSTRAINT edf_posto_policia_
 ALTER TABLE ge.edf_posto_policia_rod_federal_a ADD CONSTRAINT edf_posto_policia_rod_federal_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_posto_policia_rod_federal_a ADD CONSTRAINT edf_posto_policia_rod_federal_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
 ALTER TABLE ge.edf_posto_policia_rod_federal_a ADD CONSTRAINT edf_posto_policia_rod_federal_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_posto_policia_rod_federal_a ADD CONSTRAINT edf_posto_policia_rod_federal_a_tipoedifpubcivil_check CHECK (tipoedifpubcivil <@ ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,2::SMALLINT,22::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE ge.edf_posto_policia_rod_federal_a ADD CONSTRAINT edf_posto_policia_rod_federal_a_tipoedifpubcivil_check CHECK (tipoedifpubcivil <@ ARRAY[1::SMALLINT])#
 ALTER TABLE ge.edf_posto_policia_rod_federal_a ADD CONSTRAINT edf_posto_policia_rod_federal_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_posto_policia_rod_federal_a ADD CONSTRAINT edf_posto_policia_rod_federal_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.edf_posto_policia_rod_federal_a ADD CONSTRAINT edf_posto_policia_rod_federal_a_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_posto_policia_rod_federal_a ADD CONSTRAINT edf_posto_policia_rod_federal_a_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_posto_policia_rod_federal_a ADD CONSTRAINT edf_posto_policia_rod_federal_a_tipousoedif_check CHECK (tipousoedif = ANY(ARRAY[2::SMALLINT]))#
-ALTER TABLE ge.edf_posto_policia_rod_federal_a ADD CONSTRAINT edf_posto_policia_rod_federal_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
+ALTER TABLE ge.edf_posto_policia_rod_federal_a ADD CONSTRAINT edf_posto_policia_rod_federal_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT])#
 ALTER TABLE ge.edf_edif_saude_a ADD CONSTRAINT edf_edif_saude_a_classeativecon_check CHECK (classeativecon <@ ARRAY[27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,98::SMALLINT])#
 ALTER TABLE ge.edf_edif_saude_a ADD CONSTRAINT edf_edif_saude_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[30::SMALLINT,31::SMALLINT,6::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_saude_a ADD CONSTRAINT edf_edif_saude_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -8372,8 +8003,6 @@ ALTER TABLE ge.edf_edif_saude_a ADD CONSTRAINT edf_edif_saude_a_situacaofisica_c
 ALTER TABLE ge.edf_edif_saude_a ADD CONSTRAINT edf_edif_saude_a_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_saude_a ADD CONSTRAINT edf_edif_saude_a_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_saude_a ADD CONSTRAINT edf_edif_saude_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.cb_descontinuidade_geometrica_p ADD CONSTRAINT cb_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.cb_descontinuidade_geometrica_p ADD CONSTRAINT cb_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE ge.edf_posto_combustivel_a ADD CONSTRAINT edf_posto_combustivel_a_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
 ALTER TABLE ge.edf_posto_combustivel_a ADD CONSTRAINT edf_posto_combustivel_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
 ALTER TABLE ge.edf_posto_combustivel_a ADD CONSTRAINT edf_posto_combustivel_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -8387,8 +8016,8 @@ ALTER TABLE ge.edf_posto_combustivel_a ADD CONSTRAINT edf_posto_combustivel_a_si
 ALTER TABLE ge.edf_posto_combustivel_a ADD CONSTRAINT edf_posto_combustivel_a_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_posto_combustivel_a ADD CONSTRAINT edf_posto_combustivel_a_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_posto_combustivel_a ADD CONSTRAINT edf_posto_combustivel_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_p ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_p_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_p ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_p ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_p_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_p ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_p ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_p ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_p_tipoedifagropec_check CHECK (tipoedifagropec <@ ARRAY[12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_p ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -8399,39 +8028,35 @@ ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_p ADD CONSTRAINT edf_edif_agropec_
 ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_p ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_p ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_p ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.cb_meio_fio_l ADD CONSTRAINT cb_meio_fio_l_comsargeta_check CHECK (comsargeta = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.cb_meio_fio_l ADD CONSTRAINT cb_meio_fio_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.laz_arquibancada_l ADD CONSTRAINT laz_arquibancada_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.laz_arquibancada_l ADD CONSTRAINT laz_arquibancada_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.laz_arquibancada_l ADD CONSTRAINT laz_arquibancada_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_classeativecon_check CHECK (classeativecon <@ ARRAY[12::SMALLINT,14::SMALLINT,15::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[3::SMALLINT]))#
 ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
 ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_tipoedifpubcivil_check CHECK (tipoedifpubcivil <@ ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,2::SMALLINT,22::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_tipoedifpubcivil_check CHECK (tipoedifpubcivil <@ ARRAY[1::SMALLINT])#
 ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_tipousoedif_check CHECK (tipousoedif = ANY(ARRAY[5::SMALLINT]))#
-ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_classeativecon_check CHECK (classeativecon <@ ARRAY[10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,5::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[15::SMALLINT,16::SMALLINT,19::SMALLINT,20::SMALLINT,23::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_tipoedifpubcivil_check CHECK (tipoedifpubcivil <@ ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,2::SMALLINT,22::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_tipousoedif_check CHECK (tipousoedif = ANY(ARRAY[1::SMALLINT,2::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
+ALTER TABLE ge.edf_posto_guarda_municipal_p ADD CONSTRAINT edf_posto_guarda_municipal_p_administracao_check CHECK (administracao <@ ARRAY[4::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[92::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_tipoediflazer_check CHECK (tipoediflazer = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.laz_arquibancada_a ADD CONSTRAINT laz_arquibancada_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.laz_arquibancada_a ADD CONSTRAINT laz_arquibancada_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.laz_arquibancada_a ADD CONSTRAINT laz_arquibancada_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -8439,8 +8064,8 @@ ALTER TABLE ge.laz_pista_competicao_p ADD CONSTRAINT laz_pista_competicao_p_geom
 ALTER TABLE ge.laz_pista_competicao_p ADD CONSTRAINT laz_pista_competicao_p_tipopistacomp_check CHECK (tipopistacomp = ANY(ARRAY[1::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.laz_pista_competicao_p ADD CONSTRAINT laz_pista_competicao_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.laz_pista_competicao_p ADD CONSTRAINT laz_pista_competicao_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_portuaria_p ADD CONSTRAINT edf_edif_constr_portuaria_p_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_constr_portuaria_p ADD CONSTRAINT edf_edif_constr_portuaria_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_portuaria_p ADD CONSTRAINT edf_edif_constr_portuaria_p_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_portuaria_p ADD CONSTRAINT edf_edif_constr_portuaria_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_constr_portuaria_p ADD CONSTRAINT edf_edif_constr_portuaria_p_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_portuaria_p ADD CONSTRAINT edf_edif_constr_portuaria_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_portuaria_p ADD CONSTRAINT edf_edif_constr_portuaria_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -8452,8 +8077,8 @@ ALTER TABLE ge.edf_edif_constr_portuaria_p ADD CONSTRAINT edf_edif_constr_portua
 ALTER TABLE ge.edf_edif_constr_portuaria_p ADD CONSTRAINT edf_edif_constr_portuaria_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_portuaria_p ADD CONSTRAINT edf_edif_constr_portuaria_p_tipoedifport_check CHECK (tipoedifport = ANY(ARRAY[15::SMALLINT,26::SMALLINT,27::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_portuaria_p ADD CONSTRAINT edf_edif_constr_portuaria_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_a ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_a_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_a ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_a ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_a_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_a ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_a ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_a ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_a_tipoedifagropec_check CHECK (tipoedifagropec <@ ARRAY[12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_agropec_ext_veg_pesca_a ADD CONSTRAINT edf_edif_agropec_ext_veg_pesca_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -8468,7 +8093,7 @@ ALTER TABLE ge.laz_pista_competicao_l ADD CONSTRAINT laz_pista_competicao_l_geom
 ALTER TABLE ge.laz_pista_competicao_l ADD CONSTRAINT laz_pista_competicao_l_tipopistacomp_check CHECK (tipopistacomp = ANY(ARRAY[1::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.laz_pista_competicao_l ADD CONSTRAINT laz_pista_competicao_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.laz_pista_competicao_l ADD CONSTRAINT laz_pista_competicao_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.cb_trecho_arruamento_a ADD CONSTRAINT cb_trecho_arruamento_a_revestimento_check CHECK (revestimento = ANY(ARRAY[3::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.cb_trecho_arruamento_a ADD CONSTRAINT cb_trecho_arruamento_a_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.cb_trecho_arruamento_a ADD CONSTRAINT cb_trecho_arruamento_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.cb_trecho_arruamento_a ADD CONSTRAINT cb_trecho_arruamento_a_canteirodivisorio_check CHECK (canteirodivisorio = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.cb_trecho_arruamento_a ADD CONSTRAINT cb_trecho_arruamento_a_tipopavimentacao_check CHECK (tipopavimentacao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
@@ -8480,26 +8105,23 @@ ALTER TABLE ge.cb_trecho_arruamento_a ADD CONSTRAINT cb_trecho_arruamento_a_situ
 ALTER TABLE ge.cb_trecho_arruamento_a ADD CONSTRAINT cb_trecho_arruamento_a_tipoarruamento_check CHECK (tipoarruamento = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_posto_guarda_municipal_a ADD CONSTRAINT edf_posto_guarda_municipal_a_classeativecon_check CHECK (classeativecon <@ ARRAY[12::SMALLINT,14::SMALLINT,15::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_posto_guarda_municipal_a ADD CONSTRAINT edf_posto_guarda_municipal_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_posto_guarda_municipal_a ADD CONSTRAINT edf_posto_guarda_municipal_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_posto_guarda_municipal_a ADD CONSTRAINT edf_posto_guarda_municipal_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[3::SMALLINT]))#
 ALTER TABLE ge.edf_posto_guarda_municipal_a ADD CONSTRAINT edf_posto_guarda_municipal_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_posto_guarda_municipal_a ADD CONSTRAINT edf_posto_guarda_municipal_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_posto_guarda_municipal_a ADD CONSTRAINT edf_posto_guarda_municipal_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
 ALTER TABLE ge.edf_posto_guarda_municipal_a ADD CONSTRAINT edf_posto_guarda_municipal_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_posto_guarda_municipal_a ADD CONSTRAINT edf_posto_guarda_municipal_a_tipoedifpubcivil_check CHECK (tipoedifpubcivil <@ ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,2::SMALLINT,22::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE ge.edf_posto_guarda_municipal_a ADD CONSTRAINT edf_posto_guarda_municipal_a_tipoedifpubcivil_check CHECK (tipoedifpubcivil <@ ARRAY[1::SMALLINT])#
 ALTER TABLE ge.edf_posto_guarda_municipal_a ADD CONSTRAINT edf_posto_guarda_municipal_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_posto_guarda_municipal_a ADD CONSTRAINT edf_posto_guarda_municipal_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.edf_posto_guarda_municipal_a ADD CONSTRAINT edf_posto_guarda_municipal_a_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_posto_guarda_municipal_a ADD CONSTRAINT edf_posto_guarda_municipal_a_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_posto_guarda_municipal_a ADD CONSTRAINT edf_posto_guarda_municipal_a_tipousoedif_check CHECK (tipousoedif = ANY(ARRAY[5::SMALLINT]))#
-ALTER TABLE ge.edf_posto_guarda_municipal_a ADD CONSTRAINT edf_posto_guarda_municipal_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
+ALTER TABLE ge.edf_posto_guarda_municipal_a ADD CONSTRAINT edf_posto_guarda_municipal_a_administracao_check CHECK (administracao <@ ARRAY[4::SMALLINT])#
 ALTER TABLE ge.laz_pista_competicao_a ADD CONSTRAINT laz_pista_competicao_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.laz_pista_competicao_a ADD CONSTRAINT laz_pista_competicao_a_tipopistacomp_check CHECK (tipopistacomp = ANY(ARRAY[1::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.laz_pista_competicao_a ADD CONSTRAINT laz_pista_competicao_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.laz_pista_competicao_a ADD CONSTRAINT laz_pista_competicao_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.laz_arquibancada_p ADD CONSTRAINT laz_arquibancada_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.laz_arquibancada_p ADD CONSTRAINT laz_arquibancada_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE ge.laz_arquibancada_p ADD CONSTRAINT laz_arquibancada_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.cb_trecho_arruamento_l ADD CONSTRAINT cb_trecho_arruamento_l_revestimento_check CHECK (revestimento = ANY(ARRAY[3::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.cb_trecho_arruamento_l ADD CONSTRAINT cb_trecho_arruamento_l_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.cb_trecho_arruamento_l ADD CONSTRAINT cb_trecho_arruamento_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.cb_trecho_arruamento_l ADD CONSTRAINT cb_trecho_arruamento_l_canteirodivisorio_check CHECK (canteirodivisorio = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.cb_trecho_arruamento_l ADD CONSTRAINT cb_trecho_arruamento_l_tipopavimentacao_check CHECK (tipopavimentacao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
@@ -8509,8 +8131,8 @@ ALTER TABLE ge.cb_trecho_arruamento_l ADD CONSTRAINT cb_trecho_arruamento_l_geom
 ALTER TABLE ge.cb_trecho_arruamento_l ADD CONSTRAINT cb_trecho_arruamento_l_meiofio_check CHECK (meiofio = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.cb_trecho_arruamento_l ADD CONSTRAINT cb_trecho_arruamento_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.cb_trecho_arruamento_l ADD CONSTRAINT cb_trecho_arruamento_l_tipoarruamento_check CHECK (tipoarruamento = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,99::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_portuaria_a ADD CONSTRAINT edf_edif_constr_portuaria_a_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_constr_portuaria_a ADD CONSTRAINT edf_edif_constr_portuaria_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_portuaria_a ADD CONSTRAINT edf_edif_constr_portuaria_a_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_portuaria_a ADD CONSTRAINT edf_edif_constr_portuaria_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_constr_portuaria_a ADD CONSTRAINT edf_edif_constr_portuaria_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_portuaria_a ADD CONSTRAINT edf_edif_constr_portuaria_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_portuaria_a ADD CONSTRAINT edf_edif_constr_portuaria_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -8545,9 +8167,6 @@ ALTER TABLE ge.laz_sitio_arqueologico ADD CONSTRAINT laz_sitio_arqueologico_cult
 ALTER TABLE ge.cb_passeio ADD CONSTRAINT cb_passeio_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.cb_passeio ADD CONSTRAINT cb_passeio_pavimentacao_check CHECK (pavimentacao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.cb_passeio ADD CONSTRAINT cb_passeio_calcada_check CHECK (calcada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.ppb_faixa_dominio_rodovia_a ADD CONSTRAINT ppb_faixa_dominio_rodovia_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.ppb_faixa_dominio_rodovia_a ADD CONSTRAINT ppb_faixa_dominio_rodovia_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.ppb_faixa_dominio_rodovia_a ADD CONSTRAINT ppb_faixa_dominio_rodovia_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.laz_ruina_a ADD CONSTRAINT laz_ruina_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.laz_ruina_a ADD CONSTRAINT laz_ruina_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.laz_ruina_a ADD CONSTRAINT laz_ruina_a_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
@@ -8579,17 +8198,12 @@ ALTER TABLE ge.edf_edificacao_p ADD CONSTRAINT edf_edificacao_p_situacaofisica_c
 ALTER TABLE ge.edf_edificacao_p ADD CONSTRAINT edf_edificacao_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edificacao_p ADD CONSTRAINT edf_edificacao_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edificacao_p ADD CONSTRAINT edf_edificacao_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.emu_descontinuidade_geometrica_a ADD CONSTRAINT emu_descontinuidade_geometrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.emu_descontinuidade_geometrica_a ADD CONSTRAINT emu_descontinuidade_geometrica_a_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE ge.edf_descontinuidade_geometrica_a ADD CONSTRAINT edf_descontinuidade_geometrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_descontinuidade_geometrica_a ADD CONSTRAINT edf_descontinuidade_geometrica_a_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE ge.edf_edif_residencial_p ADD CONSTRAINT edf_edif_residencial_p_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_residencial_p ADD CONSTRAINT edf_edif_residencial_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_residencial_p ADD CONSTRAINT edf_edif_residencial_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_residencial_p ADD CONSTRAINT edf_edif_residencial_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_residencial_p ADD CONSTRAINT edf_edif_residencial_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_residencial_p ADD CONSTRAINT edf_edif_residencial_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_residencial_p ADD CONSTRAINT edf_edif_residencial_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.edf_edif_residencial_p ADD CONSTRAINT edf_edif_residencial_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_residencial_p ADD CONSTRAINT edf_edif_residencial_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_edif_residencial_p ADD CONSTRAINT edf_edif_residencial_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_residencial_p ADD CONSTRAINT edf_edif_residencial_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.edf_edif_residencial_p ADD CONSTRAINT edf_edif_residencial_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_residencial_p ADD CONSTRAINT edf_edif_residencial_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
@@ -8611,8 +8225,6 @@ ALTER TABLE ge.edf_edif_religiosa_p ADD CONSTRAINT edf_edif_religiosa_p_cultura_
 ALTER TABLE ge.edf_edif_religiosa_p ADD CONSTRAINT edf_edif_religiosa_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_religiosa_p ADD CONSTRAINT edf_edif_religiosa_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.cb_retorno_p ADD CONSTRAINT cb_retorno_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.emu_descontinuidade_geometrica_l ADD CONSTRAINT emu_descontinuidade_geometrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.emu_descontinuidade_geometrica_l ADD CONSTRAINT emu_descontinuidade_geometrica_l_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE ge.edf_edificacao ADD CONSTRAINT edf_edificacao_classeativecon_check CHECK (classeativecon <@ ARRAY[10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edificacao ADD CONSTRAINT edf_edificacao_grupoativecon_check CHECK (grupoativecon <@ ARRAY[15::SMALLINT,16::SMALLINT,19::SMALLINT,20::SMALLINT,23::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edificacao ADD CONSTRAINT edf_edificacao_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -8625,21 +8237,16 @@ ALTER TABLE ge.edf_edificacao ADD CONSTRAINT edf_edificacao_cultura_check CHECK 
 ALTER TABLE ge.edf_edificacao ADD CONSTRAINT edf_edificacao_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edificacao ADD CONSTRAINT edf_edificacao_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.cb_retorno_l ADD CONSTRAINT cb_retorno_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.emu_descontinuidade_geometrica_p ADD CONSTRAINT emu_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.emu_descontinuidade_geometrica_p ADD CONSTRAINT emu_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_residencial_a ADD CONSTRAINT edf_edif_residencial_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.edf_descontinuidade_geometrica_p ADD CONSTRAINT edf_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_descontinuidade_geometrica_p ADD CONSTRAINT edf_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE ge.edf_edif_religiosa_a ADD CONSTRAINT edf_edif_religiosa_a_classeativecon_check CHECK (classeativecon <@ ARRAY[26::SMALLINT,30::SMALLINT,31::SMALLINT,33::SMALLINT,34::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_religiosa_a ADD CONSTRAINT edf_edif_religiosa_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[15::SMALLINT,16::SMALLINT,19::SMALLINT,20::SMALLINT,23::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_religiosa_a ADD CONSTRAINT edf_edif_religiosa_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -8659,11 +8266,11 @@ ALTER TABLE ge.laz_campo_quadra ADD CONSTRAINT laz_campo_quadra_geometriaaproxim
 ALTER TABLE ge.laz_campo_quadra ADD CONSTRAINT laz_campo_quadra_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.laz_campo_quadra ADD CONSTRAINT laz_campo_quadra_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.cb_retorno_a ADD CONSTRAINT cb_retorno_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_banheiro_publico_p ADD CONSTRAINT edf_banheiro_publico_p_classeativecon_check CHECK (classeativecon <@ ARRAY[35::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_banheiro_publico_p ADD CONSTRAINT edf_banheiro_publico_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_banheiro_publico_p ADD CONSTRAINT edf_banheiro_publico_p_classeativecon_check CHECK (classeativecon <@ ARRAY[35::SMALLINT,95::SMALLINT])#
+ALTER TABLE ge.edf_banheiro_publico_p ADD CONSTRAINT edf_banheiro_publico_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_banheiro_publico_p ADD CONSTRAINT edf_banheiro_publico_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_banheiro_publico_p ADD CONSTRAINT edf_banheiro_publico_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_banheiro_publico_p ADD CONSTRAINT edf_banheiro_publico_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_banheiro_publico_p ADD CONSTRAINT edf_banheiro_publico_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_banheiro_publico_p ADD CONSTRAINT edf_banheiro_publico_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_banheiro_publico_p ADD CONSTRAINT edf_banheiro_publico_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_banheiro_publico_p ADD CONSTRAINT edf_banheiro_publico_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
@@ -8671,44 +8278,50 @@ ALTER TABLE ge.edf_banheiro_publico_p ADD CONSTRAINT edf_banheiro_publico_p_cult
 ALTER TABLE ge.edf_banheiro_publico_p ADD CONSTRAINT edf_banheiro_publico_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_banheiro_publico_p ADD CONSTRAINT edf_banheiro_publico_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.cb_largo_a ADD CONSTRAINT cb_largo_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.laz_descontinuidade_geometrica_a ADD CONSTRAINT laz_descontinuidade_geometrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.laz_descontinuidade_geometrica_a ADD CONSTRAINT laz_descontinuidade_geometrica_a_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE ge.cb_area_industrial_a ADD CONSTRAINT cb_area_industrial_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.laz_pista_competicao ADD CONSTRAINT laz_pista_competicao_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.laz_pista_competicao ADD CONSTRAINT laz_pista_competicao_tipopistacomp_check CHECK (tipopistacomp = ANY(ARRAY[1::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.laz_pista_competicao ADD CONSTRAINT laz_pista_competicao_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.laz_pista_competicao ADD CONSTRAINT laz_pista_competicao_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.laz_descontinuidade_geometrica_l ADD CONSTRAINT laz_descontinuidade_geometrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.laz_descontinuidade_geometrica_l ADD CONSTRAINT laz_descontinuidade_geometrica_l_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_classeativecon_check CHECK (classeativecon <@ ARRAY[5::SMALLINT,7::SMALLINT,98::SMALLINT,99::SMALLINT])#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT,99::SMALLINT])#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_tipoedifabast_check CHECK (tipoedifabast = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.laz_arquibancada ADD CONSTRAINT laz_arquibancada_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.laz_arquibancada ADD CONSTRAINT laz_arquibancada_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.laz_arquibancada ADD CONSTRAINT laz_arquibancada_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_habitacional_p ADD CONSTRAINT edf_edif_habitacional_p_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_habitacional_p ADD CONSTRAINT edf_edif_habitacional_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_habitacional_p ADD CONSTRAINT edf_edif_habitacional_p_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_edif_habitacional_p ADD CONSTRAINT edf_edif_habitacional_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_habitacional_p ADD CONSTRAINT edf_edif_habitacional_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_habitacional_p ADD CONSTRAINT edf_edif_habitacional_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_habitacional_p ADD CONSTRAINT edf_edif_habitacional_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_habitacional_p ADD CONSTRAINT edf_edif_habitacional_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_habitacional_p ADD CONSTRAINT edf_edif_habitacional_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_habitacional_p ADD CONSTRAINT edf_edif_habitacional_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_habitacional_p ADD CONSTRAINT edf_edif_habitacional_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.edf_edif_habitacional_p ADD CONSTRAINT edf_edif_habitacional_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_habitacional_p ADD CONSTRAINT edf_edif_habitacional_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_habitacional_p ADD CONSTRAINT edf_edif_habitacional_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.edf_banheiro_publico_a ADD CONSTRAINT edf_banheiro_publico_a_classeativecon_check CHECK (classeativecon <@ ARRAY[35::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_banheiro_publico_a ADD CONSTRAINT edf_banheiro_publico_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_banheiro_publico_a ADD CONSTRAINT edf_banheiro_publico_a_classeativecon_check CHECK (classeativecon <@ ARRAY[35::SMALLINT,95::SMALLINT])#
+ALTER TABLE ge.edf_banheiro_publico_a ADD CONSTRAINT edf_banheiro_publico_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_banheiro_publico_a ADD CONSTRAINT edf_banheiro_publico_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_banheiro_publico_a ADD CONSTRAINT edf_banheiro_publico_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_banheiro_publico_a ADD CONSTRAINT edf_banheiro_publico_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_banheiro_publico_a ADD CONSTRAINT edf_banheiro_publico_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_banheiro_publico_a ADD CONSTRAINT edf_banheiro_publico_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_banheiro_publico_a ADD CONSTRAINT edf_banheiro_publico_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_banheiro_publico_a ADD CONSTRAINT edf_banheiro_publico_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.edf_banheiro_publico_a ADD CONSTRAINT edf_banheiro_publico_a_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_banheiro_publico_a ADD CONSTRAINT edf_banheiro_publico_a_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_banheiro_publico_a ADD CONSTRAINT edf_banheiro_publico_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.laz_descontinuidade_geometrica_p ADD CONSTRAINT laz_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.laz_descontinuidade_geometrica_p ADD CONSTRAINT laz_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_classeativecon_check CHECK (classeativecon <@ ARRAY[5::SMALLINT,7::SMALLINT,98::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT,99::SMALLINT])#
@@ -8719,29 +8332,17 @@ ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_cultur
 ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_tipoedifabast_check CHECK (tipoedifabast = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_abast_agua_a ADD CONSTRAINT edf_edif_abast_agua_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_canteirodivisorio_check CHECK (canteirodivisorio = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_tipopavimentacao_check CHECK (tipopavimentacao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_trafego_check CHECK (trafego = ANY(ARRAY[1::SMALLINT,2::SMALLINT,4::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_trechoemperimetrourbano_check CHECK (trechoemperimetrourbano = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_acostamento_check CHECK (acostamento = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_tipotrechorod_check CHECK (tipotrechorod = ANY(ARRAY[2::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT]))#
 ALTER TABLE ge.edf_edif_rodoviaria_p ADD CONSTRAINT edf_edif_rodoviaria_p_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
 ALTER TABLE ge.edf_edif_rodoviaria_p ADD CONSTRAINT edf_edif_rodoviaria_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
 ALTER TABLE ge.edf_edif_rodoviaria_p ADD CONSTRAINT edf_edif_rodoviaria_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -8755,9 +8356,6 @@ ALTER TABLE ge.edf_edif_rodoviaria_p ADD CONSTRAINT edf_edif_rodoviaria_p_situac
 ALTER TABLE ge.edf_edif_rodoviaria_p ADD CONSTRAINT edf_edif_rodoviaria_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_rodoviaria_p ADD CONSTRAINT edf_edif_rodoviaria_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_rodoviaria_p ADD CONSTRAINT edf_edif_rodoviaria_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.ppb_faixa_dominio_ferrovia_a ADD CONSTRAINT ppb_faixa_dominio_ferrovia_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.ppb_faixa_dominio_ferrovia_a ADD CONSTRAINT ppb_faixa_dominio_ferrovia_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.ppb_faixa_dominio_ferrovia_a ADD CONSTRAINT ppb_faixa_dominio_ferrovia_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.cb_tunel_a ADD CONSTRAINT cb_tunel_a_modaluso_check CHECK (modaluso <@ ARRAY[4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
 ALTER TABLE ge.cb_tunel_a ADD CONSTRAINT cb_tunel_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.cb_tunel_a ADD CONSTRAINT cb_tunel_a_tipopavimentacao_check CHECK (tipopavimentacao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
@@ -8767,9 +8365,6 @@ ALTER TABLE ge.cb_tunel_a ADD CONSTRAINT cb_tunel_a_situacaofisica_check CHECK (
 ALTER TABLE ge.cb_tunel_a ADD CONSTRAINT cb_tunel_a_tipotunel_check CHECK (tipotunel = ANY(ARRAY[1::SMALLINT,2::SMALLINT]))#
 ALTER TABLE ge.cb_tunel_a ADD CONSTRAINT cb_tunel_a_posicaopista_check CHECK (posicaopista = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.cb_tunel_a ADD CONSTRAINT cb_tunel_a_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.ppb_faixa_dominio_arruamento_a ADD CONSTRAINT ppb_faixa_dominio_arruamento_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.ppb_faixa_dominio_arruamento_a ADD CONSTRAINT ppb_faixa_dominio_arruamento_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.ppb_faixa_dominio_arruamento_a ADD CONSTRAINT ppb_faixa_dominio_arruamento_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.emu_poste_sinalizacao_p ADD CONSTRAINT emu_poste_sinalizacao_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.emu_poste_sinalizacao_p ADD CONSTRAINT emu_poste_sinalizacao_p_tipoposte_check CHECK (tipoposte <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.emu_poste_sinalizacao_p ADD CONSTRAINT emu_poste_sinalizacao_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
@@ -8786,12 +8381,12 @@ ALTER TABLE ge.edf_edif_rodoviaria_a ADD CONSTRAINT edf_edif_rodoviaria_a_situac
 ALTER TABLE ge.edf_edif_rodoviaria_a ADD CONSTRAINT edf_edif_rodoviaria_a_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_rodoviaria_a ADD CONSTRAINT edf_edif_rodoviaria_a_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_rodoviaria_a ADD CONSTRAINT edf_edif_rodoviaria_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.emu_ciclovia_l ADD CONSTRAINT emu_ciclovia_l_revestimento_check CHECK (revestimento = ANY(ARRAY[3::SMALLINT]))#
+ALTER TABLE ge.emu_ciclovia_l ADD CONSTRAINT emu_ciclovia_l_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT]))#
 ALTER TABLE ge.emu_ciclovia_l ADD CONSTRAINT emu_ciclovia_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.emu_ciclovia_l ADD CONSTRAINT emu_ciclovia_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.emu_ciclovia_l ADD CONSTRAINT emu_ciclovia_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.cb_area_lazer_a ADD CONSTRAINT cb_area_lazer_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_lazer_a ADD CONSTRAINT edf_edif_constr_lazer_a_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_lazer_a ADD CONSTRAINT edf_edif_constr_lazer_a_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_constr_lazer_a ADD CONSTRAINT edf_edif_constr_lazer_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_constr_lazer_a ADD CONSTRAINT edf_edif_constr_lazer_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_lazer_a ADD CONSTRAINT edf_edif_constr_lazer_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -8804,7 +8399,7 @@ ALTER TABLE ge.edf_edif_constr_lazer_a ADD CONSTRAINT edf_edif_constr_lazer_a_pr
 ALTER TABLE ge.edf_edif_constr_lazer_a ADD CONSTRAINT edf_edif_constr_lazer_a_tipoediflazer_check CHECK (tipoediflazer = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_lazer_a ADD CONSTRAINT edf_edif_constr_lazer_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.edf_edif_comunic_a ADD CONSTRAINT edf_edif_comunic_a_classeativecon_check CHECK (classeativecon <@ ARRAY[6::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_comunic_a ADD CONSTRAINT edf_edif_comunic_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_comunic_a ADD CONSTRAINT edf_edif_comunic_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_comunic_a ADD CONSTRAINT edf_edif_comunic_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_comunic_a ADD CONSTRAINT edf_edif_comunic_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_comunic_a ADD CONSTRAINT edf_edif_comunic_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[74::SMALLINT,99::SMALLINT])#
@@ -8814,20 +8409,27 @@ ALTER TABLE ge.edf_edif_comunic_a ADD CONSTRAINT edf_edif_comunic_a_situacaofisi
 ALTER TABLE ge.edf_edif_comunic_a ADD CONSTRAINT edf_edif_comunic_a_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_comunic_a ADD CONSTRAINT edf_edif_comunic_a_modalidade_check CHECK (modalidade <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_comunic_a ADD CONSTRAINT edf_edif_comunic_a_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_edif_comunic_a ADD CONSTRAINT edf_edif_comunic_a_tipoedifcomunic_check CHECK (tipoedifcomunic <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE ge.edf_edif_comunic_a ADD CONSTRAINT edf_edif_comunic_a_tipoedifcomunic_check CHECK (tipoedifcomunic <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_comunic_a ADD CONSTRAINT edf_edif_comunic_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.cb_area_duto_a ADD CONSTRAINT cb_area_duto_a_areavalvulas_check CHECK (areavalvulas = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.cb_area_duto_a ADD CONSTRAINT cb_area_duto_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.cb_area_duto_a ADD CONSTRAINT cb_area_duto_a_bombeamento_check CHECK (bombeamento = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.ver_jardim_a ADD CONSTRAINT ver_jardim_a_terreno_check CHECK (terreno = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.ver_jardim_a ADD CONSTRAINT ver_jardim_a_finalidade_check CHECK (finalidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE ge.ver_jardim_a ADD CONSTRAINT ver_jardim_a_tipolavoura_check CHECK (tipolavoura = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.ver_jardim_a ADD CONSTRAINT ver_jardim_a_cultivopredominante_check CHECK (cultivopredominante <@ ARRAY[106::SMALLINT,72::SMALLINT,96::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.ver_jardim_a ADD CONSTRAINT ver_jardim_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.ver_jardim_a ADD CONSTRAINT ver_jardim_a_classificacaoporte_check CHECK (classificacaoporte = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT]))#
-ALTER TABLE ge.ver_jardim_a ADD CONSTRAINT ver_jardim_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[2::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_tipoedifturist_check CHECK (tipoedifturist = ANY(ARRAY[10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[92::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_tombada_check CHECK (tombada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_ovgd_check CHECK (ovgd = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_turistica_p ADD CONSTRAINT edf_edif_constr_turistica_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.edf_edif_comunic_p ADD CONSTRAINT edf_edif_comunic_p_classeativecon_check CHECK (classeativecon <@ ARRAY[6::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_comunic_p ADD CONSTRAINT edf_edif_comunic_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_comunic_p ADD CONSTRAINT edf_edif_comunic_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_comunic_p ADD CONSTRAINT edf_edif_comunic_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_comunic_p ADD CONSTRAINT edf_edif_comunic_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_comunic_p ADD CONSTRAINT edf_edif_comunic_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[74::SMALLINT,99::SMALLINT])#
@@ -8837,20 +8439,22 @@ ALTER TABLE ge.edf_edif_comunic_p ADD CONSTRAINT edf_edif_comunic_p_situacaofisi
 ALTER TABLE ge.edf_edif_comunic_p ADD CONSTRAINT edf_edif_comunic_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_comunic_p ADD CONSTRAINT edf_edif_comunic_p_modalidade_check CHECK (modalidade <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_comunic_p ADD CONSTRAINT edf_edif_comunic_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_edif_comunic_p ADD CONSTRAINT edf_edif_comunic_p_tipoedifcomunic_check CHECK (tipoedifcomunic <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE ge.edf_edif_comunic_p ADD CONSTRAINT edf_edif_comunic_p_tipoedifcomunic_check CHECK (tipoedifcomunic <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_comunic_p ADD CONSTRAINT edf_edif_comunic_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[92::SMALLINT])#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_tipoediflazer_check CHECK (tipoediflazer = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_lazer_p ADD CONSTRAINT edf_edif_constr_lazer_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_classeativecon_check CHECK (classeativecon <@ ARRAY[10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,5::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,98::SMALLINT])#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[15::SMALLINT,16::SMALLINT,19::SMALLINT,20::SMALLINT,23::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,98::SMALLINT])#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_tipoedifpubcivil_check CHECK (tipoedifpubcivil <@ ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,2::SMALLINT,22::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_tipousoedif_check CHECK (tipousoedif = ANY(ARRAY[1::SMALLINT,2::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.edf_edif_pub_civil_p ADD CONSTRAINT edf_edif_pub_civil_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.cb_canteiro_central_l ADD CONSTRAINT cb_canteiro_central_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.cb_canteiro_central_l ADD CONSTRAINT cb_canteiro_central_l_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.cb_canteiro_central_a ADD CONSTRAINT cb_canteiro_central_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
@@ -8859,7 +8463,7 @@ ALTER TABLE ge.cb_area_ruinas_a ADD CONSTRAINT cb_area_ruinas_a_geometriaaproxim
 ALTER TABLE ge.emu_escadaria_l ADD CONSTRAINT emu_escadaria_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.emu_escadaria_l ADD CONSTRAINT emu_escadaria_l_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[2::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_escadaria_l ADD CONSTRAINT emu_escadaria_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE ge.emu_escadaria_l ADD CONSTRAINT emu_escadaria_l_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.emu_escadaria_l ADD CONSTRAINT emu_escadaria_l_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_escadaria_l ADD CONSTRAINT emu_escadaria_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_saneamento_p ADD CONSTRAINT edf_edif_saneamento_p_classeativecon_check CHECK (classeativecon <@ ARRAY[35::SMALLINT,5::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_saneamento_p ADD CONSTRAINT edf_edif_saneamento_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
@@ -8873,20 +8477,8 @@ ALTER TABLE ge.edf_edif_saneamento_p ADD CONSTRAINT edf_edif_saneamento_p_cultur
 ALTER TABLE ge.edf_edif_saneamento_p ADD CONSTRAINT edf_edif_saneamento_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_saneamento_p ADD CONSTRAINT edf_edif_saneamento_p_tipoedifsaneam_check CHECK (tipoedifsaneam = ANY(ARRAY[3::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_saneamento_p ADD CONSTRAINT edf_edif_saneamento_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_classeativecon_check CHECK (classeativecon <@ ARRAY[5::SMALLINT,7::SMALLINT,98::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_tipoedifabast_check CHECK (tipoedifabast = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
-ALTER TABLE ge.edf_edif_abast_agua_p ADD CONSTRAINT edf_edif_abast_agua_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.edf_edif_energia_p ADD CONSTRAINT edf_edif_energia_p_classeativecon_check CHECK (classeativecon <@ ARRAY[2::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_energia_p ADD CONSTRAINT edf_edif_energia_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_energia_p ADD CONSTRAINT edf_edif_energia_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_energia_p ADD CONSTRAINT edf_edif_energia_p_tipoedifenergia_check CHECK (tipoedifenergia <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_energia_p ADD CONSTRAINT edf_edif_energia_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_energia_p ADD CONSTRAINT edf_edif_energia_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -8904,7 +8496,7 @@ ALTER TABLE ge.laz_campo_quadra_a ADD CONSTRAINT laz_campo_quadra_a_operacional_
 ALTER TABLE ge.emu_escadaria_a ADD CONSTRAINT emu_escadaria_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.emu_escadaria_a ADD CONSTRAINT emu_escadaria_a_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[2::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_escadaria_a ADD CONSTRAINT emu_escadaria_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE ge.emu_escadaria_a ADD CONSTRAINT emu_escadaria_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.emu_escadaria_a ADD CONSTRAINT emu_escadaria_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_escadaria_a ADD CONSTRAINT emu_escadaria_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.cb_retorno ADD CONSTRAINT cb_retorno_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.cb_entroncamento_area_a ADD CONSTRAINT cb_entroncamento_area_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
@@ -8922,7 +8514,7 @@ ALTER TABLE ge.edf_edif_saneamento_a ADD CONSTRAINT edf_edif_saneamento_a_propri
 ALTER TABLE ge.edf_edif_saneamento_a ADD CONSTRAINT edf_edif_saneamento_a_tipoedifsaneam_check CHECK (tipoedifsaneam = ANY(ARRAY[3::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_saneamento_a ADD CONSTRAINT edf_edif_saneamento_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.edf_edif_energia_a ADD CONSTRAINT edf_edif_energia_a_classeativecon_check CHECK (classeativecon <@ ARRAY[2::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_energia_a ADD CONSTRAINT edf_edif_energia_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_energia_a ADD CONSTRAINT edf_edif_energia_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_energia_a ADD CONSTRAINT edf_edif_energia_a_tipoedifenergia_check CHECK (tipoedifenergia <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_energia_a ADD CONSTRAINT edf_edif_energia_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_energia_a ADD CONSTRAINT edf_edif_energia_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -8951,11 +8543,8 @@ ALTER TABLE ge.cb_area_habitacional_a ADD CONSTRAINT cb_area_habitacional_a_geom
 ALTER TABLE ge.emu_escadaria_p ADD CONSTRAINT emu_escadaria_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.emu_escadaria_p ADD CONSTRAINT emu_escadaria_p_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[2::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_escadaria_p ADD CONSTRAINT emu_escadaria_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE ge.emu_escadaria_p ADD CONSTRAINT emu_escadaria_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.emu_escadaria_p ADD CONSTRAINT emu_escadaria_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_escadaria_p ADD CONSTRAINT emu_escadaria_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.ppb_area_dominial_a ADD CONSTRAINT ppb_area_dominial_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.ppb_area_dominial_a ADD CONSTRAINT ppb_area_dominial_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.ppb_area_dominial_a ADD CONSTRAINT ppb_area_dominial_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.cb_area_comerc_serv_a ADD CONSTRAINT cb_area_comerc_serv_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.cb_poste_p ADD CONSTRAINT cb_poste_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.cb_poste_p ADD CONSTRAINT cb_poste_p_tipoposte_check CHECK (tipoposte <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT])#
@@ -8964,7 +8553,7 @@ ALTER TABLE ge.cb_passeio_l ADD CONSTRAINT cb_passeio_l_geometriaaproximada_chec
 ALTER TABLE ge.cb_passeio_l ADD CONSTRAINT cb_passeio_l_pavimentacao_check CHECK (pavimentacao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.cb_passeio_l ADD CONSTRAINT cb_passeio_l_calcada_check CHECK (calcada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_policia_a ADD CONSTRAINT edf_edif_policia_a_classeativecon_check CHECK (classeativecon <@ ARRAY[10::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,7::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_policia_a ADD CONSTRAINT edf_edif_policia_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[15::SMALLINT,16::SMALLINT,19::SMALLINT,20::SMALLINT,23::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT])#
+ALTER TABLE ge.edf_edif_policia_a ADD CONSTRAINT edf_edif_policia_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT,98::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_policia_a ADD CONSTRAINT edf_edif_policia_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_policia_a ADD CONSTRAINT edf_edif_policia_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_policia_a ADD CONSTRAINT edf_edif_policia_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -9002,10 +8591,10 @@ ALTER TABLE ge.edf_representacao_diplomatica_a ADD CONSTRAINT edf_representacao_
 ALTER TABLE ge.edf_representacao_diplomatica_a ADD CONSTRAINT edf_representacao_diplomatica_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.edf_representacao_diplomatica_a ADD CONSTRAINT edf_representacao_diplomatica_a_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_representacao_diplomatica_a ADD CONSTRAINT edf_representacao_diplomatica_a_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_representacao_diplomatica_a ADD CONSTRAINT edf_representacao_diplomatica_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
+ALTER TABLE ge.edf_representacao_diplomatica_a ADD CONSTRAINT edf_representacao_diplomatica_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT])#
 ALTER TABLE ge.cb_quadra_a ADD CONSTRAINT cb_quadra_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_policia_p ADD CONSTRAINT edf_edif_policia_p_classeativecon_check CHECK (classeativecon <@ ARRAY[10::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,7::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_policia_p ADD CONSTRAINT edf_edif_policia_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[15::SMALLINT,16::SMALLINT,19::SMALLINT,20::SMALLINT,23::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT])#
+ALTER TABLE ge.edf_edif_policia_p ADD CONSTRAINT edf_edif_policia_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT,98::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_policia_p ADD CONSTRAINT edf_edif_policia_p_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_policia_p ADD CONSTRAINT edf_edif_policia_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_policia_p ADD CONSTRAINT edf_edif_policia_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -9029,25 +8618,25 @@ ALTER TABLE ge.edf_representacao_diplomatica_p ADD CONSTRAINT edf_representacao_
 ALTER TABLE ge.edf_representacao_diplomatica_p ADD CONSTRAINT edf_representacao_diplomatica_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.edf_representacao_diplomatica_p ADD CONSTRAINT edf_representacao_diplomatica_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_representacao_diplomatica_p ADD CONSTRAINT edf_representacao_diplomatica_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_representacao_diplomatica_p ADD CONSTRAINT edf_representacao_diplomatica_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_representacao_diplomatica_p ADD CONSTRAINT edf_representacao_diplomatica_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT])#
+ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_finalidade_check CHECK (finalidade <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[18::SMALLINT,22::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,55::SMALLINT,74::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_tipoedifcomercserv_check CHECK (tipoedifcomercserv <@ ARRAY[10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_tipoedifcomercserv_check CHECK (tipoedifcomercserv <@ ARRAY[10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_comerc_serv_p ADD CONSTRAINT edf_edif_comerc_serv_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.edf_edif_constr_est_med_fen_a ADD CONSTRAINT edf_edif_constr_est_med_fen_a_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_est_med_fen_a ADD CONSTRAINT edf_edif_constr_est_med_fen_a_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_constr_est_med_fen_a ADD CONSTRAINT edf_edif_constr_est_med_fen_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_constr_est_med_fen_a ADD CONSTRAINT edf_edif_constr_est_med_fen_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_est_med_fen_a ADD CONSTRAINT edf_edif_constr_est_med_fen_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_est_med_fen_a ADD CONSTRAINT edf_edif_constr_est_med_fen_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_est_med_fen_a ADD CONSTRAINT edf_edif_constr_est_med_fen_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_constr_est_med_fen_a ADD CONSTRAINT edf_edif_constr_est_med_fen_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_est_med_fen_a ADD CONSTRAINT edf_edif_constr_est_med_fen_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_est_med_fen_a ADD CONSTRAINT edf_edif_constr_est_med_fen_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
@@ -9056,7 +8645,7 @@ ALTER TABLE ge.edf_edif_constr_est_med_fen_a ADD CONSTRAINT edf_edif_constr_est_
 ALTER TABLE ge.edf_edif_constr_est_med_fen_a ADD CONSTRAINT edf_edif_constr_est_med_fen_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.edf_edif_constr_turistica_a ADD CONSTRAINT edf_edif_constr_turistica_a_tipoedifturist_check CHECK (tipoedifturist = ANY(ARRAY[10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_turistica_a ADD CONSTRAINT edf_edif_constr_turistica_a_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_constr_turistica_a ADD CONSTRAINT edf_edif_constr_turistica_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_turistica_a ADD CONSTRAINT edf_edif_constr_turistica_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_constr_turistica_a ADD CONSTRAINT edf_edif_constr_turistica_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_turistica_a ADD CONSTRAINT edf_edif_constr_turistica_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_turistica_a ADD CONSTRAINT edf_edif_constr_turistica_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[92::SMALLINT])#
@@ -9071,33 +8660,33 @@ ALTER TABLE ge.edf_edif_constr_turistica_a ADD CONSTRAINT edf_edif_constr_turist
 ALTER TABLE ge.emu_rampa_p ADD CONSTRAINT emu_rampa_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.emu_rampa_p ADD CONSTRAINT emu_rampa_p_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_rampa_p ADD CONSTRAINT emu_rampa_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE ge.emu_rampa_p ADD CONSTRAINT emu_rampa_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.emu_rampa_p ADD CONSTRAINT emu_rampa_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_rampa_p ADD CONSTRAINT emu_rampa_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.emu_rampa_l ADD CONSTRAINT emu_rampa_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.emu_rampa_l ADD CONSTRAINT emu_rampa_l_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_rampa_l ADD CONSTRAINT emu_rampa_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE ge.emu_rampa_l ADD CONSTRAINT emu_rampa_l_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.emu_rampa_l ADD CONSTRAINT emu_rampa_l_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_rampa_l ADD CONSTRAINT emu_rampa_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_est_med_fen_p ADD CONSTRAINT edf_edif_constr_est_med_fen_p_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_est_med_fen_p ADD CONSTRAINT edf_edif_constr_est_med_fen_p_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_constr_est_med_fen_p ADD CONSTRAINT edf_edif_constr_est_med_fen_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_constr_est_med_fen_p ADD CONSTRAINT edf_edif_constr_est_med_fen_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_est_med_fen_p ADD CONSTRAINT edf_edif_constr_est_med_fen_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_est_med_fen_p ADD CONSTRAINT edf_edif_constr_est_med_fen_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_est_med_fen_p ADD CONSTRAINT edf_edif_constr_est_med_fen_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_constr_est_med_fen_p ADD CONSTRAINT edf_edif_constr_est_med_fen_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_est_med_fen_p ADD CONSTRAINT edf_edif_constr_est_med_fen_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_est_med_fen_p ADD CONSTRAINT edf_edif_constr_est_med_fen_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_est_med_fen_p ADD CONSTRAINT edf_edif_constr_est_med_fen_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_est_med_fen_p ADD CONSTRAINT edf_edif_constr_est_med_fen_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_est_med_fen_p ADD CONSTRAINT edf_edif_constr_est_med_fen_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_finalidade_check CHECK (finalidade <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[18::SMALLINT,22::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,55::SMALLINT,74::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_tipoedifcomercserv_check CHECK (tipoedifcomercserv <@ ARRAY[10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_tipoedifcomercserv_check CHECK (tipoedifcomercserv <@ ARRAY[10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_comerc_serv_a ADD CONSTRAINT edf_edif_comerc_serv_a_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
@@ -9107,7 +8696,7 @@ ALTER TABLE ge.cb_canteiro_central ADD CONSTRAINT cb_canteiro_central_situacaoes
 ALTER TABLE ge.emu_rampa_a ADD CONSTRAINT emu_rampa_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.emu_rampa_a ADD CONSTRAINT emu_rampa_a_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_rampa_a ADD CONSTRAINT emu_rampa_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE ge.emu_rampa_a ADD CONSTRAINT emu_rampa_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.emu_rampa_a ADD CONSTRAINT emu_rampa_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_rampa_a ADD CONSTRAINT emu_rampa_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.cb_delimitacao_fisica_l ADD CONSTRAINT cb_delimitacao_fisica_l_eletrificada_check CHECK (eletrificada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.cb_delimitacao_fisica_l ADD CONSTRAINT cb_delimitacao_fisica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
@@ -9122,7 +8711,7 @@ ALTER TABLE ge.emu_acesso_p ADD CONSTRAINT emu_acesso_p_operacional_check CHECK 
 ALTER TABLE ge.emu_elevador_l ADD CONSTRAINT emu_elevador_l_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_elevador_l ADD CONSTRAINT emu_elevador_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.emu_elevador_l ADD CONSTRAINT emu_elevador_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.emu_elevador_l ADD CONSTRAINT emu_elevador_l_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.emu_elevador_l ADD CONSTRAINT emu_elevador_l_matconstr_check CHECK (matconstr = ANY(ARRAY[3::SMALLINT,8::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_elevador_l ADD CONSTRAINT emu_elevador_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.emu_elevador_l ADD CONSTRAINT emu_elevador_l_tipoelevador_check CHECK (tipoelevador = ANY(ARRAY[2::SMALLINT,3::SMALLINT]))#
 ALTER TABLE ge.laz_sitio_arqueologico_p ADD CONSTRAINT laz_sitio_arqueologico_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -9130,7 +8719,7 @@ ALTER TABLE ge.laz_sitio_arqueologico_p ADD CONSTRAINT laz_sitio_arqueologico_p_
 ALTER TABLE ge.emu_elevador_a ADD CONSTRAINT emu_elevador_a_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_elevador_a ADD CONSTRAINT emu_elevador_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.emu_elevador_a ADD CONSTRAINT emu_elevador_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.emu_elevador_a ADD CONSTRAINT emu_elevador_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.emu_elevador_a ADD CONSTRAINT emu_elevador_a_matconstr_check CHECK (matconstr = ANY(ARRAY[3::SMALLINT,8::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_elevador_a ADD CONSTRAINT emu_elevador_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.emu_elevador_a ADD CONSTRAINT emu_elevador_a_tipoelevador_check CHECK (tipoelevador = ANY(ARRAY[2::SMALLINT,3::SMALLINT]))#
 ALTER TABLE ge.emu_acesso_a ADD CONSTRAINT emu_acesso_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
@@ -9138,27 +8727,13 @@ ALTER TABLE ge.emu_acesso_a ADD CONSTRAINT emu_acesso_a_situacaoespacial_check C
 ALTER TABLE ge.emu_acesso_a ADD CONSTRAINT emu_acesso_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.emu_acesso_a ADD CONSTRAINT emu_acesso_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_acesso_a ADD CONSTRAINT emu_acesso_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_classeativecon_check CHECK (classeativecon <@ ARRAY[12::SMALLINT,14::SMALLINT,15::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_tipoedifpubcivil_check CHECK (tipoedifpubcivil <@ ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,2::SMALLINT,22::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_tipousoedif_check CHECK (tipousoedif = ANY(ARRAY[2::SMALLINT]))#
-ALTER TABLE ge.edf_posto_policia_rod_federal_p ADD CONSTRAINT edf_posto_policia_rod_federal_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.laz_sitio_arqueologico_a ADD CONSTRAINT laz_sitio_arqueologico_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.laz_sitio_arqueologico_a ADD CONSTRAINT laz_sitio_arqueologico_a_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.ver_arvore_isolada_p ADD CONSTRAINT ver_arvore_isolada_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.emu_elevador_p ADD CONSTRAINT emu_elevador_p_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_elevador_p ADD CONSTRAINT emu_elevador_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.emu_elevador_p ADD CONSTRAINT emu_elevador_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.emu_elevador_p ADD CONSTRAINT emu_elevador_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.emu_elevador_p ADD CONSTRAINT emu_elevador_p_matconstr_check CHECK (matconstr = ANY(ARRAY[3::SMALLINT,8::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_elevador_p ADD CONSTRAINT emu_elevador_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.emu_elevador_p ADD CONSTRAINT emu_elevador_p_tipoelevador_check CHECK (tipoelevador = ANY(ARRAY[2::SMALLINT,3::SMALLINT]))#
 ALTER TABLE ge.cb_passagem_elevada_viaduto_a ADD CONSTRAINT cb_passagem_elevada_viaduto_a_modaluso_check CHECK (modaluso <@ ARRAY[10::SMALLINT,14::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
@@ -9175,7 +8750,7 @@ ALTER TABLE ge.edf_edif_ensino_a ADD CONSTRAINT edf_edif_ensino_a_classeativecon
 ALTER TABLE ge.edf_edif_ensino_a ADD CONSTRAINT edf_edif_ensino_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[16::SMALLINT,19::SMALLINT,20::SMALLINT,23::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_ensino_a ADD CONSTRAINT edf_edif_ensino_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_ensino_a ADD CONSTRAINT edf_edif_ensino_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_ensino_a ADD CONSTRAINT edf_edif_ensino_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_ensino_a ADD CONSTRAINT edf_edif_ensino_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_ensino_a ADD CONSTRAINT edf_edif_ensino_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_ensino_a ADD CONSTRAINT edf_edif_ensino_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_ensino_a ADD CONSTRAINT edf_edif_ensino_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
@@ -9184,7 +8759,7 @@ ALTER TABLE ge.edf_edif_ensino_a ADD CONSTRAINT edf_edif_ensino_a_proprioadm_che
 ALTER TABLE ge.edf_edif_ensino_a ADD CONSTRAINT edf_edif_ensino_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.cb_area_comunicacao_a ADD CONSTRAINT cb_area_comunicacao_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_desenv_social_p ADD CONSTRAINT edf_edif_desenv_social_p_classeativecon_check CHECK (classeativecon <@ ARRAY[15::SMALLINT,30::SMALLINT,33::SMALLINT,34::SMALLINT,7::SMALLINT,8::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_desenv_social_p ADD CONSTRAINT edf_edif_desenv_social_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_desenv_social_p ADD CONSTRAINT edf_edif_desenv_social_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_desenv_social_p ADD CONSTRAINT edf_edif_desenv_social_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_desenv_social_p ADD CONSTRAINT edf_edif_desenv_social_p_tipoequipdesenvsocial_check CHECK (tipoequipdesenvsocial = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_desenv_social_p ADD CONSTRAINT edf_edif_desenv_social_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -9196,7 +8771,7 @@ ALTER TABLE ge.edf_edif_desenv_social_p ADD CONSTRAINT edf_edif_desenv_social_p_
 ALTER TABLE ge.edf_edif_desenv_social_p ADD CONSTRAINT edf_edif_desenv_social_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_desenv_social_p ADD CONSTRAINT edf_edif_desenv_social_p_localizacaoequipdesenvsocial_check CHECK (localizacaoequipdesenvsocial = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_desenv_social_p ADD CONSTRAINT edf_edif_desenv_social_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.cb_trecho_arruamento ADD CONSTRAINT cb_trecho_arruamento_revestimento_check CHECK (revestimento = ANY(ARRAY[3::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.cb_trecho_arruamento ADD CONSTRAINT cb_trecho_arruamento_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.cb_trecho_arruamento ADD CONSTRAINT cb_trecho_arruamento_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.cb_trecho_arruamento ADD CONSTRAINT cb_trecho_arruamento_canteirodivisorio_check CHECK (canteirodivisorio = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.cb_trecho_arruamento ADD CONSTRAINT cb_trecho_arruamento_tipopavimentacao_check CHECK (tipopavimentacao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
@@ -9211,13 +8786,13 @@ ALTER TABLE ge.emu_acesso ADD CONSTRAINT emu_acesso_situacaoespacial_check CHECK
 ALTER TABLE ge.emu_acesso ADD CONSTRAINT emu_acesso_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.emu_acesso ADD CONSTRAINT emu_acesso_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_acesso ADD CONSTRAINT emu_acesso_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_metro_ferroviaria_p ADD CONSTRAINT edf_edif_metro_ferroviaria_p_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_metro_ferroviaria_p ADD CONSTRAINT edf_edif_metro_ferroviaria_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_metro_ferroviaria_p ADD CONSTRAINT edf_edif_metro_ferroviaria_p_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_edif_metro_ferroviaria_p ADD CONSTRAINT edf_edif_metro_ferroviaria_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_metro_ferroviaria_p ADD CONSTRAINT edf_edif_metro_ferroviaria_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_metro_ferroviaria_p ADD CONSTRAINT edf_edif_metro_ferroviaria_p_tipoedifmetroferrov_check CHECK (tipoedifmetroferrov <@ ARRAY[15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,20::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_metro_ferroviaria_p ADD CONSTRAINT edf_edif_metro_ferroviaria_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_metro_ferroviaria_p ADD CONSTRAINT edf_edif_metro_ferroviaria_p_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_metro_ferroviaria_p ADD CONSTRAINT edf_edif_metro_ferroviaria_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_metro_ferroviaria_p ADD CONSTRAINT edf_edif_metro_ferroviaria_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_metro_ferroviaria_p ADD CONSTRAINT edf_edif_metro_ferroviaria_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_metro_ferroviaria_p ADD CONSTRAINT edf_edif_metro_ferroviaria_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_metro_ferroviaria_p ADD CONSTRAINT edf_edif_metro_ferroviaria_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
@@ -9236,7 +8811,7 @@ ALTER TABLE ge.edf_edif_ensino_p ADD CONSTRAINT edf_edif_ensino_p_classeativecon
 ALTER TABLE ge.edf_edif_ensino_p ADD CONSTRAINT edf_edif_ensino_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[16::SMALLINT,19::SMALLINT,20::SMALLINT,23::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_ensino_p ADD CONSTRAINT edf_edif_ensino_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_ensino_p ADD CONSTRAINT edf_edif_ensino_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_ensino_p ADD CONSTRAINT edf_edif_ensino_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_ensino_p ADD CONSTRAINT edf_edif_ensino_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_ensino_p ADD CONSTRAINT edf_edif_ensino_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_ensino_p ADD CONSTRAINT edf_edif_ensino_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_ensino_p ADD CONSTRAINT edf_edif_ensino_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
@@ -9244,7 +8819,7 @@ ALTER TABLE ge.edf_edif_ensino_p ADD CONSTRAINT edf_edif_ensino_p_cultura_check 
 ALTER TABLE ge.edf_edif_ensino_p ADD CONSTRAINT edf_edif_ensino_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_ensino_p ADD CONSTRAINT edf_edif_ensino_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.edf_edif_desenv_social_a ADD CONSTRAINT edf_edif_desenv_social_a_classeativecon_check CHECK (classeativecon <@ ARRAY[15::SMALLINT,30::SMALLINT,33::SMALLINT,34::SMALLINT,7::SMALLINT,8::SMALLINT,99::SMALLINT])#
-ALTER TABLE ge.edf_edif_desenv_social_a ADD CONSTRAINT edf_edif_desenv_social_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_desenv_social_a ADD CONSTRAINT edf_edif_desenv_social_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_desenv_social_a ADD CONSTRAINT edf_edif_desenv_social_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_desenv_social_a ADD CONSTRAINT edf_edif_desenv_social_a_tipoequipdesenvsocial_check CHECK (tipoequipdesenvsocial = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_desenv_social_a ADD CONSTRAINT edf_edif_desenv_social_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -9256,13 +8831,13 @@ ALTER TABLE ge.edf_edif_desenv_social_a ADD CONSTRAINT edf_edif_desenv_social_a_
 ALTER TABLE ge.edf_edif_desenv_social_a ADD CONSTRAINT edf_edif_desenv_social_a_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_desenv_social_a ADD CONSTRAINT edf_edif_desenv_social_a_localizacaoequipdesenvsocial_check CHECK (localizacaoequipdesenvsocial = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_desenv_social_a ADD CONSTRAINT edf_edif_desenv_social_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.edf_edif_metro_ferroviaria_a ADD CONSTRAINT edf_edif_metro_ferroviaria_a_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_metro_ferroviaria_a ADD CONSTRAINT edf_edif_metro_ferroviaria_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_metro_ferroviaria_a ADD CONSTRAINT edf_edif_metro_ferroviaria_a_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_edif_metro_ferroviaria_a ADD CONSTRAINT edf_edif_metro_ferroviaria_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_metro_ferroviaria_a ADD CONSTRAINT edf_edif_metro_ferroviaria_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_metro_ferroviaria_a ADD CONSTRAINT edf_edif_metro_ferroviaria_a_tipoedifmetroferrov_check CHECK (tipoedifmetroferrov <@ ARRAY[15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,20::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_metro_ferroviaria_a ADD CONSTRAINT edf_edif_metro_ferroviaria_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_metro_ferroviaria_a ADD CONSTRAINT edf_edif_metro_ferroviaria_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_metro_ferroviaria_a ADD CONSTRAINT edf_edif_metro_ferroviaria_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_metro_ferroviaria_a ADD CONSTRAINT edf_edif_metro_ferroviaria_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_metro_ferroviaria_a ADD CONSTRAINT edf_edif_metro_ferroviaria_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_metro_ferroviaria_a ADD CONSTRAINT edf_edif_metro_ferroviaria_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_metro_ferroviaria_a ADD CONSTRAINT edf_edif_metro_ferroviaria_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
@@ -9286,11 +8861,11 @@ ALTER TABLE ge.edf_posto_policia_militar_a ADD CONSTRAINT edf_posto_policia_mili
 ALTER TABLE ge.edf_posto_policia_militar_a ADD CONSTRAINT edf_posto_policia_militar_a_tipoinstalmilitar_check CHECK (tipoinstalmilitar = ANY(ARRAY[13::SMALLINT,14::SMALLINT,15::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_posto_policia_militar_a ADD CONSTRAINT edf_posto_policia_militar_a_tipousoedif_check CHECK (tipousoedif = ANY(ARRAY[6::SMALLINT]))#
 ALTER TABLE ge.edf_posto_policia_militar_a ADD CONSTRAINT edf_posto_policia_militar_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_coletiva_check CHECK (coletiva = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
@@ -9299,14 +8874,24 @@ ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_cultura_chec
 ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_isolada_check CHECK (isolada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.ver_descontinuidade_geometrica_a ADD CONSTRAINT ver_descontinuidade_geometrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.ver_descontinuidade_geometrica_a ADD CONSTRAINT ver_descontinuidade_geometrica_a_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_canteirodivisorio_check CHECK (canteirodivisorio = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_tipopavimentacao_check CHECK (tipopavimentacao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_trafego_check CHECK (trafego = ANY(ARRAY[1::SMALLINT,2::SMALLINT,4::SMALLINT,95::SMALLINT]))#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_trechoemperimetrourbano_check CHECK (trechoemperimetrourbano = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_acostamento_check CHECK (acostamento = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_tipotrechorod_check CHECK (tipotrechorod = ANY(ARRAY[2::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT]))#
 ALTER TABLE ge.cb_area_saneamento_a ADD CONSTRAINT cb_area_saneamento_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_hab_indigena_a ADD CONSTRAINT edf_hab_indigena_a_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_hab_indigena_a ADD CONSTRAINT edf_hab_indigena_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_hab_indigena_a ADD CONSTRAINT edf_hab_indigena_a_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_hab_indigena_a ADD CONSTRAINT edf_hab_indigena_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_hab_indigena_a ADD CONSTRAINT edf_hab_indigena_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_hab_indigena_a ADD CONSTRAINT edf_hab_indigena_a_coletiva_check CHECK (coletiva = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_hab_indigena_a ADD CONSTRAINT edf_hab_indigena_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_hab_indigena_a ADD CONSTRAINT edf_hab_indigena_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_hab_indigena_a ADD CONSTRAINT edf_hab_indigena_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_hab_indigena_a ADD CONSTRAINT edf_hab_indigena_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_hab_indigena_a ADD CONSTRAINT edf_hab_indigena_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
@@ -9321,14 +8906,14 @@ ALTER TABLE ge.cb_travessia_pedrestre_a ADD CONSTRAINT cb_travessia_pedrestre_a_
 ALTER TABLE ge.cb_travessia_pedrestre_a ADD CONSTRAINT cb_travessia_pedrestre_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.cb_travessia_pedrestre_a ADD CONSTRAINT cb_travessia_pedrestre_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.cb_travessia_pedrestre_a ADD CONSTRAINT cb_travessia_pedrestre_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE ge.cb_area_agropec_ext_veg_pesca_a ADD CONSTRAINT cb_area_agropec_ext_veg_pesca_a_destinadoa_check CHECK (destinadoa = ANY(ARRAY[18::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,44::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.cb_area_agropec_ext_veg_pesca_a ADD CONSTRAINT cb_area_agropec_ext_veg_pesca_a_destinadoa_check CHECK (destinadoa = ANY(ARRAY[18::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,43::SMALLINT,44::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.cb_area_agropec_ext_veg_pesca_a ADD CONSTRAINT cb_area_agropec_ext_veg_pesca_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_pub_militar_a ADD CONSTRAINT edf_edif_pub_militar_a_classeativecon_check CHECK (classeativecon <@ ARRAY[10::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,31::SMALLINT,7::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_pub_militar_a ADD CONSTRAINT edf_edif_pub_militar_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[15::SMALLINT,16::SMALLINT,19::SMALLINT,20::SMALLINT,23::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_pub_militar_a ADD CONSTRAINT edf_edif_pub_militar_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_pub_militar_a ADD CONSTRAINT edf_edif_pub_militar_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_pub_militar_a ADD CONSTRAINT edf_edif_pub_militar_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_pub_militar_a ADD CONSTRAINT edf_edif_pub_militar_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_pub_militar_a ADD CONSTRAINT edf_edif_pub_militar_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_pub_militar_a ADD CONSTRAINT edf_edif_pub_militar_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_pub_militar_a ADD CONSTRAINT edf_edif_pub_militar_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_pub_militar_a ADD CONSTRAINT edf_edif_pub_militar_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
@@ -9337,15 +8922,15 @@ ALTER TABLE ge.edf_edif_pub_militar_a ADD CONSTRAINT edf_edif_pub_militar_a_prop
 ALTER TABLE ge.edf_edif_pub_militar_a ADD CONSTRAINT edf_edif_pub_militar_a_tipoinstalmilitar_check CHECK (tipoinstalmilitar = ANY(ARRAY[10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_pub_militar_a ADD CONSTRAINT edf_edif_pub_militar_a_tipousoedif_check CHECK (tipousoedif = ANY(ARRAY[1::SMALLINT,2::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_pub_militar_a ADD CONSTRAINT edf_edif_pub_militar_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_tipoedifaero_check CHECK (tipoedifaero <@ ARRAY[15::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_tipoedifaero_check CHECK (tipoedifaero <@ ARRAY[15::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_p ADD CONSTRAINT edf_edif_constr_aeroportuaria_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
@@ -9355,7 +8940,7 @@ ALTER TABLE ge.edf_edif_pub_militar_p ADD CONSTRAINT edf_edif_pub_militar_p_grup
 ALTER TABLE ge.edf_edif_pub_militar_p ADD CONSTRAINT edf_edif_pub_militar_p_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_pub_militar_p ADD CONSTRAINT edf_edif_pub_militar_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_pub_militar_p ADD CONSTRAINT edf_edif_pub_militar_p_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_pub_militar_p ADD CONSTRAINT edf_edif_pub_militar_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_pub_militar_p ADD CONSTRAINT edf_edif_pub_militar_p_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_pub_militar_p ADD CONSTRAINT edf_edif_pub_militar_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_pub_militar_p ADD CONSTRAINT edf_edif_pub_militar_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_pub_militar_p ADD CONSTRAINT edf_edif_pub_militar_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
@@ -9372,24 +8957,20 @@ ALTER TABLE ge.cb_estacionamento_a ADD CONSTRAINT cb_estacionamento_a_situacaofi
 ALTER TABLE ge.cb_estacionamento_a ADD CONSTRAINT cb_estacionamento_a_publico_check CHECK (publico = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.cb_estacionamento_a ADD CONSTRAINT cb_estacionamento_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.cb_espelho_dagua_a ADD CONSTRAINT cb_espelho_dagua_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_descontinuidade_geometrica_l ADD CONSTRAINT edf_descontinuidade_geometrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.edf_descontinuidade_geometrica_l ADD CONSTRAINT edf_descontinuidade_geometrica_l_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_classeativecon_check CHECK (classeativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[99::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_tipoedifaero_check CHECK (tipoedifaero <@ ARRAY[15::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_tipoedifaero_check CHECK (tipoedifaero <@ ARRAY[15::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_turistica_check CHECK (turistica = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[99::SMALLINT])#
-ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_edif_constr_aeroportuaria_a ADD CONSTRAINT edf_edif_constr_aeroportuaria_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE ge.cb_area_saude_a ADD CONSTRAINT cb_area_saude_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.ver_descontinuidade_geometrica_p ADD CONSTRAINT ver_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE ge.ver_descontinuidade_geometrica_p ADD CONSTRAINT ver_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE complexos.laz_parque_urbano ADD CONSTRAINT laz_parque_urbano_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE complexos.laz_parque_urbano ADD CONSTRAINT laz_parque_urbano_divisaoativecon_check CHECK (divisaoativecon = ANY(ARRAY[92::SMALLINT]))#
 ALTER TABLE complexos.laz_parque_urbano ADD CONSTRAINT laz_parque_urbano_cultura_check CHECK (cultura = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -9637,31 +9218,28 @@ ALTER TABLE complexos.emu_terminal_hidroviario ADD CONSTRAINT emu_terminal_hidro
 ALTER TABLE complexos.emu_terminal_hidroviario ADD CONSTRAINT emu_terminal_hidroviario_tipoestrut_check CHECK (tipoestrut = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE complexos.emu_terminal_hidroviario ADD CONSTRAINT emu_terminal_hidroviario_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE complexos.adm_org_ext_mineral ADD CONSTRAINT adm_org_ext_mineral_secaoativecon_check CHECK (secaoativecon = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE public.aux_descontinuidade_geometrica ADD CONSTRAINT aux_descontinuidade_geometrica_categoria_check CHECK (categoria = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
+ALTER TABLE public.aux_descontinuidade_geometrica ADD CONSTRAINT aux_descontinuidade_geometrica_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE public.aux_descontinuidade_geometrica ADD CONSTRAINT aux_descontinuidade_geometrica_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
+ALTER TABLE public.aux_descontinuidade_geometrica_l ADD CONSTRAINT aux_descontinuidade_geometrica_l_categoria_check CHECK (categoria = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
 ALTER TABLE public.aux_descontinuidade_geometrica_l ADD CONSTRAINT aux_descontinuidade_geometrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE public.aux_descontinuidade_geometrica_l ADD CONSTRAINT aux_descontinuidade_geometrica_l_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
+ALTER TABLE public.aux_descontinuidade_geometrica_p ADD CONSTRAINT aux_descontinuidade_geometrica_p_categoria_check CHECK (categoria = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
 ALTER TABLE public.aux_descontinuidade_geometrica_p ADD CONSTRAINT aux_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE public.aux_descontinuidade_geometrica_p ADD CONSTRAINT aux_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE public.aux_descontinuidade_geometrica_a ADD CONSTRAINT aux_descontinuidade_geometrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE public.aux_descontinuidade_geometrica_a ADD CONSTRAINT aux_descontinuidade_geometrica_a_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE pe.hdv_eclusa_p ADD CONSTRAINT hdv_eclusa_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_eclusa_p ADD CONSTRAINT hdv_eclusa_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.hdv_eclusa_p ADD CONSTRAINT hdv_eclusa_p_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.hdv_eclusa_p ADD CONSTRAINT hdv_eclusa_p_matconstr_check CHECK (matconstr <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.hdv_eclusa_p ADD CONSTRAINT hdv_eclusa_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_dique ADD CONSTRAINT hid_dique_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_dique ADD CONSTRAINT hid_dique_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_tipoexposicao_check CHECK (tipoexposicao = ANY(ARRAY[3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_tipoequipdesenvsocial_check CHECK (tipoequipdesenvsocial = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_unidadevolume_check CHECK (unidadevolume = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_situacaoagua_check CHECK (situacaoagua = ANY(ARRAY[6::SMALLINT,7::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_tipodepgeral_check CHECK (tipodepgeral = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,19::SMALLINT,2::SMALLINT,26::SMALLINT,3::SMALLINT,32::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_localizacaoequipdesenvsocial_check CHECK (localizacaoequipdesenvsocial = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_finalidadedep_check CHECK (finalidadedep = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_tratamento_check CHECK (tratamento = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_protegida_a ADD CONSTRAINT lpal_unidade_protegida_a_tipounidprotegida_check CHECK (tipounidprotegida = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT]))#
+ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_antropizada_check CHECK (antropizada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_secundaria_check CHECK (secundaria = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_classificacaoporte_check CHECK (classificacaoporte = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT]))#
+ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_densidade_check CHECK (densidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[11::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_protegida_a ADD CONSTRAINT lpal_unidade_protegida_a_tipounidprotegida_check CHECK (tipounidprotegida = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT]))#
 ALTER TABLE pe.lpal_unidade_protegida_a ADD CONSTRAINT lpal_unidade_protegida_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.lpal_unidade_protegida_a ADD CONSTRAINT lpal_unidade_protegida_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.lpal_unidade_protegida_a ADD CONSTRAINT lpal_unidade_protegida_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
@@ -9679,20 +9257,12 @@ ALTER TABLE pe.rel_pico_p ADD CONSTRAINT rel_pico_p_geometriaaproximada_check CH
 ALTER TABLE pe.rel_pico_p ADD CONSTRAINT rel_pico_p_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[22::SMALLINT]))#
 ALTER TABLE pe.hdv_eclusa_l ADD CONSTRAINT hdv_eclusa_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_eclusa_l ADD CONSTRAINT hdv_eclusa_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.hdv_eclusa_l ADD CONSTRAINT hdv_eclusa_l_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.hdv_eclusa_l ADD CONSTRAINT hdv_eclusa_l_matconstr_check CHECK (matconstr <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.hdv_eclusa_l ADD CONSTRAINT hdv_eclusa_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_tipoexposicao_check CHECK (tipoexposicao = ANY(ARRAY[3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_unidadevolume_check CHECK (unidadevolume = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_tipodepgeral_check CHECK (tipodepgeral <@ ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,19::SMALLINT,2::SMALLINT,26::SMALLINT,3::SMALLINT,32::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_tipoconteudo_check CHECK (tipoconteudo <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT])#
-ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_tipoprodutoresiduo_check CHECK (tipoprodutoresiduo <@ ARRAY[100::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,45::SMALLINT,46::SMALLINT,47::SMALLINT,48::SMALLINT,49::SMALLINT,5::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,53::SMALLINT,54::SMALLINT,55::SMALLINT,56::SMALLINT,57::SMALLINT,58::SMALLINT,59::SMALLINT,6::SMALLINT,60::SMALLINT,61::SMALLINT,62::SMALLINT,63::SMALLINT,64::SMALLINT,65::SMALLINT,66::SMALLINT,67::SMALLINT,68::SMALLINT,69::SMALLINT,70::SMALLINT,71::SMALLINT,72::SMALLINT,73::SMALLINT,74::SMALLINT,75::SMALLINT,76::SMALLINT,77::SMALLINT,78::SMALLINT,79::SMALLINT,80::SMALLINT,81::SMALLINT,82::SMALLINT,83::SMALLINT,84::SMALLINT,85::SMALLINT,86::SMALLINT,87::SMALLINT,88::SMALLINT,89::SMALLINT,90::SMALLINT,91::SMALLINT,92::SMALLINT,93::SMALLINT,94::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.lpal_municipio_a ADD CONSTRAINT lpal_municipio_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_eclusa_a ADD CONSTRAINT hdv_eclusa_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_eclusa_a ADD CONSTRAINT hdv_eclusa_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.hdv_eclusa_a ADD CONSTRAINT hdv_eclusa_a_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.hdv_eclusa_a ADD CONSTRAINT hdv_eclusa_a_matconstr_check CHECK (matconstr <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.hdv_eclusa_a ADD CONSTRAINT hdv_eclusa_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.pto_pto_controle_p ADD CONSTRAINT pto_pto_controle_p_sistemageodesico_check CHECK (sistemageodesico = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE pe.pto_pto_controle_p ADD CONSTRAINT pto_pto_controle_p_tipoptocontrole_check CHECK (tipoptocontrole = ANY(ARRAY[12::SMALLINT,13::SMALLINT,9::SMALLINT,99::SMALLINT]))#
@@ -9715,16 +9285,9 @@ ALTER TABLE pe.hid_barragem_p ADD CONSTRAINT hid_barragem_p_usoprincipal_check C
 ALTER TABLE pe.hid_barragem_p ADD CONSTRAINT hid_barragem_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.hid_barragem_p ADD CONSTRAINT hid_barragem_p_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.hid_barragem_p ADD CONSTRAINT hid_barragem_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_modaluso_check CHECK (modaluso <@ ARRAY[4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
-ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_tipopavimentacao_check CHECK (tipopavimentacao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_necessitamanutencao_check CHECK (necessitamanutencao = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_tipotunel_check CHECK (tipotunel = ANY(ARRAY[1::SMALLINT,2::SMALLINT]))#
-ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_posicaopista_check CHECK (posicaopista = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.rod_trecho_rodoviario_l ADD CONSTRAINT rod_trecho_rodoviario_l_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.lpal_posic_geo_localidade_p ADD CONSTRAINT lpal_posic_geo_localidade_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.lpal_posic_geo_localidade_p ADD CONSTRAINT lpal_posic_geo_localidade_p_tipolocalidade_check CHECK (tipolocalidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.rod_trecho_rodoviario_l ADD CONSTRAINT rod_trecho_rodoviario_l_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.rod_trecho_rodoviario_l ADD CONSTRAINT rod_trecho_rodoviario_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rod_trecho_rodoviario_l ADD CONSTRAINT rod_trecho_rodoviario_l_canteirodivisorio_check CHECK (canteirodivisorio = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rod_trecho_rodoviario_l ADD CONSTRAINT rod_trecho_rodoviario_l_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
@@ -9736,8 +9299,6 @@ ALTER TABLE pe.rod_trecho_rodoviario_l ADD CONSTRAINT rod_trecho_rodoviario_l_tr
 ALTER TABLE pe.rod_trecho_rodoviario_l ADD CONSTRAINT rod_trecho_rodoviario_l_acostamento_check CHECK (acostamento = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rod_trecho_rodoviario_l ADD CONSTRAINT rod_trecho_rodoviario_l_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.rod_trecho_rodoviario_l ADD CONSTRAINT rod_trecho_rodoviario_l_tipotrechorod_check CHECK (tipotrechorod = ANY(ARRAY[2::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT]))#
-ALTER TABLE pe.eco_descontinuidade_geometrica_p ADD CONSTRAINT eco_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.eco_descontinuidade_geometrica_p ADD CONSTRAINT eco_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE pe.rel_elemento_fisiog_natural_a ADD CONSTRAINT rel_elemento_fisiog_natural_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_elemento_fisiog_natural_a ADD CONSTRAINT rel_elemento_fisiog_natural_a_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.veg_veg_natural_a ADD CONSTRAINT veg_veg_natural_a_antropizada_check CHECK (antropizada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -9762,8 +9323,11 @@ ALTER TABLE pe.tra_caminho_aereo_l ADD CONSTRAINT tra_caminho_aereo_l_geometriaa
 ALTER TABLE pe.tra_caminho_aereo_l ADD CONSTRAINT tra_caminho_aereo_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.tra_caminho_aereo_l ADD CONSTRAINT tra_caminho_aereo_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.tra_caminho_aereo_l ADD CONSTRAINT tra_caminho_aereo_l_tipocaminhoaereo_check CHECK (tipocaminhoaereo = ANY(ARRAY[12::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.eco_descontinuidade_geometrica_a ADD CONSTRAINT eco_descontinuidade_geometrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.eco_descontinuidade_geometrica_a ADD CONSTRAINT eco_descontinuidade_geometrica_a_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
+ALTER TABLE pe.hid_barragem_l ADD CONSTRAINT hid_barragem_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.hid_barragem_l ADD CONSTRAINT hid_barragem_l_usoprincipal_check CHECK (usoprincipal = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.hid_barragem_l ADD CONSTRAINT hid_barragem_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.hid_barragem_l ADD CONSTRAINT hid_barragem_l_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.hid_barragem_l ADD CONSTRAINT hid_barragem_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.veg_brejo_pantano_a ADD CONSTRAINT veg_brejo_pantano_a_antropizada_check CHECK (antropizada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.veg_brejo_pantano_a ADD CONSTRAINT veg_brejo_pantano_a_secundaria_check CHECK (secundaria = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.veg_brejo_pantano_a ADD CONSTRAINT veg_brejo_pantano_a_classificacaoporte_check CHECK (classificacaoporte = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT]))#
@@ -9781,10 +9345,9 @@ ALTER TABLE pe.enc_torre_comunic_p ADD CONSTRAINT enc_torre_comunic_p_modalidade
 ALTER TABLE pe.rel_terreno_exposto_a ADD CONSTRAINT rel_terreno_exposto_a_causaexposicao_check CHECK (causaexposicao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rel_terreno_exposto_a ADD CONSTRAINT rel_terreno_exposto_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_terreno_exposto_a ADD CONSTRAINT rel_terreno_exposto_a_tipoterrexp_check CHECK (tipoterrexp = ANY(ARRAY[12::SMALLINT,18::SMALLINT,23::SMALLINT,24::SMALLINT,4::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.enc_est_gerad_energia_eletr ADD CONSTRAINT enc_est_gerad_energia_eletr_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.enc_est_gerad_energia_eletr ADD CONSTRAINT enc_est_gerad_energia_eletr_tipoestgerad_check CHECK (tipoestgerad = ANY(ARRAY[5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.enc_est_gerad_energia_eletr ADD CONSTRAINT enc_est_gerad_energia_eletr_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.enc_est_gerad_energia_eletr ADD CONSTRAINT enc_est_gerad_energia_eletr_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.rel_terreno_erodido_a ADD CONSTRAINT rel_terreno_erodido_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.rel_terreno_erodido_a ADD CONSTRAINT rel_terreno_erodido_a_tipoerosao_check CHECK (tipoerosao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.rel_terreno_erodido_a ADD CONSTRAINT rel_terreno_erodido_a_situacaoterreno_check CHECK (situacaoterreno = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_destinacaocemiterio_check CHECK (destinacaocemiterio = ANY(ARRAY[2::SMALLINT,3::SMALLINT]))#
 ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_tipocemiterio_check CHECK (tipocemiterio = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
@@ -9814,10 +9377,17 @@ ALTER TABLE pe.tra_patio ADD CONSTRAINT tra_patio_operacional_check CHECK (opera
 ALTER TABLE pe.tra_patio ADD CONSTRAINT tra_patio_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.tra_patio ADD CONSTRAINT tra_patio_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.tra_patio ADD CONSTRAINT tra_patio_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE pe.aer_descontinuidade_geometrica_a ADD CONSTRAINT aer_descontinuidade_geometrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.aer_descontinuidade_geometrica_a ADD CONSTRAINT aer_descontinuidade_geometrica_a_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
+ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_tipoexposicao_check CHECK (tipoexposicao = ANY(ARRAY[3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_unidadevolume_check CHECK (unidadevolume = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_tipodepgeral_check CHECK (tipodepgeral <@ ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,19::SMALLINT,2::SMALLINT,26::SMALLINT,3::SMALLINT,32::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_tipoconteudo_check CHECK (tipoconteudo <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT])#
+ALTER TABLE pe.eco_deposito_geral ADD CONSTRAINT eco_deposito_geral_tipoprodutoresiduo_check CHECK (tipoprodutoresiduo <@ ARRAY[100::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,45::SMALLINT,46::SMALLINT,47::SMALLINT,48::SMALLINT,49::SMALLINT,5::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,53::SMALLINT,54::SMALLINT,55::SMALLINT,56::SMALLINT,57::SMALLINT,58::SMALLINT,59::SMALLINT,6::SMALLINT,60::SMALLINT,61::SMALLINT,62::SMALLINT,63::SMALLINT,64::SMALLINT,65::SMALLINT,66::SMALLINT,67::SMALLINT,68::SMALLINT,69::SMALLINT,70::SMALLINT,71::SMALLINT,72::SMALLINT,73::SMALLINT,74::SMALLINT,75::SMALLINT,76::SMALLINT,77::SMALLINT,78::SMALLINT,79::SMALLINT,80::SMALLINT,81::SMALLINT,82::SMALLINT,83::SMALLINT,84::SMALLINT,85::SMALLINT,86::SMALLINT,87::SMALLINT,88::SMALLINT,89::SMALLINT,90::SMALLINT,91::SMALLINT,92::SMALLINT,93::SMALLINT,94::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.enc_trecho_comunic_l ADD CONSTRAINT enc_trecho_comunic_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.enc_trecho_comunic_l ADD CONSTRAINT enc_trecho_comunic_l_matconstr_check CHECK (matconstr = ANY(ARRAY[2::SMALLINT,3::SMALLINT,5::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.enc_trecho_comunic_l ADD CONSTRAINT enc_trecho_comunic_l_matcondutor_check CHECK (matcondutor = ANY(ARRAY[25::SMALLINT,26::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.enc_trecho_comunic_l ADD CONSTRAINT enc_trecho_comunic_l_emduto_check CHECK (emduto = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.enc_trecho_comunic_l ADD CONSTRAINT enc_trecho_comunic_l_posicaorelativa_check CHECK (posicaorelativa = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.enc_trecho_comunic_l ADD CONSTRAINT enc_trecho_comunic_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
@@ -9829,7 +9399,7 @@ ALTER TABLE pe.hid_canal_vala_l ADD CONSTRAINT hid_canal_vala_l_finalidade_check
 ALTER TABLE pe.hid_canal_vala_l ADD CONSTRAINT hid_canal_vala_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_canal_vala_l ADD CONSTRAINT hid_canal_vala_l_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT])#
 ALTER TABLE pe.hid_canal_vala_l ADD CONSTRAINT hid_canal_vala_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.hid_canal_vala_l ADD CONSTRAINT hid_canal_vala_l_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[24::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.hid_canal_vala_l ADD CONSTRAINT hid_canal_vala_l_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[30::SMALLINT,31::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.sb_dep_abast_agua_p ADD CONSTRAINT sb_dep_abast_agua_p_tipoexposicao_check CHECK (tipoexposicao = ANY(ARRAY[3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.sb_dep_abast_agua_p ADD CONSTRAINT sb_dep_abast_agua_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.sb_dep_abast_agua_p ADD CONSTRAINT sb_dep_abast_agua_p_tipoequipdesenvsocial_check CHECK (tipoequipdesenvsocial = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
@@ -9846,18 +9416,23 @@ ALTER TABLE pe.hid_banco_areia_a ADD CONSTRAINT hid_banco_areia_a_geometriaaprox
 ALTER TABLE pe.hid_banco_areia_a ADD CONSTRAINT hid_banco_areia_a_materialpredominante_check CHECK (materialpredominante = ANY(ARRAY[12::SMALLINT,13::SMALLINT,14::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,4::SMALLINT,50::SMALLINT,95::SMALLINT,97::SMALLINT,98::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.hid_banco_areia_a ADD CONSTRAINT hid_banco_areia_a_tipobanco_check CHECK (tipobanco = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT]))#
 ALTER TABLE pe.hid_banco_areia_a ADD CONSTRAINT hid_banco_areia_a_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.fer_descontinuidade_geometrica_p ADD CONSTRAINT fer_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.fer_descontinuidade_geometrica_p ADD CONSTRAINT fer_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE pe.sb_descontinuidade_geometrica_p ADD CONSTRAINT sb_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.sb_descontinuidade_geometrica_p ADD CONSTRAINT sb_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE pe.rel_ponto_hipsometrico ADD CONSTRAINT rel_ponto_hipsometrico_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica ADD CONSTRAINT enc_est_gerad_energia_eletrica_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica ADD CONSTRAINT enc_est_gerad_energia_eletrica_tipoestgerad_check CHECK (tipoestgerad = ANY(ARRAY[5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica ADD CONSTRAINT enc_est_gerad_energia_eletrica_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica ADD CONSTRAINT enc_est_gerad_energia_eletrica_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_antropizada_check CHECK (antropizada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_secundaria_check CHECK (secundaria = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_classificacaoporte_check CHECK (classificacaoporte = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT]))#
+ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_densidade_check CHECK (densidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[6::SMALLINT]))#
 ALTER TABLE pe.hid_canal_vala_a ADD CONSTRAINT hid_canal_vala_a_usoprincipal_check CHECK (usoprincipal = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.hid_canal_vala_a ADD CONSTRAINT hid_canal_vala_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_canal_vala_a ADD CONSTRAINT hid_canal_vala_a_finalidade_check CHECK (finalidade = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_canal_vala_a ADD CONSTRAINT hid_canal_vala_a_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT])#
 ALTER TABLE pe.hid_canal_vala_a ADD CONSTRAINT hid_canal_vala_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.hid_canal_vala_a ADD CONSTRAINT hid_canal_vala_a_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT])#
 ALTER TABLE pe.hid_canal_vala_a ADD CONSTRAINT hid_canal_vala_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.hid_canal_vala_a ADD CONSTRAINT hid_canal_vala_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[24::SMALLINT,26::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.hid_canal_vala_a ADD CONSTRAINT hid_canal_vala_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[30::SMALLINT,31::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.sb_dep_saneamento_p ADD CONSTRAINT sb_dep_saneamento_p_tipoexposicao_check CHECK (tipoexposicao = ANY(ARRAY[3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.sb_dep_saneamento_p ADD CONSTRAINT sb_dep_saneamento_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.sb_dep_saneamento_p ADD CONSTRAINT sb_dep_saneamento_p_unidadevolume_check CHECK (unidadevolume = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
@@ -9896,12 +9471,9 @@ ALTER TABLE pe.dut_galeria_l ADD CONSTRAINT dut_galeria_l_geometriaaproximada_ch
 ALTER TABLE pe.dut_galeria_l ADD CONSTRAINT dut_galeria_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.dut_galeria_l ADD CONSTRAINT dut_galeria_l_setor_check CHECK (setor = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.dut_galeria_l ADD CONSTRAINT dut_galeria_l_tipotrechoduto_check CHECK (tipotrechoduto = ANY(ARRAY[5::SMALLINT]))#
-ALTER TABLE pe.sb_descontinuidade_geometrica_a ADD CONSTRAINT sb_descontinuidade_geometrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.sb_descontinuidade_geometrica_a ADD CONSTRAINT sb_descontinuidade_geometrica_a_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE pe.fer_descontinuidade_geometrica_l ADD CONSTRAINT fer_descontinuidade_geometrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.fer_descontinuidade_geometrica_l ADD CONSTRAINT fer_descontinuidade_geometrica_l_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE pe.sb_descontinuidade_geometrica_l ADD CONSTRAINT sb_descontinuidade_geometrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.sb_descontinuidade_geometrica_l ADD CONSTRAINT sb_descontinuidade_geometrica_l_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
+ALTER TABLE pe.tra_funicular_l ADD CONSTRAINT tra_funicular_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.tra_funicular_l ADD CONSTRAINT tra_funicular_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.tra_funicular_l ADD CONSTRAINT tra_funicular_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.sb_dep_saneamento_a ADD CONSTRAINT sb_dep_saneamento_a_tipoexposicao_check CHECK (tipoexposicao = ANY(ARRAY[3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.sb_dep_saneamento_a ADD CONSTRAINT sb_dep_saneamento_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.sb_dep_saneamento_a ADD CONSTRAINT sb_dep_saneamento_a_unidadevolume_check CHECK (unidadevolume = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
@@ -9924,15 +9496,24 @@ ALTER TABLE pe.hid_comporta_p ADD CONSTRAINT hid_comporta_p_geometriaaproximada_
 ALTER TABLE pe.hid_comporta_p ADD CONSTRAINT hid_comporta_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.hid_comporta_p ADD CONSTRAINT hid_comporta_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_corredeira_p ADD CONSTRAINT hid_corredeira_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_tipocampo_check CHECK (tipocampo = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_antropizada_check CHECK (antropizada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_secundaria_check CHECK (secundaria = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_classificacaoporte_check CHECK (classificacaoporte = ANY(ARRAY[2::SMALLINT,3::SMALLINT,95::SMALLINT,98::SMALLINT]))#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_densidade_check CHECK (densidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[9::SMALLINT]))#
-ALTER TABLE pe.veg_descontinuidade_geometrica_p ADD CONSTRAINT veg_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.veg_descontinuidade_geometrica_p ADD CONSTRAINT veg_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
+ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_modaluso_check CHECK (modaluso <@ ARRAY[10::SMALLINT,14::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
+ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_finalidadepatio_check CHECK (finalidadepatio <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_tipoexposicao_check CHECK (tipoexposicao = ANY(ARRAY[3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_unidadevolume_check CHECK (unidadevolume = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_estadofisico_check CHECK (estadofisico = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,98::SMALLINT]))#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_tipodepgeral_check CHECK (tipodepgeral = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,19::SMALLINT,2::SMALLINT,26::SMALLINT,3::SMALLINT,32::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_tipoconteudo_check CHECK (tipoconteudo <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT])#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_tipoprodutoresiduo_check CHECK (tipoprodutoresiduo <@ ARRAY[17::SMALLINT,20::SMALLINT,21::SMALLINT,58::SMALLINT,66::SMALLINT,75::SMALLINT,76::SMALLINT,77::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_finalidadedep_check CHECK (finalidadedep = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_tratamento_check CHECK (tratamento = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rel_corte_p ADD CONSTRAINT rel_corte_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_corte_p ADD CONSTRAINT rel_corte_p_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.rel_corte_p ADD CONSTRAINT rel_corte_p_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[24::SMALLINT,25::SMALLINT,26::SMALLINT,32::SMALLINT]))#
@@ -9952,10 +9533,6 @@ ALTER TABLE pe.tra_ponte_p ADD CONSTRAINT tra_ponte_p_matconstr_check CHECK (mat
 ALTER TABLE pe.hdv_obstaculo_navegacao_a ADD CONSTRAINT hdv_obstaculo_navegacao_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_obstaculo_navegacao_a ADD CONSTRAINT hdv_obstaculo_navegacao_a_tipoobst_check CHECK (tipoobst = ANY(ARRAY[4::SMALLINT,5::SMALLINT]))#
 ALTER TABLE pe.hdv_obstaculo_navegacao_a ADD CONSTRAINT hdv_obstaculo_navegacao_a_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_tiporecife_check CHECK (tiporecife = ANY(ARRAY[1::SMALLINT,2::SMALLINT,20::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_situacaocosta_check CHECK (situacaocosta = ANY(ARRAY[10::SMALLINT,11::SMALLINT]))#
-ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_tipoestgerad_check CHECK (tipoestgerad = ANY(ARRAY[8::SMALLINT]))#
 ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
@@ -9964,33 +9541,24 @@ ALTER TABLE pe.hid_corredeira_a ADD CONSTRAINT hid_corredeira_a_geometriaaproxim
 ALTER TABLE pe.rel_rocha_l ADD CONSTRAINT rel_rocha_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_rocha_l ADD CONSTRAINT rel_rocha_l_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[23::SMALLINT]))#
 ALTER TABLE pe.rel_rocha_l ADD CONSTRAINT rel_rocha_l_formarocha_check CHECK (formarocha = ANY(ARRAY[21::SMALLINT,22::SMALLINT,23::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_tipoponte_check CHECK (tipoponte = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,7::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_modaluso_check CHECK (modaluso <@ ARRAY[10::SMALLINT,14::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
-ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_tipopavimentacao_check CHECK (tipopavimentacao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_necessitamanutencao_check CHECK (necessitamanutencao = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_posicaopista_check CHECK (posicaopista = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT])#
-ALTER TABLE pe.hid_descontinuidade_geometrica_l ADD CONSTRAINT hid_descontinuidade_geometrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_descontinuidade_geometrica_l ADD CONSTRAINT hid_descontinuidade_geometrica_l_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
+ALTER TABLE pe.rel_corte_a ADD CONSTRAINT rel_corte_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.rel_corte_a ADD CONSTRAINT rel_corte_a_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.rel_corte_a ADD CONSTRAINT rel_corte_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[26::SMALLINT]))#
 ALTER TABLE pe.tra_entroncamento_pto_p ADD CONSTRAINT tra_entroncamento_pto_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.tra_entroncamento_pto_p ADD CONSTRAINT tra_entroncamento_pto_p_tipoentroncamento_check CHECK (tipoentroncamento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.veg_descontinuidade_geometrica_l ADD CONSTRAINT veg_descontinuidade_geometrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.veg_descontinuidade_geometrica_l ADD CONSTRAINT veg_descontinuidade_geometrica_l_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE pe.rel_corte_l ADD CONSTRAINT rel_corte_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_corte_l ADD CONSTRAINT rel_corte_l_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.rel_corte_l ADD CONSTRAINT rel_corte_l_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[24::SMALLINT,26::SMALLINT]))#
+ALTER TABLE pe.rel_corte_l ADD CONSTRAINT rel_corte_l_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[26::SMALLINT]))#
 ALTER TABLE pe.hdv_obstaculo_navegacao_p ADD CONSTRAINT hdv_obstaculo_navegacao_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_obstaculo_navegacao_p ADD CONSTRAINT hdv_obstaculo_navegacao_p_tipoobst_check CHECK (tipoobst = ANY(ARRAY[4::SMALLINT,5::SMALLINT]))#
 ALTER TABLE pe.hdv_obstaculo_navegacao_p ADD CONSTRAINT hdv_obstaculo_navegacao_p_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_comporta_l ADD CONSTRAINT hid_comporta_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_comporta_l ADD CONSTRAINT hid_comporta_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.hid_comporta_l ADD CONSTRAINT hid_comporta_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_uso_sustentavel_a ADD CONSTRAINT lpal_unidade_uso_sustentavel_a_tipounidprotegida_check CHECK (tipounidprotegida = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_uso_sustentavel_a ADD CONSTRAINT lpal_unidade_uso_sustentavel_a_tipounidprotegida_check CHECK (tipounidprotegida = ANY(ARRAY[3::SMALLINT]))#
 ALTER TABLE pe.lpal_unidade_uso_sustentavel_a ADD CONSTRAINT lpal_unidade_uso_sustentavel_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.lpal_unidade_uso_sustentavel_a ADD CONSTRAINT lpal_unidade_uso_sustentavel_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_uso_sustentavel_a ADD CONSTRAINT lpal_unidade_uso_sustentavel_a_tipounidusosust_check CHECK (tipounidusosust = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE pe.lpal_unidade_uso_sustentavel_a ADD CONSTRAINT lpal_unidade_uso_sustentavel_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.hdv_atracadouro_terminal_p ADD CONSTRAINT hdv_atracadouro_terminal_p_aptidaooperacional_check CHECK (aptidaooperacional <@ ARRAY[2::SMALLINT,3::SMALLINT])#
 ALTER TABLE pe.hdv_atracadouro_terminal_p ADD CONSTRAINT hdv_atracadouro_terminal_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -9999,15 +9567,9 @@ ALTER TABLE pe.hdv_atracadouro_terminal_p ADD CONSTRAINT hdv_atracadouro_termina
 ALTER TABLE pe.hdv_atracadouro_terminal_p ADD CONSTRAINT hdv_atracadouro_terminal_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.hdv_atracadouro_terminal_p ADD CONSTRAINT hdv_atracadouro_terminal_p_tipoatracad_check CHECK (tipoatracad = ANY(ARRAY[38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,44::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hdv_atracadouro_terminal_p ADD CONSTRAINT hdv_atracadouro_terminal_p_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.lpal_descontinuidade_geometrica_l ADD CONSTRAINT lpal_descontinuidade_geometrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.lpal_descontinuidade_geometrica_l ADD CONSTRAINT lpal_descontinuidade_geometrica_l_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE pe.tra_funicular ADD CONSTRAINT tra_funicular_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.tra_funicular ADD CONSTRAINT tra_funicular_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.tra_funicular ADD CONSTRAINT tra_funicular_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hdv_descontinuidade_geometrica_a ADD CONSTRAINT hdv_descontinuidade_geometrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hdv_descontinuidade_geometrica_a ADD CONSTRAINT hdv_descontinuidade_geometrica_a_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE pe.lpal_descontinuidade_geometrica_a ADD CONSTRAINT lpal_descontinuidade_geometrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.lpal_descontinuidade_geometrica_a ADD CONSTRAINT lpal_descontinuidade_geometrica_a_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_pedestre_l ADD CONSTRAINT tra_travessia_pedestre_l_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_pedestre_l ADD CONSTRAINT tra_travessia_pedestre_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_pedestre_l ADD CONSTRAINT tra_travessia_pedestre_l_tipotravessiaped_check CHECK (tipotravessiaped = ANY(ARRAY[10::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
@@ -10019,8 +9581,15 @@ ALTER TABLE pe.hid_trecho_drenagem_l ADD CONSTRAINT hid_trecho_drenagem_l_tipotr
 ALTER TABLE pe.hid_trecho_drenagem_l ADD CONSTRAINT hid_trecho_drenagem_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_trecho_drenagem_l ADD CONSTRAINT hid_trecho_drenagem_l_navegavel_check CHECK (navegavel = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_trecho_drenagem_l ADD CONSTRAINT hid_trecho_drenagem_l_regime_check CHECK (regime = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.lpal_posic_geo_localidade_p ADD CONSTRAINT lpal_posic_geo_localidade_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.lpal_posic_geo_localidade_p ADD CONSTRAINT lpal_posic_geo_localidade_p_tipolocalidade_check CHECK (tipolocalidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_modaluso_check CHECK (modaluso <@ ARRAY[4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
+ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_tipopavimentacao_check CHECK (tipopavimentacao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_necessitamanutencao_check CHECK (necessitamanutencao = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_tipotunel_check CHECK (tipotunel = ANY(ARRAY[1::SMALLINT,2::SMALLINT]))#
+ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_posicaopista_check CHECK (posicaopista = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.rod_ponto_rodoviario_p ADD CONSTRAINT rod_ponto_rodoviario_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rod_ponto_rodoviario_p ADD CONSTRAINT rod_ponto_rodoviario_p_relacionado_check CHECK (relacionado = ANY(ARRAY[15::SMALLINT,18::SMALLINT,20::SMALLINT,24::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,38::SMALLINT,40::SMALLINT,42::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hdv_atracadouro_terminal_a ADD CONSTRAINT hdv_atracadouro_terminal_a_aptidaooperacional_check CHECK (aptidaooperacional <@ ARRAY[2::SMALLINT,3::SMALLINT])#
@@ -10039,21 +9608,13 @@ ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_situacao
 ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_tipodepgeral_check CHECK (tipodepgeral <@ ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,19::SMALLINT,2::SMALLINT,26::SMALLINT,3::SMALLINT,32::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_tipoconteudo_check CHECK (tipoconteudo <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT])#
 ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_tipoprodutoresiduo_check CHECK (tipoprodutoresiduo <@ ARRAY[100::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,45::SMALLINT,46::SMALLINT,47::SMALLINT,48::SMALLINT,49::SMALLINT,5::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,53::SMALLINT,54::SMALLINT,55::SMALLINT,56::SMALLINT,57::SMALLINT,58::SMALLINT,59::SMALLINT,6::SMALLINT,60::SMALLINT,61::SMALLINT,62::SMALLINT,63::SMALLINT,64::SMALLINT,65::SMALLINT,66::SMALLINT,67::SMALLINT,68::SMALLINT,69::SMALLINT,70::SMALLINT,71::SMALLINT,72::SMALLINT,73::SMALLINT,74::SMALLINT,75::SMALLINT,76::SMALLINT,77::SMALLINT,78::SMALLINT,79::SMALLINT,80::SMALLINT,81::SMALLINT,82::SMALLINT,83::SMALLINT,84::SMALLINT,85::SMALLINT,86::SMALLINT,87::SMALLINT,88::SMALLINT,89::SMALLINT,90::SMALLINT,91::SMALLINT,92::SMALLINT,93::SMALLINT,94::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.hdv_descontinuidade_geometrica_p ADD CONSTRAINT hdv_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hdv_descontinuidade_geometrica_p ADD CONSTRAINT hdv_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_atividade_check CHECK (atividade = ANY(ARRAY[10::SMALLINT,9::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoextmin_check CHECK (tipoextmin = ANY(ARRAY[1::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_secaoativecon_check CHECK (secaoativecon = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipopocomina_check CHECK (tipopocomina = ANY(ARRAY[2::SMALLINT,3::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_procextracao_check CHECK (procextracao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoproduto_check CHECK (tipoproduto <@ ARRAY[100::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,45::SMALLINT,46::SMALLINT,47::SMALLINT,48::SMALLINT,49::SMALLINT,5::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,53::SMALLINT,54::SMALLINT,55::SMALLINT,56::SMALLINT,57::SMALLINT,58::SMALLINT,59::SMALLINT,6::SMALLINT,60::SMALLINT,61::SMALLINT,62::SMALLINT,63::SMALLINT,64::SMALLINT,65::SMALLINT,66::SMALLINT,67::SMALLINT,68::SMALLINT,69::SMALLINT,70::SMALLINT,71::SMALLINT,72::SMALLINT,73::SMALLINT,74::SMALLINT,75::SMALLINT,76::SMALLINT,77::SMALLINT,78::SMALLINT,79::SMALLINT,80::SMALLINT,81::SMALLINT,82::SMALLINT,83::SMALLINT,84::SMALLINT,85::SMALLINT,86::SMALLINT,87::SMALLINT,88::SMALLINT,89::SMALLINT,90::SMALLINT,91::SMALLINT,92::SMALLINT,93::SMALLINT,94::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[32::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_formaextracao_check CHECK (formaextracao = ANY(ARRAY[5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.lpal_descontinuidade_geometrica_p ADD CONSTRAINT lpal_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.lpal_descontinuidade_geometrica_p ADD CONSTRAINT lpal_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
+ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_tipotravessiaped_check CHECK (tipotravessiaped = ANY(ARRAY[10::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.lpal_distrito_a ADD CONSTRAINT lpal_distrito_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.lpal_terra_indigena_a ADD CONSTRAINT lpal_terra_indigena_a_situacaojuridica_check CHECK (situacaojuridica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT]))#
 ALTER TABLE pe.lpal_terra_indigena_a ADD CONSTRAINT lpal_terra_indigena_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.lpal_terra_indigena_a ADD CONSTRAINT lpal_terra_indigena_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
@@ -10096,58 +9657,44 @@ ALTER TABLE pe.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_tipoproduto_ch
 ALTER TABLE pe.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[32::SMALLINT]))#
 ALTER TABLE pe.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_formaextracao_check CHECK (formaextracao = ANY(ARRAY[5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_a ADD CONSTRAINT aer_pista_ponto_pouso_a_usopista_check CHECK (usopista = ANY(ARRAY[11::SMALLINT,12::SMALLINT,13::SMALLINT,6::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.aer_pista_ponto_pouso_a ADD CONSTRAINT aer_pista_ponto_pouso_a_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.aer_pista_ponto_pouso_a ADD CONSTRAINT aer_pista_ponto_pouso_a_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_a ADD CONSTRAINT aer_pista_ponto_pouso_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_a ADD CONSTRAINT aer_pista_ponto_pouso_a_homologacao_check CHECK (homologacao = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_a ADD CONSTRAINT aer_pista_ponto_pouso_a_tipopista_check CHECK (tipopista = ANY(ARRAY[10::SMALLINT,11::SMALLINT,9::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_a ADD CONSTRAINT aer_pista_ponto_pouso_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_a ADD CONSTRAINT aer_pista_ponto_pouso_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_l ADD CONSTRAINT aer_pista_ponto_pouso_l_usopista_check CHECK (usopista = ANY(ARRAY[11::SMALLINT,12::SMALLINT,13::SMALLINT,6::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.aer_pista_ponto_pouso_l ADD CONSTRAINT aer_pista_ponto_pouso_l_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.aer_pista_ponto_pouso_l ADD CONSTRAINT aer_pista_ponto_pouso_l_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_l ADD CONSTRAINT aer_pista_ponto_pouso_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_l ADD CONSTRAINT aer_pista_ponto_pouso_l_homologacao_check CHECK (homologacao = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_l ADD CONSTRAINT aer_pista_ponto_pouso_l_tipopista_check CHECK (tipopista = ANY(ARRAY[10::SMALLINT,11::SMALLINT,9::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_l ADD CONSTRAINT aer_pista_ponto_pouso_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_l ADD CONSTRAINT aer_pista_ponto_pouso_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.lpal_distrito_a ADD CONSTRAINT lpal_distrito_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_atividade_check CHECK (atividade = ANY(ARRAY[10::SMALLINT,9::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoextmin_check CHECK (tipoextmin = ANY(ARRAY[1::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_secaoativecon_check CHECK (secaoativecon = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipopocomina_check CHECK (tipopocomina = ANY(ARRAY[2::SMALLINT,3::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_procextracao_check CHECK (procextracao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoproduto_check CHECK (tipoproduto <@ ARRAY[100::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,45::SMALLINT,46::SMALLINT,47::SMALLINT,48::SMALLINT,49::SMALLINT,5::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,53::SMALLINT,54::SMALLINT,55::SMALLINT,56::SMALLINT,57::SMALLINT,58::SMALLINT,59::SMALLINT,6::SMALLINT,60::SMALLINT,61::SMALLINT,62::SMALLINT,63::SMALLINT,64::SMALLINT,65::SMALLINT,66::SMALLINT,67::SMALLINT,68::SMALLINT,69::SMALLINT,70::SMALLINT,71::SMALLINT,72::SMALLINT,73::SMALLINT,74::SMALLINT,75::SMALLINT,76::SMALLINT,77::SMALLINT,78::SMALLINT,79::SMALLINT,80::SMALLINT,81::SMALLINT,82::SMALLINT,83::SMALLINT,84::SMALLINT,85::SMALLINT,86::SMALLINT,87::SMALLINT,88::SMALLINT,89::SMALLINT,90::SMALLINT,91::SMALLINT,92::SMALLINT,93::SMALLINT,94::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[32::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_formaextracao_check CHECK (formaextracao = ANY(ARRAY[5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.tra_ponto_rodoviario_ferrov ADD CONSTRAINT tra_ponto_rodoviario_ferrov_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.tra_ponto_rodoviario_ferrov ADD CONSTRAINT tra_ponto_rodoviario_ferrov_relacionado_check CHECK (relacionado = ANY(ARRAY[15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,20::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,6::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.enc_zona_linhas_energia_com_a ADD CONSTRAINT enc_zona_linhas_energia_com_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_aptidaooperacional_check CHECK (aptidaooperacional <@ ARRAY[2::SMALLINT,3::SMALLINT])#
-ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_tipoatracad_check CHECK (tipoatracad = ANY(ARRAY[38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,44::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_tipoexposicao_check CHECK (tipoexposicao = ANY(ARRAY[3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_unidadevolume_check CHECK (unidadevolume = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_estadofisico_check CHECK (estadofisico = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,98::SMALLINT]))#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_tipodepgeral_check CHECK (tipodepgeral = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,19::SMALLINT,2::SMALLINT,26::SMALLINT,3::SMALLINT,32::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_tipoconteudo_check CHECK (tipoconteudo <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT])#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_tipoprodutoresiduo_check CHECK (tipoprodutoresiduo <@ ARRAY[17::SMALLINT,20::SMALLINT,21::SMALLINT,58::SMALLINT,66::SMALLINT,75::SMALLINT,76::SMALLINT,77::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_finalidadedep_check CHECK (finalidadedep = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_tratamento_check CHECK (tratamento = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_barragem ADD CONSTRAINT hid_barragem_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_barragem ADD CONSTRAINT hid_barragem_usoprincipal_check CHECK (usoprincipal = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.hid_barragem ADD CONSTRAINT hid_barragem_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.hid_barragem ADD CONSTRAINT hid_barragem_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.hid_barragem ADD CONSTRAINT hid_barragem_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.rel_elemento_fisiografico ADD CONSTRAINT rel_elemento_fisiografico_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.lpal_area_construida_a ADD CONSTRAINT lpal_area_construida_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_usopista_check CHECK (usopista = ANY(ARRAY[11::SMALLINT,12::SMALLINT,13::SMALLINT,6::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_homologacao_check CHECK (homologacao = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_tipopista_check CHECK (tipopista = ANY(ARRAY[10::SMALLINT,11::SMALLINT,9::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.rel_rocha_a ADD CONSTRAINT rel_rocha_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_rocha_a ADD CONSTRAINT rel_rocha_a_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[23::SMALLINT]))#
-ALTER TABLE pe.rel_rocha_a ADD CONSTRAINT rel_rocha_a_formarocha_check CHECK (formarocha = ANY(ARRAY[21::SMALLINT,22::SMALLINT,23::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_destinacaocemiterio_check CHECK (destinacaocemiterio = ANY(ARRAY[2::SMALLINT,3::SMALLINT]))#
+ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_tipocemiterio_check CHECK (tipocemiterio = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_denominacaoassociada_check CHECK (denominacaoassociada = ANY(ARRAY[5::SMALLINT,6::SMALLINT,7::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_p ADD CONSTRAINT tra_travessia_p_tipoembarcacao_check CHECK (tipoembarcacao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_p ADD CONSTRAINT tra_travessia_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_p ADD CONSTRAINT tra_travessia_p_tipouso_check CHECK (tipouso = ANY(ARRAY[21::SMALLINT,22::SMALLINT,95::SMALLINT,98::SMALLINT]))#
@@ -10156,12 +9703,12 @@ ALTER TABLE pe.eco_plataforma ADD CONSTRAINT eco_plataforma_geometriaaproximada_
 ALTER TABLE pe.eco_plataforma ADD CONSTRAINT eco_plataforma_tipoplataforma_check CHECK (tipoplataforma = ANY(ARRAY[3::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT]))#
 ALTER TABLE pe.hid_area_umida_a ADD CONSTRAINT hid_area_umida_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_area_umida_a ADD CONSTRAINT hid_area_umida_a_tipoareaumida_check CHECK (tipoareaumida = ANY(ARRAY[3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_funicular_p ADD CONSTRAINT tra_funicular_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.tra_funicular_p ADD CONSTRAINT tra_funicular_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.tra_funicular_p ADD CONSTRAINT tra_funicular_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.rel_duna_p ADD CONSTRAINT rel_duna_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.rel_duna_p ADD CONSTRAINT rel_duna_p_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[17::SMALLINT]))#
+ALTER TABLE pe.rel_duna_p ADD CONSTRAINT rel_duna_p_fixa_check CHECK (fixa = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_eclusa ADD CONSTRAINT hdv_eclusa_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_eclusa ADD CONSTRAINT hdv_eclusa_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.hdv_eclusa ADD CONSTRAINT hdv_eclusa_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.hdv_eclusa ADD CONSTRAINT hdv_eclusa_matconstr_check CHECK (matconstr <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.hdv_eclusa ADD CONSTRAINT hdv_eclusa_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rel_isolinha_hipsometrica ADD CONSTRAINT rel_isolinha_hipsometrica_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.enc_termeletrica_l ADD CONSTRAINT enc_termeletrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
@@ -10169,15 +9716,11 @@ ALTER TABLE pe.enc_termeletrica_l ADD CONSTRAINT enc_termeletrica_l_tipoestgerad
 ALTER TABLE pe.enc_termeletrica_l ADD CONSTRAINT enc_termeletrica_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.enc_termeletrica_l ADD CONSTRAINT enc_termeletrica_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.enc_termeletrica_l ADD CONSTRAINT enc_termeletrica_l_tipocombustivel_check CHECK (tipocombustivel = ANY(ARRAY[1::SMALLINT,3::SMALLINT,33::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_modaluso_check CHECK (modaluso <@ ARRAY[10::SMALLINT,14::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
-ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_tipopavimentacao_check CHECK (tipopavimentacao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_necessitamanutencao_check CHECK (necessitamanutencao = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_posicaopista_check CHECK (posicaopista = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_tipopassagviad_check CHECK (tipopassagviad = ANY(ARRAY[5::SMALLINT,6::SMALLINT]))#
+ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_tipoestgerad_check CHECK (tipoestgerad = ANY(ARRAY[9::SMALLINT]))#
+ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_tipocombustivel_check CHECK (tipocombustivel = ANY(ARRAY[1::SMALLINT,3::SMALLINT,33::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.hid_quebramar_molhe ADD CONSTRAINT hid_quebramar_molhe_tipoquebramolhe_check CHECK (tipoquebramolhe = ANY(ARRAY[1::SMALLINT,2::SMALLINT,4::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_quebramar_molhe ADD CONSTRAINT hid_quebramar_molhe_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_quebramar_molhe ADD CONSTRAINT hid_quebramar_molhe_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
@@ -10215,19 +9758,15 @@ ALTER TABLE pe.enc_torre_energia_p ADD CONSTRAINT enc_torre_energia_p_operaciona
 ALTER TABLE pe.eco_equip_agropec ADD CONSTRAINT eco_equip_agropec_tipoequipagropec_check CHECK (tipoequipagropec = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.eco_equip_agropec ADD CONSTRAINT eco_equip_agropec_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.eco_equip_agropec ADD CONSTRAINT eco_equip_agropec_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.eco_equip_agropec ADD CONSTRAINT eco_equip_agropec_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.eco_equip_agropec ADD CONSTRAINT eco_equip_agropec_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.eco_equip_agropec ADD CONSTRAINT eco_equip_agropec_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rel_alter_fisiog_antropica_p ADD CONSTRAINT rel_alter_fisiog_antropica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_alter_fisiog_antropica_p ADD CONSTRAINT rel_alter_fisiog_antropica_p_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.hid_foz_maritima ADD CONSTRAINT hid_foz_maritima_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.fer_descontinuidade_geometrica_a ADD CONSTRAINT fer_descontinuidade_geometrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.fer_descontinuidade_geometrica_a ADD CONSTRAINT fer_descontinuidade_geometrica_a_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE pe.enc_hidreletrica_l ADD CONSTRAINT enc_hidreletrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.enc_hidreletrica_l ADD CONSTRAINT enc_hidreletrica_l_tipoestgerad_check CHECK (tipoestgerad = ANY(ARRAY[8::SMALLINT]))#
 ALTER TABLE pe.enc_hidreletrica_l ADD CONSTRAINT enc_hidreletrica_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.enc_hidreletrica_l ADD CONSTRAINT enc_hidreletrica_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_descontinuidade_geometrica_p ADD CONSTRAINT hid_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_descontinuidade_geometrica_p ADD CONSTRAINT hid_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE pe.tra_patio_p ADD CONSTRAINT tra_patio_p_modaluso_check CHECK (modaluso <@ ARRAY[10::SMALLINT,14::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
 ALTER TABLE pe.tra_patio_p ADD CONSTRAINT tra_patio_p_finalidadepatio_check CHECK (finalidadepatio <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.tra_patio_p ADD CONSTRAINT tra_patio_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -10249,9 +9788,6 @@ ALTER TABLE pe.eco_deposito_geral_a ADD CONSTRAINT eco_deposito_geral_a_situacao
 ALTER TABLE pe.eco_deposito_geral_a ADD CONSTRAINT eco_deposito_geral_a_tipodepgeral_check CHECK (tipodepgeral <@ ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,19::SMALLINT,2::SMALLINT,26::SMALLINT,3::SMALLINT,32::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.eco_deposito_geral_a ADD CONSTRAINT eco_deposito_geral_a_tipoconteudo_check CHECK (tipoconteudo <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT])#
 ALTER TABLE pe.eco_deposito_geral_a ADD CONSTRAINT eco_deposito_geral_a_tipoprodutoresiduo_check CHECK (tipoprodutoresiduo <@ ARRAY[100::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,45::SMALLINT,46::SMALLINT,47::SMALLINT,48::SMALLINT,49::SMALLINT,5::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,53::SMALLINT,54::SMALLINT,55::SMALLINT,56::SMALLINT,57::SMALLINT,58::SMALLINT,59::SMALLINT,6::SMALLINT,60::SMALLINT,61::SMALLINT,62::SMALLINT,63::SMALLINT,64::SMALLINT,65::SMALLINT,66::SMALLINT,67::SMALLINT,68::SMALLINT,69::SMALLINT,70::SMALLINT,71::SMALLINT,72::SMALLINT,73::SMALLINT,74::SMALLINT,75::SMALLINT,76::SMALLINT,77::SMALLINT,78::SMALLINT,79::SMALLINT,80::SMALLINT,81::SMALLINT,82::SMALLINT,83::SMALLINT,84::SMALLINT,85::SMALLINT,86::SMALLINT,87::SMALLINT,88::SMALLINT,89::SMALLINT,90::SMALLINT,91::SMALLINT,92::SMALLINT,93::SMALLINT,94::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.rel_terreno_erodido_p ADD CONSTRAINT rel_terreno_erodido_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_terreno_erodido_p ADD CONSTRAINT rel_terreno_erodido_p_tipoerosao_check CHECK (tipoerosao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.rel_terreno_erodido_p ADD CONSTRAINT rel_terreno_erodido_p_situacaoterreno_check CHECK (situacaoterreno = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.lpal_unidade_federacao_a ADD CONSTRAINT lpal_unidade_federacao_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.lpal_unidade_federacao_a ADD CONSTRAINT lpal_unidade_federacao_a_sigla_check CHECK (sigla = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT]))#
 ALTER TABLE pe.sb_dep_abast_agua_a ADD CONSTRAINT sb_dep_abast_agua_a_tipoexposicao_check CHECK (tipoexposicao = ANY(ARRAY[3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
@@ -10266,12 +9802,13 @@ ALTER TABLE pe.sb_dep_abast_agua_a ADD CONSTRAINT sb_dep_abast_agua_a_tipodepger
 ALTER TABLE pe.sb_dep_abast_agua_a ADD CONSTRAINT sb_dep_abast_agua_a_localizacaoequipdesenvsocial_check CHECK (localizacaoequipdesenvsocial = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.sb_dep_abast_agua_a ADD CONSTRAINT sb_dep_abast_agua_a_finalidadedep_check CHECK (finalidadedep = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.sb_dep_abast_agua_a ADD CONSTRAINT sb_dep_abast_agua_a_tratamento_check CHECK (tratamento = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_modaluso_check CHECK (modaluso <@ ARRAY[10::SMALLINT,14::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
-ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_finalidadepatio_check CHECK (finalidadepatio <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_tipocampo_check CHECK (tipocampo = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_antropizada_check CHECK (antropizada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_secundaria_check CHECK (secundaria = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_classificacaoporte_check CHECK (classificacaoporte = ANY(ARRAY[2::SMALLINT,3::SMALLINT,95::SMALLINT,98::SMALLINT]))#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_densidade_check CHECK (densidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[9::SMALLINT]))#
 ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_mattransp_check CHECK (mattransp <@ ARRAY[1::SMALLINT,2::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -10300,11 +9837,9 @@ ALTER TABLE pe.veg_cerrado_a ADD CONSTRAINT veg_cerrado_a_geometriaaproximada_ch
 ALTER TABLE pe.veg_cerrado_a ADD CONSTRAINT veg_cerrado_a_densidade_check CHECK (densidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.veg_cerrado_a ADD CONSTRAINT veg_cerrado_a_vereda_check CHECK (vereda = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.veg_cerrado_a ADD CONSTRAINT veg_cerrado_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[7::SMALLINT]))#
-ALTER TABLE pe.rel_duna_p ADD CONSTRAINT rel_duna_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_duna_p ADD CONSTRAINT rel_duna_p_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[17::SMALLINT]))#
-ALTER TABLE pe.rel_duna_p ADD CONSTRAINT rel_duna_p_fixa_check CHECK (fixa = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hdv_descontinuidade_geometrica_l ADD CONSTRAINT hdv_descontinuidade_geometrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hdv_descontinuidade_geometrica_l ADD CONSTRAINT hdv_descontinuidade_geometrica_l_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
+ALTER TABLE pe.tra_funicular_p ADD CONSTRAINT tra_funicular_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.tra_funicular_p ADD CONSTRAINT tra_funicular_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.tra_funicular_p ADD CONSTRAINT tra_funicular_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hdv_fundeadouro_a ADD CONSTRAINT hdv_fundeadouro_a_tipofundeadouro_check CHECK (tipofundeadouro = ANY(ARRAY[1::SMALLINT,2::SMALLINT]))#
 ALTER TABLE pe.hdv_fundeadouro_a ADD CONSTRAINT hdv_fundeadouro_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_fundeadouro_a ADD CONSTRAINT hdv_fundeadouro_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
@@ -10327,8 +9862,11 @@ ALTER TABLE pe.hdv_obstaculo_navegacao ADD CONSTRAINT hdv_obstaculo_navegacao_si
 ALTER TABLE pe.rel_duna_l ADD CONSTRAINT rel_duna_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_duna_l ADD CONSTRAINT rel_duna_l_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[17::SMALLINT]))#
 ALTER TABLE pe.rel_duna_l ADD CONSTRAINT rel_duna_l_fixa_check CHECK (fixa = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_queda_dagua_l ADD CONSTRAINT hid_queda_dagua_l_tipoqueda_check CHECK (tipoqueda = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_queda_dagua_l ADD CONSTRAINT hid_queda_dagua_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_tipounidprotegida_check CHECK (tipounidprotegida = ANY(ARRAY[2::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_tipounidprotinteg_check CHECK (tipounidprotinteg = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT]))#
 ALTER TABLE pe.veg_reflorestamento_a ADD CONSTRAINT veg_reflorestamento_a_terreno_check CHECK (terreno = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.veg_reflorestamento_a ADD CONSTRAINT veg_reflorestamento_a_finalidade_check CHECK (finalidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.veg_reflorestamento_a ADD CONSTRAINT veg_reflorestamento_a_tipolavoura_check CHECK (tipolavoura = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
@@ -10339,10 +9877,13 @@ ALTER TABLE pe.veg_reflorestamento_a ADD CONSTRAINT veg_reflorestamento_a_tipove
 ALTER TABLE pe.hid_ilha_a ADD CONSTRAINT hid_ilha_a_tipoilha_check CHECK (tipoilha = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,98::SMALLINT]))#
 ALTER TABLE pe.hid_ilha_a ADD CONSTRAINT hid_ilha_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_ilha_a ADD CONSTRAINT hid_ilha_a_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[21::SMALLINT]))#
-ALTER TABLE pe.eco_descontinuidade_geometrica_l ADD CONSTRAINT eco_descontinuidade_geometrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.eco_descontinuidade_geometrica_l ADD CONSTRAINT eco_descontinuidade_geometrica_l_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE pe.pto_descontinuidade_geometrica_p ADD CONSTRAINT pto_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.pto_descontinuidade_geometrica_p ADD CONSTRAINT pto_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
+ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_aptidaooperacional_check CHECK (aptidaooperacional <@ ARRAY[2::SMALLINT,3::SMALLINT])#
+ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_tipoatracad_check CHECK (tipoatracad = ANY(ARRAY[38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,44::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hdv_atracadouro_terminal ADD CONSTRAINT hdv_atracadouro_terminal_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.hid_rocha_em_agua_a ADD CONSTRAINT hid_rocha_em_agua_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_rocha_em_agua_a ADD CONSTRAINT hid_rocha_em_agua_a_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[23::SMALLINT]))#
 ALTER TABLE pe.hid_rocha_em_agua_a ADD CONSTRAINT hid_rocha_em_agua_a_formarocha_check CHECK (formarocha = ANY(ARRAY[21::SMALLINT,22::SMALLINT,23::SMALLINT,95::SMALLINT]))#
@@ -10362,12 +9903,11 @@ ALTER TABLE pe.hid_recife_a ADD CONSTRAINT hid_recife_a_situacaocosta_check CHEC
 ALTER TABLE pe.hid_recife_a ADD CONSTRAINT hid_recife_a_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.sb_barragem_calcadao_a ADD CONSTRAINT sb_barragem_calcadao_a_localizacaoequipdesenvsocial_check CHECK (localizacaoequipdesenvsocial = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.sb_barragem_calcadao_a ADD CONSTRAINT sb_barragem_calcadao_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.sb_barragem_calcadao_a ADD CONSTRAINT sb_barragem_calcadao_a_tipoequipdesenvsocial_check CHECK (tipoequipdesenvsocial = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.sb_barragem_calcadao_a ADD CONSTRAINT sb_barragem_calcadao_a_tipoequipdesenvsocial_check CHECK (tipoequipdesenvsocial = ANY(ARRAY[2::SMALLINT]))#
 ALTER TABLE pe.hid_recife_l ADD CONSTRAINT hid_recife_l_tiporecife_check CHECK (tiporecife = ANY(ARRAY[1::SMALLINT,2::SMALLINT,20::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_recife_l ADD CONSTRAINT hid_recife_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_recife_l ADD CONSTRAINT hid_recife_l_situacaocosta_check CHECK (situacaocosta = ANY(ARRAY[10::SMALLINT,11::SMALLINT]))#
 ALTER TABLE pe.hid_recife_l ADD CONSTRAINT hid_recife_l_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.lpal_municipio_a ADD CONSTRAINT lpal_municipio_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso ADD CONSTRAINT aer_pista_ponto_pouso_usopista_check CHECK (usopista = ANY(ARRAY[11::SMALLINT,12::SMALLINT,13::SMALLINT,6::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso ADD CONSTRAINT aer_pista_ponto_pouso_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso ADD CONSTRAINT aer_pista_ponto_pouso_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -10375,22 +9915,16 @@ ALTER TABLE pe.aer_pista_ponto_pouso ADD CONSTRAINT aer_pista_ponto_pouso_homolo
 ALTER TABLE pe.aer_pista_ponto_pouso ADD CONSTRAINT aer_pista_ponto_pouso_tipopista_check CHECK (tipopista = ANY(ARRAY[10::SMALLINT,11::SMALLINT,9::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso ADD CONSTRAINT aer_pista_ponto_pouso_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso ADD CONSTRAINT aer_pista_ponto_pouso_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.pto_descontinuidade_geometrica_a ADD CONSTRAINT pto_descontinuidade_geometrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.pto_descontinuidade_geometrica_a ADD CONSTRAINT pto_descontinuidade_geometrica_a_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE pe.hid_barragem_l ADD CONSTRAINT hid_barragem_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_barragem_l ADD CONSTRAINT hid_barragem_l_usoprincipal_check CHECK (usoprincipal = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.hid_barragem_l ADD CONSTRAINT hid_barragem_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.hid_barragem_l ADD CONSTRAINT hid_barragem_l_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.hid_barragem_l ADD CONSTRAINT hid_barragem_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_rocha_em_agua_p ADD CONSTRAINT hid_rocha_em_agua_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_rocha_em_agua_p ADD CONSTRAINT hid_rocha_em_agua_p_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[23::SMALLINT]))#
 ALTER TABLE pe.hid_rocha_em_agua_p ADD CONSTRAINT hid_rocha_em_agua_p_formarocha_check CHECK (formarocha = ANY(ARRAY[21::SMALLINT,22::SMALLINT,23::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_rocha_em_agua_p ADD CONSTRAINT hid_rocha_em_agua_p_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.dut_ponto_inicio_fim_duto_p ADD CONSTRAINT dut_ponto_inicio_fim_duto_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.dut_ponto_inicio_fim_duto_p ADD CONSTRAINT dut_ponto_inicio_fim_duto_p_relacionado_check CHECK (relacionado = ANY(ARRAY[30::SMALLINT]))#
-ALTER TABLE pe.tra_funicular_l ADD CONSTRAINT tra_funicular_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.tra_funicular_l ADD CONSTRAINT tra_funicular_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.tra_funicular_l ADD CONSTRAINT tra_funicular_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_tiporecife_check CHECK (tiporecife = ANY(ARRAY[1::SMALLINT,2::SMALLINT,20::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_situacaocosta_check CHECK (situacaocosta = ANY(ARRAY[10::SMALLINT,11::SMALLINT]))#
+ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.fer_cremalheira_p ADD CONSTRAINT fer_cremalheira_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.fer_cremalheira_p ADD CONSTRAINT fer_cremalheira_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.fer_cremalheira_p ADD CONSTRAINT fer_cremalheira_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -10425,13 +9959,12 @@ ALTER TABLE pe.hid_recife ADD CONSTRAINT hid_recife_situacaoemagua_check CHECK (
 ALTER TABLE pe.rel_curva_batimetrica_l ADD CONSTRAINT rel_curva_batimetrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.dut_ponto_duto_p ADD CONSTRAINT dut_ponto_duto_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.dut_ponto_duto_p ADD CONSTRAINT dut_ponto_duto_p_relacionado_check CHECK (relacionado = ANY(ARRAY[30::SMALLINT,37::SMALLINT]))#
-ALTER TABLE pe.lpal_area_desenv_controle_a ADD CONSTRAINT lpal_area_desenv_controle_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_queda_dagua ADD CONSTRAINT hid_queda_dagua_tipoqueda_check CHECK (tipoqueda = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_queda_dagua ADD CONSTRAINT hid_queda_dagua_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.lpal_terra_publica_a ADD CONSTRAINT lpal_terra_publica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.lpal_terra_publica_a ADD CONSTRAINT lpal_terra_publica_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.lpal_terra_publica_a ADD CONSTRAINT lpal_terra_publica_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.rod_trecho_rodoviario ADD CONSTRAINT rod_trecho_rodoviario_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.rod_trecho_rodoviario ADD CONSTRAINT rod_trecho_rodoviario_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.rod_trecho_rodoviario ADD CONSTRAINT rod_trecho_rodoviario_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rod_trecho_rodoviario ADD CONSTRAINT rod_trecho_rodoviario_canteirodivisorio_check CHECK (canteirodivisorio = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rod_trecho_rodoviario ADD CONSTRAINT rod_trecho_rodoviario_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
@@ -10444,11 +9977,15 @@ ALTER TABLE pe.rod_trecho_rodoviario ADD CONSTRAINT rod_trecho_rodoviario_acosta
 ALTER TABLE pe.rod_trecho_rodoviario ADD CONSTRAINT rod_trecho_rodoviario_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.rod_trecho_rodoviario ADD CONSTRAINT rod_trecho_rodoviario_tipotrechorod_check CHECK (tipotrechorod = ANY(ARRAY[2::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT]))#
 ALTER TABLE pe.rel_ponto_cotado_batimetrico_p ADD CONSTRAINT rel_ponto_cotado_batimetrico_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_tipoestgerad_check CHECK (tipoestgerad = ANY(ARRAY[9::SMALLINT]))#
-ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.enc_termeletrica_a ADD CONSTRAINT enc_termeletrica_a_tipocombustivel_check CHECK (tipocombustivel = ANY(ARRAY[1::SMALLINT,3::SMALLINT,33::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_modaluso_check CHECK (modaluso <@ ARRAY[10::SMALLINT,14::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
+ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_tipopavimentacao_check CHECK (tipopavimentacao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_necessitamanutencao_check CHECK (necessitamanutencao = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_posicaopista_check CHECK (posicaopista = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.tra_passagem_elevada_viaduto_p ADD CONSTRAINT tra_passagem_elevada_viaduto_p_tipopassagviad_check CHECK (tipopassagviad = ANY(ARRAY[5::SMALLINT,6::SMALLINT]))#
 ALTER TABLE pe.enc_grupo_transformadores_a ADD CONSTRAINT enc_grupo_transformadores_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_canal_l ADD CONSTRAINT hid_canal_l_usoprincipal_check CHECK (usoprincipal = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.hid_canal_l ADD CONSTRAINT hid_canal_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -10472,10 +10009,6 @@ ALTER TABLE pe.tra_travessia_l ADD CONSTRAINT tra_travessia_l_tipotravessia_chec
 ALTER TABLE pe.hdv_fundeadouro_p ADD CONSTRAINT hdv_fundeadouro_p_tipofundeadouro_check CHECK (tipofundeadouro = ANY(ARRAY[1::SMALLINT,2::SMALLINT]))#
 ALTER TABLE pe.hdv_fundeadouro_p ADD CONSTRAINT hdv_fundeadouro_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_fundeadouro_p ADD CONSTRAINT hdv_fundeadouro_p_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.pto_pto_geod_topo_controle_p ADD CONSTRAINT pto_pto_geod_topo_controle_p_sistemageodesico_check CHECK (sistemageodesico = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE pe.pto_pto_geod_topo_controle_p ADD CONSTRAINT pto_pto_geod_topo_controle_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.pto_pto_geod_topo_controle_p ADD CONSTRAINT pto_pto_geod_topo_controle_p_tiporef_check CHECK (tiporef = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT]))#
-ALTER TABLE pe.pto_pto_geod_topo_controle_p ADD CONSTRAINT pto_pto_geod_topo_controle_p_referencialaltim_check CHECK (referencialaltim = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.rel_gruta_caverna_l ADD CONSTRAINT rel_gruta_caverna_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_gruta_caverna_l ADD CONSTRAINT rel_gruta_caverna_l_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[15::SMALLINT,20::SMALLINT]))#
 ALTER TABLE pe.enc_trecho_energia_l ADD CONSTRAINT enc_trecho_energia_l_especie_check CHECK (especie = ANY(ARRAY[2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
@@ -10483,16 +10016,22 @@ ALTER TABLE pe.enc_trecho_energia_l ADD CONSTRAINT enc_trecho_energia_l_geometri
 ALTER TABLE pe.enc_trecho_energia_l ADD CONSTRAINT enc_trecho_energia_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.enc_trecho_energia_l ADD CONSTRAINT enc_trecho_energia_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.enc_trecho_energia_l ADD CONSTRAINT enc_trecho_energia_l_posicaorelativa_check CHECK (posicaorelativa = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.rel_corte_a ADD CONSTRAINT rel_corte_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_corte_a ADD CONSTRAINT rel_corte_a_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.rel_corte_a ADD CONSTRAINT rel_corte_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[24::SMALLINT,26::SMALLINT]))#
+ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_tipoponte_check CHECK (tipoponte = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,7::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_modaluso_check CHECK (modaluso <@ ARRAY[10::SMALLINT,14::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
+ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_tipopavimentacao_check CHECK (tipopavimentacao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_necessitamanutencao_check CHECK (necessitamanutencao = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_posicaopista_check CHECK (posicaopista = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.tra_ponte_l ADD CONSTRAINT tra_ponte_l_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT])#
 ALTER TABLE pe.hdv_sinalizacao_p ADD CONSTRAINT hdv_sinalizacao_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_sinalizacao_p ADD CONSTRAINT hdv_sinalizacao_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.hdv_sinalizacao_p ADD CONSTRAINT hdv_sinalizacao_p_tiposinal_check CHECK (tiposinal = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,6::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hdv_sinalizacao_p ADD CONSTRAINT hdv_sinalizacao_p_tiposinal_check CHECK (tiposinal = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hdv_sinalizacao_p ADD CONSTRAINT hdv_sinalizacao_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.enc_descontinuidade_geometrica_p ADD CONSTRAINT enc_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.enc_descontinuidade_geometrica_p ADD CONSTRAINT enc_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE pe.lpal_pais_a ADD CONSTRAINT lpal_pais_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.veg_vegetacao_a ADD CONSTRAINT veg_vegetacao_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.veg_vegetacao_a ADD CONSTRAINT veg_vegetacao_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[10::SMALLINT,11::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.veg_vegetacao_a ADD CONSTRAINT veg_vegetacao_a_classificacaoporte_check CHECK (classificacaoporte = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT]))#
 ALTER TABLE pe.hdv_fundeadouro ADD CONSTRAINT hdv_fundeadouro_tipofundeadouro_check CHECK (tipofundeadouro = ANY(ARRAY[1::SMALLINT,2::SMALLINT]))#
 ALTER TABLE pe.hdv_fundeadouro ADD CONSTRAINT hdv_fundeadouro_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_fundeadouro ADD CONSTRAINT hdv_fundeadouro_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
@@ -10520,7 +10059,6 @@ ALTER TABLE pe.veg_veg_cultivada_a ADD CONSTRAINT veg_veg_cultivada_a_cultivopre
 ALTER TABLE pe.veg_veg_cultivada_a ADD CONSTRAINT veg_veg_cultivada_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.veg_veg_cultivada_a ADD CONSTRAINT veg_veg_cultivada_a_classificacaoporte_check CHECK (classificacaoporte = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT]))#
 ALTER TABLE pe.veg_veg_cultivada_a ADD CONSTRAINT veg_veg_cultivada_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[2::SMALLINT]))#
-ALTER TABLE pe.lpal_area_construida_a ADD CONSTRAINT lpal_area_construida_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_vala_a ADD CONSTRAINT hid_vala_a_usoprincipal_check CHECK (usoprincipal = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.hid_vala_a ADD CONSTRAINT hid_vala_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_vala_a ADD CONSTRAINT hid_vala_a_finalidade_check CHECK (finalidade = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
@@ -10537,8 +10075,6 @@ ALTER TABLE pe.veg_refugio_ecologico_a ADD CONSTRAINT veg_refugio_ecologico_a_cl
 ALTER TABLE pe.veg_refugio_ecologico_a ADD CONSTRAINT veg_refugio_ecologico_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.veg_refugio_ecologico_a ADD CONSTRAINT veg_refugio_ecologico_a_densidade_check CHECK (densidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.veg_refugio_ecologico_a ADD CONSTRAINT veg_refugio_ecologico_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[5::SMALLINT]))#
-ALTER TABLE pe.enc_descontinuidade_geometrica_a ADD CONSTRAINT enc_descontinuidade_geometrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.enc_descontinuidade_geometrica_a ADD CONSTRAINT enc_descontinuidade_geometrica_a_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE pe.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_atividade_check CHECK (atividade = ANY(ARRAY[10::SMALLINT,9::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_tipoextmin_check CHECK (tipoextmin = ANY(ARRAY[1::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,99::SMALLINT]))#
@@ -10552,25 +10088,21 @@ ALTER TABLE pe.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_tipoalterantro
 ALTER TABLE pe.eco_ext_mineral_p ADD CONSTRAINT eco_ext_mineral_p_formaextracao_check CHECK (formaextracao = ANY(ARRAY[5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rel_gruta_caverna_p ADD CONSTRAINT rel_gruta_caverna_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_gruta_caverna_p ADD CONSTRAINT rel_gruta_caverna_p_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[15::SMALLINT,20::SMALLINT]))#
-ALTER TABLE pe.rel_terreno_erodido_a ADD CONSTRAINT rel_terreno_erodido_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_terreno_erodido_a ADD CONSTRAINT rel_terreno_erodido_a_tipoerosao_check CHECK (tipoerosao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.rel_terreno_erodido_a ADD CONSTRAINT rel_terreno_erodido_a_situacaoterreno_check CHECK (situacaoterreno = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_usoprincipal_check CHECK (usoprincipal = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_finalidade_check CHECK (finalidade = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT])#
+ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[31::SMALLINT]))#
 ALTER TABLE pe.rod_passagem_nivel_p ADD CONSTRAINT rod_passagem_nivel_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rod_passagem_nivel_p ADD CONSTRAINT rod_passagem_nivel_p_relacionado_check CHECK (relacionado = ANY(ARRAY[18::SMALLINT,20::SMALLINT,24::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,38::SMALLINT,40::SMALLINT,42::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_antropizada_check CHECK (antropizada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_secundaria_check CHECK (secundaria = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_classificacaoporte_check CHECK (classificacaoporte = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT]))#
-ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_densidade_check CHECK (densidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.veg_campinarana_a ADD CONSTRAINT veg_campinarana_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[6::SMALLINT]))#
-ALTER TABLE pe.rel_descontinuidade_geometrica_a ADD CONSTRAINT rel_descontinuidade_geometrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_descontinuidade_geometrica_a ADD CONSTRAINT rel_descontinuidade_geometrica_a_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_tipoquebramolhe_check CHECK (tipoquebramolhe = ANY(ARRAY[1::SMALLINT,2::SMALLINT,4::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_matconstr_check CHECK (matconstr <@ ARRAY[2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.rod_passagem_nivel_p ADD CONSTRAINT rod_passagem_nivel_p_relacionado_check CHECK (relacionado = ANY(ARRAY[19::SMALLINT,20::SMALLINT,24::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,38::SMALLINT,40::SMALLINT,42::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.rel_ponto_hipsometrico ADD CONSTRAINT rel_ponto_hipsometrico_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.hid_barragem ADD CONSTRAINT hid_barragem_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.hid_barragem ADD CONSTRAINT hid_barragem_usoprincipal_check CHECK (usoprincipal = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.hid_barragem ADD CONSTRAINT hid_barragem_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.hid_barragem ADD CONSTRAINT hid_barragem_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.hid_barragem ADD CONSTRAINT hid_barragem_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rel_terreno_erodido_l ADD CONSTRAINT rel_terreno_erodido_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_terreno_erodido_l ADD CONSTRAINT rel_terreno_erodido_l_tipoerosao_check CHECK (tipoerosao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.rel_terreno_erodido_l ADD CONSTRAINT rel_terreno_erodido_l_situacaoterreno_check CHECK (situacaoterreno = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
@@ -10583,29 +10115,31 @@ ALTER TABLE pe.hid_quebramar_molhe_l ADD CONSTRAINT hid_quebramar_molhe_l_geomet
 ALTER TABLE pe.hid_quebramar_molhe_l ADD CONSTRAINT hid_quebramar_molhe_l_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_quebramar_molhe_l ADD CONSTRAINT hid_quebramar_molhe_l_matconstr_check CHECK (matconstr <@ ARRAY[2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.hid_quebramar_molhe_l ADD CONSTRAINT hid_quebramar_molhe_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.rel_descontinuidade_geometrica_l ADD CONSTRAINT rel_descontinuidade_geometrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_descontinuidade_geometrica_l ADD CONSTRAINT rel_descontinuidade_geometrica_l_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE pe.lpal_limite_politico_adm_l ADD CONSTRAINT lpal_limite_politico_adm_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.lpal_limite_politico_adm_l ADD CONSTRAINT lpal_limite_politico_adm_l_tipolimpol_check CHECK (tipolimpol <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT])#
 ALTER TABLE pe.lpal_limite_politico_adm_l ADD CONSTRAINT lpal_limite_politico_adm_l_referenciallegal_check CHECK (referenciallegal = ANY(ARRAY[10::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,96::SMALLINT]))#
-ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_antropizada_check CHECK (antropizada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_secundaria_check CHECK (secundaria = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_classificacaoporte_check CHECK (classificacaoporte = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT]))#
-ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_densidade_check CHECK (densidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.veg_caatinga_a ADD CONSTRAINT veg_caatinga_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[11::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_conservacao_a ADD CONSTRAINT lpal_unidade_conservacao_a_tipounidprotegida_check CHECK (tipounidprotegida = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT]))#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_tipoexposicao_check CHECK (tipoexposicao = ANY(ARRAY[3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_tipoequipdesenvsocial_check CHECK (tipoequipdesenvsocial = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_unidadevolume_check CHECK (unidadevolume = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_situacaoagua_check CHECK (situacaoagua = ANY(ARRAY[6::SMALLINT,7::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_tipodepgeral_check CHECK (tipodepgeral = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,19::SMALLINT,2::SMALLINT,26::SMALLINT,3::SMALLINT,32::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_localizacaoequipdesenvsocial_check CHECK (localizacaoequipdesenvsocial = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_finalidadedep_check CHECK (finalidadedep = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.sb_dep_abast_agua ADD CONSTRAINT sb_dep_abast_agua_tratamento_check CHECK (tratamento = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_conservacao_a ADD CONSTRAINT lpal_unidade_conservacao_a_tipounidprotegida_check CHECK (tipounidprotegida = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT]))#
 ALTER TABLE pe.lpal_unidade_conservacao_a ADD CONSTRAINT lpal_unidade_conservacao_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.lpal_unidade_conservacao_a ADD CONSTRAINT lpal_unidade_conservacao_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.lpal_unidade_conservacao_a ADD CONSTRAINT lpal_unidade_conservacao_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.aer_descontinuidade_geometrica_p ADD CONSTRAINT aer_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.aer_descontinuidade_geometrica_p ADD CONSTRAINT aer_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
+ALTER TABLE pe.hid_ponto_drenagem_p ADD CONSTRAINT hid_ponto_drenagem_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.hid_ponto_drenagem_p ADD CONSTRAINT hid_ponto_drenagem_p_relacionado_check CHECK (relacionado = ANY(ARRAY[10::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,16::SMALLINT,17::SMALLINT,2::SMALLINT,21::SMALLINT,25::SMALLINT,30::SMALLINT,39::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT]))#
 ALTER TABLE pe.hid_banco_areia ADD CONSTRAINT hid_banco_areia_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_banco_areia ADD CONSTRAINT hid_banco_areia_materialpredominante_check CHECK (materialpredominante = ANY(ARRAY[12::SMALLINT,13::SMALLINT,14::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,4::SMALLINT,50::SMALLINT,95::SMALLINT,97::SMALLINT,98::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.hid_banco_areia ADD CONSTRAINT hid_banco_areia_tipobanco_check CHECK (tipobanco = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT]))#
 ALTER TABLE pe.hid_banco_areia ADD CONSTRAINT hid_banco_areia_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.rel_descontinuidade_geometrica_p ADD CONSTRAINT rel_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_descontinuidade_geometrica_p ADD CONSTRAINT rel_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE pe.tra_passagem_elevada_viaduto_l ADD CONSTRAINT tra_passagem_elevada_viaduto_l_modaluso_check CHECK (modaluso <@ ARRAY[10::SMALLINT,14::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
 ALTER TABLE pe.tra_passagem_elevada_viaduto_l ADD CONSTRAINT tra_passagem_elevada_viaduto_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.tra_passagem_elevada_viaduto_l ADD CONSTRAINT tra_passagem_elevada_viaduto_l_tipopavimentacao_check CHECK (tipopavimentacao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
@@ -10624,13 +10158,7 @@ ALTER TABLE pe.dut_condutor_hidrico_l ADD CONSTRAINT dut_condutor_hidrico_l_geom
 ALTER TABLE pe.dut_condutor_hidrico_l ADD CONSTRAINT dut_condutor_hidrico_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.dut_condutor_hidrico_l ADD CONSTRAINT dut_condutor_hidrico_l_setor_check CHECK (setor = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.dut_condutor_hidrico_l ADD CONSTRAINT dut_condutor_hidrico_l_tipotrechoduto_check CHECK (tipotrechoduto = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_usoprincipal_check CHECK (usoprincipal = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_finalidade_check CHECK (finalidade = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT])#
-ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.hid_vala_l ADD CONSTRAINT hid_vala_l_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[31::SMALLINT]))#
+ALTER TABLE pe.hid_corredeira_l ADD CONSTRAINT hid_corredeira_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.veg_mangue_a ADD CONSTRAINT veg_mangue_a_antropizada_check CHECK (antropizada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.veg_mangue_a ADD CONSTRAINT veg_mangue_a_secundaria_check CHECK (secundaria = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.veg_mangue_a ADD CONSTRAINT veg_mangue_a_classificacaoporte_check CHECK (classificacaoporte = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT]))#
@@ -10639,12 +10167,12 @@ ALTER TABLE pe.veg_mangue_a ADD CONSTRAINT veg_mangue_a_densidade_check CHECK (d
 ALTER TABLE pe.veg_mangue_a ADD CONSTRAINT veg_mangue_a_tipomanguezal_check CHECK (tipomanguezal = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.veg_mangue_a ADD CONSTRAINT veg_mangue_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[4::SMALLINT]))#
 ALTER TABLE pe.hid_limite_massa_dagua_l ADD CONSTRAINT hid_limite_massa_dagua_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_limite_massa_dagua_l ADD CONSTRAINT hid_limite_massa_dagua_l_materialpredominante_check CHECK (materialpredominante = ANY(ARRAY[12::SMALLINT,13::SMALLINT,14::SMALLINT,18::SMALLINT,19::SMALLINT,20::SMALLINT,21::SMALLINT,4::SMALLINT,50::SMALLINT,95::SMALLINT,97::SMALLINT,98::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.hid_limite_massa_dagua_l ADD CONSTRAINT hid_limite_massa_dagua_l_materialpredominante_check CHECK (materialpredominante = ANY(ARRAY[12::SMALLINT,13::SMALLINT,14::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,4::SMALLINT,50::SMALLINT,95::SMALLINT,97::SMALLINT,98::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.hid_limite_massa_dagua_l ADD CONSTRAINT hid_limite_massa_dagua_l_revestida_check CHECK (revestida = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_limite_massa_dagua_l ADD CONSTRAINT hid_limite_massa_dagua_l_tipolimmassa_check CHECK (tipolimmassa = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE pe.rel_aterro_l ADD CONSTRAINT rel_aterro_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_aterro_l ADD CONSTRAINT rel_aterro_l_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.rel_aterro_l ADD CONSTRAINT rel_aterro_l_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[25::SMALLINT,27::SMALLINT]))#
+ALTER TABLE pe.rel_aterro_l ADD CONSTRAINT rel_aterro_l_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[27::SMALLINT]))#
 ALTER TABLE pe.hid_queda_dagua_p ADD CONSTRAINT hid_queda_dagua_p_tipoqueda_check CHECK (tipoqueda = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_queda_dagua_p ADD CONSTRAINT hid_queda_dagua_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_tipotrechomassadagua_check CHECK (tipotrechomassadagua = ANY(ARRAY[1::SMALLINT,10::SMALLINT,9::SMALLINT,99::SMALLINT]))#
@@ -10655,50 +10183,49 @@ ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_
 ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_tipomassadagua_check CHECK (tipomassadagua = ANY(ARRAY[8::SMALLINT]))#
 ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_regime_check CHECK (regime = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.tra_caminho_carrocavel_l ADD CONSTRAINT tra_caminho_carrocavel_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.fer_cremalheira_l ADD CONSTRAINT fer_cremalheira_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.fer_cremalheira_l ADD CONSTRAINT fer_cremalheira_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.fer_cremalheira_l ADD CONSTRAINT fer_cremalheira_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_p ADD CONSTRAINT enc_est_gerad_energia_eletrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_p ADD CONSTRAINT enc_est_gerad_energia_eletrica_p_tipoestgerad_check CHECK (tipoestgerad = ANY(ARRAY[5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_p ADD CONSTRAINT enc_est_gerad_energia_eletrica_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_p ADD CONSTRAINT enc_est_gerad_energia_eletrica_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rel_alter_fisiog_antropica_l ADD CONSTRAINT rel_alter_fisiog_antropica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_alter_fisiog_antropica_l ADD CONSTRAINT rel_alter_fisiog_antropica_l_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.eco_equip_agropec_a ADD CONSTRAINT eco_equip_agropec_a_tipoequipagropec_check CHECK (tipoequipagropec = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.eco_equip_agropec_a ADD CONSTRAINT eco_equip_agropec_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.eco_equip_agropec_a ADD CONSTRAINT eco_equip_agropec_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.eco_equip_agropec_a ADD CONSTRAINT eco_equip_agropec_a_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.eco_equip_agropec_a ADD CONSTRAINT eco_equip_agropec_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_destinacaocemiterio_check CHECK (destinacaocemiterio = ANY(ARRAY[2::SMALLINT,3::SMALLINT]))#
-ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_tipocemiterio_check CHECK (tipocemiterio = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_denominacaoassociada_check CHECK (denominacaoassociada = ANY(ARRAY[5::SMALLINT,6::SMALLINT,7::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.rel_rocha_a ADD CONSTRAINT rel_rocha_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.rel_rocha_a ADD CONSTRAINT rel_rocha_a_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[23::SMALLINT]))#
+ALTER TABLE pe.rel_rocha_a ADD CONSTRAINT rel_rocha_a_formarocha_check CHECK (formarocha = ANY(ARRAY[21::SMALLINT,22::SMALLINT,23::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rel_aterro_a ADD CONSTRAINT rel_aterro_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_aterro_a ADD CONSTRAINT rel_aterro_a_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.rel_aterro_a ADD CONSTRAINT rel_aterro_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[25::SMALLINT,27::SMALLINT]))#
+ALTER TABLE pe.rel_aterro_a ADD CONSTRAINT rel_aterro_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[27::SMALLINT]))#
 ALTER TABLE pe.hid_queda_dagua_a ADD CONSTRAINT hid_queda_dagua_a_tipoqueda_check CHECK (tipoqueda = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_queda_dagua_a ADD CONSTRAINT hid_queda_dagua_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_tipounidprotegida_check CHECK (tipounidprotegida = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_tipounidprotegida_check CHECK (tipounidprotegida = ANY(ARRAY[1::SMALLINT]))#
 ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.dut_faixa_dominial_duto_a ADD CONSTRAINT dut_faixa_dominial_duto_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_corredeira_l ADD CONSTRAINT hid_corredeira_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_a ADD CONSTRAINT enc_est_gerad_energia_eletrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_a ADD CONSTRAINT enc_est_gerad_energia_eletrica_a_tipoestgerad_check CHECK (tipoestgerad = ANY(ARRAY[5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_a ADD CONSTRAINT enc_est_gerad_energia_eletrica_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_a ADD CONSTRAINT enc_est_gerad_energia_eletrica_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_l ADD CONSTRAINT enc_est_gerad_energia_eletrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_l ADD CONSTRAINT enc_est_gerad_energia_eletrica_l_tipoestgerad_check CHECK (tipoestgerad = ANY(ARRAY[5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_l ADD CONSTRAINT enc_est_gerad_energia_eletrica_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.enc_est_gerad_energia_eletrica_l ADD CONSTRAINT enc_est_gerad_energia_eletrica_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.fer_cremalheira_l ADD CONSTRAINT fer_cremalheira_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.fer_cremalheira_l ADD CONSTRAINT fer_cremalheira_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.fer_cremalheira_l ADD CONSTRAINT fer_cremalheira_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rel_aterro_p ADD CONSTRAINT rel_aterro_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_aterro_p ADD CONSTRAINT rel_aterro_p_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.rel_aterro_p ADD CONSTRAINT rel_aterro_p_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[25::SMALLINT,27::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_tipounidprotegida_check CHECK (tipounidprotegida = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.hid_queda_dagua_l ADD CONSTRAINT hid_queda_dagua_l_tipoqueda_check CHECK (tipoqueda = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_queda_dagua_l ADD CONSTRAINT hid_queda_dagua_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_terreno_erodido ADD CONSTRAINT rel_terreno_erodido_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_terreno_erodido ADD CONSTRAINT rel_terreno_erodido_tipoerosao_check CHECK (tipoerosao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.rel_terreno_erodido ADD CONSTRAINT rel_terreno_erodido_situacaoterreno_check CHECK (situacaoterreno = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.rod_descontinuidade_geometrica_l ADD CONSTRAINT rod_descontinuidade_geometrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rod_descontinuidade_geometrica_l ADD CONSTRAINT rod_descontinuidade_geometrica_l_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_p ADD CONSTRAINT enc_est_gerad_energia_eletr_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_p ADD CONSTRAINT enc_est_gerad_energia_eletr_p_tipoestgerad_check CHECK (tipoestgerad = ANY(ARRAY[5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_p ADD CONSTRAINT enc_est_gerad_energia_eletr_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_p ADD CONSTRAINT enc_est_gerad_energia_eletr_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.veg_vegetacao_a ADD CONSTRAINT veg_vegetacao_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.veg_vegetacao_a ADD CONSTRAINT veg_vegetacao_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[10::SMALLINT,11::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.veg_vegetacao_a ADD CONSTRAINT veg_vegetacao_a_classificacaoporte_check CHECK (classificacaoporte = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT]))#
+ALTER TABLE pe.rel_elemento_fisiografico ADD CONSTRAINT rel_elemento_fisiografico_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.eco_equip_agropec_a ADD CONSTRAINT eco_equip_agropec_a_tipoequipagropec_check CHECK (tipoequipagropec = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.eco_equip_agropec_a ADD CONSTRAINT eco_equip_agropec_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.eco_equip_agropec_a ADD CONSTRAINT eco_equip_agropec_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.eco_equip_agropec_a ADD CONSTRAINT eco_equip_agropec_a_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.eco_equip_agropec_a ADD CONSTRAINT eco_equip_agropec_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.eco_plataforma_a ADD CONSTRAINT eco_plataforma_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.eco_plataforma_a ADD CONSTRAINT eco_plataforma_a_tipoplataforma_check CHECK (tipoplataforma = ANY(ARRAY[3::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT]))#
 ALTER TABLE pe.hid_dique_a ADD CONSTRAINT hid_dique_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
@@ -10710,56 +10237,39 @@ ALTER TABLE pe.veg_veg_area_contato_a ADD CONSTRAINT veg_veg_area_contato_a_clas
 ALTER TABLE pe.veg_veg_area_contato_a ADD CONSTRAINT veg_veg_area_contato_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.veg_veg_area_contato_a ADD CONSTRAINT veg_veg_area_contato_a_densidade_check CHECK (densidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.veg_veg_area_contato_a ADD CONSTRAINT veg_veg_area_contato_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[95::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_conservacao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_snuc_a_tipounidprotegida_check CHECK (tipounidprotegida = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_conservacao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_snuc_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_conservacao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_snuc_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_conservacao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_snuc_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.hid_dique_l ADD CONSTRAINT hid_dique_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_dique_l ADD CONSTRAINT hid_dique_l_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.hid_ponto_drenagem_p ADD CONSTRAINT hid_ponto_drenagem_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_ponto_drenagem_p ADD CONSTRAINT hid_ponto_drenagem_p_relacionado_check CHECK (relacionado = ANY(ARRAY[10::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,16::SMALLINT,17::SMALLINT,2::SMALLINT,21::SMALLINT,25::SMALLINT,30::SMALLINT,39::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT]))#
-ALTER TABLE pe.lpal_area_pub_militar_a ADD CONSTRAINT lpal_area_pub_militar_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.lpal_area_pub_militar_a ADD CONSTRAINT lpal_area_pub_militar_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.lpal_area_pub_militar_a ADD CONSTRAINT lpal_area_pub_militar_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.rod_descontinuidade_geometrica_a ADD CONSTRAINT rod_descontinuidade_geometrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rod_descontinuidade_geometrica_a ADD CONSTRAINT rod_descontinuidade_geometrica_a_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE pe.dut_descontinuidade_geometrica_p ADD CONSTRAINT dut_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.dut_descontinuidade_geometrica_p ADD CONSTRAINT dut_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
+ALTER TABLE pe.pto_pto_geod_topo_controle_p ADD CONSTRAINT pto_pto_geod_topo_controle_p_sistemageodesico_check CHECK (sistemageodesico = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
+ALTER TABLE pe.pto_pto_geod_topo_controle_p ADD CONSTRAINT pto_pto_geod_topo_controle_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.pto_pto_geod_topo_controle_p ADD CONSTRAINT pto_pto_geod_topo_controle_p_tiporef_check CHECK (tiporef = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT]))#
+ALTER TABLE pe.pto_pto_geod_topo_controle_p ADD CONSTRAINT pto_pto_geod_topo_controle_p_referencialaltim_check CHECK (referencialaltim = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_tipoquebramolhe_check CHECK (tipoquebramolhe = ANY(ARRAY[1::SMALLINT,2::SMALLINT,4::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_matconstr_check CHECK (matconstr <@ ARRAY[2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.hid_quebramar_molhe_a ADD CONSTRAINT hid_quebramar_molhe_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.lpal_pais_a ADD CONSTRAINT lpal_pais_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.enc_zona_linhas_energia_comunicacao_a ADD CONSTRAINT enc_zona_linhas_energia_comunicacao_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.eco_equip_agropec_l ADD CONSTRAINT eco_equip_agropec_l_tipoequipagropec_check CHECK (tipoequipagropec = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.eco_equip_agropec_l ADD CONSTRAINT eco_equip_agropec_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.eco_equip_agropec_l ADD CONSTRAINT eco_equip_agropec_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.eco_equip_agropec_l ADD CONSTRAINT eco_equip_agropec_l_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.eco_equip_agropec_l ADD CONSTRAINT eco_equip_agropec_l_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.eco_equip_agropec_l ADD CONSTRAINT eco_equip_agropec_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.dut_descontinuidade_geometrica_l ADD CONSTRAINT dut_descontinuidade_geometrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.dut_descontinuidade_geometrica_l ADD CONSTRAINT dut_descontinuidade_geometrica_l_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE pe.eco_equip_agropec_p ADD CONSTRAINT eco_equip_agropec_p_tipoequipagropec_check CHECK (tipoequipagropec = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.eco_equip_agropec_p ADD CONSTRAINT eco_equip_agropec_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.eco_equip_agropec_p ADD CONSTRAINT eco_equip_agropec_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.eco_equip_agropec_p ADD CONSTRAINT eco_equip_agropec_p_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.eco_equip_agropec_p ADD CONSTRAINT eco_equip_agropec_p_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.eco_equip_agropec_p ADD CONSTRAINT eco_equip_agropec_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_a ADD CONSTRAINT enc_est_gerad_energia_eletr_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_a ADD CONSTRAINT enc_est_gerad_energia_eletr_a_tipoestgerad_check CHECK (tipoestgerad = ANY(ARRAY[5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_a ADD CONSTRAINT enc_est_gerad_energia_eletr_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_a ADD CONSTRAINT enc_est_gerad_energia_eletr_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_dique_p ADD CONSTRAINT hid_dique_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_dique_p ADD CONSTRAINT hid_dique_p_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.lpal_area_especial_a ADD CONSTRAINT lpal_area_especial_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.aer_descontinuidade_geometrica_l ADD CONSTRAINT aer_descontinuidade_geometrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.aer_descontinuidade_geometrica_l ADD CONSTRAINT aer_descontinuidade_geometrica_l_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE pe.dut_descontinuidade_geometrica_a ADD CONSTRAINT dut_descontinuidade_geometrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.dut_descontinuidade_geometrica_a ADD CONSTRAINT dut_descontinuidade_geometrica_a_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE pe.rod_descontinuidade_geometrica_p ADD CONSTRAINT rod_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rod_descontinuidade_geometrica_p ADD CONSTRAINT rod_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_l ADD CONSTRAINT enc_est_gerad_energia_eletr_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_l ADD CONSTRAINT enc_est_gerad_energia_eletr_l_tipoestgerad_check CHECK (tipoestgerad = ANY(ARRAY[5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_l ADD CONSTRAINT enc_est_gerad_energia_eletr_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.enc_est_gerad_energia_eletr_l ADD CONSTRAINT enc_est_gerad_energia_eletr_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_tipotravessiaped_check CHECK (tipotravessiaped = ANY(ARRAY[10::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.rel_terreno_erodido_p ADD CONSTRAINT rel_terreno_erodido_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.rel_terreno_erodido_p ADD CONSTRAINT rel_terreno_erodido_p_tipoerosao_check CHECK (tipoerosao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.rel_terreno_erodido_p ADD CONSTRAINT rel_terreno_erodido_p_situacaoterreno_check CHECK (situacaoterreno = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.lpal_area_pub_militar_a ADD CONSTRAINT lpal_area_pub_militar_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.lpal_area_pub_militar_a ADD CONSTRAINT lpal_area_pub_militar_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.lpal_area_pub_militar_a ADD CONSTRAINT lpal_area_pub_militar_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE ONLY complexos.adm_instituicao_publica ALTER COLUMN id SET DEFAULT uuid_generate_v4()#
 ALTER TABLE ONLY complexos.adm_org_agropec_ext_veg_pesca ALTER COLUMN id SET DEFAULT uuid_generate_v4()#
 ALTER TABLE ONLY complexos.adm_org_comerc_serv ALTER COLUMN id SET DEFAULT uuid_generate_v4()#
@@ -10920,10 +10430,6 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 USING gist
                 (
                   geom
-                )#CREATE INDEX cb_area_servico_social_a_gist ON ge.cb_area_servico_social_a
-                USING gist
-                (
-                  geom
                 )#CREATE INDEX cb_area_urbana_isolada_a_gist ON ge.cb_area_urbana_isolada_a
                 USING gist
                 (
@@ -10940,18 +10446,6 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 USING gist
                 (
                   geom
-                )#CREATE INDEX cb_descontinuidade_geometrica_a_gist ON ge.cb_descontinuidade_geometrica_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX cb_descontinuidade_geometrica_l_gist ON ge.cb_descontinuidade_geometrica_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX cb_descontinuidade_geometrica_p_gist ON ge.cb_descontinuidade_geometrica_p
-                USING gist
-                (
-                  geom
                 )#CREATE INDEX cb_entroncamento_area_a_gist ON ge.cb_entroncamento_area_a
                 USING gist
                 (
@@ -10965,10 +10459,6 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 (
                   geom
                 )#CREATE INDEX cb_largo_a_gist ON ge.cb_largo_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX cb_meio_fio_l_gist ON ge.cb_meio_fio_l
                 USING gist
                 (
                   geom
@@ -11037,18 +10527,6 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 (
                   geom
                 )#CREATE INDEX edf_banheiro_publico_p_gist ON ge.edf_banheiro_publico_p
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX edf_descontinuidade_geometrica_a_gist ON ge.edf_descontinuidade_geometrica_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX edf_descontinuidade_geometrica_l_gist ON ge.edf_descontinuidade_geometrica_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX edf_descontinuidade_geometrica_p_gist ON ge.edf_descontinuidade_geometrica_p
                 USING gist
                 (
                   geom
@@ -11332,18 +10810,6 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 USING gist
                 (
                   geom
-                )#CREATE INDEX emu_descontinuidade_geometrica_a_gist ON ge.emu_descontinuidade_geometrica_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX emu_descontinuidade_geometrica_l_gist ON ge.emu_descontinuidade_geometrica_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX emu_descontinuidade_geometrica_p_gist ON ge.emu_descontinuidade_geometrica_p
-                USING gist
-                (
-                  geom
                 )#CREATE INDEX emu_elevador_a_gist ON ge.emu_elevador_a
                 USING gist
                 (
@@ -11392,27 +10858,11 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 USING gist
                 (
                   geom
-                )#CREATE INDEX laz_arquibancada_p_gist ON ge.laz_arquibancada_p
-                USING gist
-                (
-                  geom
                 )#CREATE INDEX laz_campo_quadra_a_gist ON ge.laz_campo_quadra_a
                 USING gist
                 (
                   geom
                 )#CREATE INDEX laz_campo_quadra_p_gist ON ge.laz_campo_quadra_p
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX laz_descontinuidade_geometrica_a_gist ON ge.laz_descontinuidade_geometrica_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX laz_descontinuidade_geometrica_l_gist ON ge.laz_descontinuidade_geometrica_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX laz_descontinuidade_geometrica_p_gist ON ge.laz_descontinuidade_geometrica_p
                 USING gist
                 (
                   geom
@@ -11448,51 +10898,11 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 USING gist
                 (
                   geom
-                )#CREATE INDEX ppb_area_dominial_a_gist ON ge.ppb_area_dominial_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX ppb_faixa_dominio_arruamento_a_gist ON ge.ppb_faixa_dominio_arruamento_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX ppb_faixa_dominio_ferrovia_a_gist ON ge.ppb_faixa_dominio_ferrovia_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX ppb_faixa_dominio_rodovia_a_gist ON ge.ppb_faixa_dominio_rodovia_a
-                USING gist
-                (
-                  geom
                 )#CREATE INDEX ver_arvore_isolada_p_gist ON ge.ver_arvore_isolada_p
                 USING gist
                 (
                   geom
-                )#CREATE INDEX ver_descontinuidade_geometrica_a_gist ON ge.ver_descontinuidade_geometrica_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX ver_descontinuidade_geometrica_l_gist ON ge.ver_descontinuidade_geometrica_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX ver_descontinuidade_geometrica_p_gist ON ge.ver_descontinuidade_geometrica_p
-                USING gist
-                (
-                  geom
                 )#CREATE INDEX ver_jardim_a_gist ON ge.ver_jardim_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX aer_descontinuidade_geometrica_a_gist ON pe.aer_descontinuidade_geometrica_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX aer_descontinuidade_geometrica_l_gist ON pe.aer_descontinuidade_geometrica_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX aer_descontinuidade_geometrica_p_gist ON pe.aer_descontinuidade_geometrica_p
                 USING gist
                 (
                   geom
@@ -11509,22 +10919,6 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 (
                   geom
                 )#CREATE INDEX dut_condutor_hidrico_l_gist ON pe.dut_condutor_hidrico_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX dut_descontinuidade_geometrica_a_gist ON pe.dut_descontinuidade_geometrica_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX dut_descontinuidade_geometrica_l_gist ON pe.dut_descontinuidade_geometrica_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX dut_descontinuidade_geometrica_p_gist ON pe.dut_descontinuidade_geometrica_p
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX dut_faixa_dominial_duto_a_gist ON pe.dut_faixa_dominial_duto_a
                 USING gist
                 (
                   geom
@@ -11557,18 +10951,6 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 (
                   geom
                 )#CREATE INDEX eco_deposito_geral_p_gist ON pe.eco_deposito_geral_p
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX eco_descontinuidade_geometrica_a_gist ON pe.eco_descontinuidade_geometrica_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX eco_descontinuidade_geometrica_l_gist ON pe.eco_descontinuidade_geometrica_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX eco_descontinuidade_geometrica_p_gist ON pe.eco_descontinuidade_geometrica_p
                 USING gist
                 (
                   geom
@@ -11608,23 +10990,15 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 USING gist
                 (
                   geom
-                )#CREATE INDEX enc_descontinuidade_geometrica_a_gist ON pe.enc_descontinuidade_geometrica_a
+                )#CREATE INDEX enc_est_gerad_energia_eletrica_a_gist ON pe.enc_est_gerad_energia_eletrica_a
                 USING gist
                 (
                   geom
-                )#CREATE INDEX enc_descontinuidade_geometrica_p_gist ON pe.enc_descontinuidade_geometrica_p
+                )#CREATE INDEX enc_est_gerad_energia_eletrica_l_gist ON pe.enc_est_gerad_energia_eletrica_l
                 USING gist
                 (
                   geom
-                )#CREATE INDEX enc_est_gerad_energia_eletr_a_gist ON pe.enc_est_gerad_energia_eletr_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX enc_est_gerad_energia_eletr_l_gist ON pe.enc_est_gerad_energia_eletr_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX enc_est_gerad_energia_eletr_p_gist ON pe.enc_est_gerad_energia_eletr_p
+                )#CREATE INDEX enc_est_gerad_energia_eletrica_p_gist ON pe.enc_est_gerad_energia_eletrica_p
                 USING gist
                 (
                   geom
@@ -11676,7 +11050,7 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 USING gist
                 (
                   geom
-                )#CREATE INDEX enc_zona_linhas_energia_com_a_gist ON pe.enc_zona_linhas_energia_com_a
+                )#CREATE INDEX enc_zona_linhas_energia_comunicacao_a_gist ON pe.enc_zona_linhas_energia_comunicacao_a
                 USING gist
                 (
                   geom
@@ -11685,18 +11059,6 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 (
                   geom
                 )#CREATE INDEX fer_cremalheira_p_gist ON pe.fer_cremalheira_p
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX fer_descontinuidade_geometrica_a_gist ON pe.fer_descontinuidade_geometrica_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX fer_descontinuidade_geometrica_l_gist ON pe.fer_descontinuidade_geometrica_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX fer_descontinuidade_geometrica_p_gist ON pe.fer_descontinuidade_geometrica_p
                 USING gist
                 (
                   geom
@@ -11721,18 +11083,6 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 (
                   geom
                 )#CREATE INDEX hdv_atracadouro_terminal_p_gist ON pe.hdv_atracadouro_terminal_p
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX hdv_descontinuidade_geometrica_a_gist ON pe.hdv_descontinuidade_geometrica_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX hdv_descontinuidade_geometrica_l_gist ON pe.hdv_descontinuidade_geometrica_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX hdv_descontinuidade_geometrica_p_gist ON pe.hdv_descontinuidade_geometrica_p
                 USING gist
                 (
                   geom
@@ -11833,14 +11183,6 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 (
                   geom
                 )#CREATE INDEX hid_corredeira_p_gist ON pe.hid_corredeira_p
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX hid_descontinuidade_geometrica_l_gist ON pe.hid_descontinuidade_geometrica_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX hid_descontinuidade_geometrica_p_gist ON pe.hid_descontinuidade_geometrica_p
                 USING gist
                 (
                   geom
@@ -11968,10 +11310,6 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 USING gist
                 (
                   geom
-                )#CREATE INDEX lpal_area_desenv_controle_a_gist ON pe.lpal_area_desenv_controle_a
-                USING gist
-                (
-                  geom
                 )#CREATE INDEX lpal_area_especial_a_gist ON pe.lpal_area_especial_a
                 USING gist
                 (
@@ -11981,18 +11319,6 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 (
                   geom
                 )#CREATE INDEX lpal_area_pub_militar_a_gist ON pe.lpal_area_pub_militar_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX lpal_descontinuidade_geometrica_a_gist ON pe.lpal_descontinuidade_geometrica_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX lpal_descontinuidade_geometrica_l_gist ON pe.lpal_descontinuidade_geometrica_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX lpal_descontinuidade_geometrica_p_gist ON pe.lpal_descontinuidade_geometrica_p
                 USING gist
                 (
                   geom
@@ -12044,10 +11370,6 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 USING gist
                 (
                   geom
-                )#CREATE INDEX lpal_unidade_conservacao_snuc_a_gist ON pe.lpal_unidade_conservacao_snuc_a
-                USING gist
-                (
-                  geom
                 )#CREATE INDEX lpal_unidade_federacao_a_gist ON pe.lpal_unidade_federacao_a
                 USING gist
                 (
@@ -12061,14 +11383,6 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 (
                   geom
                 )#CREATE INDEX lpal_unidade_uso_sustentavel_a_gist ON pe.lpal_unidade_uso_sustentavel_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX pto_descontinuidade_geometrica_a_gist ON pe.pto_descontinuidade_geometrica_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX pto_descontinuidade_geometrica_p_gist ON pe.pto_descontinuidade_geometrica_p
                 USING gist
                 (
                   geom
@@ -12133,18 +11447,6 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 (
                   geom
                 )#CREATE INDEX rel_curva_nivel_l_gist ON pe.rel_curva_nivel_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX rel_descontinuidade_geometrica_a_gist ON pe.rel_descontinuidade_geometrica_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX rel_descontinuidade_geometrica_l_gist ON pe.rel_descontinuidade_geometrica_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX rel_descontinuidade_geometrica_p_gist ON pe.rel_descontinuidade_geometrica_p
                 USING gist
                 (
                   geom
@@ -12228,18 +11530,6 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 USING gist
                 (
                   geom
-                )#CREATE INDEX rod_descontinuidade_geometrica_a_gist ON pe.rod_descontinuidade_geometrica_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX rod_descontinuidade_geometrica_l_gist ON pe.rod_descontinuidade_geometrica_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX rod_descontinuidade_geometrica_p_gist ON pe.rod_descontinuidade_geometrica_p
-                USING gist
-                (
-                  geom
                 )#CREATE INDEX rod_passagem_nivel_p_gist ON pe.rod_passagem_nivel_p
                 USING gist
                 (
@@ -12280,35 +11570,11 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 USING gist
                 (
                   geom
-                )#CREATE INDEX sb_descontinuidade_geometrica_a_gist ON pe.sb_descontinuidade_geometrica_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX sb_descontinuidade_geometrica_l_gist ON pe.sb_descontinuidade_geometrica_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX sb_descontinuidade_geometrica_p_gist ON pe.sb_descontinuidade_geometrica_p
-                USING gist
-                (
-                  geom
                 )#CREATE INDEX tra_caminho_aereo_l_gist ON pe.tra_caminho_aereo_l
                 USING gist
                 (
                   geom
                 )#CREATE INDEX tra_caminho_carrocavel_l_gist ON pe.tra_caminho_carrocavel_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX tra_descontinuidade_geometrica_a_gist ON pe.tra_descontinuidade_geometrica_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX tra_descontinuidade_geometrica_l_gist ON pe.tra_descontinuidade_geometrica_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX tra_descontinuidade_geometrica_p_gist ON pe.tra_descontinuidade_geometrica_p
                 USING gist
                 (
                   geom
@@ -12396,14 +11662,6 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 USING gist
                 (
                   geom
-                )#CREATE INDEX veg_descontinuidade_geometrica_l_gist ON pe.veg_descontinuidade_geometrica_l
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX veg_descontinuidade_geometrica_p_gist ON pe.veg_descontinuidade_geometrica_p
-                USING gist
-                (
-                  geom
                 )#CREATE INDEX veg_floresta_a_gist ON pe.veg_floresta_a
                 USING gist
                 (
@@ -12441,10 +11699,6 @@ CREATE INDEX cb_area_abast_agua_a_gist ON ge.cb_area_abast_agua_a
                 (
                   geom
                 )#CREATE INDEX aux_area_a_gist ON public.aux_area_a
-                USING gist
-                (
-                  geom
-                )#CREATE INDEX aux_descontinuidade_geometrica_a_gist ON public.aux_descontinuidade_geometrica_a
                 USING gist
                 (
                   geom
@@ -12506,7 +11760,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_desportivo_lazer','ge','laz_arquibancada_l','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_vila','complexos','lpal_aldeia_indigena','id_localidade')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','pto_est_med_fenomenos','ge','edf_edif_constr_est_med_fen_p','id_est_med_fenomenos')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_campo_de_golfe','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','eco_frigorifico_matadouro','pe','tra_patio','id_org_industrial')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_estande_de_tiro','ge','laz_pista_competicao_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_comerc_serv','complexos','laz_velodromo','id_org_comerc_serv')#
@@ -12549,7 +11802,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_rodoviaria_p','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_pesque_pague','ge','edf_posto_fiscal_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','eco_madeireira','ge','edf_edif_industrial_a','id_org_industrial')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_desportivo','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_policia_a','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','tra_estrut_transporte','pe','tra_patio_a','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','eco_madeireira','ge','edf_edif_industrial_p','id_org_industrial')#
@@ -12622,7 +11874,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_constr_lazer_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_campo_de_golfe','ge','laz_piscina_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_urbano','ge','cb_largo_a','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','enc_complexo_gerador_energia_eletrica','pe','enc_est_gerad_energia_eletr_a','id_complexo_gerador_energia_eletrica')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_kartodromo','ge','cb_area_lazer_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aglomerado_rural_isolado','complexos','lpal_aldeia_indigena','id_localidade')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_servico_social_a','id_complexo_habitacional')#
@@ -12631,6 +11882,7 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_desenv_social_p','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_pub_militar','complexos','laz_pesque_pague','id_org_pub_militar')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_comerc_serv_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','enc_complexo_gerador_energia_eletrica','pe','enc_est_gerad_energia_eletrica','id_complexo_gerador_energia_eletrica')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_ext_mineral','pe','tra_caminho_aereo_l','id_org_ext_mineral')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipica','ge','laz_pista_competicao','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_pub','complexos','laz_jardim_botanico','id_org_ensino')#
@@ -12684,8 +11936,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','rtr_via_ferrea','pe','tra_passagem_elevada_viaduto','id_via_ferrea')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_pub_civil_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_pub','complexos','laz_marina','id_org_ensino')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_saneamento_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_energia_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_saneamento_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','sau_org_saude_pub','ge','cb_area_saude_a','id_org_saude')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_residencial_p','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aglomerado_rural','complexos','cb_complexo_habitacional','id_localidade')#
@@ -12725,8 +11977,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','rdr_elemento_hidrografico','complexos','rdr_trecho_curso_dagua','id_elemento_hidrografico')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_privada','ge','edf_edif_ensino_p','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','hid_arquipelago','pe','hid_ilha_a','id_arquipelago')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_pub_militar_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_hab_indigena_p','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_pub_militar_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_pub','ge','edf_edif_ensino_a','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','emu_terminal_hidroviario','pe','eco_deposito_geral_a','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_clube_social','ge','laz_pista_competicao_l','id_complexo_desportivo_lazer')#
@@ -12796,7 +12048,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_aquatico','ge','edf_edif_policia_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_privada','complexos','laz_complexo_desportivo','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_cidade','pe','lpal_posic_geo_localidade_p','id_localidade')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_pesque_pague','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipodromo','ge','laz_ruina','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino','complexos','laz_clube_social','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_comerc_serv','complexos','laz_parque_tematico','id_org_comerc_serv')#
@@ -12842,7 +12093,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_jardim_botanico','ge','laz_arquibancada_l','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_aquatico','ge','laz_campo_quadra_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','tra_estrut_apoio','pe','eco_deposito_geral_p','id_estrut_transporte')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','enc_complexo_gerador_energia_eletrica','pe','enc_est_gerad_energia_eletr','id_complexo_gerador_energia_eletrica')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_aquatico','ge','edf_posto_policia_rod_federal_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipodromo','ge','edf_edif_pub_civil_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_comunic_p','id_complexo_habitacional')#
@@ -12917,10 +12167,10 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_comunic_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_desportivo_lazer','ge','laz_ruina_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_velodromo','ge','laz_arquibancada','id_complexo_desportivo_lazer')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','enc_complexo_gerador_energia_eletrica','pe','enc_est_gerad_energia_eletrica_a','id_complexo_gerador_energia_eletrica')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','hdv_complexo_portuario','complexos','hdv_complexo_portuario','id_complexo_portuario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipica','ge','laz_ruina','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_representacao_diplomatica_p','id_complexo_habitacional')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_estande_de_tiro','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_tematico','ge','edf_edif_constr_turistica_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_constr_aeroportuaria_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_campo_de_golfe','ge','laz_pista_competicao_a','id_complexo_desportivo_lazer')#
@@ -12952,7 +12202,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_posto_combustivel_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','emu_terminal_rodoviario','ge','edf_posto_combustivel_p','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_policia_a','id_complexo_habitacional')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','sau_org_servico_social','ge','cb_area_servico_social_a','id_org_servico_social')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_autodromo','ge','edf_edif_constr_lazer_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_aquatico','ge','cb_area_ruinas_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_religiosa','complexos','laz_parque_aquatico','id_org_religiosa')#
@@ -12965,23 +12214,33 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipica','ge','edf_edif_pub_civil_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','fer_estacao_metroviaria','ge','edf_edif_comerc_serv_a','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_campo_aeromodelismo','ge','cb_area_lazer_a','id_complexo_desportivo_lazer')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_localidade','complexos','lpal_aldeia_indigena','id_localidade')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_pub_militar','complexos','laz_complexo_recreativo','id_org_pub_militar')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_pub','complexos','laz_campo_de_golfe','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_recreativo','ge','laz_piscina_a','id_complexo_desportivo_lazer')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_autodromo','ge','edf_edif_pub_civil_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_hab_indigena_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_marina','ge','cb_praca_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','rdr_trecho_curso_dagua','pe','hid_trecho_drenagem_l','id_trecho_curso_dagua')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_jardim_zoologico','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','ver_area_verde','pe','veg_mangue_a','id_area_verde')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','aer_complexo_aeroportuario','ge','cb_area_estrut_transporte_a','id_estrut_transporte')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_posto_combustivel_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipodromo','ge','laz_arquibancada_a','id_complexo_desportivo_lazer')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_hab_indigena_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_comerc_serv','complexos','laz_autodromo','id_org_comerc_serv')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_autodromo','ge','edf_posto_policia_rod_federal_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_capital','pe','lpal_area_construida_a','id_localidade')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','rod_estacao_rodoviaria','ge','edf_edif_comerc_serv_a','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_desportivo','ge','laz_pista_competicao_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_policia_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','fer_estacao_metroviaria','pe','eco_deposito_geral_p','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_pub_militar','complexos','laz_jardim_botanico','id_org_pub_militar')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_religiosa','complexos','laz_campo_aeromodelismo','id_org_religiosa')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_ext_mineral','pe','tra_patio_p','id_org_ext_mineral')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','sau_org_servico_social_pub','ge','cb_area_servico_social_a','id_org_servico_social')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_clube_social','ge','cb_praca_a','id_complexo_desportivo_lazer')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_kartodromo','ge','edf_edif_policia_a','id_complexo_desportivo_lazer')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_autodromo','ge','edf_edif_constr_turistica_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_rodoviaria_p','id_complexo_habitacional')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_marina','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_pub_civil','complexos','adm_instituicao_publica','id_org_pub_civil')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_jardim_zoologico','ge','cb_praca_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','tra_estrut_apoio','ge','edf_posto_fiscal_a','id_estrut_transporte')#
@@ -13000,8 +12259,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_religiosa_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','sb_complexo_abast_agua','ge','edf_edif_abast_agua_p','id_complexo_abast_agua')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_comerc_serv_a','id_assentamento_precario')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_religiosa_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_saude_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_religiosa_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipodromo','ge','laz_ruina_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','eco_frigorifico_matadouro','pe','eco_deposito_geral_a','id_org_industrial')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_urbano','ge','laz_ruina_a','id_complexo_desportivo_lazer')#
@@ -13053,7 +12312,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_servico_social_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_aquatico','ge','edf_edif_constr_turistica_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','aer_complexo_aeroportuario','pe','tra_patio_a','id_estrut_transporte')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_jardim_botanico','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_ensino_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_desportivo_lazer','ge','edf_posto_fiscal_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','fer_estacao_metroviaria','pe','eco_deposito_geral_a','id_estrut_transporte')#
@@ -13074,8 +12332,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_militar','complexos','laz_parque_tematico','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_urbano','ge','laz_pista_competicao','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_militar','complexos','laz_complexo_desportivo_lazer','id_org_ensino')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_religiosa_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_saude_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_religiosa_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_desenv_social_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_capital','complexos','cb_condominio','id_localidade')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_privada','complexos','laz_campo_aeromodelismo','id_org_ensino')#
@@ -13110,8 +12368,9 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edificacao_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_militar','complexos','laz_jardim_botanico','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_privada','complexos','laz_velodromo','id_org_ensino')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_energia_a','id_assentamento_precario')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','enc_complexo_gerador_energia_eletrica','pe','enc_est_gerad_energia_eletrica_p','id_complexo_gerador_energia_eletrica')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_saneamento_a','id_assentamento_precario')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_energia_a','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_constr_portuaria_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_pub_civil_p','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_habitacional_a','id_complexo_habitacional')#
@@ -13132,7 +12391,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_pub','ge','edf_edif_ensino_p','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','sb_complexo_abast_agua','pe','sb_dep_abast_agua_p','id_complexo_abast_agua')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_militar','complexos','laz_complexo_recreativo','id_org_ensino')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_recreativo','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_campo_aeromodelismo','ge','cb_area_ruinas_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_campo_de_golfe','ge','edf_edif_constr_lazer_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_velodromo','ge','laz_ruina','id_complexo_desportivo_lazer')#
@@ -13143,8 +12401,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_aquatico','ge','edf_edif_constr_lazer_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipica','ge','cb_largo_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_jardim_botanico','ge','laz_arquibancada_a','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_hab_indigena_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_pub_militar_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_hab_indigena_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_comerc_serv','complexos','laz_clube_social','id_org_comerc_serv')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','sau_org_saude_militar','ge','cb_area_saude_a','id_org_saude')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','hdv_complexo_portuario','pe','hdv_fundeadouro','id_complexo_portuario')#
@@ -13261,8 +12519,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','hdv_complexo_portuario','pe','tra_patio','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_desportivo','ge','laz_arquibancada_l','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_jardim_botanico','ge','laz_pista_competicao_p','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_posto_fiscal_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_saude_p','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_posto_fiscal_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_posto_policia_rod_federal_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_kartodromo','ge','edf_edif_constr_turistica_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_constr_turistica_p','id_complexo_habitacional')#
@@ -13360,12 +12618,10 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_servico_social_p','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_constr_lazer_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_estande_de_tiro','ge','edf_edif_constr_turistica_p','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_tematico','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_pub','complexos','laz_autodromo','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_religiosa','complexos','laz_kartodromo','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','fer_estacao_metroviaria','ge','edf_posto_combustivel_p','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipodromo','ge','laz_ruina_a','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_desportivo_lazer','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','tra_estrut_transporte','pe','tra_patio','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino','ge','cb_estacionamento_a','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','emu_terminal_rodoviario','pe','eco_deposito_geral_p','id_estrut_transporte')#
@@ -13429,7 +12685,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipica','ge','laz_campo_quadra','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_kartodromo','ge','laz_campo_quadra_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','tra_estrut_apoio','pe','tra_patio','id_estrut_transporte')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','enc_complexo_gerador_energia_eletrica','pe','enc_est_gerad_energia_eletr_l','id_complexo_gerador_energia_eletrica')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','fer_estacao_ferroviaria','pe','eco_deposito_geral','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_autodromo','ge','laz_pista_competicao_l','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipica','ge','laz_pista_competicao_a','id_complexo_desportivo_lazer')#
@@ -13527,7 +12782,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_energia_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_energia_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','dut_duto','pe','dut_ponto_inicio_fim_duto_p','id_duto')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_urbano','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_policia_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipodromo','ge','laz_campo_quadra_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_comerc_serv','complexos','laz_estande_de_tiro','id_org_comerc_serv')#
@@ -13607,7 +12861,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_marina','ge','laz_pista_competicao_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_habitacional_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','ver_area_verde','ge','ver_arvore_isolada_p','id_area_verde')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','enc_complexo_gerador_energia_eletrica','pe','enc_est_gerad_energia_eletr_p','id_complexo_gerador_energia_eletrica')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_clube_social','ge','edf_edif_policia_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_habitacional_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_estande_de_tiro','ge','edf_posto_policia_rod_federal_p','id_complexo_desportivo_lazer')#
@@ -13646,7 +12899,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_campo_aeromodelismo','ge','laz_ruina_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_posto_guarda_municipal_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_estande_de_tiro','ge','laz_campo_quadra','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_aquatico','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aglom_rural_de_ext_urbana','complexos','lpal_aldeia_indigena','id_localidade')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_estande_de_tiro','complexos','ver_area_verde','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_posto_guarda_municipal_p','id_complexo_habitacional')#
@@ -13727,7 +12979,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_comerc_serv_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_recreativo','ge','cb_area_ruinas_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','sau_org_saude_pub','ge','edf_edif_saude_a','id_org_saude')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_campo_aeromodelismo','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_agropec_ext_veg_pesca_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','tra_estrut_apoio','ge','edf_edif_comerc_serv_p','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_pub_civil','complexos','laz_complexo_recreativo','id_org_pub_civil')#
@@ -13763,6 +13014,7 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_jardim_zoologico','ge','edf_edif_constr_lazer_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_religiosa','complexos','laz_pesque_pague','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_localidade','pe','lpal_posic_geo_localidade_p','id_localidade')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','enc_complexo_gerador_energia_eletrica','pe','enc_est_gerad_energia_eletrica_l','id_complexo_gerador_energia_eletrica')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_constr_lazer_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','tra_estrut_apoio','pe','tra_patio_a','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_pub_militar','pe','lpal_area_pub_militar_a','id_org_pub_militar')#
@@ -13796,7 +13048,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_pub_militar','complexos','laz_complexo_desportivo','id_org_pub_militar')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_religiosa','complexos','laz_campo_de_golfe','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_velodromo','ge','laz_pista_competicao_p','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_autodromo','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_jardim_zoologico','ge','edf_posto_policia_rod_federal_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_constr_lazer_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_clube_social','ge','edf_edif_constr_turistica_a','id_complexo_desportivo_lazer')#
@@ -13899,7 +13150,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_autodromo','ge','laz_pista_competicao_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','enc_complexo_gerador_energia_eletrica','pe','enc_hidreletrica_a','id_complexo_gerador_energia_eletrica')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_recreativo','ge','laz_ruina','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_velodromo','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_pub_militar','complexos','laz_clube_social','id_org_pub_militar')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_urbano','ge','edf_edif_constr_lazer_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_campo_aeromodelismo','ge','edf_posto_fiscal_p','id_complexo_desportivo_lazer')#
@@ -13986,7 +13236,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_metro_ferroviaria_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_industrial','ge','edf_edif_constr_portuaria_p','id_org_industrial')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aglomerado_rural_isolado','complexos','cb_condominio','id_localidade')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipica','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_recreativo','ge','laz_arquibancada','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_capital','complexos','cb_complexo_habitacional','id_localidade')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_autodromo','ge','edf_edif_constr_turistica_p','id_complexo_desportivo_lazer')#
@@ -14078,7 +13327,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_religiosa','complexos','edu_org_ensino_religiosa','id_org_religiosa')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edificacao','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_pesque_pague','ge','laz_ruina','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipodromo','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_kartodromo','ge','laz_arquibancada_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_campo_aeromodelismo','ge','edf_edif_pub_civil_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_campo_de_golfe','ge','laz_campo_quadra','id_complexo_desportivo_lazer')#
@@ -14115,7 +13363,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_industrial','pe','tra_patio','id_org_industrial')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_pub_civil_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_policia_a','id_complexo_habitacional')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_kartodromo','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_ext_mineral_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','dut_duto','pe','dut_trecho_duto_l','id_duto')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_hab_indigena_a','id_complexo_habitacional')#
@@ -14131,24 +13378,10 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_urbano','ge','edf_edif_policia_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','rod_estacao_rodoviaria','pe','eco_deposito_geral_p','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_religiosa','complexos','laz_jardim_botanico','id_org_ensino')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_clube_social','ge','laz_arquibancada_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_metro_ferroviaria_p','id_complexo_habitacional')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_localidade','complexos','lpal_aldeia_indigena','id_localidade')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_pub_militar','complexos','laz_complexo_recreativo','id_org_pub_militar')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_autodromo','ge','edf_edif_pub_civil_p','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','ver_area_verde','pe','veg_mangue_a','id_area_verde')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','aer_complexo_aeroportuario','ge','cb_area_estrut_transporte_a','id_estrut_transporte')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_posto_combustivel_a','id_complexo_habitacional')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipodromo','ge','laz_arquibancada_a','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_hab_indigena_a','id_complexo_habitacional')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_comerc_serv','complexos','laz_autodromo','id_org_comerc_serv')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','rod_estacao_rodoviaria','ge','edf_edif_comerc_serv_a','id_estrut_transporte')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_clube_social','ge','cb_praca_a','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_kartodromo','ge','edf_edif_policia_a','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_autodromo','ge','edf_edif_constr_turistica_a','id_complexo_desportivo_lazer')#
-ALTER TABLE ONLY ge.edf_edif_pub_civil_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.edf_edif_pub_civil_a ALTER COLUMN jurisdicao SET DEFAULT 95#
-ALTER TABLE ONLY ge.edf_edif_pub_civil_a ALTER COLUMN tipousoedif SET DEFAULT 95#
+ALTER TABLE ONLY ge.edf_edif_constr_lazer_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY ge.edf_edif_constr_lazer_a ALTER COLUMN divisaoativecon SET DEFAULT ARRAY[92::SMALLINT]#
+ALTER TABLE ONLY ge.edf_edif_constr_lazer_a ALTER COLUMN tipoediflazer SET DEFAULT 16#
 ALTER TABLE ONLY ge.edf_edif_industrial_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_servico_social_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.cb_area_desenv_social_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
@@ -14160,21 +13393,22 @@ ALTER TABLE ONLY ge.edf_posto_policia_militar_p ALTER COLUMN tipousoedif SET DEF
 ALTER TABLE ONLY ge.edf_posto_policia_militar_p ALTER COLUMN tipoinstalmilitar SET DEFAULT 95#
 ALTER TABLE ONLY ge.cb_area_de_propriedade_particular_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_ext_mineral_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.edf_edif_constr_turistica_p ALTER COLUMN tipoedifturist SET DEFAULT 95#
-ALTER TABLE ONLY ge.edf_edif_constr_turistica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY ge.ver_jardim_a ALTER COLUMN tipolavoura SET DEFAULT 95#
+ALTER TABLE ONLY ge.ver_jardim_a ALTER COLUMN finalidade SET DEFAULT 4#
+ALTER TABLE ONLY ge.ver_jardim_a ALTER COLUMN cultivopredominante SET DEFAULT ARRAY[72::SMALLINT]#
+ALTER TABLE ONLY ge.ver_jardim_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY ge.ver_jardim_a ALTER COLUMN classificacaoporte SET DEFAULT 95#
+ALTER TABLE ONLY ge.ver_jardim_a ALTER COLUMN tipoveg SET DEFAULT 2#
 ALTER TABLE ONLY ge.cb_area_ext_mineral_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_ext_mineral_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.cb_area_ensino_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.cb_area_servico_social_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY ge.edf_posto_policia_rod_federal_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY ge.edf_posto_policia_rod_federal_p ALTER COLUMN jurisdicao SET DEFAULT 95#
+ALTER TABLE ONLY ge.edf_posto_policia_rod_federal_p ALTER COLUMN tipousoedif SET DEFAULT 2#
+ALTER TABLE ONLY ge.edf_posto_policia_rod_federal_p ALTER COLUMN tipoedifpubcivil SET DEFAULT ARRAY[1::SMALLINT]#
 ALTER TABLE ONLY ge.edf_edif_saude_p ALTER COLUMN nivelatencao SET DEFAULT 5#
 ALTER TABLE ONLY ge.edf_edif_saude_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.cb_area_est_med_fenomenos_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.cb_descontinuidade_geometrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.cb_descontinuidade_geometrica_a ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY ge.ver_descontinuidade_geometrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.ver_descontinuidade_geometrica_l ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY ge.cb_descontinuidade_geometrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.cb_descontinuidade_geometrica_l ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_posto_combustivel_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_posto_combustivel_p ALTER COLUMN tipoedifcomercserv SET DEFAULT ARRAY[19::SMALLINT]#
 ALTER TABLE ONLY ge.edf_posto_combustivel_p ALTER COLUMN finalidade SET DEFAULT ARRAY[95::SMALLINT]#
@@ -14182,25 +13416,21 @@ ALTER TABLE ONLY ge.cb_area_energia_eletrica_a ALTER COLUMN geometriaaproximada 
 ALTER TABLE ONLY ge.edf_posto_policia_rod_federal_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_posto_policia_rod_federal_a ALTER COLUMN jurisdicao SET DEFAULT 95#
 ALTER TABLE ONLY ge.edf_posto_policia_rod_federal_a ALTER COLUMN tipousoedif SET DEFAULT 2#
-ALTER TABLE ONLY ge.edf_posto_policia_rod_federal_a ALTER COLUMN tipoedifpubcivil SET DEFAULT ARRAY[95::SMALLINT]#
+ALTER TABLE ONLY ge.edf_posto_policia_rod_federal_a ALTER COLUMN tipoedifpubcivil SET DEFAULT ARRAY[1::SMALLINT]#
 ALTER TABLE ONLY ge.edf_edif_saude_a ALTER COLUMN nivelatencao SET DEFAULT 5#
 ALTER TABLE ONLY ge.edf_edif_saude_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.cb_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.cb_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_posto_combustivel_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_posto_combustivel_a ALTER COLUMN tipoedifcomercserv SET DEFAULT ARRAY[19::SMALLINT]#
 ALTER TABLE ONLY ge.edf_posto_combustivel_a ALTER COLUMN finalidade SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY ge.edf_edif_agropec_ext_veg_pesca_p ALTER COLUMN tipoedifagropec SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY ge.edf_edif_agropec_ext_veg_pesca_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.cb_meio_fio_l ALTER COLUMN comsargeta SET DEFAULT 95#
-ALTER TABLE ONLY ge.cb_meio_fio_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.laz_arquibancada_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.laz_arquibancada_l ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY ge.laz_arquibancada_l ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY ge.edf_posto_guarda_municipal_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.edf_posto_guarda_municipal_p ALTER COLUMN jurisdicao SET DEFAULT 95#
+ALTER TABLE ONLY ge.edf_posto_guarda_municipal_p ALTER COLUMN jurisdicao SET DEFAULT 3#
 ALTER TABLE ONLY ge.edf_posto_guarda_municipal_p ALTER COLUMN tipousoedif SET DEFAULT 5#
-ALTER TABLE ONLY ge.edf_posto_guarda_municipal_p ALTER COLUMN tipoedifpubcivil SET DEFAULT ARRAY[95::SMALLINT]#
+ALTER TABLE ONLY ge.edf_posto_guarda_municipal_p ALTER COLUMN tipoedifpubcivil SET DEFAULT ARRAY[1::SMALLINT]#
 ALTER TABLE ONLY ge.edf_edif_constr_lazer_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_constr_lazer_p ALTER COLUMN divisaoativecon SET DEFAULT ARRAY[92::SMALLINT]#
 ALTER TABLE ONLY ge.edf_edif_constr_lazer_p ALTER COLUMN tipoediflazer SET DEFAULT 16#
@@ -14223,23 +13453,19 @@ ALTER TABLE ONLY ge.cb_trecho_arruamento_a ALTER COLUMN geometriaaproximada SET 
 ALTER TABLE ONLY ge.cb_trecho_arruamento_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY ge.cb_trecho_arruamento_a ALTER COLUMN tipoarruamento SET DEFAULT 4#
 ALTER TABLE ONLY ge.edf_posto_guarda_municipal_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.edf_posto_guarda_municipal_a ALTER COLUMN jurisdicao SET DEFAULT 95#
+ALTER TABLE ONLY ge.edf_posto_guarda_municipal_a ALTER COLUMN jurisdicao SET DEFAULT 3#
 ALTER TABLE ONLY ge.edf_posto_guarda_municipal_a ALTER COLUMN tipousoedif SET DEFAULT 5#
-ALTER TABLE ONLY ge.edf_posto_guarda_municipal_a ALTER COLUMN tipoedifpubcivil SET DEFAULT ARRAY[95::SMALLINT]#
+ALTER TABLE ONLY ge.edf_posto_guarda_municipal_a ALTER COLUMN tipoedifpubcivil SET DEFAULT ARRAY[1::SMALLINT]#
 ALTER TABLE ONLY ge.laz_pista_competicao_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.laz_pista_competicao_a ALTER COLUMN tipopistacomp SET DEFAULT 95#
-ALTER TABLE ONLY ge.laz_arquibancada_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.laz_arquibancada_p ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY ge.laz_arquibancada_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY ge.cb_trecho_arruamento_l ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY ge.cb_trecho_arruamento_l ALTER COLUMN canteirodivisorio SET DEFAULT 95#
 ALTER TABLE ONLY ge.cb_trecho_arruamento_l ALTER COLUMN trafego SET DEFAULT 95#
 ALTER TABLE ONLY ge.cb_trecho_arruamento_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.cb_trecho_arruamento_l ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY ge.cb_trecho_arruamento_l ALTER COLUMN tipoarruamento SET DEFAULT 4#
-ALTER TABLE ONLY ge.ppb_faixa_dominio_arruamento_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.ppb_faixa_dominio_arruamento_a ALTER COLUMN jurisdicao SET DEFAULT 95#
-ALTER TABLE ONLY ge.ppb_faixa_dominio_arruamento_a ALTER COLUMN administracao SET DEFAULT 95#
+ALTER TABLE ONLY ge.edf_edif_constr_portuaria_a ALTER COLUMN tipoedifport SET DEFAULT ARRAY[95::SMALLINT]#
+ALTER TABLE ONLY ge.edf_edif_constr_portuaria_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.laz_ruina_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_posto_fiscal_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_posto_fiscal_a ALTER COLUMN jurisdicao SET DEFAULT 95#
@@ -14249,7 +13475,6 @@ ALTER TABLE ONLY ge.edf_posto_fiscal_a ALTER COLUMN tipopostofisc SET DEFAULT 95
 ALTER TABLE ONLY ge.cb_passeio ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.cb_passeio ALTER COLUMN pavimentacao SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY ge.cb_passeio ALTER COLUMN calcada SET DEFAULT 95#
-ALTER TABLE ONLY ge.laz_ruina ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.laz_ruina_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_posto_fiscal_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_posto_fiscal_p ALTER COLUMN jurisdicao SET DEFAULT 95#
@@ -14259,10 +13484,6 @@ ALTER TABLE ONLY ge.edf_posto_fiscal_p ALTER COLUMN tipopostofisc SET DEFAULT 95
 ALTER TABLE ONLY ge.cb_praca_a ALTER COLUMN turistica SET DEFAULT 95#
 ALTER TABLE ONLY ge.cb_praca_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edificacao_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.emu_descontinuidade_geometrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.emu_descontinuidade_geometrica_a ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY ge.edf_descontinuidade_geometrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.edf_descontinuidade_geometrica_a ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_residencial_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.cb_area_urbana_isolada_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.cb_area_urbana_isolada_a ALTER COLUMN tipoassociado SET DEFAULT 1#
@@ -14271,15 +13492,9 @@ ALTER TABLE ONLY ge.edf_edif_religiosa_p ALTER COLUMN geometriaaproximada SET DE
 ALTER TABLE ONLY ge.edf_edif_religiosa_p ALTER COLUMN tipoedifrelig SET DEFAULT 95#
 ALTER TABLE ONLY ge.edf_edif_religiosa_p ALTER COLUMN ensino SET DEFAULT 0#
 ALTER TABLE ONLY ge.cb_retorno_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.emu_descontinuidade_geometrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.emu_descontinuidade_geometrica_l ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edificacao ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.cb_retorno_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.emu_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.emu_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_residencial_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.edf_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.edf_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_religiosa_a ALTER COLUMN crista SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_religiosa_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_religiosa_a ALTER COLUMN tipoedifrelig SET DEFAULT 95#
@@ -14289,33 +13504,25 @@ ALTER TABLE ONLY ge.laz_campo_quadra ALTER COLUMN geometriaaproximada SET DEFAUL
 ALTER TABLE ONLY ge.laz_campo_quadra ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY ge.laz_campo_quadra ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY ge.cb_retorno_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.cb_area_lazer_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_banheiro_publico_p ALTER COLUMN classeativecon SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY ge.edf_banheiro_publico_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.cb_largo_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.laz_descontinuidade_geometrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.laz_descontinuidade_geometrica_a ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY ge.cb_area_industrial_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.laz_pista_competicao ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.laz_pista_competicao ALTER COLUMN tipopistacomp SET DEFAULT 95#
-ALTER TABLE ONLY ge.laz_descontinuidade_geometrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.laz_descontinuidade_geometrica_l ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
+ALTER TABLE ONLY ge.edf_edif_abast_agua_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY ge.edf_edif_abast_agua_p ALTER COLUMN tipoedifabast SET DEFAULT 95#
 ALTER TABLE ONLY ge.laz_arquibancada ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.laz_arquibancada ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY ge.laz_arquibancada ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY ge.edf_edif_habitacional_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_banheiro_publico_a ALTER COLUMN classeativecon SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY ge.edf_banheiro_publico_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.laz_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.laz_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_abast_agua_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_abast_agua_a ALTER COLUMN tipoedifabast SET DEFAULT 95#
 ALTER TABLE ONLY ge.edf_edif_habitacional_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_rodoviaria_p ALTER COLUMN tipoedifrod SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY ge.edf_edif_rodoviaria_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.ppb_faixa_dominio_ferrovia_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.ppb_faixa_dominio_ferrovia_a ALTER COLUMN jurisdicao SET DEFAULT 95#
-ALTER TABLE ONLY ge.ppb_faixa_dominio_ferrovia_a ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY ge.cb_tunel_a ALTER COLUMN modaluso SET DEFAULT ARRAY[4::SMALLINT]#
 ALTER TABLE ONLY ge.cb_tunel_a ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY ge.cb_tunel_a ALTER COLUMN tipopavimentacao SET DEFAULT 95#
@@ -14324,8 +13531,6 @@ ALTER TABLE ONLY ge.cb_tunel_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.cb_tunel_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY ge.cb_tunel_a ALTER COLUMN tipotunel SET DEFAULT 1#
 ALTER TABLE ONLY ge.cb_tunel_a ALTER COLUMN posicaopista SET DEFAULT 95#
-ALTER TABLE ONLY ge.edf_edif_constr_portuaria_a ALTER COLUMN tipoedifport SET DEFAULT ARRAY[95::SMALLINT]#
-ALTER TABLE ONLY ge.edf_edif_constr_portuaria_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.emu_poste_sinalizacao_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.emu_poste_sinalizacao_p ALTER COLUMN tipoposte SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY ge.edf_edif_rodoviaria_a ALTER COLUMN tipoedifrod SET DEFAULT ARRAY[95::SMALLINT]#
@@ -14335,19 +13540,15 @@ ALTER TABLE ONLY ge.emu_ciclovia_l ALTER COLUMN geometriaaproximada SET DEFAULT 
 ALTER TABLE ONLY ge.emu_ciclovia_l ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY ge.emu_ciclovia_l ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY ge.cb_area_saude_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.edf_edif_constr_lazer_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.edf_edif_constr_lazer_a ALTER COLUMN divisaoativecon SET DEFAULT ARRAY[92::SMALLINT]#
-ALTER TABLE ONLY ge.edf_edif_constr_lazer_a ALTER COLUMN tipoediflazer SET DEFAULT 16#
+ALTER TABLE ONLY ge.edf_edif_pub_civil_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY ge.edf_edif_pub_civil_a ALTER COLUMN jurisdicao SET DEFAULT 95#
+ALTER TABLE ONLY ge.edf_edif_pub_civil_a ALTER COLUMN tipousoedif SET DEFAULT 95#
 ALTER TABLE ONLY ge.edf_edif_comunic_a ALTER COLUMN tipoedifcomunic SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY ge.edf_edif_comunic_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_comunic_a ALTER COLUMN modalidade SET DEFAULT ARRAY[1::SMALLINT]#
 ALTER TABLE ONLY ge.cb_area_duto_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.ver_jardim_a ALTER COLUMN tipolavoura SET DEFAULT 95#
-ALTER TABLE ONLY ge.ver_jardim_a ALTER COLUMN finalidade SET DEFAULT 4#
-ALTER TABLE ONLY ge.ver_jardim_a ALTER COLUMN cultivopredominante SET DEFAULT ARRAY[72::SMALLINT]#
-ALTER TABLE ONLY ge.ver_jardim_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.ver_jardim_a ALTER COLUMN classificacaoporte SET DEFAULT 95#
-ALTER TABLE ONLY ge.ver_jardim_a ALTER COLUMN tipoveg SET DEFAULT 2#
+ALTER TABLE ONLY ge.edf_edif_constr_turistica_p ALTER COLUMN tipoedifturist SET DEFAULT 95#
+ALTER TABLE ONLY ge.edf_edif_constr_turistica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_comunic_p ALTER COLUMN tipoedifcomunic SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY ge.edf_edif_comunic_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_comunic_p ALTER COLUMN modalidade SET DEFAULT ARRAY[1::SMALLINT]#
@@ -14365,8 +13566,6 @@ ALTER TABLE ONLY ge.emu_escadaria_l ALTER COLUMN matconstr SET DEFAULT 95#
 ALTER TABLE ONLY ge.emu_escadaria_l ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY ge.edf_edif_saneamento_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_saneamento_p ALTER COLUMN tipoedifsaneam SET DEFAULT 95#
-ALTER TABLE ONLY ge.edf_edif_abast_agua_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.edf_edif_abast_agua_p ALTER COLUMN tipoedifabast SET DEFAULT 95#
 ALTER TABLE ONLY ge.edf_edif_energia_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_energia_p ALTER COLUMN tipoedifenergia SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY ge.laz_campo_quadra_a ALTER COLUMN tipocampoquadra SET DEFAULT 95#
@@ -14402,9 +13601,6 @@ ALTER TABLE ONLY ge.emu_escadaria_p ALTER COLUMN situacaoespacial SET DEFAULT 95
 ALTER TABLE ONLY ge.emu_escadaria_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY ge.emu_escadaria_p ALTER COLUMN matconstr SET DEFAULT 95#
 ALTER TABLE ONLY ge.emu_escadaria_p ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY ge.ppb_area_dominial_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.ppb_area_dominial_a ALTER COLUMN jurisdicao SET DEFAULT 95#
-ALTER TABLE ONLY ge.ppb_area_dominial_a ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY ge.cb_area_comerc_serv_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.cb_poste_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.cb_poste_p ALTER COLUMN tipoposte SET DEFAULT ARRAY[95::SMALLINT]#
@@ -14481,12 +13677,6 @@ ALTER TABLE ONLY ge.emu_acesso_a ALTER COLUMN situacaoespacial SET DEFAULT 95#
 ALTER TABLE ONLY ge.emu_acesso_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY ge.emu_acesso_a ALTER COLUMN matconstr SET DEFAULT 95#
 ALTER TABLE ONLY ge.emu_acesso_a ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY ge.edf_posto_policia_rod_federal_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.edf_posto_policia_rod_federal_p ALTER COLUMN jurisdicao SET DEFAULT 95#
-ALTER TABLE ONLY ge.edf_posto_policia_rod_federal_p ALTER COLUMN tipousoedif SET DEFAULT 2#
-ALTER TABLE ONLY ge.edf_posto_policia_rod_federal_p ALTER COLUMN tipoedifpubcivil SET DEFAULT ARRAY[95::SMALLINT]#
-ALTER TABLE ONLY ge.ver_descontinuidade_geometrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.ver_descontinuidade_geometrica_a ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY ge.ver_arvore_isolada_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.emu_elevador_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.emu_elevador_p ALTER COLUMN situacaoespacial SET DEFAULT 95#
@@ -14528,9 +13718,7 @@ ALTER TABLE ONLY ge.edf_edif_ensino_p ALTER COLUMN geometriaaproximada SET DEFAU
 ALTER TABLE ONLY ge.edf_edif_desenv_social_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_metro_ferroviaria_a ALTER COLUMN tipoedifmetroferrov SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY ge.edf_edif_metro_ferroviaria_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.ppb_faixa_dominio_rodovia_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.ppb_faixa_dominio_rodovia_a ALTER COLUMN jurisdicao SET DEFAULT 95#
-ALTER TABLE ONLY ge.ppb_faixa_dominio_rodovia_a ALTER COLUMN administracao SET DEFAULT 95#
+ALTER TABLE ONLY ge.laz_ruina ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_posto_policia_militar_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_posto_policia_militar_a ALTER COLUMN jurisdicao SET DEFAULT 95#
 ALTER TABLE ONLY ge.edf_posto_policia_militar_a ALTER COLUMN tipousoedif SET DEFAULT 6#
@@ -14561,6 +13749,10 @@ ALTER TABLE ONLY ge.cb_travessia_pedrestre_a ALTER COLUMN geometriaaproximada SE
 ALTER TABLE ONLY ge.cb_travessia_pedrestre_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY ge.cb_area_agropec_ext_veg_pesca_a ALTER COLUMN destinadoa SET DEFAULT 95#
 ALTER TABLE ONLY ge.cb_area_agropec_ext_veg_pesca_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY ge.edf_edif_pub_militar_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY ge.edf_edif_pub_militar_a ALTER COLUMN jurisdicao SET DEFAULT 95#
+ALTER TABLE ONLY ge.edf_edif_pub_militar_a ALTER COLUMN tipousoedif SET DEFAULT 95#
+ALTER TABLE ONLY ge.edf_edif_pub_militar_a ALTER COLUMN tipoinstalmilitar SET DEFAULT 5#
 ALTER TABLE ONLY ge.edf_edif_constr_aeroportuaria_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_constr_aeroportuaria_p ALTER COLUMN tipoedifaero SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY ge.edf_edif_pub_militar_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
@@ -14573,16 +13765,9 @@ ALTER TABLE ONLY ge.cb_estacionamento_a ALTER COLUMN finalidadepatio SET DEFAULT
 ALTER TABLE ONLY ge.cb_estacionamento_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY ge.cb_estacionamento_a ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY ge.cb_espelho_dagua_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.edf_descontinuidade_geometrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.edf_descontinuidade_geometrica_l ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_constr_aeroportuaria_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY ge.edf_edif_constr_aeroportuaria_a ALTER COLUMN tipoedifaero SET DEFAULT ARRAY[95::SMALLINT]#
-ALTER TABLE ONLY ge.edf_edif_pub_militar_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.edf_edif_pub_militar_a ALTER COLUMN jurisdicao SET DEFAULT 95#
-ALTER TABLE ONLY ge.edf_edif_pub_militar_a ALTER COLUMN tipousoedif SET DEFAULT 95#
-ALTER TABLE ONLY ge.edf_edif_pub_militar_a ALTER COLUMN tipoinstalmilitar SET DEFAULT 5#
-ALTER TABLE ONLY ge.ver_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY ge.ver_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
+ALTER TABLE ONLY ge.cb_area_lazer_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY complexos.laz_parque_urbano ALTER COLUMN divisaoativecon SET DEFAULT 92#
 ALTER TABLE ONLY complexos.laz_parque_urbano ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY complexos.sau_org_saude ALTER COLUMN classeativecon SET DEFAULT 99#
@@ -14749,18 +13934,25 @@ ALTER TABLE ONLY complexos.emu_terminal_hidroviario ALTER COLUMN situacaofisica 
 ALTER TABLE ONLY complexos.emu_terminal_hidroviario ALTER COLUMN tipoestrut SET DEFAULT 5#
 ALTER TABLE ONLY complexos.emu_terminal_hidroviario ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY complexos.adm_org_ext_mineral ALTER COLUMN secaoativecon SET DEFAULT 95#
+ALTER TABLE ONLY public.aux_descontinuidade_geometrica ALTER COLUMN categoria SET DEFAULT 95#
+ALTER TABLE ONLY public.aux_descontinuidade_geometrica ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY public.aux_descontinuidade_geometrica ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
+ALTER TABLE ONLY public.aux_descontinuidade_geometrica_l ALTER COLUMN categoria SET DEFAULT 95#
 ALTER TABLE ONLY public.aux_descontinuidade_geometrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY public.aux_descontinuidade_geometrica_l ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
+ALTER TABLE ONLY public.aux_descontinuidade_geometrica_p ALTER COLUMN categoria SET DEFAULT 95#
 ALTER TABLE ONLY public.aux_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY public.aux_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY public.aux_descontinuidade_geometrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY public.aux_descontinuidade_geometrica_a ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
+ALTER TABLE ONLY pe.hid_recife ALTER COLUMN tiporecife SET DEFAULT 95#
+ALTER TABLE ONLY pe.hid_recife ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.hid_recife ALTER COLUMN situacaocosta SET DEFAULT 11#
+ALTER TABLE ONLY pe.hid_recife ALTER COLUMN situacaoemagua SET DEFAULT 4#
 ALTER TABLE ONLY pe.hdv_eclusa_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hdv_eclusa_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.hdv_eclusa_p ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY pe.hdv_eclusa_p ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.hid_dique ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.hid_dique ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
+ALTER TABLE ONLY pe.dut_ramificacao_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.dut_ramificacao_p ALTER COLUMN relacionado SET DEFAULT 37#
 ALTER TABLE ONLY pe.sb_dep_abast_agua ALTER COLUMN tipoexposicao SET DEFAULT 95#
 ALTER TABLE ONLY pe.sb_dep_abast_agua ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.sb_dep_abast_agua ALTER COLUMN situacaoagua SET DEFAULT 95#
@@ -14782,8 +13974,9 @@ ALTER TABLE ONLY pe.hdv_eclusa_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hdv_eclusa_l ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.hdv_eclusa_l ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY pe.hdv_eclusa_l ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.eco_deposito_geral ALTER COLUMN tipoexposicao SET DEFAULT 95#
-ALTER TABLE ONLY pe.eco_deposito_geral ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.fer_cremalheira_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.fer_cremalheira_p ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.fer_cremalheira_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.hdv_eclusa_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hdv_eclusa_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.hdv_eclusa_a ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
@@ -14821,14 +14014,11 @@ ALTER TABLE ONLY pe.rod_trecho_rodoviario_l ALTER COLUMN situacaofisica SET DEFA
 ALTER TABLE ONLY pe.rod_trecho_rodoviario_l ALTER COLUMN trechoemperimetrourbano SET DEFAULT 0#
 ALTER TABLE ONLY pe.rod_trecho_rodoviario_l ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY pe.rod_trecho_rodoviario_l ALTER COLUMN tipotrechorod SET DEFAULT 2#
-ALTER TABLE ONLY pe.eco_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.eco_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY pe.rel_elemento_fisiog_natural_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.rel_elemento_fisiog_natural_a ALTER COLUMN tipoelemnat SET DEFAULT 1#
 ALTER TABLE ONLY pe.veg_veg_natural_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.veg_veg_natural_a ALTER COLUMN tipoveg SET DEFAULT 95#
 ALTER TABLE ONLY pe.veg_veg_natural_a ALTER COLUMN classificacaoporte SET DEFAULT 95#
-ALTER TABLE ONLY pe.hid_terreno_suj_inundacao_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.lpal_linha_de_limite_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.lpal_linha_de_limite_l ALTER COLUMN referenciallegal SET DEFAULT 96#
 ALTER TABLE ONLY pe.hid_ponto_inicio_drenagem_p ALTER COLUMN nascente SET DEFAULT 95#
@@ -14849,21 +14039,15 @@ ALTER TABLE ONLY pe.hid_barragem_l ALTER COLUMN usoprincipal SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_barragem_l ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_barragem_l ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY pe.hid_barragem_l ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.tra_funicular_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.tra_funicular_l ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY pe.tra_funicular_l ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY pe.veg_brejo_pantano_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.veg_brejo_pantano_a ALTER COLUMN tipoveg SET DEFAULT 10#
+ALTER TABLE ONLY pe.veg_brejo_pantano_a ALTER COLUMN classificacaoporte SET DEFAULT 95#
 ALTER TABLE ONLY pe.rel_elemento_fisiog_natural_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.rel_elemento_fisiog_natural_p ALTER COLUMN tipoelemnat SET DEFAULT 1#
 ALTER TABLE ONLY pe.enc_torre_comunic_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.enc_torre_comunic_p ALTER COLUMN modalidade SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY pe.rel_terreno_exposto_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.enc_est_gerad_energia_eletr ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.enc_est_gerad_energia_eletr ALTER COLUMN tipoestgerad SET DEFAULT 95#
-ALTER TABLE ONLY pe.enc_est_gerad_energia_eletr ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY pe.enc_est_gerad_energia_eletr ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.sb_cemiterio_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.sb_cemiterio_a ALTER COLUMN destinacaocemiterio SET DEFAULT 2#
-ALTER TABLE ONLY pe.sb_cemiterio_a ALTER COLUMN tipocemiterio SET DEFAULT 95#
+ALTER TABLE ONLY pe.rel_terreno_erodido_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_sumidouro_vertedouro_p ALTER COLUMN causa SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_sumidouro_vertedouro_p ALTER COLUMN tiposumvert SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_sumidouro_vertedouro_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
@@ -14878,17 +14062,18 @@ ALTER TABLE ONLY pe.rel_ponto_cotado_altimetrico_p ALTER COLUMN geometriaaproxim
 ALTER TABLE ONLY pe.rel_ponto_cotado_altimetrico_p ALTER COLUMN cotacomprovada SET DEFAULT 0#
 ALTER TABLE ONLY pe.hid_confluencia_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_confluencia_p ALTER COLUMN relacionado SET DEFAULT 16#
-ALTER TABLE ONLY pe.dut_ramificacao_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.dut_ramificacao_p ALTER COLUMN relacionado SET DEFAULT 37#
+ALTER TABLE ONLY pe.hid_dique ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.hid_dique ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY pe.tra_patio ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.tra_patio ALTER COLUMN finalidadepatio SET DEFAULT ARRAY[3::SMALLINT]#
 ALTER TABLE ONLY pe.tra_patio ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.tra_patio ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.aer_descontinuidade_geometrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.aer_descontinuidade_geometrica_a ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY pe.enc_trecho_comunic_l ALTER COLUMN posicaorelativa SET DEFAULT 95#
+ALTER TABLE ONLY pe.eco_deposito_geral ALTER COLUMN tipoexposicao SET DEFAULT 95#
+ALTER TABLE ONLY pe.eco_deposito_geral ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.enc_trecho_comunic_l ALTER COLUMN matcondutor SET DEFAULT 95#
 ALTER TABLE ONLY pe.enc_trecho_comunic_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.enc_trecho_comunic_l ALTER COLUMN tipotrechocomunic SET DEFAULT 95#
+ALTER TABLE ONLY pe.enc_trecho_comunic_l ALTER COLUMN posicaorelativa SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_canal_vala_l ALTER COLUMN usoprincipal SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_canal_vala_l ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_canal_vala_l ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
@@ -14903,10 +14088,12 @@ ALTER TABLE ONLY pe.sb_dep_abast_agua_p ALTER COLUMN finalidadedep SET DEFAULT 9
 ALTER TABLE ONLY pe.sb_dep_abast_agua_p ALTER COLUMN tratamento SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_banco_areia_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_banco_areia_a ALTER COLUMN tipobanco SET DEFAULT 1#
-ALTER TABLE ONLY pe.fer_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.fer_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY pe.sb_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.sb_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
+ALTER TABLE ONLY pe.hid_queda_dagua_l ALTER COLUMN tipoqueda SET DEFAULT 95#
+ALTER TABLE ONLY pe.hid_queda_dagua_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.enc_est_gerad_energia_eletrica ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.enc_est_gerad_energia_eletrica ALTER COLUMN tipoestgerad SET DEFAULT 95#
+ALTER TABLE ONLY pe.enc_est_gerad_energia_eletrica ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.enc_est_gerad_energia_eletrica ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.veg_campinarana_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.veg_campinarana_a ALTER COLUMN tipoveg SET DEFAULT 6#
 ALTER TABLE ONLY pe.veg_campinarana_a ALTER COLUMN classificacaoporte SET DEFAULT 95#
@@ -14940,14 +14127,6 @@ ALTER TABLE ONLY pe.dut_galeria_l ALTER COLUMN tipotrechoduto SET DEFAULT 5#
 ALTER TABLE ONLY pe.dut_galeria_l ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.dut_galeria_l ALTER COLUMN setor SET DEFAULT 95#
 ALTER TABLE ONLY pe.dut_galeria_l ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.sb_descontinuidade_geometrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.sb_descontinuidade_geometrica_a ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY pe.hid_ponto_drenagem_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.hid_ponto_drenagem_p ALTER COLUMN relacionado SET DEFAULT 39#
-ALTER TABLE ONLY pe.fer_descontinuidade_geometrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.fer_descontinuidade_geometrica_l ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY pe.sb_descontinuidade_geometrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.sb_descontinuidade_geometrica_l ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY pe.sb_dep_saneamento_a ALTER COLUMN tipoexposicao SET DEFAULT 95#
 ALTER TABLE ONLY pe.sb_dep_saneamento_a ALTER COLUMN estadofisico SET DEFAULT 95#
 ALTER TABLE ONLY pe.sb_dep_saneamento_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
@@ -14968,8 +14147,12 @@ ALTER TABLE ONLY pe.veg_campo_a ALTER COLUMN tipocampo SET DEFAULT 95#
 ALTER TABLE ONLY pe.veg_campo_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.veg_campo_a ALTER COLUMN tipoveg SET DEFAULT 9#
 ALTER TABLE ONLY pe.veg_campo_a ALTER COLUMN classificacaoporte SET DEFAULT 95#
-ALTER TABLE ONLY pe.veg_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.veg_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
+ALTER TABLE ONLY pe.sb_dep_saneamento ALTER COLUMN tipoexposicao SET DEFAULT 95#
+ALTER TABLE ONLY pe.sb_dep_saneamento ALTER COLUMN estadofisico SET DEFAULT 95#
+ALTER TABLE ONLY pe.sb_dep_saneamento ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.sb_dep_saneamento ALTER COLUMN tipodepgeral SET DEFAULT 95#
+ALTER TABLE ONLY pe.sb_dep_saneamento ALTER COLUMN finalidadedep SET DEFAULT 2#
+ALTER TABLE ONLY pe.sb_dep_saneamento ALTER COLUMN tratamento SET DEFAULT 95#
 ALTER TABLE ONLY pe.rel_corte_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.rel_corte_p ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY pe.rel_corte_p ALTER COLUMN tipoalterantrop SET DEFAULT 26#
@@ -14987,12 +14170,9 @@ ALTER TABLE ONLY pe.tra_ponte_p ALTER COLUMN posicaopista SET DEFAULT 95#
 ALTER TABLE ONLY pe.hdv_obstaculo_navegacao_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hdv_obstaculo_navegacao_a ALTER COLUMN tipoobst SET DEFAULT 4#
 ALTER TABLE ONLY pe.hdv_obstaculo_navegacao_a ALTER COLUMN situacaoemagua SET DEFAULT 95#
-ALTER TABLE ONLY pe.hid_vala_a ALTER COLUMN usoprincipal SET DEFAULT 1#
-ALTER TABLE ONLY pe.hid_vala_a ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.hid_vala_a ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
-ALTER TABLE ONLY pe.hid_vala_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.hid_vala_a ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY pe.hid_vala_a ALTER COLUMN tipoalterantrop SET DEFAULT 31#
+ALTER TABLE ONLY pe.rel_duna_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.rel_duna_l ALTER COLUMN tipoelemnat SET DEFAULT 17#
+ALTER TABLE ONLY pe.rel_duna_l ALTER COLUMN fixa SET DEFAULT 0#
 ALTER TABLE ONLY pe.dut_trecho_duto_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.dut_trecho_duto_l ALTER COLUMN tipotrechoduto SET DEFAULT 95#
 ALTER TABLE ONLY pe.dut_trecho_duto_l ALTER COLUMN situacaofisica SET DEFAULT 95#
@@ -15001,20 +14181,11 @@ ALTER TABLE ONLY pe.dut_trecho_duto_l ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_corredeira_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_queda_dagua_p ALTER COLUMN tipoqueda SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_queda_dagua_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.tra_ponte_l ALTER COLUMN tipoponte SET DEFAULT 95#
-ALTER TABLE ONLY pe.tra_ponte_l ALTER COLUMN modaluso SET DEFAULT ARRAY[4::SMALLINT]#
-ALTER TABLE ONLY pe.tra_ponte_l ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.tra_ponte_l ALTER COLUMN tipopavimentacao SET DEFAULT 95#
-ALTER TABLE ONLY pe.tra_ponte_l ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
-ALTER TABLE ONLY pe.tra_ponte_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.tra_ponte_l ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY pe.tra_ponte_l ALTER COLUMN posicaopista SET DEFAULT 95#
-ALTER TABLE ONLY pe.hid_fonte_dagua_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.hid_fonte_dagua_p ALTER COLUMN tipofontedagua SET DEFAULT 95#
+ALTER TABLE ONLY pe.rel_corte_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.rel_corte_a ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
+ALTER TABLE ONLY pe.rel_corte_a ALTER COLUMN tipoalterantrop SET DEFAULT 26#
 ALTER TABLE ONLY pe.tra_entroncamento_pto_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.tra_entroncamento_pto_p ALTER COLUMN tipoentroncamento SET DEFAULT 1#
-ALTER TABLE ONLY pe.veg_descontinuidade_geometrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.veg_descontinuidade_geometrica_l ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY pe.rel_corte_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.rel_corte_l ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY pe.rel_corte_l ALTER COLUMN tipoalterantrop SET DEFAULT 26#
@@ -15024,9 +14195,10 @@ ALTER TABLE ONLY pe.hdv_obstaculo_navegacao_p ALTER COLUMN situacaoemagua SET DE
 ALTER TABLE ONLY pe.hid_comporta_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_comporta_l ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_comporta_l ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.lpal_unidade_uso_sustentavel_a ALTER COLUMN tipounidprotegida SET DEFAULT 1#
+ALTER TABLE ONLY pe.lpal_unidade_uso_sustentavel_a ALTER COLUMN tipounidprotegida SET DEFAULT 3#
 ALTER TABLE ONLY pe.lpal_unidade_uso_sustentavel_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.lpal_unidade_uso_sustentavel_a ALTER COLUMN jurisdicao SET DEFAULT 95#
+ALTER TABLE ONLY pe.lpal_unidade_uso_sustentavel_a ALTER COLUMN tipounidusosust SET DEFAULT 3#
 ALTER TABLE ONLY pe.lpal_unidade_uso_sustentavel_a ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY pe.hdv_atracadouro_terminal_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.hdv_atracadouro_terminal_p ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
@@ -15034,15 +14206,9 @@ ALTER TABLE ONLY pe.hdv_atracadouro_terminal_p ALTER COLUMN geometriaaproximada 
 ALTER TABLE ONLY pe.hdv_atracadouro_terminal_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.hdv_atracadouro_terminal_p ALTER COLUMN tipoatracad SET DEFAULT 95#
 ALTER TABLE ONLY pe.hdv_atracadouro_terminal_p ALTER COLUMN administracao SET DEFAULT 95#
-ALTER TABLE ONLY pe.lpal_descontinuidade_geometrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.lpal_descontinuidade_geometrica_l ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY pe.tra_funicular ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.tra_funicular ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.tra_funicular ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.hdv_descontinuidade_geometrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.hdv_descontinuidade_geometrica_a ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY pe.lpal_descontinuidade_geometrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.lpal_descontinuidade_geometrica_a ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY pe.tra_travessia_pedestre_l ALTER COLUMN situacaoespacial SET DEFAULT 95#
 ALTER TABLE ONLY pe.tra_travessia_pedestre_l ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.tra_travessia_pedestre_l ALTER COLUMN tipotravessiaped SET DEFAULT 95#
@@ -15071,11 +14237,13 @@ ALTER TABLE ONLY pe.hdv_atracadouro_terminal_a ALTER COLUMN tipoatracad SET DEFA
 ALTER TABLE ONLY pe.hdv_atracadouro_terminal_a ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY pe.rel_alter_fisiog_antropica ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.rel_alter_fisiog_antropica ALTER COLUMN tipoalterantrop SET DEFAULT 95#
-ALTER TABLE ONLY pe.hdv_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.hdv_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
+ALTER TABLE ONLY pe.tra_travessia_pedestre_p ALTER COLUMN situacaoespacial SET DEFAULT 95#
+ALTER TABLE ONLY pe.tra_travessia_pedestre_p ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY pe.tra_travessia_pedestre_p ALTER COLUMN tipotravessiaped SET DEFAULT 95#
+ALTER TABLE ONLY pe.tra_travessia_pedestre_p ALTER COLUMN matconstr SET DEFAULT 95#
+ALTER TABLE ONLY pe.tra_travessia_pedestre_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.tra_travessia_pedestre_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.lpal_distrito_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.lpal_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.lpal_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY pe.lpal_terra_indigena_a ALTER COLUMN situacaojuridica SET DEFAULT 3#
 ALTER TABLE ONLY pe.lpal_terra_indigena_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.lpal_terra_indigena_a ALTER COLUMN jurisdicao SET DEFAULT 95#
@@ -15133,13 +14301,6 @@ ALTER TABLE ONLY pe.eco_ext_mineral_a ALTER COLUMN tipoalterantrop SET DEFAULT 3
 ALTER TABLE ONLY pe.eco_ext_mineral_a ALTER COLUMN formaextracao SET DEFAULT 5#
 ALTER TABLE ONLY pe.tra_ponto_rodoviario_ferrov ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.tra_ponto_rodoviario_ferrov ALTER COLUMN relacionado SET DEFAULT 28#
-ALTER TABLE ONLY pe.enc_zona_linhas_energia_com_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.hdv_atracadouro_terminal ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.hdv_atracadouro_terminal ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
-ALTER TABLE ONLY pe.hdv_atracadouro_terminal ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.hdv_atracadouro_terminal ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY pe.hdv_atracadouro_terminal ALTER COLUMN tipoatracad SET DEFAULT 95#
-ALTER TABLE ONLY pe.hdv_atracadouro_terminal ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_canal_a ALTER COLUMN usoprincipal SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_canal_a ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_canal_a ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
@@ -15165,24 +14326,24 @@ ALTER TABLE ONLY pe.rel_aterro_a ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SM
 ALTER TABLE ONLY pe.rel_aterro_a ALTER COLUMN tipoalterantrop SET DEFAULT 27#
 ALTER TABLE ONLY pe.hid_area_umida_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_area_umida_a ALTER COLUMN tipoareaumida SET DEFAULT 95#
-ALTER TABLE ONLY pe.tra_funicular_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.tra_funicular_p ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY pe.tra_funicular_p ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY pe.rel_duna_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.rel_duna_p ALTER COLUMN tipoelemnat SET DEFAULT 17#
+ALTER TABLE ONLY pe.rel_duna_p ALTER COLUMN fixa SET DEFAULT 0#
 ALTER TABLE ONLY pe.hdv_eclusa ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hdv_eclusa ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.hdv_eclusa ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY pe.hdv_eclusa ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.rel_isolinha_hipsometrica ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.fer_ponto_ferroviario_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.fer_ponto_ferroviario_p ALTER COLUMN relacionado SET DEFAULT 30#
-ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN modaluso SET DEFAULT ARRAY[4::SMALLINT]#
-ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN tipopavimentacao SET DEFAULT 95#
-ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
-ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN posicaopista SET DEFAULT 95#
-ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN tipopassagviad SET DEFAULT 6#
+ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN tipoestgerad SET DEFAULT 9#
+ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN tipocombustivel SET DEFAULT 95#
+ALTER TABLE ONLY pe.enc_termeletrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.enc_termeletrica_a ALTER COLUMN tipoestgerad SET DEFAULT 9#
+ALTER TABLE ONLY pe.enc_termeletrica_a ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.enc_termeletrica_a ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY pe.enc_termeletrica_a ALTER COLUMN tipocombustivel SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_quebramar_molhe ALTER COLUMN tipoquebramolhe SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_quebramar_molhe ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_quebramar_molhe ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
@@ -15198,6 +14359,11 @@ ALTER TABLE ONLY pe.fer_cremalheira ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.fer_cremalheira ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.eco_plataforma_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.eco_plataforma_p ALTER COLUMN tipoplataforma SET DEFAULT 95#
+ALTER TABLE ONLY pe.lpal_unidade_protecao_integral_a ALTER COLUMN tipounidprotegida SET DEFAULT 2#
+ALTER TABLE ONLY pe.lpal_unidade_protecao_integral_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.lpal_unidade_protecao_integral_a ALTER COLUMN jurisdicao SET DEFAULT 95#
+ALTER TABLE ONLY pe.lpal_unidade_protecao_integral_a ALTER COLUMN administracao SET DEFAULT 95#
+ALTER TABLE ONLY pe.lpal_unidade_protecao_integral_a ALTER COLUMN tipounidprotinteg SET DEFAULT 1#
 ALTER TABLE ONLY pe.fer_trecho_ferroviario_l ALTER COLUMN tipotrechoferrov SET DEFAULT 95#
 ALTER TABLE ONLY pe.fer_trecho_ferroviario_l ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.fer_trecho_ferroviario_l ALTER COLUMN eletrificada SET DEFAULT 95#
@@ -15219,14 +14385,10 @@ ALTER TABLE ONLY pe.eco_equip_agropec ALTER COLUMN geometriaaproximada SET DEFAU
 ALTER TABLE ONLY pe.rel_alter_fisiog_antropica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.rel_alter_fisiog_antropica_p ALTER COLUMN tipoalterantrop SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_foz_maritima ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.fer_descontinuidade_geometrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.fer_descontinuidade_geometrica_a ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY pe.enc_hidreletrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.enc_hidreletrica_l ALTER COLUMN tipoestgerad SET DEFAULT 8#
 ALTER TABLE ONLY pe.enc_hidreletrica_l ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.enc_hidreletrica_l ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.hid_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.hid_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY pe.tra_patio_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.tra_patio_p ALTER COLUMN finalidadepatio SET DEFAULT ARRAY[3::SMALLINT]#
 ALTER TABLE ONLY pe.tra_patio_p ALTER COLUMN situacaofisica SET DEFAULT 95#
@@ -15239,7 +14401,6 @@ ALTER TABLE ONLY pe.rel_dolina_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.rel_dolina_a ALTER COLUMN tipoelemnat SET DEFAULT 16#
 ALTER TABLE ONLY pe.eco_deposito_geral_a ALTER COLUMN tipoexposicao SET DEFAULT 95#
 ALTER TABLE ONLY pe.eco_deposito_geral_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.rel_terreno_erodido_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.lpal_unidade_federacao_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.lpal_unidade_federacao_a ALTER COLUMN sigla SET DEFAULT 1#
 ALTER TABLE ONLY pe.sb_dep_abast_agua_a ALTER COLUMN tipoexposicao SET DEFAULT 95#
@@ -15256,8 +14417,8 @@ ALTER TABLE ONLY pe.enc_hidreletrica_p ALTER COLUMN geometriaaproximada SET DEFA
 ALTER TABLE ONLY pe.enc_hidreletrica_p ALTER COLUMN tipoestgerad SET DEFAULT 8#
 ALTER TABLE ONLY pe.enc_hidreletrica_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.enc_hidreletrica_p ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.hid_descontinuidade_geometrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.hid_descontinuidade_geometrica_l ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
+ALTER TABLE ONLY pe.hid_fonte_dagua_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.hid_fonte_dagua_p ALTER COLUMN tipofontedagua SET DEFAULT 95#
 ALTER TABLE ONLY pe.rel_dolina_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.rel_dolina_p ALTER COLUMN tipoelemnat SET DEFAULT 16#
 ALTER TABLE ONLY pe.eco_deposito_geral_p ALTER COLUMN tipoexposicao SET DEFAULT 95#
@@ -15269,14 +14430,9 @@ ALTER TABLE ONLY pe.pto_marco_de_limite_p ALTER COLUMN referencialaltim SET DEFA
 ALTER TABLE ONLY pe.veg_cerrado_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.veg_cerrado_a ALTER COLUMN tipoveg SET DEFAULT 7#
 ALTER TABLE ONLY pe.veg_cerrado_a ALTER COLUMN classificacaoporte SET DEFAULT 95#
-ALTER TABLE ONLY pe.sb_dep_saneamento ALTER COLUMN tipoexposicao SET DEFAULT 95#
-ALTER TABLE ONLY pe.sb_dep_saneamento ALTER COLUMN estadofisico SET DEFAULT 95#
-ALTER TABLE ONLY pe.sb_dep_saneamento ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.sb_dep_saneamento ALTER COLUMN tipodepgeral SET DEFAULT 95#
-ALTER TABLE ONLY pe.sb_dep_saneamento ALTER COLUMN finalidadedep SET DEFAULT 2#
-ALTER TABLE ONLY pe.sb_dep_saneamento ALTER COLUMN tratamento SET DEFAULT 95#
-ALTER TABLE ONLY pe.hdv_descontinuidade_geometrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.hdv_descontinuidade_geometrica_l ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
+ALTER TABLE ONLY pe.tra_funicular_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.tra_funicular_p ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.tra_funicular_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.hdv_fundeadouro_a ALTER COLUMN tipofundeadouro SET DEFAULT 1#
 ALTER TABLE ONLY pe.hdv_fundeadouro_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hdv_fundeadouro_a ALTER COLUMN administracao SET DEFAULT 95#
@@ -15297,15 +14453,12 @@ ALTER TABLE ONLY pe.rel_aterro_p ALTER COLUMN tipoalterantrop SET DEFAULT 27#
 ALTER TABLE ONLY pe.hdv_obstaculo_navegacao ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hdv_obstaculo_navegacao ALTER COLUMN tipoobst SET DEFAULT 4#
 ALTER TABLE ONLY pe.hdv_obstaculo_navegacao ALTER COLUMN situacaoemagua SET DEFAULT 95#
-ALTER TABLE ONLY pe.aer_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.aer_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY pe.rel_duna_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.rel_duna_l ALTER COLUMN tipoelemnat SET DEFAULT 17#
-ALTER TABLE ONLY pe.rel_duna_l ALTER COLUMN fixa SET DEFAULT 0#
-ALTER TABLE ONLY pe.lpal_unidade_protecao_integral_a ALTER COLUMN tipounidprotegida SET DEFAULT 1#
-ALTER TABLE ONLY pe.lpal_unidade_protecao_integral_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.lpal_unidade_protecao_integral_a ALTER COLUMN jurisdicao SET DEFAULT 95#
-ALTER TABLE ONLY pe.lpal_unidade_protecao_integral_a ALTER COLUMN administracao SET DEFAULT 95#
+ALTER TABLE ONLY pe.tra_funicular_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.tra_funicular_l ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.tra_funicular_l ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY pe.sb_cemiterio_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.sb_cemiterio_a ALTER COLUMN destinacaocemiterio SET DEFAULT 2#
+ALTER TABLE ONLY pe.sb_cemiterio_a ALTER COLUMN tipocemiterio SET DEFAULT 95#
 ALTER TABLE ONLY pe.veg_reflorestamento_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.veg_reflorestamento_a ALTER COLUMN cultivopredominante SET DEFAULT ARRAY[96::SMALLINT]#
 ALTER TABLE ONLY pe.veg_reflorestamento_a ALTER COLUMN tipoveg SET DEFAULT 2#
@@ -15314,13 +14467,12 @@ ALTER TABLE ONLY pe.veg_reflorestamento_a ALTER COLUMN tipolavoura SET DEFAULT 9
 ALTER TABLE ONLY pe.hid_ilha_a ALTER COLUMN tipoilha SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_ilha_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_ilha_a ALTER COLUMN tipoelemnat SET DEFAULT 21#
-ALTER TABLE ONLY pe.eco_descontinuidade_geometrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.eco_descontinuidade_geometrica_l ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY pe.lpal_limite_politico_adm_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.lpal_limite_politico_adm_l ALTER COLUMN tipolimpol SET DEFAULT ARRAY[3::SMALLINT]#
-ALTER TABLE ONLY pe.lpal_limite_politico_adm_l ALTER COLUMN referenciallegal SET DEFAULT 96#
-ALTER TABLE ONLY pe.pto_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.pto_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
+ALTER TABLE ONLY pe.hdv_atracadouro_terminal ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY pe.hdv_atracadouro_terminal ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
+ALTER TABLE ONLY pe.hdv_atracadouro_terminal ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.hdv_atracadouro_terminal ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.hdv_atracadouro_terminal ALTER COLUMN tipoatracad SET DEFAULT 95#
+ALTER TABLE ONLY pe.hdv_atracadouro_terminal ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_rocha_em_agua_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_rocha_em_agua_a ALTER COLUMN tipoelemnat SET DEFAULT 23#
 ALTER TABLE ONLY pe.hid_rocha_em_agua_a ALTER COLUMN situacaoemagua SET DEFAULT 4#
@@ -15337,12 +14489,11 @@ ALTER TABLE ONLY pe.hid_recife_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_recife_a ALTER COLUMN situacaocosta SET DEFAULT 11#
 ALTER TABLE ONLY pe.hid_recife_a ALTER COLUMN situacaoemagua SET DEFAULT 4#
 ALTER TABLE ONLY pe.sb_barragem_calcadao_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.sb_barragem_calcadao_a ALTER COLUMN tipoequipdesenvsocial SET DEFAULT 95#
+ALTER TABLE ONLY pe.sb_barragem_calcadao_a ALTER COLUMN tipoequipdesenvsocial SET DEFAULT 2#
 ALTER TABLE ONLY pe.hid_recife_l ALTER COLUMN tiporecife SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_recife_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_recife_l ALTER COLUMN situacaocosta SET DEFAULT 11#
 ALTER TABLE ONLY pe.hid_recife_l ALTER COLUMN situacaoemagua SET DEFAULT 4#
-ALTER TABLE ONLY pe.lpal_municipio_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.aer_pista_ponto_pouso ALTER COLUMN usopista SET DEFAULT 95#
 ALTER TABLE ONLY pe.aer_pista_ponto_pouso ALTER COLUMN revestimento SET DEFAULT 95#
 ALTER TABLE ONLY pe.aer_pista_ponto_pouso ALTER COLUMN operacional SET DEFAULT 95#
@@ -15350,10 +14501,8 @@ ALTER TABLE ONLY pe.aer_pista_ponto_pouso ALTER COLUMN homologacao SET DEFAULT 1
 ALTER TABLE ONLY pe.aer_pista_ponto_pouso ALTER COLUMN tipopista SET DEFAULT 9#
 ALTER TABLE ONLY pe.aer_pista_ponto_pouso ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.aer_pista_ponto_pouso ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY pe.pto_descontinuidade_geometrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.pto_descontinuidade_geometrica_a ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY pe.eco_descontinuidade_geometrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.eco_descontinuidade_geometrica_a ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
+ALTER TABLE ONLY pe.hid_ponto_drenagem_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.hid_ponto_drenagem_p ALTER COLUMN relacionado SET DEFAULT 39#
 ALTER TABLE ONLY pe.hid_rocha_em_agua_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_rocha_em_agua_p ALTER COLUMN tipoelemnat SET DEFAULT 23#
 ALTER TABLE ONLY pe.hid_rocha_em_agua_p ALTER COLUMN situacaoemagua SET DEFAULT 4#
@@ -15363,9 +14512,7 @@ ALTER TABLE ONLY pe.hid_recife_p ALTER COLUMN tiporecife SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_recife_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_recife_p ALTER COLUMN situacaocosta SET DEFAULT 11#
 ALTER TABLE ONLY pe.hid_recife_p ALTER COLUMN situacaoemagua SET DEFAULT 4#
-ALTER TABLE ONLY pe.fer_cremalheira_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.fer_cremalheira_p ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY pe.fer_cremalheira_p ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY pe.lpal_municipio_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.tra_tunel_p ALTER COLUMN modaluso SET DEFAULT ARRAY[4::SMALLINT]#
 ALTER TABLE ONLY pe.tra_tunel_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.tra_tunel_p ALTER COLUMN tipopavimentacao SET DEFAULT 95#
@@ -15374,11 +14521,8 @@ ALTER TABLE ONLY pe.tra_tunel_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.tra_tunel_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.tra_tunel_p ALTER COLUMN tipotunel SET DEFAULT 1#
 ALTER TABLE ONLY pe.tra_tunel_p ALTER COLUMN posicaopista SET DEFAULT 95#
-ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN tipoestgerad SET DEFAULT 9#
-ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.enc_termeletrica_l ALTER COLUMN tipocombustivel SET DEFAULT 95#
+ALTER TABLE ONLY pe.fer_ponto_ferroviario_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.fer_ponto_ferroviario_p ALTER COLUMN relacionado SET DEFAULT 30#
 ALTER TABLE ONLY pe.fer_girador_ferroviario_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.fer_girador_ferroviario_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.fer_girador_ferroviario_p ALTER COLUMN administracao SET DEFAULT 95#
@@ -15388,10 +14532,7 @@ ALTER TABLE ONLY pe.veg_floresta_a ALTER COLUMN tipoveg SET DEFAULT 3#
 ALTER TABLE ONLY pe.veg_floresta_a ALTER COLUMN classificacaoporte SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_corredeira ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.enc_grupo_transformadores_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.hid_recife ALTER COLUMN tiporecife SET DEFAULT 95#
-ALTER TABLE ONLY pe.hid_recife ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.hid_recife ALTER COLUMN situacaocosta SET DEFAULT 11#
-ALTER TABLE ONLY pe.hid_recife ALTER COLUMN situacaoemagua SET DEFAULT 4#
+ALTER TABLE ONLY pe.hid_terreno_suj_inundacao_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.rel_curva_batimetrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.dut_ponto_duto_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.dut_ponto_duto_p ALTER COLUMN relacionado SET DEFAULT 37#
@@ -15412,11 +14553,14 @@ ALTER TABLE ONLY pe.rod_trecho_rodoviario ALTER COLUMN trechoemperimetrourbano S
 ALTER TABLE ONLY pe.rod_trecho_rodoviario ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY pe.rod_trecho_rodoviario ALTER COLUMN tipotrechorod SET DEFAULT 2#
 ALTER TABLE ONLY pe.rel_ponto_cotado_batimetrico_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.enc_termeletrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.enc_termeletrica_a ALTER COLUMN tipoestgerad SET DEFAULT 9#
-ALTER TABLE ONLY pe.enc_termeletrica_a ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY pe.enc_termeletrica_a ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.enc_termeletrica_a ALTER COLUMN tipocombustivel SET DEFAULT 95#
+ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN modaluso SET DEFAULT ARRAY[4::SMALLINT]#
+ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN tipopavimentacao SET DEFAULT 95#
+ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
+ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN posicaopista SET DEFAULT 95#
+ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_p ALTER COLUMN tipopassagviad SET DEFAULT 6#
 ALTER TABLE ONLY pe.enc_grupo_transformadores_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_canal_l ALTER COLUMN usoprincipal SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_canal_l ALTER COLUMN operacional SET DEFAULT 95#
@@ -15424,29 +14568,33 @@ ALTER TABLE ONLY pe.hid_canal_l ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMA
 ALTER TABLE ONLY pe.hid_canal_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_canal_l ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_canal_l ALTER COLUMN tipoalterantrop SET DEFAULT 30#
-ALTER TABLE ONLY pe.hdv_fundeadouro_p ALTER COLUMN tipofundeadouro SET DEFAULT 1#
-ALTER TABLE ONLY pe.hdv_fundeadouro_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.hdv_fundeadouro_p ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY pe.lpal_nome_local_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.rel_elemento_fisiografico ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.lpal_area_construida_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.tra_travessia_l ALTER COLUMN tipoembarcacao SET DEFAULT 2#
 ALTER TABLE ONLY pe.tra_travessia_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.tra_travessia_l ALTER COLUMN tipouso SET DEFAULT 95#
 ALTER TABLE ONLY pe.tra_travessia_l ALTER COLUMN tipotravessia SET DEFAULT 95#
-ALTER TABLE ONLY pe.lpal_area_desenv_controle_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.hdv_fundeadouro_p ALTER COLUMN tipofundeadouro SET DEFAULT 1#
+ALTER TABLE ONLY pe.hdv_fundeadouro_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.hdv_fundeadouro_p ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY pe.rel_gruta_caverna_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.rel_gruta_caverna_l ALTER COLUMN tipoelemnat SET DEFAULT 20#
 ALTER TABLE ONLY pe.enc_trecho_energia_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.rel_corte_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.rel_corte_a ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
-ALTER TABLE ONLY pe.rel_corte_a ALTER COLUMN tipoalterantrop SET DEFAULT 26#
+ALTER TABLE ONLY pe.tra_ponte_l ALTER COLUMN tipoponte SET DEFAULT 95#
+ALTER TABLE ONLY pe.tra_ponte_l ALTER COLUMN modaluso SET DEFAULT ARRAY[4::SMALLINT]#
+ALTER TABLE ONLY pe.tra_ponte_l ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY pe.tra_ponte_l ALTER COLUMN tipopavimentacao SET DEFAULT 95#
+ALTER TABLE ONLY pe.tra_ponte_l ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
+ALTER TABLE ONLY pe.tra_ponte_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.tra_ponte_l ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.tra_ponte_l ALTER COLUMN posicaopista SET DEFAULT 95#
 ALTER TABLE ONLY pe.hdv_sinalizacao_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hdv_sinalizacao_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.hdv_sinalizacao_p ALTER COLUMN tiposinal SET DEFAULT 95#
 ALTER TABLE ONLY pe.hdv_sinalizacao_p ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.enc_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.enc_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY pe.lpal_pais_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.veg_vegetacao_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.veg_vegetacao_a ALTER COLUMN tipoveg SET DEFAULT 95#
+ALTER TABLE ONLY pe.veg_vegetacao_a ALTER COLUMN classificacaoporte SET DEFAULT 95#
 ALTER TABLE ONLY pe.hdv_fundeadouro ALTER COLUMN tipofundeadouro SET DEFAULT 1#
 ALTER TABLE ONLY pe.hdv_fundeadouro ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hdv_fundeadouro ALTER COLUMN administracao SET DEFAULT 95#
@@ -15470,24 +14618,18 @@ ALTER TABLE ONLY pe.veg_veg_cultivada_a ALTER COLUMN cultivopredominante SET DEF
 ALTER TABLE ONLY pe.veg_veg_cultivada_a ALTER COLUMN tipoveg SET DEFAULT 2#
 ALTER TABLE ONLY pe.veg_veg_cultivada_a ALTER COLUMN classificacaoporte SET DEFAULT 95#
 ALTER TABLE ONLY pe.veg_veg_cultivada_a ALTER COLUMN tipolavoura SET DEFAULT 95#
-ALTER TABLE ONLY pe.lpal_area_construida_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.rel_duna_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.rel_duna_p ALTER COLUMN tipoelemnat SET DEFAULT 17#
-ALTER TABLE ONLY pe.rel_duna_p ALTER COLUMN fixa SET DEFAULT 0#
-ALTER TABLE ONLY pe.hid_quebramar_molhe_a ALTER COLUMN tipoquebramolhe SET DEFAULT 95#
-ALTER TABLE ONLY pe.hid_quebramar_molhe_a ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.hid_quebramar_molhe_a ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
-ALTER TABLE ONLY pe.hid_quebramar_molhe_a ALTER COLUMN situacaoemagua SET DEFAULT 4#
-ALTER TABLE ONLY pe.hid_quebramar_molhe_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.hid_quebramar_molhe_a ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.hid_vala_a ALTER COLUMN usoprincipal SET DEFAULT 1#
+ALTER TABLE ONLY pe.hid_vala_a ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY pe.hid_vala_a ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
+ALTER TABLE ONLY pe.hid_vala_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.hid_vala_a ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.hid_vala_a ALTER COLUMN tipoalterantrop SET DEFAULT 31#
 ALTER TABLE ONLY pe.hid_comporta ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_comporta ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_comporta ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.veg_refugio_ecologico_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.veg_refugio_ecologico_a ALTER COLUMN tipoveg SET DEFAULT 5#
 ALTER TABLE ONLY pe.veg_refugio_ecologico_a ALTER COLUMN classificacaoporte SET DEFAULT 95#
-ALTER TABLE ONLY pe.enc_descontinuidade_geometrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.enc_descontinuidade_geometrica_a ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY pe.eco_ext_mineral_p ALTER COLUMN atividade SET DEFAULT 10#
 ALTER TABLE ONLY pe.eco_ext_mineral_p ALTER COLUMN secaoativecon SET DEFAULT 95#
 ALTER TABLE ONLY pe.eco_ext_mineral_p ALTER COLUMN tipoextmin SET DEFAULT 95#
@@ -15498,14 +14640,15 @@ ALTER TABLE ONLY pe.eco_ext_mineral_p ALTER COLUMN tipoalterantrop SET DEFAULT 3
 ALTER TABLE ONLY pe.eco_ext_mineral_p ALTER COLUMN formaextracao SET DEFAULT 5#
 ALTER TABLE ONLY pe.rel_gruta_caverna_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.rel_gruta_caverna_p ALTER COLUMN tipoelemnat SET DEFAULT 20#
-ALTER TABLE ONLY pe.fer_cremalheira_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.fer_cremalheira_l ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY pe.fer_cremalheira_l ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY pe.hid_vala_l ALTER COLUMN usoprincipal SET DEFAULT 1#
+ALTER TABLE ONLY pe.hid_vala_l ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY pe.hid_vala_l ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
+ALTER TABLE ONLY pe.hid_vala_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.hid_vala_l ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.hid_vala_l ALTER COLUMN tipoalterantrop SET DEFAULT 31#
 ALTER TABLE ONLY pe.rod_passagem_nivel_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.rod_passagem_nivel_p ALTER COLUMN relacionado SET DEFAULT 95#
 ALTER TABLE ONLY pe.rel_ponto_hipsometrico ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.rel_descontinuidade_geometrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.rel_descontinuidade_geometrica_a ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_barragem ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_barragem ALTER COLUMN usoprincipal SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_barragem ALTER COLUMN situacaofisica SET DEFAULT 95#
@@ -15520,26 +14663,19 @@ ALTER TABLE ONLY pe.hid_quebramar_molhe_l ALTER COLUMN matconstr SET DEFAULT ARR
 ALTER TABLE ONLY pe.hid_quebramar_molhe_l ALTER COLUMN situacaoemagua SET DEFAULT 4#
 ALTER TABLE ONLY pe.hid_quebramar_molhe_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_quebramar_molhe_l ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY pe.rel_descontinuidade_geometrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.rel_descontinuidade_geometrica_l ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY pe.veg_brejo_pantano_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.veg_brejo_pantano_a ALTER COLUMN tipoveg SET DEFAULT 10#
-ALTER TABLE ONLY pe.veg_brejo_pantano_a ALTER COLUMN classificacaoporte SET DEFAULT 95#
+ALTER TABLE ONLY pe.lpal_limite_politico_adm_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.lpal_limite_politico_adm_l ALTER COLUMN tipolimpol SET DEFAULT ARRAY[3::SMALLINT]#
+ALTER TABLE ONLY pe.lpal_limite_politico_adm_l ALTER COLUMN referenciallegal SET DEFAULT 96#
 ALTER TABLE ONLY pe.veg_caatinga_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.veg_caatinga_a ALTER COLUMN tipoveg SET DEFAULT 11#
 ALTER TABLE ONLY pe.veg_caatinga_a ALTER COLUMN classificacaoporte SET DEFAULT 95#
-ALTER TABLE ONLY pe.lpal_unidade_conservacao_a ALTER COLUMN tipounidprotegida SET DEFAULT 1#
+ALTER TABLE ONLY pe.lpal_unidade_conservacao_a ALTER COLUMN tipounidprotegida SET DEFAULT 4#
 ALTER TABLE ONLY pe.lpal_unidade_conservacao_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.lpal_unidade_conservacao_a ALTER COLUMN jurisdicao SET DEFAULT 95#
 ALTER TABLE ONLY pe.lpal_unidade_conservacao_a ALTER COLUMN administracao SET DEFAULT 95#
-ALTER TABLE ONLY pe.veg_vegetacao_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.veg_vegetacao_a ALTER COLUMN tipoveg SET DEFAULT 95#
-ALTER TABLE ONLY pe.veg_vegetacao_a ALTER COLUMN classificacaoporte SET DEFAULT 95#
 ALTER TABLE ONLY pe.rel_terreno_erodido_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_banco_areia ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_banco_areia ALTER COLUMN tipobanco SET DEFAULT 1#
-ALTER TABLE ONLY pe.rel_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.rel_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_l ALTER COLUMN modaluso SET DEFAULT ARRAY[4::SMALLINT]#
 ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_l ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.tra_passagem_elevada_viaduto_l ALTER COLUMN tipopavimentacao SET DEFAULT 95#
@@ -15553,12 +14689,7 @@ ALTER TABLE ONLY pe.dut_condutor_hidrico_l ALTER COLUMN tipotrechoduto SET DEFAU
 ALTER TABLE ONLY pe.dut_condutor_hidrico_l ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY pe.dut_condutor_hidrico_l ALTER COLUMN setor SET DEFAULT 95#
 ALTER TABLE ONLY pe.dut_condutor_hidrico_l ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.hid_vala_l ALTER COLUMN usoprincipal SET DEFAULT 1#
-ALTER TABLE ONLY pe.hid_vala_l ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.hid_vala_l ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
-ALTER TABLE ONLY pe.hid_vala_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.hid_vala_l ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY pe.hid_vala_l ALTER COLUMN tipoalterantrop SET DEFAULT 31#
+ALTER TABLE ONLY pe.hid_corredeira_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.veg_mangue_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.veg_mangue_a ALTER COLUMN tipoveg SET DEFAULT 4#
 ALTER TABLE ONLY pe.veg_mangue_a ALTER COLUMN classificacaoporte SET DEFAULT 95#
@@ -15576,8 +14707,10 @@ ALTER TABLE ONLY pe.hid_trecho_massa_dagua_a ALTER COLUMN geometriaaproximada SE
 ALTER TABLE ONLY pe.hid_trecho_massa_dagua_a ALTER COLUMN tipomassadagua SET DEFAULT 8#
 ALTER TABLE ONLY pe.hid_trecho_massa_dagua_a ALTER COLUMN regime SET DEFAULT 95#
 ALTER TABLE ONLY pe.tra_caminho_carrocavel_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.rel_rocha_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.rel_rocha_p ALTER COLUMN tipoelemnat SET DEFAULT 23#
+ALTER TABLE ONLY pe.enc_est_gerad_energia_eletrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.enc_est_gerad_energia_eletrica_p ALTER COLUMN tipoestgerad SET DEFAULT 95#
+ALTER TABLE ONLY pe.enc_est_gerad_energia_eletrica_p ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.enc_est_gerad_energia_eletrica_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.rel_alter_fisiog_antropica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.rel_alter_fisiog_antropica_l ALTER COLUMN tipoalterantrop SET DEFAULT 95#
 ALTER TABLE ONLY pe.rel_rocha_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
@@ -15590,20 +14723,23 @@ ALTER TABLE ONLY pe.lpal_unidade_conservacao_nao_snuc_a ALTER COLUMN tipounidpro
 ALTER TABLE ONLY pe.lpal_unidade_conservacao_nao_snuc_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.lpal_unidade_conservacao_nao_snuc_a ALTER COLUMN jurisdicao SET DEFAULT 95#
 ALTER TABLE ONLY pe.lpal_unidade_conservacao_nao_snuc_a ALTER COLUMN administracao SET DEFAULT 95#
-ALTER TABLE ONLY pe.dut_faixa_dominial_duto_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.rel_terreno_erodido_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.hid_corredeira_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.enc_est_gerad_energia_eletrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.enc_est_gerad_energia_eletrica_a ALTER COLUMN tipoestgerad SET DEFAULT 95#
+ALTER TABLE ONLY pe.enc_est_gerad_energia_eletrica_a ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.enc_est_gerad_energia_eletrica_a ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY pe.enc_est_gerad_energia_eletrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.enc_est_gerad_energia_eletrica_l ALTER COLUMN tipoestgerad SET DEFAULT 95#
+ALTER TABLE ONLY pe.enc_est_gerad_energia_eletrica_l ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.enc_est_gerad_energia_eletrica_l ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY pe.fer_cremalheira_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.fer_cremalheira_l ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.fer_cremalheira_l ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.enc_antena_comunic_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.enc_antena_comunic_p ALTER COLUMN posicaoreledific SET DEFAULT 95#
-ALTER TABLE ONLY pe.hid_queda_dagua_l ALTER COLUMN tipoqueda SET DEFAULT 95#
-ALTER TABLE ONLY pe.hid_queda_dagua_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.rel_rocha_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.rel_rocha_p ALTER COLUMN tipoelemnat SET DEFAULT 23#
 ALTER TABLE ONLY pe.rel_terreno_erodido ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.rod_descontinuidade_geometrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.rod_descontinuidade_geometrica_l ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY pe.enc_est_gerad_energia_eletr_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.enc_est_gerad_energia_eletr_p ALTER COLUMN tipoestgerad SET DEFAULT 95#
-ALTER TABLE ONLY pe.enc_est_gerad_energia_eletr_p ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY pe.enc_est_gerad_energia_eletr_p ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY pe.rel_elemento_fisiografico ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.eco_equip_agropec_a ALTER COLUMN tipoequipagropec SET DEFAULT 95#
 ALTER TABLE ONLY pe.eco_equip_agropec_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.eco_plataforma_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
@@ -15613,52 +14749,31 @@ ALTER TABLE ONLY pe.hid_dique_a ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMA
 ALTER TABLE ONLY pe.veg_veg_area_contato_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.veg_veg_area_contato_a ALTER COLUMN tipoveg SET DEFAULT 95#
 ALTER TABLE ONLY pe.veg_veg_area_contato_a ALTER COLUMN classificacaoporte SET DEFAULT 95#
-ALTER TABLE ONLY pe.lpal_unidade_conservacao_snuc_a ALTER COLUMN tipounidprotegida SET DEFAULT 1#
-ALTER TABLE ONLY pe.lpal_unidade_conservacao_snuc_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.lpal_unidade_conservacao_snuc_a ALTER COLUMN jurisdicao SET DEFAULT 95#
-ALTER TABLE ONLY pe.lpal_unidade_conservacao_snuc_a ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_dique_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_dique_l ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY pe.pto_pto_geod_topo_controle_p ALTER COLUMN sistemageodesico SET DEFAULT 2#
 ALTER TABLE ONLY pe.pto_pto_geod_topo_controle_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.pto_pto_geod_topo_controle_p ALTER COLUMN tiporef SET DEFAULT 3#
 ALTER TABLE ONLY pe.pto_pto_geod_topo_controle_p ALTER COLUMN referencialaltim SET DEFAULT 2#
-ALTER TABLE ONLY pe.lpal_area_pub_militar_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.lpal_area_pub_militar_a ALTER COLUMN jurisdicao SET DEFAULT 95#
-ALTER TABLE ONLY pe.lpal_area_pub_militar_a ALTER COLUMN administracao SET DEFAULT 95#
-ALTER TABLE ONLY pe.rod_descontinuidade_geometrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.rod_descontinuidade_geometrica_a ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY pe.dut_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.dut_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
+ALTER TABLE ONLY pe.hid_quebramar_molhe_a ALTER COLUMN tipoquebramolhe SET DEFAULT 95#
+ALTER TABLE ONLY pe.hid_quebramar_molhe_a ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY pe.hid_quebramar_molhe_a ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
+ALTER TABLE ONLY pe.hid_quebramar_molhe_a ALTER COLUMN situacaoemagua SET DEFAULT 4#
+ALTER TABLE ONLY pe.hid_quebramar_molhe_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.hid_quebramar_molhe_a ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.lpal_pais_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.enc_zona_linhas_energia_comunicacao_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.eco_equip_agropec_l ALTER COLUMN tipoequipagropec SET DEFAULT 95#
 ALTER TABLE ONLY pe.eco_equip_agropec_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.dut_descontinuidade_geometrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.dut_descontinuidade_geometrica_l ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
 ALTER TABLE ONLY pe.eco_equip_agropec_p ALTER COLUMN tipoequipagropec SET DEFAULT 95#
 ALTER TABLE ONLY pe.eco_equip_agropec_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.enc_est_gerad_energia_eletr_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.enc_est_gerad_energia_eletr_a ALTER COLUMN tipoestgerad SET DEFAULT 95#
-ALTER TABLE ONLY pe.enc_est_gerad_energia_eletr_a ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY pe.enc_est_gerad_energia_eletr_a ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY pe.hid_dique_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
 ALTER TABLE ONLY pe.hid_dique_p ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY pe.lpal_area_especial_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.aer_descontinuidade_geometrica_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.aer_descontinuidade_geometrica_l ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY pe.dut_descontinuidade_geometrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.dut_descontinuidade_geometrica_a ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY pe.rod_descontinuidade_geometrica_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.rod_descontinuidade_geometrica_p ALTER COLUMN motivodescontinuidade SET DEFAULT 1#
-ALTER TABLE ONLY pe.enc_est_gerad_energia_eletr_l ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.enc_est_gerad_energia_eletr_l ALTER COLUMN tipoestgerad SET DEFAULT 95#
-ALTER TABLE ONLY pe.enc_est_gerad_energia_eletr_l ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY pe.enc_est_gerad_energia_eletr_l ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.tra_travessia_pedestre_p ALTER COLUMN situacaoespacial SET DEFAULT 95#
-ALTER TABLE ONLY pe.tra_travessia_pedestre_p ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY pe.tra_travessia_pedestre_p ALTER COLUMN tipotravessiaped SET DEFAULT 95#
-ALTER TABLE ONLY pe.tra_travessia_pedestre_p ALTER COLUMN matconstr SET DEFAULT 95#
-ALTER TABLE ONLY pe.tra_travessia_pedestre_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
-ALTER TABLE ONLY pe.tra_travessia_pedestre_p ALTER COLUMN situacaofisica SET DEFAULT 95#
+ALTER TABLE ONLY pe.rel_terreno_erodido_p ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.lpal_area_pub_militar_a ALTER COLUMN geometriaaproximada SET DEFAULT 1#
+ALTER TABLE ONLY pe.lpal_area_pub_militar_a ALTER COLUMN jurisdicao SET DEFAULT 95#
+ALTER TABLE ONLY pe.lpal_area_pub_militar_a ALTER COLUMN administracao SET DEFAULT 95#
 CREATE OR REPLACE FUNCTION edf_edif_pub_civil_a_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
@@ -15743,7 +14858,33 @@ CREATE TRIGGER edf_posto_fiscal_a_avoid_empty_array
                   BEFORE INSERT OR UPDATE
                   ON ge.edf_posto_fiscal_a
                   FOR EACH ROW
-                  EXECUTE PROCEDURE edf_posto_fiscal_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_industrial_p_avoid_empty_array()
+                  EXECUTE PROCEDURE edf_posto_fiscal_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_constr_est_med_fen_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_constr_est_med_fen_p_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_constr_est_med_fen_p
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_constr_est_med_fen_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_industrial_p_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -15902,7 +15043,7 @@ CREATE TRIGGER edf_edif_comunic_p_avoid_empty_array
                   BEFORE INSERT OR UPDATE
                   ON ge.edf_edif_comunic_p
                   FOR EACH ROW
-                  EXECUTE PROCEDURE edf_edif_comunic_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_pub_civil_p_avoid_empty_array()
+                  EXECUTE PROCEDURE edf_edif_comunic_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_constr_lazer_p_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -15916,9 +15057,6 @@ IF NEW.classeativecon = '{}' THEN
                     IF NEW.divisaoativecon = '{}' THEN
                             NEW.divisaoativecon = NULL;
                           END IF;
-                    IF NEW.tipoedifpubcivil = '{}' THEN
-                            NEW.tipoedifpubcivil = NULL;
-                          END IF;
                     IF NEW.administracao = '{}' THEN
                             NEW.administracao = NULL;
                           END IF;
@@ -15927,11 +15065,11 @@ IF NEW.classeativecon = '{}' THEN
                 $BODY$
               LANGUAGE plpgsql VOLATILE
               COST 100#
-CREATE TRIGGER edf_edif_pub_civil_p_avoid_empty_array
+CREATE TRIGGER edf_edif_constr_lazer_p_avoid_empty_array
                   BEFORE INSERT OR UPDATE
-                  ON ge.edf_edif_pub_civil_p
+                  ON ge.edf_edif_constr_lazer_p
                   FOR EACH ROW
-                  EXECUTE PROCEDURE edf_edif_pub_civil_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_posto_fiscal_p_avoid_empty_array()
+                  EXECUTE PROCEDURE edf_edif_constr_lazer_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_posto_fiscal_p_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -16084,7 +15222,39 @@ CREATE TRIGGER edf_edif_ensino_a_avoid_empty_array
                   BEFORE INSERT OR UPDATE
                   ON ge.edf_edif_ensino_a
                   FOR EACH ROW
-                  EXECUTE PROCEDURE edf_edif_ensino_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_saneamento_p_avoid_empty_array()
+                  EXECUTE PROCEDURE edf_edif_ensino_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_comerc_serv_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.classeativecon = '{}' THEN
+                            NEW.classeativecon = NULL;
+                          END IF;
+                    IF NEW.grupoativecon = '{}' THEN
+                            NEW.grupoativecon = NULL;
+                          END IF;
+                    IF NEW.finalidade = '{}' THEN
+                            NEW.finalidade = NULL;
+                          END IF;
+                    IF NEW.divisaoativecon = '{}' THEN
+                            NEW.divisaoativecon = NULL;
+                          END IF;
+                    IF NEW.tipoedifcomercserv = '{}' THEN
+                            NEW.tipoedifcomercserv = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER edf_edif_comerc_serv_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.edf_edif_comerc_serv_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE edf_edif_comerc_serv_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_saneamento_p_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -16234,36 +15404,7 @@ CREATE TRIGGER edf_edif_religiosa_p_avoid_empty_array
                   BEFORE INSERT OR UPDATE
                   ON ge.edf_edif_religiosa_p
                   FOR EACH ROW
-                  EXECUTE PROCEDURE edf_edif_religiosa_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_posto_guarda_municipal_a_avoid_empty_array()
-              RETURNS trigger AS
-            $BODY$
-                DECLARE
-                BEGIN
-IF NEW.classeativecon = '{}' THEN
-                            NEW.classeativecon = NULL;
-                          END IF;
-                    IF NEW.grupoativecon = '{}' THEN
-                            NEW.grupoativecon = NULL;
-                          END IF;
-                    IF NEW.divisaoativecon = '{}' THEN
-                            NEW.divisaoativecon = NULL;
-                          END IF;
-                    IF NEW.tipoedifpubcivil = '{}' THEN
-                            NEW.tipoedifpubcivil = NULL;
-                          END IF;
-                    IF NEW.administracao = '{}' THEN
-                            NEW.administracao = NULL;
-                          END IF;
-                    RETURN NEW;
-                    END;
-                $BODY$
-              LANGUAGE plpgsql VOLATILE
-              COST 100#
-CREATE TRIGGER edf_posto_guarda_municipal_a_avoid_empty_array
-                  BEFORE INSERT OR UPDATE
-                  ON ge.edf_posto_guarda_municipal_a
-                  FOR EACH ROW
-                  EXECUTE PROCEDURE edf_posto_guarda_municipal_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_metro_ferroviaria_p_avoid_empty_array()
+                  EXECUTE PROCEDURE edf_edif_religiosa_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_metro_ferroviaria_p_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -17080,24 +16221,7 @@ CREATE TRIGGER edf_hab_indigena_a_avoid_empty_array
                   BEFORE INSERT OR UPDATE
                   ON ge.edf_hab_indigena_a
                   FOR EACH ROW
-                  EXECUTE PROCEDURE edf_hab_indigena_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION cb_trecho_arruamento_a_avoid_empty_array()
-              RETURNS trigger AS
-            $BODY$
-                DECLARE
-                BEGIN
-IF NEW.tipopavimentacao = '{}' THEN
-                            NEW.tipopavimentacao = NULL;
-                          END IF;
-                    RETURN NEW;
-                    END;
-                $BODY$
-              LANGUAGE plpgsql VOLATILE
-              COST 100#
-CREATE TRIGGER cb_trecho_arruamento_a_avoid_empty_array
-                  BEFORE INSERT OR UPDATE
-                  ON ge.cb_trecho_arruamento_a
-                  FOR EACH ROW
-                  EXECUTE PROCEDURE cb_trecho_arruamento_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_representacao_diplomatica_p_avoid_empty_array()
+                  EXECUTE PROCEDURE edf_hab_indigena_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_representacao_diplomatica_p_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -17294,7 +16418,7 @@ CREATE TRIGGER edf_posto_guarda_municipal_p_avoid_empty_array
                   BEFORE INSERT OR UPDATE
                   ON ge.edf_posto_guarda_municipal_p
                   FOR EACH ROW
-                  EXECUTE PROCEDURE edf_posto_guarda_municipal_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_constr_lazer_p_avoid_empty_array()
+                  EXECUTE PROCEDURE edf_posto_guarda_municipal_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_pub_civil_p_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -17308,6 +16432,9 @@ IF NEW.classeativecon = '{}' THEN
                     IF NEW.divisaoativecon = '{}' THEN
                             NEW.divisaoativecon = NULL;
                           END IF;
+                    IF NEW.tipoedifpubcivil = '{}' THEN
+                            NEW.tipoedifpubcivil = NULL;
+                          END IF;
                     IF NEW.administracao = '{}' THEN
                             NEW.administracao = NULL;
                           END IF;
@@ -17316,11 +16443,11 @@ IF NEW.classeativecon = '{}' THEN
                 $BODY$
               LANGUAGE plpgsql VOLATILE
               COST 100#
-CREATE TRIGGER edf_edif_constr_lazer_p_avoid_empty_array
+CREATE TRIGGER edf_edif_pub_civil_p_avoid_empty_array
                   BEFORE INSERT OR UPDATE
-                  ON ge.edf_edif_constr_lazer_p
+                  ON ge.edf_edif_pub_civil_p
                   FOR EACH ROW
-                  EXECUTE PROCEDURE edf_edif_constr_lazer_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_comerc_serv_p_avoid_empty_array()
+                  EXECUTE PROCEDURE edf_edif_pub_civil_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_comerc_serv_p_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -17620,7 +16747,24 @@ CREATE TRIGGER edf_edif_ext_mineral_a_avoid_empty_array
                   BEFORE INSERT OR UPDATE
                   ON ge.edf_edif_ext_mineral_a
                   FOR EACH ROW
-                  EXECUTE PROCEDURE edf_edif_ext_mineral_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_constr_est_med_fen_p_avoid_empty_array()
+                  EXECUTE PROCEDURE edf_edif_ext_mineral_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION cb_trecho_arruamento_a_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.tipopavimentacao = '{}' THEN
+                            NEW.tipopavimentacao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER cb_trecho_arruamento_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON ge.cb_trecho_arruamento_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE cb_trecho_arruamento_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_posto_guarda_municipal_a_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -17634,37 +16778,8 @@ IF NEW.classeativecon = '{}' THEN
                     IF NEW.divisaoativecon = '{}' THEN
                             NEW.divisaoativecon = NULL;
                           END IF;
-                    IF NEW.administracao = '{}' THEN
-                            NEW.administracao = NULL;
-                          END IF;
-                    RETURN NEW;
-                    END;
-                $BODY$
-              LANGUAGE plpgsql VOLATILE
-              COST 100#
-CREATE TRIGGER edf_edif_constr_est_med_fen_p_avoid_empty_array
-                  BEFORE INSERT OR UPDATE
-                  ON ge.edf_edif_constr_est_med_fen_p
-                  FOR EACH ROW
-                  EXECUTE PROCEDURE edf_edif_constr_est_med_fen_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_comerc_serv_a_avoid_empty_array()
-              RETURNS trigger AS
-            $BODY$
-                DECLARE
-                BEGIN
-IF NEW.classeativecon = '{}' THEN
-                            NEW.classeativecon = NULL;
-                          END IF;
-                    IF NEW.grupoativecon = '{}' THEN
-                            NEW.grupoativecon = NULL;
-                          END IF;
-                    IF NEW.finalidade = '{}' THEN
-                            NEW.finalidade = NULL;
-                          END IF;
-                    IF NEW.divisaoativecon = '{}' THEN
-                            NEW.divisaoativecon = NULL;
-                          END IF;
-                    IF NEW.tipoedifcomercserv = '{}' THEN
-                            NEW.tipoedifcomercserv = NULL;
+                    IF NEW.tipoedifpubcivil = '{}' THEN
+                            NEW.tipoedifpubcivil = NULL;
                           END IF;
                     IF NEW.administracao = '{}' THEN
                             NEW.administracao = NULL;
@@ -17674,11 +16789,11 @@ IF NEW.classeativecon = '{}' THEN
                 $BODY$
               LANGUAGE plpgsql VOLATILE
               COST 100#
-CREATE TRIGGER edf_edif_comerc_serv_a_avoid_empty_array
+CREATE TRIGGER edf_posto_guarda_municipal_a_avoid_empty_array
                   BEFORE INSERT OR UPDATE
-                  ON ge.edf_edif_comerc_serv_a
+                  ON ge.edf_posto_guarda_municipal_a
                   FOR EACH ROW
-                  EXECUTE PROCEDURE edf_edif_comerc_serv_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_constr_aeroportuaria_a_avoid_empty_array()
+                  EXECUTE PROCEDURE edf_posto_guarda_municipal_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION edf_edif_constr_aeroportuaria_a_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -17992,30 +17107,24 @@ CREATE TRIGGER veg_veg_area_contato_a_avoid_empty_array
                   BEFORE INSERT OR UPDATE
                   ON pe.veg_veg_area_contato_a
                   FOR EACH ROW
-                  EXECUTE PROCEDURE veg_veg_area_contato_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_patio_a_avoid_empty_array()
+                  EXECUTE PROCEDURE veg_veg_area_contato_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION rel_corte_a_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
                 BEGIN
-IF NEW.modaluso = '{}' THEN
-                            NEW.modaluso = NULL;
-                          END IF;
-                    IF NEW.finalidadepatio = '{}' THEN
-                            NEW.finalidadepatio = NULL;
-                          END IF;
-                    IF NEW.administracao = '{}' THEN
-                            NEW.administracao = NULL;
+IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
                           END IF;
                     RETURN NEW;
                     END;
                 $BODY$
               LANGUAGE plpgsql VOLATILE
               COST 100#
-CREATE TRIGGER tra_patio_a_avoid_empty_array
+CREATE TRIGGER rel_corte_a_avoid_empty_array
                   BEFORE INSERT OR UPDATE
-                  ON pe.tra_patio_a
+                  ON pe.rel_corte_a
                   FOR EACH ROW
-                  EXECUTE PROCEDURE tra_patio_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION sb_dep_saneamento_avoid_empty_array()
+                  EXECUTE PROCEDURE rel_corte_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION sb_dep_saneamento_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -18098,15 +17207,12 @@ CREATE TRIGGER tra_ponte_p_avoid_empty_array
                   BEFORE INSERT OR UPDATE
                   ON pe.tra_ponte_p
                   FOR EACH ROW
-                  EXECUTE PROCEDURE tra_ponte_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_tunel_l_avoid_empty_array()
+                  EXECUTE PROCEDURE tra_ponte_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION rel_aterro_l_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
                 BEGIN
-IF NEW.modaluso = '{}' THEN
-                            NEW.modaluso = NULL;
-                          END IF;
-                    IF NEW.matconstr = '{}' THEN
+IF NEW.matconstr = '{}' THEN
                             NEW.matconstr = NULL;
                           END IF;
                     RETURN NEW;
@@ -18114,11 +17220,11 @@ IF NEW.modaluso = '{}' THEN
                 $BODY$
               LANGUAGE plpgsql VOLATILE
               COST 100#
-CREATE TRIGGER tra_tunel_l_avoid_empty_array
+CREATE TRIGGER rel_aterro_l_avoid_empty_array
                   BEFORE INSERT OR UPDATE
-                  ON pe.tra_tunel_l
+                  ON pe.rel_aterro_l
                   FOR EACH ROW
-                  EXECUTE PROCEDURE tra_tunel_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION eco_deposito_geral_a_avoid_empty_array()
+                  EXECUTE PROCEDURE rel_aterro_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION eco_deposito_geral_a_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -18221,7 +17327,7 @@ CREATE TRIGGER hdv_eclusa_l_avoid_empty_array
                   BEFORE INSERT OR UPDATE
                   ON pe.hdv_eclusa_l
                   FOR EACH ROW
-                  EXECUTE PROCEDURE hdv_eclusa_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_ponte_l_avoid_empty_array()
+                  EXECUTE PROCEDURE hdv_eclusa_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_patio_a_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -18229,7 +17335,27 @@ CREATE TRIGGER hdv_eclusa_l_avoid_empty_array
 IF NEW.modaluso = '{}' THEN
                             NEW.modaluso = NULL;
                           END IF;
-                    IF NEW.matconstr = '{}' THEN
+                    IF NEW.finalidadepatio = '{}' THEN
+                            NEW.finalidadepatio = NULL;
+                          END IF;
+                    IF NEW.administracao = '{}' THEN
+                            NEW.administracao = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER tra_patio_a_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.tra_patio_a
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE tra_patio_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION rel_aterro_p_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.matconstr = '{}' THEN
                             NEW.matconstr = NULL;
                           END IF;
                     RETURN NEW;
@@ -18237,11 +17363,11 @@ IF NEW.modaluso = '{}' THEN
                 $BODY$
               LANGUAGE plpgsql VOLATILE
               COST 100#
-CREATE TRIGGER tra_ponte_l_avoid_empty_array
+CREATE TRIGGER rel_aterro_p_avoid_empty_array
                   BEFORE INSERT OR UPDATE
-                  ON pe.tra_ponte_l
+                  ON pe.rel_aterro_p
                   FOR EACH ROW
-                  EXECUTE PROCEDURE tra_ponte_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION dut_trecho_duto_l_avoid_empty_array()
+                  EXECUTE PROCEDURE rel_aterro_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION dut_trecho_duto_l_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -18378,7 +17504,7 @@ CREATE TRIGGER hid_barragem_p_avoid_empty_array
                   BEFORE INSERT OR UPDATE
                   ON pe.hid_barragem_p
                   FOR EACH ROW
-                  EXECUTE PROCEDURE hid_barragem_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_quebramar_molhe_a_avoid_empty_array()
+                  EXECUTE PROCEDURE hid_barragem_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_barragem_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -18391,11 +17517,11 @@ IF NEW.matconstr = '{}' THEN
                 $BODY$
               LANGUAGE plpgsql VOLATILE
               COST 100#
-CREATE TRIGGER hid_quebramar_molhe_a_avoid_empty_array
+CREATE TRIGGER hid_barragem_avoid_empty_array
                   BEFORE INSERT OR UPDATE
-                  ON pe.hid_quebramar_molhe_a
+                  ON pe.hid_barragem
                   FOR EACH ROW
-                  EXECUTE PROCEDURE hid_quebramar_molhe_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_quebramar_molhe_l_avoid_empty_array()
+                  EXECUTE PROCEDURE hid_barragem_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_quebramar_molhe_l_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -18591,27 +17717,7 @@ CREATE TRIGGER veg_reflorestamento_a_avoid_empty_array
                   BEFORE INSERT OR UPDATE
                   ON pe.veg_reflorestamento_a
                   FOR EACH ROW
-                  EXECUTE PROCEDURE veg_reflorestamento_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_passagem_elevada_viaduto_p_avoid_empty_array()
-              RETURNS trigger AS
-            $BODY$
-                DECLARE
-                BEGIN
-IF NEW.modaluso = '{}' THEN
-                            NEW.modaluso = NULL;
-                          END IF;
-                    IF NEW.matconstr = '{}' THEN
-                            NEW.matconstr = NULL;
-                          END IF;
-                    RETURN NEW;
-                    END;
-                $BODY$
-              LANGUAGE plpgsql VOLATILE
-              COST 100#
-CREATE TRIGGER tra_passagem_elevada_viaduto_p_avoid_empty_array
-                  BEFORE INSERT OR UPDATE
-                  ON pe.tra_passagem_elevada_viaduto_p
-                  FOR EACH ROW
-                  EXECUTE PROCEDURE tra_passagem_elevada_viaduto_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION hdv_atracadouro_terminal_l_avoid_empty_array()
+                  EXECUTE PROCEDURE veg_reflorestamento_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION hdv_atracadouro_terminal_l_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -18668,12 +17774,15 @@ CREATE TRIGGER enc_torre_comunic_p_avoid_empty_array
                   BEFORE INSERT OR UPDATE
                   ON pe.enc_torre_comunic_p
                   FOR EACH ROW
-                  EXECUTE PROCEDURE enc_torre_comunic_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION rel_aterro_l_avoid_empty_array()
+                  EXECUTE PROCEDURE enc_torre_comunic_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_tunel_l_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
                 BEGIN
-IF NEW.matconstr = '{}' THEN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
                             NEW.matconstr = NULL;
                           END IF;
                     RETURN NEW;
@@ -18681,11 +17790,11 @@ IF NEW.matconstr = '{}' THEN
                 $BODY$
               LANGUAGE plpgsql VOLATILE
               COST 100#
-CREATE TRIGGER rel_aterro_l_avoid_empty_array
+CREATE TRIGGER tra_tunel_l_avoid_empty_array
                   BEFORE INSERT OR UPDATE
-                  ON pe.rel_aterro_l
+                  ON pe.tra_tunel_l
                   FOR EACH ROW
-                  EXECUTE PROCEDURE rel_aterro_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_passagem_elevada_viaduto_avoid_empty_array()
+                  EXECUTE PROCEDURE tra_tunel_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_passagem_elevada_viaduto_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -18887,7 +17996,27 @@ CREATE TRIGGER eco_deposito_geral_avoid_empty_array
                   BEFORE INSERT OR UPDATE
                   ON pe.eco_deposito_geral
                   FOR EACH ROW
-                  EXECUTE PROCEDURE eco_deposito_geral_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_tunel_p_avoid_empty_array()
+                  EXECUTE PROCEDURE eco_deposito_geral_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_ponte_l_avoid_empty_array()
+              RETURNS trigger AS
+            $BODY$
+                DECLARE
+                BEGIN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
+                            NEW.matconstr = NULL;
+                          END IF;
+                    RETURN NEW;
+                    END;
+                $BODY$
+              LANGUAGE plpgsql VOLATILE
+              COST 100#
+CREATE TRIGGER tra_ponte_l_avoid_empty_array
+                  BEFORE INSERT OR UPDATE
+                  ON pe.tra_ponte_l
+                  FOR EACH ROW
+                  EXECUTE PROCEDURE tra_ponte_l_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_tunel_p_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -18975,12 +18104,15 @@ CREATE TRIGGER hid_dique_a_avoid_empty_array
                   BEFORE INSERT OR UPDATE
                   ON pe.hid_dique_a
                   FOR EACH ROW
-                  EXECUTE PROCEDURE hid_dique_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION rel_aterro_p_avoid_empty_array()
+                  EXECUTE PROCEDURE hid_dique_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION tra_passagem_elevada_viaduto_p_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
                 BEGIN
-IF NEW.matconstr = '{}' THEN
+IF NEW.modaluso = '{}' THEN
+                            NEW.modaluso = NULL;
+                          END IF;
+                    IF NEW.matconstr = '{}' THEN
                             NEW.matconstr = NULL;
                           END IF;
                     RETURN NEW;
@@ -18988,11 +18120,11 @@ IF NEW.matconstr = '{}' THEN
                 $BODY$
               LANGUAGE plpgsql VOLATILE
               COST 100#
-CREATE TRIGGER rel_aterro_p_avoid_empty_array
+CREATE TRIGGER tra_passagem_elevada_viaduto_p_avoid_empty_array
                   BEFORE INSERT OR UPDATE
-                  ON pe.rel_aterro_p
+                  ON pe.tra_passagem_elevada_viaduto_p
                   FOR EACH ROW
-                  EXECUTE PROCEDURE rel_aterro_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_quebramar_molhe_avoid_empty_array()
+                  EXECUTE PROCEDURE tra_passagem_elevada_viaduto_p_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_quebramar_molhe_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -19009,7 +18141,7 @@ CREATE TRIGGER hid_quebramar_molhe_avoid_empty_array
                   BEFORE INSERT OR UPDATE
                   ON pe.hid_quebramar_molhe
                   FOR EACH ROW
-                  EXECUTE PROCEDURE hid_quebramar_molhe_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_barragem_avoid_empty_array()
+                  EXECUTE PROCEDURE hid_quebramar_molhe_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_quebramar_molhe_a_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -19022,11 +18154,11 @@ IF NEW.matconstr = '{}' THEN
                 $BODY$
               LANGUAGE plpgsql VOLATILE
               COST 100#
-CREATE TRIGGER hid_barragem_avoid_empty_array
+CREATE TRIGGER hid_quebramar_molhe_a_avoid_empty_array
                   BEFORE INSERT OR UPDATE
-                  ON pe.hid_barragem
+                  ON pe.hid_quebramar_molhe_a
                   FOR EACH ROW
-                  EXECUTE PROCEDURE hid_barragem_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_canal_vala_a_avoid_empty_array()
+                  EXECUTE PROCEDURE hid_quebramar_molhe_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION hid_canal_vala_a_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
@@ -19228,24 +18360,7 @@ CREATE TRIGGER eco_equip_agropec_avoid_empty_array
                   BEFORE INSERT OR UPDATE
                   ON pe.eco_equip_agropec
                   FOR EACH ROW
-                  EXECUTE PROCEDURE eco_equip_agropec_avoid_empty_array()#CREATE OR REPLACE FUNCTION rel_corte_a_avoid_empty_array()
-              RETURNS trigger AS
-            $BODY$
-                DECLARE
-                BEGIN
-IF NEW.matconstr = '{}' THEN
-                            NEW.matconstr = NULL;
-                          END IF;
-                    RETURN NEW;
-                    END;
-                $BODY$
-              LANGUAGE plpgsql VOLATILE
-              COST 100#
-CREATE TRIGGER rel_corte_a_avoid_empty_array
-                  BEFORE INSERT OR UPDATE
-                  ON pe.rel_corte_a
-                  FOR EACH ROW
-                  EXECUTE PROCEDURE rel_corte_a_avoid_empty_array()#CREATE OR REPLACE FUNCTION dut_galeria_l_avoid_empty_array()
+                  EXECUTE PROCEDURE eco_equip_agropec_avoid_empty_array()#CREATE OR REPLACE FUNCTION dut_galeria_l_avoid_empty_array()
               RETURNS trigger AS
             $BODY$
                 DECLARE
