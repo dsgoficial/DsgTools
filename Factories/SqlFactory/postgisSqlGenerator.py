@@ -420,3 +420,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def getDimension(self, geom):
         sql = "select ST_Dimension('%s')" % geom
         return sql
+    
+    def getMulti(self,cl):
+        sql = "select id from only %s where ST_NumGeometries(geom) > 1" % cl
+        return sql

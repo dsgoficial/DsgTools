@@ -812,4 +812,35 @@ class PostgisDb(AbstractDb):
             dimension = query.value(0)
         return dimension
     
+    def getExplodeCandidates(self):
+        self.checkAndOpenDb()
+        explodeDict = dict()
+        classesWithElem = self.listClassesWithElementsFromDatabase()
+        for cl in classesWithElem:
+            sql= self.gen.getMulti(cl)
+            query = QSqlQuery(sql, self.db)
+            if not query.isActive():
+                raise Exception(self.tr('Problem exploding geometries: ') + query.lastError().text())
+            idList = []
+            while query.next():
+                idList.append(query.value(0))
+            if len(idList) > 0:
+                explodeDict = self.utils.buildNestedDict(explodeDict, [cl], idList)
+        return explodeDict
+
+    def getURI(self,table):
+        schema, layer_name = self.getTableSchema(table)
+
+        host = self.db.hostName()
+        port = self.db.port()
+        database = self.db.databaseName()
+        user = self.db.userName()
+        password = self.db.password()
+        sql = self.gen.loadLayerFromDatabase(table)
         
+        uri = QgsDataSourceURI()
+        uri.setConnection(str(host),str(port), str(database), str(user), str(password))
+        uri.setDataSource(schema, layer_name, 'geom', sql, 'id')
+        uri.disableSelectAtId(True)
+        
+        return uri
