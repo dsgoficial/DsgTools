@@ -38,22 +38,28 @@ class DeaggregateGeometriesProcess(ValidationProcess):
             for cl in explodeIdDict.keys():
                 uri = self.abstractDb.getURI(cl)
                 layer = QgsVectorLayer(uri.uri(), cl, 'postgres')
+                provider = layer.dataProvider()
                 if not layer.isValid():
                     QgsMessageLog.logMessage("Layer %s failed to load!" % cl)
                 layer.startEditing()
                 for id in explodeIdDict[cl]:
+                    layer.startEditing()
                     feat = layer.getFeatures(QgsFeatureRequest(id)).next()
                     count = 1
-                    for part in feat.geometry().asGeometryCollection():
-                        if count == 1:
-                            feat.setGeometry(part)
-                            layer.updateFeature(feat)
-                        else:
-                            newFeat = QgsFeature(feat)
-                            newFeat.setGeometry(part)
-                            layer.addFeature(newFeat)
-                        count += 1
-                layer.commitChanges()
+                    parts = feat.geometry().asGeometryCollection ()
+                    for part in parts:
+                        part.convertToMultiType()
+                    addList = []
+                    for i in range(1,len(parts)):
+                        newFeat = QgsFeature(feat)
+                        newFeat.setGeometry(parts[i])
+                        idx = newFeat.fieldNameIndex('id')
+                        newFeat.setAttribute(idx,provider.defaultValue(idx))
+                        addList.append(newFeat)
+                    feat.setGeometry(parts[0])
+                    layer.updateFeature(feat)
+                    layer.addFeatures(addList,True)
+                    layer.commitChanges()
             self.setStatus('All geometries are now single parted.\n', 1) #Finished
             QgsMessageLog.logMessage('All features are valid.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         except Exception as e:
