@@ -3461,12 +3461,6 @@ CREATE TABLE dominios.tipo_fundeadouro
                     code_name text NOT NULL,
                     CONSTRAINT tipo_fundeadouro_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.estado_fisico
-                    (
-                    code smallint NOT NULL,
-                    code_name text NOT NULL,
-                    CONSTRAINT estado_fisico_pk PRIMARY KEY (code)
-                                )#
 CREATE TABLE dominios.tipo_org_militar
                     (
                     code smallint NOT NULL,
@@ -3491,11 +3485,11 @@ CREATE TABLE dominios.destinacao_cemiterio
                     code_name text NOT NULL,
                     CONSTRAINT destinacao_cemiterio_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_passag_viad
+CREATE TABLE dominios.tipo_plataforma
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_passag_viad_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_plataforma_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_edif_metro_ferrov
                     (
@@ -3533,11 +3527,11 @@ CREATE TABLE dominios.grupo_ativ_econ
                     code_name text NOT NULL,
                     CONSTRAINT grupo_ativ_econ_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_ponte
+CREATE TABLE dominios.tipo_edif_turist
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_ponte_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_edif_turist_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_banco
                     (
@@ -3551,11 +3545,11 @@ CREATE TABLE dominios.tipo_lim_area_esp
                     code_name text NOT NULL,
                     CONSTRAINT tipo_lim_area_esp_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_localidade
+CREATE TABLE dominios.causa
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_localidade_pk PRIMARY KEY (code)
+                    CONSTRAINT causa_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.nivel_atencao
                     (
@@ -3574,6 +3568,12 @@ CREATE TABLE dominios.booleano
                     code smallint NOT NULL,
                     code_name text NOT NULL,
                     CONSTRAINT booleano_pk PRIMARY KEY (code)
+                                )#
+CREATE TABLE dominios.tipo_equip_desenv_social
+                    (
+                    code smallint NOT NULL,
+                    code_name text NOT NULL,
+                    CONSTRAINT tipo_equip_desenv_social_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_sum_vert
                     (
@@ -3640,6 +3640,12 @@ CREATE TABLE dominios.tipo_curva_nivel
                     code smallint NOT NULL,
                     code_name text NOT NULL,
                     CONSTRAINT tipo_curva_nivel_pk PRIMARY KEY (code)
+                                )#
+CREATE TABLE dominios.divisao_ativ_econ
+                    (
+                    code smallint NOT NULL,
+                    code_name text NOT NULL,
+                    CONSTRAINT divisao_ativ_econ_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_embarcacao
                     (
@@ -3773,11 +3779,11 @@ CREATE TABLE dominios.tipo_estrut
                     code_name text NOT NULL,
                     CONSTRAINT tipo_estrut_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.causa
+CREATE TABLE dominios.tipo_localidade
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT causa_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_localidade_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.cultivo_predominante
                     (
@@ -3857,12 +3863,6 @@ CREATE TABLE dominios.tipo_assentamento_precario
                     code_name text NOT NULL,
                     CONSTRAINT tipo_assentamento_precario_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.finalidade_patio
-                    (
-                    code smallint NOT NULL,
-                    code_name text NOT NULL,
-                    CONSTRAINT finalidade_patio_pk PRIMARY KEY (code)
-                                )#
 CREATE TABLE dominios.unidade_volume
                     (
                     code smallint NOT NULL,
@@ -3887,11 +3887,11 @@ CREATE TABLE dominios.tipo_arruamento
                     code_name text NOT NULL,
                     CONSTRAINT tipo_arruamento_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_trecho_rod
+CREATE TABLE dominios.tipo_lim_pol
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_trecho_rod_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_lim_pol_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_est_gerad
                     (
@@ -3941,17 +3941,17 @@ CREATE TABLE dominios.referencial_grav
                     code_name text NOT NULL,
                     CONSTRAINT referencial_grav_pk PRIMARY KEY (code)
                                 )#
+CREATE TABLE dominios.tipo_massa_dagua
+                    (
+                    code smallint NOT NULL,
+                    code_name text NOT NULL,
+                    CONSTRAINT tipo_massa_dagua_pk PRIMARY KEY (code)
+                                )#
 CREATE TABLE dominios.tipo_caminho_aereo
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
                     CONSTRAINT tipo_caminho_aereo_pk PRIMARY KEY (code)
-                                )#
-CREATE TABLE dominios.tipo_org_civil
-                    (
-                    code smallint NOT NULL,
-                    code_name text NOT NULL,
-                    CONSTRAINT tipo_org_civil_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_instal_militar
                     (
@@ -3965,11 +3965,11 @@ CREATE TABLE dominios.tipo_entroncamento
                     code_name text NOT NULL,
                     CONSTRAINT tipo_entroncamento_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_atracad
+CREATE TABLE dominios.tipo_travessia_ped
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_atracad_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_travessia_ped_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.trafego
                     (
@@ -4037,11 +4037,11 @@ CREATE TABLE dominios.referencial_legal
                     code_name text NOT NULL,
                     CONSTRAINT referencial_legal_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_massa_dagua
+CREATE TABLE dominios.tipo_trecho_duto
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_massa_dagua_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_trecho_duto_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_complexo_aeroportuario
                     (
@@ -4079,11 +4079,11 @@ CREATE TABLE dominios.tipo_lim_massa
                     code_name text NOT NULL,
                     CONSTRAINT tipo_lim_massa_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_plataforma
+CREATE TABLE dominios.tipo_passag_viad
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_plataforma_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_passag_viad_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_recife
                     (
@@ -4127,11 +4127,11 @@ CREATE TABLE dominios.booleano_estendido
                     code_name text NOT NULL,
                     CONSTRAINT booleano_estendido_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.divisao_ativ_econ
+CREATE TABLE dominios.tipo_unid_uso_sust
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT divisao_ativ_econ_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_unid_uso_sust_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_unid_protegida
                     (
@@ -4175,11 +4175,11 @@ CREATE TABLE dominios.tipo_elevador
                     code_name text NOT NULL,
                     CONSTRAINT tipo_elevador_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_lim_pol
+CREATE TABLE dominios.tipo_trecho_rod
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_lim_pol_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_trecho_rod_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_pista
                     (
@@ -4187,17 +4187,17 @@ CREATE TABLE dominios.tipo_pista
                     code_name text NOT NULL,
                     CONSTRAINT tipo_pista_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_edif_turist
+CREATE TABLE dominios.estado_fisico
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_edif_turist_pk PRIMARY KEY (code)
+                    CONSTRAINT estado_fisico_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_travessia_ped
+CREATE TABLE dominios.tipo_atracad
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_travessia_ped_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_atracad_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.forma_extracao
                     (
@@ -4229,11 +4229,11 @@ CREATE TABLE dominios.situacao_costa
                     code_name text NOT NULL,
                     CONSTRAINT situacao_costa_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_equip_desenv_social
+CREATE TABLE dominios.finalidade_patio
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_equip_desenv_social_pk PRIMARY KEY (code)
+                    CONSTRAINT finalidade_patio_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_edif_abast
                     (
@@ -4283,11 +4283,11 @@ CREATE TABLE dominios.tipo_edif_port
                     code_name text NOT NULL,
                     CONSTRAINT tipo_edif_port_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_trecho_duto
+CREATE TABLE dominios.tipo_ponte
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_trecho_duto_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_ponte_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_quebra_molhe
                     (
@@ -4349,11 +4349,11 @@ CREATE TABLE dominios.destinado_a
                     code_name text NOT NULL,
                     CONSTRAINT destinado_a_pk PRIMARY KEY (code)
                                 )#
-CREATE TABLE dominios.tipo_unid_uso_sust
+CREATE TABLE dominios.tipo_org_civil
                     (
                     code smallint NOT NULL,
                     code_name text NOT NULL,
-                    CONSTRAINT tipo_unid_uso_sust_pk PRIMARY KEY (code)
+                    CONSTRAINT tipo_org_civil_pk PRIMARY KEY (code)
                                 )#
 CREATE TABLE dominios.tipo_vegetacao
                     (
@@ -4490,11 +4490,6 @@ INSERT INTO dominios.tipo_org_sv_social (code,code_name) values (4,'Casa de Repo
 INSERT INTO dominios.tipo_org_sv_social (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.tipo_fundeadouro (code,code_name) values (1,'Navio/Embarcação')#
 INSERT INTO dominios.tipo_fundeadouro (code,code_name) values (2,'Hidroavião')#
-INSERT INTO dominios.estado_fisico (code,code_name) values (1,'Líquido')#
-INSERT INTO dominios.estado_fisico (code,code_name) values (98,'Misto')#
-INSERT INTO dominios.estado_fisico (code,code_name) values (3,'Gasoso')#
-INSERT INTO dominios.estado_fisico (code,code_name) values (2,'Sólido')#
-INSERT INTO dominios.estado_fisico (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.tipo_org_militar (code,code_name) values (99,'Outros')#
 INSERT INTO dominios.tipo_org_militar (code,code_name) values (3,'Exército')#
 INSERT INTO dominios.tipo_org_militar (code,code_name) values (2,'Corpo de bombeiros')#
@@ -4515,8 +4510,10 @@ INSERT INTO dominios.uso_pista (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.uso_pista (code,code_name) values (6,'Particular')#
 INSERT INTO dominios.destinacao_cemiterio (code,code_name) values (3,'Animais')#
 INSERT INTO dominios.destinacao_cemiterio (code,code_name) values (2,'Humanos')#
-INSERT INTO dominios.tipo_passag_viad (code,code_name) values (5,'Passagem elevada')#
-INSERT INTO dominios.tipo_passag_viad (code,code_name) values (6,'Viaduto')#
+INSERT INTO dominios.tipo_plataforma (code,code_name) values (5,'Gás')#
+INSERT INTO dominios.tipo_plataforma (code,code_name) values (3,'Petróleo')#
+INSERT INTO dominios.tipo_plataforma (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.tipo_plataforma (code,code_name) values (98,'Misto')#
 INSERT INTO dominios.tipo_edif_metro_ferrov (code,code_name) values (15,'Administrativa')#
 INSERT INTO dominios.tipo_edif_metro_ferrov (code,code_name) values (17,'Estação metroviária')#
 INSERT INTO dominios.tipo_edif_metro_ferrov (code,code_name) values (16,'Estação ferroviária de passageiros')#
@@ -4562,11 +4559,18 @@ INSERT INTO dominios.grupo_ativ_econ (code,code_name) values (16,'Educação inf
 INSERT INTO dominios.grupo_ativ_econ (code,code_name) values (6,'Administração do estado e da política econômica e social')#
 INSERT INTO dominios.grupo_ativ_econ (code,code_name) values (8,'Serviços coletivos prestados pela administração')#
 INSERT INTO dominios.grupo_ativ_econ (code,code_name) values (95,'Desconhecido')#
-INSERT INTO dominios.tipo_ponte (code,code_name) values (1,'Móvel')#
-INSERT INTO dominios.tipo_ponte (code,code_name) values (3,'Fixa')#
-INSERT INTO dominios.tipo_ponte (code,code_name) values (2,'Pênsil')#
-INSERT INTO dominios.tipo_ponte (code,code_name) values (95,'Desconhecido')#
-INSERT INTO dominios.tipo_ponte (code,code_name) values (7,'Estaiada')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (11,'Mirante')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (10,'Estátua')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (13,'Panteão')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (12,'Monumento')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (15,'Chaminé')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (14,'Chafariz')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (17,'Obelisco')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (16,'Escultura')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (18,'Torre')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (99,'Outros')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (9,'Cruzeiro')#
+INSERT INTO dominios.tipo_edif_turist (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.tipo_banco (code,code_name) values (1,'Fluvial')#
 INSERT INTO dominios.tipo_banco (code,code_name) values (3,'Lacustre')#
 INSERT INTO dominios.tipo_banco (code,code_name) values (2,'Marítimo')#
@@ -4609,13 +4613,10 @@ INSERT INTO dominios.tipo_lim_area_esp (code,code_name) values (35,'Refúgio da 
 INSERT INTO dominios.tipo_lim_area_esp (code,code_name) values (34,'Reserva biológica - REBIO')#
 INSERT INTO dominios.tipo_lim_area_esp (code,code_name) values (33,'Monumento natural - MONA')#
 INSERT INTO dominios.tipo_lim_area_esp (code,code_name) values (18,'Reserva ecológica')#
-INSERT INTO dominios.tipo_localidade (code,code_name) values (1,'Aglomerado rural')#
-INSERT INTO dominios.tipo_localidade (code,code_name) values (3,'Aglomerado rural isolado')#
-INSERT INTO dominios.tipo_localidade (code,code_name) values (2,'Aglomerado rural de extensão urbana')#
-INSERT INTO dominios.tipo_localidade (code,code_name) values (5,'Cidade')#
-INSERT INTO dominios.tipo_localidade (code,code_name) values (4,'Capital')#
-INSERT INTO dominios.tipo_localidade (code,code_name) values (6,'Vila')#
-INSERT INTO dominios.tipo_localidade (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.causa (code,code_name) values (5,'Canalização')#
+INSERT INTO dominios.causa (code,code_name) values (2,'Absorção')#
+INSERT INTO dominios.causa (code,code_name) values (95,'Desconhecida')#
+INSERT INTO dominios.causa (code,code_name) values (4,'Gruta ou fenda')#
 INSERT INTO dominios.nivel_atencao (code,code_name) values (5,'Primário')#
 INSERT INTO dominios.nivel_atencao (code,code_name) values (7,'Terciário')#
 INSERT INTO dominios.nivel_atencao (code,code_name) values (6,'Secundário')#
@@ -4625,6 +4626,29 @@ INSERT INTO dominios.nr_linhas (code,code_name) values (2,'Dupla')#
 INSERT INTO dominios.nr_linhas (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.booleano (code,code_name) values (1,'Sim')#
 INSERT INTO dominios.booleano (code,code_name) values (0,'Não')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (20,'Unidade de acolhimento para mulheres vitmas de violência')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (21,'Unidade de acolhimento para pessoas em situação de rua')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (1,'Banco de Alimentos')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (3,'Bolsa Verde')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (2,'Barragem Calçadão')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (5,'Centro POP')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (4,'Centro de Convivência')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (7,'Cisterna Subterrânea')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (6,'Centro-dia')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (9,'Cisterna de Placa')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (8,'Cisterna de Polietileno')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (99,'Outros')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (11,'CRAS')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (10,'Cozinha Comunitária')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (13,'PAA')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (12,'CREAS')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (15,'PRONATEC')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (14,'PRONAF')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (17,'Unidade de acolhimento para crianças e adolescentes')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (16,'Restaurante Popular')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (19,'Unidade de acolhimento para idosos')#
+INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (18,'Unidade de acolhimento para crianças e adolescentes (casa de passagem)')#
 INSERT INTO dominios.tipo_sum_vert (code,code_name) values (1,'Sumidouro')#
 INSERT INTO dominios.tipo_sum_vert (code,code_name) values (2,'Vertedouro')#
 INSERT INTO dominios.especie (code,code_name) values (11,'Bambu')#
@@ -4732,6 +4756,44 @@ INSERT INTO dominios.tipo_edif_energia (code,code_name) values (95,'Desconhecido
 INSERT INTO dominios.tipo_curva_nivel (code,code_name) values (1,'Mestra')#
 INSERT INTO dominios.tipo_curva_nivel (code,code_name) values (3,'Auxiliar')#
 INSERT INTO dominios.tipo_curva_nivel (code,code_name) values (2,'Normal')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (51,'Comércio por atacado e representantes comerciais e agentes do comércio')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (36,'Fabricação de móveis e indústrias diversas')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (34,'Fabricação e montagem de veículos automotores')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (24,'Fabricação de produtos químicos')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (25,'Fabricação de artigos de borracha e material plástico')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (27,'Metalurgia básica')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (20,'Fabricação de produtos de madeira e celulose')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (21,'Fabricação de celulose')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (22,'Edição')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (23,'Fabricação de coque')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (45,'Construção')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (28,'Fabricação de produtos de metal')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (29,'Fabricação de máquinas e equipamentos')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (1,'Agricultura')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (2,'Silvicultura')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (5,'Pesca')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (99,'Outros')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (74,'Serviços prestados principalmente a empresas (organizações)')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (92,'Atividades recreativas')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (11,'Extração de petróleo e serviços relacionados')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (10,'Extração de carvão mineral')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (13,'Extração de minerais metálicos')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (15,'Fabricação alimentícia e bebidas')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (14,'Fabricação de produtos de minerais não metálicos')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (17,'Fabricação de produtos têxteis')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (16,'Fabricação de produtos do fumo')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (19,'Preparação de couros e fabricação de artefatos de couro')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (18,'Confecção de artigos do vestuário e acessórios')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (31,'Fabricação de máquinas')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (30,'Fabricação de máquinas de escritório e equipamentos de informática')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (37,'Reciclagem')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (50,'Comércio e reparação de veiculos automotores e motocicletas e comércio a varejo de combustíveis')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (35,'Fabricação de outros equipamentos de transporte')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (52,'Comércio varejista e reparação de objetos pessoais e domésticos')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (33,'Fabricação de equipamentos de instrumentação médico-hospitalares')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (55,'Alojamento e alimentação')#
+INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (32,'Fabricação de material eletrônico')#
 INSERT INTO dominios.tipo_embarcacao (code,code_name) values (3,'Lancha')#
 INSERT INTO dominios.tipo_embarcacao (code,code_name) values (2,'Balsa')#
 INSERT INTO dominios.tipo_embarcacao (code,code_name) values (7,'Embarcação de pequeno porte')#
@@ -4877,10 +4939,13 @@ INSERT INTO dominios.tipo_estrut (code,code_name) values (4,'Porto seco')#
 INSERT INTO dominios.tipo_estrut (code,code_name) values (9,'Parada')#
 INSERT INTO dominios.tipo_estrut (code,code_name) values (8,'Integração')#
 INSERT INTO dominios.tipo_estrut (code,code_name) values (95,'Desconhecido')#
-INSERT INTO dominios.causa (code,code_name) values (5,'Canalização')#
-INSERT INTO dominios.causa (code,code_name) values (2,'Absorção')#
-INSERT INTO dominios.causa (code,code_name) values (95,'Desconhecida')#
-INSERT INTO dominios.causa (code,code_name) values (4,'Gruta ou fenda')#
+INSERT INTO dominios.tipo_localidade (code,code_name) values (1,'Aglomerado rural')#
+INSERT INTO dominios.tipo_localidade (code,code_name) values (3,'Aglomerado rural isolado')#
+INSERT INTO dominios.tipo_localidade (code,code_name) values (2,'Aglomerado rural de extensão urbana')#
+INSERT INTO dominios.tipo_localidade (code,code_name) values (5,'Cidade')#
+INSERT INTO dominios.tipo_localidade (code,code_name) values (4,'Capital')#
+INSERT INTO dominios.tipo_localidade (code,code_name) values (6,'Vila')#
+INSERT INTO dominios.tipo_localidade (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.cultivo_predominante (code,code_name) values (24,'Pastagem cultivada')#
 INSERT INTO dominios.cultivo_predominante (code,code_name) values (25,'Hortaliças')#
 INSERT INTO dominios.cultivo_predominante (code,code_name) values (26,'Bracatinga')#
@@ -5022,14 +5087,14 @@ INSERT INTO dominios.local_equip_desenv_social (code,code_name) values (6,'Urban
 INSERT INTO dominios.local_equip_desenv_social (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.categoria_edgv (code,code_name) values (11,'laz')#
 INSERT INTO dominios.categoria_edgv (code,code_name) values (10,'hid')#
-INSERT INTO dominios.categoria_edgv (code,code_name) values (13,'ppb')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (13,'pto')#
 INSERT INTO dominios.categoria_edgv (code,code_name) values (12,'lpal')#
-INSERT INTO dominios.categoria_edgv (code,code_name) values (15,'rel')#
-INSERT INTO dominios.categoria_edgv (code,code_name) values (14,'pto')#
-INSERT INTO dominios.categoria_edgv (code,code_name) values (17,'sb')#
-INSERT INTO dominios.categoria_edgv (code,code_name) values (16,'rod')#
-INSERT INTO dominios.categoria_edgv (code,code_name) values (19,'veg')#
-INSERT INTO dominios.categoria_edgv (code,code_name) values (18,'tra')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (15,'rod')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (14,'rel')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (17,'tra')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (16,'sb')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (19,'ver')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (18,'veg')#
 INSERT INTO dominios.categoria_edgv (code,code_name) values (1,'aer')#
 INSERT INTO dominios.categoria_edgv (code,code_name) values (3,'dut')#
 INSERT INTO dominios.categoria_edgv (code,code_name) values (2,'cb')#
@@ -5038,9 +5103,8 @@ INSERT INTO dominios.categoria_edgv (code,code_name) values (4,'eco')#
 INSERT INTO dominios.categoria_edgv (code,code_name) values (7,'enc')#
 INSERT INTO dominios.categoria_edgv (code,code_name) values (6,'emu')#
 INSERT INTO dominios.categoria_edgv (code,code_name) values (9,'hdv')#
-INSERT INTO dominios.categoria_edgv (code,code_name) values (20,'ver')#
-INSERT INTO dominios.categoria_edgv (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.categoria_edgv (code,code_name) values (8,'fer')#
+INSERT INTO dominios.categoria_edgv (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.sigla_uf (code,code_name) values (24,'SC')#
 INSERT INTO dominios.sigla_uf (code,code_name) values (25,'SE')#
 INSERT INTO dominios.sigla_uf (code,code_name) values (26,'SP')#
@@ -5090,15 +5154,6 @@ INSERT INTO dominios.tipo_assentamento_precario (code,code_name) values (2,'Conj
 INSERT INTO dominios.tipo_assentamento_precario (code,code_name) values (5,'Mocambos')#
 INSERT INTO dominios.tipo_assentamento_precario (code,code_name) values (4,'Loteamento irregular da periferia')#
 INSERT INTO dominios.tipo_assentamento_precario (code,code_name) values (6,'Palafitas')#
-INSERT INTO dominios.finalidade_patio (code,code_name) values (99,'Outros')#
-INSERT INTO dominios.finalidade_patio (code,code_name) values (3,'Estacionamento de veículos ')#
-INSERT INTO dominios.finalidade_patio (code,code_name) values (2,'Deposito temporário de cargas e contêineres')#
-INSERT INTO dominios.finalidade_patio (code,code_name) values (5,'Estacionamento de aeronaves')#
-INSERT INTO dominios.finalidade_patio (code,code_name) values (4,'Estacionamento de locomotivas')#
-INSERT INTO dominios.finalidade_patio (code,code_name) values (7,'Manobra de veículos em geral')#
-INSERT INTO dominios.finalidade_patio (code,code_name) values (6,'Manobra de cargas')#
-INSERT INTO dominios.finalidade_patio (code,code_name) values (8,'Manutenção')#
-INSERT INTO dominios.finalidade_patio (code,code_name) values (95,'Desconhecida')#
 INSERT INTO dominios.unidade_volume (code,code_name) values (1,'Litro')#
 INSERT INTO dominios.unidade_volume (code,code_name) values (2,'Metro cúbico')#
 INSERT INTO dominios.unidade_volume (code,code_name) values (95,'Desconhecido')#
@@ -5231,10 +5286,9 @@ INSERT INTO dominios.tipo_arruamento (code,code_name) values (3,'Entroncamento')
 INSERT INTO dominios.tipo_arruamento (code,code_name) values (2,'Beco')#
 INSERT INTO dominios.tipo_arruamento (code,code_name) values (5,'Servidão')#
 INSERT INTO dominios.tipo_arruamento (code,code_name) values (4,'Logradouro')#
-INSERT INTO dominios.tipo_trecho_rod (code,code_name) values (2,'Rodovia')#
-INSERT INTO dominios.tipo_trecho_rod (code,code_name) values (5,'Ligação entre pistas')#
-INSERT INTO dominios.tipo_trecho_rod (code,code_name) values (4,'Auto-estrada')#
-INSERT INTO dominios.tipo_trecho_rod (code,code_name) values (6,'Trecho de Entroncamento')#
+INSERT INTO dominios.tipo_lim_pol (code,code_name) values (1,'Internacional')#
+INSERT INTO dominios.tipo_lim_pol (code,code_name) values (3,'Municipal')#
+INSERT INTO dominios.tipo_lim_pol (code,code_name) values (2,'Estadual')#
 INSERT INTO dominios.tipo_est_gerad (code,code_name) values (99,'Outros')#
 INSERT INTO dominios.tipo_est_gerad (code,code_name) values (5,'Eólica')#
 INSERT INTO dominios.tipo_est_gerad (code,code_name) values (7,'Maré-motriz')#
@@ -5278,27 +5332,16 @@ INSERT INTO dominios.referencial_grav (code,code_name) values (5,'RGFB')#
 INSERT INTO dominios.referencial_grav (code,code_name) values (4,'Local')#
 INSERT INTO dominios.referencial_grav (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.referencial_grav (code,code_name) values (97,'Não aplicável')#
+INSERT INTO dominios.tipo_massa_dagua (code,code_name) values (10,'Represa/açude')#
+INSERT INTO dominios.tipo_massa_dagua (code,code_name) values (3,'Oceano')#
+INSERT INTO dominios.tipo_massa_dagua (code,code_name) values (5,'Enseada')#
+INSERT INTO dominios.tipo_massa_dagua (code,code_name) values (4,'Baía')#
+INSERT INTO dominios.tipo_massa_dagua (code,code_name) values (7,'Lago/Lagoa')#
+INSERT INTO dominios.tipo_massa_dagua (code,code_name) values (6,'Meandro abandonado')#
+INSERT INTO dominios.tipo_massa_dagua (code,code_name) values (8,'Trecho massa dágua')#
+INSERT INTO dominios.tipo_massa_dagua (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.tipo_caminho_aereo (code,code_name) values (99,'Outros')#
 INSERT INTO dominios.tipo_caminho_aereo (code,code_name) values (12,'Teleférico')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (11,'Delegacia de policia civil')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (10,'Autarquia')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (13,'Fórum')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (12,'Educação')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (15,'Procuradoria')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (14,'Fundação')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (22,'Prefeitura')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (16,'Secretaria')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (99,'Outros')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (3,'Cartorial')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (2,'Prisional')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (5,'Eleitoral')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (4,'Gestão')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (7,'Seguridade social')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (6,'Produção e/ou pesquisa')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (9,'Assembleia legislativa')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (8,'Câmara municipal')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (1,'Policial')#
-INSERT INTO dominios.tipo_org_civil (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.tipo_instal_militar (code,code_name) values (11,'Delegacia de  serviço militar')#
 INSERT INTO dominios.tipo_instal_militar (code,code_name) values (10,'Hotel de trânsito')#
 INSERT INTO dominios.tipo_instal_militar (code,code_name) values (13,'Posto de vigilância')#
@@ -5320,14 +5363,11 @@ INSERT INTO dominios.tipo_entroncamento (code,code_name) values (3,'Trevo')#
 INSERT INTO dominios.tipo_entroncamento (code,code_name) values (2,'Círculo ')#
 INSERT INTO dominios.tipo_entroncamento (code,code_name) values (5,'Entroncamento ferroviário')#
 INSERT INTO dominios.tipo_entroncamento (code,code_name) values (4,'Rótula')#
-INSERT INTO dominios.tipo_atracad (code,code_name) values (39,'Cais flutuante')#
-INSERT INTO dominios.tipo_atracad (code,code_name) values (38,'Cais')#
-INSERT INTO dominios.tipo_atracad (code,code_name) values (44,'Desembarcadouro')#
-INSERT INTO dominios.tipo_atracad (code,code_name) values (42,'Píer')#
-INSERT INTO dominios.tipo_atracad (code,code_name) values (43,'Dolfim')#
-INSERT INTO dominios.tipo_atracad (code,code_name) values (40,'Trapiche')#
-INSERT INTO dominios.tipo_atracad (code,code_name) values (41,'Molhe de atracação')#
-INSERT INTO dominios.tipo_atracad (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.tipo_travessia_ped (code,code_name) values (9,'Pinguela')#
+INSERT INTO dominios.tipo_travessia_ped (code,code_name) values (8,'Passarela')#
+INSERT INTO dominios.tipo_travessia_ped (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.tipo_travessia_ped (code,code_name) values (7,'Passagem subterrânea')#
+INSERT INTO dominios.tipo_travessia_ped (code,code_name) values (10,'Passarela em Área Úmida')#
 INSERT INTO dominios.trafego (code,code_name) values (1,'Permanente')#
 INSERT INTO dominios.trafego (code,code_name) values (2,'Periódico')#
 INSERT INTO dominios.trafego (code,code_name) values (95,'Desconhecido')#
@@ -5407,14 +5447,11 @@ INSERT INTO dominios.referencial_legal (code,code_name) values (6,'Linha seca')#
 INSERT INTO dominios.referencial_legal (code,code_name) values (9,'Trecho ferroviário')#
 INSERT INTO dominios.referencial_legal (code,code_name) values (8,'Trecho de drenagem')#
 INSERT INTO dominios.referencial_legal (code,code_name) values (96,'Não identificado')#
-INSERT INTO dominios.tipo_massa_dagua (code,code_name) values (10,'Represa/açude')#
-INSERT INTO dominios.tipo_massa_dagua (code,code_name) values (3,'Oceano')#
-INSERT INTO dominios.tipo_massa_dagua (code,code_name) values (5,'Enseada')#
-INSERT INTO dominios.tipo_massa_dagua (code,code_name) values (4,'Baía')#
-INSERT INTO dominios.tipo_massa_dagua (code,code_name) values (7,'Lago/Lagoa')#
-INSERT INTO dominios.tipo_massa_dagua (code,code_name) values (6,'Meandro abandonado')#
-INSERT INTO dominios.tipo_massa_dagua (code,code_name) values (8,'Trecho massa dágua')#
-INSERT INTO dominios.tipo_massa_dagua (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (1,'Duto')#
+INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (3,'Correia transportadora')#
+INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (2,'Calha')#
+INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (5,'Galeria ou bueiro')#
 INSERT INTO dominios.tipo_complexo_aeroportuario (code,code_name) values (24,'Aeroporto')#
 INSERT INTO dominios.tipo_complexo_aeroportuario (code,code_name) values (25,'Heliporto')#
 INSERT INTO dominios.tipo_complexo_aeroportuario (code,code_name) values (23,'Aeródromo')#
@@ -5447,10 +5484,8 @@ INSERT INTO dominios.tipo_lim_massa (code,code_name) values (5,'Limite interno e
 INSERT INTO dominios.tipo_lim_massa (code,code_name) values (4,'Margem direita de trechos de massas dágua')#
 INSERT INTO dominios.tipo_lim_massa (code,code_name) values (7,'Limite interno com foz marítima')#
 INSERT INTO dominios.tipo_lim_massa (code,code_name) values (6,'Limite com elemento artificial')#
-INSERT INTO dominios.tipo_plataforma (code,code_name) values (5,'Gás')#
-INSERT INTO dominios.tipo_plataforma (code,code_name) values (3,'Petróleo')#
-INSERT INTO dominios.tipo_plataforma (code,code_name) values (95,'Desconhecido')#
-INSERT INTO dominios.tipo_plataforma (code,code_name) values (98,'Misto')#
+INSERT INTO dominios.tipo_passag_viad (code,code_name) values (5,'Passagem elevada')#
+INSERT INTO dominios.tipo_passag_viad (code,code_name) values (6,'Viaduto')#
 INSERT INTO dominios.tipo_recife (code,code_name) values (1,'Arenito')#
 INSERT INTO dominios.tipo_recife (code,code_name) values (20,'Coral')#
 INSERT INTO dominios.tipo_recife (code,code_name) values (2,'Rochoso')#
@@ -5481,44 +5516,13 @@ INSERT INTO dominios.tipo_ilha (code,code_name) values (2,'Marítima')#
 INSERT INTO dominios.booleano_estendido (code,code_name) values (1,'Sim')#
 INSERT INTO dominios.booleano_estendido (code,code_name) values (0,'Não')#
 INSERT INTO dominios.booleano_estendido (code,code_name) values (95,'Desconhecido')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (51,'Comércio por atacado e representantes comerciais e agentes do comércio')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (36,'Fabricação de móveis e indústrias diversas')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (34,'Fabricação e montagem de veículos automotores')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (24,'Fabricação de produtos químicos')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (25,'Fabricação de artigos de borracha e material plástico')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (27,'Metalurgia básica')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (20,'Fabricação de produtos de madeira e celulose')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (21,'Fabricação de celulose')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (22,'Edição')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (23,'Fabricação de coque')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (45,'Construção')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (28,'Fabricação de produtos de metal')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (29,'Fabricação de máquinas e equipamentos')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (1,'Agricultura')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (2,'Silvicultura')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (5,'Pesca')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (99,'Outros')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (74,'Serviços prestados principalmente a empresas (organizações)')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (92,'Atividades recreativas')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (95,'Desconhecido')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (11,'Extração de petróleo e serviços relacionados')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (10,'Extração de carvão mineral')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (13,'Extração de minerais metálicos')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (15,'Fabricação alimentícia e bebidas')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (14,'Fabricação de produtos de minerais não metálicos')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (17,'Fabricação de produtos têxteis')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (16,'Fabricação de produtos do fumo')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (19,'Preparação de couros e fabricação de artefatos de couro')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (18,'Confecção de artigos do vestuário e acessórios')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (31,'Fabricação de máquinas')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (30,'Fabricação de máquinas de escritório e equipamentos de informática')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (37,'Reciclagem')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (50,'Comércio e reparação de veiculos automotores e motocicletas e comércio a varejo de combustíveis')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (35,'Fabricação de outros equipamentos de transporte')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (52,'Comércio varejista e reparação de objetos pessoais e domésticos')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (33,'Fabricação de equipamentos de instrumentação médico-hospitalares')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (55,'Alojamento e alimentação')#
-INSERT INTO dominios.divisao_ativ_econ (code,code_name) values (32,'Fabricação de material eletrônico')#
+INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (1,'Área de proteção ambiental – APA')#
+INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (3,'Floresta – FLO')#
+INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (2,'Área de relevante interesse ecológico – ARIE')#
+INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (5,'Reserva extrativista')#
+INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (4,'Reserva de desenvolvimento sustentável – RDS')#
+INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (7,'Reserva particular do patrimônio natural -  RPPN')#
+INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (6,'Reserva de fauna - REFAU')#
 INSERT INTO dominios.tipo_unid_protegida (code,code_name) values (1,'Unidade de conservação não SNUC')#
 INSERT INTO dominios.tipo_unid_protegida (code,code_name) values (3,'Unidade de uso sustentável')#
 INSERT INTO dominios.tipo_unid_protegida (code,code_name) values (2,'Unidade de proteção integral')#
@@ -5544,29 +5548,26 @@ INSERT INTO dominios.tipo_erosao (code,code_name) values (4,'Ravina')#
 INSERT INTO dominios.tipo_erosao (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.tipo_elevador (code,code_name) values (3,'Vertical')#
 INSERT INTO dominios.tipo_elevador (code,code_name) values (2,'Inclinado')#
-INSERT INTO dominios.tipo_lim_pol (code,code_name) values (1,'Internacional')#
-INSERT INTO dominios.tipo_lim_pol (code,code_name) values (3,'Municipal')#
-INSERT INTO dominios.tipo_lim_pol (code,code_name) values (2,'Estadual')#
+INSERT INTO dominios.tipo_trecho_rod (code,code_name) values (2,'Rodovia')#
+INSERT INTO dominios.tipo_trecho_rod (code,code_name) values (5,'Ligação entre pistas')#
+INSERT INTO dominios.tipo_trecho_rod (code,code_name) values (4,'Auto-estrada')#
+INSERT INTO dominios.tipo_trecho_rod (code,code_name) values (6,'Trecho de Entroncamento')#
 INSERT INTO dominios.tipo_pista (code,code_name) values (11,'Heliponto')#
 INSERT INTO dominios.tipo_pista (code,code_name) values (9,'Pista de Pouso')#
 INSERT INTO dominios.tipo_pista (code,code_name) values (10,'Pista de taxiamento')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (11,'Mirante')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (10,'Estátua')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (13,'Panteão')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (12,'Monumento')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (15,'Chaminé')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (14,'Chafariz')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (17,'Obelisco')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (16,'Escultura')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (18,'Torre')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (99,'Outros')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (9,'Cruzeiro')#
-INSERT INTO dominios.tipo_edif_turist (code,code_name) values (95,'Desconhecido')#
-INSERT INTO dominios.tipo_travessia_ped (code,code_name) values (9,'Pinguela')#
-INSERT INTO dominios.tipo_travessia_ped (code,code_name) values (8,'Passarela')#
-INSERT INTO dominios.tipo_travessia_ped (code,code_name) values (95,'Desconhecido')#
-INSERT INTO dominios.tipo_travessia_ped (code,code_name) values (7,'Passagem subterrânea')#
-INSERT INTO dominios.tipo_travessia_ped (code,code_name) values (10,'Passarela em Área Úmida')#
+INSERT INTO dominios.estado_fisico (code,code_name) values (1,'Líquido')#
+INSERT INTO dominios.estado_fisico (code,code_name) values (98,'Misto')#
+INSERT INTO dominios.estado_fisico (code,code_name) values (3,'Gasoso')#
+INSERT INTO dominios.estado_fisico (code,code_name) values (2,'Sólido')#
+INSERT INTO dominios.estado_fisico (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.tipo_atracad (code,code_name) values (39,'Cais flutuante')#
+INSERT INTO dominios.tipo_atracad (code,code_name) values (38,'Cais')#
+INSERT INTO dominios.tipo_atracad (code,code_name) values (44,'Desembarcadouro')#
+INSERT INTO dominios.tipo_atracad (code,code_name) values (42,'Píer')#
+INSERT INTO dominios.tipo_atracad (code,code_name) values (43,'Dolfim')#
+INSERT INTO dominios.tipo_atracad (code,code_name) values (40,'Trapiche')#
+INSERT INTO dominios.tipo_atracad (code,code_name) values (41,'Molhe de atracação')#
+INSERT INTO dominios.tipo_atracad (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.forma_extracao (code,code_name) values (5,'A céu aberto')#
 INSERT INTO dominios.forma_extracao (code,code_name) values (95,'Desconhecida')#
 INSERT INTO dominios.forma_extracao (code,code_name) values (6,'Subterrânea')#
@@ -5594,29 +5595,15 @@ INSERT INTO dominios.mat_transp (code,code_name) values (8,'Efluentes')#
 INSERT INTO dominios.mat_transp (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.situacao_costa (code,code_name) values (11,'Afastada')#
 INSERT INTO dominios.situacao_costa (code,code_name) values (10,'Contígua')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (20,'Unidade de acolhimento para mulheres vitmas de violência')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (21,'Unidade de acolhimento para pessoas em situação de rua')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (1,'Banco de Alimentos')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (3,'Bolsa Verde')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (2,'Barragem Calçadão')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (5,'Centro POP')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (4,'Centro de Convivência')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (7,'Cisterna Subterrânea')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (6,'Centro-dia')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (9,'Cisterna de Placa')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (8,'Cisterna de Polietileno')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (99,'Outros')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (95,'Desconhecido')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (11,'CRAS')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (10,'Cozinha Comunitária')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (13,'PAA')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (12,'CREAS')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (15,'PRONATEC')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (14,'PRONAF')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (17,'Unidade de acolhimento para crianças e adolescentes')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (16,'Restaurante Popular')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (19,'Unidade de acolhimento para idosos')#
-INSERT INTO dominios.tipo_equip_desenv_social (code,code_name) values (18,'Unidade de acolhimento para crianças e adolescentes (casa de passagem)')#
+INSERT INTO dominios.finalidade_patio (code,code_name) values (99,'Outros')#
+INSERT INTO dominios.finalidade_patio (code,code_name) values (3,'Estacionamento de veículos ')#
+INSERT INTO dominios.finalidade_patio (code,code_name) values (2,'Deposito temporário de cargas e contêineres')#
+INSERT INTO dominios.finalidade_patio (code,code_name) values (5,'Estacionamento de aeronaves')#
+INSERT INTO dominios.finalidade_patio (code,code_name) values (4,'Estacionamento de locomotivas')#
+INSERT INTO dominios.finalidade_patio (code,code_name) values (7,'Manobra de veículos em geral')#
+INSERT INTO dominios.finalidade_patio (code,code_name) values (6,'Manobra de cargas')#
+INSERT INTO dominios.finalidade_patio (code,code_name) values (8,'Manutenção')#
+INSERT INTO dominios.finalidade_patio (code,code_name) values (95,'Desconhecida')#
 INSERT INTO dominios.tipo_edif_abast (code,code_name) values (99,'Outros')#
 INSERT INTO dominios.tipo_edif_abast (code,code_name) values (1,'Captação, tratamento e distribuição de água')#
 INSERT INTO dominios.tipo_edif_abast (code,code_name) values (98,'Misto')#
@@ -5682,11 +5669,11 @@ INSERT INTO dominios.tipo_edif_port (code,code_name) values (35,'Rampa transport
 INSERT INTO dominios.tipo_edif_port (code,code_name) values (34,'Dique de estaleiro')#
 INSERT INTO dominios.tipo_edif_port (code,code_name) values (99,'Outros')#
 INSERT INTO dominios.tipo_edif_port (code,code_name) values (95,'Desconhecido')#
-INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (1,'Duto')#
-INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (95,'Desconhecido')#
-INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (3,'Correia transportadora')#
-INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (2,'Calha')#
-INSERT INTO dominios.tipo_trecho_duto (code,code_name) values (5,'Galeria ou bueiro')#
+INSERT INTO dominios.tipo_ponte (code,code_name) values (1,'Móvel')#
+INSERT INTO dominios.tipo_ponte (code,code_name) values (3,'Fixa')#
+INSERT INTO dominios.tipo_ponte (code,code_name) values (2,'Pênsil')#
+INSERT INTO dominios.tipo_ponte (code,code_name) values (95,'Desconhecido')#
+INSERT INTO dominios.tipo_ponte (code,code_name) values (7,'Estaiada')#
 INSERT INTO dominios.tipo_quebra_molhe (code,code_name) values (1,'Quebramar')#
 INSERT INTO dominios.tipo_quebra_molhe (code,code_name) values (2,'Molhe')#
 INSERT INTO dominios.tipo_quebra_molhe (code,code_name) values (95,'Desconhecido')#
@@ -5788,13 +5775,25 @@ INSERT INTO dominios.destinado_a (code,code_name) values (5,'Madeira')#
 INSERT INTO dominios.destinado_a (code,code_name) values (40,'Palmito')#
 INSERT INTO dominios.destinado_a (code,code_name) values (34,'Turfa')#
 INSERT INTO dominios.destinado_a (code,code_name) values (95,'Desconhecido')#
-INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (1,'Área de proteção ambiental – APA')#
-INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (3,'Floresta – FLO')#
-INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (2,'Área de relevante interesse ecológico – ARIE')#
-INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (5,'Reserva extrativista')#
-INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (4,'Reserva de desenvolvimento sustentável – RDS')#
-INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (7,'Reserva particular do patrimônio natural -  RPPN')#
-INSERT INTO dominios.tipo_unid_uso_sust (code,code_name) values (6,'Reserva de fauna - REFAU')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (11,'Delegacia de policia civil')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (10,'Autarquia')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (13,'Fórum')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (12,'Educação')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (15,'Procuradoria')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (14,'Fundação')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (22,'Prefeitura')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (16,'Secretaria')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (99,'Outros')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (3,'Cartorial')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (2,'Prisional')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (5,'Eleitoral')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (4,'Gestão')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (7,'Seguridade social')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (6,'Produção e/ou pesquisa')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (9,'Assembleia legislativa')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (8,'Câmara municipal')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (1,'Policial')#
+INSERT INTO dominios.tipo_org_civil (code,code_name) values (95,'Desconhecido')#
 INSERT INTO dominios.tipo_vegetacao (code,code_name) values (11,'Caatinga')#
 INSERT INTO dominios.tipo_vegetacao (code,code_name) values (10,'Vegetação de brejo ou pântano')#
 INSERT INTO dominios.tipo_vegetacao (code,code_name) values (3,'Floresta')#
@@ -8784,7 +8783,7 @@ ALTER TABLE ge.cb_trecho_arruamento ADD CONSTRAINT cb_trecho_arruamento_tipoarru
 ALTER TABLE ge.emu_acesso ADD CONSTRAINT emu_acesso_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.emu_acesso ADD CONSTRAINT emu_acesso_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_acesso ADD CONSTRAINT emu_acesso_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE ge.emu_acesso ADD CONSTRAINT emu_acesso_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.emu_acesso ADD CONSTRAINT emu_acesso_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.emu_acesso ADD CONSTRAINT emu_acesso_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_edif_metro_ferroviaria_p ADD CONSTRAINT edf_edif_metro_ferroviaria_p_classeativecon_check CHECK (classeativecon <@ ARRAY[95::SMALLINT])#
 ALTER TABLE ge.edf_edif_metro_ferroviaria_p ADD CONSTRAINT edf_edif_metro_ferroviaria_p_grupoativecon_check CHECK (grupoativecon <@ ARRAY[95::SMALLINT])#
@@ -8874,7 +8873,7 @@ ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_cultura_chec
 ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_proprioadm_check CHECK (proprioadm = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_isolada_check CHECK (isolada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.edf_hab_indigena_p ADD CONSTRAINT edf_hab_indigena_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
-ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_canteirodivisorio_check CHECK (canteirodivisorio = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE ge.cb_trecho_rodoviario_a ADD CONSTRAINT cb_trecho_rodoviario_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
@@ -9224,9 +9223,13 @@ ALTER TABLE public.aux_descontinuidade_geometrica ADD CONSTRAINT aux_descontinui
 ALTER TABLE public.aux_descontinuidade_geometrica_l ADD CONSTRAINT aux_descontinuidade_geometrica_l_categoria_check CHECK (categoria = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
 ALTER TABLE public.aux_descontinuidade_geometrica_l ADD CONSTRAINT aux_descontinuidade_geometrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE public.aux_descontinuidade_geometrica_l ADD CONSTRAINT aux_descontinuidade_geometrica_l_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
-ALTER TABLE public.aux_descontinuidade_geometrica_p ADD CONSTRAINT aux_descontinuidade_geometrica_p_categoria_check CHECK (categoria = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
+ALTER TABLE public.aux_descontinuidade_geometrica_p ADD CONSTRAINT aux_descontinuidade_geometrica_p_categoria_check CHECK (categoria = ANY(ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
 ALTER TABLE public.aux_descontinuidade_geometrica_p ADD CONSTRAINT aux_descontinuidade_geometrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE public.aux_descontinuidade_geometrica_p ADD CONSTRAINT aux_descontinuidade_geometrica_p_motivodescontinuidade_check CHECK (motivodescontinuidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
+ALTER TABLE pe.hid_recife ADD CONSTRAINT hid_recife_tiporecife_check CHECK (tiporecife = ANY(ARRAY[1::SMALLINT,2::SMALLINT,20::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_recife ADD CONSTRAINT hid_recife_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.hid_recife ADD CONSTRAINT hid_recife_situacaocosta_check CHECK (situacaocosta = ANY(ARRAY[10::SMALLINT,11::SMALLINT]))#
+ALTER TABLE pe.hid_recife ADD CONSTRAINT hid_recife_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hdv_eclusa_p ADD CONSTRAINT hdv_eclusa_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_eclusa_p ADD CONSTRAINT hdv_eclusa_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.hdv_eclusa_p ADD CONSTRAINT hdv_eclusa_p_matconstr_check CHECK (matconstr <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
@@ -9259,7 +9262,9 @@ ALTER TABLE pe.hdv_eclusa_l ADD CONSTRAINT hdv_eclusa_l_geometriaaproximada_chec
 ALTER TABLE pe.hdv_eclusa_l ADD CONSTRAINT hdv_eclusa_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.hdv_eclusa_l ADD CONSTRAINT hdv_eclusa_l_matconstr_check CHECK (matconstr <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.hdv_eclusa_l ADD CONSTRAINT hdv_eclusa_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.lpal_municipio_a ADD CONSTRAINT lpal_municipio_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.fer_cremalheira_p ADD CONSTRAINT fer_cremalheira_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.fer_cremalheira_p ADD CONSTRAINT fer_cremalheira_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.fer_cremalheira_p ADD CONSTRAINT fer_cremalheira_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hdv_eclusa_a ADD CONSTRAINT hdv_eclusa_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_eclusa_a ADD CONSTRAINT hdv_eclusa_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.hdv_eclusa_a ADD CONSTRAINT hdv_eclusa_a_matconstr_check CHECK (matconstr <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
@@ -9285,8 +9290,15 @@ ALTER TABLE pe.hid_barragem_p ADD CONSTRAINT hid_barragem_p_usoprincipal_check C
 ALTER TABLE pe.hid_barragem_p ADD CONSTRAINT hid_barragem_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.hid_barragem_p ADD CONSTRAINT hid_barragem_p_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.hid_barragem_p ADD CONSTRAINT hid_barragem_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.lpal_posic_geo_localidade_p ADD CONSTRAINT lpal_posic_geo_localidade_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.lpal_posic_geo_localidade_p ADD CONSTRAINT lpal_posic_geo_localidade_p_tipolocalidade_check CHECK (tipolocalidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_modaluso_check CHECK (modaluso <@ ARRAY[4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
+ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_tipopavimentacao_check CHECK (tipopavimentacao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_necessitamanutencao_check CHECK (necessitamanutencao = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_tipotunel_check CHECK (tipotunel = ANY(ARRAY[1::SMALLINT,2::SMALLINT]))#
+ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_posicaopista_check CHECK (posicaopista = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.rod_trecho_rodoviario_l ADD CONSTRAINT rod_trecho_rodoviario_l_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.rod_trecho_rodoviario_l ADD CONSTRAINT rod_trecho_rodoviario_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rod_trecho_rodoviario_l ADD CONSTRAINT rod_trecho_rodoviario_l_canteirodivisorio_check CHECK (canteirodivisorio = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -9307,7 +9319,6 @@ ALTER TABLE pe.veg_veg_natural_a ADD CONSTRAINT veg_veg_natural_a_classificacaop
 ALTER TABLE pe.veg_veg_natural_a ADD CONSTRAINT veg_veg_natural_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.veg_veg_natural_a ADD CONSTRAINT veg_veg_natural_a_densidade_check CHECK (densidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.veg_veg_natural_a ADD CONSTRAINT veg_veg_natural_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[10::SMALLINT,11::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_terreno_suj_inundacao_a ADD CONSTRAINT hid_terreno_suj_inundacao_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.lpal_linha_de_limite_l ADD CONSTRAINT lpal_linha_de_limite_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.lpal_linha_de_limite_l ADD CONSTRAINT lpal_linha_de_limite_l_referenciallegal_check CHECK (referenciallegal = ANY(ARRAY[10::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,96::SMALLINT]))#
 ALTER TABLE pe.hid_ponto_inicio_drenagem_p ADD CONSTRAINT hid_ponto_inicio_drenagem_p_nascente_check CHECK (nascente = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -9348,21 +9359,14 @@ ALTER TABLE pe.rel_terreno_exposto_a ADD CONSTRAINT rel_terreno_exposto_a_tipote
 ALTER TABLE pe.rel_terreno_erodido_a ADD CONSTRAINT rel_terreno_erodido_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_terreno_erodido_a ADD CONSTRAINT rel_terreno_erodido_a_tipoerosao_check CHECK (tipoerosao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.rel_terreno_erodido_a ADD CONSTRAINT rel_terreno_erodido_a_situacaoterreno_check CHECK (situacaoterreno = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_destinacaocemiterio_check CHECK (destinacaocemiterio = ANY(ARRAY[2::SMALLINT,3::SMALLINT]))#
-ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_tipocemiterio_check CHECK (tipocemiterio = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_denominacaoassociada_check CHECK (denominacaoassociada = ANY(ARRAY[5::SMALLINT,6::SMALLINT,7::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.hid_sumidouro_vertedouro_p ADD CONSTRAINT hid_sumidouro_vertedouro_p_causa_check CHECK (causa = ANY(ARRAY[2::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_sumidouro_vertedouro_p ADD CONSTRAINT hid_sumidouro_vertedouro_p_tiposumvert_check CHECK (tiposumvert = ANY(ARRAY[1::SMALLINT,2::SMALLINT]))#
 ALTER TABLE pe.hid_sumidouro_vertedouro_p ADD CONSTRAINT hid_sumidouro_vertedouro_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.tra_trilha_picada_l ADD CONSTRAINT tra_trilha_picada_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_rocha_p ADD CONSTRAINT rel_rocha_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_rocha_p ADD CONSTRAINT rel_rocha_p_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[23::SMALLINT]))#
-ALTER TABLE pe.rel_rocha_p ADD CONSTRAINT rel_rocha_p_formarocha_check CHECK (formarocha = ANY(ARRAY[21::SMALLINT,22::SMALLINT,23::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_pedestre ADD CONSTRAINT tra_travessia_pedestre_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_pedestre ADD CONSTRAINT tra_travessia_pedestre_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_pedestre ADD CONSTRAINT tra_travessia_pedestre_tipotravessiaped_check CHECK (tipotravessiaped = ANY(ARRAY[10::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_travessia_pedestre ADD CONSTRAINT tra_travessia_pedestre_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.tra_travessia_pedestre ADD CONSTRAINT tra_travessia_pedestre_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_pedestre ADD CONSTRAINT tra_travessia_pedestre_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_pedestre ADD CONSTRAINT tra_travessia_pedestre_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.rel_ponto_cotado_altimetrico_p ADD CONSTRAINT rel_ponto_cotado_altimetrico_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
@@ -9416,6 +9420,8 @@ ALTER TABLE pe.hid_banco_areia_a ADD CONSTRAINT hid_banco_areia_a_geometriaaprox
 ALTER TABLE pe.hid_banco_areia_a ADD CONSTRAINT hid_banco_areia_a_materialpredominante_check CHECK (materialpredominante = ANY(ARRAY[12::SMALLINT,13::SMALLINT,14::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,4::SMALLINT,50::SMALLINT,95::SMALLINT,97::SMALLINT,98::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.hid_banco_areia_a ADD CONSTRAINT hid_banco_areia_a_tipobanco_check CHECK (tipobanco = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT]))#
 ALTER TABLE pe.hid_banco_areia_a ADD CONSTRAINT hid_banco_areia_a_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_queda_dagua_l ADD CONSTRAINT hid_queda_dagua_l_tipoqueda_check CHECK (tipoqueda = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_queda_dagua_l ADD CONSTRAINT hid_queda_dagua_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.enc_est_gerad_energia_eletrica ADD CONSTRAINT enc_est_gerad_energia_eletrica_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.enc_est_gerad_energia_eletrica ADD CONSTRAINT enc_est_gerad_energia_eletrica_tipoestgerad_check CHECK (tipoestgerad = ANY(ARRAY[5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.enc_est_gerad_energia_eletrica ADD CONSTRAINT enc_est_gerad_energia_eletrica_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
@@ -9471,9 +9477,13 @@ ALTER TABLE pe.dut_galeria_l ADD CONSTRAINT dut_galeria_l_geometriaaproximada_ch
 ALTER TABLE pe.dut_galeria_l ADD CONSTRAINT dut_galeria_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.dut_galeria_l ADD CONSTRAINT dut_galeria_l_setor_check CHECK (setor = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.dut_galeria_l ADD CONSTRAINT dut_galeria_l_tipotrechoduto_check CHECK (tipotrechoduto = ANY(ARRAY[5::SMALLINT]))#
-ALTER TABLE pe.tra_funicular_l ADD CONSTRAINT tra_funicular_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.tra_funicular_l ADD CONSTRAINT tra_funicular_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.tra_funicular_l ADD CONSTRAINT tra_funicular_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_tipotrechomassadagua_check CHECK (tipotrechomassadagua = ANY(ARRAY[1::SMALLINT,10::SMALLINT,9::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_dominialidade_check CHECK (dominialidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_salgada_check CHECK (salgada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_artificial_check CHECK (artificial = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_tipomassadagua_check CHECK (tipomassadagua = ANY(ARRAY[8::SMALLINT]))#
+ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_regime_check CHECK (regime = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.sb_dep_saneamento_a ADD CONSTRAINT sb_dep_saneamento_a_tipoexposicao_check CHECK (tipoexposicao = ANY(ARRAY[3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.sb_dep_saneamento_a ADD CONSTRAINT sb_dep_saneamento_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.sb_dep_saneamento_a ADD CONSTRAINT sb_dep_saneamento_a_unidadevolume_check CHECK (unidadevolume = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
@@ -9496,12 +9506,13 @@ ALTER TABLE pe.hid_comporta_p ADD CONSTRAINT hid_comporta_p_geometriaaproximada_
 ALTER TABLE pe.hid_comporta_p ADD CONSTRAINT hid_comporta_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.hid_comporta_p ADD CONSTRAINT hid_comporta_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_corredeira_p ADD CONSTRAINT hid_corredeira_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_modaluso_check CHECK (modaluso <@ ARRAY[10::SMALLINT,14::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
-ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_finalidadepatio_check CHECK (finalidadepatio <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_tipocampo_check CHECK (tipocampo = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_antropizada_check CHECK (antropizada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_secundaria_check CHECK (secundaria = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_classificacaoporte_check CHECK (classificacaoporte = ANY(ARRAY[2::SMALLINT,3::SMALLINT,95::SMALLINT,98::SMALLINT]))#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_densidade_check CHECK (densidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[9::SMALLINT]))#
 ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_tipoexposicao_check CHECK (tipoexposicao = ANY(ARRAY[3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.sb_dep_saneamento ADD CONSTRAINT sb_dep_saneamento_unidadevolume_check CHECK (unidadevolume = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
@@ -9533,14 +9544,22 @@ ALTER TABLE pe.tra_ponte_p ADD CONSTRAINT tra_ponte_p_matconstr_check CHECK (mat
 ALTER TABLE pe.hdv_obstaculo_navegacao_a ADD CONSTRAINT hdv_obstaculo_navegacao_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_obstaculo_navegacao_a ADD CONSTRAINT hdv_obstaculo_navegacao_a_tipoobst_check CHECK (tipoobst = ANY(ARRAY[4::SMALLINT,5::SMALLINT]))#
 ALTER TABLE pe.hdv_obstaculo_navegacao_a ADD CONSTRAINT hdv_obstaculo_navegacao_a_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_tipoestgerad_check CHECK (tipoestgerad = ANY(ARRAY[8::SMALLINT]))#
-ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_tiporecife_check CHECK (tiporecife = ANY(ARRAY[1::SMALLINT,2::SMALLINT,20::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_situacaocosta_check CHECK (situacaocosta = ANY(ARRAY[10::SMALLINT,11::SMALLINT]))#
+ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_mattransp_check CHECK (mattransp <@ ARRAY[1::SMALLINT,2::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_posicaorelativa_check CHECK (posicaorelativa = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_setor_check CHECK (setor = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_tipotrechoduto_check CHECK (tipotrechoduto = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_corredeira_a ADD CONSTRAINT hid_corredeira_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_rocha_l ADD CONSTRAINT rel_rocha_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_rocha_l ADD CONSTRAINT rel_rocha_l_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[23::SMALLINT]))#
-ALTER TABLE pe.rel_rocha_l ADD CONSTRAINT rel_rocha_l_formarocha_check CHECK (formarocha = ANY(ARRAY[21::SMALLINT,22::SMALLINT,23::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_queda_dagua_p ADD CONSTRAINT hid_queda_dagua_p_tipoqueda_check CHECK (tipoqueda = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_queda_dagua_p ADD CONSTRAINT hid_queda_dagua_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_corte_a ADD CONSTRAINT rel_corte_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_corte_a ADD CONSTRAINT rel_corte_a_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.rel_corte_a ADD CONSTRAINT rel_corte_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[26::SMALLINT]))#
@@ -9581,15 +9600,8 @@ ALTER TABLE pe.hid_trecho_drenagem_l ADD CONSTRAINT hid_trecho_drenagem_l_tipotr
 ALTER TABLE pe.hid_trecho_drenagem_l ADD CONSTRAINT hid_trecho_drenagem_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_trecho_drenagem_l ADD CONSTRAINT hid_trecho_drenagem_l_navegavel_check CHECK (navegavel = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_trecho_drenagem_l ADD CONSTRAINT hid_trecho_drenagem_l_regime_check CHECK (regime = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_modaluso_check CHECK (modaluso <@ ARRAY[4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
-ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_tipopavimentacao_check CHECK (tipopavimentacao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_necessitamanutencao_check CHECK (necessitamanutencao = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_tipotunel_check CHECK (tipotunel = ANY(ARRAY[1::SMALLINT,2::SMALLINT]))#
-ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_posicaopista_check CHECK (posicaopista = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.tra_tunel ADD CONSTRAINT tra_tunel_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.lpal_posic_geo_localidade_p ADD CONSTRAINT lpal_posic_geo_localidade_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.lpal_posic_geo_localidade_p ADD CONSTRAINT lpal_posic_geo_localidade_p_tipolocalidade_check CHECK (tipolocalidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rod_ponto_rodoviario_p ADD CONSTRAINT rod_ponto_rodoviario_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rod_ponto_rodoviario_p ADD CONSTRAINT rod_ponto_rodoviario_p_relacionado_check CHECK (relacionado = ANY(ARRAY[15::SMALLINT,18::SMALLINT,20::SMALLINT,24::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,38::SMALLINT,40::SMALLINT,42::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hdv_atracadouro_terminal_a ADD CONSTRAINT hdv_atracadouro_terminal_a_aptidaooperacional_check CHECK (aptidaooperacional <@ ARRAY[2::SMALLINT,3::SMALLINT])#
@@ -9599,22 +9611,25 @@ ALTER TABLE pe.hdv_atracadouro_terminal_a ADD CONSTRAINT hdv_atracadouro_termina
 ALTER TABLE pe.hdv_atracadouro_terminal_a ADD CONSTRAINT hdv_atracadouro_terminal_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.hdv_atracadouro_terminal_a ADD CONSTRAINT hdv_atracadouro_terminal_a_tipoatracad_check CHECK (tipoatracad = ANY(ARRAY[38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,44::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hdv_atracadouro_terminal_a ADD CONSTRAINT hdv_atracadouro_terminal_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_tipoexposicao_check CHECK (tipoexposicao = ANY(ARRAY[3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_unidadevolume_check CHECK (unidadevolume = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_tipodepgeral_check CHECK (tipodepgeral <@ ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,19::SMALLINT,2::SMALLINT,26::SMALLINT,3::SMALLINT,32::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_tipoconteudo_check CHECK (tipoconteudo <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT])#
-ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_tipoprodutoresiduo_check CHECK (tipoprodutoresiduo <@ ARRAY[100::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,45::SMALLINT,46::SMALLINT,47::SMALLINT,48::SMALLINT,49::SMALLINT,5::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,53::SMALLINT,54::SMALLINT,55::SMALLINT,56::SMALLINT,57::SMALLINT,58::SMALLINT,59::SMALLINT,6::SMALLINT,60::SMALLINT,61::SMALLINT,62::SMALLINT,63::SMALLINT,64::SMALLINT,65::SMALLINT,66::SMALLINT,67::SMALLINT,68::SMALLINT,69::SMALLINT,70::SMALLINT,71::SMALLINT,72::SMALLINT,73::SMALLINT,74::SMALLINT,75::SMALLINT,76::SMALLINT,77::SMALLINT,78::SMALLINT,79::SMALLINT,80::SMALLINT,81::SMALLINT,82::SMALLINT,83::SMALLINT,84::SMALLINT,85::SMALLINT,86::SMALLINT,87::SMALLINT,88::SMALLINT,89::SMALLINT,90::SMALLINT,91::SMALLINT,92::SMALLINT,93::SMALLINT,94::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.rel_alter_fisiog_antropica ADD CONSTRAINT rel_alter_fisiog_antropica_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.rel_alter_fisiog_antropica ADD CONSTRAINT rel_alter_fisiog_antropica_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_tipotravessiaped_check CHECK (tipotravessiaped = ANY(ARRAY[10::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_matconstr_check CHECK (matconstr = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_pedestre_p ADD CONSTRAINT tra_travessia_pedestre_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.lpal_distrito_a ADD CONSTRAINT lpal_distrito_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_atividade_check CHECK (atividade = ANY(ARRAY[10::SMALLINT,9::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoextmin_check CHECK (tipoextmin = ANY(ARRAY[1::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_secaoativecon_check CHECK (secaoativecon = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipopocomina_check CHECK (tipopocomina = ANY(ARRAY[2::SMALLINT,3::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_procextracao_check CHECK (procextracao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoproduto_check CHECK (tipoproduto <@ ARRAY[100::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,45::SMALLINT,46::SMALLINT,47::SMALLINT,48::SMALLINT,49::SMALLINT,5::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,53::SMALLINT,54::SMALLINT,55::SMALLINT,56::SMALLINT,57::SMALLINT,58::SMALLINT,59::SMALLINT,6::SMALLINT,60::SMALLINT,61::SMALLINT,62::SMALLINT,63::SMALLINT,64::SMALLINT,65::SMALLINT,66::SMALLINT,67::SMALLINT,68::SMALLINT,69::SMALLINT,70::SMALLINT,71::SMALLINT,72::SMALLINT,73::SMALLINT,74::SMALLINT,75::SMALLINT,76::SMALLINT,77::SMALLINT,78::SMALLINT,79::SMALLINT,80::SMALLINT,81::SMALLINT,82::SMALLINT,83::SMALLINT,84::SMALLINT,85::SMALLINT,86::SMALLINT,87::SMALLINT,88::SMALLINT,89::SMALLINT,90::SMALLINT,91::SMALLINT,92::SMALLINT,93::SMALLINT,94::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[32::SMALLINT]))#
+ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_formaextracao_check CHECK (formaextracao = ANY(ARRAY[5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.lpal_terra_indigena_a ADD CONSTRAINT lpal_terra_indigena_a_situacaojuridica_check CHECK (situacaojuridica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT]))#
 ALTER TABLE pe.lpal_terra_indigena_a ADD CONSTRAINT lpal_terra_indigena_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.lpal_terra_indigena_a ADD CONSTRAINT lpal_terra_indigena_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
@@ -9670,20 +9685,16 @@ ALTER TABLE pe.aer_pista_ponto_pouso_l ADD CONSTRAINT aer_pista_ponto_pouso_l_ho
 ALTER TABLE pe.aer_pista_ponto_pouso_l ADD CONSTRAINT aer_pista_ponto_pouso_l_tipopista_check CHECK (tipopista = ANY(ARRAY[10::SMALLINT,11::SMALLINT,9::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_l ADD CONSTRAINT aer_pista_ponto_pouso_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_l ADD CONSTRAINT aer_pista_ponto_pouso_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_atividade_check CHECK (atividade = ANY(ARRAY[10::SMALLINT,9::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoextmin_check CHECK (tipoextmin = ANY(ARRAY[1::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_secaoativecon_check CHECK (secaoativecon = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipopocomina_check CHECK (tipopocomina = ANY(ARRAY[2::SMALLINT,3::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_procextracao_check CHECK (procextracao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoproduto_check CHECK (tipoproduto <@ ARRAY[100::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,45::SMALLINT,46::SMALLINT,47::SMALLINT,48::SMALLINT,49::SMALLINT,5::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,53::SMALLINT,54::SMALLINT,55::SMALLINT,56::SMALLINT,57::SMALLINT,58::SMALLINT,59::SMALLINT,6::SMALLINT,60::SMALLINT,61::SMALLINT,62::SMALLINT,63::SMALLINT,64::SMALLINT,65::SMALLINT,66::SMALLINT,67::SMALLINT,68::SMALLINT,69::SMALLINT,70::SMALLINT,71::SMALLINT,72::SMALLINT,73::SMALLINT,74::SMALLINT,75::SMALLINT,76::SMALLINT,77::SMALLINT,78::SMALLINT,79::SMALLINT,80::SMALLINT,81::SMALLINT,82::SMALLINT,83::SMALLINT,84::SMALLINT,85::SMALLINT,86::SMALLINT,87::SMALLINT,88::SMALLINT,89::SMALLINT,90::SMALLINT,91::SMALLINT,92::SMALLINT,93::SMALLINT,94::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[32::SMALLINT]))#
-ALTER TABLE pe.eco_ext_mineral_a ADD CONSTRAINT eco_ext_mineral_a_formaextracao_check CHECK (formaextracao = ANY(ARRAY[5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.lpal_distrito_a ADD CONSTRAINT lpal_distrito_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.tra_ponto_rodoviario_ferrov ADD CONSTRAINT tra_ponto_rodoviario_ferrov_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.tra_ponto_rodoviario_ferrov ADD CONSTRAINT tra_ponto_rodoviario_ferrov_relacionado_check CHECK (relacionado = ANY(ARRAY[15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,20::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,6::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.lpal_area_construida_a ADD CONSTRAINT lpal_area_construida_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.tra_ponto_rodoviario_ferrov ADD CONSTRAINT tra_ponto_rodoviario_ferrov_relacionado_check CHECK (relacionado = ANY(ARRAY[15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,20::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,6::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_canal_a ADD CONSTRAINT hid_canal_a_usoprincipal_check CHECK (usoprincipal = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.hid_canal_a ADD CONSTRAINT hid_canal_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_canal_a ADD CONSTRAINT hid_canal_a_finalidade_check CHECK (finalidade = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_canal_a ADD CONSTRAINT hid_canal_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.hid_canal_a ADD CONSTRAINT hid_canal_a_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT])#
+ALTER TABLE pe.hid_canal_a ADD CONSTRAINT hid_canal_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.hid_canal_a ADD CONSTRAINT hid_canal_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[30::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_usopista_check CHECK (usopista = ANY(ARRAY[11::SMALLINT,12::SMALLINT,13::SMALLINT,6::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_revestimento_check CHECK (revestimento = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -9691,21 +9702,21 @@ ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_ho
 ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_tipopista_check CHECK (tipopista = ANY(ARRAY[10::SMALLINT,11::SMALLINT,9::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso_p ADD CONSTRAINT aer_pista_ponto_pouso_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_destinacaocemiterio_check CHECK (destinacaocemiterio = ANY(ARRAY[2::SMALLINT,3::SMALLINT]))#
-ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_tipocemiterio_check CHECK (tipocemiterio = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_denominacaoassociada_check CHECK (denominacaoassociada = ANY(ARRAY[5::SMALLINT,6::SMALLINT,7::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.rel_rocha_a ADD CONSTRAINT rel_rocha_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.rel_rocha_a ADD CONSTRAINT rel_rocha_a_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[23::SMALLINT]))#
+ALTER TABLE pe.rel_rocha_a ADD CONSTRAINT rel_rocha_a_formarocha_check CHECK (formarocha = ANY(ARRAY[21::SMALLINT,22::SMALLINT,23::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_p ADD CONSTRAINT tra_travessia_p_tipoembarcacao_check CHECK (tipoembarcacao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_p ADD CONSTRAINT tra_travessia_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_p ADD CONSTRAINT tra_travessia_p_tipouso_check CHECK (tipouso = ANY(ARRAY[21::SMALLINT,22::SMALLINT,95::SMALLINT,98::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_p ADD CONSTRAINT tra_travessia_p_tipotravessia_check CHECK (tipotravessia = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.eco_plataforma ADD CONSTRAINT eco_plataforma_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.eco_plataforma ADD CONSTRAINT eco_plataforma_tipoplataforma_check CHECK (tipoplataforma = ANY(ARRAY[3::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT]))#
+ALTER TABLE pe.rel_aterro_a ADD CONSTRAINT rel_aterro_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.rel_aterro_a ADD CONSTRAINT rel_aterro_a_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.rel_aterro_a ADD CONSTRAINT rel_aterro_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[27::SMALLINT]))#
 ALTER TABLE pe.hid_area_umida_a ADD CONSTRAINT hid_area_umida_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_area_umida_a ADD CONSTRAINT hid_area_umida_a_tipoareaumida_check CHECK (tipoareaumida = ANY(ARRAY[3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.rel_duna_p ADD CONSTRAINT rel_duna_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_duna_p ADD CONSTRAINT rel_duna_p_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[17::SMALLINT]))#
-ALTER TABLE pe.rel_duna_p ADD CONSTRAINT rel_duna_p_fixa_check CHECK (fixa = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.tra_funicular_p ADD CONSTRAINT tra_funicular_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.tra_funicular_p ADD CONSTRAINT tra_funicular_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.tra_funicular_p ADD CONSTRAINT tra_funicular_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hdv_eclusa ADD CONSTRAINT hdv_eclusa_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_eclusa ADD CONSTRAINT hdv_eclusa_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.hdv_eclusa ADD CONSTRAINT hdv_eclusa_matconstr_check CHECK (matconstr <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
@@ -9736,6 +9747,11 @@ ALTER TABLE pe.fer_cremalheira ADD CONSTRAINT fer_cremalheira_situacaofisica_che
 ALTER TABLE pe.fer_cremalheira ADD CONSTRAINT fer_cremalheira_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.eco_plataforma_p ADD CONSTRAINT eco_plataforma_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.eco_plataforma_p ADD CONSTRAINT eco_plataforma_p_tipoplataforma_check CHECK (tipoplataforma = ANY(ARRAY[3::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_tipounidprotegida_check CHECK (tipounidprotegida = ANY(ARRAY[2::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_tipounidprotinteg_check CHECK (tipounidprotinteg = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT]))#
 ALTER TABLE pe.fer_trecho_ferroviario_l ADD CONSTRAINT fer_trecho_ferroviario_l_tipotrechoferrov_check CHECK (tipotrechoferrov = ANY(ARRAY[5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.fer_trecho_ferroviario_l ADD CONSTRAINT fer_trecho_ferroviario_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.fer_trecho_ferroviario_l ADD CONSTRAINT fer_trecho_ferroviario_l_eletrificada_check CHECK (eletrificada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
@@ -9760,8 +9776,10 @@ ALTER TABLE pe.eco_equip_agropec ADD CONSTRAINT eco_equip_agropec_geometriaaprox
 ALTER TABLE pe.eco_equip_agropec ADD CONSTRAINT eco_equip_agropec_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.eco_equip_agropec ADD CONSTRAINT eco_equip_agropec_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.eco_equip_agropec ADD CONSTRAINT eco_equip_agropec_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.rel_alter_fisiog_antropica_p ADD CONSTRAINT rel_alter_fisiog_antropica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_alter_fisiog_antropica_p ADD CONSTRAINT rel_alter_fisiog_antropica_p_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_tipounidprotegida_check CHECK (tipounidprotegida = ANY(ARRAY[1::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.hid_foz_maritima ADD CONSTRAINT hid_foz_maritima_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.enc_hidreletrica_l ADD CONSTRAINT enc_hidreletrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.enc_hidreletrica_l ADD CONSTRAINT enc_hidreletrica_l_tipoestgerad_check CHECK (tipoestgerad = ANY(ARRAY[8::SMALLINT]))#
@@ -9802,30 +9820,31 @@ ALTER TABLE pe.sb_dep_abast_agua_a ADD CONSTRAINT sb_dep_abast_agua_a_tipodepger
 ALTER TABLE pe.sb_dep_abast_agua_a ADD CONSTRAINT sb_dep_abast_agua_a_localizacaoequipdesenvsocial_check CHECK (localizacaoequipdesenvsocial = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.sb_dep_abast_agua_a ADD CONSTRAINT sb_dep_abast_agua_a_finalidadedep_check CHECK (finalidadedep = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.sb_dep_abast_agua_a ADD CONSTRAINT sb_dep_abast_agua_a_tratamento_check CHECK (tratamento = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_tipocampo_check CHECK (tipocampo = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_antropizada_check CHECK (antropizada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_secundaria_check CHECK (secundaria = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_classificacaoporte_check CHECK (classificacaoporte = ANY(ARRAY[2::SMALLINT,3::SMALLINT,95::SMALLINT,98::SMALLINT]))#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_densidade_check CHECK (densidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.veg_campo_a ADD CONSTRAINT veg_campo_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[9::SMALLINT]))#
-ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_situacaoespacial_check CHECK (situacaoespacial = ANY(ARRAY[12::SMALLINT,13::SMALLINT,2::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_mattransp_check CHECK (mattransp <@ ARRAY[1::SMALLINT,2::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_posicaorelativa_check CHECK (posicaorelativa = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_setor_check CHECK (setor = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.dut_trecho_duto_l ADD CONSTRAINT dut_trecho_duto_l_tipotrechoduto_check CHECK (tipotrechoduto = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,5::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_modaluso_check CHECK (modaluso <@ ARRAY[10::SMALLINT,14::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
+ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_finalidadepatio_check CHECK (finalidadepatio <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.tra_patio_a ADD CONSTRAINT tra_patio_a_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
+ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_tipoestgerad_check CHECK (tipoestgerad = ANY(ARRAY[8::SMALLINT]))#
+ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.enc_hidreletrica_p ADD CONSTRAINT enc_hidreletrica_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_fonte_dagua_p ADD CONSTRAINT hid_fonte_dagua_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_fonte_dagua_p ADD CONSTRAINT hid_fonte_dagua_p_qualidagua_check CHECK (qualidagua = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_fonte_dagua_p ADD CONSTRAINT hid_fonte_dagua_p_tipofontedagua_check CHECK (tipofontedagua = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_fonte_dagua_p ADD CONSTRAINT hid_fonte_dagua_p_regime_check CHECK (regime = ANY(ARRAY[1::SMALLINT,3::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rel_dolina_p ADD CONSTRAINT rel_dolina_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_dolina_p ADD CONSTRAINT rel_dolina_p_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[16::SMALLINT]))#
-ALTER TABLE pe.rel_alter_fisiog_antropica ADD CONSTRAINT rel_alter_fisiog_antropica_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_alter_fisiog_antropica ADD CONSTRAINT rel_alter_fisiog_antropica_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_tipoexposicao_check CHECK (tipoexposicao = ANY(ARRAY[3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_unidadevolume_check CHECK (unidadevolume = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,8::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_tipodepgeral_check CHECK (tipodepgeral <@ ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,19::SMALLINT,2::SMALLINT,26::SMALLINT,3::SMALLINT,32::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_tipoconteudo_check CHECK (tipoconteudo <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT])#
+ALTER TABLE pe.eco_deposito_geral_p ADD CONSTRAINT eco_deposito_geral_p_tipoprodutoresiduo_check CHECK (tipoprodutoresiduo <@ ARRAY[100::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,45::SMALLINT,46::SMALLINT,47::SMALLINT,48::SMALLINT,49::SMALLINT,5::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,53::SMALLINT,54::SMALLINT,55::SMALLINT,56::SMALLINT,57::SMALLINT,58::SMALLINT,59::SMALLINT,6::SMALLINT,60::SMALLINT,61::SMALLINT,62::SMALLINT,63::SMALLINT,64::SMALLINT,65::SMALLINT,66::SMALLINT,67::SMALLINT,68::SMALLINT,69::SMALLINT,70::SMALLINT,71::SMALLINT,72::SMALLINT,73::SMALLINT,74::SMALLINT,75::SMALLINT,76::SMALLINT,77::SMALLINT,78::SMALLINT,79::SMALLINT,80::SMALLINT,81::SMALLINT,82::SMALLINT,83::SMALLINT,84::SMALLINT,85::SMALLINT,86::SMALLINT,87::SMALLINT,88::SMALLINT,89::SMALLINT,90::SMALLINT,91::SMALLINT,92::SMALLINT,93::SMALLINT,94::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.pto_marco_de_limite_p ADD CONSTRAINT pto_marco_de_limite_p_sistemageodesico_check CHECK (sistemageodesico = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT]))#
 ALTER TABLE pe.pto_marco_de_limite_p ADD CONSTRAINT pto_marco_de_limite_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.pto_marco_de_limite_p ADD CONSTRAINT pto_marco_de_limite_p_tipomarcolim_check CHECK (tipomarcolim = ANY(ARRAY[23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,3::SMALLINT,99::SMALLINT]))#
@@ -9837,36 +9856,34 @@ ALTER TABLE pe.veg_cerrado_a ADD CONSTRAINT veg_cerrado_a_geometriaaproximada_ch
 ALTER TABLE pe.veg_cerrado_a ADD CONSTRAINT veg_cerrado_a_densidade_check CHECK (densidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.veg_cerrado_a ADD CONSTRAINT veg_cerrado_a_vereda_check CHECK (vereda = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.veg_cerrado_a ADD CONSTRAINT veg_cerrado_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[7::SMALLINT]))#
-ALTER TABLE pe.tra_funicular_p ADD CONSTRAINT tra_funicular_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.tra_funicular_p ADD CONSTRAINT tra_funicular_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.tra_funicular_p ADD CONSTRAINT tra_funicular_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.rel_duna_p ADD CONSTRAINT rel_duna_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.rel_duna_p ADD CONSTRAINT rel_duna_p_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[17::SMALLINT]))#
+ALTER TABLE pe.rel_duna_p ADD CONSTRAINT rel_duna_p_fixa_check CHECK (fixa = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_fundeadouro_a ADD CONSTRAINT hdv_fundeadouro_a_tipofundeadouro_check CHECK (tipofundeadouro = ANY(ARRAY[1::SMALLINT,2::SMALLINT]))#
 ALTER TABLE pe.hdv_fundeadouro_a ADD CONSTRAINT hdv_fundeadouro_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_fundeadouro_a ADD CONSTRAINT hdv_fundeadouro_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.hid_ilha_p ADD CONSTRAINT hid_ilha_p_tipoilha_check CHECK (tipoilha = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,98::SMALLINT]))#
 ALTER TABLE pe.hid_ilha_p ADD CONSTRAINT hid_ilha_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_ilha_p ADD CONSTRAINT hid_ilha_p_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[21::SMALLINT]))#
-ALTER TABLE pe.rel_alter_fisiog_antropica_a ADD CONSTRAINT rel_alter_fisiog_antropica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_alter_fisiog_antropica_a ADD CONSTRAINT rel_alter_fisiog_antropica_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.hid_ilha_l ADD CONSTRAINT hid_ilha_l_tipoilha_check CHECK (tipoilha = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,98::SMALLINT]))#
 ALTER TABLE pe.hid_ilha_l ADD CONSTRAINT hid_ilha_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_ilha_l ADD CONSTRAINT hid_ilha_l_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[21::SMALLINT]))#
 ALTER TABLE pe.rel_duna_a ADD CONSTRAINT rel_duna_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_duna_a ADD CONSTRAINT rel_duna_a_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[17::SMALLINT]))#
 ALTER TABLE pe.rel_duna_a ADD CONSTRAINT rel_duna_a_fixa_check CHECK (fixa = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.enc_antena_comunic_p ADD CONSTRAINT enc_antena_comunic_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.enc_antena_comunic_p ADD CONSTRAINT enc_antena_comunic_p_posicaoreledific_check CHECK (posicaoreledific = ANY(ARRAY[14::SMALLINT,17::SMALLINT,18::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.rel_aterro_p ADD CONSTRAINT rel_aterro_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.rel_aterro_p ADD CONSTRAINT rel_aterro_p_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT])#
+ALTER TABLE pe.rel_aterro_p ADD CONSTRAINT rel_aterro_p_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[25::SMALLINT,27::SMALLINT]))#
 ALTER TABLE pe.hdv_obstaculo_navegacao ADD CONSTRAINT hdv_obstaculo_navegacao_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hdv_obstaculo_navegacao ADD CONSTRAINT hdv_obstaculo_navegacao_tipoobst_check CHECK (tipoobst = ANY(ARRAY[4::SMALLINT,5::SMALLINT]))#
 ALTER TABLE pe.hdv_obstaculo_navegacao ADD CONSTRAINT hdv_obstaculo_navegacao_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rel_duna_l ADD CONSTRAINT rel_duna_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_duna_l ADD CONSTRAINT rel_duna_l_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[17::SMALLINT]))#
 ALTER TABLE pe.rel_duna_l ADD CONSTRAINT rel_duna_l_fixa_check CHECK (fixa = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_tipounidprotegida_check CHECK (tipounidprotegida = ANY(ARRAY[2::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_protecao_integral_a ADD CONSTRAINT lpal_unidade_protecao_integral_a_tipounidprotinteg_check CHECK (tipounidprotinteg = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT]))#
+ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_destinacaocemiterio_check CHECK (destinacaocemiterio = ANY(ARRAY[2::SMALLINT,3::SMALLINT]))#
+ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_tipocemiterio_check CHECK (tipocemiterio = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.sb_cemiterio_a ADD CONSTRAINT sb_cemiterio_a_denominacaoassociada_check CHECK (denominacaoassociada = ANY(ARRAY[5::SMALLINT,6::SMALLINT,7::SMALLINT,97::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.veg_reflorestamento_a ADD CONSTRAINT veg_reflorestamento_a_terreno_check CHECK (terreno = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.veg_reflorestamento_a ADD CONSTRAINT veg_reflorestamento_a_finalidade_check CHECK (finalidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.veg_reflorestamento_a ADD CONSTRAINT veg_reflorestamento_a_tipolavoura_check CHECK (tipolavoura = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
@@ -9915,19 +9932,18 @@ ALTER TABLE pe.aer_pista_ponto_pouso ADD CONSTRAINT aer_pista_ponto_pouso_homolo
 ALTER TABLE pe.aer_pista_ponto_pouso ADD CONSTRAINT aer_pista_ponto_pouso_tipopista_check CHECK (tipopista = ANY(ARRAY[10::SMALLINT,11::SMALLINT,9::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso ADD CONSTRAINT aer_pista_ponto_pouso_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.aer_pista_ponto_pouso ADD CONSTRAINT aer_pista_ponto_pouso_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.hid_ponto_drenagem_p ADD CONSTRAINT hid_ponto_drenagem_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.hid_ponto_drenagem_p ADD CONSTRAINT hid_ponto_drenagem_p_relacionado_check CHECK (relacionado = ANY(ARRAY[10::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,16::SMALLINT,17::SMALLINT,2::SMALLINT,21::SMALLINT,25::SMALLINT,30::SMALLINT,39::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT]))#
 ALTER TABLE pe.hid_rocha_em_agua_p ADD CONSTRAINT hid_rocha_em_agua_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_rocha_em_agua_p ADD CONSTRAINT hid_rocha_em_agua_p_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[23::SMALLINT]))#
 ALTER TABLE pe.hid_rocha_em_agua_p ADD CONSTRAINT hid_rocha_em_agua_p_formarocha_check CHECK (formarocha = ANY(ARRAY[21::SMALLINT,22::SMALLINT,23::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_rocha_em_agua_p ADD CONSTRAINT hid_rocha_em_agua_p_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.dut_ponto_inicio_fim_duto_p ADD CONSTRAINT dut_ponto_inicio_fim_duto_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.dut_ponto_inicio_fim_duto_p ADD CONSTRAINT dut_ponto_inicio_fim_duto_p_relacionado_check CHECK (relacionado = ANY(ARRAY[30::SMALLINT]))#
-ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_tiporecife_check CHECK (tiporecife = ANY(ARRAY[1::SMALLINT,2::SMALLINT,20::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_situacaocosta_check CHECK (situacaocosta = ANY(ARRAY[10::SMALLINT,11::SMALLINT]))#
-ALTER TABLE pe.hid_recife_p ADD CONSTRAINT hid_recife_p_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.fer_cremalheira_p ADD CONSTRAINT fer_cremalheira_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.fer_cremalheira_p ADD CONSTRAINT fer_cremalheira_p_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.fer_cremalheira_p ADD CONSTRAINT fer_cremalheira_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.tra_funicular_l ADD CONSTRAINT tra_funicular_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.tra_funicular_l ADD CONSTRAINT tra_funicular_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.tra_funicular_l ADD CONSTRAINT tra_funicular_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.lpal_municipio_a ADD CONSTRAINT lpal_municipio_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.tra_tunel_p ADD CONSTRAINT tra_tunel_p_modaluso_check CHECK (modaluso <@ ARRAY[4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
 ALTER TABLE pe.tra_tunel_p ADD CONSTRAINT tra_tunel_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.tra_tunel_p ADD CONSTRAINT tra_tunel_p_tipopavimentacao_check CHECK (tipopavimentacao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
@@ -9952,10 +9968,7 @@ ALTER TABLE pe.veg_floresta_a ADD CONSTRAINT veg_floresta_a_densidade_check CHEC
 ALTER TABLE pe.veg_floresta_a ADD CONSTRAINT veg_floresta_a_tipoveg_check CHECK (tipoveg = ANY(ARRAY[3::SMALLINT]))#
 ALTER TABLE pe.hid_corredeira ADD CONSTRAINT hid_corredeira_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.enc_grupo_transformadores_p ADD CONSTRAINT enc_grupo_transformadores_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_recife ADD CONSTRAINT hid_recife_tiporecife_check CHECK (tiporecife = ANY(ARRAY[1::SMALLINT,2::SMALLINT,20::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_recife ADD CONSTRAINT hid_recife_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_recife ADD CONSTRAINT hid_recife_situacaocosta_check CHECK (situacaocosta = ANY(ARRAY[10::SMALLINT,11::SMALLINT]))#
-ALTER TABLE pe.hid_recife ADD CONSTRAINT hid_recife_situacaoemagua_check CHECK (situacaoemagua = ANY(ARRAY[4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.hid_terreno_suj_inundacao_a ADD CONSTRAINT hid_terreno_suj_inundacao_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_curva_batimetrica_l ADD CONSTRAINT rel_curva_batimetrica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.dut_ponto_duto_p ADD CONSTRAINT dut_ponto_duto_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.dut_ponto_duto_p ADD CONSTRAINT dut_ponto_duto_p_relacionado_check CHECK (relacionado = ANY(ARRAY[30::SMALLINT,37::SMALLINT]))#
@@ -9995,13 +10008,7 @@ ALTER TABLE pe.hid_canal_l ADD CONSTRAINT hid_canal_l_matconstr_check CHECK (mat
 ALTER TABLE pe.hid_canal_l ADD CONSTRAINT hid_canal_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.hid_canal_l ADD CONSTRAINT hid_canal_l_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[30::SMALLINT]))#
 ALTER TABLE pe.lpal_nome_local_p ADD CONSTRAINT lpal_nome_local_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_canal_a ADD CONSTRAINT hid_canal_a_usoprincipal_check CHECK (usoprincipal = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.hid_canal_a ADD CONSTRAINT hid_canal_a_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_canal_a ADD CONSTRAINT hid_canal_a_finalidade_check CHECK (finalidade = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_canal_a ADD CONSTRAINT hid_canal_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_canal_a ADD CONSTRAINT hid_canal_a_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT])#
-ALTER TABLE pe.hid_canal_a ADD CONSTRAINT hid_canal_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.hid_canal_a ADD CONSTRAINT hid_canal_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[30::SMALLINT]))#
+ALTER TABLE pe.lpal_area_construida_a ADD CONSTRAINT lpal_area_construida_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_l ADD CONSTRAINT tra_travessia_l_tipoembarcacao_check CHECK (tipoembarcacao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,6::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_l ADD CONSTRAINT tra_travessia_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.tra_travessia_l ADD CONSTRAINT tra_travessia_l_tipouso_check CHECK (tipouso = ANY(ARRAY[21::SMALLINT,22::SMALLINT,95::SMALLINT,98::SMALLINT]))#
@@ -10103,9 +10110,6 @@ ALTER TABLE pe.hid_barragem ADD CONSTRAINT hid_barragem_usoprincipal_check CHECK
 ALTER TABLE pe.hid_barragem ADD CONSTRAINT hid_barragem_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.hid_barragem ADD CONSTRAINT hid_barragem_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT,97::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.hid_barragem ADD CONSTRAINT hid_barragem_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.rel_terreno_erodido_l ADD CONSTRAINT rel_terreno_erodido_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_terreno_erodido_l ADD CONSTRAINT rel_terreno_erodido_l_tipoerosao_check CHECK (tipoerosao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.rel_terreno_erodido_l ADD CONSTRAINT rel_terreno_erodido_l_situacaoterreno_check CHECK (situacaoterreno = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rel_curva_nivel_l ADD CONSTRAINT rel_curva_nivel_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_curva_nivel_l ADD CONSTRAINT rel_curva_nivel_l_tipocurvanivel_check CHECK (tipocurvanivel = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT]))#
 ALTER TABLE pe.rel_curva_nivel_l ADD CONSTRAINT rel_curva_nivel_l_depressao_check CHECK (depressao = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
@@ -10134,8 +10138,9 @@ ALTER TABLE pe.lpal_unidade_conservacao_a ADD CONSTRAINT lpal_unidade_conservaca
 ALTER TABLE pe.lpal_unidade_conservacao_a ADD CONSTRAINT lpal_unidade_conservacao_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.lpal_unidade_conservacao_a ADD CONSTRAINT lpal_unidade_conservacao_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.lpal_unidade_conservacao_a ADD CONSTRAINT lpal_unidade_conservacao_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
-ALTER TABLE pe.hid_ponto_drenagem_p ADD CONSTRAINT hid_ponto_drenagem_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_ponto_drenagem_p ADD CONSTRAINT hid_ponto_drenagem_p_relacionado_check CHECK (relacionado = ANY(ARRAY[10::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,16::SMALLINT,17::SMALLINT,2::SMALLINT,21::SMALLINT,25::SMALLINT,30::SMALLINT,39::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT]))#
+ALTER TABLE pe.rel_terreno_erodido_l ADD CONSTRAINT rel_terreno_erodido_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.rel_terreno_erodido_l ADD CONSTRAINT rel_terreno_erodido_l_tipoerosao_check CHECK (tipoerosao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.rel_terreno_erodido_l ADD CONSTRAINT rel_terreno_erodido_l_situacaoterreno_check CHECK (situacaoterreno = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_banco_areia ADD CONSTRAINT hid_banco_areia_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.hid_banco_areia ADD CONSTRAINT hid_banco_areia_materialpredominante_check CHECK (materialpredominante = ANY(ARRAY[12::SMALLINT,13::SMALLINT,14::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,4::SMALLINT,50::SMALLINT,95::SMALLINT,97::SMALLINT,98::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.hid_banco_areia ADD CONSTRAINT hid_banco_areia_tipobanco_check CHECK (tipobanco = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT]))#
@@ -10173,15 +10178,11 @@ ALTER TABLE pe.hid_limite_massa_dagua_l ADD CONSTRAINT hid_limite_massa_dagua_l_
 ALTER TABLE pe.rel_aterro_l ADD CONSTRAINT rel_aterro_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_aterro_l ADD CONSTRAINT rel_aterro_l_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE pe.rel_aterro_l ADD CONSTRAINT rel_aterro_l_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[27::SMALLINT]))#
-ALTER TABLE pe.hid_queda_dagua_p ADD CONSTRAINT hid_queda_dagua_p_tipoqueda_check CHECK (tipoqueda = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_queda_dagua_p ADD CONSTRAINT hid_queda_dagua_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_tipotrechomassadagua_check CHECK (tipotrechomassadagua = ANY(ARRAY[1::SMALLINT,10::SMALLINT,9::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_dominialidade_check CHECK (dominialidade = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_salgada_check CHECK (salgada = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_artificial_check CHECK (artificial = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_tipomassadagua_check CHECK (tipomassadagua = ANY(ARRAY[8::SMALLINT]))#
-ALTER TABLE pe.hid_trecho_massa_dagua_a ADD CONSTRAINT hid_trecho_massa_dagua_a_regime_check CHECK (regime = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.rel_rocha_l ADD CONSTRAINT rel_rocha_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.rel_rocha_l ADD CONSTRAINT rel_rocha_l_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[23::SMALLINT]))#
+ALTER TABLE pe.rel_rocha_l ADD CONSTRAINT rel_rocha_l_formarocha_check CHECK (formarocha = ANY(ARRAY[21::SMALLINT,22::SMALLINT,23::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.rel_alter_fisiog_antropica_a ADD CONSTRAINT rel_alter_fisiog_antropica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.rel_alter_fisiog_antropica_a ADD CONSTRAINT rel_alter_fisiog_antropica_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.tra_caminho_carrocavel_l ADD CONSTRAINT tra_caminho_carrocavel_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.enc_est_gerad_energia_eletrica_p ADD CONSTRAINT enc_est_gerad_energia_eletrica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.enc_est_gerad_energia_eletrica_p ADD CONSTRAINT enc_est_gerad_energia_eletrica_p_tipoestgerad_check CHECK (tipoestgerad = ANY(ARRAY[5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
@@ -10189,18 +10190,16 @@ ALTER TABLE pe.enc_est_gerad_energia_eletrica_p ADD CONSTRAINT enc_est_gerad_ene
 ALTER TABLE pe.enc_est_gerad_energia_eletrica_p ADD CONSTRAINT enc_est_gerad_energia_eletrica_p_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rel_alter_fisiog_antropica_l ADD CONSTRAINT rel_alter_fisiog_antropica_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_alter_fisiog_antropica_l ADD CONSTRAINT rel_alter_fisiog_antropica_l_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,95::SMALLINT,99::SMALLINT]))#
-ALTER TABLE pe.rel_rocha_a ADD CONSTRAINT rel_rocha_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_rocha_a ADD CONSTRAINT rel_rocha_a_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[23::SMALLINT]))#
-ALTER TABLE pe.rel_rocha_a ADD CONSTRAINT rel_rocha_a_formarocha_check CHECK (formarocha = ANY(ARRAY[21::SMALLINT,22::SMALLINT,23::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.rel_aterro_a ADD CONSTRAINT rel_aterro_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_aterro_a ADD CONSTRAINT rel_aterro_a_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.rel_aterro_a ADD CONSTRAINT rel_aterro_a_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[27::SMALLINT]))#
+ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_destinacaocemiterio_check CHECK (destinacaocemiterio = ANY(ARRAY[2::SMALLINT,3::SMALLINT]))#
+ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_tipocemiterio_check CHECK (tipocemiterio = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.sb_cemiterio_p ADD CONSTRAINT sb_cemiterio_p_denominacaoassociada_check CHECK (denominacaoassociada = ANY(ARRAY[5::SMALLINT,6::SMALLINT,7::SMALLINT,97::SMALLINT,99::SMALLINT]))#
+ALTER TABLE pe.eco_plataforma ADD CONSTRAINT eco_plataforma_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.eco_plataforma ADD CONSTRAINT eco_plataforma_tipoplataforma_check CHECK (tipoplataforma = ANY(ARRAY[3::SMALLINT,5::SMALLINT,95::SMALLINT,98::SMALLINT]))#
 ALTER TABLE pe.hid_queda_dagua_a ADD CONSTRAINT hid_queda_dagua_a_tipoqueda_check CHECK (tipoqueda = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.hid_queda_dagua_a ADD CONSTRAINT hid_queda_dagua_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_tipounidprotegida_check CHECK (tipounidprotegida = ANY(ARRAY[1::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_jurisdicao_check CHECK (jurisdicao = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,8::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.lpal_unidade_conservacao_nao_snuc_a ADD CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_administracao_check CHECK (administracao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT]))#
+ALTER TABLE pe.rel_alter_fisiog_antropica_p ADD CONSTRAINT rel_alter_fisiog_antropica_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.rel_alter_fisiog_antropica_p ADD CONSTRAINT rel_alter_fisiog_antropica_p_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.enc_est_gerad_energia_eletrica_a ADD CONSTRAINT enc_est_gerad_energia_eletrica_a_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.enc_est_gerad_energia_eletrica_a ADD CONSTRAINT enc_est_gerad_energia_eletrica_a_tipoestgerad_check CHECK (tipoestgerad = ANY(ARRAY[5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.enc_est_gerad_energia_eletrica_a ADD CONSTRAINT enc_est_gerad_energia_eletrica_a_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
@@ -10212,11 +10211,11 @@ ALTER TABLE pe.enc_est_gerad_energia_eletrica_l ADD CONSTRAINT enc_est_gerad_ene
 ALTER TABLE pe.fer_cremalheira_l ADD CONSTRAINT fer_cremalheira_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.fer_cremalheira_l ADD CONSTRAINT fer_cremalheira_l_situacaofisica_check CHECK (situacaofisica = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,7::SMALLINT,95::SMALLINT,97::SMALLINT]))#
 ALTER TABLE pe.fer_cremalheira_l ADD CONSTRAINT fer_cremalheira_l_operacional_check CHECK (operacional = ANY(ARRAY[0::SMALLINT,1::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.rel_aterro_p ADD CONSTRAINT rel_aterro_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
-ALTER TABLE pe.rel_aterro_p ADD CONSTRAINT rel_aterro_p_matconstr_check CHECK (matconstr <@ ARRAY[1::SMALLINT,2::SMALLINT,23::SMALLINT,4::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE pe.rel_aterro_p ADD CONSTRAINT rel_aterro_p_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[25::SMALLINT,27::SMALLINT]))#
-ALTER TABLE pe.hid_queda_dagua_l ADD CONSTRAINT hid_queda_dagua_l_tipoqueda_check CHECK (tipoqueda = ANY(ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,95::SMALLINT]))#
-ALTER TABLE pe.hid_queda_dagua_l ADD CONSTRAINT hid_queda_dagua_l_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.enc_antena_comunic_p ADD CONSTRAINT enc_antena_comunic_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.enc_antena_comunic_p ADD CONSTRAINT enc_antena_comunic_p_posicaoreledific_check CHECK (posicaoreledific = ANY(ARRAY[14::SMALLINT,17::SMALLINT,18::SMALLINT,95::SMALLINT]))#
+ALTER TABLE pe.rel_rocha_p ADD CONSTRAINT rel_rocha_p_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
+ALTER TABLE pe.rel_rocha_p ADD CONSTRAINT rel_rocha_p_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[23::SMALLINT]))#
+ALTER TABLE pe.rel_rocha_p ADD CONSTRAINT rel_rocha_p_formarocha_check CHECK (formarocha = ANY(ARRAY[21::SMALLINT,22::SMALLINT,23::SMALLINT,95::SMALLINT]))#
 ALTER TABLE pe.rel_terreno_erodido ADD CONSTRAINT rel_terreno_erodido_geometriaaproximada_check CHECK (geometriaaproximada = ANY(ARRAY[0::SMALLINT,1::SMALLINT]))#
 ALTER TABLE pe.rel_terreno_erodido ADD CONSTRAINT rel_terreno_erodido_tipoerosao_check CHECK (tipoerosao = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT]))#
 ALTER TABLE pe.rel_terreno_erodido ADD CONSTRAINT rel_terreno_erodido_situacaoterreno_check CHECK (situacaoterreno = ANY(ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,95::SMALLINT]))#
