@@ -120,6 +120,15 @@ class PostgisDbThread(GenericThread):
                 return (-1, self.messenger.getUserCanceledFeedbackMessage())
 
         self.db.commit()
+        if self.version == '2.1.3':
+            sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'cb\',\'complexos\',\'dominios\';' % self.db.databaseName()
+        elif self.version == 'FTer_2a_Ed':
+            sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'pe\',\'ge\',\'complexos\',\'dominios\';' % self.db.databaseName()
+        
+        if not query.exec_(sql):
+            QgsMessageLog.logMessage(self.messenger.getProblemMessage(command, query), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return (0, self.messenger.getProblemFeedbackMessage())
+        
         self.db.close()
         QgsMessageLog.logMessage(self.messenger.getSuccessFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
         return (1, self.messenger.getSuccessFeedbackMessage())
