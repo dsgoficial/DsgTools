@@ -65,8 +65,8 @@ class CriaSpatialiteDialog(QtGui.QDialog, FORM_CLASS):
         currentPath = os.path.dirname(__file__)
         if self.versionComboBox.currentText() == '2.1.3':
             edgvPath = os.path.join(currentPath, 'template', '213', 'seed_edgv213.sqlite')
-        elif self.versionComboBox.currentText() == '3.0':
-            edgvPath = os.path.join(currentPath, 'template', '30', 'seed_edgv30.sqlite')
+        elif self.versionComboBox.currentText() == 'FTer_2a_Ed':
+            edgvPath = os.path.join(currentPath, 'template', 'FTer_2a_Ed', 'seed_edgvfter_2a_ed.sqlite')
         return edgvPath
 
     def restauraInicio(self):

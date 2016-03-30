@@ -44,7 +44,7 @@ class SpatialiteLayer(EDGVLayer):
         self.schema, self.layer_name = abstractDb.getTableSchema(table)
         
         dbVersion = abstractDb.getDatabaseVersion()
-        if dbVersion == '3.0' or dbVersion == '2.1.3':
+        if dbVersion == 'FTer_2a_Ed' or dbVersion == '2.1.3':
             self.qmlName = '_'.join(table.replace('\r', '').split('_')[1::])
         else:
             self.qmlName = table.replace('\r','')
