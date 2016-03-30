@@ -44,7 +44,7 @@ class CreateFeatureTest():
 
         #Connecting to the database that will be tested
         self.db = QSqlDatabase("QPSQL")
-        self.db.setDatabaseName('teste')
+        self.db.setDatabaseName('fter')
         self.db.setHostName('localhost')
         self.db.setPort(5432)
         self.db.setUserName('postgres')
@@ -80,7 +80,7 @@ class CreateFeatureTest():
         schema = str(QgsDataSourceURI(layer.dataProvider().dataSourceUri()).schema())
 
         #Creating the log file
-        file = open(os.path.join(currentPath, 'LayerTools', 'Problemas', layer.name()+'_relatorio_banco_2016_01_15.txt'), 'w')
+        file = open(os.path.join(currentPath, 'LayerTools', 'Problemas', layer.name()+'_relatorio_banco_2016_03_29.txt'), 'w')
         filetext = ''
         #Iterate on every field
         for field in fields:
@@ -180,7 +180,7 @@ class CreateFeatureTest():
     
     def testComplexAggregation(self):
         #Creating the log file
-        file = open(os.path.join(currentPath, 'LayerTools', 'Problemas', 'complexos_relatorio_banco_2016_01_15.txt'), 'w')
+        file = open(os.path.join(currentPath, 'LayerTools', 'Problemas', 'complexos_relatorio_banco_2016_03_29.txt'), 'w')
         
         sql = 'SELECT * from public.complex_schema order by complex asc'
         query = QSqlQuery(sql, self.db)
