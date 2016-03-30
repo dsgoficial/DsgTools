@@ -3971,7 +3971,7 @@ CREATE [VIEW] views.cb_area_agropec_ext_veg_pesca_a as
     [FROM]
         ge.cb_area_agropec_ext_veg_pesca_a 
 	left join dominios.booleano as dominio_geometriaaproximada on dominio_geometriaaproximada.code = cb_area_agropec_ext_veg_pesca_a.geometriaaproximada 
-	left join dominios.destinado_a as dominio_destinadoa on dominio_destinadoa.code = cb_area_agropec_ext_veg_pesca_a.destinadoa
+	left join dominios.destinadoa as dominio_destinadoa on dominio_destinadoa.code = cb_area_agropec_ext_veg_pesca_a.destinadoa
 #
 DROP VIEW IF EXISTS views.edf_edif_pub_militar_a#
 CREATE [VIEW] views.edf_edif_pub_militar_a as 
