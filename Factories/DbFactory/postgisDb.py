@@ -555,7 +555,7 @@ class PostgisDb(AbstractDb):
             table = query.value(4)
             privilege = query.value(5)
             
-            if schema in ['cb', 'public', 'complexos']:
+            if schema in ['cb', 'public', 'complexos', 'pe', 'ge']:
                 privilegesDict = self.utils.buildNestedDict(privilegesDict, [schema, table], [privilege])
             
         permissionsDict = dict()
