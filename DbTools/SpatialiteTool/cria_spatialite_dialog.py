@@ -126,6 +126,7 @@ class CriaSpatialiteDialog(QtGui.QDialog, FORM_CLASS):
                 self.copiaSemente(destino,self.epsgCriaSpatialite)
                 self.close()
                 self.restauraInicio()
+                QtGui.QMessageBox.information(self, self.tr('Information'), self.tr('Spatialite created successfully!'))
             except:
                 qgis.utils.iface.messageBar().pushMessage(self.tr("Error!"), self.tr("Problem creating the database!"), level=QgsMessageBar.CRITICAL)
                 self.restauraInicio()
