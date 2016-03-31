@@ -55,11 +55,8 @@ class SpatialiteLayer(EDGVLayer):
     def load(self, crs, idSubgrupo = None):
         vlayerQml = os.path.join(self.abstractDb.getQmlDir(), self.qmlName+'.qml')
         
-        host = self.abstractDb.db.hostName()
-        port = self.abstractDb.db.port()
+
         database = self.abstractDb.db.databaseName()
-        user = self.abstractDb.db.userName()
-        password = self.abstractDb.db.password()
 
         vlayer = iface.addVectorLayer(self.uri.uri(), self.layer_name, self.provider)
         if not vlayer:
@@ -74,11 +71,12 @@ class SpatialiteLayer(EDGVLayer):
                 if vlayer.editorWidgetV2(i) == 'ValueRelation':
                     groupList = iface.legendInterface().groups()
                     groupRelationshipList = iface.legendInterface().groupLayerRelationship()
-                    if database not in groupList:
-                        idx = iface.legendInterface().addGroup(database, True,-1)
+                    filename = os.path.basename(database).split('.')[0]
+                    if filename not in groupList:
+                        idx = iface.legendInterface().addGroup(filename, True,-1)
                         domainIdGroup = iface.legendInterface().addGroup(self.tr("Dominios"), True, idx)
                     else:
-                        idx = groupList.index(database)
+                        idx = groupList.index(filename)
                         if "Dominios" not in groupList[idx::]:
                             domainIdGroup = iface.legendInterface().addGroup(self.tr("Dominios"), True, idx)
                         else:
@@ -91,13 +89,15 @@ class SpatialiteLayer(EDGVLayer):
                     for ll in loadedLayers:
                         if ll.name() == domainTableName:
                             candidateUri = QgsDataSourceURI(ll.dataProvider().dataSourceUri())
-                            if host == candidateUri.host() and database == candidateUri.database() and port == int(candidateUri.port()):
+                            if database == candidateUri.database():
                                 domainLoaded = True
                                 domLayer = ll
                     if not domainLoaded:
-                        uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (database, host, port, user, password, domainTableName)
+                        uri = QgsDataSourceURI()
+                        uri.setDatabase(database)
+                        uri.setDataSource('', 'dominios_'+domainTableName, None)
                         #TODO Load domain layer into a group
-                        domLayer = iface.addVectorLayer(uri, domainTableName, self.provider)
+                        domLayer = iface.addVectorLayer(uri.uri(), domainTableName, self.provider)
                         iface.legendInterface().moveLayer(domLayer, domainIdGroup)
                     valueRelationDict['Layer'] = domLayer.id()
                     vlayer.setEditorWidgetV2Config(i,valueRelationDict)
