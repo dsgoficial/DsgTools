@@ -857,6 +857,20 @@ class PostgisDb(AbstractDb):
             while query.next():
                 duplicatedDict = self.utils.buildNestedDict(duplicatedDict, [cl,query.value(0)], query.value(2))
         return duplicatedDict
+
+    def getSmallAreasRecords(self,classesWithGeom, tol):
+        self.checkAndOpenDb()
+        smallAreasDict = dict()
+        for cl in classesWithGeom:
+            tableSchema, tableName = self.getTableSchema(cl)
+            sql = self.gen.getSmallAreas(tableSchema, tableName, tol)
+            query = QSqlQuery(sql, self.db)
+            if not query.isActive():
+                raise Exception(self.tr('Problem getting small areas: ') + query.lastError().text())
+            while query.next():
+                smallAreasDict = self.utils.buildNestedDict(smallAreasDict, [cl,query.value(0)], query.value(2))
+        return duplicatedDict
+
     
     def removeFeatures(self,cl,idList):
         self.checkAndOpenDb()

@@ -151,7 +151,9 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.databaseLineEdit.setText(database)
             self.scale = self.configWindow.scaleComboBox.currentText()
             self.tolerance = self.configWindow.toleranceLineEdit.text()
-            self.validationManager = ValidationManager(self.configWindow.widget.abstractDb)
+            parametersDict = dict()
+            parametersDict['tolerance'] = self.tolerance
+            self.validationManager = ValidationManager(self.configWindow.widget.abstractDb, parametersDict)
             self.populateProcessList()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
