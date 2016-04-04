@@ -844,3 +844,29 @@ class PostgisDb(AbstractDb):
         uri.disableSelectAtId(True)
         
         return uri
+    
+    def getDuplicatedGeomRecords(self,classesWithGeom):
+        self.checkAndOpenDb()
+        duplicatedDict = dict()
+        for cl in classesWithGeom:
+            tableSchema, tableName = self.getTableSchema(cl)
+            sql = self.gen.getDuplicatedGeom(tableSchema, tableName)
+            query = QSqlQuery(sql, self.db)
+            if not query.isActive():
+                raise Exception(self.tr('Problem getting duplicated geometries: ') + query.lastError().text())
+            while query.next():
+                duplicatedDict = self.utils.buildNestedDict(duplicatedDict, [cl,query.value(0)], query.value(2))
+        return duplicatedDict
+    
+    def removeFeatures(self,cl,idList):
+        self.checkAndOpenDb()
+        tableSchema, tableName = self.getTableSchema(cl)
+        sql = self.gen.deleteFeatures(tableSchema, tableName)
+        query = QSqlQuery(self.db)
+        self.db.transaction()
+        if not query.exec_(inner):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem deleting features from ')+cl+': '+ query.lastError().text())
+        self.db.commit()
+        self.db.close()

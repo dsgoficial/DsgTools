@@ -424,3 +424,18 @@ class PostGISSqlGenerator(SqlGenerator):
     def getMulti(self,cl):
         sql = "select id from only %s where ST_NumGeometries(geom) > 1" % cl
         return sql
+
+    def getDuplicatedGeom(self,schema,cl):
+        sql = """select * from (
+      SELECT id,
+      ROW_NUMBER() OVER(PARTITION BY geom ORDER BY id asc) AS Row,
+      geom FROM ONLY %s.%s 
+    ) dups
+    where     
+    dups.Row > 1""" % (schema,cl)
+        return sql
+    
+    def deleteFeatures(self,schema,table,idList):
+        sql = """DELETE FROM %s.%s 
+        WHERE id in (%s)""" %(schema,table,','.join(idList))
+        return sql
