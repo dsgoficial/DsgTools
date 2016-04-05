@@ -687,7 +687,10 @@ class PostgisDb(AbstractDb):
             self.db.transaction()
             query = QSqlQuery(self.db)
             for record in flagTupleList:
-                dimension = self.getDimension(record[3]) # getting geometry dimension
+                try:
+                    dimension = self.getDimension(record[3]) # getting geometry dimension
+                except Exception as e:
+                    raise e
                 sql = self.gen.insertFlagIntoDb(record[0], str(record[1]), record[2], record[3], srid, processName, dimension)
                 if not query.exec_(sql):
                     self.db.rollback()
@@ -868,7 +871,7 @@ class PostgisDb(AbstractDb):
             if not query.isActive():
                 raise Exception(self.tr('Problem getting small areas: ') + query.lastError().text())
             while query.next():
-                smallAreasDict = self.utils.buildNestedDict(smallAreasDict, [cl,query.value(0)], query.value(2))
+                smallAreasDict = self.utils.buildNestedDict(smallAreasDict, [cl,query.value(0)], query.value(1))
         return smallAreasDict
 
     def getSmallLinesRecords(self,classesWithGeom, tol):
@@ -881,7 +884,7 @@ class PostgisDb(AbstractDb):
             if not query.isActive():
                 raise Exception(self.tr('Problem getting small lines: ') + query.lastError().text())
             while query.next():
-                smallLinesDict = self.utils.buildNestedDict(smallLinesDict, [cl,query.value(0)], query.value(2))
+                smallLinesDict = self.utils.buildNestedDict(smallLinesDict, [cl,query.value(0)], query.value(1))
         return smallLinesDict
 
     def getSliverPolygonsRecords(self,classesWithGeom, tol):
@@ -894,7 +897,7 @@ class PostgisDb(AbstractDb):
             if not query.isActive():
                 raise Exception(self.tr('Problem getting sliver polygons: ') + query.lastError().text())
             while query.next():
-                sliverDict = self.utils.buildNestedDict(sliverDict, [cl,query.value(0)], query.value(2))
+                sliverDict = self.utils.buildNestedDict(sliverDict, [cl,query.value(0)], query.value(1))
         return sliverDict
 
     def removeFeatures(self,cl,idList):

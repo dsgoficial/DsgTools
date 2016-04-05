@@ -188,7 +188,11 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     def on_runButton_clicked(self):
         processName = self.processTreeWidget.selectedItems()[0].text(1)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        procReturn = self.validationManager.executeProcess(processName)
+        try:
+            procReturn = self.validationManager.executeProcess(processName)
+        except:
+            procReturn = 0
+            QApplication.restoreOverrideCursor()
         QApplication.restoreOverrideCursor()
         self.populateProcessList()
         if procReturn == 0:
