@@ -26,7 +26,7 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 class IdentifySmallAreasProcess(ValidationProcess):
     def __init__(self, postgisDb):
         super(self.__class__,self).__init__(postgisDb)
-        self.setParameters(['teste'])
+        self.parameters = {'Area': 125}
 
     def execute(self,tol):
         #abstract method. MUST be reimplemented.
@@ -39,6 +39,7 @@ class IdentifySmallAreasProcess(ValidationProcess):
             for c in classesWithGeom:
                 if c[-1] == 'a':
                     areas.append(c)
+            tol = self.parameters['Area']
             result = self.abstractDb.getSmallAreasRecords(classesWithGeom, tol) #list only classes with elements.
             if len(result.keys()) > 0:
                 recordList = []

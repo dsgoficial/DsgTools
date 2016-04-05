@@ -28,11 +28,10 @@ from PyQt4.QtGui import QMessageBox
 from PyQt4.Qt import QObject
 
 class ValidationManager(QObject):
-    def __init__(self,postgisDb, parameterDict):
+    def __init__(self,postgisDb):
         super(ValidationManager, self).__init__()
         self.processList = []
         self.postgisDb = postgisDb
-        self.parameterDict = parameterDict
         try:
             self.postgisDb.checkAndCreateValidationStructure()
         except Exception as e:
@@ -99,7 +98,6 @@ class ValidationManager(QObject):
                     # adjusting the parameters in the process
                     currProc.setParameters(params)
                 #check status
-                currProc.setParametersDict(self.parameterDict)
                 QgsMessageLog.logMessage('Process %s Log:\n' % currProc.getName(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 currProc.execute() #run bitch run!
                 status = currProc.getStatus() #must set status
