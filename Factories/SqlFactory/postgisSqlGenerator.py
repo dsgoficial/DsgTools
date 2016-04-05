@@ -447,10 +447,28 @@ class PostGISSqlGenerator(SqlGenerator):
         ) as foo2 where len < %s order by foo2.id""" % (schema,cl,areaTolerance)
         return sql
     
-    def getSliverPolygons(self,schema,cl,areaTolerance):
-        sql = """select  foo2.id, foo2.geom from (
-        select id, geom, ST_Area(geom) as area, ST_Perimeter(geom) as perimeter from %s.%s 
-        ) as foo2 where 4*pi()*foo2.area/(foo2.perimeter*foo2.perimeter) < %s order by foo2.id""" % (schema,cl,areaTolerance)
+    def prepareVertexNearEdgesStruct(self, tableSchema, tableName):
+        sql = """drop table if exists seg#
+        create temp table seg as (
+        SELECT segments.id as id, ST_MakeLine(sp,ep) as geom
+        FROM
+           (SELECT
+              ST_PointN(geom, generate_series(1, ST_NPoints(geom)-1)) as sp,
+              ST_PointN(geom, generate_series(2, ST_NPoints(geom)  )) as ep,
+              linestrings.id as id
+            FROM
+              (SELECT id as id, (ST_Dump(ST_Boundary(geom))).geom
+               FROM only {0}.{1} 
+               ) AS linestrings
+            ) AS segments)#
+        drop table if exists pontos#
+        create temp table pontos as select id as id, (ST_DumpPoints(geom)).geom as geom from only {0}.{1}#
+        create index pontos_gist on pontos using gist (geom)#
+        create index seg_gist on seg using gist (geom)#""".format(tableSchema, tableName)
+        return sql
+
+    def getVertexNearEdgesStruct(self, epsg, tol):
+        sql = """select pontos.id, ST_SetSRID(pontos.geom,{0}) as geom from pontos, seg where seg.id = pontos.id and  ST_DWithin(seg.geom, pontos.geom, {1}) and ST_Distance(seg.geom, pontos.geom) > 0""".format(epsg,tol)
         return sql
     
     def deleteFeatures(self,schema,table,idList):

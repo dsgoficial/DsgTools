@@ -887,18 +887,33 @@ class PostgisDb(AbstractDb):
                 smallLinesDict = self.utils.buildNestedDict(smallLinesDict, [cl,query.value(0)], query.value(1))
         return smallLinesDict
 
-    def getSliverPolygonsRecords(self,classesWithGeom, tol):
+    def getVertexNearEdgesRecords(self, tableSchema, tableName, tol):
         self.checkAndOpenDb()
-        sliverDict = dict()
-        for cl in classesWithGeom:
-            tableSchema, tableName = self.getTableSchema(cl)
-            sql = self.gen.getSliverPolygons(tableSchema, tableName, tol)
-            query = QSqlQuery(sql, self.db)
-            if not query.isActive():
-                raise Exception(self.tr('Problem getting sliver polygons: ') + query.lastError().text())
-            while query.next():
-                sliverDict = self.utils.buildNestedDict(sliverDict, [cl,query.value(0)], query.value(1))
-        return sliverDict
+        result = []
+        sql = self.gen.prepareVertexNearEdgesStruct(tableSchema, tableName)
+        sqlList = sql.split('#')
+        self.db.transaction()
+        for sql2 in sqlList:
+            query = QSqlQuery(self.db)
+            if not query.exec_(sql2):
+                self.db.rollback()
+                self.db.close()
+                raise Exception(self.tr('Problem preparing auxiliary structure: ') + query.lastError().text())
+        epsg = self.findEPSG()
+        sql = self.gen.getVertexNearEdgesStruct(epsg, tol)
+        self.db.transaction()
+        query = QSqlQuery(sql,self.db)
+        if not query.isActive():
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem getting vertex near edges: ') + query.lastError().text())
+        while query.next():
+            id = query.value(0)
+            geom = query.value(1)
+            result.append((id,geom))
+        self.db.commit()
+        self.db.close()
+        return result
 
     def removeFeatures(self,cl,idList):
         self.checkAndOpenDb()
