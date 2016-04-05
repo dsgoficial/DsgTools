@@ -873,7 +873,7 @@ class PostgisDb(AbstractDb):
 
     def getSmallLinesRecords(self,classesWithGeom, tol):
         self.checkAndOpenDb()
-        smallAreasDict = dict()
+        smallLinesDict = dict()
         for cl in classesWithGeom:
             tableSchema, tableName = self.getTableSchema(cl)
             sql = self.gen.getSmallLines(tableSchema, tableName, tol)
@@ -881,12 +881,12 @@ class PostgisDb(AbstractDb):
             if not query.isActive():
                 raise Exception(self.tr('Problem getting small lines: ') + query.lastError().text())
             while query.next():
-                smallAreasDict = self.utils.buildNestedDict(smallAreasDict, [cl,query.value(0)], query.value(2))
-        return duplicatedDict
+                smallLinesDict = self.utils.buildNestedDict(smallLinesDict, [cl,query.value(0)], query.value(2))
+        return smallLinesDict
 
     def getSliverPolygonsRecords(self,classesWithGeom, tol):
         self.checkAndOpenDb()
-        smallAreasDict = dict()
+        sliverDict = dict()
         for cl in classesWithGeom:
             tableSchema, tableName = self.getTableSchema(cl)
             sql = self.gen.getSliverPolygons(tableSchema, tableName, tol)
@@ -894,8 +894,8 @@ class PostgisDb(AbstractDb):
             if not query.isActive():
                 raise Exception(self.tr('Problem getting sliver polygons: ') + query.lastError().text())
             while query.next():
-                smallAreasDict = self.utils.buildNestedDict(smallAreasDict, [cl,query.value(0)], query.value(2))
-        return duplicatedDict
+                sliverDict = self.utils.buildNestedDict(sliverDict, [cl,query.value(0)], query.value(2))
+        return sliverDict
 
     def removeFeatures(self,cl,idList):
         self.checkAndOpenDb()
