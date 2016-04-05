@@ -19,6 +19,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+import sys
 from PyQt4 import QtGui
 
 class ProcessParametersDialog(QtGui.QDialog):
@@ -64,6 +65,11 @@ class ProcessParametersDialog(QtGui.QDialog):
 
             label = QtGui.QLabel(beautifyText(k))
             widget = self.WIDGETS[type(v)]()
+            if self.WIDGETS[type(v)] == QtGui.QDoubleSpinBox:
+                widget.setMaximum(sys.float_info.max)
+            if self.WIDGETS[type(v)] == QtGui.QSpinBox:
+                widget.setMaximum(sys.int_info.max)
+                
             getattr(widget, self.SETTERS[type(widget)])(v)
 
             if k in self.required:
