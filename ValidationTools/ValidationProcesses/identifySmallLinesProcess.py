@@ -35,12 +35,12 @@ class IdentifySmallLinesProcess(ValidationProcess):
             self.setStatus('Running', 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
-            areas = []
+            lines = []
             for c in classesWithGeom:
                 if c[-1] == 'l':
                     areas.append(c)
             tol = self.parameters['Length']
-            result = self.abstractDb.getSmallLinesRecords(classesWithGeom, tol) #list only classes with elements.
+            result = self.abstractDb.getSmallLinesRecords(lines, tol) #list only classes with elements.
             if len(result.keys()) > 0:
                 recordList = []
                 for cl in result.keys():

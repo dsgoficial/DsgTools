@@ -40,7 +40,7 @@ class IdentifySmallAreasProcess(ValidationProcess):
                 if c[-1] == 'a':
                     areas.append(c)
             tol = self.parameters['Area']
-            result = self.abstractDb.getSmallAreasRecords(classesWithGeom, tol) #list only classes with elements.
+            result = self.abstractDb.getSmallAreasRecords(areas, tol) #list only classes with elements.
             if len(result.keys()) > 0:
                 recordList = []
                 for cl in result.keys():
