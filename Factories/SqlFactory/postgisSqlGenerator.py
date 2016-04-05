@@ -437,8 +437,20 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def getSmallAreas(self,schema,cl,areaTolerance):
         sql = """select  foo2.id, foo2.geom from (
+        select id, geom, ST_Area(geom) as area from %s.%s 
+        ) as foo2 where foo2.area < %s order by foo2.id""" % (schema,cl,areaTolerance)
+        return sql
+    
+    def getSmallLines(self,schema,cl,areaTolerance):
+        sql = """select  foo2.id, foo2.geom from (
+        select id, geom, ST_Length(geom) as len from %s.%s 
+        ) as foo2 where len < %s order by foo2.id""" % (schema,cl,areaTolerance)
+        return sql
+    
+    def getSliverPolygons(self,schema,cl,areaTolerance):
+        sql = """select  foo2.id, foo2.geom from (
         select id, geom, ST_Area(geom) as area, ST_Perimeter(geom) as perimeter from %s.%s 
-        ) as foo2 where 4*pi()*foo2.area/(foo2.perimeter*foo2.perimeter) < 0.3 and foo2.area < %s order by foo2.id""" % (schema,cl,areaTolerance)
+        ) as foo2 where 4*pi()*foo2.area/(foo2.perimeter*foo2.perimeter) < %s order by foo2.id""" % (schema,cl,areaTolerance)
         return sql
     
     def deleteFeatures(self,schema,table,idList):
