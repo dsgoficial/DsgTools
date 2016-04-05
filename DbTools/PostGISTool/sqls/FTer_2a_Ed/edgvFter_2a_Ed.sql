@@ -552,7 +552,7 @@ CREATE TABLE ge.edf_edificacao(
 	logradouro varchar(200),
 	id_assentamento_precario uuid,
 	id_complexo_habitacional uuid,
-	CONSTRAINT "EDF_Edificacao_pk" PRIMARY KEY (id)
+	CONSTRAINT edf_edificacao_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE pe.rel_alter_fisiog_antropica_l(
@@ -758,7 +758,8 @@ CREATE TABLE pe.rel_pico_p(
 ) INHERITS(pe.rel_elemento_fisiog_natural_p)
 #
 CREATE TABLE ge.edf_edif_residencial_p(
-	id_complexo_habitacional uuid
+	id_complexo_habitacional uuid,
+	CONSTRAINT edf_edif_residencial_p_pk PRIMARY KEY (id)
 ) INHERITS(ge.edf_edif_habitacional_p)
 #
 CREATE TABLE ge.edf_edif_habitacional_a(
@@ -860,7 +861,8 @@ CREATE TABLE ge.edf_edif_saude_a(
 ) INHERITS(ge.edf_edificacao_a)
 #
 CREATE TABLE ge.edf_edif_residencial_a(
-	id_complexo_habitacional uuid
+	id_complexo_habitacional uuid,
+	CONSTRAINT edf_edif_residencial_a_pk PRIMARY KEY (id)
 ) INHERITS(ge.edf_edif_habitacional_a)
 #
 CREATE TABLE ge.edf_edif_religiosa_a(
@@ -2149,7 +2151,8 @@ CREATE TABLE pe.rod_trecho_rodoviario_l(
 ) INHERITS(pe.rod_trecho_rodoviario)
 #
 CREATE TABLE complexos.lpal_capital(
-	tipocapital smallint NOT NULL
+	tipocapital smallint NOT NULL,
+	CONSTRAINT lpal_capital_pk PRIMARY KEY (id)
 ) INHERITS(complexos.lpal_cidade)
 #
 CREATE TABLE pe.fer_cremalheira_p(
@@ -2217,7 +2220,8 @@ CREATE TABLE pe.hdv_obstaculo_navegacao_p(
 CREATE TABLE pe.tra_ponto_rodoviario_ferrov(
 	id serial NOT NULL,
 	geometriaaproximada smallint NOT NULL,
-	relacionado smallint NOT NULL
+	relacionado smallint NOT NULL,
+	CONSTRAINT tra_ponto_rodoviario_ferrov_pk PRIMARY KEY (id)
 )#
 CREATE TABLE complexos.laz_complexo_desportivo_lazer(
 	id uuid NOT NULL,
@@ -2649,7 +2653,8 @@ CREATE TABLE ge.cb_passeio(
 	geometriaaproximada smallint NOT NULL,
 	largura float,
 	calcada smallint NOT NULL,
-	pavimentacao smallint[] NOT NULL
+	pavimentacao smallint[] NOT NULL,
+	CONSTRAINT cb_passeio_pk PRIMARY KEY (id)
 )#
 CREATE TABLE ge.laz_campo_quadra_p(
 	geom geometry(MULTIPOINT, [epsg]) NOT NULL,
@@ -2985,14 +2990,17 @@ CREATE TABLE ge.cb_area_urbana_isolada_a(
 	 WITH (FILLFACTOR = 10)
 )#
 CREATE TABLE pe.lpal_unidade_conservacao_nao_snuc_a(
+	CONSTRAINT lpal_unidade_conservacao_nao_snuc_a_pk PRIMARY KEY (id)
 ) INHERITS(pe.lpal_unidade_conservacao_a)
 #
 CREATE TABLE pe.lpal_unidade_protecao_integral_a(
-	tipounidprotinteg smallint NOT NULL
+	tipounidprotinteg smallint NOT NULL,
+	CONSTRAINT lpal_unidade_protecao_integral_a_pk PRIMARY KEY (id)
 ) INHERITS(pe.lpal_unidade_conservacao_a)
 #
 CREATE TABLE pe.lpal_unidade_uso_sustentavel_a(
-	tipounidusosust smallint NOT NULL
+	tipounidusosust smallint NOT NULL,
+	CONSTRAINT lpal_unidade_uso_sustentavel_a_pk PRIMARY KEY (id)
 ) INHERITS(pe.lpal_unidade_conservacao_a)
 #
 CREATE TABLE pe.fer_ponto_ferroviario_p(
@@ -3348,13 +3356,15 @@ ALTER TABLE ge.edf_edif_desenv_social_a OWNER TO postgres#
 CREATE TABLE ge.edf_hab_indigena_p(
 	coletiva smallint NOT NULL,
 	isolada smallint NOT NULL,
-	id_aldeia_indigena uuid
+	id_aldeia_indigena uuid,
+	CONSTRAINT edf_hab_indigena_p_pk PRIMARY KEY (id)
 ) INHERITS(ge.edf_edif_habitacional_p)
 #
 CREATE TABLE ge.edf_hab_indigena_a(
 	coletiva smallint NOT NULL,
 	isolada smallint NOT NULL,
-	id_aldeia_indigena uuid
+	id_aldeia_indigena uuid,
+	CONSTRAINT edf_hab_indigena_a_pk PRIMARY KEY (id)
 ) INHERITS(ge.edf_edif_habitacional_a)
 #
 CREATE TABLE ge.emu_poste_sinalizacao_p(
@@ -11899,8 +11909,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_privada','pe','tra_patio_p','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','fer_estacao_ferroviaria','ge','cb_area_estrut_transporte_a','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_banheiro_publico_p','id_assentamento_precario')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_posto_fiscal_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_saude_p','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_posto_fiscal_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','emu_terminal_rodoviario','ge','edf_posto_fiscal_a','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_desportivo','ge','laz_ruina_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_comerc_serv','complexos','laz_kartodromo','id_org_comerc_serv')#
@@ -11920,8 +11930,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','tra_estrut_transporte','ge','cb_estacionamento_a','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_industrial','pe','eco_deposito_geral_a','id_org_industrial')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_pub_civil','complexos','adm_org_comerc_serv','id_org_pub_civil')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_hab_indigena_p','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_pub_militar_a','id_assentamento_precario')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_hab_indigena_p','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_clube_social','ge','edf_edif_constr_lazer_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','tra_estrut_apoio','ge','edf_posto_combustivel_p','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_constr_turistica_a','id_complexo_habitacional')#
@@ -11935,8 +11945,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','rtr_via_ferrea','pe','tra_passagem_elevada_viaduto','id_via_ferrea')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_pub_civil_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_pub','complexos','laz_marina','id_org_ensino')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_energia_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_saneamento_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_energia_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','sau_org_saude_pub','ge','cb_area_saude_a','id_org_saude')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_residencial_p','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aglomerado_rural','complexos','cb_complexo_habitacional','id_localidade')#
@@ -11976,8 +11986,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','rdr_elemento_hidrografico','complexos','rdr_trecho_curso_dagua','id_elemento_hidrografico')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_privada','ge','edf_edif_ensino_p','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','hid_arquipelago','pe','hid_ilha_a','id_arquipelago')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_hab_indigena_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_pub_militar_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_hab_indigena_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_pub','ge','edf_edif_ensino_a','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','emu_terminal_hidroviario','pe','eco_deposito_geral_a','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_clube_social','ge','laz_pista_competicao_l','id_complexo_desportivo_lazer')#
@@ -12258,8 +12268,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_religiosa_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','sb_complexo_abast_agua','ge','edf_edif_abast_agua_p','id_complexo_abast_agua')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_comerc_serv_a','id_assentamento_precario')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_religiosa_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_saude_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_religiosa_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipodromo','ge','laz_ruina_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','eco_frigorifico_matadouro','pe','eco_deposito_geral_a','id_org_industrial')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_urbano','ge','laz_ruina_a','id_complexo_desportivo_lazer')#
@@ -12368,8 +12378,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_militar','complexos','laz_jardim_botanico','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_privada','complexos','laz_velodromo','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','enc_complexo_gerador_energia_eletrica','pe','enc_est_gerad_energia_eletrica_p','id_complexo_gerador_energia_eletrica')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_energia_a','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_saneamento_a','id_assentamento_precario')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_energia_a','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_constr_portuaria_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_pub_civil_p','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_habitacional_a','id_complexo_habitacional')#
@@ -12400,8 +12410,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_parque_aquatico','ge','edf_edif_constr_lazer_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipica','ge','cb_largo_a','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_jardim_botanico','ge','laz_arquibancada_a','id_complexo_desportivo_lazer')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_hab_indigena_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_edif_pub_militar_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_aldeia_indigena','ge','edf_hab_indigena_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_comerc_serv','complexos','laz_clube_social','id_org_comerc_serv')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','sau_org_saude_militar','ge','cb_area_saude_a','id_org_saude')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','hdv_complexo_portuario','pe','hdv_fundeadouro','id_complexo_portuario')#
@@ -12523,8 +12533,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_posto_policia_rod_federal_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_kartodromo','ge','edf_edif_constr_turistica_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_complexo_habitacional','ge','edf_edif_constr_turistica_p','id_complexo_habitacional')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_saude_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_posto_fiscal_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_condominio','ge','edf_edif_saude_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_instituicao_publica','complexos','adm_org_pub_militar','id_instituicao_publica')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','edu_org_ensino_pub','pe','tra_patio_p','id_org_ensino')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_pesque_pague','ge','edf_edif_pub_civil_p','id_complexo_desportivo_lazer')#
@@ -13182,8 +13192,8 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','ver_area_verde','pe','veg_veg_restinga_a','id_area_verde')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','adm_org_pub_civil','complexos','laz_velodromo','id_org_pub_civil')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_industrial_a','id_assentamento_precario')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_religiosa_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_saude_a','id_complexo_habitacional')#
+INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_conjunto_habitacional','ge','edf_edif_religiosa_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cb_assentamento_precario','ge','edf_edif_agropec_ext_veg_pesca_p','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_hipodromo','ge','laz_arquibancada_l','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lpal_capital','pe','lpal_posic_geo_localidade_p','id_localidade')#
