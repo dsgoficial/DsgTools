@@ -32,9 +32,13 @@ class ValidationProcess(QObject):
             self.setStatus('Instantianting process', 0)
         self.classesToBeDisplayedAfterProcess = []
         self.parameters = None
+        self.parametersDict = None
         
     def setParameters(self, params):
         self.parameters = params
+
+    def setParametersDict(self, params):
+        self.parametersDict = params
     
     def execute(self):
         #abstract method. MUST be reimplemented.

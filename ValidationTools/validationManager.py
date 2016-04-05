@@ -99,6 +99,7 @@ class ValidationManager(QObject):
                     # adjusting the parameters in the process
                     currProc.setParameters(params)
                 #check status
+                currProc.setParametersDict(self.parameterDict)
                 QgsMessageLog.logMessage('Process %s Log:\n' % currProc.getName(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 currProc.execute() #run bitch run!
                 status = currProc.getStatus() #must set status
