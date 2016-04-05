@@ -38,7 +38,7 @@ class IdentifySmallLinesProcess(ValidationProcess):
             lines = []
             for c in classesWithGeom:
                 if c[-1] == 'l':
-                    areas.append(c)
+                    lines.append(c)
             tol = self.parameters['Length']
             result = self.abstractDb.getSmallLinesRecords(lines, tol) #list only classes with elements.
             if len(result.keys()) > 0:
