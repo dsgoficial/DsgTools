@@ -40,7 +40,7 @@ class IdentifySliverPolygonsProcess(ValidationProcess):
                 if c[-1] == 'a':
                     areas.append(c)
             thickness = self.parameters['Thickness']
-            result = self.abstractDb.getSliverPolygonsRecords(classesWithGeom, thickness) #list only classes with elements.
+            result = self.abstractDb.getSliverPolygonsRecords(areas, thickness) #list only classes with elements.
             if len(result.keys()) > 0:
                 recordList = []
                 for cl in result.keys():
