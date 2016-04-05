@@ -869,7 +869,7 @@ class PostgisDb(AbstractDb):
                 raise Exception(self.tr('Problem getting small areas: ') + query.lastError().text())
             while query.next():
                 smallAreasDict = self.utils.buildNestedDict(smallAreasDict, [cl,query.value(0)], query.value(2))
-        return duplicatedDict
+        return smallAreasDict
 
     def getSmallLinesRecords(self,classesWithGeom, tol):
         self.checkAndOpenDb()
