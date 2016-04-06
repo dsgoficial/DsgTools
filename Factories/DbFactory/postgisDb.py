@@ -128,7 +128,8 @@ class PostgisDb(AbstractDb):
             layerName = tableSchema+'.'+tableName
             if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
                 or tableName.split("_")[-1] == "a":
-                classList.append(layerName)
+                if tableSchema not in ['validation', 'views']:
+                    classList.append(layerName)
         return classList
     
     def listComplexClassesFromDatabase(self):
@@ -918,15 +919,16 @@ class PostgisDb(AbstractDb):
     def removeFeatures(self,cl,idList):
         self.checkAndOpenDb()
         tableSchema, tableName = self.getTableSchema(cl)
-        sql = self.gen.deleteFeatures(tableSchema, tableName)
+        sql = self.gen.deleteFeatures(tableSchema, tableName, idList)
         query = QSqlQuery(self.db)
         self.db.transaction()
-        if not query.exec_(query):
+        if not query.exec_(sql):
             self.db.rollback()
             self.db.close()
             raise Exception(self.tr('Problem deleting features from ')+cl+': '+ query.lastError().text())
         self.db.commit()
         self.db.close()
+        return len(idList)
 
     def getNotSimpleRecords(self,classesWithGeom):
         self.checkAndOpenDb()
