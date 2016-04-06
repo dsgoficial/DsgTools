@@ -464,7 +464,7 @@ class PostGISSqlGenerator(SqlGenerator):
         drop table if exists pontos#
         create temp table pontos as select id as id, (ST_DumpPoints(geom)).geom as geom from only {0}.{1}#
         create index pontos_gist on pontos using gist (geom)#
-        create index seg_gist on seg using gist (geom)#""".format(tableSchema, tableName)
+        create index seg_gist on seg using gist (geom)""".format(tableSchema, tableName)
         return sql
 
     def getVertexNearEdgesStruct(self, epsg, tol):

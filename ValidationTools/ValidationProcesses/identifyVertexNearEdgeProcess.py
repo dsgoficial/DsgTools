@@ -26,7 +26,7 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 class IdentifyVertexNearEdgeProcess(ValidationProcess):
     def __init__(self, postgisDb):
         super(self.__class__,self).__init__(postgisDb)
-        self.parameters = {'Tolerance': 1}
+        self.parameters = {'Tolerance': 1.0}
 
     def execute(self):
         #abstract method. MUST be reimplemented.
@@ -36,8 +36,8 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
             tol = self.parameters['Tolerance']
-            tableSchema, tableName = self.abstractDb.getTableSchema(cl)
             for cl in classesWithGeom:
+                tableSchema, tableName = self.abstractDb.getTableSchema(cl)
                 if cl[-1] in ['l','a']:
                     result = self.abstractDb.getVertexNearEdgesRecords(tableSchema, tableName, tol) #list only classes with elements.
                     if len(result) > 0:
