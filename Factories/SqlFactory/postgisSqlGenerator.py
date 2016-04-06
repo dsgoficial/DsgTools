@@ -491,9 +491,9 @@ class PostGISSqlGenerator(SqlGenerator):
                                         )::decimal + 360) % 360 as angle
                         FROM
                         (SELECT
-                              ST_PointN(geom, generate_series(1, ST_NPoints(geom)-1)) as pt1,
-                              ST_PointN(geom, generate_series(1, ST_NPoints(geom)-1) %  (ST_NPoints(geom)-1)+1) as anchor,
-                              ST_PointN(geom, generate_series(2, ST_NPoints(geom)) %  (ST_NPoints(geom)-1)+1) as pt2,
+                              ST_PointN(geom, generate_series(1, ST_NPoints(geom)-2)) as pt1,
+                              ST_PointN(geom, generate_series(2, ST_NPoints(geom)-1)) as anchor,
+                              ST_PointN(geom, generate_series(3, ST_NPoints(geom))) as pt2,
                               linestrings.id as id
                             FROM
                               (SELECT id as id, (ST_Dump(geom)).geom as geom
