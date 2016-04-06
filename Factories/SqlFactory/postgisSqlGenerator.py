@@ -427,12 +427,12 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def getDuplicatedGeom(self,schema,cl):
         sql = """select * from (
-      SELECT id,
-      ROW_NUMBER() OVER(PARTITION BY geom ORDER BY id asc) AS Row,
-      geom FROM ONLY %s.%s 
-    ) dups
-    where     
-    dups.Row > 1""" % (schema,cl)
+        SELECT id,
+        ROW_NUMBER() OVER(PARTITION BY geom ORDER BY id asc) AS Row,
+        geom FROM ONLY %s.%s 
+        ) dups
+        where     
+        dups.Row > 1""" % (schema,cl)
         return sql
     
     def getSmallAreas(self,schema,cl,areaTolerance):
@@ -525,9 +525,8 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def forceValidity(self, tableSchema, tableName, idList, srid):
         sql = """update {0}.{1} set geom = result.geom from (
-select distinct parts.id, ST_Union(parts.geom) as geom from {0}.{1} as source, 
-                                (select id as id, ST_Multi(((ST_Dump(ST_SetSRID(ST_MakeValid(geom), {3}))).geom)) as geom from 
-                                pe.veg_campo_a  where id in ({2})) as parts where ST_GeometryType(parts.geom) = ST_GeometryType(source.geom) group by parts.id
-) as result where  result.id = {0}.{1}.id
-        """.format(tableSchema,tableName,','.join(idList),srid)
+        select distinct parts.id, ST_Union(parts.geom) as geom from {0}.{1} as source, 
+                                        (select id as id, ST_Multi(((ST_Dump(ST_SetSRID(ST_MakeValid(geom), {3}))).geom)) as geom from 
+                                        pe.veg_campo_a  where id in ({2})) as parts where ST_GeometryType(parts.geom) = ST_GeometryType(source.geom) group by parts.id
+        ) as result where  result.id = {0}.{1}.id""".format(tableSchema,tableName,','.join(idList),srid)
         return sql
