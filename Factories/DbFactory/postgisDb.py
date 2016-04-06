@@ -940,3 +940,16 @@ class PostgisDb(AbstractDb):
             while query.next():
                 notSimpleDict = self.utils.buildNestedDict(notSimpleDict, [cl,query.value(0)], query.value(1))
         return notSimpleDict
+
+    def getOutOfBoundsAnglesRecords(self, tableSchema, tableName, tol):
+        self.checkAndOpenDb()
+        result = []
+        sql = self.gen.getOutofBoundsAngles(tableSchema, tableName, tol)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting not out of bounds angles: ') + query.lastError().text())
+        while query.next():
+            id = query.value(0)
+            geom = query.value(1)
+            result.append((id, geom))
+        return result

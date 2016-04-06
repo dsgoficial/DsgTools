@@ -478,6 +478,43 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def getNotSimple(self, tableSchema, tableName):
         sql = """select foo.id as id, ST_MULTI(st_startpoint(foo.geom)) as geom from (
-select id as id, (ST_Dump(ST_Node(ST_SetSRID(ST_MakeValid(geom),ST_SRID(geom))))).geom as geom from {0}.{1}  
-where ST_IsSimple(geom) = 'f') as foo where st_equals(st_startpoint(foo.geom),st_endpoint(foo.geom))""".format(tableSchema, tableName)
+        select id as id, (ST_Dump(ST_Node(ST_SetSRID(ST_MakeValid(geom),ST_SRID(geom))))).geom as geom from {0}.{1}  
+        where ST_IsSimple(geom) = 'f') as foo where st_equals(st_startpoint(foo.geom),st_endpoint(foo.geom))""".format(tableSchema, tableName)
+        return sql
+
+    def getOutofBoundsAngles(self, tableSchema, tableName, angle):
+        if tableName.split('_')[-1] == 'l':
+            sql = """
+            WITH result AS (SELECT points.id, points.anchor, (degrees
+                                        (
+                                            ST_Azimuth(points.anchor, points.pt1) - ST_Azimuth(points.anchor, points.pt2)
+                                        )::decimal + 360) % 360 as angle
+                        FROM
+                        (SELECT
+                              ST_PointN(geom, generate_series(1, ST_NPoints(geom)-1)) as pt1,
+                              ST_PointN(geom, generate_series(1, ST_NPoints(geom)-1) %  (ST_NPoints(geom)-1)+1) as anchor,
+                              ST_PointN(geom, generate_series(2, ST_NPoints(geom)) %  (ST_NPoints(geom)-1)+1) as pt2,
+                              linestrings.id as id
+                            FROM
+                              (SELECT id as id, (ST_Dump(geom)).geom as geom
+                               FROM only {0}.{1}
+                               ) AS linestrings WHERE ST_NPoints(linestrings.geom) > 2 ) as points)
+            select distinct id, anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle)
+        elif  tableName.split('_')[-1] == 'a':
+            sql = """
+            WITH result AS (SELECT points.id, points.anchor, (degrees
+                                        (
+                                            ST_Azimuth(points.anchor, points.pt1) - ST_Azimuth(points.anchor, points.pt2)
+                                        )::decimal + 360) % 360 as angle
+                        FROM
+                        (SELECT
+                              ST_PointN(geom, generate_series(1, ST_NPoints(geom)-1)) as pt1,
+                              ST_PointN(geom, generate_series(1, ST_NPoints(geom)-1) %  (ST_NPoints(geom)-1)+1) as anchor,
+                              ST_PointN(geom, generate_series(2, ST_NPoints(geom)) %  (ST_NPoints(geom)-1)+1) as pt2,
+                              linestrings.id as id
+                            FROM
+                              (SELECT id as id, ST_Boundary((ST_Dump(ST_ForceRHR(geom))).geom) as geom
+                               FROM only {0}.{1}
+                               ) AS linestrings WHERE ST_NPoints(linestrings.geom) > 2 ) as points)
+            select distinct id, anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle)
         return sql
