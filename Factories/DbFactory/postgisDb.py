@@ -927,3 +927,16 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem deleting features from ')+cl+': '+ query.lastError().text())
         self.db.commit()
         self.db.close()
+
+    def getNotSimpleRecords(self,classesWithGeom):
+        self.checkAndOpenDb()
+        notSimpleDict = dict()
+        for cl in classesWithGeom:
+            tableSchema, tableName = self.getTableSchema(cl)
+            sql = self.gen.getNotSimple(tableSchema, tableName)
+            query = QSqlQuery(sql, self.db)
+            if not query.isActive():
+                raise Exception(self.tr('Problem getting not simple geometries: ') + query.lastError().text())
+            while query.next():
+                notSimpleDict = self.utils.buildNestedDict(notSimpleDict, [cl,query.value(0)], query.value(1))
+        return notSimpleDict

@@ -475,3 +475,9 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """DELETE FROM %s.%s 
         WHERE id in (%s)""" %(schema,table,','.join(idList))
         return sql
+    
+    def getNotSimple(self, tableSchema, tableName):
+        sql = """select foo.id as id, ST_MULTI(st_startpoint(foo.geom)) as geom from (
+select id as id, (ST_Dump(ST_Node(ST_SetSRID(ST_MakeValid(geom),ST_SRID(geom))))).geom as geom from {0}.{1}  
+where ST_IsSimple(geom) = 'f') as foo where st_equals(st_startpoint(foo.geom),st_endpoint(foo.geom))""".format(tableSchema, tableName)
+        return sql
