@@ -518,3 +518,16 @@ class PostGISSqlGenerator(SqlGenerator):
                                ) AS linestrings WHERE ST_NPoints(linestrings.geom) > 2 ) as points)
             select distinct id, anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle)
         return sql
+    
+    def getFlagsByProcess(self, processName):
+        sql = """select layer, feat_id from validation.aux_flags_validacao where process_name = '%s'""" % processName
+        return sql
+    
+    def forceValidity(self, tableSchema, tableName, idList, srid):
+        sql = """update {0}.{1} set geom = result.geom from (
+select distinct parts.id, ST_Union(parts.geom) as geom from {0}.{1} as source, 
+                                (select id as id, ST_Multi(((ST_Dump(ST_SetSRID(ST_MakeValid(geom), {3}))).geom)) as geom from 
+                                pe.veg_campo_a  where id in ({2})) as parts where ST_GeometryType(parts.geom) = ST_GeometryType(source.geom) group by parts.id
+) as result where  result.id = {0}.{1}.id
+        """.format(tableSchema,tableName,','.join(idList),srid)
+        return sql

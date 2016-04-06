@@ -921,7 +921,7 @@ class PostgisDb(AbstractDb):
         sql = self.gen.deleteFeatures(tableSchema, tableName)
         query = QSqlQuery(self.db)
         self.db.transaction()
-        if not query.exec_(inner):
+        if not query.exec_(query):
             self.db.rollback()
             self.db.close()
             raise Exception(self.tr('Problem deleting features from ')+cl+': '+ query.lastError().text())
@@ -953,3 +953,31 @@ class PostgisDb(AbstractDb):
             geom = query.value(1)
             result.append((id, geom))
         return result
+
+    def getFlagsDictByProcess(self, processName):
+        self.checkAndOpenDb()
+        flagsDict = dict()
+        sql = self.gen.getFlagsByProcess(processName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting flags dict: ') + query.lastError().text())
+        while query.next():
+            cl = query.value(0)
+            id = query.value(1)
+            flagsDict = self.utils.buildNestedDict(flagsDict, [cl], [str(id)])
+        return flagsDict
+    
+    def forceValidity(self, cl, idList):
+        self.checkAndOpenDb()
+        tableSchema, tableName = self.getTableSchema(cl)
+        srid = self.findEPSG()
+        sql = self.gen.forceValidity(tableSchema, tableName, idList, srid)
+        query = QSqlQuery(self.db)
+        self.db.transaction()
+        if not query.exec_(sql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem forcing validity of features from ')+cl+': '+ query.lastError().text())
+        self.db.commit()
+        self.db.close()        
+        return len(idList)

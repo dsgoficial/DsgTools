@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2016-02-18
+        begin                : 2016-04-06
         git sha              : $Format:%H$
         copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba@dsg.eb.mil.br
@@ -32,8 +32,10 @@ class ForceValidityGeometriesProcess(ValidationProcess):
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
-            flagsDict = self.abstractDb.getFlagsDictByProcess(self.getName())
-            numberOfProblems = self.abstractDb.forceValidity(flagsDict) #list only classes with elements.      
+            flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyInvalidGeometriesProcess')
+            numberOfProblems = 0
+            for cl in flagsDict.keys():
+                numberOfProblems += self.abstractDb.forceValidity(cl,flagsDict[cl])
             self.setStatus('%s features were changed.\n' % numberOfProblems, 1) #Finished with flags
             QgsMessageLog.logMessage('%s features were changed.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return
