@@ -83,7 +83,7 @@ class ValidationManager(QObject):
                     procDep = self.instantiateProcessByName(dep)
                     #possible status: (0,'Not yet ran'), (1,'Finished'), (2,'Failed'), (3,'Running'), (4,'Finished with flags')
                     #must check if each dependency is met, so status must be 1
-                    if procDep.getStatus() != 1: 
+                    if procDep.getStatus() not in [1,4]: 
                         unmetDep.append(dep)
                 if len(unmetDep) > 0:
                     QgsMessageLog.logMessage('Unable to run process due to the following dependencies: %s\n' % ','.join(unmetDep), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

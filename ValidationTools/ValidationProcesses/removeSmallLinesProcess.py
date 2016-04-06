@@ -26,6 +26,10 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 class RemoveSmallLinesProcess(ValidationProcess):
     def __init__(self, postgisDb):
         super(self.__class__,self).__init__(postgisDb)
+    
+    def dependsOn(self):
+        #Abstract method. Should be reimplemented if necessary.
+        return ['IdentifySmallLinesProcess']
 
     def execute(self):
         #abstract method. MUST be reimplemented.
