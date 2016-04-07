@@ -32,7 +32,7 @@ class CleanAreasProcess(ValidationProcess):
     def runProcessinAlg(self, cl):
         alg = 'grass7:v.clean.advanced'
         
-        input = QgsVectorLayer(self.abstractDb.getURI(cl).uri(), cl, "postgres")
+        input = QgsVectorLayer(self.abstractDb.getURI(cl).uri(), cl, "postgres") #TODO: fazer bagulho sem from only
         crs = input.crs()
         crs.createFromId(self.abstractDb.findEPSG())
         input.setCrs(crs)        
@@ -53,7 +53,11 @@ class CleanAreasProcess(ValidationProcess):
         outputLayer = processing.getObject(ret['output'])
         
         return self.getProcessingErrors(tableSchema, tableName, errorLayer)
-        
+    
+    #TODO: Fazer essa porra
+    def updateOriginalLayer(self,lyr):
+        pass
+    
     def getProcessingErrors(self, tableSchema, tableName, layer):
         recordList = []
         for feature in layer.getFeatures():
