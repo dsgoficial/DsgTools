@@ -49,8 +49,17 @@ class CleanAreasProcess(ValidationProcess):
         minArea = 0.0001
         
         ret = processing.runalg(alg, input, tools, threshold, extent, snap, minArea, None, None)
-        print ret
-
+        errorLayer = processing.getObject(ret['error'])
+        outputLayer = processing.getObject(ret['output'])
+        
+        return self.getProcessingErrors(tableSchema, tableName, errorLayer)
+        
+    def getProcessingErrors(self, tableSchema, tableName, layer):
+        recordList = []
+        for feature in layer.getFeatures():
+            recordList.append((feature.id(), feature.geometry()))
+        return recordList
+        
     def execute(self):
         #abstract method. MUST be reimplemented.
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
@@ -60,9 +69,18 @@ class CleanAreasProcess(ValidationProcess):
             classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
             for cl in classesWithGeom:
                 if cl[-1] in ['l','a']:
-                    self.runProcessinAlg(cl)
-                    self.setStatus('Cleaning process finished.\n', 1) #Finished
-                    QgsMessageLog.logMessage('Cleaning process finished.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)                    
+                    result = self.runProcessinAlg(cl)
+                    if len(result) > 0:
+                        recordList = []
+                        for tupple in result:
+                            recordList.append((tableSchema+'.'+tableName,tupple[0],'Cleaning error.',tupple[1]))
+                            self.addClassesToBeDisplayedList(tupple[0]) 
+                        numberOfProblems = self.addFlag(recordList)
+                        self.setStatus('%s feature(s) with cleaning errors. Check flags.\n' % numberOfProblems, 4) #Finished with flags
+                        QgsMessageLog.logMessage('%s feature(s) with cleaning errors. Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    else:
+                        self.setStatus('There are cleaning errors.\n', 1) #Finished
+                        QgsMessageLog.logMessage('There are cleaning errors.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
