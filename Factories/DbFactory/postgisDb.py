@@ -983,3 +983,20 @@ class PostgisDb(AbstractDb):
         self.db.commit()
         self.db.close()        
         return len(idList)
+    
+    def getTableExtent(self, tableSchema, tableName):
+        self.checkAndOpenDb()
+        sql = self.gen.getTableExtent(tableSchema, tableName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting table extent: ') + query.lastError().text())
+        
+        extent = None
+        while query.next():
+            xmin = query.value(0)
+            xmax = query.value(1)
+            ymin = query.value(2)
+            ymax = query.value(3)
+            extent = (xmin, xmax, ymin, ymax)
+        return extent
+        

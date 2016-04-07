@@ -132,3 +132,6 @@ class SqlGenerator:
 
     def createValidationStructure(self,srid):
         return None
+    
+    def getTableExtent(self, tableSchema, tableName):
+        return None    

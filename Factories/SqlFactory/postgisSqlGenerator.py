@@ -530,3 +530,9 @@ class PostGISSqlGenerator(SqlGenerator):
                                         pe.veg_campo_a  where id in ({2})) as parts where ST_GeometryType(parts.geom) = ST_GeometryType(source.geom) group by parts.id
         ) as result where  result.id = {0}.{1}.id""".format(tableSchema,tableName,','.join(idList),srid)
         return sql
+    
+    def getTableExtent(self, tableSchema, tableName):
+        sql = """
+        SELECT ST_XMin(ST_Extent(geom)), ST_XMax(ST_Extent(geom)), ST_YMin(ST_Extent(geom)), ST_YMax(ST_Extent(geom)) AS extent FROM {}.{}
+        """.format(tableSchema, tableName)
+        return sql
