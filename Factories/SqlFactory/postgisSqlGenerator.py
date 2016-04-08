@@ -67,6 +67,10 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "id in (SELECT id FROM ONLY "+layer_name+")"
         return sql
 
+    def loadLayerFromDatabaseUsingInh(self, layer_name):
+        sql = "id in (SELECT id FROM "+layer_name+")"
+        return sql
+
     def getCreateDatabase(self, name):
         sql = "CREATE DATABASE "+name
         return sql
@@ -77,6 +81,10 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def getElementCountFromLayer(self, layer):
         sql = "SELECT count(*) FROM ONLY "+layer
+        return sql
+
+    def getElementCountFromLayerWithInh(self, layer):
+        sql = "SELECT count(*) FROM "+layer
         return sql
     
     def getDatabasesFromServer(self):
@@ -535,4 +543,15 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """
         SELECT ST_XMin(ST_Extent(geom)), ST_XMax(ST_Extent(geom)), ST_YMin(ST_Extent(geom)), ST_YMax(ST_Extent(geom)) AS extent FROM {}.{}
         """.format(tableSchema, tableName)
+        return sql
+    
+    def getGeomParents(self):
+        sql = """
+        select distinct coalesce(gc.f_table_schema, gc2.f_table_schema) || '.' || coalesce(gc.f_table_name,gc2.f_table_name) as parents  from pg_inherits as inh 
+            left join pg_class as p on inh.inhrelid = p.oid 
+            left join pg_class as p2 on inh.inhparent = p2.oid 
+            left join geometry_columns as gc on gc.f_table_name = p2.relname
+            left join geometry_columns as gc2 on gc2.f_table_name = p.relname
+        where gc2.f_table_schema not in ('validation','complexos','public') order by parents
+        """
         return sql

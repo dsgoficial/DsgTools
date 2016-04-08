@@ -27,15 +27,15 @@ import processing
 class CleanAreasProcess(ValidationProcess):
     def __init__(self, postgisDb):
         super(self.__class__,self).__init__(postgisDb)
-        self.parameters = {'Snap': 0.5}
+        self.parameters = {'Snap': 0.5, 'MinArea':0.0001}
         
     def runProcessinAlg(self, cl):
         alg = 'grass7:v.clean.advanced'
         
-        input = QgsVectorLayer(self.abstractDb.getURI(cl).uri(), cl, "postgres") #TODO: fazer bagulho sem from only
-        crs = input.crs()
+        inputLyr= QgsVectorLayer(self.abstractDb.getDbURI(cl,True).uri(), cl, "postgres")
+        crs = inputLyr.crs()
         crs.createFromId(self.abstractDb.findEPSG())
-        input.setCrs(crs)        
+        inputLyr.setCrs(crs)        
         
         tools = 'break,rmsa,rmdangle'
         threshold = -1
@@ -45,17 +45,18 @@ class CleanAreasProcess(ValidationProcess):
         extent = '{0},{1},{2},{3}'.format(xmin, xmax, ymin, ymax)
         
         snap = self.parameters['Snap']
+        minArea = self.parameters['MinArea']
         
-        minArea = 0.0001
-        
-        ret = processing.runalg(alg, input, tools, threshold, extent, snap, minArea, None, None)
+        ret = processing.runalg(alg, inputLyr, tools, threshold, extent, snap, minArea, None, None)
         errorLayer = processing.getObject(ret['error'])
         outputLayer = processing.getObject(ret['output'])
+        self.updateOriginalLayer(inputLyr,outputLayer)
         
         return self.getProcessingErrors(tableSchema, tableName, errorLayer)
     
     #TODO: Fazer essa porra
     def updateOriginalLayer(self,lyr):
+        
         pass
     
     def getProcessingErrors(self, tableSchema, tableName, layer):
@@ -70,7 +71,8 @@ class CleanAreasProcess(ValidationProcess):
         try:
             self.setStatus('Running', 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
+            classesWithGeom = self.abstractDb.getParentsWithElements()
+            print classesWithGeom
             for cl in classesWithGeom:
                 if cl[-1] in ['l','a']:
                     result = self.runProcessinAlg(cl)

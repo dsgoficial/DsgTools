@@ -849,6 +849,25 @@ class PostgisDb(AbstractDb):
         
         return uri
     
+    def getDbURI(self,table, useInh = False):
+        if useInh:
+            return getURI(table)
+        else:
+            return getURInoInh(table)
+    
+    def getURInoInh(self,table):
+        schema, layer_name = self.getTableSchema(table)
+        host = self.db.hostName()
+        port = self.db.port()
+        database = self.db.databaseName()
+        user = self.db.userName()
+        password = self.db.password()
+        sql = self.gen.loadLayerFromDatabaseUsingInh(table)
+        uri = QgsDataSourceURI()
+        uri.setConnection(str(host),str(port), str(database), str(user), str(password))
+        uri.setDataSource(schema, layer_name, 'geom', sql, 'id')
+        uri.disableSelectAtId(True)   
+    
     def getDuplicatedGeomRecords(self,classesWithGeom):
         self.checkAndOpenDb()
         duplicatedDict = dict()
@@ -999,4 +1018,43 @@ class PostgisDb(AbstractDb):
             ymax = query.value(3)
             extent = (xmin, xmax, ymin, ymax)
         return extent
-        
+    
+    def getGeomTopOfInheritance(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getGeomParents()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting table extent: ') + query.lastError().text())
+        topOfInhList = []
+        while query.next():
+            topOfInhList.append(query.value(0))
+        return topOfInhList
+    
+    def getParentsWithElements(self):
+        candidates = self.getGeomTopOfInheritance()
+        elementsDict = self.listWithElementsFromDatabaseUsingInh(candidates)
+        return elementsDict.keys()
+    
+    def listWithElementsFromDatabaseUsingInh(self,classList): #TODO: Merge both methods and add an argument to decide which to use
+        self.checkAndOpenDb()
+        classListWithNumber = self.countElementsUsingInh(classList)
+        classesWithElements = dict()
+        for cl in classListWithNumber:
+            if cl[1]>0:
+                classesWithElements[cl[0]]=cl[1]   
+        return classesWithElements
+    
+    def countElementsUsingInh(self, layers):
+        self.checkAndOpenDb()
+        listaQuantidades = []
+        for layer in layers:
+            (table,schema)=self.getTableSchema(layer)
+            if layer.split('_')[-1] in ['p','l','a'] or schema == 'complexos':
+                sql = self.gen.getElementCountFromLayerWithInh(layer)
+                query = QSqlQuery(sql,self.db)
+                query.next()
+                number = query.value(0)
+                if not query.exec_(sql):
+                    raise Exception(self.tr("Problem counting elements: ")+query.lastError().text())
+                listaQuantidades.append([layer, number])
+        return listaQuantidades
