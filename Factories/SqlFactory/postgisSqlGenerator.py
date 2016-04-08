@@ -545,13 +545,19 @@ class PostGISSqlGenerator(SqlGenerator):
         """.format(tableSchema, tableName)
         return sql
     
-    def getGeomParents(self):
+    def getOrphanGeomTablesWithElements(self):
         sql = """
-        select distinct coalesce(gc.f_table_schema, gc2.f_table_schema) || '.' || coalesce(gc.f_table_name,gc2.f_table_name) as parents  from pg_inherits as inh 
-            left join pg_class as p on inh.inhrelid = p.oid 
-            left join pg_class as p2 on inh.inhparent = p2.oid 
-            left join geometry_columns as gc on gc.f_table_name = p2.relname
-            left join geometry_columns as gc2 on gc2.f_table_name = p.relname
-        where gc2.f_table_schema not in ('validation','complexos','public') order by parents
+        select distinct gc.f_table_schema || '.' || p.relname as orphan from pg_class as p
+            left join pg_inherits as inh  on inh.inhrelid = p.oid 
+            left join geometry_columns as gc on gc.f_table_name = p.relname
+            join pg_stat_user_tables as stats on stats.relid = p.oid
+            where inh.inhrelid IS NULL and 
+            n_live_tup > 0 and
+            gc.f_table_schema not in ('validation','complexos','public') order by orphan
+        """
+        return sql
+    
+    def updateOriginalTable(self):
+        sql = """
         """
         return sql

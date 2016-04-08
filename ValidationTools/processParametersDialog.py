@@ -67,8 +67,10 @@ class ProcessParametersDialog(QtGui.QDialog):
             widget = self.WIDGETS[type(v)]()
             if self.WIDGETS[type(v)] == QtGui.QDoubleSpinBox:
                 widget.setMaximum(sys.float_info.max)
+                widget.setMinimum(sys.float_info.min)
             if self.WIDGETS[type(v)] == QtGui.QSpinBox:
                 widget.setMaximum(sys.int_info.max)
+                widget.setMinimum(sys.int_info.min)
                 
             getattr(widget, self.SETTERS[type(widget)])(v)
 
