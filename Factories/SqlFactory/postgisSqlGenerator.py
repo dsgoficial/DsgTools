@@ -557,7 +557,8 @@ class PostGISSqlGenerator(SqlGenerator):
         """
         return sql
     
-    def updateOriginalTable(self):
+    def updateOriginalTable(self, tableSchema, tableName, geom, id):
         sql = """
-        """
+        UPDATE {0}.{1} SET geom = {2} WHERE id = {3}
+        """.format(tableSchema, tableName, geom, id)
         return sql
