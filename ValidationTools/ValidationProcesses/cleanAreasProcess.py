@@ -57,28 +57,30 @@ class CleanAreasProcess(ValidationProcess):
         ret = processing.runalg(alg, input, tools, threshold, extent, snap, minArea, None, None)
         
         #removing from registry
-        QgsMapLayerRegistry.instance().removeMapLayer(input.id())
+#         QgsMapLayerRegistry.instance().removeMapLayer(input.id())
 
         #updating original layer
-        outputLayer = processing.getObject(ret['output'])
-        self.updateOriginalLayer(tableSchema, tableName, outputLayer, epsg)
+#         outputLayer = processing.getObject(ret['output'])
+        self.updateOriginalLayer(tableSchema, tableName, input, epsg)
          
         #getting error flags
-        errorLayer = processing.getObject(ret['error'])
-        return self.getProcessingErrors(tableSchema, tableName, errorLayer)
+#         errorLayer = processing.getObject(ret['error'])
+#         return self.getProcessingErrors(tableSchema, tableName, errorLayer)
+        return []
     
     def updateOriginalLayer(self, tableSchema, tableName, layer, epsg):
         result = dict()
         for feature in layer.getFeatures():
-            if not result[feature.id()]:
+            if feature.id() not in result.keys():
                 result[feature.id()] = list()
-            else:
-                result[feature.id()].append(feature.geometry())
+            result[feature.id()].append(feature.geometry())
                 
         tuplas = []
         for key in result.keys():
-            geom = QgsGeometry.unaryUnion(result[key])
-            tuplas.append(key, geom.asWkb())
+            combined = result[key][0]
+            for geom in range(1, len(result[key])):
+                combined = combined.combine(geom)
+            tuplas.append((key, combined.asWkb()))
         self.abstractDb.updateGeometries(tableSchema, tableName, tuplas, epsg)
     
     def getProcessingErrors(self, tableSchema, tableName, layer):
