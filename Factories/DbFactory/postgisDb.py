@@ -858,12 +858,13 @@ class PostgisDb(AbstractDb):
         duplicatedDict = dict()
         for cl in classesWithGeom:
             tableSchema, tableName = self.getTableSchema(cl)
-            sql = self.gen.getDuplicatedGeom(tableSchema, tableName)
-            query = QSqlQuery(sql, self.db)
-            if not query.isActive():
-                raise Exception(self.tr('Problem getting duplicated geometries: ') + query.lastError().text())
-            while query.next():
-                duplicatedDict = self.utils.buildNestedDict(duplicatedDict, [cl,query.value(0)], query.value(2))
+            if tableSchema not in ('validation'):
+                sql = self.gen.getDuplicatedGeom(tableSchema, tableName)
+                query = QSqlQuery(sql, self.db)
+                if not query.isActive():
+                    raise Exception(self.tr('Problem getting duplicated geometries: ') + query.lastError().text())
+                while query.next():
+                    duplicatedDict = self.utils.buildNestedDict(duplicatedDict, [cl,query.value(0)], query.value(2))
         return duplicatedDict
 
     def getSmallAreasRecords(self,classesWithGeom, tol):
