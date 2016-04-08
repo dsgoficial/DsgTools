@@ -557,8 +557,11 @@ class PostGISSqlGenerator(SqlGenerator):
         """
         return sql
     
-    def updateOriginalTable(self, tableSchema, tableName, geom, id):
-        sql = """
-        UPDATE {0}.{1} SET geom = {2} WHERE id = {3}
-        """.format(tableSchema, tableName, geom, id)
-        return sql
+    def updateOriginalTable(self, tableSchema, tableName, tuplas, epsg):
+        sqls = []
+        for tupla in tuplas:
+            sql = """
+            UPDATE {0}.{1} SET geom = SELECT ST_GeomFromWKB({3},{4}) WHERE id = {2}
+            """.format(tableSchema, tableName, tupla[0], tupla[1], epsg)
+            sqls.append(sql)
+        return sqls

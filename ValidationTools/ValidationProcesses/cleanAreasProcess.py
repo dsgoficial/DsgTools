@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 import processing
 
@@ -35,7 +35,8 @@ class CleanAreasProcess(ValidationProcess):
         #creating vector layer
         input = QgsVectorLayer(self.abstractDb.getURI(cl, False).uri(), cl, "postgres")
         crs = input.crs()
-        crs.createFromId(self.abstractDb.findEPSG())
+        epsg = self.abstractDb.findEPSG()
+        crs.createFromId(epsg)
         input.setCrs(crs)
         
         #Adding to registry
@@ -53,20 +54,32 @@ class CleanAreasProcess(ValidationProcess):
         snap = self.parameters['Snap']
         minArea = self.parameters['MinArea']
         
-        ret = processing.runandload(alg, input, tools, threshold, extent, snap, minArea, None, None)
+        ret = processing.runalg(alg, input, tools, threshold, extent, snap, minArea, None, None)
         
         #removing from registry
         QgsMapLayerRegistry.instance().removeMapLayer(input.id())
-#         errorLayer = processing.getObject(ret['error'])
-#         outputLayer = processing.getObject(ret['output'])
-#         self.updateOriginalLayer(input,outputLayer)
-#         
-#         return self.getProcessingErrors(tableSchema, tableName, errorLayer)
-        return []
+
+        #updating original layer
+        outputLayer = processing.getObject(ret['output'])
+        self.updateOriginalLayer(tableSchema, tableName, outputLayer, epsg)
+         
+        #getting error flags
+        errorLayer = processing.getObject(ret['error'])
+        return self.getProcessingErrors(tableSchema, tableName, errorLayer)
     
-    #TODO: Fazer essa porra
-    def updateOriginalLayer(self,lyr):
-        pass
+    def updateOriginalLayer(self, tableSchema, tableName, layer, epsg):
+        result = dict()
+        for feature in layer.getFeatures():
+            if not result[feature.id()]:
+                result[feature.id()] = list()
+            else:
+                result[feature.id()].append(feature.geometry())
+                
+        tuplas = []
+        for key in result.keys():
+            geom = QgsGeometry.unaryUnion(result[key])
+            tuplas.append(key, geom.asWkb())
+        self.abstractDb.updateGeometries(tableSchema, tableName, tuplas, epsg)
     
     def getProcessingErrors(self, tableSchema, tableName, layer):
         recordList = []

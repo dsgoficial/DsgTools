@@ -1015,3 +1015,16 @@ class PostgisDb(AbstractDb):
         while query.next():
             result.append(query.value(0))
         return result
+    
+    def updateGeometries(self, tableSchema, tableName, tuplas, epsg):
+        self.checkAndOpenDb()
+        sqls = self.gen.updateOriginalTable(tableSchema, tableName, tuplas, epsg)
+        query = QSqlQuery(self.db)
+        self.db.transaction()
+        for sql in sqls:
+            if not query.exec_(sql):
+                self.db.rollback()
+                self.db.close()
+                raise Exception(self.tr('Problem updating geometries: ') + query.lastError().text())
+        self.db.commit()
+        self.db.close()        
