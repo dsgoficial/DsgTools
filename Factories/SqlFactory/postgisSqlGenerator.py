@@ -561,7 +561,7 @@ class PostGISSqlGenerator(SqlGenerator):
         sqls = []
         for tupla in tuplas:
             sql = """
-            UPDATE {0}.{1} SET geom = SELECT ST_GeomFromWKB({3},{4}) WHERE id = {2}
+            UPDATE {0}.{1} SET geom = ST_GeomFromText('{3}',{4}) WHERE id = {2}
             """.format(tableSchema, tableName, tupla[0], tupla[1], epsg)
             sqls.append(sql)
         return sqls

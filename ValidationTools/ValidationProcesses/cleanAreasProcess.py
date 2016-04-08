@@ -57,16 +57,15 @@ class CleanAreasProcess(ValidationProcess):
         ret = processing.runalg(alg, input, tools, threshold, extent, snap, minArea, None, None)
         
         #removing from registry
-#         QgsMapLayerRegistry.instance().removeMapLayer(input.id())
+        QgsMapLayerRegistry.instance().removeMapLayer(input.id())
 
         #updating original layer
-#         outputLayer = processing.getObject(ret['output'])
+        outputLayer = processing.getObject(ret['output'])
         self.updateOriginalLayer(tableSchema, tableName, input, epsg)
          
         #getting error flags
-#         errorLayer = processing.getObject(ret['error'])
-#         return self.getProcessingErrors(tableSchema, tableName, errorLayer)
-        return []
+        errorLayer = processing.getObject(ret['error'])
+        return self.getProcessingErrors(tableSchema, tableName, errorLayer)
     
     def updateOriginalLayer(self, tableSchema, tableName, layer, epsg):
         result = dict()
@@ -80,7 +79,7 @@ class CleanAreasProcess(ValidationProcess):
             combined = result[key][0]
             for geom in range(1, len(result[key])):
                 combined = combined.combine(geom)
-            tuplas.append((key, combined.asWkb()))
+            tuplas.append((key, combined.exportToWkb()))
         self.abstractDb.updateGeometries(tableSchema, tableName, tuplas, epsg)
     
     def getProcessingErrors(self, tableSchema, tableName, layer):
