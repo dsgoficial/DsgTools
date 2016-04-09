@@ -557,11 +557,17 @@ class PostGISSqlGenerator(SqlGenerator):
         """
         return sql
     
-    def updateOriginalTable(self, tableSchema, tableName, tuplas, epsg):
+    def updateOriginalTable(self, tableSchema, tableName, result, epsg):
         sqls = []
-        for tupla in tuplas:
+        for key in result.keys():
+            geoms = []
+            for wkt in result[key]:
+                geoms.append("ST_Multi(ST_GeomFromText('{0}', {1}))".format(wkt, epsg))
+            array = ','.join(geoms)
+            union = 'ST_Union(ARRAY[{}])'.format(array)
+
             sql = """
-            UPDATE {0}.{1} SET geom = ST_GeomFromText('{3}',{4}) WHERE id = {2}
-            """.format(tableSchema, tableName, tupla[0], tupla[1], epsg)
+            UPDATE {0}.{1} SET geom = {2} WHERE id = {3}
+            """.format(tableSchema, tableName, union, key)
             sqls.append(sql)
         return sqls

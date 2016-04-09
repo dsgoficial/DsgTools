@@ -61,7 +61,7 @@ class CleanAreasProcess(ValidationProcess):
 
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
-        self.updateOriginalLayer(tableSchema, tableName, input, epsg)
+        self.updateOriginalLayer(tableSchema, tableName, outputLayer, epsg)
          
         #getting error flags
         errorLayer = processing.getObject(ret['error'])
@@ -72,15 +72,8 @@ class CleanAreasProcess(ValidationProcess):
         for feature in layer.getFeatures():
             if feature.id() not in result.keys():
                 result[feature.id()] = list()
-            result[feature.id()].append(feature.geometry())
-                
-        tuplas = []
-        for key in result.keys():
-            combined = result[key][0]
-            for geom in range(1, len(result[key])):
-                combined = combined.combine(geom)
-            tuplas.append((key, combined.exportToWkb()))
-        self.abstractDb.updateGeometries(tableSchema, tableName, tuplas, epsg)
+            result[feature.id()].append(feature.geometry().exportToWkt())
+        self.abstractDb.updateGeometries(tableSchema, tableName, result, epsg)
     
     def getProcessingErrors(self, tableSchema, tableName, layer):
         recordList = []
