@@ -61,7 +61,7 @@ class CleanAreasProcess(ValidationProcess):
 
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
-        self.updateOriginalLayer(tableSchema, tableName, input, epsg)
+        self.updateOriginalLayer(tableSchema, tableName, outputLayer, epsg)
          
         #getting error flags
         errorLayer = processing.getObject(ret['error'])
