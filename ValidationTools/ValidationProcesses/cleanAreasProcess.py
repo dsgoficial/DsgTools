@@ -22,7 +22,7 @@
 """
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-import processing
+import processing, binascii
 
 class CleanAreasProcess(ValidationProcess):
     def __init__(self, postgisDb):
@@ -78,7 +78,7 @@ class CleanAreasProcess(ValidationProcess):
     def getProcessingErrors(self, tableSchema, tableName, layer):
         recordList = []
         for feature in layer.getFeatures():
-            recordList.append((feature.id(), feature.geometry()))
+            recordList.append((feature.id(), binascii.hexlify(feature.geometry().asWkb())))
         return recordList
         
     def execute(self):
