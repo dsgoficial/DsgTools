@@ -62,7 +62,7 @@ class CleanAreasProcess(ValidationProcess):
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
         self.updateOriginalLayer(tableSchema, tableName, outputLayer, epsg)
-         
+          
         #getting error flags
         errorLayer = processing.getObject(ret['error'])
         return self.getProcessingErrors(tableSchema, tableName, errorLayer)
@@ -70,9 +70,9 @@ class CleanAreasProcess(ValidationProcess):
     def updateOriginalLayer(self, tableSchema, tableName, layer, epsg):
         result = dict()
         for feature in layer.getFeatures():
-            if feature.id() not in result.keys():
-                result[feature.id()] = list()
-            result[feature.id()].append(feature.geometry().exportToWkt())
+            if feature['id'] not in result.keys():
+                result[feature['id']] = list()
+            result[feature['id']].append(feature.geometry().exportToWkt())
         self.abstractDb.updateGeometries(tableSchema, tableName, result, epsg)
     
     def getProcessingErrors(self, tableSchema, tableName, layer):
@@ -88,6 +88,8 @@ class CleanAreasProcess(ValidationProcess):
             self.setStatus('Running', 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithGeom = self.abstractDb.getOrphanGeomTablesWithElements()
+            if classesWithGeom.__len__() == 0:
+                return
             for cl in classesWithGeom:
                 if cl[-1]  == 'a':
                     result = self.runProcessinAlg(cl)
