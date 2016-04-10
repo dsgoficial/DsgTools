@@ -72,7 +72,7 @@ class CleanAreasProcess(ValidationProcess):
         for feature in layer.getFeatures():
             if feature['id'] not in result.keys():
                 result[feature['id']] = list()
-            result[feature['id']].append(feature.geometry().exportToWkt())
+            result[feature['id']].append(binascii.hexlify(feature.geometry().asWkb()))
         self.abstractDb.updateGeometries(tableSchema, tableName, result, epsg)
     
     def getProcessingErrors(self, tableSchema, tableName, layer):

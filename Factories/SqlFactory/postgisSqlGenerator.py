@@ -561,8 +561,8 @@ class PostGISSqlGenerator(SqlGenerator):
         sqls = []
         for key in result.keys():
             geoms = []
-            for wkt in result[key]:
-                geoms.append("ST_Multi(ST_GeomFromText('{0}', {1}))".format(wkt, epsg))
+            for wkb in result[key]:
+                geoms.append("ST_SetSRID(ST_Multi('{0}'), {1})".format(wkb, epsg))
             array = ','.join(geoms)
             union = 'ST_Union(ARRAY[{}])'.format(array)
 
