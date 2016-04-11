@@ -547,13 +547,23 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def getOrphanGeomTablesWithElements(self):
         sql = """
-        select distinct gc.f_table_schema || '.' || p.relname as orphan from pg_class as p
+        select pgcl2.sc || '.' || pgcl2.n as tb from pg_class as pgcl
+            left join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
+            left join pg_namespace as pgnsp on pgcl.relnamespace = pgnsp.oid
+            left join pg_inherits as pginh on pginh.inhparent = pgcl.oid
+            join (select pgcl.oid, pgmsp.nspname as sc, pgcl.relname as n from pg_class as pgcl
+                        join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
+                        left join pg_namespace pgmsp on pgcl.relnamespace = pgmsp.oid) 
+            as pgcl2 on pgcl2.oid = pginh.inhrelid
+            where pgnsp.nspname in ('ge','pe', 'cb') and pgatt.attname IS NULL and pgcl.relkind = 'r'
+        union 
+        select distinct gc.f_table_schema || '.' || p.relname as tb from pg_class as p
             left join pg_inherits as inh  on inh.inhrelid = p.oid 
             left join geometry_columns as gc on gc.f_table_name = p.relname
-            join pg_stat_user_tables as stats on stats.relid = p.oid
-            where inh.inhrelid IS NULL and 
-            n_live_tup > 0 and
-            gc.f_table_schema not in ('validation','complexos','public') order by orphan
+            where (inh.inhrelid IS NULL) and 
+            gc.f_table_schema in ('cb', 'pe', 'ge')
+        
+        order by tb
         """
         return sql
     
