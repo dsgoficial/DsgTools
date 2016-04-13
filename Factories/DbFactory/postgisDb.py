@@ -1013,7 +1013,14 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem getting orphan tables: ') + query.lastError().text())
         result = []
         while query.next():
-            result.append(query.value(0))
+            orphanCandidate = query.value(0)
+            sql2 = self.gen.getOrphanTableElementCount(orphanCandidate)
+            query2 = QSqlQuery(sql2, self.db)
+            if not query2.isActive():
+                raise Exception(self.tr('Problem counting orphan table: ') + query2.lastError().text())
+            while query2.next():
+                if query2.value(0):
+                    result.append(query.value(0))
         return result
     
     def updateGeometries(self, tableSchema, tableName, tuplas, epsg):

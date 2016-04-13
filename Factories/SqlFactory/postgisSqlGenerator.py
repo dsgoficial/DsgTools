@@ -577,7 +577,11 @@ class PostGISSqlGenerator(SqlGenerator):
             union = 'ST_Union(ARRAY[{}])'.format(array)
 
             sql = """
-            UPDATE {0}.{1} SET geom = {2} WHERE id = {3}
+            UPDATE {0}.{1} SET geom = ST_Multi({2}) WHERE id = {3}
             """.format(tableSchema, tableName, union, key)
             sqls.append(sql)
         return sqls
+    
+    def getOrphanTableElementCount(self, orphan):
+        sql = "select id from {} limit 1".format(orphan)
+        return sql

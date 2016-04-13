@@ -89,9 +89,11 @@ class CleanAreasProcess(ValidationProcess):
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithGeom = self.abstractDb.getOrphanGeomTablesWithElements()
             if classesWithGeom.__len__() == 0:
+                self.setStatus('Empty database!\n', 1) #Finished
+                QgsMessageLog.logMessage('Empty database!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
                 return
             for cl in classesWithGeom:
-                if cl[-1]  == 'a':
+                if cl[-1]  in ['l','a']:
                     result = self.runProcessinAlg(cl)
                     if len(result) > 0:
                         recordList = []
