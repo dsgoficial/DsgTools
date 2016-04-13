@@ -24,7 +24,7 @@ from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeo
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 import processing, binascii
 
-class CleanAreasProcess(ValidationProcess):
+class CleanGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb):
         super(self.__class__,self).__init__(postgisDb)
         self.parameters = {'Snap': 0.5, 'MinArea':0.01}
