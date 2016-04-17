@@ -52,7 +52,7 @@ class AlterUserPassword(QtGui.QDialog, FORM_CLASS):
             return
 
         try:
-            self.abstracDb.alterUserPass(self.user, newpassword)
+            self.abstractDb.alterUserPass(self.user, newpassword)
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
             return

@@ -82,7 +82,7 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
         categories = dict()
         for tableName in tables:
             #proceed only for edgv tables
-            if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" or tableName.split("_")[-1] == "a" or tableName.split("_")[0] == 'complexos':
+            if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" or tableName.split("_")[-1] == "a" or tableName.split("_")[0] == 'complexos' or tableName.split("_")[0] == 'dominios':
                 layerName = tableName.split('_')[0]+'.'+'_'.join(tableName.split('_')[1::])
                 split = tableName.split('_')
                 
