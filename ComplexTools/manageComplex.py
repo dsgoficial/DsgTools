@@ -46,8 +46,12 @@ class CustomTableModel(QSqlTableModel):
         ret = dict()
 
         in_clause = '(%s)' % ",".join(map(str, codes))
+        if self.db.driverName() == 'QPSQL':
+            sql = 'select code, code_name from dominios.%s where code in %s' % (table, in_clause)
+        elif self.db.driverName() == 'QSQLITE':
+            sql = 'select code, code_name from dominios_%s where code in %s' % (table, in_clause)
 
-        query = QSqlQuery('select code, code_name from dominios.%s where code in %s' % (table, in_clause), self.db)
+        query = QSqlQuery(sql, self.db)
         while query.next():
             code = str(query.value(0))
             code_name = query.value(1)
@@ -250,8 +254,12 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         ret = dict()
 
         in_clause = '(%s)' % ",".join(map(str, codes))
+        if self.db.driverName() == 'QPSQL':
+            sql = 'select code, code_name from dominios.%s where code in %s' % (table, in_clause)
+        elif self.db.driverName() == 'QSQLITE':
+            sql = 'select code, code_name from dominios_%s where code in %s' % (table, in_clause)
 
-        query = QSqlQuery('select code, code_name from dominios.%s where code in %s' % (table, in_clause), self.db)
+        query = QSqlQuery(sql, self.db)
         while query.next():
             code = query.value(0)
             code_name = query.value(1)

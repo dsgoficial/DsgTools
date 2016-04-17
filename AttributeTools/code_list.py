@@ -81,6 +81,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         ret = dict()
 
         codes = valueDict['FilterExpression'].replace('code in (', '').replace(')','').split(',')
+        in_clause = ','.join(map(str, codes))
         keyColumn = valueDict['Key']
         valueColumn = valueDict['Value']
         table = valueDict['Layer'][:-17]#removing the date-time characters
@@ -89,6 +90,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         if uri.host() == '':
             db = QSqlDatabase('QSQLITE')
             db.setDatabaseName(uri.database())
+            sql = 'select code, code_name from dominios_%s where code in (%s)' % (table, in_clause)
         else:
             db = QSqlDatabase('QPSQL')
             db.setHostName(uri.host())
@@ -96,13 +98,13 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
             db.setDatabaseName(uri.database())
             db.setUserName(uri.username())
             db.setPassword(uri.password())
+            sql = 'select code, code_name from dominios.%s where code in (%s)' % (table, in_clause)
         
         if not db.open():
             db.close()
             return ret
 
-        in_clause = ','.join(map(str, codes))
-        query = QSqlQuery('select code, code_name from dominios.%s where code in (%s)' % (table, in_clause), db)
+        query = QSqlQuery(sql, db)
         while query.next():
             code = str(query.value(0))
             code_name = query.value(1)
