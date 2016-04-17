@@ -73,9 +73,9 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 2.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 2.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -374,12 +374,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CodeList</name>
     <message>
-        <location filename="AttributeTools/code_list.py" line="122"/>
+        <location filename="AttributeTools/code_list.py" line="124"/>
         <source>Value</source>
         <translation>Valor</translation>
     </message>
     <message>
-        <location filename="AttributeTools/code_list.py" line="122"/>
+        <location filename="AttributeTools/code_list.py" line="124"/>
         <source>Code</source>
         <translation>Código</translation>
     </message>
@@ -1884,7 +1884,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="Factories/LayerFactory/edgv_layer.py" line="78"/>
         <source>Dominios</source>
-        <translation>Dominios</translation>
+        <translation type="obsolete">Dominios</translation>
     </message>
 </context>
 <context>
@@ -2361,22 +2361,22 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>ManageComplexDialog</name>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="303"/>
+        <location filename="ComplexTools/manageComplex.py" line="311"/>
         <source>edit this field</source>
         <translation>edite este campo</translation>
     </message>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="326"/>
+        <location filename="ComplexTools/manageComplex.py" line="334"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="326"/>
+        <location filename="ComplexTools/manageComplex.py" line="334"/>
         <source>The field: &apos;nome&apos; must be filled in all rows. Please, check and try again.</source>
         <translation>O campo &apos;nome&apos; precisa ser preenchido em todas as linhas. Por favor, verifique e tente novamente.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="339"/>
+        <location filename="ComplexTools/manageComplex.py" line="347"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
@@ -2465,6 +2465,14 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <location filename="ToolboxTools/models_and_scripts_installer.py" line="94"/>
         <source>Error copying file: </source>
         <translation>Erro copiando arquivo: </translation>
+    </message>
+</context>
+<context>
+    <name>PostGISLayer</name>
+    <message>
+        <location filename="Factories/LayerFactory/postgis_layer.py" line="87"/>
+        <source>Dominios</source>
+        <translation>Dominios</translation>
     </message>
 </context>
 <context>
@@ -2814,6 +2822,14 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
         <location filename="Factories/DbFactory/spatialiteDb.py" line="47"/>
         <source>Spatialite file databases (*.sqlite)</source>
         <translation>Banco de dados Spatialite (*.sqlite)</translation>
+    </message>
+</context>
+<context>
+    <name>SpatialiteLayer</name>
+    <message>
+        <location filename="Factories/LayerFactory/spatialite_layer.py" line="81"/>
+        <source>Dominios</source>
+        <translation>Dominios</translation>
     </message>
 </context>
 <context>
