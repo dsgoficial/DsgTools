@@ -68,7 +68,7 @@ class BDGExTools(QObject):
     def getProxyConfiguration(self):
         settings = QSettings()
         settings.beginGroup('proxy')
-        enabled = settings.value('proxyEnable')
+        enabled = settings.value('proxyEnabled')
         host = settings.value('proxyHost')
         port = settings.value('proxyPort')
         user = settings.value('proxyUser')
