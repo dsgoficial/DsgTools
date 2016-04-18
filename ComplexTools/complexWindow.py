@@ -134,7 +134,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
 
         complexClasses = []
         try:
-            complexClasses = self.widget.abstractDb.listComplexClassesFromDatabase()
+            complexClasses = self.abstractDb.listComplexClassesFromDatabase()
         except Exception as e:
             QMessageBox.critical(self.iface.mainWindow(), self.tr("Critical!"), e.args[0])
             QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)

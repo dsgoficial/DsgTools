@@ -276,6 +276,9 @@ class SpatialiteDb(AbstractDb):
             aggregated_schema = query.value(2)
             aggregated_class = query.value(3)
             column_name = query.value(4)
+            
+            if aggregated_class.split('_')[-1] not in ['p', 'l', 'a']:
+                continue
 
             #query to obtain the created complexes
             sql = self.gen.getComplexData(complex_schema, complex)
