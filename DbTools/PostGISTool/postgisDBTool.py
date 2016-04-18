@@ -82,7 +82,6 @@ class PostgisDBTool(QDialog, FORM_CLASS):
         dlg.show()
         result = dlg.exec_()
         self.populateServersCombo()
-        
 
     @pyqtSlot(bool)
     def on_srsButton_clicked(self):

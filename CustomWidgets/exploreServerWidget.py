@@ -86,8 +86,12 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         db = self.getPostGISDatabaseWithParams(database, host, port, user, password)
         if not db.open():
             QgsMessageLog.logMessage(db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
         
         query = QSqlQuery(gen.getDatabasesFromServer(), db)
+        if not query.isActive():
+            QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr("Problem executing query: ")+query.lastError().text())
+            
         dbList = []
         while query.next():
             dbList.append(query.value(0))
@@ -111,6 +115,9 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         self.clearWidgets.emit()
         if self.serversCombo.currentIndex() != 0:
             self.abstractDb = self.dbFactory.createDbFactory('QPSQL')
+            if not self.abstractDb:
+                QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
+                return
             (host, port, user, password) = self.abstractDb.getServerConfiguration(self.serversCombo.currentText())
             self.abstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
             self.abstractDbLoaded.emit()

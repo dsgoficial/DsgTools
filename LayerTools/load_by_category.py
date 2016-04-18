@@ -119,7 +119,14 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
 
         self.dbVersion = self.widget.getDBVersion()
         self.qmlPath = self.widget.getQmlPath()
-        classes = self.widget.abstractDb.listGeomClassesFromDatabase()
+
+        classes = []
+        try:
+            classes = self.widget.abstractDb.listGeomClassesFromDatabase()
+        except Exception as e:
+            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            self.bar.pushMessage(self.tr("CRITICAL!"), self.tr('A problem occurred! Check log for details.'), level=QgsMessageBar.CRITICAL)
+            
         for table in classes:
             schema, layerName = self.widget.abstractDb.getTableSchema(table)
             category = layerName.split('_')[0]
@@ -262,9 +269,14 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         self.lineWithElement = []
         self.polygonWithElement = []
 
-        pontoAux = self.widget.abstractDb.countElements(self.point)
-        linhaAux = self.widget.abstractDb.countElements(self.line)
-        areaAux = self.widget.abstractDb.countElements(self.polygon)
+        try:
+            pontoAux = self.widget.abstractDb.countElements(self.point)
+            linhaAux = self.widget.abstractDb.countElements(self.line)
+            areaAux = self.widget.abstractDb.countElements(self.polygon)
+        except Exception as e:
+            self.bar.pushMessage(self.tr('CRITICAL!'), self.tr('A problem occurred! Check log for details'), level=QgsMessageBar.CRITICAL)
+            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            return
 
         for i in pontoAux:
             if i[1] > 0:

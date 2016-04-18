@@ -66,6 +66,9 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
             edgvPath = os.path.join(currentPath, '..', 'DbTools', 'SpatialiteTool', 'template', 'FTer_2a_Ed', 'seed_edgvfter_2a_ed.sqlite')
 
         self.abstractDb = self.abstractDbFactory.createDbFactory('QSQLITE')
+        if not self.abstractDb:
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('A problem occurred! Check log for details.'))
+            return
         self.abstractDb.connectDatabase(edgvPath)
 
         try:
@@ -76,7 +79,12 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
     def populateTreeDict(self):
         self.getDbInfo()
 
-        tables = self.abstractDb.getTablesFromDatabase()
+        tables = []
+        try:
+            tables = self.abstractDb.getTablesFromDatabase()
+        except Exception as e:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
         
         self.profile = dict()
         categories = dict()

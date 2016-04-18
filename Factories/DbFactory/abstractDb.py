@@ -96,10 +96,7 @@ class AbstractDb(QObject):
         return None
 
     def countElements(self, layers):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return []
+        self.checkAndOpenDb()
         listaQuantidades = []
         for layer in layers:
             (table,schema)=self.getTableSchema(layer)
@@ -109,27 +106,23 @@ class AbstractDb(QObject):
                 query.next()
                 number = query.value(0)
                 if not query.exec_(sql):
-                    QgsMessageLog.logMessage(self.tr("Problem counting elements: ")+query.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    raise Exception(self.tr("Problem counting elements: ")+query.lastError().text())
                 listaQuantidades.append([layer, number])
         return listaQuantidades     
 
     def findEPSG(self):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return -1   
+        self.checkAndOpenDb()
         sql = self.gen.getSrid()
         query = QSqlQuery(sql, self.db)
-        srids = []
+        if not query.isActive():
+            raise Exception(self.tr("Problem finding EPSG: ")+query.lastError().text())
+        srid = -1
         while query.next():
-            srids.append(query.value(0))
-        return srids[0]
+            srid = query.value(0)
+        return srid
 
     def listWithElementsFromDatabase(self, classList):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return dict()
+        self.checkAndOpenDb()
         classListWithNumber = self.countElements(classList)
         classesWithElements = dict()
         for cl in classListWithNumber:
@@ -161,13 +154,12 @@ class AbstractDb(QObject):
         return None
 
     def getAggregationAttributes(self):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return []       
+        self.checkAndOpenDb()
         columns = []
         sql = self.gen.getAggregationColumn()
         query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting aggregation attributes: ")+query.lastError().text())
         while query.next():
             value = query.value(0)
             columns.append(value)
@@ -179,10 +171,7 @@ class AbstractDb(QObject):
             return self.ogrDb
 
     def buildFieldMap(self):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return dict()
+        self.checkAndOpenDb()
         fieldMap = self.getStructureDict()
         return fieldMap
 
@@ -407,11 +396,8 @@ class AbstractDb(QObject):
         return invalidated
     
     def prepareForConversion(self,outputAbstractDb):
-        try:
-            self.checkAndOpenDb()
-            outputAbstractDb.checkAndOpenDb()
-        except:
-            return (None, None, dict(), [], dict())
+        self.checkAndOpenDb()
+        outputAbstractDb.checkAndOpenDb()
         fieldMap = self.buildFieldMap()
         inputOgrDb = self.buildOgrDatabase()
         outputOgrDb = outputAbstractDb.buildOgrDatabase()
@@ -536,10 +522,7 @@ class AbstractDb(QObject):
         return None
     
     def getQmlDir(self):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return ''
+        self.checkAndOpenDb()
         currentPath = os.path.dirname(__file__)
         if qgis.core.QGis.QGIS_VERSION_INT >= 20600:
             qmlVersionPath = os.path.join(currentPath, '..', '..', 'Qmls', 'qgis_26')

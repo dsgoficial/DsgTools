@@ -87,7 +87,11 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
         if not self.widget.abstractDb:
             return
         
-        ret = self.widget.abstractDb.getRoles()
+        ret = []
+        try:
+            ret = self.widget.abstractDb.getRoles()
+        except Exception as e:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
 
         self.assignedProfiles.addItems(ret)
 

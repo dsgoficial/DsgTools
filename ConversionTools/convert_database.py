@@ -145,6 +145,7 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         except:
             QApplication.restoreOverrideCursor()
             converted = False
+            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
         if converted:
             QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Conversion successfully completed!'))
         else:

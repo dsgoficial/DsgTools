@@ -74,7 +74,12 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         listedItems = self.installedProfiles.selectedItems()
         permission = listedItems[0].text()
         dbname = self.widget.abstractDb.getDatabaseName()
-        permissionsDict = self.widget.abstractDb.getRolePrivileges(permission, dbname)
+
+        permissionsDict = dict()
+        try:
+            permissionsDict = self.widget.abstractDb.getRolePrivileges(permission, dbname)
+        except Exception as e:
+            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
         
         dlg = PermissionProperties(permissionsDict)
         dlg.exec_()
@@ -93,7 +98,12 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         listedItems = self.assignedProfiles.selectedItems()
         permission = listedItems[0].text()
         dbname = self.widget.abstractDb.getDatabaseName()
-        permissionsDict = self.widget.abstractDb.getRolePrivileges(permission, dbname)
+
+        permissionsDict = dict()
+        try:
+            permissionsDict = self.widget.abstractDb.getRolePrivileges(permission, dbname)
+        except Exception as e:
+            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
 
         dlg = PermissionProperties(permissionsDict)
         dlg.exec_()
@@ -104,7 +114,11 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         if not self.widget.abstractDb:
             return
         
-        ret = self.widget.abstractDb.getUsers()
+        ret = []
+        try:
+            ret = self.widget.abstractDb.getUsers()
+        except Exception as e:
+            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
         
         self.comboBox.addItem(self.tr('Select a User'))
         self.comboBox.addItems(ret)
@@ -119,7 +133,11 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         if not self.widget.abstractDb:
             return
         
-        self.installed, self.assigned = self.widget.abstractDb.getUserRelatedRoles(username)
+        self.installed, self.assigned = [], []
+        try:
+            self.installed, self.assigned = self.widget.abstractDb.getUserRelatedRoles(username)
+        except Exception as e:
+            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
 
         self.installedProfiles.addItems(self.installed)
         self.assignedProfiles.addItems(self.assigned)

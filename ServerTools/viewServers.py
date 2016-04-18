@@ -144,12 +144,14 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
     def testServer(self, name):
         abstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
         if not abstractDb:
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             return False
         (host, port, user, password) = abstractDb.getServerConfiguration(name)
         abstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
         try:
             abstractDb.checkAndOpenDb()
         except Exception as e:
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
             return False
         return True

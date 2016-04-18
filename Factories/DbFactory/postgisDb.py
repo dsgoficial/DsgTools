@@ -105,41 +105,40 @@ class PostgisDb(AbstractDb):
             self.db.setPassword(password)
 
     def getDatabaseVersion(self):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return '-1'
-        sqlVersion = self.gen.getEDGVVersion()
-        queryVersion = QSqlQuery(sqlVersion, self.db)
-        while queryVersion.next():
-            version = queryVersion.value(0)
+        self.checkAndOpenDb()
+        sql = self.gen.getEDGVVersion()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting database version: ")+query.lastError().text())
+        version = '-1'
+        while query.next():
+            version = query.value(0)
         return version
     
     def listGeomClassesFromDatabase(self):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return []    
+        self.checkAndOpenDb()
         classList = []
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem listing geom classes: ")+query.lastError().text())
         while query.next():
             tableSchema = query.value(0)
             tableName = query.value(1)
             layerName = tableSchema+'.'+tableName
             if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
                 or tableName.split("_")[-1] == "a":
-                classList.append(layerName)
+                if tableSchema not in ['validation', 'views']:
+                    classList.append(layerName)
         return classList
     
     def listComplexClassesFromDatabase(self):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return []      
+        self.checkAndOpenDb()
         classList = []
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem listing complex classes: ")+query.lastError().text())
         while query.next():
             tableSchema = query.value(0)
             tableName = query.value(1)
@@ -187,13 +186,12 @@ class PostgisDb(AbstractDb):
         return (host, port, user, password)
 
     def getStructureDict(self):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return dict()
+        self.checkAndOpenDb()
         classDict = dict()
         sql = self.gen.getStructure(self.getDatabaseVersion())        
         query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting database structure: ")+query.lastError().text())
         while query.next():
             className = str(query.value(0))+'.'+str(query.value(1))
             fieldName = str(query.value(2))
@@ -217,10 +215,8 @@ class PostgisDb(AbstractDb):
         return constring
 
     def getNotNullDict(self):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return dict()
+        self.checkAndOpenDb()
+        
         if self.getDatabaseVersion() == '2.1.3':
             schemaList = ['cb', 'complexos']
         elif self.getDatabaseVersion() == 'FTer_2a_Ed':
@@ -228,8 +224,11 @@ class PostgisDb(AbstractDb):
         else:
             QgsMessageLog.logMessage(self.tr('Operation not defined for this database version!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return None
+        
         sql = self.gen.getNotNullFields(schemaList)
         query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem executing query: ")+query.lastError().text())
         notNullDict = dict()
         while query.next():
             schemaName = str(query.value(0))
@@ -242,10 +241,8 @@ class PostgisDb(AbstractDb):
         return notNullDict
 
     def getDomainDict(self):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return dict()
+        self.checkAndOpenDb()
+        
         if self.getDatabaseVersion() == '2.1.3':
             schemaList = ['cb', 'complexos', 'dominios']
         elif self.getDatabaseVersion() == 'FTer_2a_Ed':
@@ -253,8 +250,12 @@ class PostgisDb(AbstractDb):
         else:
             QgsMessageLog.logMessage(self.tr('Operation not defined for this database version!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return
+        
         sql = self.gen.validateWithDomain(schemaList)
         query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem executing query: ")+query.lastError().text())
+
         classDict = dict()
         domainDict = dict()
         while query.next():
@@ -300,29 +301,28 @@ class PostgisDb(AbstractDb):
         return status
     
     def obtainLinkColumn(self, complexClass, aggregatedClass):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return ''
+        self.checkAndOpenDb()
         complexClass = complexClass.replace('complexos.', '')
         #query to obtain the link column between the complex and the feature layer
         sql = self.gen.getLinkColumn(complexClass, aggregatedClass)
         query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem obtaining link column: ")+query.lastError().text())
         column_name = ''
         while query.next():
             column_name = query.value(0)
         return column_name
 
     def loadAssociatedFeatures(self, complex):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return dict()
+        self.checkAndOpenDb()
         associatedDict = dict()
         complex = complex.replace('complexos.', '')
         #query to get the possible links to the selected complex in the combobox
         sql = self.gen.getComplexLinks(complex)
         query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem loading associated features: ")+query.lastError().text())
+
         while query.next():
             #setting the variables
             complex_schema = query.value(0)
@@ -334,6 +334,9 @@ class PostgisDb(AbstractDb):
             #query to obtain the created complexes
             sql = self.gen.getComplexData(complex_schema, complex)
             complexQuery = QSqlQuery(sql, self.db)
+            if not complexQuery.isActive():
+                raise Exception(self.tr("Problem loading associated features: ")+complexQuery.lastError().text())
+
             while complexQuery.next():
                 complex_uuid = complexQuery.value(0)
                 name = complexQuery.value(1)
@@ -346,6 +349,8 @@ class PostgisDb(AbstractDb):
                 #query to obtain the id of the associated feature
                 sql = self.gen.getAssociatedFeaturesData(aggregated_schema, aggregated_class, column_name, complex_uuid)
                 associatedQuery = QSqlQuery(sql, self.db)
+                if not associatedQuery.isActive():
+                    raise Exception(self.tr("Problem loading associated features: ")+associatedQuery.lastError().text())
 
                 while associatedQuery.next():
                     ogc_fid = associatedQuery.value(0)
@@ -353,12 +358,12 @@ class PostgisDb(AbstractDb):
         return associatedDict
     
     def isComplexClass(self, className):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return False
+        self.checkAndOpenDb()
         #getting all complex tables
         query = QSqlQuery(self.gen.getComplexTablesFromDatabase(), self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem executing query: ")+query.lastError().text())
+
         while query.next():
             if query.value(0) == className:
                 return True
@@ -371,14 +376,13 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem disassociating complex from complex: ') + '\n' + query.lastError().text())
     
     def getUsers(self):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return []
+        self.checkAndOpenDb()
         ret = []
         
         sql = self.gen.getUsers()
         query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting users: ")+query.lastError().text())
 
         while query.next():
             ret.append(query.value(0))
@@ -387,15 +391,14 @@ class PostgisDb(AbstractDb):
         return ret
 
     def getUserRelatedRoles(self, username):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return [], []
+        self.checkAndOpenDb()
         installed = []
         assigned = []
 
         sql = self.gen.getUserRelatedRoles(username)
         query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting user roles: ")+query.lastError().text())
 
         while query.next():
             rolname = query.value(0)
@@ -410,14 +413,13 @@ class PostgisDb(AbstractDb):
         return installed, assigned
     
     def getRoles(self):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return []
+        self.checkAndOpenDb()
         ret = []
 
         sql = self.gen.getRoles()
         query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting roles: ")+query.lastError().text())
 
         while query.next():
             ret.append(query.value(0))
@@ -426,10 +428,7 @@ class PostgisDb(AbstractDb):
         return ret
 
     def createRole(self, role, dict):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return
+        self.checkAndOpenDb()
         #making this so the instaciated permissions stay with different names
         uuid = str(uuid4()).replace('-', '_')
         role += '_'+uuid
@@ -453,10 +452,7 @@ class PostgisDb(AbstractDb):
                     raise Exception(self.tr('Problem assigning profile: ') +role+'\n'+query.lastError().text())
     
     def dropRole(self, role):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return
+        self.checkAndOpenDb()
         sql = self.gen.dropRole(role)
         split = sql.split('#')
         query = QSqlQuery(self.db)
@@ -470,10 +466,7 @@ class PostgisDb(AbstractDb):
                     raise Exception(self.tr('Problem removing profile: ') +role+'\n'+query.lastError().text())
 
     def alterUserPass(self, user, newpassword):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return
+        self.checkAndOpenDb()
         sql = self.gen.alterUserPass(user, newpassword)
         query = QSqlQuery(self.db)
 
@@ -481,10 +474,7 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem altering user\'s password: ') +user+'\n'+query.lastError().text())
 
     def createUser(self, user, password, isSuperUser):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return
+        self.checkAndOpenDb()
         sql = self.gen.createUser(user, password, isSuperUser)
         query = QSqlQuery(self.db)
 
@@ -492,10 +482,7 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem creating user: ') +user+'\n'+query.lastError().text())
 
     def removeUser(self, user):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return
+        self.checkAndOpenDb()
         sql = self.gen.removeUser(user)
         query = QSqlQuery(self.db)
 
@@ -503,10 +490,7 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem removing user: ') +user+'\n'+query.lastError().text())
 
     def grantRole(self, user, role):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return        
+        self.checkAndOpenDb()
         sql = self.gen.grantRole(user, role)
         query = QSqlQuery(self.db)
 
@@ -514,10 +498,7 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem granting profile: ') +role+'\n'+query.lastError().text())
 
     def revokeRole(self, user, role):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return
+        self.checkAndOpenDb()
         sql = self.gen.revokeRole(user, role)
         query = QSqlQuery(self.db)
 
@@ -525,10 +506,7 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem revoking profile: ') +role+'\n'+query.lastError().text())
 
     def getTablesFromDatabase(self):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return []
+        self.checkAndOpenDb()
         ret = []
 
         sql = self.gen.getTablesFromDatabase()
@@ -541,21 +519,20 @@ class PostgisDb(AbstractDb):
         return ret
 
     def getRolePrivileges(self, role, dbname):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return dict()
+        self.checkAndOpenDb()
         privilegesDict = dict()
         
         sql = self.gen.getRolePrivileges(role, dbname)
         query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting role privileges: ")+query.lastError().text())
         
         while query.next():
             schema = query.value(3)
             table = query.value(4)
             privilege = query.value(5)
             
-            if schema in ['cb', 'public', 'complexos', 'pe', 'ge']:
+            if schema in ['cb', 'public', 'complexos']:
                 privilegesDict = self.utils.buildNestedDict(privilegesDict, [schema, table], [privilege])
             
         permissionsDict = dict()
@@ -591,11 +568,11 @@ class PostgisDb(AbstractDb):
     
     def getEDGVDbsFromServer(self):
         #Can only be used in postgres database.
-        try:
-            self.checkAndOpenDb()
-        except:
-            return []
+        self.checkAndOpenDb()
         query = QSqlQuery(self.gen.getDatabasesFromServer(),self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting EDGV databases: ")+query.lastError().text())
+
         dbList = []
         
         while query.next():
@@ -611,7 +588,7 @@ class PostgisDb(AbstractDb):
             db.setUserName(self.db.userName())
             db.setPassword(self.db.password())
             if not db.open():
-                QgsMessageLog.logMessage('DB :'+database+'| msg: '+db.lastError().databaseText(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                raise Exception(self.tr("Problem opening EDGV databases: ")+db.lastError().databaseText())
 
             query2 = QSqlQuery(db)
             if query2.exec_(self.gen.getEDGVVersion()):
@@ -620,16 +597,15 @@ class PostgisDb(AbstractDb):
                     if version:
                         edvgDbList.append((database,version))
             else:
-                QgsMessageLog.logMessage(self.tr('Problem accessing database: ') +database+'\n'+query2.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                raise Exception(self.tr("Problem accessing databases: ")+query2.lastError().text())
         return edvgDbList
     
     def getDbsFromServer(self):
         #Can only be used in postgres database.
-        try:
-            self.checkAndOpenDb()
-        except:
-            return []
+        self.checkAndOpenDb()
         query = QSqlQuery(self.gen.getDatabasesFromServer(),self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting databases: ")+query.lastError().text())
         dbList = []
         
         while query.next():
@@ -637,22 +613,18 @@ class PostgisDb(AbstractDb):
         return dbList
     
     def checkSuperUser(self):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return False
+        self.checkAndOpenDb()
         query = QSqlQuery(self.db)
         if query.exec_(self.gen.isSuperUser(self.db.userName())):
             query.next()
             value = query.value(0)
             return value
+        else:
+            raise Exception(self.tr("Problem checking user: ")+query.lastError().text())
         return False
     
     def dropDatabase(self, candidateName):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return
+        self.checkAndOpenDb()
         if self.checkSuperUser():
             sql = self.gen.dropDatabase(candidateName)
             query = QSqlQuery(self.db)
@@ -660,10 +632,7 @@ class PostgisDb(AbstractDb):
                 raise Exception(self.tr('Problem dropping database: ') + query.lastError().text())
     
     def createResolvedDomainViews(self, createViewClause, fromClause):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return
+        self.checkAndOpenDb()
         if self.checkSuperUser():
             filename = self.getSqlViewFile()
             if filename <> None:
@@ -678,15 +647,12 @@ class PostgisDb(AbstractDb):
                     if not query.exec_(command):
                         self.db.rollback()
                         self.db.close()
-                        raise Exception(self.tr('Problem creating views: ') + str(query.lastError().text()))
+                        raise Exception(self.tr('Problem creating views: ') + query.lastError().text())
                 self.db.commit()
                 self.db.close()
 
     def getSqlViewFile(self):
-        try:
-            self.checkAndOpenDb()
-        except:
-            return
+        self.checkAndOpenDb()
         currentPath = os.path.dirname(__file__)
         dbVersion = self.getDatabaseVersion()
         file = None

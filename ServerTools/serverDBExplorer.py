@@ -97,8 +97,14 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
     
     def populateListWithDatabasesFromServer(self):
         self.serverListWidget.clear()
-        dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer()
+
+        dbList = []
+        try:
+            dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer()
+        except Exception as e:
+            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
         dbList.sort()
+
         for (dbname, dbversion) in dbList:
             item =  QListWidgetItem(self.serverListWidget)
             item.setText(dbname+' (EDGV v. '+dbversion+')')
@@ -143,7 +149,12 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
         candidates = settings.childGroups()
         settings.endGroup()
         removedConn = []
-        dbList = self.serverWidget.abstractDb.getDbsFromServer()
+        dbList = []
+        try:
+            dbList = self.serverWidget.abstractDb.getDbsFromServer()
+        except Exception as e:
+            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+
         for candidate in candidates:
             candidateSettings = QSettings()
             candidateSettings.beginGroup('PostgreSQL/connections/'+candidate)

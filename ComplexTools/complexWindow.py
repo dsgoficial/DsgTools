@@ -132,7 +132,13 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         self.complexCombo.clear()
         self.complexCombo.addItem(self.tr("select a complex class"))
 
-        complexClasses = self.abstractDb.listComplexClassesFromDatabase()
+        complexClasses = []
+        try:
+            complexClasses = self.widget.abstractDb.listComplexClassesFromDatabase()
+        except Exception as e:
+            QMessageBox.critical(self.iface.mainWindow(), self.tr("Critical!"), e.args[0])
+            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+
         self.complexCombo.addItems(complexClasses)
 
     def getDataSources(self):
@@ -224,7 +230,13 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         aggregated_class = item.text(0)
         uuid = item.parent().text(1)
         complex = item.parent().parent().text(0)
-        link_column = self.abstractDb.obtainLinkColumn(complex, aggregated_class)
+
+        link_column = ''
+        try:
+            link_column = self.abstractDb.obtainLinkColumn(complex, aggregated_class)
+        except Exception as e:
+            QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
 
         #getting the layer the needs to be updated
         aggregated_layer = None
@@ -248,7 +260,13 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         aggregated_class = item.parent().text(0)
         uuid = item.parent().parent().text(1)
         complex = item.parent().parent().parent().text(0)
-        link_column = self.abstractDb.obtainLinkColumn(complex, aggregated_class)
+
+        link_column = ''
+        try:
+            link_column = self.abstractDb.obtainLinkColumn(complex, aggregated_class)
+        except Exception as e:
+            QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
 
         #getting the layer the needs to be updated
         aggregated_layer = None
@@ -268,18 +286,19 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         self.updateLayerOnDisassociate(layer, aggregated_class, link_column, id)
 
     def updateLayerOnDisassociate(self, layer, aggregated_class, link_column, id):
-        if self.abstractDb.isComplexClass(aggregated_class):
-            try:
-                self.abstractDb.disassociateComplexFromComplex(aggregated_class, link_column, id)
-            except Exception as e:
-                QMessageBox.critical(self.iface.mainWindow(), self.tr("Critical!"), e.args[0])
-        else:
-            #field index that will be set to NULL
-            fieldIndex = [i for i in range(len(layer.dataProvider().fields())) if layer.dataProvider().fields()[i].name() == link_column]
-            #attribute pair that will be changed
-            attrs = {fieldIndex[0]:None}
-            #actual update in the database
-            layer.dataProvider().changeAttributeValues({int(id):attrs})
+        try:
+            if self.abstractDb.isComplexClass(aggregated_class):
+                    self.abstractDb.disassociateComplexFromComplex(aggregated_class, link_column, id)
+            else:
+                #field index that will be set to NULL
+                fieldIndex = [i for i in range(len(layer.dataProvider().fields())) if layer.dataProvider().fields()[i].name() == link_column]
+                #attribute pair that will be changed
+                attrs = {fieldIndex[0]:None}
+                #actual update in the database
+                layer.dataProvider().changeAttributeValues({int(id):attrs})
+        except Exception as e:
+            QMessageBox.critical(self.iface.mainWindow(), self.tr("Critical!"), e.args[0])
+            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
 
     @pyqtSlot(bool)
     def on_disassociatePushButton_clicked(self):
@@ -308,8 +327,13 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
 
         complex = self.complexCombo.currentText()
 
-        associatedDict = self.abstractDb.loadAssociatedFeatures(complex)
-
+        associatedDict = dict()
+        try:
+            associatedDict = self.abstractDb.loadAssociatedFeatures(complex)
+        except Exception as e:
+            QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            
         for name in associatedDict.keys():
             for complex_uuid in associatedDict[name].keys():
                 self.addAssociatedFeature(str(complex), str(name), complex_uuid, None, None)
@@ -352,7 +376,12 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                 continue
 
             #obtaining the link column
-            column_name = self.abstractDb.obtainLinkColumn(complex, layer.name())
+            column_name = ''
+            try:
+                column_name = self.abstractDb.obtainLinkColumn(complex, layer.name())
+            except Exception as e:
+                QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
+                QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
 
             #storing the names of the incompatible layers
             if column_name == "":

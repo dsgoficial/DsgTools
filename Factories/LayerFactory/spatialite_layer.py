@@ -53,8 +53,15 @@ class SpatialiteLayer(EDGVLayer):
         self.uri.setDataSource('', table, 'GEOMETRY')
 
     def load(self, crs, idSubgrupo = None):
-        vlayerQml = os.path.join(self.abstractDb.getQmlDir(), self.qmlName+'.qml')
-        
+        qmldir = ''
+        try:
+            qmldir = self.abstractDb.getQmlDir()
+        except Exception as e:
+            self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return None
+
+        vlayerQml = os.path.join(qmldir, self.qmlName+'.qml')
 
         database = self.abstractDb.db.databaseName()
 
@@ -103,7 +110,6 @@ class SpatialiteLayer(EDGVLayer):
                     vlayer.setEditorWidgetV2Config(i,valueRelationDict)
     
             self.qmlLoaded.emit()
-        
 
         iface.legendInterface().moveLayer(vlayer, idSubgrupo)
             

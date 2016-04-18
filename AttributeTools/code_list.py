@@ -28,7 +28,7 @@ from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsField, QgsDataSourceURI
-from PyQt4.QtGui import QTableWidgetItem
+from PyQt4.QtGui import QTableWidgetItem, QMessageBox
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -105,6 +105,10 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
             return ret
 
         query = QSqlQuery(sql, db)
+        if not query.isActive():
+            QMessageBox.critical(self.iface.mainWindow(), self.tr("Error!"), self.tr("Problem obtaining domain values: ")+query.lastError().text())
+            return ret
+        
         while query.next():
             code = str(query.value(0))
             code_name = query.value(1)
