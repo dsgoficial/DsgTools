@@ -32,6 +32,7 @@ from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.UserTools.permission_properties import PermissionProperties
 from DsgTools.ServerTools.createView import CreateView
+from DsgTools.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'exploreDb.ui'))
@@ -181,3 +182,12 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
         settings.beginGroup('PostgreSQL/connections/'+name)
         settings.remove('')
         settings.endGroup()
+    
+    @pyqtSlot(bool)
+    def on_manageAuxStructPushButton_clicked(self):
+        if not self.localDb:
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a database to manage auxiliar structure'))
+            return
+        dlg = ManageDBAuxiliarStructure(self.localDb)
+        dlg.exec_()
+        pass    

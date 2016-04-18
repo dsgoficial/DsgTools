@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ManageAuxStructDialog</class>
+ <widget class="QDialog" name="ManageAuxStructDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>325</width>
+    <height>190</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>325</width>
+    <height>190</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>325</width>
+    <height>190</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Manage Database Auxiliar Structure</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" colspan="2">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Line-Centroid Structure</string>
+     </property>
+     <widget class="QRadioButton" name="lineCentroidCreatedRadioButton">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>94</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Created</string>
+      </property>
+      <attribute name="buttonGroup">
+       <string notr="true">lineCentroidButtonGroup</string>
+      </attribute>
+     </widget>
+     <widget class="QRadioButton" name="lineCentroidNotCreatedRadioButton">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>94</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Not Created</string>
+      </property>
+      <attribute name="buttonGroup">
+       <string notr="true">lineCentroidButtonGroup</string>
+      </attribute>
+     </widget>
+     <widget class="QPushButton" name="createLineCentroidPushButton">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>30</y>
+        <width>75</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Create</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="dropLineCentroidPushButton">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>30</y>
+        <width>75</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Drop</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>219</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Constraint and Defaults</string>
+     </property>
+     <widget class="QRadioButton" name="constraintsOnRadioButton">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>94</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>On</string>
+      </property>
+      <attribute name="buttonGroup">
+       <string notr="true">constraintButtonGroup</string>
+      </attribute>
+     </widget>
+     <widget class="QRadioButton" name="constraintsOffRadioButton">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>94</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Off</string>
+      </property>
+      <attribute name="buttonGroup">
+       <string notr="true">constraintButtonGroup</string>
+      </attribute>
+     </widget>
+     <widget class="QPushButton" name="turnOnConstraintsPushButton">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>30</y>
+        <width>75</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Turn On</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="turnOffConstraintsPushButton">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>30</y>
+        <width>75</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Turn Off</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QPushButton" name="closePushButton">
+     <property name="text">
+      <string>Close</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+ <buttongroups>
+  <buttongroup name="constraintButtonGroup"/>
+  <buttongroup name="lineCentroidButtonGroup"/>
+ </buttongroups>
+</ui>

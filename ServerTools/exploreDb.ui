@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>651</width>
+    <width>744</width>
     <height>332</height>
    </rect>
   </property>
@@ -94,6 +94,13 @@
        <widget class="QPushButton" name="createViewsPushButton">
         <property name="text">
          <string>Create Domain Resolved Views</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="manageAuxStructPushButton">
+        <property name="text">
+         <string>Manage Auxiliar Structure</string>
         </property>
        </widget>
       </item>

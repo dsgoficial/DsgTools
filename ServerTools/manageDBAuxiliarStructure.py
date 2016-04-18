@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- DsgTools
+ DsgManagementToolsDialog
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
-                              -------------------
-        begin                : 2016-02-18
+                             -------------------
+        begin                : 2015-08-12
         git sha              : $Format:%H$
-        copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba@dsg.eb.mil.br
+        copyright            : (C) 2015 by Brazilian Army - Geographic Service Bureau
+        email                : suporte.dsgtools@dsg.eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -22,37 +22,33 @@
 """
 import os
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import *
+# Qt imports
+from PyQt4 import QtGui, uic, QtCore
+from PyQt4.QtCore import pyqtSlot, Qt, QSettings
+from PyQt4.QtGui import QListWidgetItem, QMessageBox, QMenu, QApplication, QCursor
 
-from DsgTools.ValidationTools.setupEarthCoverage import SetupEarthCoverage
+# DSGTools imports
+from DsgTools.Utils.utils import Utils
+from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.UserTools.permission_properties import PermissionProperties
+from DsgTools.ServerTools.createView import CreateView
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'validation_config.ui'))
+    os.path.dirname(__file__), 'manageDBAuxiliarStructure.ui'))
 
-class ValidationConfig(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, parent=None):
-        '''Constructor.'''
-        super(ValidationConfig, self).__init__(parent)
+class ManageDBAuxiliarStructure(QtGui.QDialog, FORM_CLASS):
+    def __init__(self, abstractDb, parent = None):
+        """Constructor."""
+        super(self.__class__, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.widget.tabWidget.setTabEnabled(1,True)
-        self.widget.tabWidget.setTabEnabled(0,False)
-        self.widget.tabWidget.setCurrentIndex(1)
+        self.abstractDb = abstractDb
 
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
-        self.hide()
-
-    @pyqtSlot(bool)
-    def on_defineEarthCoverageButton_clicked(self):
-        if not self.widget.abstractDb:
-            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a database to manage earth coverage'))
-            return
-        dlg = SetupEarthCoverage(self.widget.abstractDb)
-        dlg.exec_()
-        pass    
+        self.done(0)
+    

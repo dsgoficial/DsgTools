@@ -25,34 +25,19 @@ import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
 
-from DsgTools.ValidationTools.setupEarthCoverage import SetupEarthCoverage
-
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'validation_config.ui'))
+    os.path.dirname(__file__), 'setupEarthCoverage.ui'))
 
-class ValidationConfig(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, parent=None):
+class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
+    def __init__(self, abstractDb, parent=None):
         '''Constructor.'''
-        super(ValidationConfig, self).__init__(parent)
+        super(self.__class__, self).__init__()
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.widget.tabWidget.setTabEnabled(1,True)
-        self.widget.tabWidget.setTabEnabled(0,False)
-        self.widget.tabWidget.setCurrentIndex(1)
+        self.abstractDb = abstractDb
 
-    @pyqtSlot(bool)
-    def on_closePushButton_clicked(self):
-        self.hide()
-
-    @pyqtSlot(bool)
-    def on_defineEarthCoverageButton_clicked(self):
-        if not self.widget.abstractDb:
-            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a database to manage earth coverage'))
-            return
-        dlg = SetupEarthCoverage(self.widget.abstractDb)
-        dlg.exec_()
-        pass    
+    
