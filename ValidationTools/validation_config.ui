@@ -119,9 +119,20 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <attribute name="headerDefaultSectionSize">
+      <number>200</number>
+     </attribute>
+     <attribute name="headerStretchLastSection">
+      <bool>false</bool>
+     </attribute>
      <column>
       <property name="text">
-       <string>Classes of earth coverage</string>
+       <string>Class of earth coverage</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Delimiter</string>
       </property>
      </column>
     </widget>

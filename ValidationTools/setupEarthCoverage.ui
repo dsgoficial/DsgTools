@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>539</width>
-    <height>337</height>
+    <width>840</width>
+    <height>499</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,12 +24,12 @@
     <item row="0" column="0">
      <widget class="QLabel" name="label">
       <property name="text">
-       <string>1- Choose the area classes that build earth coverage</string>
+       <string>1- Choose the area classes that build earth coverage (only parent classes are listed here).</string>
       </property>
      </widget>
     </item>
     <item row="1" column="0">
-     <widget class="KActionSelector" name="kactionselector"/>
+     <widget class="CustomSelector" name="areasCustomSelector" native="true"/>
     </item>
    </layout>
   </widget>
@@ -38,77 +38,73 @@
     <item row="0" column="0">
      <widget class="QLabel" name="label_2">
       <property name="text">
-       <string>2- Choose the line classes that, along with the frame, build the areas of earth coverage</string>
+       <string>2- Choose the line classes that, along with the frame, build the areas of earth coverage (only parent classes are listed here).
+If there is a constraint attribute in a selected class, right click it and define it.</string>
       </property>
      </widget>
     </item>
     <item row="1" column="0">
-     <widget class="KActionSelector" name="kactionselector_2"/>
+     <widget class="CustomSelector" name="linesCustomSelector" native="true"/>
     </item>
    </layout>
   </widget>
   <widget class="QWizardPage" name="wizardPage">
-   <layout class="QGridLayout" name="gridLayout_3">
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>3- For each area class of earth coverage, define which lines are used to build it
- (note that frame is always used to close areas)</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QTableWidget" name="tableWidget">
-      <property name="maximumSize">
-       <size>
-        <width>501</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <attribute name="horizontalHeaderCascadingSectionResizes">
-       <bool>true</bool>
-      </attribute>
-      <attribute name="horizontalHeaderDefaultSectionSize">
-       <number>100</number>
-      </attribute>
-      <attribute name="horizontalHeaderMinimumSectionSize">
-       <number>100</number>
-      </attribute>
-      <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-       <bool>true</bool>
-      </attribute>
-      <attribute name="verticalHeaderDefaultSectionSize">
-       <number>100</number>
-      </attribute>
-      <attribute name="verticalHeaderMinimumSectionSize">
-       <number>100</number>
-      </attribute>
-      <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-       <bool>true</bool>
-      </attribute>
-      <attribute name="verticalHeaderStretchLastSection">
-       <bool>true</bool>
-      </attribute>
-      <column>
-       <property name="text">
-        <string>Class</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Delimiters</string>
-       </property>
-      </column>
-     </widget>
-    </item>
-   </layout>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>9</y>
+      <width>675</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>3- For each area class of earth coverage, define which lines are used to build it (note that frame is always used to close areas)</string>
+    </property>
+   </widget>
+   <widget class="QTreeWidget" name="treeWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>801</width>
+      <height>381</height>
+     </rect>
+    </property>
+    <property name="itemsExpandable">
+     <bool>true</bool>
+    </property>
+    <attribute name="headerCascadingSectionResizes">
+     <bool>true</bool>
+    </attribute>
+    <attribute name="headerDefaultSectionSize">
+     <number>100</number>
+    </attribute>
+    <attribute name="headerMinimumSectionSize">
+     <number>50</number>
+    </attribute>
+    <attribute name="headerStretchLastSection">
+     <bool>false</bool>
+    </attribute>
+    <column>
+     <property name="text">
+      <string>Class</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Delimiters</string>
+     </property>
+    </column>
+   </widget>
   </widget>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KActionSelector</class>
+   <class>CustomSelector</class>
    <extends>QWidget</extends>
-   <header>kactionselector.h</header>
+   <header>DsgTools.CustomWidgets.customSelector.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
