@@ -49,6 +49,7 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         self.areasCustomSelector.selectionChanged.connect(self.populateClasses)
         self.linesCustomSelector.selectionChanged.connect(self.populateDelimiters)
         self.button(QtGui.QWizard.FinishButton).clicked.connect(self.writeToDisk)
+        #TODO: insert attribute filter for delimiter
     
     def populateClasses(self):
         self.treeWidget.clear()
