@@ -218,6 +218,8 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = ''
         if edgvVersion == '2.1.3':
             sql = 'SELECT table_schema, table_name, column_name FROM INFORMATION_SCHEMA.COLUMNS where table_schema in (\'cb\',\'complexos\',\'public\')'
+        elif edgvVersion == 'FTer_2a_Ed':
+            sql = 'SELECT table_schema, table_name, column_name FROM INFORMATION_SCHEMA.COLUMNS where table_schema in (\'ge\',\'pe\',\'complexos\',\'public\')'
         return sql
     
     def getAggregationColumn(self):

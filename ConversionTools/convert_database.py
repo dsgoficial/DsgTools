@@ -22,6 +22,8 @@
 """
 import os
 from osgeo import ogr
+#QGIS imports
+from qgis.core import QgsMessageLog
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
@@ -35,10 +37,8 @@ from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.UserTools.create_profile import CreateProfile
 
-
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'convert_database.ui'))
-
 
 class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
     def __init__(self, parent = None):
@@ -142,7 +142,7 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
                 QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
                 converted = self.widget.abstractDb.convertDatabase(self.widget_2.abstractDb,type)
                 QApplication.restoreOverrideCursor()
-        except:
+        except Exception as e:
             QApplication.restoreOverrideCursor()
             converted = False
             QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
@@ -150,7 +150,6 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
             QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Conversion successfully completed!'))
         else:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not performed! Check log for details.'))
-    
     
     @pyqtSlot(str)
     def logUpdated(self,text):
