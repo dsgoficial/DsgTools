@@ -69,6 +69,7 @@ class CleanGeometriesProcess(ValidationProcess):
     
     def updateOriginalLayer(self, tableSchema, tableName, layer, epsg):
         result = dict()
+        delete = []
         for feature in layer.getFeatures():
             if feature['id'] not in result.keys():
                 result[feature['id']] = list()
@@ -93,7 +94,7 @@ class CleanGeometriesProcess(ValidationProcess):
                 QgsMessageLog.logMessage('Empty database!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
                 return
             for cl in classesWithGeom:
-                if cl[-1]  in ['l','a']:
+                if cl[-1]  in ['a']:
                     result = self.runProcessinAlg(cl)
                     if len(result) > 0:
                         recordList = []

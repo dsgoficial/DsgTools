@@ -1039,10 +1039,16 @@ class PostgisDb(AbstractDb):
         sqls = self.gen.updateOriginalTable(tableSchema, tableName, tuplas, epsg)
         query = QSqlQuery(self.db)
         self.db.transaction()
+        sqlDel = self.gen.deleteFeaturesNotIn(tableSchema, tableName, tuplas.keys())
         for sql in sqls:
             if not query.exec_(sql):
                 self.db.rollback()
                 self.db.close()
                 raise Exception(self.tr('Problem updating geometries: ') + query.lastError().text())
+        query2 = QSqlQuery(self.db)
+        if not query2.exec_(sqlDel):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem deleting geometries: ') + query.lastError().text())            
         self.db.commit()
         self.db.close()        
