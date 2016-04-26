@@ -1051,4 +1051,27 @@ class PostgisDb(AbstractDb):
             self.db.close()
             raise Exception(self.tr('Problem deleting geometries: ') + query.lastError().text())            
         self.db.commit()
-        self.db.close()        
+        self.db.close()    
+
+    def checkAndCreateCentroidAuxStruct(self):
+        self.checkAndOpenDb()
+        sql = self.gen.checkValidationStructure()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem creating structure: ')+query.lastError().text())
+        created = True
+        while query.next():
+            if query.value(0) == 0:
+                created = False
+        if not created:
+            sqltext = self.gen.createCentroidAuxStruct()
+            sqlList = sqltext.split('#')
+            query2 = QSqlQuery(self.db)
+            self.db.transaction()
+            for sql2 in sqlList:
+                if not query2.exec_(sql2):
+                    self.db.rollback()
+                    self.db.close()
+                    raise Exception(self.tr('Problem creating structure: ') + query.lastError().text())
+            self.db.commit()
+            self.db.close()

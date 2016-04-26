@@ -144,8 +144,8 @@ class CleanGeometriesProcess(ValidationProcess):
                             recordList.append((tableSchema+'.'+tableName,tupple[0],'Cleaning error.',tupple[1]))
                             self.addClassesToBeDisplayedList(tupple[0]) 
                         numberOfProblems = self.addFlag(recordList)
-                        self.setStatus('%s feature(s) with cleaning errors. Check flags.\n' % numberOfProblems, 4) #Finished with flags
-                        QgsMessageLog.logMessage('%s feature(s) with cleaning errors. Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        self.setStatus('%s feature(s) of class '+cl+' with cleaning errors. Check flags.\n' % numberOfProblems, 4) #Finished with flags
+                        QgsMessageLog.logMessage('%s feature(s) of class '+cl+' with cleaning errors. Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     else:
                         self.setStatus('There are no cleaning errors on '+cl+'.\n', 1) #Finished
                         QgsMessageLog.logMessage('There are no cleaning errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
