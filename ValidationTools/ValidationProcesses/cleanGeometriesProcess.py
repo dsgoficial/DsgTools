@@ -20,14 +20,14 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 import processing, binascii
 
 class CleanGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb):
         super(self.__class__,self).__init__(postgisDb)
-        self.parameters = {'Snap': 0.5, 'MinArea':0.01}
+        self.parameters = {'Snap': 0.5, 'MinArea':0.001}
         
     def runProcessinAlg(self, cl):
         alg = 'grass7:v.clean.advanced'
@@ -56,25 +56,67 @@ class CleanGeometriesProcess(ValidationProcess):
         
         ret = processing.runalg(alg, input, tools, threshold, extent, snap, minArea, None, None)
         
-        #removing from registry
-        QgsMapLayerRegistry.instance().removeMapLayer(input.id())
+
 
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
-        self.updateOriginalLayer(tableSchema, tableName, outputLayer, epsg)
+        self.updateOriginalLayer(input, outputLayer)
+#         self.updateOriginalLayer(tableSchema, tableName, outputLayer, epsg)
           
         #getting error flags
         errorLayer = processing.getObject(ret['error'])
+        #removing from registry
+        QgsMapLayerRegistry.instance().removeMapLayer(input.id())
         return self.getProcessingErrors(tableSchema, tableName, errorLayer)
     
-    def updateOriginalLayer(self, tableSchema, tableName, layer, epsg):
-        result = dict()
-        delete = []
-        for feature in layer.getFeatures():
-            if feature['id'] not in result.keys():
-                result[feature['id']] = list()
-            result[feature['id']].append(binascii.hexlify(feature.geometry().asWkb()))
-        self.abstractDb.updateGeometries(tableSchema, tableName, result, epsg)
+#     def updateOriginalLayer(self, tableSchema, tableName, layer, epsg):
+#         result = dict()
+#         delete = []
+#         for feature in layer.getFeatures():
+#             if feature['id'] not in result.keys():
+#                 result[feature['id']] = list()
+#             result[feature['id']].append(binascii.hexlify(feature.geometry().asWkb()))
+#         self.abstractDb.updateGeometries(tableSchema, tableName, result, epsg)
+
+    def updateOriginalLayer(self, pgInputLyr, grassOutputLyr):
+        grassIdList = []
+        deleteList = []
+        provider = pgInputLyr.dataProvider()
+        for feature in grassOutputLyr.getFeatures():
+            id = feature['id']
+            if id not in grassIdList:
+                grassIdList.append(id)
+        for id in grassIdList:
+            pgInputLyr.startEditing()
+            grassFeats = []
+            addList = []
+            for gf in grassOutputLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%id))):
+                grassFeats.append(gf)
+            feat = pgInputLyr.getFeatures(QgsFeatureRequest(id)).next()
+            for i in range(len(grassFeats)):
+                if i == 0:
+                    newGeom = grassFeats[i].geometry()
+                    newGeom.convertToMultiType()
+                    feat.setGeometry(newGeom)
+                    pgInputLyr.updateFeature(feat)
+                else:
+                    newFeat = QgsFeature(feat)
+                    newGeom = grassFeats[i].geometry()
+                    newGeom.convertToMultiType()
+                    newFeat.setGeometry(newGeom)
+                    idx = newFeat.fieldNameIndex('id')
+                    newFeat.setAttribute(idx,provider.defaultValue(idx))
+                    addList.append(newFeat)
+            pgInputLyr.addFeatures(addList,True)
+            pgInputLyr.commitChanges()
+        for feat in pgInputLyr.getFeatures():
+            if feat['id'] not in grassIdList:
+                deleteList.append(feat['id'])
+        pgInputLyr.startEditing()
+        caps = provider.capabilities()
+        if caps & QgsVectorDataProvider.DeleteFeatures:
+            provider.deleteFeatures(deleteList)
+        pgInputLyr.commitChanges()
     
     def getProcessingErrors(self, tableSchema, tableName, layer):
         recordList = []
@@ -105,8 +147,8 @@ class CleanGeometriesProcess(ValidationProcess):
                         self.setStatus('%s feature(s) with cleaning errors. Check flags.\n' % numberOfProblems, 4) #Finished with flags
                         QgsMessageLog.logMessage('%s feature(s) with cleaning errors. Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     else:
-                        self.setStatus('There are no cleaning errors.\n', 1) #Finished
-                        QgsMessageLog.logMessage('There are no cleaning errors.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        self.setStatus('There are no cleaning errors on '+cl+'.\n', 1) #Finished
+                        QgsMessageLog.logMessage('There are no cleaning errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
