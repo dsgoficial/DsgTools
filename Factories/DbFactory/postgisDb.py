@@ -596,8 +596,6 @@ class PostgisDb(AbstractDb):
                     version = query2.value(0)
                     if version:
                         edvgDbList.append((database,version))
-            else:
-                raise Exception(self.tr("Problem accessing databases: ")+query2.lastError().text())
         return edvgDbList
     
     def getDbsFromServer(self):
