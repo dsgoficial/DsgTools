@@ -591,6 +591,10 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "select id from {} limit 1".format(orphan)
         return sql
     
+    def checkCentroidAuxStruct(self):
+        sql = "select distinct count(table_schema) from information_schema.columns where table_schema = 'cobter' group by table_schema"
+        return sql
+    
     def createCentroidAuxStruct(self,version):
         sql = ""
         if version == 'FTer_2a_Ed':
