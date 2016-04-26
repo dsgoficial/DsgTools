@@ -150,9 +150,9 @@ class InventoryThread(GenericThread):
             csvfile.close()
             QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+e.strerror, "DSG Tools Plugin", QgsMessageLog.INFO)
             return (0, self.messenger.getInventoryErrorMessage()+'\n'+e.strerror)
-        except:
+        except Exception as e:
             csvfile.close()
-            QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
+            QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+e.args[0], "DSG Tools Plugin", QgsMessageLog.INFO)
             return (0, self.messenger.getInventoryErrorMessage())
         csvfile.close()
         
@@ -213,21 +213,16 @@ class InventoryThread(GenericThread):
             newFileName = os.path.join(destinationFolder, file)
             newFileName = newFileName.replace('/', os.sep)
 
-            gdalSrc = gdal.Open(fileName)
-            ogrSrc = ogr.Open(fileName)
-            ok = True
-            if ogrSrc:
-                if not self.copyOGRDataSource(ogrSrc, newFileName):
-                    ok = False
-            elif gdalSrc:
-                if not self.copyGDALDataSource(gdalSrc, newFileName):
-                    ok = False
-            else:
-                ok = False
-
-            if not ok:
-                QgsMessageLog.logMessage(self.messenger.getCopyErrorMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
-                return (0, self.messenger.getCopyErrorMessage())
+            try:
+                gdalSrc = gdal.Open(fileName)
+                ogrSrc = ogr.Open(fileName)
+                if ogrSrc:
+                    self.copyOGRDataSource(ogrSrc, newFileName)
+                elif gdalSrc:
+                    self.copyGDALDataSource(gdalSrc, newFileName)
+            except Exception as e:
+                QgsMessageLog.logMessage(self.messenger.getCopyErrorMessage()+'\n'+e.args[0], "DSG Tools Plugin", QgsMessageLog.INFO)
+                return (0, self.messenger.getCopyErrorMessage()+'\n'+e.args[0])
         
         QgsMessageLog.logMessage(self.messenger.getSuccessInventoryAndCopyMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())
@@ -235,26 +230,14 @@ class InventoryThread(GenericThread):
     def copyGDALDataSource(self, gdalSrc, newFileName):
         driver = gdalSrc.GetDriver()
         dst_ds = driver.CreateCopy(newFileName, gdalSrc)
-        if not dst_ds:
-            ogrSrc = None
-            dst_ds = None
-            return False
-            
         ogrSrc = None
         dst_ds = None
-        return True
     
     def copyOGRDataSource(self, ogrSrc, newFileName):
         driver = ogrSrc.GetDriver()
         dst_ds = driver.CopyDataSource(ogrSrc, newFileName)
-        if not dst_ds:
-            ogrSrc = None
-            dst_ds = None
-            return False
-
         ogrSrc = None
         dst_ds = None
-        return True
 
     def isInFormatsList(self, ext):
         '''Check if the extension is in the formats list
