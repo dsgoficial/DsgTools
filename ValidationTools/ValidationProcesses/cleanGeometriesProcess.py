@@ -61,22 +61,12 @@ class CleanGeometriesProcess(ValidationProcess):
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
         self.updateOriginalLayer(input, outputLayer)
-#         self.updateOriginalLayer(tableSchema, tableName, outputLayer, epsg)
           
         #getting error flags
         errorLayer = processing.getObject(ret['error'])
         #removing from registry
         QgsMapLayerRegistry.instance().removeMapLayer(input.id())
         return self.getProcessingErrors(tableSchema, tableName, errorLayer)
-    
-#     def updateOriginalLayer(self, tableSchema, tableName, layer, epsg):
-#         result = dict()
-#         delete = []
-#         for feature in layer.getFeatures():
-#             if feature['id'] not in result.keys():
-#                 result[feature['id']] = list()
-#             result[feature['id']].append(binascii.hexlify(feature.geometry().asWkb()))
-#         self.abstractDb.updateGeometries(tableSchema, tableName, result, epsg)
 
     def updateOriginalLayer(self, pgInputLyr, grassOutputLyr):
         grassIdList = []
