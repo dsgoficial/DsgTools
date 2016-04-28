@@ -55,7 +55,11 @@ class SpatialiteLayer(EDGVLayer):
             self.qmlName = table.replace('\r','')
             
         self.uri.setDatabase(abstractDb.db.databaseName())
-        self.uri.setDataSource('', table, 'GEOMETRY')
+        if self.layer_name[-1] == 'c':
+            geomColumn = 'CENTROID'
+        else:
+            geomColumn = 'GEOMETRY'
+        self.uri.setDataSource('', table, geomColumn)
 
     def loadDomainTable(self,name):
         pass

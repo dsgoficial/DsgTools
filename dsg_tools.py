@@ -35,6 +35,7 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from DsgTools.LayerTools.load_by_class import LoadByClass
 from DsgTools.LayerTools.load_by_category import LoadByCategory
+from DsgTools.LayerTools.loadAuxStruct import LoadAuxStruct
 from DsgTools.LayerTools.ui_create_inom_dialog import CreateInomDialog
 from DsgTools.DbTools.SpatialiteTool.cria_spatialite_dialog import CriaSpatialiteDialog
 from DsgTools.DbTools.PostGISTool.postgisDBTool import PostgisDBTool
@@ -563,6 +564,17 @@ class DsgTools:
         layers.addAction(action)
         self.layerButton.addAction(action)
 
+        icon_path = ':/plugins/DsgTools/icons/class.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Load Auxiliar Structure'),
+            callback=self.loadAuxStruct,
+            parent=layers,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        layers.addAction(action)
+        self.layerButton.addAction(action)
+
         icon_path = ':/plugins/DsgTools/icons/frame.png'
         action = self.add_action(
             icon_path,
@@ -699,6 +711,17 @@ class DsgTools:
         except:
             pass
         dlg = LoadByCategory(self.codeList)
+        dlg.show()
+        result = dlg.exec_()
+        if result:
+            pass
+
+    def loadAuxStruct(self):
+        try:
+            self.layerButton.setDefaultAction(self.toolbar.sender())
+        except:
+            pass
+        dlg = LoadAuxStruct(self.codeList)
         dlg.show()
         result = dlg.exec_()
         if result:

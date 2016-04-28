@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <author>Ten Borba</author>
- <class>LoadByClass</class>
- <widget class="QWidget" name="LoadByClass">
+ <class>LoadAuxStruct</class>
+ <widget class="QWidget" name="LoadAuxStruct">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>351</width>
-    <height>409</height>
+    <height>82</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -33,21 +33,10 @@
    <string>Load by Class</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="2" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
-      <widget class="QCheckBox" name="selectAllCheck">
-       <property name="text">
-        <string>Select All</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item row="0" column="0">
     <widget class="ConnectionWidget" name="widget" native="true"/>
    </item>
-   <item row="3" column="0">
+   <item row="1" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_9">
      <item>
       <spacer name="horizontalSpacer_14">
@@ -104,35 +93,18 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>Select the classes</string>
+   <item row="2" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Filter:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="filterEdit"/>
-      </item>
-      <item row="1" column="0" colspan="2">
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QListWidget" name="classesListWidget">
-          <property name="selectionMode">
-           <enum>QAbstractItemView::MultiSelection</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

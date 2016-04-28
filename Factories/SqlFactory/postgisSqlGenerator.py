@@ -592,7 +592,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def checkCentroidAuxStruct(self):
-        sql = "select distinct count(table_schema) from information_schema.columns where table_schema = 'cobter' group by table_schema"
+        sql = "select distinct count(table_column) from information_schema.columns where table_column = 'centroid' group by table_column"
         return sql
     
     def createCentroidColumn(self, table_schema, table_name, srid):
@@ -604,4 +604,7 @@ class PostGISSqlGenerator(SqlGenerator):
         gistName = table_name[::-2]+'_c_gist'
         sql = "CREATE INDEX {1} ON {2}.{3} USING gist(centroid)".format(gistName,table_schema,table_name)
         return sql
-        
+    
+    def getEarthCoverageClasses(self):
+        sql = "select distinct table_schema || '.' || table_name from information_schema.columns where column_name = 'centroid'"
+        return sql

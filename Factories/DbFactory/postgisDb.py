@@ -1064,25 +1064,40 @@ class PostgisDb(AbstractDb):
                 return False
         return True
     
+    def createCentroidAuxStruct(self,earthCoverageClasses):
+        self.checkAndOpenDb()
+        srid = self.findEPSG()
+        self.db.transaction()
+        for cl in earthCoverageClasses:
+            table_schema, table_name = self.getTableSchema(cl)
+            sqltext = self.gen.createCentroidColumn(table_schema, table_name, srid)
+            sqlList = sqltext.split('#')
+            query2 = QSqlQuery(self.db)
+            for sql2 in sqlList:
+                if not query2.exec_(sql2):
+                    self.db.rollback()
+                    self.db.close()
+                    raise Exception(self.tr('Problem creating centroid structure: ') + query.lastError().text())
+            sql3 = self.gen.createCentroidGist(table_schema, table_name)
+            if not query2.exec_(sql3):
+                self.db.rollback()
+                self.db.close()
+                raise Exception(self.tr('Problem creating centroid gist: ') + query.lastError().text())
+        self.db.commit()
+        self.db.close()
+    
     def checkAndCreateCentroidAuxStruct(self,earthCoverageClasses):
         created = self.checkCentroidAuxStruct()
         if not created:
-            srid = self.findEPSG()
-            self.db.transaction()
-            for cl in earthCoverageClasses:
-                table_schema, table_name = self.getTableSchema(cl)
-                sqltext = self.gen.createCentroidColumn(table_schema, table_name, srid)
-                sqlList = sqltext.split('#')
-                query2 = QSqlQuery(self.db)
-                for sql2 in sqlList:
-                    if not query2.exec_(sql2):
-                        self.db.rollback()
-                        self.db.close()
-                        raise Exception(self.tr('Problem creating centroid structure: ') + query.lastError().text())
-                sql3 = self.gen.createCentroidGist(table_schema, table_name)
-                if not query2.exec_(sql3):
-                    self.db.rollback()
-                    self.db.close()
-                    raise Exception(self.tr('Problem creating centroid gist: ') + query.lastError().text())
-            self.db.commit()
-            self.db.close()
+            self.createCentroidAuxStruct(earthCoverageClasses)
+    
+    def getEarthCoverageClasses(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getEarthCoverageClasses()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting earth coverage tables: ') + query.lastError().text())
+        result = []
+        while query.next():
+            result.append(query.value(0))
+        return result
