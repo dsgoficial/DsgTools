@@ -46,53 +46,8 @@ class ValidationConfig(QtGui.QDialog, FORM_CLASS):
         self.widget.tabWidget.setTabEnabled(1,True)
         self.widget.tabWidget.setTabEnabled(0,False)
         self.widget.tabWidget.setCurrentIndex(1)
-        self.widget.connectionChanged.connect(self.loadEarthCoverage)
+        self.widget.dbChanged.connect(self.widgetConv.setDatabase)
 
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
         self.hide()
-
-    @pyqtSlot(bool)
-    def on_defineEarthCoverageButton_clicked(self):
-        if not self.widget.abstractDb:
-            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a database to manage earth coverage'))
-            return
-        try:
-            classList = self.widget.abstractDb.getOrphanGeomTables()
-            areas = []
-            lines = []
-            for cl in classList:
-                if cl[-1] == 'a':
-                    areas.append(cl)
-                if cl[-1] == 'l':
-                    lines.append(cl)
-            lines.append('public.aux_linhas_l')
-            
-            dlg = SetupEarthCoverage(areas,lines)
-            dlg.coverageChanged.connect(self.loadEarthCoverage)
-            dlg.exec_()
-        except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        
-        pass
-    
-    def loadEarthCoverage(self,version=None):
-        try:
-            fileName = os.path.join(os.path.dirname(__file__), 'ValidationConfig', 'earthCoverage.cfg')
-            file = open(fileName, 'r')
-            data = file.read()
-            earthCoverageDict = json.loads(data)
-            rootItem = self.earthCoverageTreeWidget.invisibleRootItem()
-            #database item
-            for key in earthCoverageDict.keys():
-                item = QTreeWidgetItem(rootItem)
-                item.setText(0,key)
-                item.setExpanded(True)
-                for cl in earthCoverageDict[key]:
-                    covItem = QTreeWidgetItem(item)
-                    covItem.setText(1,cl)
-                    covItem.setExpanded(True)
-        except Exception as e:
-            QgsMessageLog.logMessage(self.tr('Earth Coverage not loaded! Check log for details.')+str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        

@@ -564,7 +564,7 @@ class DsgTools:
         layers.addAction(action)
         self.layerButton.addAction(action)
 
-        icon_path = ':/plugins/DsgTools/icons/class.png'
+        icon_path = ':/plugins/DsgTools/icons/centroid.png'
         action = self.add_action(
             icon_path,
             text=self.tr('Load Auxiliar Structure'),
