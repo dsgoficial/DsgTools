@@ -26,7 +26,6 @@ import os
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSlot, Qt
 from PyQt4.QtGui import QAbstractItemView, QApplication, QCursor, QMessageBox
-from psycopg2.tests.testconfig import dbname
 # DSGTools imports
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
