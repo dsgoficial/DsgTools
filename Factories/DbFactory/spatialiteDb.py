@@ -47,12 +47,6 @@ class SpatialiteDb(AbstractDb):
         filename = fd.getOpenFileName(caption=self.tr('Select a DSGTools Spatialite file'),filter=self.tr('Spatialite file databases (*.sqlite)'))
         self.db.setDatabaseName(filename)
     
-    def connectDatabaseWithQSettings(self, name):
-        return None
-
-    def connectDatabaseWithParameters(self, host, port, database, user, password):
-        return None
-    
     def listGeomClassesFromDatabase(self):
         self.checkAndOpenDb()
         classList = []
@@ -83,15 +77,6 @@ class SpatialiteDb(AbstractDb):
                     classList.append(layerName)
         return classList    
 
-    def getConnectionFromQSettings(self, conName):
-        return None
-
-    def storeConnection(self, server):
-        return None
-        
-    def getServerConfiguration(self, name):
-        return None
-
     def getStructureDict(self):
         self.checkAndOpenDb()
         classDict = dict()
@@ -121,12 +106,6 @@ class SpatialiteDb(AbstractDb):
     def makeOgrConn(self):
         constring = self.db.databaseName()
         return constring
-
-    def getNotNullDict(self):
-        return None
-
-    def getDomainDict(self):
-        return None 
 
     def validateWithOutputDatabaseSchema(self,outputAbstractDb):
         self.checkAndOpenDb()
@@ -232,9 +211,6 @@ class SpatialiteDb(AbstractDb):
                 return status
         return False
     
-    def convertToSpatialite(self, outputAbstractDb,type=None):
-        return None
-    
     def getDatabaseVersion(self):
         self.checkAndOpenDb()
         version = '2.1.3'
@@ -322,36 +298,6 @@ class SpatialiteDb(AbstractDb):
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr('Problem disassociating complex from complex: ') + '\n' + query.lastError().text())
-    
-    def getUsers(self):
-        return None
-    
-    def getUserRelatedRoles(self, username):
-        return None
-    
-    def getRoles(self):
-        return None
-    
-    def createRole(self, role, dict):
-        pass
-
-    def dropRole(self, role):
-        pass
-
-    def alterUserPass(self, user, newpassword):
-        pass
-
-    def createUser(self, user, password, isSuperUser):
-        pass
-
-    def removeUser(self, user):
-        pass
-
-    def grantRole(self, user, role):
-        pass
-
-    def revokeRole(self, user, role):
-        pass
 
     def getTablesFromDatabase(self):
         self.checkAndOpenDb()
@@ -367,35 +313,5 @@ class SpatialiteDb(AbstractDb):
             ret.append(query.value(0))
         return ret
 
-    def getRolePrivileges(self, role, dbname):
-        return None
-
     def getFrameLayerName(self):
         return 'public_aux_moldura_a'
-
-    def getEDGVDbsFromServer(self,name):
-        return None
-
-    def getDbsFromServer(self):
-        return None
-    
-    def checkSuperUser(self):
-        return None
-
-    def dropDatabase(self,abstractCandidate):
-        return None
-
-    def createResolvedDomainViews(self, createViewClause, fromClause):
-        pass
-
-    def getSqlViewFile(self):
-        pass
-    
-    def getInvalidGeom(self):
-        pass
-
-    def checkInvalidGeom(self):
-        pass
-    
-    def checkAndCreateValidationStructure(self):
-        pass

@@ -50,9 +50,6 @@ class PostgisDb(AbstractDb):
         else:
             self.connectDatabaseWithQSettings(conn)
 
-    def connectDatabaseWithGui(self):
-        return None
-
     def connectDatabaseWithParameters(self, host, port, database, user, password):
         self.db.setHostName(host)
         if type(port) != 'int':
@@ -271,9 +268,6 @@ class PostgisDb(AbstractDb):
                 value = int(query2.value(0))
                 classDict = self.utils.buildNestedDict(classDict,[str(cl),str(attName)],[value])
         return classDict
-    
-    def validateWithOutputDatabaseSchema(self,outputAbstractDb):
-        return None
 
     def translateAbstractDbLayerNameToOutputFormat(self,lyr,outputAbstractDb):
         if outputAbstractDb.db.driverName() == 'QSQLITE':
@@ -291,9 +285,6 @@ class PostgisDb(AbstractDb):
         schema = lyr.split('.')[0]
         className = '_'.join(lyr.split('.')[1::])
         return (schema, className)
-
-    def convertToPostgis(self, outputAbstractDb,type=None):
-        return None
     
     def convertToSpatialite(self, outputAbstractDb,type=None):
         (inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict) = self.prepareForConversion(outputAbstractDb)

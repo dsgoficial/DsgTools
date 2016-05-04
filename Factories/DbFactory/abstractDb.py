@@ -54,46 +54,13 @@ class AbstractDb(QObject):
             self.db.close()
             self.db = None
             
-    def getDatabaseName(self):
-        return None
-    
     def checkAndOpenDb(self):
         if not self.db.isOpen():
             if not self.db.open():
                 raise Exception(self.tr('Error opening database: ')+self.db.lastError().text())
 
-    def connectDatabase(self,conn=None):
-        return None
-    
-    def connectDatabaseWithParameters(self,host,port,database,user,password):
-        return None
-
-    def connectDatabaseWithQSettings(self,name):
-        return None
-
-    def connectDatabaseWithGui(self):
-        return None
-    
-    def getDatabaseVersion(self):
-        return None
-
     def getType(self):
         return self.db.driverName()
-    
-    def listGeomClassesFromDatabase(self):
-        return None
-
-    def listComplexClassesFromDatabase(self):
-        return None    
-
-    def getConnectionFromQSettings(self, conName):
-        return None
-
-    def storeConnection(self, server):
-        return None
-        
-    def getServerConfiguration(self, name):
-        return None
 
     def countElements(self, layers):
         self.checkAndOpenDb()
@@ -141,18 +108,6 @@ class AbstractDb(QObject):
         classList.sort()
         return self.listWithElementsFromDatabase(classList)
 
-    def getStructureDict(self):
-        return None
-
-    def makeOgrConn(self):
-        return None    
-
-    def getNotNullDict(self):
-        return None
-
-    def getDomainDict(self):
-        return None
-
     def getAggregationAttributes(self):
         self.checkAndOpenDb()
         columns = []
@@ -184,15 +139,6 @@ class AbstractDb(QObject):
             return self.convertToPostgis(outputAbstractDb,type)
         if outputAbstractDb.db.driverName() == 'QSQLITE':
             return self.convertToSpatialite(outputAbstractDb,type)
-        return None
-    
-    def convertToPostgis(self, outputAbstractDb,type):
-        return None
-    
-    def convertToSpatialite(self, outputAbstractDb,type):
-        return None 
-
-    def buildInvalidatedDict(self):
         return None
     
     def makeValidationSummary(self,invalidatedDataDict):
@@ -254,15 +200,6 @@ class AbstractDb(QObject):
                         self.signals.updateLog.emit(valueList)
                 
         return hasErrors
-
-    def translateAbstractDbLayerNameToOutputFormat(self,lyr,outputAbstractDb):
-        return None
-    
-    def translateOGRLayerNameToOutputFormat(self,lyr,ogrOutput):
-        return None
-    
-    def getTableSchema(self,lyr):
-        return None
             
     def buildReadSummary(self,inputOgrDb,outputAbstractDb,classList):
         self.signals.clearLog.emit() #Clears log
@@ -539,81 +476,3 @@ class AbstractDb(QObject):
         else:
             qmlPath = ''
         return qmlPath
-    
-    def obtainLinkColumn(self, complexClass, aggregatedClass):
-        return None
-    
-    def loadAssociatedFeatures(self, complex):
-        return None
-    
-    def isComplexClass(self, className):
-        return None
-    
-    def disassociateComplexFromComplex(aggregated_class, link_column, id):
-        pass
-    
-    def getUsers(self):
-        return None
-    
-    def getUserRelatedRoles(self, username):
-        return None
-    
-    def getRoles(self):
-        return None
-
-    def createRole(self, role, dict):
-        pass
-    
-    def dropRole(self, role):
-        pass
-
-    def alterUserPass(self, user, newpassword):
-        pass
-
-    def createUser(self, user, password, isSuperUser):
-        pass
-
-    def removeUser(self, user):
-        pass
-
-    def grantRole(self, user, role):
-        pass
-
-    def revokeRole(self, user, role):
-        pass
-
-    def getTablesFromDatabase(self):
-        return None
-
-    def getRolePrivileges(self, role, dbname):
-        return None
-    
-    def getFrameLayerName(self):
-        return None
-
-    def getEDGVDbsFromServer(self,name):
-        return None
-
-    def getDbsFromServer(self):
-        return None
-    
-    def checkSuperUser(self):
-        return None
-
-    def dropDatabase(self,abstractCandidate):
-        return None
-
-    def createResolvedDomainViews(self, createViewClause, fromClause):
-        pass
-    
-    def getSqlViewFile(self):
-        pass
-    
-    def getInvalidGeom(self):
-        pass
-
-    def checkInvalidGeom(self):
-        pass
-
-    def checkAndCreateValidationStructure(self):
-        pass
