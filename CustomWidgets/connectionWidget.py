@@ -34,6 +34,7 @@ from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.ServerTools.serverDBExplorer import ServerDBExplorer
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'connectionWidget.ui'))
@@ -41,6 +42,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
     connectionChanged = pyqtSignal()
     problemOccurred = pyqtSignal(str)
+    dbChanged = pyqtSignal(AbstractDb)
     
     def __init__(self, parent = None):
         """Constructor."""
@@ -92,6 +94,7 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
             self.edgvPostgisVersionEdit.setReadOnly(True)  
             self.loadDatabase()
             self.connectionChanged.emit()
+            self.dbChanged.emit(self.abstractDb)
         
     @pyqtSlot(bool)
     def on_pushButtonOpenFile_clicked(self):  

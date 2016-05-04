@@ -150,6 +150,15 @@ class SpatialiteSqlGenerator(SqlGenerator):
 
     def isSuperUser(self,user):
         return None
+
+    def getInvalidGeom(self, tableSchema, tableName):
+        return None
+
+    def checkValidationStructure(self):
+        return None
+
+    def createValidationStructure(self,srid):
+        return None
     
     def getEDGVVersion(self):
         sql = "SELECT edgvversion FROM public_db_metadata LIMIT 1"

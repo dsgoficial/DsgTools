@@ -140,7 +140,6 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
 
             self.insertIntoListView(categoryName)
         self.listWidgetCategoryFrom.sortItems()
-        self.setCRS()
 
     def insertIntoListView(self, item_name):
         found = self.listWidgetCategoryFrom.findItems(item_name, Qt.MatchExactly)
@@ -188,22 +187,6 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
             
     def pushMessage(self, msg):
         self.bar.pushMessage('', msg, level=QgsMessageBar.WARNING)
-
-    def setCRS(self):
-        try:
-            self.epsg = self.utils.findEPSG(self.db)
-            if self.epsg == -1:
-                self.bar.pushMessage("", self.tr("Coordinate Reference System not set or invalid!"), level=QgsMessageBar.WARNING)
-            else:
-                self.crs = QgsCoordinateReferenceSystem(self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
-                if self.isSpatialite:
-                    self.spatialiteCrsEdit.setText(self.crs.description())
-                    self.spatialiteCrsEdit.setReadOnly(True)
-                else:
-                    self.postGISCrsEdit.setText(self.crs.description())
-                    self.postGISCrsEdit.setReadOnly(True)
-        except:
-            pass
 
     def cancel(self):
         self.restoreInitialState()

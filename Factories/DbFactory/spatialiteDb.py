@@ -238,13 +238,12 @@ class SpatialiteDb(AbstractDb):
     def getDatabaseVersion(self):
         self.checkAndOpenDb()
         version = '2.1.3'
-        try:
-            sqlVersion = self.gen.getEDGVVersion()
-            queryVersion =  QSqlQuery(sqlVersion, self.db)
-            while queryVersion.next():
-                version = queryVersion.value(0)
-        except:
-            version = '2.1.3'
+        sql = self.gen.getEDGVVersion()
+        query = QSqlQuery(sql, self.db)
+        # if not query.isActive():
+        #     raise Exception(self.tr("Problem getting database version: ")+query.lastError().text())
+        while query.next():
+            version = query.value(0)
         return version
     
     def obtainLinkColumn(self, complexClass, aggregatedClass):
@@ -390,4 +389,13 @@ class SpatialiteDb(AbstractDb):
         pass
 
     def getSqlViewFile(self):
+        pass
+    
+    def getInvalidGeom(self):
+        pass
+
+    def checkInvalidGeom(self):
+        pass
+    
+    def checkAndCreateValidationStructure(self):
         pass

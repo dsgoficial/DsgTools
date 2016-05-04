@@ -22,6 +22,8 @@
 """
 import os
 
+from qgis.core import QgsMessageLog
+
 # Qt imports
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
@@ -74,7 +76,8 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
         try:
             self.abstractDb.checkAndOpenDb()
         except Exception as e:
-            print e.args[0]
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
 
     def populateTreeDict(self):
         self.getDbInfo()

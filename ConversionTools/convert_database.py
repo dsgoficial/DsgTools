@@ -25,6 +25,8 @@ from osgeo import ogr
 #QGIS imports
 from qgis.core import QgsMessageLog
 
+from qgis.core import QgsMessageLog
+
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import Qt

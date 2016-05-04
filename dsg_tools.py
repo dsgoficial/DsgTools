@@ -35,6 +35,7 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from DsgTools.LayerTools.load_by_class import LoadByClass
 from DsgTools.LayerTools.load_by_category import LoadByCategory
+from DsgTools.LayerTools.loadAuxStruct import LoadAuxStruct
 from DsgTools.LayerTools.ui_create_inom_dialog import CreateInomDialog
 from DsgTools.DbTools.SpatialiteTool.cria_spatialite_dialog import CriaSpatialiteDialog
 from DsgTools.DbTools.PostGISTool.postgisDBTool import PostgisDBTool
@@ -54,6 +55,7 @@ from DsgTools.aboutdialog import AboutDialog
 from DsgTools.VectorTools.calc_contour import CalcContour
 from DsgTools.AttributeTools.code_list import CodeList
 from DsgTools.AttributeTools.attributes_viewer import AttributesViewer
+from DsgTools.ValidationTools.validation_toolbox import ValidationToolbox
 from qgis.utils import showPluginHelp
 
 class DsgTools:
@@ -101,6 +103,7 @@ class DsgTools:
         self.complexWindow = ComplexWindow(iface)
         self.codeList = CodeList(iface)
         #self.attributesViewer = AttributesViewer(iface)
+        self.validationToolbox = ValidationToolbox(iface,self.codeList)
         self.contourDock = None
 
         self.processManager = ProcessManager(iface)
@@ -227,6 +230,7 @@ class DsgTools:
         layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/icons/layers.png')
         bdgex = self.addMenu(self.dsgTools, u'bdgex', self.tr('BDGEx'),':/plugins/DsgTools/icons/eb.png')
         vectortools = self.addMenu(self.dsgTools, u'vectortools', self.tr('Vector Tools'),':/plugins/DsgTools/icons/vectortools.png')
+        validationtools = self.addMenu(self.dsgTools, u'validationtools', self.tr('Validation Tools'),':/plugins/DsgTools/icons/database.png')
         topocharts = self.addMenu(bdgex, u'topocharts', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
         coverageLyr = self.addMenu(bdgex, u'coverageLyr', self.tr('Coverage Layers'),':/plugins/DsgTools/icons/eb.png')
         indexes = self.addMenu(bdgex, u'indexes', self.tr('Product Indexes'),':/plugins/DsgTools/icons/eb.png')
@@ -505,6 +509,16 @@ class DsgTools:
         self.vectorButton.addAction(action)
         self.vectorButton.setDefaultAction(action)
 
+        icon_path = ':/plugins/DsgTools/icons/database.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Detect invalid geometry'),
+            callback=self.detectInvalidGeom,
+            parent=validationtools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        validationtools.addAction(action)
+
         #User Permissions submenu
         permissions = self.addMenu(database, u'layers', self.tr('User Permissions Tools'),':/plugins/DsgTools/icons/profile.png')
         icon_path = ':/plugins/DsgTools/icons/profile.png'
@@ -550,6 +564,17 @@ class DsgTools:
         layers.addAction(action)
         self.layerButton.addAction(action)
 
+        icon_path = ':/plugins/DsgTools/icons/centroid.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Load Auxiliar Structure'),
+            callback=self.loadAuxStruct,
+            parent=layers,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        layers.addAction(action)
+        self.layerButton.addAction(action)
+
         icon_path = ':/plugins/DsgTools/icons/frame.png'
         action = self.add_action(
             icon_path,
@@ -564,6 +589,7 @@ class DsgTools:
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.codeList)
         #self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.attributesViewer)
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.validationToolbox)
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -579,6 +605,7 @@ class DsgTools:
             self.iface.removeDockWidget(self.complexWindow)
             self.iface.removeDockWidget(self.codeList)
             #self.iface.removeDockWidget(self.attributesViewer)
+            self.iface.removeDockWidget(self.validationToolbox)
 
     def run(self):
         """Run method that performs all the real work"""
@@ -646,6 +673,9 @@ class DsgTools:
             self.contourDock = CalcContour(self.iface)
         self.contourDock.activateTool()
         self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.contourDock)
+
+    def detectInvalidGeom(self):
+        pass
             
     def installModelsAndScripts(self):
         dlg = ModelsAndScriptsInstaller()
@@ -681,6 +711,17 @@ class DsgTools:
         except:
             pass
         dlg = LoadByCategory(self.codeList)
+        dlg.show()
+        result = dlg.exec_()
+        if result:
+            pass
+
+    def loadAuxStruct(self):
+        try:
+            self.layerButton.setDefaultAction(self.toolbar.sender())
+        except:
+            pass
+        dlg = LoadAuxStruct(self.codeList)
         dlg.show()
         result = dlg.exec_()
         if result:

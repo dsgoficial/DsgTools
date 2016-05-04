@@ -67,6 +67,10 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "id in (SELECT id FROM ONLY "+layer_name+")"
         return sql
 
+    def loadLayerFromDatabaseUsingInh(self, layer_name):
+        sql = "id in (SELECT id FROM "+layer_name+")"
+        return sql
+
     def getCreateDatabase(self, name):
         sql = "CREATE DATABASE "+name
         return sql
@@ -77,6 +81,10 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def getElementCountFromLayer(self, layer):
         sql = "SELECT count(*) FROM ONLY "+layer
+        return sql
+
+    def getElementCountFromLayerWithInh(self, layer):
+        sql = "SELECT count(*) FROM "+layer
         return sql
     
     def getDatabasesFromServer(self):
@@ -266,4 +274,339 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def isSuperUser(self,user):
         sql = 'SELECT rolsuper FROM pg_roles WHERE rolname = \'%s\'' % user 
+        return sql
+
+    def getInvalidGeom(self, tableSchema, tableName):
+        return "select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only %s.%s  where ST_IsValid(geom) = 'f') as f" % (tableSchema,tableName)
+    
+    def getNonSimpleGeom(self, tableSchema, tableName):
+        return "select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only %s.%s  where ST_IsSimple(geom) = 'f') as f" % (tableSchema,tableName)
+    
+    def checkValidationStructure(self):
+        return "select count(*) from information_schema.columns where table_name = 'aux_flags_validacao'"
+
+    def createValidationStructure(self, srid):
+        sql = """CREATE SCHEMA IF NOT EXISTS validation#
+        CREATE TABLE validation.aux_flags_validacao (
+            id serial NOT NULL,
+            process_name varchar(200) NOT NULL,
+            layer varchar(200) NOT NULL,
+            feat_id smallint NOT NULL,
+            reason varchar(200) NOT NULL,
+            user_fixed boolean NOT NULL DEFAULT FALSE,
+            dimension smallint NOT NULL,
+            CONSTRAINT aux_flags_validacao_pk PRIMARY KEY (id)
+             WITH (FILLFACTOR = 100)
+        )#
+        
+        CREATE TABLE validation.aux_flags_validacao_p (
+            geom geometry(MULTIPOINT, %s) NOT NULL,
+            CONSTRAINT aux_flags_validacao_p_pk PRIMARY KEY (id)
+        )INHERITS(validation.aux_flags_validacao)#
+        
+        CREATE TABLE validation.aux_flags_validacao_l (
+            geom geometry(MULTILINESTRING, %s) NOT NULL,
+            CONSTRAINT aux_flags_validacao_l_pk PRIMARY KEY (id)
+        )INHERITS(validation.aux_flags_validacao)#
+        
+        CREATE TABLE validation.aux_flags_validacao_a (
+            geom geometry(MULTIPOLYGON, %s) NOT NULL,
+            CONSTRAINT aux_flags_validacao_a_pk PRIMARY KEY (id)
+        )INHERITS(validation.aux_flags_validacao)#
+        
+        CREATE TABLE validation.status
+        (
+          id smallint NOT NULL,
+          status character varying(200) NOT NULL,
+          CONSTRAINT status_pk PRIMARY KEY (id)
+        )#
+        CREATE TABLE validation.process_history (
+            id serial NOT NULL,
+            process_name varchar(200) NOT NULL,
+            log text NOT NULL,
+            status int NOT NULL,
+            finished timestamp NOT NULL default now(),
+            CONSTRAINT process_history_pk PRIMARY KEY (id),
+            CONSTRAINT process_history_status_fk FOREIGN KEY (status) REFERENCES validation.status (id) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION
+        
+        )#
+        CREATE TABLE validation.settings(
+            id serial NOT NULL,
+            scale character varying(10) NOT NULL,
+            tolerance float NOT NULL,
+            CONSTRAINT settings_pk PRIMARY KEY (id)
+        )#
+
+        INSERT INTO validation.status(id,status) VALUES (0,'Not yet ran'), (1,'Finished'), (2,'Failed'), (3,'Running'), (4,'Finished with flags')   
+        """ % (srid, srid, srid)
+        return sql
+    
+    def validationStatus(self, processName):
+        sql = "SELECT status FROM validation.process_history where process_name = '%s' ORDER BY finished DESC LIMIT 1; " % processName
+        return sql
+    
+    def validationStatusText(self, processName):
+        sql = "SELECT sta.status FROM validation.process_history as hist left join validation.status as sta on sta.id = hist.status where hist.process_name = '%s' ORDER BY hist.finished DESC LIMIT 1 " % processName
+        return sql
+    
+    def setValidationStatusQuery(self, processName,log,status):
+        sql = "INSERT INTO validation.process_history (process_name, log, status) values ('%s','%s',%s)" % (processName,log,status)
+        return sql
+    
+    def insertFlagIntoDb(self,layer,feat_id,reason,geom,srid,processName, dimension):
+        sql = ''
+        if dimension == 0:
+            sql = "INSERT INTO validation.aux_flags_validacao_p (process_name, layer, feat_id, reason, geom, dimension) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s), %s);" % (processName, layer, str(feat_id), reason, geom, srid, dimension)
+        elif dimension == 1:
+            sql = "INSERT INTO validation.aux_flags_validacao_l (process_name, layer, feat_id, reason, geom, dimension) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s), %s);" % (processName, layer, str(feat_id), reason, geom, srid, dimension)
+        elif dimension == 2:
+            sql = "INSERT INTO validation.aux_flags_validacao_a (process_name, layer, feat_id, reason, geom, dimension) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s), %s);" % (processName, layer, str(feat_id), reason, geom, srid, dimension)
+        return sql
+    
+    def getRunningProc(self):
+        sql = "SELECT process_name, status FROM validation.process_history ORDER BY finished DESC LIMIT 1;"
+        return sql
+    
+    def deleteFlags(self, processName):
+        sql = """
+        DELETE FROM validation.aux_flags_validacao_p 
+        WHERE id in 
+        (SELECT id FROM validation.aux_flags_validacao_p where process_name = '%s')#
+        
+        DELETE FROM validation.aux_flags_validacao_l 
+        WHERE id in 
+        (SELECT id FROM validation.aux_flags_validacao_l where process_name = '%s')#
+
+        DELETE FROM validation.aux_flags_validacao_a 
+        WHERE id in 
+        (SELECT id FROM validation.aux_flags_validacao_a where process_name = '%s')
+        """ % (processName, processName, processName)
+        return sql
+    
+    def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card):
+        if predicate_function == 'ST_Disjoint':
+            if class_a!=class_b:
+                sameClassRestriction=''
+            else:
+                sameClassRestriction=' WHERE a.id <> b.id '
+                    
+            if necessity == '\'f\'':
+                sql = """SELECT DISTINCT foo.id, foo.geom FROM
+                (SELECT a.id id, SUM(CASE WHEN %s(a.geom,b.geom) = 'f' THEN 1 ELSE 0 END) count, a.geom geom 
+                    FROM %s as a,%s as b %s GROUP BY a.id) as foo
+                WHERE foo.count > 0
+                """% (predicate_function, class_a, class_b, sameClassRestriction)
+                
+            elif necessity == '\'t\'':
+                sql = """SELECT DISTINCT foo.id, foo.geom FROM
+                (SELECT a.id id, SUM(CASE WHEN %s(a.geom,b.geom) = 'f' THEN 1 ELSE 0 END) count, a.geom geom 
+                    FROM %s as a,%s as b %s GROUP BY a.id) as foo
+                WHERE foo.count = 0
+                """% (predicate_function, class_a, class_b, sameClassRestriction)
+        else:
+            if necessity == '\'f\'':
+                if class_a!=class_b:
+                    sameClassRestriction=''
+                else:
+                    sameClassRestriction=' WHERE a.id <> b.id '
+                
+                sql = """SELECT DISTINCT foo.id, foo.geom FROM
+                (SELECT a.id id, SUM(CASE WHEN %s(a.geom,b.geom) THEN 1 ELSE 0 END) count, a.geom geom 
+                    FROM %s as a,%s as b %s GROUP BY a.id) as foo
+                WHERE foo.count < %s OR foo.count > %s
+                """ % (predicate_function, class_a, class_b, sameClassRestriction, min_card, max_card)
+            elif necessity == '\'t\'':
+                if class_a!=class_b:
+                    sameClassRestriction=''
+                else:
+                    sameClassRestriction=' AND a.id <> b.id '
+                
+                sql = """SELECT DISTINCT a.id id, a.geom as geom
+                FROM %s as a, %s as b 
+                    WHERE %s(a.geom,b.geom) = %s %s
+                """ % (class_a, class_b, predicate_function, necessity, sameClassRestriction)
+        return sql
+    
+    def getDimension(self, geom):
+        sql = "select ST_Dimension('%s')" % geom
+        return sql
+    
+    def getMulti(self,cl):
+        sql = "select id from only %s where ST_NumGeometries(geom) > 1" % cl
+        return sql
+
+    def getDuplicatedGeom(self,schema,cl):
+        sql = """select * from (
+        SELECT id,
+        ROW_NUMBER() OVER(PARTITION BY geom ORDER BY id asc) AS Row,
+        geom FROM ONLY %s.%s 
+        ) dups
+        where     
+        dups.Row > 1""" % (schema,cl)
+        return sql
+    
+    def getSmallAreas(self,schema,cl,areaTolerance):
+        sql = """select  foo2.id, foo2.geom from (
+        select id, geom, ST_Area(geom) as area from %s.%s 
+        ) as foo2 where foo2.area < %s order by foo2.id""" % (schema,cl,areaTolerance)
+        return sql
+    
+    def getSmallLines(self,schema,cl,areaTolerance):
+        sql = """select  foo2.id, foo2.geom from (
+        select id, geom, ST_Length(geom) as len from %s.%s 
+        ) as foo2 where len < %s order by foo2.id""" % (schema,cl,areaTolerance)
+        return sql
+    
+    def prepareVertexNearEdgesStruct(self, tableSchema, tableName):
+        sql = """drop table if exists seg#
+        create temp table seg as (
+        SELECT segments.id as id, ST_MakeLine(sp,ep) as geom
+        FROM
+           (SELECT
+              ST_PointN(geom, generate_series(1, ST_NPoints(geom)-1)) as sp,
+              ST_PointN(geom, generate_series(2, ST_NPoints(geom)  )) as ep,
+              linestrings.id as id
+            FROM
+              (SELECT id as id, (ST_Dump(ST_Boundary(geom))).geom
+               FROM only {0}.{1} 
+               ) AS linestrings
+            ) AS segments)#
+        drop table if exists pontos#
+        create temp table pontos as select id as id, (ST_DumpPoints(geom)).geom as geom from only {0}.{1}#
+        create index pontos_gist on pontos using gist (geom)#
+        create index seg_gist on seg using gist (geom)""".format(tableSchema, tableName)
+        return sql
+
+    def getVertexNearEdgesStruct(self, epsg, tol):
+        sql = """select pontos.id, ST_SetSRID(pontos.geom,{0}) as geom from pontos, seg where seg.id = pontos.id and  ST_DWithin(seg.geom, pontos.geom, {1}) and ST_Distance(seg.geom, pontos.geom) > 0""".format(epsg,tol)
+        return sql
+    
+    def deleteFeatures(self,schema,table,idList):
+        sql = """DELETE FROM %s.%s 
+        WHERE id in (%s)""" %(schema,table,','.join(idList))
+        return sql
+    
+    def deleteFeaturesNotIn(self,schema,table,idList):
+        sql = """DELETE FROM %s.%s 
+        WHERE id not in (%s)""" %(schema,table,','.join(map(str,idList)))
+        return sql        
+    
+    def getNotSimple(self, tableSchema, tableName):
+        sql = """select foo.id as id, ST_MULTI(st_startpoint(foo.geom)) as geom from (
+        select id as id, (ST_Dump(ST_Node(ST_SetSRID(ST_MakeValid(geom),ST_SRID(geom))))).geom as geom from {0}.{1}  
+        where ST_IsSimple(geom) = 'f') as foo where st_equals(st_startpoint(foo.geom),st_endpoint(foo.geom))""".format(tableSchema, tableName)
+        return sql
+
+    def getOutofBoundsAngles(self, tableSchema, tableName, angle):
+        if tableName.split('_')[-1] == 'l':
+            sql = """
+            WITH result AS (SELECT points.id, points.anchor, (degrees
+                                        (
+                                            ST_Azimuth(points.anchor, points.pt1) - ST_Azimuth(points.anchor, points.pt2)
+                                        )::decimal + 360) % 360 as angle
+                        FROM
+                        (SELECT
+                              ST_PointN(geom, generate_series(1, ST_NPoints(geom)-2)) as pt1,
+                              ST_PointN(geom, generate_series(2, ST_NPoints(geom)-1)) as anchor,
+                              ST_PointN(geom, generate_series(3, ST_NPoints(geom))) as pt2,
+                              linestrings.id as id
+                            FROM
+                              (SELECT id as id, (ST_Dump(geom)).geom as geom
+                               FROM only {0}.{1}
+                               ) AS linestrings WHERE ST_NPoints(linestrings.geom) > 2 ) as points)
+            select distinct id, anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle)
+        elif  tableName.split('_')[-1] == 'a':
+            sql = """
+            WITH result AS (SELECT points.id, points.anchor, (degrees
+                                        (
+                                            ST_Azimuth(points.anchor, points.pt1) - ST_Azimuth(points.anchor, points.pt2)
+                                        )::decimal + 360) % 360 as angle
+                        FROM
+                        (SELECT
+                              ST_PointN(geom, generate_series(1, ST_NPoints(geom)-1)) as pt1,
+                              ST_PointN(geom, generate_series(1, ST_NPoints(geom)-1) %  (ST_NPoints(geom)-1)+1) as anchor,
+                              ST_PointN(geom, generate_series(2, ST_NPoints(geom)) %  (ST_NPoints(geom)-1)+1) as pt2,
+                              linestrings.id as id
+                            FROM
+                              (SELECT id as id, ST_Boundary((ST_Dump(ST_ForceRHR(geom))).geom) as geom
+                               FROM only {0}.{1}
+                               ) AS linestrings WHERE ST_NPoints(linestrings.geom) > 2 ) as points)
+            select distinct id, anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle)
+        return sql
+    
+    def getFlagsByProcess(self, processName):
+        sql = """select layer, feat_id from validation.aux_flags_validacao where process_name = '%s'""" % processName
+        return sql
+    
+    def forceValidity(self, tableSchema, tableName, idList, srid):
+        sql = """update {0}.{1} set geom = result.geom from (
+        select distinct parts.id, ST_Union(parts.geom) as geom from {0}.{1} as source, 
+                                        (select id as id, ST_Multi(((ST_Dump(ST_SetSRID(ST_MakeValid(geom), {3}))).geom)) as geom from 
+                                        pe.veg_campo_a  where id in ({2})) as parts where ST_GeometryType(parts.geom) = ST_GeometryType(source.geom) group by parts.id
+        ) as result where  result.id = {0}.{1}.id""".format(tableSchema,tableName,','.join(idList),srid)
+        return sql
+    
+    def getTableExtent(self, tableSchema, tableName):
+        sql = """
+        SELECT ST_XMin(ST_Extent(geom)), ST_XMax(ST_Extent(geom)), ST_YMin(ST_Extent(geom)), ST_YMax(ST_Extent(geom)) AS extent FROM {}.{}
+        """.format(tableSchema, tableName)
+        return sql
+    
+    def getOrphanGeomTablesWithElements(self):
+        sql = """
+        select pgcl2.sc || '.' || pgcl2.n as tb from pg_class as pgcl
+            left join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
+            left join pg_namespace as pgnsp on pgcl.relnamespace = pgnsp.oid
+            left join pg_inherits as pginh on pginh.inhparent = pgcl.oid
+            join (select pgcl.oid, pgmsp.nspname as sc, pgcl.relname as n from pg_class as pgcl
+                        join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
+                        left join pg_namespace pgmsp on pgcl.relnamespace = pgmsp.oid) 
+            as pgcl2 on pgcl2.oid = pginh.inhrelid
+            where pgnsp.nspname in ('ge','pe', 'cb') and pgatt.attname IS NULL and pgcl.relkind = 'r'
+        union 
+        select distinct gc.f_table_schema || '.' || p.relname as tb from pg_class as p
+            left join pg_inherits as inh  on inh.inhrelid = p.oid 
+            left join geometry_columns as gc on gc.f_table_name = p.relname
+            where (inh.inhrelid IS NULL) and 
+            gc.f_table_schema in ('cb', 'pe', 'ge')
+        
+        order by tb
+        """
+        return sql
+    
+    def updateOriginalTable(self, tableSchema, tableName, result, epsg):
+        sqls = []
+        for key in result.keys():
+            geoms = []
+            for wkb in result[key]:
+                geoms.append("ST_SetSRID(ST_Multi('{0}'), {1})".format(wkb, epsg))
+            array = ','.join(geoms)
+            union = 'ST_Union(ARRAY[{}])'.format(array)
+
+            sql = """
+            UPDATE {0}.{1} SET geom = ST_Multi({2}) WHERE id = {3}
+            """.format(tableSchema, tableName, union, key)
+            sqls.append(sql)
+        return sqls
+    
+    def getOrphanTableElementCount(self, orphan):
+        sql = "select id from {} limit 1".format(orphan)
+        return sql
+    
+    def checkCentroidAuxStruct(self):
+        sql = "select distinct count(table_column) from information_schema.columns where table_column = 'centroid' group by table_column"
+        return sql
+    
+    def createCentroidColumn(self, table_schema, table_name, srid):
+        sql = """alter table pe.veg_vegetacao_a add column centroid geometry('POINT',{1})#
+        alter table {2}.{3} alter column geom drop not null""".format(srid,table_schema, table_name)
+        return sql
+    
+    def createCentroidGist(self, table_schema, table_name):
+        gistName = table_name[::-2]+'_c_gist'
+        sql = "CREATE INDEX {1} ON {2}.{3} USING gist(centroid)".format(gistName,table_schema,table_name)
+        return sql
+    
+    def getEarthCoverageClasses(self):
+        sql = "select distinct table_schema || '.' || table_name from information_schema.columns where column_name = 'centroid'"
         return sql

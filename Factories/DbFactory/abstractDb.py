@@ -60,7 +60,7 @@ class AbstractDb(QObject):
     def checkAndOpenDb(self):
         if not self.db.isOpen():
             if not self.db.open():
-                raise Exception(self.tr('Error when opening database.')+'\n'+self.db.lastError().text())
+                raise Exception(self.tr('Error opening database: ')+self.db.lastError().text())
 
     def connectDatabase(self,conn=None):
         return None
@@ -536,7 +536,6 @@ class AbstractDb(QObject):
             qmlPath = os.path.join(qmlVersionPath, 'edgv_213')
         elif version == 'FTer_2a_Ed':
             qmlPath = os.path.join(qmlVersionPath, 'FTer_2a_Ed')
-        
         else:
             qmlPath = ''
         return qmlPath
@@ -608,4 +607,13 @@ class AbstractDb(QObject):
         pass
     
     def getSqlViewFile(self):
+        pass
+    
+    def getInvalidGeom(self):
+        pass
+
+    def checkInvalidGeom(self):
+        pass
+
+    def checkAndCreateValidationStructure(self):
         pass

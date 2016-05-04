@@ -23,6 +23,8 @@
 import os
 from uuid import uuid4
 
+from qgis.core import QgsMessageLog
+
 # Import the PyQt and QGIS libraries
 from PyQt4 import uic, QtGui, QtCore
 from PyQt4.QtCore import Qt, SIGNAL
@@ -210,7 +212,12 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         fileName = fileName.split('.')[-1]+'.qml'
 
         #obtaining the qml file path
-        qmlDirPath = abstractDb.getQmlDir()
+        qmlDirPath = ''
+        try:
+            qmlDirPath = abstractDb.getQmlDir()
+        except Exception as e:
+            QMessageBox.critical(self.iface.mainWindow(), self.tr("Critical!"), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
         qmlPath = os.path.join(qmlDirPath, fileName)
 
         #getting the domain dictionary that will be used to generate the comboboxes

@@ -384,7 +384,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                 QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
 
             #storing the names of the incompatible layers
-            if column_name == "":
+            if column_name == '':
                 forbiddenLayers.append(layer.name())
                 continue
 

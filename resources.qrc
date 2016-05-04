@@ -24,5 +24,6 @@
         <file>icons/manageUserProfiles.png</file>
         <file>icons/calccontour.png</file>
         <file>icons/vectortools.png</file>
+        <file>icons/centroid.png</file>
     </qresource>
 </RCC>

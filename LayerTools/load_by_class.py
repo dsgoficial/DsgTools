@@ -108,7 +108,7 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
         self.close()
         
     def pushMessage(self, msg):
-        self.bar.pushMessage("", msg, level=QgsMessageBar.WARNING)
+        self.bar.pushMessage("", msg, level=QgsMessageBar.CRITICAL)
 
     def selectAll(self):
         if self.selectAllCheck.isChecked():

@@ -24,7 +24,7 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 from PyQt4.QtCore import QSettings
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from qgis.core import QgsCredentials, QgsMessageLog
+from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceURI
 from osgeo import ogr
 from uuid import uuid4
 import codecs, os
@@ -659,3 +659,441 @@ class PostgisDb(AbstractDb):
         if dbVersion == 'FTer_2a_Ed':
             file = os.path.join(currentPath,'..','..','DbTools','PostGISTool', 'sqls', 'FTer_2a_Ed', 'views_edgvFter_2a_Ed.sql')
         return file
+    
+    def getInvalidGeomRecords(self):
+        self.checkAndOpenDb()
+        geomList = self.listClassesWithElementsFromDatabase()
+        invalidRecordsList = []
+        for lyr in geomList:
+            tableSchema, tableName = self.getTableSchema(lyr)
+            sql = self.gen.getInvalidGeom(tableSchema, tableName)
+            query = QSqlQuery(sql, self.db)
+            if not query.isActive():
+                raise Exception(self.tr("Problem getting invalid geometries: ")+query.lastError().text())
+            while query.next():
+                featId = query.value(0)
+                reason = query.value(1)
+                geom = query.value(2)
+                invalidRecordsList.append( (tableSchema+'.'+tableName,featId,reason,geom) )
+        return invalidRecordsList
+    
+    def insertFlags(self, flagTupleList, processName):
+        self.checkAndOpenDb()
+        srid = self.findEPSG()
+        if len(flagTupleList) > 0:
+            self.db.transaction()
+            query = QSqlQuery(self.db)
+            for record in flagTupleList:
+                try:
+                    dimension = self.getDimension(record[3]) # getting geometry dimension
+                except Exception as e:
+                    raise e
+                sql = self.gen.insertFlagIntoDb(record[0], str(record[1]), record[2], record[3], srid, processName, dimension)
+                if not query.exec_(sql):
+                    self.db.rollback()
+                    self.db.close()
+                    raise Exception(self.tr('Problem inserting flags: ') + query.lastError().text())
+                self.db.commit()
+            return len(flagTupleList)
+        else:
+            return 0
+    
+    def deleteProcessFlags(self, processName):
+        self.checkAndOpenDb()
+        sql = self.gen.deleteFlags(processName)
+        sqlList = sql.split('#')
+        query = QSqlQuery(self.db)
+        self.db.transaction()
+        for inner in sqlList:
+            if not query.exec_(inner):
+                self.db.rollback()
+                self.db.close()
+                raise Exception(self.tr('Problem deleting flags: ') + query.lastError().text())
+        self.db.commit()
+        self.db.close()
+    
+    def checkAndCreateValidationStructure(self):
+        self.checkAndOpenDb()
+        sql = self.gen.checkValidationStructure()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem creating structure: ')+query.lastError().text())
+        created = True
+        while query.next():
+            if query.value(0) == 0:
+                created = False
+        if not created:
+            sqltext = self.gen.createValidationStructure(self.findEPSG())
+            sqlList = sqltext.split('#')
+            query2 = QSqlQuery(self.db)
+            self.db.transaction()
+            for sql2 in sqlList:
+                if not query2.exec_(sql2):
+                    self.db.rollback()
+                    self.db.close()
+                    raise Exception(self.tr('Problem creating structure: ') + query.lastError().text())
+            self.db.commit()
+            self.db.close()
+    
+    def getValidationStatus(self, processName):
+        self.checkAndOpenDb()
+        sql = self.gen.validationStatus(processName)
+        query = QSqlQuery(sql,self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem acquiring status: ') + query.lastError().text()) 
+        ret = None
+        while query.next():
+            ret = query.value(0)
+        return ret
+
+    def getValidationStatusText(self, processName):
+        self.checkAndOpenDb()
+        sql = self.gen.validationStatusText(processName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem acquiring status: ') + query.lastError().text()) 
+        ret = None
+        while query.next():
+            ret = query.value(0)
+        return ret
+
+    def setValidationProcessStatus(self,processName,log,status):
+        self.checkAndOpenDb()
+        sql = self.gen.setValidationStatusQuery(processName,log,status)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr('Problem setting status: ') + query.lastError().text())
+    
+    def getRunningProc(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getRunningProc()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting running process: ') + query.lastError().text()) 
+        while query.next():
+            processName = query.value(0)
+            status = query.value(1)
+            if status == 3:
+                return processName
+        return None
+    
+    def isLyrInDb(self,lyr):
+        candidateUri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
+        candidateHost = candidateUri.host()
+        candidatePort = int(candidateUri.port())
+        candidateDb = candidateUri.database()
+        if self.db.hostName() == candidateHost and self.db.port() == candidatePort and self.db.databaseName() == candidateDb:
+            return True
+        else:
+            return False
+        
+    def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card, rule):
+        self.checkAndOpenDb()
+        sql = self.gen.testSpatialRule(class_a, necessity, predicate_function, class_b, min_card, max_card)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem testing spatial rule: ') + query.lastError().text()) 
+        ret = []
+        while query.next():
+            feat_id = query.value(0)
+            reason = 'Feature id %s from %s violates rule %s %s' % (feat_id, class_a, rule, class_b)
+            geom = query.value(1)
+            ret.append((class_a, feat_id, reason, geom))
+        return ret
+
+    def getDimension(self, geom):
+        self.checkAndOpenDb()
+        sql = self.gen.getDimension(geom)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting dimension: ') + query.lastError().text()) 
+        dimension = 0
+        while query.next():
+            dimension = query.value(0)
+        return dimension
+    
+    def getExplodeCandidates(self):
+        self.checkAndOpenDb()
+        explodeDict = dict()
+        classesWithElem = self.listClassesWithElementsFromDatabase()
+        for cl in classesWithElem:
+            sql= self.gen.getMulti(cl)
+            query = QSqlQuery(sql, self.db)
+            if not query.isActive():
+                raise Exception(self.tr('Problem exploding geometries: ') + query.lastError().text())
+            idList = []
+            while query.next():
+                idList.append(query.value(0))
+            if len(idList) > 0:
+                explodeDict = self.utils.buildNestedDict(explodeDict, [cl], idList)
+        return explodeDict
+
+    def getURI(self, table, useOnly = True):
+        schema, layer_name = self.getTableSchema(table)
+
+        host = self.db.hostName()
+        port = self.db.port()
+        database = self.db.databaseName()
+        user = self.db.userName()
+        password = self.db.password()
+        
+        if useOnly:
+            sql = self.gen.loadLayerFromDatabase(table)
+        else:
+            sql = self.gen.loadLayerFromDatabaseUsingInh(table)
+        
+        uri = QgsDataSourceURI()
+        uri.setConnection(str(host),str(port), str(database), str(user), str(password))
+        uri.setDataSource(schema, layer_name, 'geom', sql, 'id')
+        uri.disableSelectAtId(True)
+        
+        return uri
+    
+    def getDuplicatedGeomRecords(self,classesWithGeom):
+        self.checkAndOpenDb()
+        duplicatedDict = dict()
+        for cl in classesWithGeom:
+            tableSchema, tableName = self.getTableSchema(cl)
+            if tableSchema not in ('validation'):
+                sql = self.gen.getDuplicatedGeom(tableSchema, tableName)
+                query = QSqlQuery(sql, self.db)
+                if not query.isActive():
+                    raise Exception(self.tr('Problem getting duplicated geometries: ') + query.lastError().text())
+                while query.next():
+                    duplicatedDict = self.utils.buildNestedDict(duplicatedDict, [cl,query.value(0)], query.value(2))
+        return duplicatedDict
+
+    def getSmallAreasRecords(self,classesWithGeom, tol):
+        self.checkAndOpenDb()
+        smallAreasDict = dict()
+        for cl in classesWithGeom:
+            tableSchema, tableName = self.getTableSchema(cl)
+            sql = self.gen.getSmallAreas(tableSchema, tableName, tol)
+            query = QSqlQuery(sql, self.db)
+            if not query.isActive():
+                raise Exception(self.tr('Problem getting small areas: ') + query.lastError().text())
+            while query.next():
+                smallAreasDict = self.utils.buildNestedDict(smallAreasDict, [cl,query.value(0)], query.value(1))
+        return smallAreasDict
+
+    def getSmallLinesRecords(self,classesWithGeom, tol):
+        self.checkAndOpenDb()
+        smallLinesDict = dict()
+        for cl in classesWithGeom:
+            tableSchema, tableName = self.getTableSchema(cl)
+            sql = self.gen.getSmallLines(tableSchema, tableName, tol)
+            query = QSqlQuery(sql, self.db)
+            if not query.isActive():
+                raise Exception(self.tr('Problem getting small lines: ') + query.lastError().text())
+            while query.next():
+                smallLinesDict = self.utils.buildNestedDict(smallLinesDict, [cl,query.value(0)], query.value(1))
+        return smallLinesDict
+
+    def getVertexNearEdgesRecords(self, tableSchema, tableName, tol):
+        self.checkAndOpenDb()
+        result = []
+        sql = self.gen.prepareVertexNearEdgesStruct(tableSchema, tableName)
+        sqlList = sql.split('#')
+        self.db.transaction()
+        for sql2 in sqlList:
+            query = QSqlQuery(self.db)
+            if not query.exec_(sql2):
+                self.db.rollback()
+                self.db.close()
+                raise Exception(self.tr('Problem preparing auxiliary structure: ') + query.lastError().text())
+        epsg = self.findEPSG()
+        sql = self.gen.getVertexNearEdgesStruct(epsg, tol)
+        self.db.transaction()
+        query = QSqlQuery(sql,self.db)
+        if not query.isActive():
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem getting vertex near edges: ') + query.lastError().text())
+        while query.next():
+            id = query.value(0)
+            geom = query.value(1)
+            result.append((id,geom))
+        self.db.commit()
+        self.db.close()
+        return result
+
+    def removeFeatures(self,cl,idList):
+        self.checkAndOpenDb()
+        tableSchema, tableName = self.getTableSchema(cl)
+        sql = self.gen.deleteFeatures(tableSchema, tableName, idList)
+        query = QSqlQuery(self.db)
+        self.db.transaction()
+        if not query.exec_(sql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem deleting features from ')+cl+': '+ query.lastError().text())
+        self.db.commit()
+        self.db.close()
+        return len(idList)
+
+    def getNotSimpleRecords(self,classesWithGeom):
+        self.checkAndOpenDb()
+        notSimpleDict = dict()
+        for cl in classesWithGeom:
+            tableSchema, tableName = self.getTableSchema(cl)
+            sql = self.gen.getNotSimple(tableSchema, tableName)
+            query = QSqlQuery(sql, self.db)
+            if not query.isActive():
+                raise Exception(self.tr('Problem getting not simple geometries: ') + query.lastError().text())
+            while query.next():
+                notSimpleDict = self.utils.buildNestedDict(notSimpleDict, [cl,query.value(0)], query.value(1))
+        return notSimpleDict
+
+    def getOutOfBoundsAnglesRecords(self, tableSchema, tableName, tol):
+        self.checkAndOpenDb()
+        result = []
+        sql = self.gen.getOutofBoundsAngles(tableSchema, tableName, tol)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting not out of bounds angles: ') + query.lastError().text())
+        while query.next():
+            id = query.value(0)
+            geom = query.value(1)
+            result.append((id, geom))
+        return result
+
+    def getFlagsDictByProcess(self, processName):
+        self.checkAndOpenDb()
+        flagsDict = dict()
+        sql = self.gen.getFlagsByProcess(processName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting flags dict: ') + query.lastError().text())
+        while query.next():
+            cl = query.value(0)
+            id = query.value(1)
+            flagsDict = self.utils.buildNestedDict(flagsDict, [cl], [str(id)])
+        return flagsDict
+    
+    def forceValidity(self, cl, idList):
+        self.checkAndOpenDb()
+        tableSchema, tableName = self.getTableSchema(cl)
+        srid = self.findEPSG()
+        sql = self.gen.forceValidity(tableSchema, tableName, idList, srid)
+        query = QSqlQuery(self.db)
+        self.db.transaction()
+        if not query.exec_(sql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem forcing validity of features from ')+cl+': '+ query.lastError().text())
+        self.db.commit()
+        self.db.close()        
+        return len(idList)
+    
+    def getTableExtent(self, tableSchema, tableName):
+        self.checkAndOpenDb()
+        sql = self.gen.getTableExtent(tableSchema, tableName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting table extent: ') + query.lastError().text())
+        
+        extent = None
+        while query.next():
+            xmin = query.value(0)
+            xmax = query.value(1)
+            ymin = query.value(2)
+            ymax = query.value(3)
+            extent = (xmin, xmax, ymin, ymax)
+        return extent
+
+    def getOrphanGeomTables(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getOrphanGeomTablesWithElements()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting orphan tables: ') + query.lastError().text())
+        result = []
+        while query.next():
+            result.append(query.value(0))
+        return result
+
+    def getOrphanGeomTablesWithElements(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getOrphanGeomTablesWithElements()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting orphan tables: ') + query.lastError().text())
+        result = []
+        while query.next():
+            orphanCandidate = query.value(0)
+            sql2 = self.gen.getOrphanTableElementCount(orphanCandidate)
+            query2 = QSqlQuery(sql2, self.db)
+            if not query2.isActive():
+                raise Exception(self.tr('Problem counting orphan table: ') + query2.lastError().text())
+            while query2.next():
+                if query2.value(0):
+                    result.append(query.value(0))
+        return result
+    
+    def updateGeometries(self, tableSchema, tableName, tuplas, epsg):
+        self.checkAndOpenDb()
+        sqls = self.gen.updateOriginalTable(tableSchema, tableName, tuplas, epsg)
+        query = QSqlQuery(self.db)
+        self.db.transaction()
+        sqlDel = self.gen.deleteFeaturesNotIn(tableSchema, tableName, tuplas.keys())
+        for sql in sqls:
+            if not query.exec_(sql):
+                self.db.rollback()
+                self.db.close()
+                raise Exception(self.tr('Problem updating geometries: ') + query.lastError().text())
+        query2 = QSqlQuery(self.db)
+        if not query2.exec_(sqlDel):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem deleting geometries: ') + query.lastError().text())            
+        self.db.commit()
+        self.db.close()    
+    
+    def checkCentroidAuxStruct(self):
+        self.checkAndOpenDb()
+        sql = self.gen.checkCentroidAuxStruct()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem checking structure: ')+query.lastError().text())
+        while query.next():
+            if query.value(0) == None:
+                return False
+        return True
+    
+    def createCentroidAuxStruct(self,earthCoverageClasses):
+        self.checkAndOpenDb()
+        srid = self.findEPSG()
+        self.db.transaction()
+        for cl in earthCoverageClasses:
+            table_schema, table_name = self.getTableSchema(cl)
+            sqltext = self.gen.createCentroidColumn(table_schema, table_name, srid)
+            sqlList = sqltext.split('#')
+            query2 = QSqlQuery(self.db)
+            for sql2 in sqlList:
+                if not query2.exec_(sql2):
+                    self.db.rollback()
+                    self.db.close()
+                    raise Exception(self.tr('Problem creating centroid structure: ') + query.lastError().text())
+            sql3 = self.gen.createCentroidGist(table_schema, table_name)
+            if not query2.exec_(sql3):
+                self.db.rollback()
+                self.db.close()
+                raise Exception(self.tr('Problem creating centroid gist: ') + query.lastError().text())
+        self.db.commit()
+        self.db.close()
+    
+    def checkAndCreateCentroidAuxStruct(self,earthCoverageClasses):
+        created = self.checkCentroidAuxStruct()
+        if not created:
+            self.createCentroidAuxStruct(earthCoverageClasses)
+    
+    def getEarthCoverageClasses(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getEarthCoverageClasses()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting earth coverage tables: ') + query.lastError().text())
+        result = []
+        while query.next():
+            result.append(query.value(0))
+        return result
