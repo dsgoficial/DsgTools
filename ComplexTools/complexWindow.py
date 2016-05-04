@@ -336,10 +336,10 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             
         for name in associatedDict.keys():
             for complex_uuid in associatedDict[name].keys():
-                self.addAssociatedFeature(str(complex), str(name), complex_uuid, None, None)
+                self.addAssociatedFeature(complex, name, complex_uuid, None, None)
                 for aggregated_class in associatedDict[name][complex_uuid]:
                     for ogc_fid in associatedDict[name][complex_uuid][aggregated_class]:
-                        self.addAssociatedFeature(str(complex), str(name), complex_uuid, str(aggregated_class), ogc_fid)
+                        self.addAssociatedFeature(complex, name, complex_uuid, aggregated_class, ogc_fid)
 
     def depth(self, item):
         #calculates the depth of the item
