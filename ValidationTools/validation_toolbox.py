@@ -182,7 +182,9 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
                 item.setText(2, 'Not yet ran')
             else:
                 item.setText(2, status)
-        pass
+        
+        for i in range(3):
+            self.processTreeWidget.resizeColumnToContents(i)
     
     @pyqtSlot(bool)
     def on_runButton_clicked(self):
