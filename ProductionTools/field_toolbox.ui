@@ -18,6 +18,9 @@
     <item row="0" column="0">
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2"/>
+      </item>
+      <item>
        <widget class="QPushButton" name="setupButton">
         <property name="text">
          <string>Setup</string>
