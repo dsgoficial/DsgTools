@@ -53,6 +53,7 @@ from DsgTools.UserTools.user_profiles import ManageUserProfiles
 from DsgTools.ConversionTools.convert_database import ConvertDatabase
 from DsgTools.aboutdialog import AboutDialog
 from DsgTools.VectorTools.calc_contour import CalcContour
+from DsgTools.ProductionTools.field_toolbox import FieldToolbox
 from DsgTools.AttributeTools.code_list import CodeList
 from DsgTools.AttributeTools.attributes_viewer import AttributesViewer
 from DsgTools.ValidationTools.validation_toolbox import ValidationToolbox
@@ -105,6 +106,7 @@ class DsgTools:
         #self.attributesViewer = AttributesViewer(iface)
         self.validationToolbox = ValidationToolbox(iface,self.codeList)
         self.contourDock = None
+        self.fieldDock = None
 
         self.processManager = ProcessManager(iface)
 
@@ -230,6 +232,7 @@ class DsgTools:
         layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/icons/layers.png')
         bdgex = self.addMenu(self.dsgTools, u'bdgex', self.tr('BDGEx'),':/plugins/DsgTools/icons/eb.png')
         vectortools = self.addMenu(self.dsgTools, u'vectortools', self.tr('Vector Tools'),':/plugins/DsgTools/icons/vectortools.png')
+        productiontools = self.addMenu(self.dsgTools, u'productiontools', self.tr('Production Tools'),':/plugins/DsgTools/icons/vectortools.png')
         validationtools = self.addMenu(self.dsgTools, u'validationtools', self.tr('Validation Tools'),':/plugins/DsgTools/icons/database.png')
         topocharts = self.addMenu(bdgex, u'topocharts', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
         coverageLyr = self.addMenu(bdgex, u'coverageLyr', self.tr('Coverage Layers'),':/plugins/DsgTools/icons/eb.png')
@@ -462,6 +465,7 @@ class DsgTools:
         self.databaseButton = self.createToolButton(self.toolbar, u'DatabaseTools')
         self.layerButton = self.createToolButton(self.toolbar, u'LayerTools')
         self.vectorButton = self.createToolButton(self.toolbar, u'VectorTools')
+        self.productionButton = self.createToolButton(self.toolbar, u'ProductionTools')
 
         icon_path = ':/plugins/DsgTools/icons/spatialite.png'
         action = self.add_action(
@@ -508,6 +512,18 @@ class DsgTools:
         vectortools.addAction(action)
         self.vectorButton.addAction(action)
         self.vectorButton.setDefaultAction(action)
+        
+        icon_path = ':/plugins/DsgTools/icons/calccontour.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Perform field acquisition'),
+            callback=self.showFieldToolbox,
+            parent=productiontools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        productiontools.addAction(action)
+        self.productionButton.addAction(action)
+        self.productionButton.setDefaultAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/database.png'
         action = self.add_action(
@@ -673,6 +689,13 @@ class DsgTools:
             self.contourDock = CalcContour(self.iface)
         self.contourDock.activateTool()
         self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.contourDock)
+
+    def showFieldToolbox(self):
+        if self.fieldDock:
+            self.iface.removeDockWidget(self.fieldToolbox)
+        else:
+            self.fieldToolbox = FieldToolbox(self.iface)
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.fieldToolbox)
 
     def detectInvalidGeom(self):
         pass
