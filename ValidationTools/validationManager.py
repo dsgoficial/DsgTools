@@ -34,10 +34,11 @@ class ValidationManager(QObject):
         self.postgisDb = postgisDb
         try:
             self.postgisDb.checkAndCreateValidationStructure()
+            self.setAvailableProcesses()
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        self.setAvailableProcesses()
+            self.processList = []
 
     def setAvailableProcesses(self):
         ignoredFiles = ['__init__.py', 'validationProcess.py']
@@ -100,7 +101,7 @@ class ValidationManager(QObject):
                 #check status
                 QgsMessageLog.logMessage('Process %s Log:\n' % currProc.getName(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 currProc.execute() #run bitch run!
-                status = currProc.getStatus() #must set status
+                #status = currProc.getStatus() #must set status
                 QgsMessageLog.logMessage('Process ran with status %s\n' % currProc.getStatusMessage(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
     

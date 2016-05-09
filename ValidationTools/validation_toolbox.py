@@ -153,11 +153,10 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.tolerance = self.configWindow.toleranceLineEdit.text()
             self.validationManager = ValidationManager(self.configWindow.widget.abstractDb)
             self.populateProcessList()
+            self.databaseLineEdit.setText(database)
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             self.processTreeWidget.clear()
-
-        self.databaseLineEdit.setText(database)
     
     def populateProcessList(self):
         self.processTreeWidget.clear()
@@ -202,8 +201,6 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         else:
             QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Process successfully executed!'))
             #executou! show!
-            pass
-        pass
 
     @pyqtSlot(int)
     def on_validationTabWidget_currentChanged(self):
@@ -211,8 +208,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.projectModel = QSqlTableModel(None,self.configWindow.widget.abstractDb.db)
             self.projectModel.setTable('validation.aux_flags_validacao')
             self.projectModel.select()
-            self.tableView.setModel(self.projectModel)
-        pass    
+            self.tableView.setModel(self.projectModel)  
     
     @pyqtSlot(bool)
     def on_rulesEditorButton_clicked(self):

@@ -27,7 +27,7 @@ import processing, binascii
 class CleanGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb):
         super(self.__class__,self).__init__(postgisDb)
-        self.parameters = {'Snap': 0.5, 'MinArea':0.001}
+        self.parameters = {'Snap': 1.0, 'MinArea':0.001}
         
     def runProcessinAlg(self, cl):
         alg = 'grass7:v.clean.advanced'
@@ -55,8 +55,6 @@ class CleanGeometriesProcess(ValidationProcess):
         minArea = self.parameters['MinArea']
         
         ret = processing.runalg(alg, input, tools, threshold, extent, snap, minArea, None, None)
-        
-
 
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
@@ -66,7 +64,7 @@ class CleanGeometriesProcess(ValidationProcess):
         errorLayer = processing.getObject(ret['error'])
         #removing from registry
         QgsMapLayerRegistry.instance().removeMapLayer(input.id())
-        return self.getProcessingErrors(tableSchema, tableName, errorLayer)
+        return self.getProcessingErrors(errorLayer)
 
     def updateOriginalLayer(self, pgInputLyr, grassOutputLyr):
         grassIdList = []
@@ -108,10 +106,10 @@ class CleanGeometriesProcess(ValidationProcess):
             provider.deleteFeatures(deleteList)
         pgInputLyr.commitChanges()
     
-    def getProcessingErrors(self, tableSchema, tableName, layer):
+    def getProcessingErrors(self, layer):
         recordList = []
         for feature in layer.getFeatures():
-            recordList.append((feature.id(), binascii.hexlify(feature.geometry().asWkb())))
+            recordList.append((feature['id'], binascii.hexlify(feature.geometry().asWkb())))
         return recordList
         
     def execute(self):
@@ -131,8 +129,8 @@ class CleanGeometriesProcess(ValidationProcess):
                     if len(result) > 0:
                         recordList = []
                         for tupple in result:
-                            recordList.append((tableSchema+'.'+tableName,tupple[0],'Cleaning error.',tupple[1]))
-                            self.addClassesToBeDisplayedList(tupple[0]) 
+                            recordList.append((cl,tupple[0],'Cleaning error.',tupple[1]))
+                            self.addClassesToBeDisplayedList(cl) 
                         numberOfProblems = self.addFlag(recordList)
                         self.setStatus('%s feature(s) of class '+cl+' with cleaning errors. Check flags.\n' % numberOfProblems, 4) #Finished with flags
                         QgsMessageLog.logMessage('%s feature(s) of class '+cl+' with cleaning errors. Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
