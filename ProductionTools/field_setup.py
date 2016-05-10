@@ -26,7 +26,7 @@ import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, Qt
 from PyQt4.QtGui import QMessageBox, QCheckBox
-from PyQt4.QtGui import QTableWidget, QTableWidgetItem, QStyledItemDelegate, QComboBox, QButtonGroup, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem
+from PyQt4.QtGui import QTreeWidgetItem, QTableWidget, QTableWidgetItem, QStyledItemDelegate, QComboBox, QButtonGroup, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
@@ -151,4 +151,25 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_addUpdatePushButton_clicked(self):
-        print self.attributeTableWidget.cellWidget(0,1).currentText()
+        # invisible root item
+        rootItem = self.treeWidget.invisibleRootItem()
+        
+        # item that will be used to create the button
+        item = QTreeWidgetItem(rootItem)
+        item.setText(0, self.buttonNameLineEdit.text())
+        
+        # class row in the classListWidget
+        classRow = self.classListWidget.currentRow()
+        schemaName, tableName = self.abstractDb.getTableSchema(self.classListWidget.item(classRow).text())
+        qmlPath = os.path.join(self.qmlDir,tableName+'.qml')
+        qml = QmlParser(qmlPath)
+        # qml dict for this class (tableName)
+        qmlDict = qml.getDomainDict()
+        
+        # accessing the attribute name and widget (QComboBox or QListWidget depending on data type)
+        for i in range(self.attributeTableWidget.rowCount()):
+            attribute = self.attributeTableWidget.item(i, 0).text()
+            
+            # this guy is a QComboBox or a QListWidget
+            widgetItem = self.attributeTableWidget.cellWidget(i, 1)
+#         print self.attributeTableWidget.cellWidget(0,1).currentText()
