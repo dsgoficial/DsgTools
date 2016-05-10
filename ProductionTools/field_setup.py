@@ -28,7 +28,7 @@ from PyQt4.QtCore import pyqtSlot, Qt
 from PyQt4.QtGui import QMessageBox, QCheckBox
 from PyQt4.QtGui import QTableWidget, QTableWidgetItem, QStyledItemDelegate, QComboBox, QButtonGroup, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
-from PyQt4.QtSql import QSqlDatabase
+from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry
@@ -54,7 +54,6 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.abstractDb = None
         self.abstractDbFactory = DbFactory()
         self.setupUi(self)
-        
     
     def __del__(self):
         if self.abstractDb:
@@ -103,6 +102,24 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             self.attributeTableWidget.removeRow(i)
         pass
     
+    def makeValueRelationDict(self, table, codes):
+        #query to obtain the dict with code names and related codes
+        ret = dict()
+
+        in_clause = '(%s)' % ",".join(map(str, codes))
+        if self.abstractDb.db.driverName() == 'QPSQL':
+            sql = 'select code, code_name from dominios.%s where code in %s' % (table, in_clause)
+        elif self.abstractDb.db.driverName() == 'QSQLITE':
+            sql = 'select code, code_name from dominios_%s where code in %s' % (table, in_clause)
+
+        query = QSqlQuery(sql, self.abstractDb.db)
+        while query.next():
+            code = query.value(0)
+            code_name = query.value(1)
+            ret[code_name] = code
+
+        return ret    
+    
     @pyqtSlot(int)
     def on_classListWidget_currentRowChanged(self,row):
         self.buttonNameLineEdit.setText('')
@@ -123,17 +140,14 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 self.attributeTableWidget.setCellWidget(count,1,comboItem)
             if isinstance(qmlDict[attr],tuple):
                 (table,filterKeys) = qmlDict[attr]
-                checkGroup = QButtonGroup()
-                for key in filterKeys:
-                    check = QCheckBox(key)
-                    checkGroup.addButton(check)
-                self.attributeTableWidget.setCellWidget(count,1,checkGroup)
-                print table
-                print filterKeys
-                
-                
+                valueRelation = self.makeValueRelationDict(table, filterKeys)
+                list = QListWidget()
+                for key in valueRelation.keys():
+                    listItem = QListWidgetItem(key)
+                    listItem.setCheckState(Qt.Unchecked)
+                    list.addItem(listItem)
+                self.attributeTableWidget.setCellWidget(count,1,list)
             count+=1
-        
     
     @pyqtSlot(bool)
     def on_addUpdatePushButton_clicked(self):
