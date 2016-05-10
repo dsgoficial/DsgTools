@@ -154,6 +154,10 @@ class SpatialiteSqlGenerator(SqlGenerator):
     def getInvalidGeom(self, tableSchema, tableName):
         return None
 
+    def makeRelationDict(self, table, in_clause):
+        sql = 'select code, code_name from dominios_%s where code in %s' % (table, in_clause)
+        return sql
+
     def checkValidationStructure(self):
         return None
 

@@ -456,7 +456,6 @@ class AbstractDb(QObject):
             for cl in errorClasses:
                 for id in errorDict[cl]:
                     self.signals.updateLog.emit('\n\n'+'{:<50}'.format(cl+str(id)))
-        return None
     
     def getQmlDir(self):
         self.checkAndOpenDb()
@@ -476,3 +475,15 @@ class AbstractDb(QObject):
         else:
             qmlPath = ''
         return qmlPath
+    
+    def makeValueRelationDict(self, table, codes):
+        self.checkAndOpenDb()
+        ret = dict()
+        in_clause = '(%s)' % ",".join(map(str, codes))
+        sql = self.gen.makeRelationDict(table, in_clause)
+        query = QSqlQuery(sql, self.db)
+        while query.next():
+            code = str(query.value(0))
+            code_name = query.value(1)
+            ret[code_name] = code
+        return ret

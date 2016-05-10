@@ -1075,8 +1075,6 @@ class PostgisDb(AbstractDb):
     
     def checkAndCreateCentroidAuxStruct(self,earthCoverageClasses):
         created = self.checkCentroidAuxStruct()
-        if not created:
-            self.createCentroidAuxStruct(earthCoverageClasses)
     
     def getEarthCoverageClasses(self):
         self.checkAndOpenDb()

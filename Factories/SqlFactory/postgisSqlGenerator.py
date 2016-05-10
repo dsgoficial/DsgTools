@@ -610,3 +610,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def getEarthCoverageClasses(self):
         sql = "select distinct table_schema || '.' || table_name from information_schema.columns where column_name = 'centroid'"
         return sql
+    
+    def makeRelationDict(self, table, codes):
+        sql = 'select code, code_name from dominios.%s where code in %s' % (table, in_clause)
+        return sql

@@ -78,7 +78,7 @@
        </spacer>
       </item>
       <item row="3" column="3">
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="addUpdatePushButton">
         <property name="text">
          <string>Add / Update</string>
         </property>
