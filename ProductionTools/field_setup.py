@@ -97,6 +97,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         if self.versionCombo.currentIndex() <> 0:
             self.getDbInfo()
             self.populateClassList()
+            self.treeWidget.invisibleRootItem().takeChildren()
         else:
             self.classListWidget.clear()
     
@@ -127,6 +128,8 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
     def on_classListWidget_currentRowChanged(self,row):
         self.buttonNameLineEdit.setText('')
         self.clearAttributeTableWidget()
+        if not self.classListWidget.item(row):
+            return
         schemaName, tableName = self.abstractDb.getTableSchema(self.classListWidget.item(row).text())
         qmlPath = os.path.join(self.qmlDir,tableName+'.qml')
         qml = QmlParser(qmlPath)
@@ -163,6 +166,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
 
         # class row in the classListWidget
         classRow = self.classListWidget.currentRow()
+
         schemaName, tableName = self.abstractDb.getTableSchema(self.classListWidget.item(classRow).text())
 
         # item that will be used to group the button by class
