@@ -38,6 +38,7 @@ from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.QmlTools.qmlParser import QmlParser
 from PyQt4.Qt import QGroupBox, QButtonGroup
+from __builtin__ import True
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'field_setup.ui'))
@@ -159,37 +160,65 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         schemaName, tableName = self.abstractDb.getTableSchema(self.classListWidget.item(classRow).text())
 
         # item that will be used to group the button by class
-        item = QTreeWidgetItem(rootItem)
-        item.setText(0, self.classListWidget.item(classRow).text())
+        if self.buttonNameLineEdit.text() <> '':
 
-        # item that will be used to create the button
-        buttonItem = QTreeWidgetItem(item)
-        buttonItem.setText(0, self.buttonNameLineEdit.text())
-
-        qmlPath = os.path.join(self.qmlDir, tableName+'.qml')
-        qml = QmlParser(qmlPath)
-        # qml dict for this class (tableName)
-        qmlDict = qml.getDomainDict()
-        
-        # accessing the attribute name and widget (QComboBox or QListWidget depending on data type)
-        for i in range(self.attributeTableWidget.rowCount()):
-            attribute = self.attributeTableWidget.item(i, 0).text()
+            buttonInTree = False
+            leafInTree = False
+            for i in range(rootItem.childCount()):
+                leaf = rootItem.child(i)
+                if leaf.text(0) == self.classListWidget.item(classRow).text():
+                    leafInTree = True
+                    item = leaf
+                    for j in range(leaf.childCount()):
+                        leafChild = leaf.child(j)
+                        if leafChild.text(0) == self.buttonNameLineEdit.text():
+                            buttonItem = leafChild
+                            buttonItem.setText(0, self.buttonNameLineEdit.text())
+                            buttonInTree = True
+                            break
+            if not leafInTree:
+                item = QTreeWidgetItem(rootItem)
+                item.setText(0, self.classListWidget.item(classRow).text())
+            if not buttonInTree:        
+                # item that will be used to create the button
+                buttonItem = QTreeWidgetItem(item)
+                buttonItem.setText(0, self.buttonNameLineEdit.text())
+    
+            qmlPath = os.path.join(self.qmlDir, tableName+'.qml')
+            qml = QmlParser(qmlPath)
+            # qml dict for this class (tableName)
+            qmlDict = qml.getDomainDict()
             
-            # this guy is a QComboBox or a QListWidget
-            widgetItem = self.attributeTableWidget.cellWidget(i, 1)
-
-            if isinstance(qmlDict[attribute], dict):
-                value = qmlDict[attribute][widgetItem.currentText()]
-            if isinstance(qmlDict[attribute], tuple):
-                (table, filterKeys) = qmlDict[attribute]
-                valueRelation = self.makeValueRelationDict(table, filterKeys)
-                values = []
-                for i in range(widgetItem.count()):
-                    if widgetItem.item(i).checkState() == Qt.Checked:
-                        key = widgetItem.item(i).text()
-                        values.append(valueRelation[key])
-                value = '{%s}' % ','.join(map(str, values))
-
-            attributeItem = QTreeWidgetItem(buttonItem)
-            attributeItem.setText(0, attribute)
-            attributeItem.setText(1, value)
+            # accessing the attribute name and widget (QComboBox or QListWidget depending on data type)
+            for i in range(self.attributeTableWidget.rowCount()):
+                attribute = self.attributeTableWidget.item(i, 0).text()
+                
+                # this guy is a QComboBox or a QListWidget
+                widgetItem = self.attributeTableWidget.cellWidget(i, 1)
+    
+                if isinstance(qmlDict[attribute], dict):
+                    value = qmlDict[attribute][widgetItem.currentText()]
+                if isinstance(qmlDict[attribute], tuple):
+                    (table, filterKeys) = qmlDict[attribute]
+                    valueRelation = self.makeValueRelationDict(table, filterKeys)
+                    values = []
+                    for i in range(widgetItem.count()):
+                        if widgetItem.item(i).checkState() == Qt.Checked:
+                            key = widgetItem.item(i).text()
+                            values.append(valueRelation[key])
+                    value = '{%s}' % ','.join(map(str, values))
+                
+                #sweep tree for attribute
+                attrFound = False
+                for i in range(buttonItem.childCount()):
+                    attrItem = buttonItem.child(i)
+                    if attribute == attrItem.text(0):
+                        attrFound = True
+                        attributeItem = attrItem
+                        break
+                if not attrFound:
+                    attributeItem = QTreeWidgetItem(buttonItem)
+                    attributeItem.setText(0, attribute)
+                attributeItem.setText(1, value)
+        else:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Enter a button name!'))
