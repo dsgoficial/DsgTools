@@ -139,7 +139,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 comboItem.addItems(qmlDict[attr].keys())
                 self.attributeTableWidget.setCellWidget(count,1,comboItem)
             if isinstance(qmlDict[attr],tuple):
-                (table,filterKeys) = qmlDict[attr]
+                (table, filterKeys) = qmlDict[attr]
                 valueRelation = self.makeValueRelationDict(table, filterKeys)
                 list = QListWidget()
                 for key in valueRelation.keys():
@@ -153,15 +153,20 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
     def on_addUpdatePushButton_clicked(self):
         # invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
-        
-        # item that will be used to create the button
-        item = QTreeWidgetItem(rootItem)
-        item.setText(0, self.buttonNameLineEdit.text())
-        
+
         # class row in the classListWidget
         classRow = self.classListWidget.currentRow()
         schemaName, tableName = self.abstractDb.getTableSchema(self.classListWidget.item(classRow).text())
-        qmlPath = os.path.join(self.qmlDir,tableName+'.qml')
+
+        # item that will be used to group the button by class
+        item = QTreeWidgetItem(rootItem)
+        item.setText(0, self.classListWidget.item(classRow).text())
+
+        # item that will be used to create the button
+        buttonItem = QTreeWidgetItem(item)
+        buttonItem.setText(0, self.buttonNameLineEdit.text())
+
+        qmlPath = os.path.join(self.qmlDir, tableName+'.qml')
         qml = QmlParser(qmlPath)
         # qml dict for this class (tableName)
         qmlDict = qml.getDomainDict()
@@ -172,4 +177,19 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             
             # this guy is a QComboBox or a QListWidget
             widgetItem = self.attributeTableWidget.cellWidget(i, 1)
-#         print self.attributeTableWidget.cellWidget(0,1).currentText()
+
+            if isinstance(qmlDict[attribute], dict):
+                value = qmlDict[attribute][widgetItem.currentText()]
+            if isinstance(qmlDict[attribute], tuple):
+                (table, filterKeys) = qmlDict[attribute]
+                valueRelation = self.makeValueRelationDict(table, filterKeys)
+                values = []
+                for i in range(widgetItem.count()):
+                    if widgetItem.item(i).checkState() == Qt.Checked:
+                        key = widgetItem.item(i).text()
+                        values.append(valueRelation[key])
+                value = '{%s}' % ','.join(map(str, values))
+
+            attributeItem = QTreeWidgetItem(buttonItem)
+            attributeItem.setText(0, attribute)
+            attributeItem.setText(1, value)

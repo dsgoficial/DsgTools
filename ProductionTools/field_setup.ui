@@ -116,9 +116,20 @@
    </item>
    <item row="2" column="0">
     <widget class="QTreeWidget" name="treeWidget">
+     <property name="columnCount">
+      <number>2</number>
+     </property>
+     <attribute name="headerVisible">
+      <bool>true</bool>
+     </attribute>
      <column>
       <property name="text">
        <string>Custom Elements</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Value</string>
       </property>
      </column>
     </widget>
