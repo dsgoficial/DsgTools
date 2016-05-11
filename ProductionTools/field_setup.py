@@ -289,8 +289,8 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot()    
     def on_buttonBox_accepted(self):
-        if not QMessageBox.question(self, self.tr('Question'), self.tr('Do you want to save this field setup?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
-            self.close()
+        if QMessageBox.question(self, self.tr('Question'), self.tr('Do you want to save this field setup?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
+            return
             
         filename = QFileDialog.getSaveFileName(self, self.tr('Save Field Setup configuration'), self.folder, self.tr('Field Setup Files (*.json)'))
         if not filename:

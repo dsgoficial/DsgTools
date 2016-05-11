@@ -69,6 +69,8 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         return scrollArea
         
     def createButtons(self, reclassificationDict):
+        self.tabWidget.clear()
+        
         for edgvClass in reclassificationDict.keys():
             formLayout = QtGui.QFormLayout()
             scrollArea = self.createWidget(formLayout)
