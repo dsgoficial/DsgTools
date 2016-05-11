@@ -25,7 +25,6 @@ import os
 # Qt imports
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot
-from PyQt4.QtGui import QMessageBox
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
 # QGIS imports
@@ -54,3 +53,26 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
     def on_setupButton_clicked(self):
         dlg = FieldSetup()
         dlg.exec_()
+        
+        reclassificationDict = dlg.makeReclassificationDict()
+        self.createButtons(reclassificationDict)
+        
+    def createButtons(self, reclassificationDict):
+        formLayout = QtGui.QFormLayout()
+        
+        for edgvClass in reclassificationDict.keys():
+            for button in reclassificationDict[edgvClass].keys():
+                pushButton = QtGui.QPushButton(button)
+                formLayout.addRow(pushButton)
+        
+        scrollArea = QtGui.QScrollArea()
+        scrollArea.setWidgetResizable(True)
+        scrollArea.setFrameShape(QtGui.QFrame.Shape(0))  # no frame
+        w = QtGui.QWidget()
+        w.setLayout(formLayout)
+        scrollArea.setWidget(w)
+        
+        layout = QtGui.QVBoxLayout()
+        layout.addWidget(scrollArea)
+        
+        self.tabWidget.widget(0).setLayout(layout)
