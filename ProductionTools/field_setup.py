@@ -93,11 +93,12 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.classListWidget.addItems(geomClasses)
     
     @pyqtSlot(int)
-    def on_versionCombo_currentIndexChanged(self):
+    def on_versionCombo_currentIndexChanged(self, clear=True):
         if self.versionCombo.currentIndex() <> 0:
             self.getDbInfo()
             self.populateClassList()
-            self.treeWidget.invisibleRootItem().takeChildren()
+            if clear:
+                self.treeWidget.invisibleRootItem().takeChildren()
         else:
             self.classListWidget.clear()
     
@@ -232,6 +233,8 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
     def makeReclassificationDict(self):
         reclassificationDict = dict()
         
+        reclassificationDict['version'] = self.versionCombo.currentText()
+        
         #invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
 
@@ -258,12 +261,17 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             return dict()    
     
     def loadReclassificationConf(self, reclassificationDict):
+        index = self.versionCombo.findText(reclassificationDict['version'])
+        self.versionCombo.setCurrentIndex(index)
+        
         self.treeWidget.clear()
         
         #invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
         
         for edgvClass in reclassificationDict.keys():
+            if edgvClass == 'version':
+                continue
             classItem = QTreeWidgetItem(rootItem)
             classItem.setText(0, edgvClass)
             for button in reclassificationDict[edgvClass].keys():
@@ -273,6 +281,26 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                     attributeItem = QTreeWidgetItem(buttonItem)
                     attributeItem.setText(0, attribute)
                     attributeItem.setText(1, reclassificationDict[edgvClass][button][attribute])
+                    
+    def on_treeWidget_currentItemChanged(self, previous, current):
+        depth = self.depth(previous)
+        if depth == 1:
+            classItems = self.classListWidget.findItems(previous.text(0), Qt.MatchExactly)
+            self.classListWidget.setCurrentItem(classItems[0])
+        elif depth == 2:
+            classItems = self.classListWidget.findItems(previous.parent().text(0), Qt.MatchExactly)
+            self.classListWidget.setCurrentItem(classItems[0])   
+        elif depth == 3:
+            classItems = self.classListWidget.findItems(previous.parent().parent().text(0), Qt.MatchExactly)
+            self.classListWidget.setCurrentItem(classItems[0])   
+        
+    def depth(self, item):
+        #calculates the depth of the item
+        depth = 0
+        while item is not None:
+            item = item.parent()
+            depth += 1
+        return depth       
                     
     @pyqtSlot(bool)
     def on_loadButton_clicked(self):

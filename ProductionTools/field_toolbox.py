@@ -72,6 +72,8 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.tabWidget.clear()
         
         for edgvClass in reclassificationDict.keys():
+            if edgvClass == 'version':
+                continue
             formLayout = QtGui.QFormLayout()
             scrollArea = self.createWidget(formLayout)
             self.tabWidget.addTab(scrollArea, edgvClass)
