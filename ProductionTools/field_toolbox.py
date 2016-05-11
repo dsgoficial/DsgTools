@@ -57,22 +57,22 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         reclassificationDict = dlg.makeReclassificationDict()
         self.createButtons(reclassificationDict)
         
-    def createButtons(self, reclassificationDict):
-        formLayout = QtGui.QFormLayout()
-        
-        for edgvClass in reclassificationDict.keys():
-            for button in reclassificationDict[edgvClass].keys():
-                pushButton = QtGui.QPushButton(button)
-                formLayout.addRow(pushButton)
-        
+    def createWidget(self, formLayout):
         scrollArea = QtGui.QScrollArea()
         scrollArea.setWidgetResizable(True)
         scrollArea.setFrameShape(QtGui.QFrame.Shape(0))  # no frame
         w = QtGui.QWidget()
         w.setLayout(formLayout)
         scrollArea.setWidget(w)
-        
         layout = QtGui.QVBoxLayout()
         layout.addWidget(scrollArea)
+        return scrollArea
         
-        self.tabWidget.widget(0).setLayout(layout)
+    def createButtons(self, reclassificationDict):
+        for edgvClass in reclassificationDict.keys():
+            formLayout = QtGui.QFormLayout()
+            scrollArea = self.createWidget(formLayout)
+            self.tabWidget.addTab(scrollArea, edgvClass)
+            for button in reclassificationDict[edgvClass].keys():
+                pushButton = QtGui.QPushButton(button)
+                formLayout.addRow(pushButton)
