@@ -20,13 +20,13 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
+import os, json
 
 # Qt imports
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, Qt
-from PyQt4.QtGui import QMessageBox, QCheckBox
-from PyQt4.QtGui import QTreeWidgetItem, QTableWidget, QTableWidgetItem, QStyledItemDelegate, QComboBox, QButtonGroup, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem
+from PyQt4.QtGui import QMessageBox, QCheckBox, QButtonGroup, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem
+from PyQt4.QtGui import QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem, QStyledItemDelegate, QComboBox
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
@@ -55,6 +55,8 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.abstractDb = None
         self.abstractDbFactory = DbFactory()
         self.setupUi(self)
+        
+        self.folder = os.path.join(os.path.dirname(__file__), 'FieldSetupConfigs')
     
     def __del__(self):
         if self.abstractDb:
@@ -152,6 +154,10 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_addUpdatePushButton_clicked(self):
+        if self.buttonNameLineEdit.text() == '':
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Enter a button name!'))
+            return
+        
         # invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
 
@@ -160,65 +166,136 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         schemaName, tableName = self.abstractDb.getTableSchema(self.classListWidget.item(classRow).text())
 
         # item that will be used to group the button by class
-        if self.buttonNameLineEdit.text() <> '':
-
-            buttonInTree = False
-            leafInTree = False
-            for i in range(rootItem.childCount()):
-                leaf = rootItem.child(i)
-                if leaf.text(0) == self.classListWidget.item(classRow).text():
-                    leafInTree = True
-                    item = leaf
-                    for j in range(leaf.childCount()):
-                        leafChild = leaf.child(j)
-                        if leafChild.text(0) == self.buttonNameLineEdit.text():
-                            buttonItem = leafChild
-                            buttonItem.setText(0, self.buttonNameLineEdit.text())
-                            buttonInTree = True
-                            break
-            if not leafInTree:
-                item = QTreeWidgetItem(rootItem)
-                item.setText(0, self.classListWidget.item(classRow).text())
-            if not buttonInTree:        
-                # item that will be used to create the button
-                buttonItem = QTreeWidgetItem(item)
-                buttonItem.setText(0, self.buttonNameLineEdit.text())
-    
-            qmlPath = os.path.join(self.qmlDir, tableName+'.qml')
-            qml = QmlParser(qmlPath)
-            # qml dict for this class (tableName)
-            qmlDict = qml.getDomainDict()
-            
-            # accessing the attribute name and widget (QComboBox or QListWidget depending on data type)
-            for i in range(self.attributeTableWidget.rowCount()):
-                attribute = self.attributeTableWidget.item(i, 0).text()
-                
-                # this guy is a QComboBox or a QListWidget
-                widgetItem = self.attributeTableWidget.cellWidget(i, 1)
-    
-                if isinstance(qmlDict[attribute], dict):
-                    value = qmlDict[attribute][widgetItem.currentText()]
-                if isinstance(qmlDict[attribute], tuple):
-                    (table, filterKeys) = qmlDict[attribute]
-                    valueRelation = self.makeValueRelationDict(table, filterKeys)
-                    values = []
-                    for i in range(widgetItem.count()):
-                        if widgetItem.item(i).checkState() == Qt.Checked:
-                            key = widgetItem.item(i).text()
-                            values.append(valueRelation[key])
-                    value = '{%s}' % ','.join(map(str, values))
-                
-                #sweep tree for attribute
-                attrFound = False
-                for i in range(buttonItem.childCount()):
-                    attrItem = buttonItem.child(i)
-                    if attribute == attrItem.text(0):
-                        attrFound = True
-                        attributeItem = attrItem
+        buttonInTree = False
+        leafInTree = False
+        for i in range(rootItem.childCount()):
+            leaf = rootItem.child(i)
+            if leaf.text(0) == self.classListWidget.item(classRow).text():
+                leafInTree = True
+                item = leaf
+                for j in range(leaf.childCount()):
+                    leafChild = leaf.child(j)
+                    if leafChild.text(0) == self.buttonNameLineEdit.text():
+                        buttonItem = leafChild
+                        buttonItem.setText(0, self.buttonNameLineEdit.text())
+                        buttonInTree = True
                         break
-                if not attrFound:
+        if not leafInTree:
+            item = QTreeWidgetItem(rootItem)
+            item.setText(0, self.classListWidget.item(classRow).text())
+        if not buttonInTree:        
+            # item that will be used to create the button
+            buttonItem = QTreeWidgetItem(item)
+            buttonItem.setText(0, self.buttonNameLineEdit.text())
+
+        qmlPath = os.path.join(self.qmlDir, tableName+'.qml')
+        qml = QmlParser(qmlPath)
+        # qml dict for this class (tableName)
+        qmlDict = qml.getDomainDict()
+        
+        # accessing the attribute name and widget (QComboBox or QListWidget depending on data type)
+        for i in range(self.attributeTableWidget.rowCount()):
+            attribute = self.attributeTableWidget.item(i, 0).text()
+            
+            # this guy is a QComboBox or a QListWidget
+            widgetItem = self.attributeTableWidget.cellWidget(i, 1)
+
+            if isinstance(qmlDict[attribute], dict):
+                value = qmlDict[attribute][widgetItem.currentText()]
+            if isinstance(qmlDict[attribute], tuple):
+                (table, filterKeys) = qmlDict[attribute]
+                valueRelation = self.makeValueRelationDict(table, filterKeys)
+                values = []
+                for i in range(widgetItem.count()):
+                    if widgetItem.item(i).checkState() == Qt.Checked:
+                        key = widgetItem.item(i).text()
+                        values.append(valueRelation[key])
+                value = '{%s}' % ','.join(map(str, values))
+            
+            #sweep tree for attribute
+            attrFound = False
+            for i in range(buttonItem.childCount()):
+                attrItem = buttonItem.child(i)
+                if attribute == attrItem.text(0):
+                    attrFound = True
+                    attributeItem = attrItem
+                    break
+            if not attrFound:
+                attributeItem = QTreeWidgetItem(buttonItem)
+                attributeItem.setText(0, attribute)
+            attributeItem.setText(1, value)
+            
+    def makeReclassificationDict(self):
+        reclassificationDict = dict()
+        
+        #invisible root item
+        rootItem = self.treeWidget.invisibleRootItem()
+
+        #class item
+        for i in range(rootItem.childCount()):
+            classItem = rootItem.child(i)
+            reclassificationDict[classItem.text(0)] = dict()
+            for j in range(classItem.childCount()):
+                buttonItem = classItem.child(j)
+                reclassificationDict[classItem.text(0)][buttonItem.text(0)] = dict()
+                for k in range(buttonItem.childCount()):
+                    attributeItem = buttonItem.child(k)
+                    reclassificationDict[classItem.text(0)][buttonItem.text(0)][attributeItem.text(0)] = attributeItem.text(1)
+        return reclassificationDict
+    
+    def readJsonFile(self, filename):
+        try:
+            file = open(filename, 'r')
+            data = file.read()
+            reclassificationDict = json.loads(data)
+            file.close()
+            return reclassificationDict
+        except:
+            return dict()    
+    
+    def loadReclassificationConf(self, reclassificationDict):
+        self.treeWidget.clear()
+        
+        #invisible root item
+        rootItem = self.treeWidget.invisibleRootItem()
+        
+        for edgvClass in reclassificationDict.keys():
+            classItem = QTreeWidgetItem(rootItem)
+            classItem.setText(0, edgvClass)
+            for button in reclassificationDict[edgvClass].keys():
+                buttonItem = QTreeWidgetItem(classItem)
+                buttonItem.setText(0, button)
+                for attribute in reclassificationDict[edgvClass][button].keys():
                     attributeItem = QTreeWidgetItem(buttonItem)
                     attributeItem.setText(0, attribute)
-                attributeItem.setText(1, value)
-        else:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Enter a button name!'))
+                    attributeItem.setText(1, reclassificationDict[edgvClass][button][attribute])
+                    
+    @pyqtSlot(bool)
+    def on_loadButton_clicked(self):
+        self.loadedFileEdit.setText('')
+        
+        filename = QFileDialog.getOpenFileName(self, self.tr('Open Field Setup configuration'), self.folder, self.tr('Field Setup Files (*.json)'))
+        if not filename:
+            return
+        
+        reclassificationDict = self.readJsonFile(filename)
+        self.loadReclassificationConf(reclassificationDict)
+        
+        self.loadedFileEdit.setText(filename)
+        
+    @pyqtSlot()    
+    def on_buttonBox_accepted(self):
+        if not QMessageBox.question(self, self.tr('Question'), self.tr('Do you want to save this field setup?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
+            self.close()
+            
+        filename = QFileDialog.getSaveFileName(self, self.tr('Save Field Setup configuration'), self.folder, self.tr('Field Setup Files (*.json)'))
+        if not filename:
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Define a name for the field setup file!'))
+            return
+        
+        reclassificationDict = self.makeReclassificationDict()
+        with open(filename, 'w') as outfile:
+            json.dump(reclassificationDict, outfile, sort_keys=True, indent=4)
+            
+        QMessageBox.information(self, self.tr('Information!'), self.tr('Field setup file saved successfuly!'))
+        

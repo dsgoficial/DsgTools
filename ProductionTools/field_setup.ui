@@ -98,10 +98,10 @@
     </widget>
    </item>
    <item row="0" column="2">
-    <widget class="QLineEdit" name="lineEdit_2"/>
+    <widget class="QLineEdit" name="loadedFileEdit"/>
    </item>
    <item row="0" column="3">
-    <widget class="QPushButton" name="pushButton_2">
+    <widget class="QPushButton" name="loadButton">
      <property name="text">
       <string>Load</string>
      </property>
