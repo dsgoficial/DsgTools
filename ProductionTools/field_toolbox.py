@@ -54,8 +54,8 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         dlg = FieldSetup()
         dlg.exec_()
         
-        reclassificationDict = dlg.makeReclassificationDict()
-        self.createButtons(reclassificationDict)
+        self.reclassificationDict = dlg.makeReclassificationDict()
+        self.createButtons(self.reclassificationDict)
         
     def createWidget(self, formLayout):
         scrollArea = QtGui.QScrollArea()
@@ -80,4 +80,19 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             for edgvClass in reclassificationDict[category].keys():
                 for button in reclassificationDict[category][edgvClass].keys():
                     pushButton = QtGui.QPushButton(button)
+                    pushButton.clicked.connect(self.reclassify)
                     formLayout.addRow(pushButton)
+                    
+    @pyqtSlot()
+    def reclassify(self):
+        button = self.sender().text()
+        
+        currLayer = self.iface.activeLayer()
+        if not currLayer:
+            return
+        
+        if currLayer.type() != QgsMapLayer.VectorLayer:
+            return
+
+        for feature in currLayer.selectedFeatures():
+            geom = feature.geometry()
