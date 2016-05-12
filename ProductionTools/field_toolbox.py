@@ -116,6 +116,12 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                 newFeature.setAttribute(idx, value)
                 reclassificationLayer.addFeatures([newFeature], False)
         reclassificationLayer.commitChanges()
+        
+        currLayer.startEditing()
+        currLayer.deleteSelectedFeatures()
+        currLayer.commitChanges()
+        
+        QtGui.QMessageBox.information(self, self.tr('Information!'), self.tr('Features reclassified with success!'))
     
     def findReclassificationClass(self, button):
         for category in self.reclassificationDict.keys():
