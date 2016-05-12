@@ -28,7 +28,7 @@ from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry, QgsProject, QgsLayerTreeLayer
+from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry, QgsProject, QgsLayerTreeLayer, QgsFeature
 
 #DsgTools imports
 from DsgTools.ProductionTools.field_setup import FieldSetup
@@ -96,7 +96,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         #button that sent the signal
         button = self.sender().text()
         #edgvClass found in the dictionary
-        edgvClass = self.findReclassificationClass(button)
+        (category, edgvClass, button) = self.findReclassificationClass(button)
         #reclassification layer name
         reclassificationClass = '_'.join(edgvClass.split('_')[1::])
             
@@ -104,10 +104,18 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         root = QgsProject.instance().layerTreeRoot()
         reclassificationLayer = self.searchLayer(root, reclassificationClass)
 
+        reclassificationLayer.startEditing()
         #iterating over selected features
         for feature in currLayer.selectedFeatures():
             geom = feature.geometry()
-            
+            newFeature = QgsFeature(reclassificationLayer.pendingFields())
+            newFeature.setGeometry(geom)
+            for attribute in self.reclassificationDict[category][edgvClass][button].keys():
+                idx = newFeature.fieldNameIndex(attribute)
+                value = self.reclassificationDict[category][edgvClass][button][attribute]
+                newFeature.setAttribute(idx, value)
+                reclassificationLayer.addFeatures([newFeature], False)
+        reclassificationLayer.commitChanges()
     
     def findReclassificationClass(self, button):
         for category in self.reclassificationDict.keys():
@@ -117,13 +125,11 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                 for buttonName in self.reclassificationDict[category][edgvClass].keys():
                     if button == buttonName:
                         #returning the desired edgvClass
-                        return edgvClass
-        return ''
+                        return (category, edgvClass, button)
+        return ()
                     
     def searchLayer(self, group, name):
-        for child in group.children():
-            if isinstance(child, QgsLayerTreeLayer) and child.layerName() == name:
-                #QgsVectorLayer found, return it
-                return child.layer()
-            else:
-                self.searchLayer(child, name)
+        layerNodes = group.findLayers()
+        for node in layerNodes:
+            if node.layerName() == name:
+                return node.layer()
