@@ -85,6 +85,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                     
     @pyqtSlot()
     def reclassify(self):
+        #checking for current layer
         currLayer = self.iface.activeLayer()
         if not currLayer:
             return
@@ -92,16 +93,22 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         if currLayer.type() != QgsMapLayer.VectorLayer:
             return
 
+        #button that sent the signal
         button = self.sender().text()
+        #edgvClass found in the dictionary
         edgvClass = self.findReclassificationClass(button)
+        #reclassification layer name
         reclassificationClass = '_'.join(edgvClass.split('_')[1::])
             
+        #searching the QgsVectorLayer to perform the reclassification
         root = QgsProject.instance().layerTreeRoot()
         reclassificationLayer = self.searchLayer(root, reclassificationClass)
 
+        #iterating over selected features
         for feature in currLayer.selectedFeatures():
             geom = feature.geometry()
             
+    
     def findReclassificationClass(self, button):
         for category in self.reclassificationDict.keys():
             if category == 'version':
@@ -109,12 +116,14 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             for edgvClass in self.reclassificationDict[category].keys():
                 for buttonName in self.reclassificationDict[category][edgvClass].keys():
                     if button == buttonName:
+                        #returning the desired edgvClass
                         return edgvClass
         return ''
                     
     def searchLayer(self, group, name):
         for child in group.children():
             if isinstance(child, QgsLayerTreeLayer) and child.layerName() == name:
+                #QgsVectorLayer found, return it
                 return child.layer()
             else:
                 self.searchLayer(child, name)
