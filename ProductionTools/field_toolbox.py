@@ -71,12 +71,13 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
     def createButtons(self, reclassificationDict):
         self.tabWidget.clear()
         
-        for edgvClass in reclassificationDict.keys():
-            if edgvClass == 'version':
+        for category in reclassificationDict.keys():
+            if category == 'version':
                 continue
             formLayout = QtGui.QFormLayout()
             scrollArea = self.createWidget(formLayout)
-            self.tabWidget.addTab(scrollArea, edgvClass)
-            for button in reclassificationDict[edgvClass].keys():
-                pushButton = QtGui.QPushButton(button)
-                formLayout.addRow(pushButton)
+            self.tabWidget.addTab(scrollArea, category)
+            for edgvClass in reclassificationDict[category].keys():
+                for button in reclassificationDict[category][edgvClass].keys():
+                    pushButton = QtGui.QPushButton(button)
+                    formLayout.addRow(pushButton)

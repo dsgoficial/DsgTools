@@ -169,24 +169,34 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         classRow = self.classListWidget.currentRow()
 
         schemaName, tableName = self.abstractDb.getTableSchema(self.classListWidget.item(classRow).text())
+        category = schemaName + '_' + tableName.split('_')[0]
 
-        # item that will be used to group the button by class
+        # creating items in tree
         buttonInTree = False
+        leafChildInTree = False
         leafInTree = False
         for i in range(rootItem.childCount()):
             leaf = rootItem.child(i)
-            if leaf.text(0) == self.classListWidget.item(classRow).text():
+            if leaf.text(0) == category:
                 leafInTree = True
                 item = leaf
                 for j in range(leaf.childCount()):
-                    leafChild = leaf.child(j)
-                    if leafChild.text(0) == self.buttonNameLineEdit.text():
-                        buttonItem = leafChild
-                        buttonItem.setText(0, self.buttonNameLineEdit.text())
-                        buttonInTree = True
-                        break
+                    leafChild = leaf.child(i)
+                    if leafChild.text(0) == self.classListWidget.item(classRow).text():
+                        leafChildInTree = True
+                        item = leafChild
+                        for k in range(leafChild.childCount()):
+                            leafGrandson = leafChild.child(k)
+                            if leafGrandson.text(0) == self.buttonNameLineEdit.text():
+                                buttonItem = leafGrandson
+                                buttonItem.setText(0, self.buttonNameLineEdit.text())
+                                buttonInTree = True
+                                break
         if not leafInTree:
             item = QTreeWidgetItem(rootItem)
+            item.setText(0, category)
+        if not leafChildInTree:
+            item = QTreeWidgetItem(item)
             item.setText(0, self.classListWidget.item(classRow).text())
         if not buttonInTree:        
             # item that will be used to create the button
@@ -240,14 +250,17 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
 
         #class item
         for i in range(rootItem.childCount()):
-            classItem = rootItem.child(i)
-            reclassificationDict[classItem.text(0)] = dict()
-            for j in range(classItem.childCount()):
-                buttonItem = classItem.child(j)
-                reclassificationDict[classItem.text(0)][buttonItem.text(0)] = dict()
-                for k in range(buttonItem.childCount()):
-                    attributeItem = buttonItem.child(k)
-                    reclassificationDict[classItem.text(0)][buttonItem.text(0)][attributeItem.text(0)] = attributeItem.text(1)
+            categoryItem = rootItem.child(i)
+            reclassificationDict[categoryItem.text(0)] = dict()
+            for j in range(categoryItem.childCount()):
+                classItem = categoryItem.child(j)
+                reclassificationDict[categoryItem.text(0)][classItem.text(0)] = dict()
+                for k in range(classItem.childCount()):
+                    buttonItem = classItem.child(k)
+                    reclassificationDict[categoryItem.text(0)][classItem.text(0)][buttonItem.text(0)] = dict()
+                    for l in range(buttonItem.childCount()):
+                        attributeItem = buttonItem.child(l)
+                        reclassificationDict[categoryItem.text(0)][classItem.text(0)][buttonItem.text(0)][attributeItem.text(0)] = attributeItem.text(1)
         return reclassificationDict
     
     def readJsonFile(self, filename):
@@ -269,28 +282,31 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         #invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
         
-        for edgvClass in reclassificationDict.keys():
-            if edgvClass == 'version':
+        for category in reclassificationDict.keys():
+            if category == 'version':
                 continue
-            classItem = QTreeWidgetItem(rootItem)
-            classItem.setText(0, edgvClass)
-            for button in reclassificationDict[edgvClass].keys():
-                buttonItem = QTreeWidgetItem(classItem)
-                buttonItem.setText(0, button)
-                for attribute in reclassificationDict[edgvClass][button].keys():
-                    attributeItem = QTreeWidgetItem(buttonItem)
-                    attributeItem.setText(0, attribute)
-                    attributeItem.setText(1, reclassificationDict[edgvClass][button][attribute])
+            categoryItem = QTreeWidgetItem(rootItem)
+            categoryItem.setText(0, category)
+            for edgvClass in reclassificationDict[category].keys():
+                classItem = QTreeWidgetItem(categoryItem)
+                classItem.setText(0, edgvClass)
+                for button in reclassificationDict[category][edgvClass].keys():
+                    buttonItem = QTreeWidgetItem(classItem)
+                    buttonItem.setText(0, button)
+                    for attribute in reclassificationDict[category][edgvClass][button].keys():
+                        attributeItem = QTreeWidgetItem(buttonItem)
+                        attributeItem.setText(0, attribute)
+                        attributeItem.setText(1, reclassificationDict[category][edgvClass][button][attribute])
                     
     def on_treeWidget_currentItemChanged(self, previous, current):
         depth = self.depth(previous)
-        if depth == 1:
+        if depth == 2:
             classItems = self.classListWidget.findItems(previous.text(0), Qt.MatchExactly)
-            self.classListWidget.setCurrentItem(classItems[0])
-        elif depth == 2:
-            classItems = self.classListWidget.findItems(previous.parent().text(0), Qt.MatchExactly)
             self.classListWidget.setCurrentItem(classItems[0])   
         elif depth == 3:
+            classItems = self.classListWidget.findItems(previous.parent().text(0), Qt.MatchExactly)
+            self.classListWidget.setCurrentItem(classItems[0])   
+        elif depth == 4:
             classItems = self.classListWidget.findItems(previous.parent().parent().text(0), Qt.MatchExactly)
             self.classListWidget.setCurrentItem(classItems[0])   
         
