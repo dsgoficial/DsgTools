@@ -404,24 +404,31 @@ class PostGISSqlGenerator(SqlGenerator):
                 WHERE foo.count = 0
                 """% (predicate_function, class_a, class_b, sameClassRestriction)
         else:
-            if necessity == '\'f\'':
+            if necessity == '\'f\'':# must (be)
                 if class_a!=class_b:
                     sameClassRestriction=''
                 else:
                     sameClassRestriction=' WHERE a.id <> b.id '
                 
-                sql = """SELECT DISTINCT foo.id, foo.geom FROM
-                (SELECT a.id id, SUM(CASE WHEN %s(a.geom,b.geom) THEN 1 ELSE 0 END) count, a.geom geom 
-                    FROM %s as a,%s as b %s GROUP BY a.id) as foo
-                WHERE foo.count < %s OR foo.count > %s
-                """ % (predicate_function, class_a, class_b, sameClassRestriction, min_card, max_card)
-            elif necessity == '\'t\'':
+                if max_card == '*':
+                    sql = """SELECT DISTINCT foo.id, foo.geom FROM
+                    (SELECT a.id id, SUM(CASE WHEN %s(a.geom,b.geom) THEN 1 ELSE 0 END) count, a.geom geom 
+                        FROM %s as a,%s as b %s GROUP BY a.id) as foo
+                    WHERE foo.count < %s
+                    """ % (predicate_function, class_a, class_b, sameClassRestriction, min_card)
+                else:
+                    sql = """SELECT DISTINCT foo.id, foo.geom FROM
+                    (SELECT a.id id, SUM(CASE WHEN %s(a.geom,b.geom) THEN 1 ELSE 0 END) count, a.geom geom 
+                        FROM %s as a,%s as b %s GROUP BY a.id) as foo
+                    WHERE foo.count < %s OR foo.count > %s
+                    """ % (predicate_function, class_a, class_b, sameClassRestriction, min_card, max_card)
+            elif necessity == '\'t\'':# must not (be)
                 if class_a!=class_b:
                     sameClassRestriction=''
                 else:
                     sameClassRestriction=' AND a.id <> b.id '
                 
-                sql = """SELECT DISTINCT a.id id, a.geom as geom
+                sql = """SELECT DISTINCT a.id id, ST_Intersection(a.geom, b.geom) as geom
                 FROM %s as a, %s as b 
                     WHERE %s(a.geom,b.geom) = %s %s
                 """ % (class_a, class_b, predicate_function, necessity, sameClassRestriction)

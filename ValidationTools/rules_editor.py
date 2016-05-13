@@ -44,6 +44,11 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         
+        regex = QtCore.QRegExp('[0-9\*]\.\.[0-9\*]')
+        validator = QtGui.QRegExpValidator(regex, self.cardinalityEdit)
+        self.cardinalityEdit.setValidator(validator)
+        self.cardinalityEdit.setText('1..1')
+        
         self.postgisDb = postgisDb
         
         self.rulesFile = os.path.join(os.path.dirname(__file__), 'ValidationRules', 'ruleLibrary.rul')

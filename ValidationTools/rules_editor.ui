@@ -146,10 +146,10 @@
        <item>
         <widget class="QLineEdit" name="cardinalityEdit">
          <property name="inputMask">
-          <string>9..9; </string>
+          <string/>
          </property>
          <property name="text">
-          <string>1..1</string>
+          <string/>
          </property>
         </widget>
        </item>
