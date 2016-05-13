@@ -29,6 +29,7 @@ from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry, QgsProject, QgsLayerTreeLayer, QgsFeature
+from qgis.gui import QgsMessageBar
 
 #DsgTools imports
 from DsgTools.ProductionTools.field_setup import FieldSetup
@@ -121,7 +122,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         currLayer.deleteSelectedFeatures()
         currLayer.commitChanges()
         
-        QtGui.QMessageBox.information(self, self.tr('Information!'), self.tr('Features reclassified with success!'))
+        self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('Features reclassified with success!'), level=QgsMessageBar.INFO, duration=3)
     
     def findReclassificationClass(self, button):
         for category in self.reclassificationDict.keys():
