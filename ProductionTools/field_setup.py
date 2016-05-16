@@ -56,6 +56,8 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.abstractDbFactory = DbFactory()
         self.setupUi(self)
         
+        self.geomClasses = []
+        
         self.folder = os.path.join(os.path.dirname(__file__), 'FieldSetupConfigs')
     
     def __del__(self):
@@ -85,12 +87,19 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
     
     def populateClassList(self):
         self.classListWidget.clear()
+        self.geomClasses = []
         try:
-            geomClasses = self.abstractDb.listGeomClassesFromDatabase()
+            self.geomClasses = self.abstractDb.listGeomClassesFromDatabase()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
-        self.classListWidget.addItems(geomClasses)
+        self.classListWidget.addItems(self.geomClasses)
+        
+    def on_filterEdit_textChanged(self, text):
+        classes = [edgvClass for edgvClass in self.geomClasses if text in edgvClass]
+        self.classListWidget.clear()
+        self.classListWidget.addItems(classes)
+        self.classListWidget.sortItems()        
     
     @pyqtSlot(int)
     def on_versionCombo_currentIndexChanged(self, clear=True):

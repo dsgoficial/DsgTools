@@ -694,7 +694,7 @@ class DsgTools:
         if self.fieldDock:
             self.iface.removeDockWidget(self.fieldToolbox)
         else:
-            self.fieldToolbox = FieldToolbox(self.iface)
+            self.fieldToolbox = FieldToolbox(self.iface, self.codeList)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.fieldToolbox)
 
     def detectInvalidGeom(self):

@@ -30,16 +30,18 @@ from PyQt4.QtCore import pyqtSlot, pyqtSignal
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry, QgsProject, QgsLayerTreeLayer, QgsFeature
 from qgis.gui import QgsMessageBar
+import qgis as qgis
 
 #DsgTools imports
 from DsgTools.ProductionTools.field_setup import FieldSetup
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'field_toolbox.ui'))
 
 class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
-    def __init__(self, iface, parent = None):
+    def __init__(self, iface, codeList, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -49,7 +51,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.iface = iface
-    
+        self.codeList = codeList
+        
+        self.layerFactory = LayerFactory()
+        
     @pyqtSlot(bool)
     def on_setupButton_clicked(self):
         dlg = FieldSetup()
@@ -84,43 +89,64 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                     pushButton.clicked.connect(self.reclassify)
                     formLayout.addRow(pushButton)
                     
+    def loadLayer(self, layer):
+        try:
+            dbName = self.widget.abstractDb.getDatabaseName()
+            groupList =  qgis.utils.iface.legendInterface().groups()
+            edgvLayer = self.layerFactory.makeLayer(self.widget.abstractDb, self.codeList, layer)
+            if dbName in groupList:
+                return edgvLayer.load(self.widget.crs, groupList.index(dbName))
+            else:
+                parentTreeNode = qgis.utils.iface.legendInterface().addGroup(dbName, -1)
+                return edgvLayer.load(self.widget.crs, parentTreeNode)
+        except:
+            QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('Could not load the selected classes!'))
+            
     @pyqtSlot()
     def reclassify(self):
-        #checking for current layer
-        currLayer = self.iface.activeLayer()
-        if not currLayer:
+        if not self.widget.abstractDb:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Please, select a database.'))
             return
         
-        if currLayer.type() != QgsMapLayer.VectorLayer:
-            return
-
         #button that sent the signal
         button = self.sender().text()
-        #edgvClass found in the dictionary
+        #edgvClass found in the dictionary (this is made using the sqlite seed)
         (category, edgvClass, button) = self.findReclassificationClass(button)
         #reclassification layer name
         reclassificationClass = '_'.join(edgvClass.split('_')[1::])
+        
+        driverName = self.widget.abstractDb.getType()
+        if driverName == "QSQLITE":
+            dsgClass = edgvClass # do not change the class name, already is in schema_table form
+        if driverName == "QPSQL":
+            dsgClass = edgvClass.split('_')[0] +'.'+ '_'.join(edgvClass.split('_')[1::]) # change the class name, must be in schema.table form
             
         #searching the QgsVectorLayer to perform the reclassification
         root = QgsProject.instance().layerTreeRoot()
         reclassificationLayer = self.searchLayer(root, reclassificationClass)
+        if not reclassificationLayer:
+            reclassificationLayer = self.loadLayer(dsgClass)
 
         reclassificationLayer.startEditing()
-        #iterating over selected features
-        for feature in currLayer.selectedFeatures():
-            geom = feature.geometry()
-            newFeature = QgsFeature(reclassificationLayer.pendingFields())
-            newFeature.setGeometry(geom)
-            for attribute in self.reclassificationDict[category][edgvClass][button].keys():
-                idx = newFeature.fieldNameIndex(attribute)
-                value = self.reclassificationDict[category][edgvClass][button][attribute]
-                newFeature.setAttribute(idx, value)
-                reclassificationLayer.addFeatures([newFeature], False)
-        reclassificationLayer.commitChanges()
+
+        mapLayers = self.iface.mapCanvas().layers()
+        for mapLayer in mapLayers:
+            if mapLayer.type() != QgsMapLayer.VectorLayer:
+                continue
+            
+            #iterating over selected features
+            for feature in mapLayer.selectedFeatures():
+                geom = feature.geometry()
+                newFeature = QgsFeature(reclassificationLayer.pendingFields())
+                newFeature.setGeometry(geom)
+                for attribute in self.reclassificationDict[category][edgvClass][button].keys():
+                    idx = newFeature.fieldNameIndex(attribute)
+                    value = self.reclassificationDict[category][edgvClass][button][attribute]
+                    newFeature.setAttribute(idx, value)
+                    reclassificationLayer.addFeatures([newFeature], False)
         
-        currLayer.startEditing()
-        currLayer.deleteSelectedFeatures()
-        currLayer.commitChanges()
+            mapLayer.startEditing()
+            mapLayer.deleteSelectedFeatures()
         
         self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('Features reclassified with success!'), level=QgsMessageBar.INFO, duration=3)
     
@@ -140,3 +166,4 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         for node in layerNodes:
             if node.layerName() == name:
                 return node.layer()
+        return None

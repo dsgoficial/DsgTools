@@ -1,1 +1,1 @@
-ge.cb_area_abast_agua_a,must not (be),intersect,ge.cb_area_agropec_ext_veg_pesca_a,1..1
+ge.cb_area_abast_agua_a,must not (be),touch,ge.cb_area_agropec_ext_veg_pesca_a,1..1
