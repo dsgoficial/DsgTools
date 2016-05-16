@@ -232,7 +232,7 @@ class DsgTools:
         layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/icons/layers.png')
         bdgex = self.addMenu(self.dsgTools, u'bdgex', self.tr('BDGEx'),':/plugins/DsgTools/icons/eb.png')
         vectortools = self.addMenu(self.dsgTools, u'vectortools', self.tr('Vector Tools'),':/plugins/DsgTools/icons/vectortools.png')
-        productiontools = self.addMenu(self.dsgTools, u'productiontools', self.tr('Production Tools'),':/plugins/DsgTools/icons/vectortools.png')
+        productiontools = self.addMenu(self.dsgTools, u'productiontools', self.tr('Production Tools'),':/plugins/DsgTools/icons/productiontools.png')
         validationtools = self.addMenu(self.dsgTools, u'validationtools', self.tr('Validation Tools'),':/plugins/DsgTools/icons/database.png')
         topocharts = self.addMenu(bdgex, u'topocharts', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
         coverageLyr = self.addMenu(bdgex, u'coverageLyr', self.tr('Coverage Layers'),':/plugins/DsgTools/icons/eb.png')
@@ -513,7 +513,7 @@ class DsgTools:
         self.vectorButton.addAction(action)
         self.vectorButton.setDefaultAction(action)
         
-        icon_path = ':/plugins/DsgTools/icons/calccontour.png'
+        icon_path = ':/plugins/DsgTools/icons/fieldToolbox.png'
         action = self.add_action(
             icon_path,
             text=self.tr('Perform field acquisition'),

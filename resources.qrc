@@ -25,5 +25,7 @@
         <file>icons/calccontour.png</file>
         <file>icons/vectortools.png</file>
         <file>icons/centroid.png</file>
+        <file>icons/fieldToolbox.png</file>
+        <file>icons/productiontools.png</file>
     </qresource>
 </RCC>
