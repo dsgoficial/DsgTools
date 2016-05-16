@@ -154,7 +154,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                     idx = newFeature.fieldNameIndex(attribute)
                     value = self.reclassificationDict[category][edgvClass][button][attribute]
                     newFeature.setAttribute(idx, value)
-                    reclassificationLayer.addFeatures([newFeature], False)
+                reclassificationLayer.addFeatures([newFeature], False)
         
             if len(mapLayer.selectedFeatures()) > 0:
                 mapLayer.startEditing()
