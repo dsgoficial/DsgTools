@@ -146,6 +146,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                 continue
             
             #iterating over selected features
+            featList = []
             for feature in mapLayer.selectedFeatures():
                 geom = feature.geometry()
                 newFeature = QgsFeature(reclassificationLayer.pendingFields())
@@ -154,7 +155,8 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                     idx = newFeature.fieldNameIndex(attribute)
                     value = self.reclassificationDict[category][edgvClass][button][attribute]
                     newFeature.setAttribute(idx, value)
-                reclassificationLayer.addFeatures([newFeature], False)
+                featList.append(newFeature)
+            reclassificationLayer.addFeatures(featList, False)
         
             if len(mapLayer.selectedFeatures()) > 0:
                 mapLayer.startEditing()
