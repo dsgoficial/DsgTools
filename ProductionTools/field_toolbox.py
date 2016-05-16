@@ -155,8 +155,9 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                     newFeature.setAttribute(idx, value)
                     reclassificationLayer.addFeatures([newFeature], False)
         
-            mapLayer.startEditing()
-            mapLayer.deleteSelectedFeatures()
+            if len(mapLayer.selectedFeatures()) > 0:
+                mapLayer.startEditing()
+                mapLayer.deleteSelectedFeatures()
         
         self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('Features reclassified with success!'), level=QgsMessageBar.INFO, duration=3)
     
