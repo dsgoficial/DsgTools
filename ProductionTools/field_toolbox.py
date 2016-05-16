@@ -58,10 +58,11 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_setupButton_clicked(self):
         dlg = FieldSetup()
-        dlg.exec_()
+        result = dlg.exec_()
         
-        self.reclassificationDict = dlg.makeReclassificationDict()
-        self.createButtons(self.reclassificationDict)
+        if result == 1:
+            self.reclassificationDict = dlg.makeReclassificationDict()
+            self.createButtons(self.reclassificationDict)
         
     def createWidget(self, formLayout):
         scrollArea = QtGui.QScrollArea()
