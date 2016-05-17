@@ -26,7 +26,7 @@ import os, json
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, Qt
 from PyQt4.QtGui import QMessageBox, QCheckBox, QButtonGroup, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem
-from PyQt4.QtGui import QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem, QStyledItemDelegate, QComboBox
+from PyQt4.QtGui import QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem, QStyledItemDelegate, QComboBox, QMenu
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
@@ -55,6 +55,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.abstractDb = None
         self.abstractDbFactory = DbFactory()
         self.setupUi(self)
+        
+        self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.treeWidget.customContextMenuRequested.connect(self.createMenu)        
         
         self.geomClasses = []
         
@@ -325,8 +328,21 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         while item is not None:
             item = item.parent()
             depth += 1
-        return depth       
-                    
+        return depth   
+    
+    def createMenu(self, position):
+        menu = QMenu()
+        
+        item = self.treeWidget.itemAt(position)
+
+        if item and self.depth(item) < 4:
+            menu.addAction(self.tr('Remove child node'), self.removeChildNode)
+        menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
+
+    def removeChildNode(self):
+        item = self.treeWidget.currentItem()
+        item.parent().removeChild(item)     
+        
     @pyqtSlot(bool)
     def on_loadButton_clicked(self):
         self.loadedFileEdit.setText('')
