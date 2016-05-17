@@ -15,25 +15,33 @@
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="ConnectionWidget" name="widget" native="true"/>
-    </item>
-    <item row="1" column="0">
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="tabPosition">
-       <enum>QTabWidget::West</enum>
-      </property>
-      <property name="currentIndex">
-       <number>-1</number>
-      </property>
-     </widget>
-    </item>
     <item row="2" column="0">
      <widget class="QPushButton" name="setupButton">
       <property name="text">
        <string>Setup</string>
       </property>
      </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>342</width>
+         <height>537</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2"/>
+      </widget>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="ConnectionWidget" name="widget" native="true"/>
     </item>
    </layout>
   </widget>

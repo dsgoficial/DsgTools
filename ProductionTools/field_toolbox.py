@@ -62,32 +62,39 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         
         if result == 1:
             self.reclassificationDict = dlg.makeReclassificationDict()
+            self.size = dlg.slider.value()
             self.createButtons(self.reclassificationDict)
         
     def createWidget(self, formLayout):
-        scrollArea = QtGui.QScrollArea()
-        scrollArea.setWidgetResizable(True)
-        scrollArea.setFrameShape(QtGui.QFrame.Shape(0))  # no frame
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setFrameShape(QtGui.QFrame.Shape(0))  # no frame
         w = QtGui.QWidget()
         w.setLayout(formLayout)
-        scrollArea.setWidget(w)
-        layout = QtGui.QVBoxLayout()
-        layout.addWidget(scrollArea)
-        return scrollArea
+        self.scrollArea.setWidget(w)
+        
+    def createButton(self, button):
+        pushButton = QtGui.QPushButton(button)
+        pushButton.clicked.connect(self.reclassify)
+        if self.size == 0:
+            pushButton.setMinimumSize(100, 20)
+            pushButton.setStyleSheet('font-size:10px')
+        elif self.size == 1:            
+            pushButton.setMinimumSize(100, 40)
+            pushButton.setStyleSheet('font-size:20px')
+        elif self.size == 2:            
+            pushButton.setMinimumSize(100, 80)
+            pushButton.setStyleSheet('font-size:30px')
+        return pushButton        
         
     def createButtons(self, reclassificationDict):
-        self.tabWidget.clear()
-        
+        formLayout = QtGui.QFormLayout()
+        self.createWidget(formLayout)
         for category in reclassificationDict.keys():
             if category == 'version':
                 continue
-            formLayout = QtGui.QFormLayout()
-            scrollArea = self.createWidget(formLayout)
-            self.tabWidget.addTab(scrollArea, category)
             for edgvClass in reclassificationDict[category].keys():
                 for button in reclassificationDict[category][edgvClass].keys():
-                    pushButton = QtGui.QPushButton(button)
-                    pushButton.clicked.connect(self.reclassify)
+                    pushButton = self.createButton(button)
                     formLayout.addRow(pushButton)
                     
     def loadLayer(self, layer):
