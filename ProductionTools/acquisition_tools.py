@@ -48,4 +48,4 @@ def sqlParser(sqlFile):
             
     return nullFieldDict
 
-sqlParser('/home/dsgdev/.qgis2/python/plugins/DsgTools/DbTools/PostGISTool/sqls/213/edgv213.sql')
+print sqlParser('/home/luiz/.qgis2/python/plugins/DsgTools/DbTools/PostGISTool/sqls/213/edgv213.sql')

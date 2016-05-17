@@ -76,8 +76,8 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         pushButton = QtGui.QPushButton(button)
         pushButton.clicked.connect(self.reclassify)
         if self.size == 0:
-            pushButton.setMinimumSize(100, 20)
-            pushButton.setStyleSheet('font-size:10px')
+            pushButton.setMinimumSize(100, 25)
+            pushButton.setStyleSheet('font-size:12px')
         elif self.size == 1:            
             pushButton.setMinimumSize(100, 40)
             pushButton.setStyleSheet('font-size:20px')
