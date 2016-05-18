@@ -1086,3 +1086,21 @@ class PostgisDb(AbstractDb):
         while query.next():
             result.append(query.value(0))
         return result
+
+    def getEarthCoverageDict(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getEarthCoverageDict()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting earth coverage structure: ') + query.lastError().text())
+        while query.next():
+            return query.value(0)
+
+    def setEarthCoverageDict(self,textDict):
+        self.checkAndOpenDb()
+        sql = self.gen.setEarthCoverageDict()
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr('Problem setting earth coverage structure: ') + query.lastError().text())
+        self.db.commit()
+        self.db.close()          

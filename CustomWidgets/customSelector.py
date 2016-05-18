@@ -46,6 +46,10 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
     def setFromList(self, fromList):
         self.fromList.addItems(fromList)
         self.fromList.sortItems()
+
+    def setToList(self, toList):
+        self.toList.addItems(fromList)
+        self.toList.sortItems()
     
     def setTitle(self,title):
         self.groupBox.setTitle(title)

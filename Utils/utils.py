@@ -84,3 +84,13 @@ class Utils:
             return self.mergeDict(inputDict, tempDict)
         else:
             return self.buildOneNestedDict(inputDict,keyList,value)
+    
+    def readJsonFile(self, filename):
+        try:
+            file = open(filename, 'r')
+            data = file.read()
+            fileDict = json.loads(data)
+            file.close()
+            return fileDict
+        except:
+            return dict()

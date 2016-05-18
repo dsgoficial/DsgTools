@@ -44,10 +44,14 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.earthCoverageDict = dict()
 
     @pyqtSlot(AbstractDb)
     def setDatabase(self, db):
         self.abstractDb = db
+        if AbstractDb:
+            self.abstractDb.checkAndCreateValidationStructure()
+            self.loadEarthCoverage()
 
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
@@ -75,14 +79,11 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        
         pass
     
-    def loadEarthCoverage(self,version=None):
+    def loadEarthCoverage(self):
         try:
-            fileName = os.path.join(os.path.dirname(__file__), 'ValidationConfig', 'earthCoverage.cfg')
-            file = open(fileName, 'r')
-            data = file.read()
+            data = self.abstractDb.getEarthCoverageDict()
             earthCoverageDict = json.loads(data)
             rootItem = self.earthCoverageTreeWidget.invisibleRootItem()
             #database item
@@ -96,4 +97,3 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
                     covItem.setExpanded(True)
         except Exception as e:
             QgsMessageLog.logMessage(self.tr('Earth Coverage not loaded! Check log for details.')+str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        

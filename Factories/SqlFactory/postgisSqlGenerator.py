@@ -334,6 +334,7 @@ class PostGISSqlGenerator(SqlGenerator):
             id serial NOT NULL,
             scale character varying(10) NOT NULL,
             tolerance float NOT NULL,
+            earthcoverage text,
             CONSTRAINT settings_pk PRIMARY KEY (id)
         )#
 
@@ -616,6 +617,10 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def getEarthCoverageClasses(self):
         sql = "select distinct table_schema || '.' || table_name from information_schema.columns where column_name = 'centroid'"
+        return sql
+
+    def getEarthCoverageDict(self):
+        sql = "select earthcoverage from validation.settings limit 1"
         return sql
     
     def makeRelationDict(self, table, codes):
