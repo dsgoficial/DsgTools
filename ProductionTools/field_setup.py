@@ -37,8 +37,7 @@ from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.QmlTools.qmlParser import QmlParser
-from PyQt4.Qt import QGroupBox, QButtonGroup
-from __builtin__ import True
+import acquisition_tools
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'field_setup.ui'))
@@ -72,8 +71,12 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         currentPath = os.path.dirname(__file__)
         if self.versionCombo.currentText() == '2.1.3':
             edgvPath = os.path.join(currentPath, '..', 'DbTools', 'SpatialiteTool', 'template', '213', 'seed_edgv213.sqlite')
+            sqlPath = os.path.join(currentPath, '..', 'DbTools', 'PostGISTool', 'sqls', '213', 'edgv213.sql')
         elif self.versionCombo.currentText() == 'FTer_2a_Ed':
             edgvPath = os.path.join(currentPath, '..', 'DbTools', 'SpatialiteTool', 'template', 'FTer_2a_Ed', 'seed_edgvfter_2a_ed.sqlite')
+            sqlPath = os.path.join(currentPath, '..', 'DbTools', 'PostGISTool', 'sqls', 'FTer_2a_Ed', 'edgvFter_2a_Ed.sql')
+            
+        self.notNullDict = acquisition_tools.sqlParser(sqlPath, True)
 
         self.abstractDb = self.abstractDbFactory.createDbFactory('QSQLITE')
         if not self.abstractDb:
@@ -143,7 +146,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.clearAttributeTableWidget()
         if not self.classListWidget.item(row):
             return
-        schemaName, tableName = self.abstractDb.getTableSchema(self.classListWidget.item(row).text())
+        
+        fullTableName = self.classListWidget.item(row).text()
+        schemaName, tableName = self.abstractDb.getTableSchema(fullTableName)
         qmlPath = os.path.join(self.qmlDir,tableName+'.qml')
         qml = QmlParser(qmlPath)
         qmlDict = qml.getDomainDict()
@@ -152,6 +157,8 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             self.attributeTableWidget.insertRow(count)
             item = QTableWidgetItem()
             item.setText(attr)
+            if fullTableName in self.notNullDict.keys() and attr in self.notNullDict[fullTableName]:
+                item.setBackgroundColor(Qt.red)
             self.attributeTableWidget.setItem(count,0,item)
             if isinstance(qmlDict[attr],dict):
                 comboItem = QComboBox()
@@ -370,5 +377,5 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         with open(filename, 'w') as outfile:
             json.dump(reclassificationDict, outfile, sort_keys=True, indent=4)
             
-        QMessageBox.information(self, self.tr('Information!'), self.tr('Field setup file saved successfuly!'))
+        QMessageBox.information(self, self.tr('Information!'), self.tr('Field setup file saved successfully!'))
         

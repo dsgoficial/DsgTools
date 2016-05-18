@@ -21,31 +21,56 @@
  ***************************************************************************/
 """
 import os
-from osgeo import ogr
 
-def sqlParser(sqlFile):
-    f =  open(sqlFile,'r')
-    data = f.read()
+def sqlParser(sqlFile, isSpatialite):
+    try:
+        file = open(sqlFile, 'r')
+        data = file.read()
+        file.close()
+    except:
+        return dict()     
+
     commandList = data.split('#')
     createList = [command for command in commandList if 'CREATE TABLE' in command]
     
-    nullFieldDict = dict()
+    notNullDict = dict()
     for item in createList:
         item = item.replace('CREATE TABLE ','').replace('\n','')
         tableName = item.split('(')[0]
+        
+        if isSpatialite:
+            tableKey = tableName.replace('.','_')# is spatialite and we should use '_' as separator between schema and table
+        else:
+            tableKey = tableName
+            
         if tableName.split('.')[0] not in ['dominios', 'public']:
-            nullFieldDict[tableName] = []
+            notNullDict[tableKey] = []  
+                          
         attString = item.split(tableName)[-1].replace('\n','').replace('\t','').replace('\n\t','').replace('(','').replace(')','')
+        
         for field in attString.split(','):
             if 'NOT NULL' in field:
                 att = field.split(' ')[0]
                 if att not in  ['','id','geom']:
-                    if tableName in nullFieldDict.keys():
-                        nullFieldDict[tableName].append(att)
-        for key in nullFieldDict.keys():
-            if nullFieldDict[key] == []:
-                nullFieldDict.pop(key)
-            
-    return nullFieldDict
+                    if tableKey in notNullDict.keys():
+                        notNullDict[tableKey].append(att)
+                        
+        if 'INHERITS' in item:
+            parent = item.split('INHERITS(')[-1].replace(')', '')
 
-print sqlParser('/home/luiz/.qgis2/python/plugins/DsgTools/DbTools/PostGISTool/sqls/213/edgv213.sql')
+            if isSpatialite:
+                parentKey = parent.replace('.','_')# is spatialite and we should use '_' as separator between schema and table
+            else:
+                parentKey = parent
+
+            if parentKey in notNullDict.keys():
+                notNullDict[tableKey] += notNullDict[parentKey]
+                        
+    for key in notNullDict.keys():
+        if notNullDict[key] == []:
+            notNullDict.pop(key)
+            
+    return notNullDict
+
+# coisa = sqlParser('/home/luiz/.qgis2/python/plugins/DsgTools/DbTools/PostGISTool/sqls/FTer_2a_Ed/edgvFter_2a_Ed.sql', True)
+# print coisa['ge_emu_acesso_a']
