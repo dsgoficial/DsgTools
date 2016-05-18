@@ -87,6 +87,7 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
                     earthCoverageDict[childClass.text(0)].append(childClass.child(j).text(1))
         return earthCoverageDict
 
+    #TODO: Ask output dir
     def writeToDisk(self):
         fileName = os.path.join(os.path.dirname(__file__), 'ValidationConfig', 'earthCoverage.cfg')
         try:

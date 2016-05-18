@@ -50,7 +50,9 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
         self.setupUi(self)
 
         self.selectedClasses = []
-
+        self.widget.tabWidget.setTabEnabled(1,True)
+        self.widget.tabWidget.setTabEnabled(0,False)
+        self.widget.tabWidget.setCurrentIndex(1)
         self.bar = QgsMessageBar()
         self.setLayout(QtGui.QGridLayout(self))
         self.layout().setContentsMargins(0,0,0,0)
@@ -60,6 +62,7 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
         self.layout().addWidget(self.bar, 0,0,1,1)
 
         QtCore.QObject.connect(self.widget, QtCore.SIGNAL(("problemOccurred()")), self.pushMessage)
+        self.widget.dbChanged.connect(self.widgetConv.setDatabase)
 
         
         self.codeList = codeList
@@ -101,3 +104,4 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
         except Exception as e:
                 QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load auxiliary classes! Check log for details!"), level=QgsMessageBar.CRITICAL)
+                
