@@ -27,7 +27,7 @@ from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactor
 from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceURI
 from osgeo import ogr
 from uuid import uuid4
-import codecs, os
+import codecs, os, json
 
 class PostgisDb(AbstractDb):
     
@@ -1078,7 +1078,7 @@ class PostgisDb(AbstractDb):
     
     def getEarthCoverageClasses(self):
         self.checkAndOpenDb()
-        sql = self.gen.getEarthCoverageClasses()
+        sql = self.gen.getEarthCoverageDict()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr('Problem getting earth coverage tables: ') + query.lastError().text())
@@ -1098,9 +1098,10 @@ class PostgisDb(AbstractDb):
 
     def setEarthCoverageDict(self,textDict):
         self.checkAndOpenDb()
-        sql = self.gen.setEarthCoverageDict()
+        sql = self.gen.setEarthCoverageDict(textDict)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr('Problem setting earth coverage structure: ') + query.lastError().text())
         self.db.commit()
-        self.db.close()          
+        self.db.close()
+         

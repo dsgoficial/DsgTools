@@ -48,7 +48,7 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         self.fromList.sortItems()
 
     def setToList(self, toList):
-        self.toList.addItems(fromList)
+        self.toList.addItems(toList)
         self.toList.sortItems()
     
     def setTitle(self,title):

@@ -332,12 +332,12 @@ class PostGISSqlGenerator(SqlGenerator):
         )#
         CREATE TABLE validation.settings(
             id serial NOT NULL,
-            scale character varying(10) NOT NULL,
-            tolerance float NOT NULL,
+            scale character varying(10),
+            tolerance float,
             earthcoverage text,
             CONSTRAINT settings_pk PRIMARY KEY (id)
         )#
-
+        INSERT INTO validation.settings(earthcoverage) VALUES (NULL)#
         INSERT INTO validation.status(id,status) VALUES (0,'Not yet ran'), (1,'Finished'), (2,'Failed'), (3,'Running'), (4,'Finished with flags')   
         """ % (srid, srid, srid)
         return sql
@@ -602,7 +602,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def checkCentroidAuxStruct(self):
-        sql = "select distinct count(table_column) from information_schema.columns where table_column = 'centroid' group by table_column"
+        sql = "select distinct count(column_name) from information_schema.columns where table_column = 'centroid' group by table_column"
         return sql
     
     def createCentroidColumn(self, table_schema, table_name, srid):
@@ -621,6 +621,10 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def getEarthCoverageDict(self):
         sql = "select earthcoverage from validation.settings limit 1"
+        return sql
+
+    def setEarthCoverageDict(self,earthDict):
+        sql = "update validation.settings set earthcoverage = '%s'" % earthDict
         return sql
     
     def makeRelationDict(self, table, codes):

@@ -25,7 +25,7 @@ import json
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
-from PyQt4.QtGui import QTreeWidgetItem
+from PyQt4.QtGui import QTreeWidgetItem, QMessageBox
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'earthCoverageWidget.ui'))
@@ -73,18 +73,24 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
                     lines.append(cl)
             lines.append('public.aux_linhas_l')
             
-            dlg = SetupEarthCoverage(areas,lines)
+            dlg = SetupEarthCoverage(self.abstractDb,areas,lines)
             dlg.coverageChanged.connect(self.loadEarthCoverage)
             dlg.exec_()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         pass
-    
+
+    def clearTree(self):
+        self.earthCoverageTreeWidget.invisibleRootItem().takeChildren()
+
     def loadEarthCoverage(self):
         try:
             data = self.abstractDb.getEarthCoverageDict()
+            if not data:
+                return
             earthCoverageDict = json.loads(data)
+            self.clearTree()
             rootItem = self.earthCoverageTreeWidget.invisibleRootItem()
             #database item
             for key in earthCoverageDict.keys():

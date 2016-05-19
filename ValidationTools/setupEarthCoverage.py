@@ -25,6 +25,7 @@ import json
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
+from PyQt4.QtGui import QMessageBox, QFileDialog
 from fileinput import filename
 from DsgTools.Utils.utils import Utils
 
@@ -66,7 +67,7 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
             setupDict = self.utils.readJsonFile(filename)
             areasToList = setupDict.keys()
             linesToList = []
-            for key in areasFromList:
+            for key in areasToList:
                 lines = setupDict[key]
                 for line in lines:
                     if line not in linesToList:
@@ -82,14 +83,22 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
             self.areasCustomSelector.setToList(areasToList)
             self.areasCustomSelector.setFromList(areasFromList)
             self.linesCustomSelector.setToList(linesToList)
-            self.linesCustomSelector.setFromList(linesToList)           
-            self.populateCheckedDelimiters()
+            self.linesCustomSelector.setFromList(linesToList)  
+            self.populateClasses()   
+            self.populateDelimiters()      
+            self.checkDelimiters(setupDict)
         else:
             self.areasCustomSelector.setFromList(self.areas)
             self.linesCustomSelector.setFromList(self.lines)
 
-    def populateCheckedDelimiters(self):
-        return
+    def checkDelimiters(self, setupDict):
+        for i in range(self.treeWidget.invisibleRootItem().childCount()):
+            areaItem = self.treeWidget.invisibleRootItem().child(i)
+            for j in range(self.treeWidget.invisibleRootItem().child(i).childCount()):
+                delimiterItem = areaItem.child(j)
+                if areaItem.text(0) in setupDict.keys():
+                    if delimiterItem.text(1) not in setupDict[areaItem.text(0)]:
+                        delimiterItem.setCheckState(1,Qt.Unchecked)
 
     def loadJson(self, filename):
         filename = QFileDialog.getOpenFileName(self, self.tr('Open Field Setup configuration'), self.folder, self.tr('Field Setup Files (*.json)'))
@@ -136,7 +145,8 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
     def writeIntoDb(self):
         try:
             earthDict = self.getEarthCoverageDictFromTree()
-            self.abstractDb.setEarthCoverage(json.dumps(earthDict))
+            self.abstractDb.setEarthCoverageDict(json.dumps(earthDict))
+            self.coverageChanged.emit()
             if QMessageBox.question(self, self.tr('Question'), self.tr('Do you want to save this earth coverage setup?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
                 return
             filename = QFileDialog.getSaveFileName(self, self.tr('Save Earth Coverage Setup configuration'), '', self.tr('Earth Coverage Files (*.json)'))
@@ -150,4 +160,3 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         except Exception as e:
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving file! \n')+e.args[0])
             return
-        self.coverageChanged.emit()

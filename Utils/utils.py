@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+import json
 class Utils:
     def mergeDict(self,dictionary1, dictionary2):
         output = dict()
