@@ -200,7 +200,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 leafInTree = True
                 item = leaf
                 for j in range(leaf.childCount()):
-                    leafChild = leaf.child(i)
+                    leafChild = leaf.child(j)
                     if leafChild.text(0) == self.classListWidget.item(classRow).text():
                         leafChildInTree = True
                         item = leafChild
