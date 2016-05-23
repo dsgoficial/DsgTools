@@ -26,7 +26,7 @@ import os, json
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, Qt
 from PyQt4.QtGui import QMessageBox, QCheckBox, QButtonGroup, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem
-from PyQt4.QtGui import QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem, QStyledItemDelegate, QComboBox, QMenu
+from PyQt4.QtGui import QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem, QStyledItemDelegate, QComboBox, QMenu, QLineEdit
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
@@ -153,17 +153,33 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         qml = QmlParser(qmlPath)
         qmlDict = qml.getDomainDict()
         count = 0
+        if fullTableName in self.notNullDict.keys():
+            for attr in self.notNullDict[fullTableName]:
+                self.attributeTableWidget.insertRow(count)
+                item = QTableWidgetItem()
+                item.setText(attr)
+                item.setBackgroundColor(Qt.red)
+                self.attributeTableWidget.setItem(count, 0, item)            
+                self.createCellWidget(qmlDict, attr, count)
+                count+=1
+            
         for attr in qmlDict.keys():
+            if fullTableName in self.notNullDict.keys() and attr in self.notNullDict[fullTableName]:
+                continue
+
             self.attributeTableWidget.insertRow(count)
             item = QTableWidgetItem()
             item.setText(attr)
-            if fullTableName in self.notNullDict.keys() and attr in self.notNullDict[fullTableName]:
-                item.setBackgroundColor(Qt.red)
-            self.attributeTableWidget.setItem(count,0,item)
+            self.attributeTableWidget.setItem(count, 0, item)
+            self.createCellWidget(qmlDict, attr, count)
+            count+=1
+                        
+    def createCellWidget(self, qmlDict, attr, count):
+        if attr in qmlDict.keys():
             if isinstance(qmlDict[attr],dict):
                 comboItem = QComboBox()
                 comboItem.addItems(qmlDict[attr].keys())
-                self.attributeTableWidget.setCellWidget(count,1,comboItem)
+                self.attributeTableWidget.setCellWidget(count, 1, comboItem)
             if isinstance(qmlDict[attr],tuple):
                 (table, filterKeys) = qmlDict[attr]
                 valueRelation = self.makeValueRelationDict(table, filterKeys)
@@ -172,8 +188,10 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                     listItem = QListWidgetItem(key)
                     listItem.setCheckState(Qt.Unchecked)
                     list.addItem(listItem)
-                self.attributeTableWidget.setCellWidget(count,1,list)
-            count+=1
+                self.attributeTableWidget.setCellWidget(count, 1, list)
+        else:
+            textItem = QLineEdit()
+            self.attributeTableWidget.setCellWidget(count, 1, textItem)
     
     @pyqtSlot(bool)
     def on_addUpdatePushButton_clicked(self):

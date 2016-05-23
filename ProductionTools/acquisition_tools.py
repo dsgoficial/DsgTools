@@ -56,7 +56,7 @@ def sqlParser(sqlFile, isSpatialite):
                         notNullDict[tableKey].append(att)
                         
         if 'INHERITS' in item:
-            parent = item.split('INHERITS(')[-1].replace(')', '')
+            parent = item.split('INHERITS(')[-1].split(')')[0]
 
             if isSpatialite:
                 parentKey = parent.replace('.','_')# is spatialite and we should use '_' as separator between schema and table
@@ -73,4 +73,5 @@ def sqlParser(sqlFile, isSpatialite):
     return notNullDict
 
 # coisa = sqlParser('/home/luiz/.qgis2/python/plugins/DsgTools/DbTools/PostGISTool/sqls/FTer_2a_Ed/edgvFter_2a_Ed.sql', True)
+# coisa = sqlParser('/home/luiz/.qgis2/python/plugins/DsgTools/DbTools/PostGISTool/sqls/213/edgv213.sql', True)
 # print coisa['ge_emu_acesso_a']
