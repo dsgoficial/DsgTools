@@ -72,8 +72,13 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
                 if cl[-1] == 'l':
                     lines.append(cl)
             lines.append('public.aux_linhas_l')
-            
-            dlg = SetupEarthCoverage(self.abstractDb,areas,lines)
+            oldCoverage = None
+            data = self.abstractDb.getEarthCoverageDict()
+            if data:
+                if QMessageBox.question(self, self.tr('Question'), self.tr('An earth coverage is already defined. Do you want to redefine it? All data will be lost.'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
+                    return
+                oldCoverage = json.loads(data)
+            dlg = SetupEarthCoverage(self.abstractDb,areas,lines, oldCoverage)
             dlg.coverageChanged.connect(self.loadEarthCoverage)
             dlg.exec_()
         except Exception as e:
@@ -86,11 +91,11 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
 
     def loadEarthCoverage(self):
         try:
+            self.clearTree()
             data = self.abstractDb.getEarthCoverageDict()
             if not data:
                 return
             earthCoverageDict = json.loads(data)
-            self.clearTree()
             rootItem = self.earthCoverageTreeWidget.invisibleRootItem()
             #database item
             for key in earthCoverageDict.keys():

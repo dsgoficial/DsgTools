@@ -1104,4 +1104,16 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem setting earth coverage structure: ') + query.lastError().text())
         self.db.commit()
         self.db.close()
-         
+
+    def dropCentroids(self, classList):
+        self.checkAndOpenDb()
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        for cl in classList:
+            sql = self.gen.dropCentroid(cl)
+            if not query.exec_(sql):
+                self.db.rollback()
+                self.db.close()
+                raise Exception(self.tr('Problem dropping centroids: ') + query.lastError().text())
+        self.db.commit()
+        self.db.close()

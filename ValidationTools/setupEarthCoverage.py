@@ -34,7 +34,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
     coverageChanged = pyqtSignal()
-    def __init__(self, abstractDb, areas, lines, parent=None):
+    def __init__(self, abstractDb, areas, lines, oldCoverage, parent=None):
         '''Constructor.'''
         super(self.__class__, self).__init__()
         # Set up the user interface from Designer.
@@ -49,7 +49,7 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         self.abstractDb = abstractDb
         self.areasCustomSelector.setTitle(self.tr('Areas'))
         self.linesCustomSelector.setTitle(self.tr('Lines'))
-        self.setupWizard()
+        self.setupWizard(oldCoverage)
         self.areasCustomSelector.selectionChanged.connect(self.populateClasses)
         self.linesCustomSelector.selectionChanged.connect(self.populateDelimiters)
         self.button(QtGui.QWizard.FinishButton).clicked.connect(self.writeIntoDb)
@@ -61,7 +61,9 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         filename = QFileDialog.getOpenFileName(self, self.tr('Open Earth Coverage Setup configuration'), '', self.tr('Earth Coverage Files (*.json)'))
         return filename
 
-    def setupWizard(self):
+    def setupWizard(self, oldCoverage):
+        if oldCoverage:
+            self.abstractDb.dropCentroids(oldCoverage.keys())
         filename = self.setupFromFile()
         if filename:
             setupDict = self.utils.readJsonFile(filename)
@@ -146,6 +148,7 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         try:
             earthDict = self.getEarthCoverageDictFromTree()
             self.abstractDb.setEarthCoverageDict(json.dumps(earthDict))
+            self.abstractDb.createCentroidAuxStruct(earthDict.keys())
             self.coverageChanged.emit()
             if QMessageBox.question(self, self.tr('Question'), self.tr('Do you want to save this earth coverage setup?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
                 return

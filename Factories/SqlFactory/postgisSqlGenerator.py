@@ -598,11 +598,15 @@ class PostGISSqlGenerator(SqlGenerator):
         return sqls
     
     def getOrphanTableElementCount(self, orphan):
-        sql = "select id from {} limit 1".format(orphan)
+        sql = "select id from %s limit 1" % orphan
         return sql
     
     def checkCentroidAuxStruct(self):
         sql = "select distinct count(column_name) from information_schema.columns where table_column = 'centroid' group by table_column"
+        return sql
+    
+    def dropCentroid(self, table):
+        sql = "alter table %s drop column if exists centroid" % table
         return sql
     
     def createCentroidColumn(self, table_schema, table_name, srid):
