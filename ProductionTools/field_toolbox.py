@@ -89,13 +89,17 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
     def createButtons(self, reclassificationDict):
         formLayout = QtGui.QFormLayout()
         self.createWidget(formLayout)
+        sortedButtonNames = []
         for category in reclassificationDict.keys():
             if category == 'version':
                 continue
             for edgvClass in reclassificationDict[category].keys():
                 for button in reclassificationDict[category][edgvClass].keys():
-                    pushButton = self.createButton(button)
-                    formLayout.addRow(pushButton)
+                    sortedButtonNames.append(button)
+        sortedButtonNames.sort()
+        for button in sortedButtonNames:       
+            pushButton = self.createButton(button)
+            formLayout.addRow(pushButton)
                     
     def loadLayer(self, layer):
         try:
