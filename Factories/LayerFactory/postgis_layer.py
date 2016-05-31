@@ -42,9 +42,17 @@ class PostGISLayer(EDGVLayer):
         self.provider = 'postgres'
         
         self.schema, self.layer_name = abstractDb.getTableSchema(table)
-        sql = abstractDb.gen.loadLayerFromDatabase(table)
+        if table[-1] == 'c':
+            layer = self.layer_name[:-1]+self.layer_name[-1].replace('c','a')
+        else:
+            layer = self.layer_name
+        
+        if table[-1] == 'c':
+            sql = abstractDb.gen.loadLayerFromDatabase(table[:-1]+table[-1].replace('c','a'))
+        else:
+            sql = abstractDb.gen.loadLayerFromDatabase(table)
 
-        self.qmlName = self.layer_name.replace('\r','')
+        self.qmlName = layer.replace('\r','')
 
         host = abstractDb.db.hostName()
         port = abstractDb.db.port()
@@ -57,7 +65,7 @@ class PostGISLayer(EDGVLayer):
             geomColumn = 'centroid'
         else:
             geomColumn = 'geom'
-        self.uri.setDataSource(self.schema, self.layer_name, geomColumn, sql, 'id')
+        self.uri.setDataSource(self.schema, layer, geomColumn, sql, 'id')
         self.uri.disableSelectAtId(True)
 
     def load(self, crs, idSubgrupo = None):

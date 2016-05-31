@@ -81,23 +81,22 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         auxCreated = self.widget.abstractDb.checkCentroidAuxStruct()
         if not auxCreated:
-#             if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Auxiliar structure not created. Do you want to create it?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
-#                 self.widget.abstractDb.createCentroidAuxStruct(self.widget.abstractDb.getEarthCoverageClasses())
-#                 self.loadLayers()
             QApplication.restoreOverrideCursor()
             self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load auxiliary classes! Check log for details!"), level=QgsMessageBar.CRITICAL)
                 
         else:
             self.loadLayers()
         QApplication.restoreOverrideCursor()
+        self.close()
 
     def loadLayers(self):
         try:
-            auxClassesDict = json.loads(self.widget.abstractDb.getEarthCoverageClasses())
+            auxClassesDict = json.loads(self.widget.abstractDb.getEarthCoverageClasses()[0])
             auxClasses = []
             for key in auxClassesDict.keys():
-                if auxClassesDict[key] not in auxClasses:
-                    auxClasses.append(auxClassesDict[key])
+                for cl in auxClassesDict[key]:
+                    if cl not in auxClasses:
+                        auxClasses.append(cl)
             auxCentroids = self.widget.abstractDb.getEarthCoverageCentroids()
             auxClasses = auxClasses + auxCentroids
             for lyr in auxClasses:
