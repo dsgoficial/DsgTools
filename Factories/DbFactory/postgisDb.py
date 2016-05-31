@@ -1059,17 +1059,12 @@ class PostgisDb(AbstractDb):
             table_schema, table_name = self.getTableSchema(cl)
             sqltext = self.gen.createCentroidColumn(table_schema, table_name, srid)
             sqlList = sqltext.split('#')
-            query2 = QSqlQuery(self.db)
+            query = QSqlQuery(self.db)
             for sql2 in sqlList:
-                if not query2.exec_(sql2):
+                if not query.exec_(sql2):
                     self.db.rollback()
                     self.db.close()
                     raise Exception(self.tr('Problem creating centroid structure: ') + query.lastError().text())
-            sql3 = self.gen.createCentroidGist(table_schema, table_name)
-            if not query2.exec_(sql3):
-                self.db.rollback()
-                self.db.close()
-                raise Exception(self.tr('Problem creating centroid gist: ') + query.lastError().text())
         self.db.commit()
         self.db.close()
     
@@ -1117,3 +1112,10 @@ class PostgisDb(AbstractDb):
                 raise Exception(self.tr('Problem dropping centroids: ') + query.lastError().text())
         self.db.commit()
         self.db.close()
+    
+    def rollbackEarthCoverage(self, classList):
+        try:
+            self.dropCentroids(classList)
+            self.setEarthCoverageDict(None)
+        except Exception as e:
+            raise e

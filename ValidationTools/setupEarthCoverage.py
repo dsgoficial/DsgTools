@@ -161,5 +161,6 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
             QMessageBox.information(self, self.tr('Information!'), self.tr('Field setup file saved successfully!'))
             
         except Exception as e:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving file! \n')+e.args[0])
+            self.abstractDb.rollbackEarthCoverage(earthDict.keys())
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving into database! \n')+e.args[0])
             return

@@ -610,13 +610,14 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def createCentroidColumn(self, table_schema, table_name, srid):
-        sql = """alter table pe.veg_vegetacao_a add column centroid geometry('POINT',{1})#
-        alter table {2}.{3} alter column geom drop not null""".format(srid,table_schema, table_name)
+        sql = """alter table {1}.{2} add column centroid geometry('POINT',{0})#
+        alter table {1}.{2} alter column geom drop not null#
+        CREATE INDEX {3} ON {1}.{2} USING gist(centroid)""".format(srid,table_schema, table_name,table_name[:-2]+'_c_gist')
         return sql
     
     def createCentroidGist(self, table_schema, table_name):
-        gistName = table_name[::-2]+'_c_gist'
-        sql = "CREATE INDEX {1} ON {2}.{3} USING gist(centroid)".format(gistName,table_schema,table_name)
+        gistName = table_name[:-2]+'_c_gist'
+        sql = "CREATE INDEX {0} ON {1}.{2} USING gist(centroid)".format(gistName,table_schema,table_name)
         return sql
     
     def getEarthCoverageClasses(self):
@@ -628,8 +629,12 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def setEarthCoverageDict(self,earthDict):
-        sql = "update validation.settings set earthcoverage = '%s'" % earthDict
+        if earthDict:
+            sql = "update validation.settings set earthcoverage = '%s'" % earthDict
+        else:
+            sql = "update validation.settings set earthcoverage = NULL"
         return sql
+    
     
     def makeRelationDict(self, table, codes):
         sql = 'select code, code_name from dominios.%s where code in %s' % (table, in_clause)
