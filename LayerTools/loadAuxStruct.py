@@ -21,10 +21,11 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
+import os, json
 
 #Qgis imports
 from qgis.gui import QgsMessageBar
+from qgis.core import QgsMessageLog
 
 #PyQt imports
 from PyQt4 import QtGui, QtCore, uic
@@ -80,16 +81,25 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         auxCreated = self.widget.abstractDb.checkCentroidAuxStruct()
         if not auxCreated:
-            if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Auxiliar structure not created. Do you want to create it?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
-                self.widget.abstractDb.createCentroidAuxStruct(self.widget.abstractDb.getEarthCoverageClasses())
-                self.loadLayers()
+#             if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Auxiliar structure not created. Do you want to create it?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+#                 self.widget.abstractDb.createCentroidAuxStruct(self.widget.abstractDb.getEarthCoverageClasses())
+#                 self.loadLayers()
+            QApplication.restoreOverrideCursor()
+            self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load auxiliary classes! Check log for details!"), level=QgsMessageBar.CRITICAL)
+                
         else:
             self.loadLayers()
         QApplication.restoreOverrideCursor()
 
     def loadLayers(self):
         try:
-            auxClasses = self.widget.abstractDb.getEarthCoverageClasses()
+            auxClassesDict = json.loads(self.widget.abstractDb.getEarthCoverageClasses())
+            auxClasses = []
+            for key in auxClassesDict.keys():
+                if auxClassesDict[key] not in auxClasses:
+                    auxClasses.append(auxClassesDict[key])
+            auxCentroids = self.widget.abstractDb.getEarthCoverageCentroids()
+            auxClasses = auxClasses + auxCentroids
             for lyr in auxClasses:
                 layer = lyr[:-1]+lyr[-1].replace('a','c')
                 dbName = self.widget.abstractDb.getDatabaseName()

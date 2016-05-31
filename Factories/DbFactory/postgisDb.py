@@ -1119,3 +1119,14 @@ class PostgisDb(AbstractDb):
             self.setEarthCoverageDict(None)
         except Exception as e:
             raise e
+
+    def getEarthCoverageCentroids(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getEarthCoverageCentroids()
+        query = QSqlQuery(sql, self.db)
+        centroidList = []
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting earth coverage structure: ') + query.lastError().text())
+        while query.next():
+            centroidList.append(query.value(0))
+        return centroidList

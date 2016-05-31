@@ -602,7 +602,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def checkCentroidAuxStruct(self):
-        sql = "select distinct count(column_name) from information_schema.columns where table_column = 'centroid' group by table_column"
+        sql = "select distinct count(column_name) from information_schema.columns where column_name = 'centroid' group by column_name"
         return sql
     
     def dropCentroid(self, table):
@@ -638,4 +638,8 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def makeRelationDict(self, table, codes):
         sql = 'select code, code_name from dominios.%s where code in %s' % (table, in_clause)
+        return sql
+
+    def getEarthCoverageCentroids(self):
+        sql = "select distinct table_schema ||'.'|| table_name from information_schema.columns where column_name = 'centroid'"
         return sql
