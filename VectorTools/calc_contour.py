@@ -29,6 +29,7 @@ from PyQt4.QtGui import QMessageBox
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry
+from qgis.gui import QgsMessageBar
 
 #DSGTools imports
 from DsgTools.VectorTools.dsg_line_tool import DsgLineTool
@@ -105,10 +106,15 @@ class CalcContour(QtGui.QDockWidget, FORM_CLASS):
 
         #canvas crs to be used in case a reprojection is needed
         canvasCrs = self.iface.mapCanvas().mapRenderer().destinationCrs()
-        if self.contourTool.assignValues(self.attributeCombo.currentText(), self.spinBox.value(), geom, canvasCrs):
-            QMessageBox.information(None, self.tr('Information'), self.tr('Layer successfully updated!'))
-        else:
-            QMessageBox.critical(None, self.tr('Critical'), self.tr('Error!'))
+        ret = self.contourTool.assignValues(self.attributeCombo.currentText(), self.spinBox.value(), geom, canvasCrs)
+        if ret == 1:
+            self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('Layer successfully updated!'), level=QgsMessageBar.INFO, duration=3)
+        elif ret == 0:
+            self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('Could not update features!'), level=QgsMessageBar.CRITICAL, duration=3)
+        elif ret == -1:
+            self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('Problem ordering the features!'), level=QgsMessageBar.CRITICAL, duration=3)
+        elif ret == -2:
+            self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('The line created does not cross any features in the selected layer!'), level=QgsMessageBar.CRITICAL, duration=3)
         
     @pyqtSlot(int)
     def on_layerCombo_currentIndexChanged(self):

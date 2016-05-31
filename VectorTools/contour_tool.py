@@ -84,7 +84,12 @@ class ContourTool():
     def assignValues(self, attribute, pace, geom, canvasCrs):
         self.reproject(geom, canvasCrs)
         features = self.getFeatures(geom)
+        if len(features) == 0:
+            return -2
+        
         ordered = self.sortFeatures(geom, features)
+        if len(ordered) == 0:
+            return -1
 
         #the first feature must have the initial value already assigned
         first_feature = ordered[0][1]
@@ -96,12 +101,14 @@ class ContourTool():
 
         self.reference.startEditing()
         for i in range(1, len(ordered)):
+            #value to be adjusted
             value = first_value + pace*i
+            #feature that will be updated
             feature = ordered[i][1]
             #feature id that will be updated
             id = feature.id()
-            #attribute pair that will be changed
-            attrs = {fieldIndex:value}
-            #actual update in the database
-            self.reference.dataProvider().changeAttributeValues({id:attrs})
-        return self.reference.commitChanges()
+            #actual update in the layer
+            if not self.reference.changeAttributeValue(id, fieldIndex, value):return 0
+        return 1
+            
+        
