@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 import processing, binascii
 import json
@@ -28,63 +28,77 @@ import json
 class CloseEarthCoveragePolygonsProcess(ValidationProcess):
     def __init__(self, postgisDb):
         super(self.__class__,self).__init__(postgisDb)
-        self.parameters = {'Snap': 1.0, 'MinArea':0.001}
     
-    def defineQueryLayer(self, key, earthCoverageDict):
-        #Defines a query layer composed by all features from earthCoverage
-        lyr = None
-        return lyr
-        
-    def runProcessinAlg(self, key):
-        alg = 'qgis:polygonize'
-        
-        #creating vector layer
-        input = QgsVectorLayer(self.abstractDb.getURI(cl, False).uri(), cl, "postgres")
-        crs = input.crs()
+    def defineQueryLayer(self, delimiterList):
+        '''
+        Defines a query layer composed by all features from earthCoverage lines
+        '''
+        #TODO: add frame
         epsg = self.abstractDb.findEPSG()
-        crs.createFromId(epsg)
-        input.setCrs(crs)
+        lineLyr = QgsVectorLayer("multiline?crs=EPSG:%s","tempLine",'memory')
+        for delimiter in delimiterList:
+            lyr = QgsVectorLayer(self.abstractDb.getURI(delimiter, False).uri(), delimiter, "postgres")
+            featureList = []
+            for feat in lyr.getFeatures():
+                featureList.append(feat)
+            lineLyr.dataProvider().addFeatures(featureList)
+        return lineLyr
         
-        #Adding to registry
-        QgsMapLayerRegistry.instance().addMapLayer(input)
-        
-        #setting tools
-        tools = 'break,rmsa,rmdangle'
-        threshold = -1
-        #change parameters
-        ret = processing.runalg(alg, input, tools, threshold, extent, snap, minArea, None, None)
-
+    def runPolygonize(self, lineLyr):
+        alg = 'qgis:polygonize'
+        QgsMapLayerRegistry.instance().addMapLayer(lineLyr)
+        ret = processing.runalg('qgis:polygonize', lineLyr, False, True, None)
         #updating original layer
-        outputLayer = processing.getObject(ret['output'])
-        #getting error flags
-        errorLayer = processing.getObject(ret['error'])
+        outputLayer = processing.getObject(ret['OUTPUT'])
         #removing from registry
         QgsMapLayerRegistry.instance().removeMapLayer(input.id())
-        return self.getProcessingErrors(errorLayer)
+        return outputLayer
     
-    def reclassifyAreasWithCentroids(self,areaLyr):
+    def relateAreasWithCentroids(self, areaLyr, centroidLyr):
+        '''
+        Returns a dict that relates each area with a centroid list. This list might be empty.
+        '''
         #after all checks, reclassifies areas
-        pass
+        centroidIdx = QgsSpatialIndex()
+        for feat in centroidLyr.getFeatures():
+            centroidIdx.insertFeature(feat)
+        relateDict = dict()
+        for areaFeat in areaLyr.getFeatures():
+            areaId = areaFeat.id()
+            relateDict[areaId] = []
+            bbox = areaFeat.geometry().boundingBox()
+            candidates = self.getCentroidCandidates(centroidIdx, centroidLyr, bbox)
+            for candidate in candicates:
+                relateDict[areaId].append(candidate)
+        return relateDict
 
-    def detectConflicts(self, areaLyr):
-        #Conflicts are centroids of different set of attributes which reclassify the same area.
-        #This method outputs flags with the geometry of the problem and the id of the conflict
-#         numberOfProblems = self.addFlag(recordList)
-        pass
-    
-    def detectDuplicatedCentroids(self, areaLyr):
-        #returns a dict with the ids of duplicated centroids with the same set of attributes and wich reclassifies the same area
-        pass
-    
-    def detectAreaWithoutCentroid(self, areaLyr):
-        #areas
-        pass
-    
-    def getProcessingErrors(self, layer):
-        recordList = []
-        for feature in layer.getFeatures():
-            recordList.append((feature['id'], binascii.hexlify(feature.geometry().asWkb())))
-        return recordList
+    def getCentroidCandidates(idx, layer, bbox):
+        return idx.intersects(bbox)
+
+    def reclassifyAreasWithCentroids(self, areaLyr, centroidLyr, relateDict):
+        flagTupleList = []
+        for id in relateDict.keys():
+            numberOfCentroids = len(relateDict[id])
+            if numberOfCentroids == 1:
+                centroidFeature = centroidLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%id)))
+                areaFeature = areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%id)))
+                centroidFeature['geom'] = binascii.hexlify(areaFeature.geometry().asWkb())
+            elif numberOfCentroids == 0:
+                feature = areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%id)))
+                flagTupleList.append((centroidLyr.name(),-1, self.tr('Area without centroid.'), binascii.hexlify(feature.geometry().asWkb()) ))
+            else:
+                idList = ','.join(map(str,relateDict[id]))
+                features = centroidLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id in (%s)"%idList)))
+                attributes = features[0].attributes()
+                duplicated = True
+                for i in range(1,len(features)):
+                    candidateFeat = features[i]
+                    if candidateFeat.attributes() != attributes:
+                        flagTupleList.append( (centroidLyr.name(), candidateFeat['id'], self.tr('Area with conflicted centroids.'), binascii.hexlify(candidateFeat.geometry().asWkb()) ) )
+                        duplicated = False
+                if duplicated:
+                    flagTupleList.append( (centroidLyr.name(), candidateFeat['id'], self.tr('Area with multiple centroids with same attributes.'), binascii.hexlify(candidateFeat.geometry().asWkb()) ) )
+        return flagTupleList
         
     def execute(self):
         #abstract method. MUST be reimplemented.
@@ -92,25 +106,39 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         try:
             self.setStatus('Running', 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            classesWithGeom = self.abstractDb.getOrphanGeomTablesWithElements()
-            if classesWithGeom.__len__() == 0:
-                self.setStatus('Empty database!\n', 1) #Finished
-                QgsMessageLog.logMessage('Empty database!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
+            #TODO: check if frame is created
+            dadsWithGeom = self.abstractDb.getOrphanGeomTablesWithElements()
+            earthCoverageDict = json.loads(self.abstractDb.getEarthCoverageDict())
+            if len(earthCoverageDict.keys()) == 0:
+                self.setStatus('Earth coverage not defined!\n', 1)
+                QgsMessageLog.logMessage('Earth coverage not defined!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return
-            for cl in classesWithGeom:
-                if cl[-1]  in ['a']:
-                    result = self.runProcessinAlg(cl)
-                    if len(result) > 0:
-                        recordList = []
-                        for tupple in result:
-                            recordList.append((cl,tupple[0],'Cleaning error.',tupple[1]))
-                            self.addClassesToBeDisplayedList(cl) 
-                        numberOfProblems = self.addFlag(recordList)
-                        self.setStatus('%s feature(s) of class '+cl+' with cleaning errors. Check flags.\n' % numberOfProblems, 4) #Finished with flags
-                        QgsMessageLog.logMessage('%s feature(s) of class '+cl+' with cleaning errors. Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                    else:
-                        self.setStatus('There are no cleaning errors on '+cl+'.\n', 1) #Finished
-                        QgsMessageLog.logMessage('There are no cleaning errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            coverageClassList = []
+            for cl in dadsWithGeom:
+                if cl in earthCoverageDict.keys():
+                    coverageClassList.append(cl)
+            if coverageClassList.__len__() == 0:
+                self.setStatus('Empty earth coverage!\n', 1) #Finished
+                QgsMessageLog.logMessage('Empty earth coverage!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
+                return
+            for cl in coverageClassList:
+                centroidLyr = QgsVectorLayer(self.abstractDb.getURI(cl, False).uri(), cl, "postgres")
+                #must gather all lines (including frame) to close areas
+                lineLyr = self.defineQueryLayer(earthCoverageDict[cl])
+                #close areas from lines
+                areaLyr = self.runPolygonize(lineLyr)
+                #relate elements
+                relateDict = self.relateAreasWithCentroids(areaLyr, centroidLyr)
+                #reclassify
+                flagTuppleList = self.reclassifyAreasWithCentroids(areaLyr, centroidLyr, relateDict)
+                
+                if len(flagTuppleList) > 0:
+                    numberOfProblems = self.addFlag(flagTuppleList)
+                    self.setStatus('%s feature(s) of class '+cl+' with problems. Check flags.\n' % numberOfProblems, 4) #Finished with flags
+                    QgsMessageLog.logMessage('%s feature(s) of class '+cl+' with problems. Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                else:
+                    self.setStatus('There are no area building errors on '+cl+'.\n', 1) #Finished
+                    QgsMessageLog.logMessage('There are no area building errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
