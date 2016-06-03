@@ -28,7 +28,7 @@ from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog
+from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem
 from qgis.gui import QgsMessageBar
 import qgis as qgis
 
@@ -152,15 +152,23 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         reclassificationLayer.startEditing()
 
         mapLayers = self.iface.mapCanvas().layers()
+        crsSrc = QgsCoordinateReferenceSystem(self.widget.crs.geographicCRSAuthId())
         for mapLayer in mapLayers:
             if mapLayer.type() != QgsMapLayer.VectorLayer:
                 continue
             
             #iterating over selected features
             featList = []
+            mapLayerCrs = mapLayer.crs()
+            coordinateTransformer = QgsCoordinateTransform(mapLayerCrs, crsSrc)
             for feature in mapLayer.selectedFeatures():
                 geom = feature.geometry()
+                if 'Multi' not in geom.geometry().geometryType():
+                    geom.convertToMultiType()
+                    geom.geometry().dropMValue()
+                    geom.geometry().dropZValue()
                 newFeature = QgsFeature(reclassificationLayer.pendingFields())
+                geom.transform(coordinateTransformer)
                 newFeature.setGeometry(geom)
                 for attribute in self.reclassificationDict[category][edgvClass][button].keys():
                     idx = newFeature.fieldNameIndex(attribute)
