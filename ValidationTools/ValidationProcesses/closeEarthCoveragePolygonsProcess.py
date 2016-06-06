@@ -35,7 +35,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         '''
         #TODO: add frame
         epsg = self.abstractDb.findEPSG()
-        lineLyr = QgsVectorLayer("multiline?crs=EPSG:%s","tempLine",'memory')
+        lineLyr = QgsVectorLayer("multilinestring?crs=EPSG:%d" % epsg,"tempLine",'memory')
         for delimiter in delimiterList:
             lyr = QgsVectorLayer(self.abstractDb.getURI(delimiter, False).uri(), delimiter, "postgres")
             featureList = []
@@ -51,7 +51,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         #updating original layer
         outputLayer = processing.getObject(ret['OUTPUT'])
         #removing from registry
-        QgsMapLayerRegistry.instance().removeMapLayer(input.id())
+        QgsMapLayerRegistry.instance().removeMapLayer(lineLyr.id())
         return outputLayer
     
     def relateAreasWithCentroids(self, areaLyr, centroidLyr):
@@ -68,11 +68,11 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             relateDict[areaId] = []
             bbox = areaFeat.geometry().boundingBox()
             candidates = self.getCentroidCandidates(centroidIdx, centroidLyr, bbox)
-            for candidate in candicates:
+            for candidate in candidates:
                 relateDict[areaId].append(candidate)
         return relateDict
 
-    def getCentroidCandidates(idx, layer, bbox):
+    def getCentroidCandidates(self, idx, layer, bbox):
         return idx.intersects(bbox)
 
     def reclassifyAreasWithCentroids(self, areaLyr, centroidLyr, relateDict):
@@ -80,15 +80,15 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         for id in relateDict.keys():
             numberOfCentroids = len(relateDict[id])
             if numberOfCentroids == 1:
-                centroidFeature = centroidLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%id)))
-                areaFeature = areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%id)))
+                centroidFeature = [i for i in centroidLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%relateDict[id][0])))][0]
+                areaFeature = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(id))][0]
                 centroidFeature['geom'] = binascii.hexlify(areaFeature.geometry().asWkb())
             elif numberOfCentroids == 0:
-                feature = areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%id)))
+                feature = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(id))][0]
                 flagTupleList.append((centroidLyr.name(),-1, self.tr('Area without centroid.'), binascii.hexlify(feature.geometry().asWkb()) ))
             else:
                 idList = ','.join(map(str,relateDict[id]))
-                features = centroidLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id in (%s)"%idList)))
+                features = [i for i in centroidLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%relateDict[id][0])))]
                 attributes = features[0].attributes()
                 duplicated = True
                 for i in range(1,len(features)):
@@ -122,7 +122,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                 QgsMessageLog.logMessage('Empty earth coverage!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
                 return
             for cl in coverageClassList:
-                centroidLyr = QgsVectorLayer(self.abstractDb.getURI(cl, False).uri(), cl, "postgres")
+                centroidLyr = QgsVectorLayer(self.abstractDb.getURI(cl, False, geomColumn = 'centroid').uri(), cl, "postgres")
                 #must gather all lines (including frame) to close areas
                 lineLyr = self.defineQueryLayer(earthCoverageDict[cl])
                 #close areas from lines

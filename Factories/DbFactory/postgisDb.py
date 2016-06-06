@@ -819,7 +819,7 @@ class PostgisDb(AbstractDb):
                 explodeDict = self.utils.buildNestedDict(explodeDict, [cl], idList)
         return explodeDict
 
-    def getURI(self, table, useOnly = True):
+    def getURI(self, table, useOnly = True, geomColumn = 'geom'):
         schema, layer_name = self.getTableSchema(table)
 
         host = self.db.hostName()
@@ -835,7 +835,7 @@ class PostgisDb(AbstractDb):
         
         uri = QgsDataSourceURI()
         uri.setConnection(str(host),str(port), str(database), str(user), str(password))
-        uri.setDataSource(schema, layer_name, 'geom', sql, 'id')
+        uri.setDataSource(schema, layer_name, geomColumn, sql, 'id')
         uri.disableSelectAtId(True)
         
         return uri
