@@ -25,6 +25,8 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 import processing, binascii
 import json
 
+#update imports
+
 class CloseEarthCoveragePolygonsProcess(ValidationProcess):
     def __init__(self, postgisDb):
         super(self.__class__,self).__init__(postgisDb)
@@ -71,26 +73,33 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             bbox = areaFeat.geometry().boundingBox()
             candidates = self.getCentroidCandidates(centroidIdx, centroidLyr, bbox)
             for candidate in candidates:
-                relateDict[areaId].append(candidate)
+                feat = [i for i in centroidLyr.dataProvider().getFeatures(QgsFeatureRequest(candidate))][0]
+                if feat.geometry().within(areaFeat.geometry()):
+                    relateDict[areaId].append(candidate)
         return relateDict
 
     def getCentroidCandidates(self, idx, layer, bbox):
         return idx.intersects(bbox)
 
     def reclassifyAreasWithCentroids(self, areaLyr, centroidLyr, relateDict):
+        '''
+        Comentar essa porra
+        '''
         flagTupleList = []
+        centroidReclassLyr = QgsVectorLayer(self.abstractDb.getURI(centroidLyr.name(), False).uri(), centroidLyr.name(), "postgres")
         for id in relateDict.keys():
             numberOfCentroids = len(relateDict[id])
             if numberOfCentroids == 1:
-                centroidFeature = [i for i in centroidLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%relateDict[id][0])))][0]
                 areaFeature = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(id))][0]
-                centroidFeature['geom'] = binascii.hexlify(areaFeature.geometry().asWkb())
+                area = areaFeature.geometry()
+                area.convertToMultiType()
+                centroidReclassLyr.dataProvider().changeGeometryValues({relateDict[id][0]:area})        
             elif numberOfCentroids == 0:
                 feature = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(id))][0]
                 flagTupleList.append((centroidLyr.name(),-1, self.tr('Area without centroid.'), binascii.hexlify(feature.geometry().asWkb()) ))
             else:
                 idList = ','.join(map(str,relateDict[id]))
-                features = [i for i in centroidLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%relateDict[id][0])))]
+                features = [i for i in centroidLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id in (%s)" % idList)))]
                 attributes = features[0].attributes()
                 duplicated = True
                 for i in range(1,len(features)):
@@ -136,8 +145,8 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                 
                 if len(flagTuppleList) > 0:
                     numberOfProblems = self.addFlag(flagTuppleList)
-                    self.setStatus('%s feature(s) of class '+cl+' with problems. Check flags.\n' % numberOfProblems, 4) #Finished with flags
-                    QgsMessageLog.logMessage('%s feature(s) of class '+cl+' with problems. Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    self.setStatus('%d feature(s) of class '+cl+' with problems. Check flags.\n' % numberOfProblems, 4) #Finished with flags
+                    QgsMessageLog.logMessage('%d feature(s) of class '+cl+' with problems. Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 else:
                     self.setStatus('There are no area building errors on '+cl+'.\n', 1) #Finished
                     QgsMessageLog.logMessage('There are no area building errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
