@@ -33,7 +33,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
     
     def defineQueryLayer(self, delimiterList):
         '''
-        Defines a query layer composed by all features from earthCoverage lines
+        Defines a query layer composed by all features from earthCoverage lines and also by frame
         '''
         #TODO: add frame
         epsg = self.abstractDb.findEPSG()
@@ -44,6 +44,12 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             for feat in lyr.getFeatures():
                 featureList.append(feat)
             lineLyr.dataProvider().addFeatures(featureList)
+        frame = QgsVectorLayer(self.abstractDb.getURI('public.aux_moldura_a', False).uri(), 'public.aux_moldura_a', "postgres")
+        for feat in frame.getFeatures():
+            newFeat = QgsFeature(lineLyr.pendingFields())
+            newGeom = QgsGeometry.fromPolyline(feat.geometry().asMultiPolygon()[0][0])
+            newFeat.setGeometry(newGeom)
+            lineLyr.dataProvider().addFeatures([newFeat])
         return lineLyr
         
     def runPolygonize(self, lineLyr):
@@ -110,7 +116,35 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                 if duplicated:
                     flagTupleList.append( (centroidLyr.name(), candidateFeat['id'], self.tr('Area with multiple centroids with same attributes.'), binascii.hexlify(candidateFeat.geometry().asWkb()) ) )
         return flagTupleList
-        
+    
+    def postProcessFlags(self, coverageClassList):
+        flags = QgsVectorLayer(self.abstractDb.getURI('validation.aux_flags_validacao_a', False).uri(), 'validation.aux_flags_validacao_a', "postgres")
+        for cl in coverageClassList:
+            centroidCheckList = []
+            for i in coverageClassList:
+                if i <> cl:
+                    centroidCheckList.append(i)
+            featureList = []
+            for centroidName in centroidCheckList:
+                lyr = QgsVectorLayer(self.abstractDb.getURI(centroidName, False).uri(), centroidName, "postgres")
+                for feat in lyr.getFeatures():
+                    featureList.append(feat)
+            problemCandidates = [i for i in flags.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("process_name = '%s' and layer = '%s' and reason = '%s'" % (self.getName(), cl, self.tr('Area without centroid.')) )))]
+            eraseIdList = []
+            for candidate in problemCandidates:
+                for centroidName in centroidCheckList:
+                    lyr = QgsVectorLayer(self.abstractDb.getURI(centroidName, False).uri(), centroidName, "postgres")
+                    centroidList = [i for i in lyr.dataProvider().getFeatures(QgsFeatureRequest(candidate.geometry().boundingBox()))]
+                    if candidate.id() not in eraseIdList:
+                        hasPoints = False
+                        for c in centroidList:
+                            if c.geometry().within(candidate.geometry()):
+                                hasPoints = True
+                                break
+                        if hasPoints:
+                            eraseIdList.append(candidate.id())
+            flags.dataProvider().deleteFeatures(eraseIdList)
+            
     def execute(self):
         #abstract method. MUST be reimplemented.
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
@@ -142,14 +176,14 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                 relateDict = self.relateAreasWithCentroids(areaLyr, centroidLyr)
                 #reclassify
                 flagTuppleList = self.reclassifyAreasWithCentroids(areaLyr, centroidLyr, relateDict)
-                
                 if len(flagTuppleList) > 0:
                     numberOfProblems = self.addFlag(flagTuppleList)
-                    self.setStatus('%d feature(s) of class '+cl+' with problems. Check flags.\n' % numberOfProblems, 4) #Finished with flags
-                    QgsMessageLog.logMessage('%d feature(s) of class '+cl+' with problems. Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    self.setStatus('%s feature(s) of class ' % str(numberOfProblems) + cl+' with problems. Check flags.\n', 4) #Finished with flags
+                    QgsMessageLog.logMessage('%s feature(s) of class ' % str(numberOfProblems) + cl+' with problems. Check flags.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 else:
                     self.setStatus('There are no area building errors on '+cl+'.\n', 1) #Finished
                     QgsMessageLog.logMessage('There are no area building errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            self.postProcessFlags(coverageClassList)
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
