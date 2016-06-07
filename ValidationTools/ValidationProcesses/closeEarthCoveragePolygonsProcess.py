@@ -48,6 +48,8 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         alg = 'qgis:polygonize'
         QgsMapLayerRegistry.instance().addMapLayer(lineLyr)
         ret = processing.runalg('qgis:polygonize', lineLyr, False, True, None)
+        if not ret:
+            raise Exception(self.tr('Problem executing qgis:polygonize. Check your installed libs.\n'))
         #updating original layer
         outputLayer = processing.getObject(ret['OUTPUT'])
         #removing from registry
