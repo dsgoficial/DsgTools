@@ -124,16 +124,11 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             for i in coverageClassList:
                 if i <> cl:
                     centroidCheckList.append(i)
-            featureList = []
-            for centroidName in centroidCheckList:
-                lyr = QgsVectorLayer(self.abstractDb.getURI(centroidName, False).uri(), centroidName, "postgres")
-                for feat in lyr.getFeatures():
-                    featureList.append(feat)
             problemCandidates = [i for i in flags.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("process_name = '%s' and layer = '%s' and reason = '%s'" % (self.getName(), cl, self.tr('Area without centroid.')) )))]
             eraseIdList = []
             for candidate in problemCandidates:
                 for centroidName in centroidCheckList:
-                    lyr = QgsVectorLayer(self.abstractDb.getURI(centroidName, False).uri(), centroidName, "postgres")
+                    lyr = QgsVectorLayer(self.abstractDb.getURI(centroidName, False, geomColumn = 'centroid').uri(), centroidName, "postgres")
                     centroidList = [i for i in lyr.dataProvider().getFeatures(QgsFeatureRequest(candidate.geometry().boundingBox()))]
                     if candidate.id() not in eraseIdList:
                         hasPoints = False
