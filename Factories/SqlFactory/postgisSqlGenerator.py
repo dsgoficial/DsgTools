@@ -486,7 +486,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getVertexNearEdgesStruct(self, epsg, tol):
-        sql = """select pontos.id, ST_SetSRID(pontos.geom,{0}) as geom from pontos, seg where seg.id = pontos.id and  ST_DWithin(seg.geom, pontos.geom, {1}) and ST_Distance(seg.geom, pontos.geom) > 0""".format(epsg,tol)
+        sql = """select pontos.id, ST_SetSRID(pontos.geom,{0}) as geom from pontos, seg where ST_DWithin(seg.geom, pontos.geom, {1}) and ST_Distance(seg.geom, pontos.geom) > 0""".format(epsg,tol)
         return sql
     
     def deleteFeatures(self,schema,table,idList):
