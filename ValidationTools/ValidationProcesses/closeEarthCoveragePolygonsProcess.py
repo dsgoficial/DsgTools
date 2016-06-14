@@ -99,15 +99,11 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         '''
         Comentar essa porra
         '''
-        flagTupleList = []
-        centroidReclassLyr = QgsVectorLayer(self.abstractDb.getURI(centroidLyr.name(), False).uri(), centroidLyr.name(), "postgres")
-        for id in relateDict.keys():
-            numberOfCentroids = len(relateDict[id])
+        for id in relateDict[cl].keys():
+            numberOfCentroids = len(relateDict[cl][id])
             if numberOfCentroids == 1:
-                areaFeature = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(id))][0]
-                area = areaFeature.geometry()
-                area.convertToMultiType()
-                centroidReclassLyr.dataProvider().changeGeometryValues({relateDict[id][0]:area})        
+                feat = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(id))][0]
+                feat['destid']=relateDict[cl][id].id()
             elif numberOfCentroids == 0:
                 feature = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(id))][0]
                 flagTupleList.append((centroidLyr.name(),-1, self.tr('Area without centroid.'), binascii.hexlify(feature.geometry().asWkb()) ))
