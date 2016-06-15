@@ -103,10 +103,12 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             numberOfCentroids = len(relateDict[cl][id])
             if numberOfCentroids == 1:
                 feat = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(id))][0]
-                feat['destid']=relateDict[cl][id].id()
+                feat['destid'] = relateDict[cl][id].id()
+                areaLyr.dataProvider().changeAttributeValue()
             elif numberOfCentroids == 0:
-                feature = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(id))][0]
-                flagTupleList.append((centroidLyr.name(),-1, self.tr('Area without centroid.'), binascii.hexlify(feature.geometry().asWkb()) ))
+                feat = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(id))][0]
+                feat['destid']= -1
+                
             else:
                 idList = ','.join(map(str,relateDict[id]))
                 features = [i for i in centroidLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id in (%s)" % idList)))]
