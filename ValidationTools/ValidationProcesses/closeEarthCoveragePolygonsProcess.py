@@ -79,7 +79,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         '''
         #after all checks, reclassifies areas
         centroidIdx = QgsSpatialIndex()
-        for feat in centroidLyr.getFeatures(QgsFeatureRequest('cl = %s' % cl)):
+        for feat in centroidLyr.getFeatures():
             centroidIdx.insertFeature(feat)
         relateDict[cl] = dict()
         for areaFeat in areaLyr.getFeatures():
@@ -99,48 +99,60 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         '''
         Comentar essa porra
         '''
+        destIdx = areaLyr.fieldNameIndex('destid')
         for id in relateDict[cl].keys():
             numberOfCentroids = len(relateDict[cl][id])
-            if numberOfCentroids == 1:
-                feat = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(id))][0]
-                feat['destid'] = relateDict[cl][id].id()
-                areaLyr.dataProvider().changeAttributeValue()
+            if numberOfCentroids == 1 and relateDict[cl][id]['cl'] == cl:
+                areaLyr.dataProvider().changeAttributeValues({id : {destIdx:relateDict[cl][id].id()}})
             elif numberOfCentroids == 0:
-                feat = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(id))][0]
-                feat['destid']= -1
-                
+                areaLyr.dataProvider().changeAttributeValues({id : {destIdx:-1}})
             else:
-                idList = ','.join(map(str,relateDict[id]))
-                features = [i for i in centroidLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id in (%s)" % idList)))]
-                fieldNames = [field.name() for field in centroidLyr.pendingFields()]
-                notAllowedFields = []
-                for i in fieldNames:
-                    if i == 'id' and i == 'geom' or 'id_' in i:
-                        notAllowedFields.append(centroidLyr.fieldNameIndex(i)) 
-                attributes = features[0].attributes()
-                for idx in notAllowedFields:
-                    attributes[idx] = None
-                duplicated = True
-                for i in range(1,len(features)):
-                    candidateFeat = features[i]
-                    candidateFeatList = candidateFeat.attributes()
-                    for nidx in notAllowedFields:
-                        candidateFeatList[nidx] = None
-                    if  candidateFeatList != attributes:
-                        flagTupleList.append( (centroidLyr.name(), candidateFeat['id'], self.tr('Area with conflicted centroids.'), binascii.hexlify(candidateFeat.geometry().asWkb()) ) )
-                        duplicated = False
-                if duplicated:
-                    area = feature[0].geometry()
-                    area.convertToMultiType()
-                    centroidReclassLyr.dataProvider().changeGeometryValues({relateDict[id][0]:area}) 
-                    
-        return flagTupleList
+                conflictedCentroids = []
+                #first sweep: identify centroids with conflicted classes
+                for feat in relateDict[cl][id]:
+                    if feat['cl'] <> cl:
+                        conflictedCentroids.append(feat)
+                if len(conflictedCentroids) > 0:
+                    changeDict = dict()
+                    for c in conflictedCentroids:
+                        changeDict[c.id()] = {destIdx:0}
+                    areaLyr.dataProvider().changeAttributeValues(changeDict)
+                else:
+                #second sweep: if there are no conflicted attributes, it tests if all centroids have the same set of attributes
+                    fieldNames = [field.name() for field in centroidLyr.pendingFields()]
+                    notAllowedFields = []
+                    for i in fieldNames:
+                        if i in ['id', 'geom', 'centroid'] or 'id_' in i:
+                            notAllowedFields.append(centroidLyr.fieldNameIndex(i)) 
+                    attributes = relateDict[cl][id][0].attributes()
+                    duplicated = True
+                    for c in relateDict[cl][id][1::]:
+                        #compairs attributes if one set of attribute is different from another, for breaks and sets duplicates = False
+                        if duplicated:
+                            featAttr = c.attributes()
+                            for i in range(attributes):
+                                if i not in notAllowedFields and attributes[i] <> featAttr[i]:
+                                    duplicated = False
+                                    break
+                        else:
+                            break
+                    if duplicated:
+                        areaLyr.dataProvider().changeAttributeValues({id : {destIdx:relateDict[cl][id][0].id()}})
     
-    def reclassifyAreasWithCentroids(self):
-        pass
+    def reclassifyAreasWithCentroids(self, coverageClassList, areaLyr, centroidLyr, relateDict):
+        lyrDict = dict()
+        for cl in coverageClassList:
+            lyr = QgsVectorLayer(self.abstractDb.getURI(cl, False).uri(), cl, "postgres")
+            reclassFeats = areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('cl = %s and destid > 0' % cl)))
+            reclassDict = dict()
+            deleteList = []
+            for feat in reclassFeats:
+                reclassDict[feat['destid']]=feat.geometry()
+                deleteList.append(feat.id())
+            lyr.dataProvider().changeGeometryValues(reclassDict)
+            areaLyr.dataProvider().deleteFeatures(deleteList)
     
-    def postProcessFlags(self, coverageClassList):
-        flags = QgsVectorLayer(self.abstractDb.getURI('validation.aux_flags_validacao_a', False).uri(), 'validation.aux_flags_validacao_a', "postgres")
+    def postProcessFlags(self, coverageClassList, areaLyr, centroidLyr):
         for cl in coverageClassList:
             centroidCheckList = []
             for i in coverageClassList:
@@ -189,6 +201,16 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             auxCentroidLyr.dataProvider().addFeatures(newFeatList)
         return auxCentroidLyr
 
+    def raiseFlags(self, areaLyr):
+        flagTupleList = []
+        areasWithoutCentroids = areaLyr.dataProvider.getFeatures(QgsFeatureRequest(QgsExpression('destid = 0')))
+        for feat in areasWithoutCentroids:
+            tuppleList.append((feat['cl'],-1,'Area without centroid.',binascii.hexlify(feat.geometry().asWkb())))
+        areasWithConflictedCentroids = areaLyr.dataProvider.getFeatures(QgsFeatureRequest(QgsExpression('destid = -1')))
+        for feat in areasWithConflictedCentroids:
+            flagTupleList.append((feat['cl'],-1,'Area with conflicted centroid.',binascii.hexlify(feat.geometry().asWkb())))
+        self.addFlag(flagTupleList)
+
     def execute(self):
         #abstract method. MUST be reimplemented.
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
@@ -221,8 +243,8 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                 self.runPolygonize(cl, areaLyr, lineLyr)
                 self.relateAreasWithCentroids(cl, areaLyr, auxCentroidLyr, relateDict)
                 self.prepareReclassification(cl, areaLyr, centroidLyr, relateDict)
-            self.reclassifyAreasWithCentroids()
-            self.postProcessFlags(coverageClassList)
+            self.reclassifyAreasWithCentroids(coverageClassList, areaLyr, centroidLyr, relateDict)
+            self.raiseFlags(areaLyr)
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
