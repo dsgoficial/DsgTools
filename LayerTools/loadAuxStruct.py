@@ -99,7 +99,7 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
                         auxClasses.append(cl)
             auxCentroids = self.widget.abstractDb.getEarthCoverageCentroids()
             auxClasses = auxClasses + auxCentroids
-            auxClasses.sort()
+            auxClasses.sort(reverse=True)
             for lyr in auxClasses:
                 layer = lyr[:-1]+lyr[-1].replace('a','c')
                 dbName = self.widget.abstractDb.getDatabaseName()
