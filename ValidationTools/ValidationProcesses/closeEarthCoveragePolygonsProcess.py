@@ -105,6 +105,9 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             numberOfCentroids = len(relateDict[cl][id])
             if numberOfCentroids == 1 and relateDict[cl][id][0]['cl'] == cl:
                 areaLyr.dataProvider().changeAttributeValues({id : {destIdx:relateDict[cl][id][0]['featid']}})
+            elif numberOfCentroids == 1 and relateDict[cl][id][0]['cl'] != cl:
+                # this happens when there is only one centroid but its class is different
+                continue
             elif numberOfCentroids == 0:
                 areaLyr.dataProvider().changeAttributeValues({id : {destIdx:-1}})
             else:
