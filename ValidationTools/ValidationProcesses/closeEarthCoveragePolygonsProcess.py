@@ -193,45 +193,49 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
 
     def raiseFlags(self, areaLyr):
         flagTupleList = []
-        areasWithoutCentroids = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid = 0')))]
-        reclassifiedAreas = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid > 0')))]
-        spatialIndex = QgsSpatialIndex()
-        for feat in reclassifiedAreas:
-            spatialIndex.insertFeature(feat)
+        areasWithoutCentroids = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid = -1')))]
+        #reclassifiedAreas = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid > 0')))]
+        areasWithConflictedCentroids = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid = 0')))]
+        
+#         spatialIndex = QgsSpatialIndex()
+#         for feat in reclassifiedAreas:
+#             spatialIndex.insertFeature(feat)
         for feat in areasWithoutCentroids:
+            flagTupleList.append((feat['cl'],-1,'Area without centroid.',binascii.hexlify(feat.geometry().asWkb())))
 #             candidates = self.getCandidates(spatialIndex, feat.geometry().boundingBox())
 #             candidateList = []
 #             for f in reclassifiedAreas:
 #                 if f.id() in candidates:
 #                     candidateList.append(f)
-            isFlag = True
+#             isFlag = True
 #             for c in candidateList:
 #                 if feat.geometry().within(c.geometry()) or feat.geometry().overlaps(c.geometry()) or c.geometry().within(feat.geometry()) or c.geometry().overlaps(feat.geometry()):
 #                     if feat['cl'] <> c['cl']:
 #                         isFlag = False
 #                         break
  
-            if isFlag:
-                flagTupleList.append((feat['cl'],-1,'Area without centroid.',binascii.hexlify(feat.geometry().asWkb())))
-        
-        areasWithConflictedCentroids = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid = -1')))]
-        for feat in areasWithConflictedCentroids:
-            candidates = self.getCandidates(spatialIndex, feat.geometry().boundingBox())
-            candidateList = []
-            for f in reclassifiedAreas:
-                if f.id() in candidates:
-                    candidateList.append(f)
-            isFlag = True
-            for c in candidateList:
-                if isFlag:
-                    if feat.geometry().within(c.geometry()) or feat.geometry().overlaps(c.geometry()) or c.geometry().within(feat.geometry()) or c.geometry().overlaps(feat.geometry()):
-                        if feat['cl'] <> c['cl']:
-                            isFlag = False
-                else:
-                    break
-            if isFlag:
+#             if isFlag:
 #                 flagTupleList.append((feat['cl'],-1,'Area without centroid.',binascii.hexlify(feat.geometry().asWkb())))
-                flagTupleList.append((feat['cl'],-1,'Area with conflicted centroid.',binascii.hexlify(feat.geometry().asWkb())))
+        
+#         areasWithConflictedCentroids = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid = 0')))]
+        for feat in areasWithConflictedCentroids:
+            flagTupleList.append((feat['cl'],-1,'Area with conflicted centroid.',binascii.hexlify(feat.geometry().asWkb())))
+#             candidates = self.getCandidates(spatialIndex, feat.geometry().boundingBox())
+#             candidateList = []
+#             for f in reclassifiedAreas:
+#                 if f.id() in candidates:
+#                     candidateList.append(f)
+#             isFlag = True
+#             for c in candidateList:
+#                 if isFlag:
+#                     if feat.geometry().within(c.geometry()) or feat.geometry().overlaps(c.geometry()) or c.geometry().within(feat.geometry()) or c.geometry().overlaps(feat.geometry()):
+#                         if feat['cl'] <> c['cl']:
+#                             isFlag = False
+#                 else:
+#                     break
+#             if isFlag:
+# #                 flagTupleList.append((feat['cl'],-1,'Area without centroid.',binascii.hexlify(feat.geometry().asWkb())))
+#                 flagTupleList.append((feat['cl'],-1,'Area with conflicted centroid.',binascii.hexlify(feat.geometry().asWkb())))
         
         if len(flagTupleList) > 0:
             self.addFlag(flagTupleList)
