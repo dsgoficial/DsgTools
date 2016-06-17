@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsField, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsField, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from PyQt4.QtCore import QVariant
 import processing, binascii
@@ -118,18 +118,17 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                     # perfect case - must be reclassified
                     areaLyr.dataProvider().changeAttributeValues({id : {destIdx:relateDict[cl][id][0]['featid']}})
                 else:
-                    # nothing to be done in this case
                     continue
             elif numberOfCentroids == 0:
                 # area without centroid - this must become a flag
-                areaLyr.dataProvider().changeAttributeValues({id : {destIdx:-1}})
+                areaLyr.dataProvider().changeAttributeValues({id : {destIdx:-1000}})
             else:
                 #first sweep: identify centroids with conflicted classes
                 conflictedCentroids = [feat for feat in relateDict[cl][id] if feat['cl'] <> cl]
                 if len(conflictedCentroids) > 0:
                     f = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(id))][0]
                     if f['cl'] == cl:
-                        areaLyr.dataProvider().changeAttributeValues({id:{destIdx:0}})
+                        areaLyr.dataProvider().changeAttributeValues({id:{destIdx:-2000}})
                 else:
                     sameClassCentroids = relateDict[cl][id]
                     #get original centroid layer
@@ -159,8 +158,6 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                         break
                     if duplicated:
                         areaLyr.dataProvider().changeAttributeValues({id : {destIdx:relateDict[cl][id][0]['featid']}})
-                    else:
-                        areaLyr.dataProvider().changeAttributeValues({id:{destIdx:0}})
     
     def reclassifyAreasWithCentroids(self, coverageClassList, areaLyr, centroidLyr, relateDict):
         lyrDict = dict()
@@ -219,44 +216,42 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
     def raiseFlags(self, areaLyr):
         flagTupleList = []
         
-        areasWithoutCentroids = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid = -1')))]
-        areasWithConflictedCentroids = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid = 0')))]
+        areasWithoutCentroids = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid = -1000')))]
+        areasWithConflictedCentroids = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid = -2000')))]
 
         reclassifiedAreas = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid > 0')))]
         spatialIndex = QgsSpatialIndex()
         for feat in reclassifiedAreas:
             spatialIndex.insertFeature(feat)
-        
+            
         for feat in areasWithoutCentroids:
-#             flagTupleList.append((feat['cl'],-1,'Area without centroid.',binascii.hexlify(feat.geometry().asWkb())))
             candidates = self.getCandidates(spatialIndex, feat.geometry().boundingBox())
             candidateList = [f for f in reclassifiedAreas if f.id() in candidates]
             isFlag = True
             for c in candidateList:
-                if feat.geometry().within(c.geometry()) or feat.geometry().overlaps(c.geometry()) or c.geometry().within(feat.geometry()):
+#                 if feat.geometry().within(c.geometry()) or feat.geometry().overlaps(c.geometry()) or c.geometry().within(feat.geometry()):
+                if feat.geometry().within(c.geometry()):
                     if feat['cl'] <> c['cl']:
                         isFlag = False
                         break
- 
+   
             if isFlag:
                 flagTupleList.append((feat['cl'],-1,'Area without centroid.',binascii.hexlify(feat.geometry().asWkb())))
-        
+         
         for feat in areasWithConflictedCentroids:
-#             flagTupleList.append((feat['cl'],-1,'Area with conflicted centroid.',binascii.hexlify(feat.geometry().asWkb())))
             candidates = self.getCandidates(spatialIndex, feat.geometry().boundingBox())
             candidateList = [f for f in reclassifiedAreas if f.id() in candidates]
             isFlag = True
             isFlag = True
             for c in candidateList:
-                if isFlag:
-                    if feat.geometry().within(c.geometry()) or feat.geometry().overlaps(c.geometry()) or c.geometry().within(feat.geometry()):
+#                 if feat.geometry().within(c.geometry()) or feat.geometry().overlaps(c.geometry()) or c.geometry().within(feat.geometry()):
+                if feat.geometry().within(c.geometry()):
                         if feat['cl'] <> c['cl']:
                             isFlag = False
                             break
             if isFlag:
-#                 flagTupleList.append((feat['cl'],-1,'Area without centroid.',binascii.hexlify(feat.geometry().asWkb())))
                 flagTupleList.append((feat['cl'],-1,'Area with conflicted centroid.',binascii.hexlify(feat.geometry().asWkb())))
-        
+          
         #finishing the raise flags step
         if len(flagTupleList) > 0:
             self.addFlag(flagTupleList)
