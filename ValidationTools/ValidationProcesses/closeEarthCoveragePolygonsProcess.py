@@ -119,6 +119,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                     areaLyr.dataProvider().changeAttributeValues({id : {destIdx:relateDict[cl][id][0]['featid']}})
                 else:
                     continue
+                    #areaLyr.dataProvider().changeAttributeValues({id : {destIdx:-2000}}) WHY NOT?????????
             elif numberOfCentroids == 0:
                 # area without centroid - this must become a flag
                 areaLyr.dataProvider().changeAttributeValues({id : {destIdx:-1000}})
@@ -158,6 +159,8 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                         break
                     if duplicated:
                         areaLyr.dataProvider().changeAttributeValues({id : {destIdx:relateDict[cl][id][0]['featid']}})
+                    else:
+                        areaLyr.dataProvider().changeAttributeValues({id : {destIdx:-2000}})
     
     def reclassifyAreasWithCentroids(self, coverageClassList, areaLyr, centroidLyr, relateDict):
         lyrDict = dict()
