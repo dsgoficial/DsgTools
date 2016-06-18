@@ -96,9 +96,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         
         #getting earth coverage hole
         hole = frameFeat.geometry().difference(combined)
-        #making buffer due to some small shifts
-        buffer = hole.buffer(50, 5)
-#         print buffer.exportToWkt()
+        print hole.exportToWkt()
         
         #making the flags
         flagTupleList = []
@@ -106,10 +104,10 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             areasWithoutCentroids = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid = -1000')))]
             areasWithConflictedCentroids = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid = -2000')))]
             for feat in areasWithoutCentroids:
-                if feat.geometry().within(buffer):
+                if feat.geometry().intersects(hole):
                     flagTupleList.append((feat['cl'],-1,'Area without centroid.',binascii.hexlify(feat.geometry().asWkb())))
             for feat in areasWithConflictedCentroids:
-                if feat.geometry().within(buffer):
+                if feat.geometry().intersects(hole):
                     flagTupleList.append((feat['cl'],-1,'Area with conflicted centroid.',binascii.hexlify(feat.geometry().asWkb())))
 
         #finishing the raise flags step
