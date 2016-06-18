@@ -98,6 +98,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         hole = frameFeat.geometry().difference(combined)
         #making buffer due to some small shifts
         buffer = hole.buffer(50, 5)
+#         print buffer.exportToWkt()
         
         #making the flags
         flagTupleList = []
