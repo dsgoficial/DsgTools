@@ -46,11 +46,11 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
                     self.addClassesToBeDisplayedList(tuple[0])        
                 self.setStatus('%s features are not simple. Check flags.\n' % numberOfProblems, 4) #Finished with flags
                 QgsMessageLog.logMessage('%s features are not simple. Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                return
             else:
                 self.setStatus('All features are simple.\n', 1) #Finished
                 QgsMessageLog.logMessage('All features are simple.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
-            return
+            return 0

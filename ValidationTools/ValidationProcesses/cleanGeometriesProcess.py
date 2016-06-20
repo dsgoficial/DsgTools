@@ -137,7 +137,8 @@ class CleanGeometriesProcess(ValidationProcess):
                     else:
                         self.setStatus('There are no cleaning errors on '+cl+'.\n', 1) #Finished
                         QgsMessageLog.logMessage('There are no cleaning errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
-            return
+            return 0

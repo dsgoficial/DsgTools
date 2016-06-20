@@ -34,10 +34,11 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
             self.setStatus('Running', 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName())
             invalidGeomRecordList = self.abstractDb.getInvalidGeomRecords() #list only classes with elements.
+            return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
-            return
+            return 0
 
         if len(invalidGeomRecordList) > 0:
             numberOfInvGeom = self.addFlag(invalidGeomRecordList)

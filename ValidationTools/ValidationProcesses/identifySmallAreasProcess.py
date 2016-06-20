@@ -52,11 +52,11 @@ class IdentifySmallAreasProcess(ValidationProcess):
                     self.addClassesToBeDisplayedList(tuple[0])        
                 self.setStatus('%s features have small areas. Check flags.\n' % numberOfProblems, 4) #Finished with flags
                 QgsMessageLog.logMessage('%s features have small areas. Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                return
             else:
                 self.setStatus('There are no small areas.\n', 1) #Finished
                 QgsMessageLog.logMessage('There are no small areas.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
-            return
+            return 0

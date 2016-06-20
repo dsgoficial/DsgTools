@@ -51,7 +51,8 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
                     else:
                         self.setStatus('There are no out of bounds angles.\n', 1) #Finished
                         QgsMessageLog.logMessage('There are no out of bounds angles.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
-            return
+            return 0

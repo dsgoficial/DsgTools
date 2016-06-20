@@ -42,8 +42,8 @@ class RemoveSmallLinesProcess(ValidationProcess):
                 numberOfProblems += self.abstractDb.removeFeatures(cl,flagsDict[cl])
             self.setStatus('%s features were removed.\n' % numberOfProblems, 1) #Finished with flags
             QgsMessageLog.logMessage('%s features were changed.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            return
+            return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
-            return
+            return 0

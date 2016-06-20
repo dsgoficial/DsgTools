@@ -51,7 +51,8 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
             else:
                 self.setStatus('There are no duplicated geometries.\n', 1) #Finished
                 QgsMessageLog.logMessage('There are no duplicated geometries.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
-            return
+            return 0

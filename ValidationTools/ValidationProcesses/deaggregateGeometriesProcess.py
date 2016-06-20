@@ -62,7 +62,8 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                     layer.commitChanges()
             self.setStatus('All geometries are now single parted.\n', 1) #Finished
             QgsMessageLog.logMessage('All features are valid.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
-            return
+            return 0
