@@ -88,6 +88,8 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         print 'unvisited'
     
     def zoomToFlag(self):
+        flagLyr.removeSelection()
+
         idx =  self.tableView.selectionModel().selection().indexes()[0].data()
         
         dimension = self.tableView.selectionModel().selection().indexes()[6].data()
@@ -102,7 +104,6 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.iface.mapCanvas().refresh()
         flagLyr.select(idx)
         bbox = flagLyr.boundingBoxOfSelected()
-        flagLyr.removeSelection()
         self.iface.mapCanvas().setExtent(bbox)
         self.iface.mapCanvas().refresh()
     
