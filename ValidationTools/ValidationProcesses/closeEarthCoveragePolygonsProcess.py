@@ -105,8 +105,8 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         
         #getting earth coverage hole
         hole = frameFeat.geometry().difference(combined)
-        hole = hole.buffer(0.01, 5)
-        print hole.exportToWkt()
+        hole = hole.buffer(0.1, 5)
+#         print hole.exportToWkt()
         
         #making the flags
         flagTupleList = []
@@ -260,8 +260,9 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                 newFeat = QgsFeature(centroidLyr.pendingFields())
                 newFeat['featid'] = feat.id()
                 newFeat['cl'] = cl
-                newFeat.setGeometry(feat.geometry())
-                newFeatList.append(newFeat)
+                if feat.geometry():
+                    newFeat.setGeometry(feat.geometry())
+                    newFeatList.append(newFeat)
             centroidLyr.dataProvider().addFeatures(newFeatList)
 
     def raiseFlags(self, areaLyr):
