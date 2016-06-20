@@ -32,6 +32,15 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
     def __init__(self, postgisDb):
         super(self.__class__,self).__init__(postgisDb)
     
+    def cleanCentroidsAreas(self, coverageClassList):
+        for cl in coverageClassList:
+            auxCentroidLyr = QgsVectorLayer(self.abstractDb.getURI(cl, False, geomColumn = 'geom').uri(), cl, "postgres")
+            featDict = dict()
+            for feat in auxCentroidLyr.getFeatures():
+                if feat['centroid']:
+                    featDict[feat['id']] = QgsGeometry()
+            auxCentroidLyr.dataProvider().changeGeometryValues(featDict)
+    
     def defineQueryLayer(self, delimiterList):
         '''
         Defines a query layer composed by all features from earthCoverage lines and also by frame
@@ -96,6 +105,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         
         #getting earth coverage hole
         hole = frameFeat.geometry().difference(combined)
+        hole = hole.buffer(0.01, 5)
         print hole.exportToWkt()
         
         #making the flags
@@ -104,10 +114,10 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             areasWithoutCentroids = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid = -1000')))]
             areasWithConflictedCentroids = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid = -2000')))]
             for feat in areasWithoutCentroids:
-                if feat.geometry().intersects(hole):
+                if feat.geometry().within(hole):
                     flagTupleList.append((feat['cl'],-1,'Area without centroid.',binascii.hexlify(feat.geometry().asWkb())))
             for feat in areasWithConflictedCentroids:
-                if feat.geometry().intersects(hole):
+                if feat.geometry().within(hole):
                     flagTupleList.append((feat['cl'],-1,'Area with conflicted centroid.',binascii.hexlify(feat.geometry().asWkb())))
 
         #finishing the raise flags step
@@ -289,7 +299,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                 self.setStatus('Empty earth coverage!\n', 1) #Finished
                 QgsMessageLog.logMessage('Empty earth coverage!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
                 return
-            
+            self.cleanCentroidsAreas(coverageClassList)
             #making temp layers
             epsg = self.abstractDb.findEPSG()
             areaLyr, centroidLyr = self.createAuxStruct(epsg)
@@ -311,19 +321,19 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                 self.prepareReclassification(cl, areaLyr, centroidLyr, relateDict)
                 self.reclassifyAreasWithCentroids(coverageClassList, areaLyr, centroidLyr, relateDict)
                 areaLayers.append(areaLyr)
-                flags += self.raiseFlags(areaLyr)#this way we need to check if the flags are actual flags
+#                 flags += self.raiseFlags(areaLyr)#this way we need to check if the flags are actual flags
                 
-#             self.raiseFlagsTest(areaLayers)#this is a test, I don't know if it works on all cases
+            self.raiseFlagsTest(areaLayers)#this is a test, I don't know if it works on all cases
 
             #finishing the raise flags step when using raiseFlags
             #when using raiseFlagsTest comment this end part
-            if len(flags) > 0:
-                self.addFlag(flags)
-                self.setStatus('Process finished with problems. Check flags.\n', 4) #Finished with flags
-                QgsMessageLog.logMessage('Process finished with problems. Check flags.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            else:
-                self.setStatus('There are no area building errors.\n', 1)
-                QgsMessageLog.logMessage('There are no area building errors.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)        
+#             if len(flags) > 0:
+#                 self.addFlag(flags)
+#                 self.setStatus('Process finished with problems. Check flags.\n', 4) #Finished with flags
+#                 QgsMessageLog.logMessage('Process finished with problems. Check flags.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+#             else:
+#                 self.setStatus('There are no area building errors.\n', 1)
+#                 QgsMessageLog.logMessage('There are no area building errors.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)        
 
             return 1
         except Exception as e:
