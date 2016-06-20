@@ -1130,3 +1130,15 @@ class PostgisDb(AbstractDb):
         while query.next():
             centroidList.append(query.value(0))
         return centroidList
+
+    def getWhoAmI(self, cl, id):
+        """
+        cl: class with schema
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getWhoAmI(cl, id)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting class name: ') + query.lastError().text())
+        while query.next():
+            return query.value(0)

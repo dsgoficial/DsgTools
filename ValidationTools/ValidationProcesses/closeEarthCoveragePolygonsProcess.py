@@ -201,7 +201,13 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             else:
                 #first sweep: identify centroids with conflicted classes
                 conflictedCentroids = [feat for feat in relateDict[cl][id] if feat['cl'] <> cl]
+                conflictedChildCentroids = [feat['child'] for feat in relateDict[cl][id]]
+                conflictedDict = dict()
+                for conf in conflictedChildCentroids:
+                    conflictedDict[conf] = 1
                 if len(conflictedCentroids) > 0:
+                    areaLyr.dataProvider().changeAttributeValues({id:{destIdx:-2000}})
+                elif len(conflictedDict.keys())>1:
                     areaLyr.dataProvider().changeAttributeValues({id:{destIdx:-2000}})
                 else:
                     sameClassCentroids = relateDict[cl][id]
@@ -264,7 +270,8 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             centroidLyr = QgsVectorLayer("MultiPoint?crs=EPSG:%d" % epsg,'centroids','memory')
             classField = QgsField('cl',QVariant.String)
             idField = QgsField('featid',QVariant.Int)
-            centroidLyr.dataProvider().addAttributes([classField,idField])
+            childField = QgsField('child',QVariant.String)
+            centroidLyr.dataProvider().addAttributes([classField,idField, childField])
             centroidLyr.updateFields()
             return (areaLyr, centroidLyr)
         except Exception as e:
@@ -284,6 +291,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                 newFeat = QgsFeature(centroidLyr.pendingFields())
                 newFeat['featid'] = feat.id()
                 newFeat['cl'] = cl
+                newFeat['child'] = self.abstractDb.getWhoAmI(cl,feat.id()) 
                 if feat.geometry():
                     newFeat.setGeometry(feat.geometry())
                     newFeatList.append(newFeat)

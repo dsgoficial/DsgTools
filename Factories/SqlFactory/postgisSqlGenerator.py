@@ -643,3 +643,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def getEarthCoverageCentroids(self):
         sql = "select distinct table_schema ||'.'|| table_name from information_schema.columns where column_name = 'centroid'"
         return sql
+    
+    def getWhoAmI(self, cl, id):
+        sql = "select p.relname from {0} as c, pg_class as p where c.tableoid = p.oid and c.id = {1}".format(cl,id)
+        return sql
