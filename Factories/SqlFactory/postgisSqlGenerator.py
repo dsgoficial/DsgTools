@@ -647,3 +647,57 @@ class PostGISSqlGenerator(SqlGenerator):
     def getWhoAmI(self, cl, id):
         sql = "select p.relname from {0} as c, pg_class as p where c.tableoid = p.oid and c.id = {1}".format(cl,id)
         return sql
+    
+    def snapLinesToFrame(self, schema, table, tol):
+        sql = """
+        update {0}.{1} as classe set geom = ST_Multi(agrupado.geom)
+        from
+            (
+                select simplelines.id as id, ST_Union(simplelines.newline) as geom
+                from
+                (
+                    select short.id, St_SetPoint((ST_Dump(short.geom)).geom, 0, 
+                    ST_EndPoint(from_start)) as newline
+                    from
+                    (   select a.id as id, a.geom as geom,
+                        ST_ShortestLine(st_startpoint((ST_Dump(a.geom)).geom), 
+                        ST_Boundary(m.geom)) as from_start
+                        from {0}.{1} a, public.aux_moldura_a m
+                    ) as short
+                    where ST_Length(from_start) < {2}
+                ) as simplelines group by simplelines.id
+            ) as agrupado
+        where classe.id = agrupado.id#
+        update {0}.{1} as classe set geom = ST_Multi(agrupado.geom)
+        from
+            (
+                select simplelines.id as id, ST_Union(simplelines.newline) as geom
+                from
+                (
+                    select short.id, St_SetPoint((ST_Dump(short.geom)).geom, 
+                    short.index - 1, ST_EndPoint(from_start)) as newline
+                    from
+                    (   select a.id as id, a.geom as geom,
+                        ST_ShortestLine(st_endpoint((ST_Dump(a.geom)).geom), 
+                        ST_Boundary(m.geom)) as from_start,
+                        ST_NPoints((ST_Dump(a.geom)).geom) as index
+                        from {0}.{1} a, public.aux_moldura_a m
+                    ) as short
+                    where ST_Length(from_start) < {2}
+                ) as simplelines group by simplelines.id
+            ) as agrupado
+        where classe.id = agrupado.id        
+        """.format(schema, table, str(tol))
+        return sql
+    
+    def densifyFrame(self, schema, table):
+        sql = """
+        update public.aux_moldura_a m set geom = st_multi(st_snap(m.geom, 
+        foo.vertices, 0.0000000001))
+        from
+        (
+            select st_union(st_boundary(a.geom)) as vertices from 
+        {0}.{1} a
+        ) as foo        
+        """.format(schema, table)
+        return sql
