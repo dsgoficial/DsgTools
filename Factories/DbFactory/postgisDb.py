@@ -1142,3 +1142,16 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem getting class name: ') + query.lastError().text())
         while query.next():
             return query.value(0)
+    
+    def snapToGrid(self, classList, tol):
+        self.checkAndOpenDb()
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        for cl in classList:
+            sql = self.gen.snapToGrid(cl, tol)
+            if not query.exec_(sql):
+                self.db.rollback()
+                self.db.close()
+                raise Exception(self.tr('Problem snapping to grid: ') + query.lastError().text())
+        self.db.commit()
+        self.db.close()
