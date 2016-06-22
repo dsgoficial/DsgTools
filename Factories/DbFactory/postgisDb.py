@@ -1155,3 +1155,29 @@ class PostgisDb(AbstractDb):
                 raise Exception(self.tr('Problem snapping to grid: ') + query.lastError().text())
         self.db.commit()
         self.db.close()
+
+    def snapLinesToFrame(self, classList, tol):
+        self.checkAndOpenDb()
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        for cl in classList:
+            sql = self.gen.snapLinesToFrame(cl, tol)
+            if not query.exec_(sql):
+                self.db.rollback()
+                self.db.close()
+                raise Exception(self.tr('Problem snapping to frame: ') + query.lastError().text())
+        self.db.commit()
+        self.db.close()
+    
+    def densifyFrame(self, classList, tol):
+        self.checkAndOpenDb()
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        for cl in classList:
+            sql = self.gen.densifyFrame(cl, tol)
+            if not query.exec_(sql):
+                self.db.rollback()
+                self.db.close()
+                raise Exception(self.tr('Problem densifying frame: ') + query.lastError().text())
+        self.db.commit()
+        self.db.close()

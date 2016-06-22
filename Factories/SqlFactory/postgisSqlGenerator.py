@@ -648,7 +648,8 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "select p.relname from {0} as c, pg_class as p where c.tableoid = p.oid and c.id = {1}".format(cl,id)
         return sql
     
-    def snapLinesToFrame(self, schema, table, tol):
+    def snapLinesToFrame(self, cl, tol):
+        schema, table = cl.split('.')
         sql = """
         update {0}.{1} as classe set geom = ST_Multi(agrupado.geom)
         from
@@ -690,7 +691,8 @@ class PostGISSqlGenerator(SqlGenerator):
         """.format(schema, table, str(tol))
         return sql
     
-    def densifyFrame(self, schema, table):
+    def densifyFrame(self, cl):
+        schema, table = cl.split('.')
         sql = """
         update public.aux_moldura_a m set geom = st_multi(st_snap(m.geom, 
         foo.vertices, 0.0000000001))
