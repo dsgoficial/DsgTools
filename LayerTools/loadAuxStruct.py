@@ -100,8 +100,12 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
             auxCentroids = self.widget.abstractDb.getEarthCoverageCentroids()
             auxClasses = auxClasses + auxCentroids
             auxClasses.sort(reverse=True)
+            auxClasses = ['public.aux_moldura_a']+auxClasses
             for lyr in auxClasses:
-                layer = lyr[:-1]+lyr[-1].replace('a','c')
+                if lyr <> 'public.aux_moldura_a':
+                    layer = lyr[:-1]+lyr[-1].replace('a','c')
+                else:
+                    layer = lyr
                 dbName = self.widget.abstractDb.getDatabaseName()
                 groupList =  qgis.utils.iface.legendInterface().groups()
                 edgvLayer = self.layerFactory.makeLayer(self.widget.abstractDb, self.codeList, layer)
