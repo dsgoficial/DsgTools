@@ -1,1 +1,2 @@
 pe.enc_torre_energia_p,must (be),within,pe.enc_zona_linhas_energia_comunicacao_a,1..1
+pe.enc_zona_linhas_energia_comunicacao_a,must (be),contain,pe.enc_torre_energia_p,0..*

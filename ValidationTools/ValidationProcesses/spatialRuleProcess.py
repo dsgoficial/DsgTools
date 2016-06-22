@@ -36,7 +36,7 @@ class SpatialRuleProcess(ValidationProcess):
                   'cross':'ST_Crosses',
                   'within':'ST_Within',
                   'overlap':'ST_Overlaps',
-                  'contains':'ST_Contains',
+                  'contain':'ST_Contains',
                   'cover':'ST_Covers',
                   'covered by':'ST_CoveredBy'}
     
