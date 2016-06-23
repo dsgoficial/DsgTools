@@ -84,26 +84,25 @@ class ValidationManager(QObject):
                     procDep = self.instantiateProcessByName(dep)
                     #possible status: (0,'Not yet ran'), (1,'Finished'), (2,'Failed'), (3,'Running'), (4,'Finished with flags')
                     #must check if each dependency is met, so status must be 1
-                    if procDep.getStatus() not in [1,4]: 
+                    if procDep.getStatus() not in [1,4]:
                         unmetDep.append(dep)
                 if len(unmetDep) > 0:
                     QgsMessageLog.logMessage('Unable to run process due to the following dependencies: %s\n' % ','.join(unmetDep), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     return 0
-            else:
-                # setting parameters
-                if currProc.parameters:
-                    dlg = ProcessParametersDialog(None, currProc.parameters, None, 'Process parameters setter')
-                    dlg.exec_()
-                    # get parameters
-                    params = dlg.values
-                    # adjusting the parameters in the process
-                    currProc.setParameters(params)
-                #check status
-                QgsMessageLog.logMessage('Process %s Log:\n' % currProc.getName(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                currProc.execute() #run bitch run!
-                #status = currProc.getStatus() #must set status
-                QgsMessageLog.logMessage('Process ran with status %s\n' % currProc.getStatusMessage(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                return 1
+            # setting parameters
+            if currProc.parameters:
+                dlg = ProcessParametersDialog(None, currProc.parameters, None, 'Process parameters setter')
+                dlg.exec_()
+                # get parameters
+                params = dlg.values
+                # adjusting the parameters in the process
+                currProc.setParameters(params)
+            #check status
+            QgsMessageLog.logMessage('Process %s Log:\n' % currProc.getName(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            currProc.execute() #run bitch run!
+            #status = currProc.getStatus() #must set status
+            QgsMessageLog.logMessage('Process ran with status %s\n' % currProc.getStatusMessage(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return 1
     
 if __name__ == '__main__':
     from DsgTools.Factories.DbFactory.dbFactory import DbFactory
