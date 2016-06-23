@@ -26,7 +26,7 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 class SnapLinesToFrameProcess(ValidationProcess):
     def __init__(self, postgisDb):
         super(self.__class__,self).__init__(postgisDb)
-        self.parameters = {'Snap': 0.0001}
+        self.parameters = {'Snap': 5.0}
 
     def execute(self):
         #abstract method. MUST be reimplemented.
@@ -39,8 +39,8 @@ class SnapLinesToFrameProcess(ValidationProcess):
                 if cl[-1] == 'l':
                     lines.append(cl)
             tol = self.parameters['Snap']
-            self.abstractDb.snapLinesToFrame(lines, tol) #list only classes with elements.
-            self.abstractDb.densifyFrame(lines, tol)
+            self.abstractDb.snapLinesToFrame(lines, tol)
+            self.abstractDb.densifyFrame(lines)
             self.setStatus('All features snapped succesfully.\n', 1) #Finished
             QgsMessageLog.logMessage('All features snapped succesfully.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1

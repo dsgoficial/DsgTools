@@ -26,7 +26,7 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 class SnapToGridProcess(ValidationProcess):
     def __init__(self, postgisDb):
         super(self.__class__,self).__init__(postgisDb)
-        self.parameters = {'Snap': 0.0001}
+        self.parameters = {'Snap': 0.001}
 
     def execute(self):
         #abstract method. MUST be reimplemented.
@@ -34,6 +34,7 @@ class SnapToGridProcess(ValidationProcess):
         try:
             self.setStatus('Running', 3) #now I'm running!
             classesWithGeom = self.abstractDb.getOrphanGeomTablesWithElements()
+            classesWithGeom.append('public.aux_moldura_a')
             tol = self.parameters['Snap']
             self.abstractDb.snapToGrid(classesWithGeom, tol) #list only classes with elements.
             self.setStatus('All features snapped succesfully.\n', 1) #Finished

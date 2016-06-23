@@ -1161,20 +1161,21 @@ class PostgisDb(AbstractDb):
         self.db.transaction()
         query = QSqlQuery(self.db)
         for cl in classList:
-            sql = self.gen.snapLinesToFrame(cl, tol)
-            if not query.exec_(sql):
-                self.db.rollback()
-                self.db.close()
-                raise Exception(self.tr('Problem snapping to frame: ') + query.lastError().text())
+            sqls = self.gen.snapLinesToFrame(cl, tol)
+            for sql in sqls.split('#'):
+                if not query.exec_(sql):
+                    self.db.rollback()
+                    self.db.close()
+                    raise Exception(self.tr('Problem snapping to frame: ') + query.lastError().text())
         self.db.commit()
         self.db.close()
     
-    def densifyFrame(self, classList, tol):
+    def densifyFrame(self, classList):
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
         for cl in classList:
-            sql = self.gen.densifyFrame(cl, tol)
+            sql = self.gen.densifyFrame(cl)
             if not query.exec_(sql):
                 self.db.rollback()
                 self.db.close()

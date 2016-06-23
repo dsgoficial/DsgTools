@@ -704,6 +704,6 @@ class PostGISSqlGenerator(SqlGenerator):
         """.format(schema, table)
         return sql
 
-    def snapToGrid(self, cl, tol):
-        sql = 'update {0} set geom = ST_SnapToGrid(geom,{1})'.format(cl,tol)
+    def snapToGrid(self, cl, precision):
+        sql = 'update {0} set geom = ST_SnapToGrid(geom,{1})'.format(cl, precision)
         return sql
