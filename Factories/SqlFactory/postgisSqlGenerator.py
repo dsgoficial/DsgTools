@@ -707,3 +707,31 @@ class PostGISSqlGenerator(SqlGenerator):
     def snapToGrid(self, cl, precision):
         sql = 'update {0} set geom = ST_SnapToGrid(geom,{1})'.format(cl, precision)
         return sql
+    
+    def innerLayerSnap(self, cl, tol, id):
+        sql = """
+        CREATE OR REPLACE FUNCTION dsgsnap(tabela text, snap int) RETURNS void AS 
+        $BODY$
+            DECLARE
+            id int;
+            BEGIN
+                FOR id in execute('select id from '||tabela)
+                LOOP
+                    EXECUTE     
+                'update '||tabela||' as classe set geom = st_multi(res.geom) 
+                from 
+                    (
+                        select st_snap(a.geom, st_collect(b.geom), '||snap||') as geom, a.id as id 
+                        from '||tabela||' a, '||tabela||' b 
+                        where a.id != b.id and a.id = '||id||' 
+                        group by a.id, a.geom
+                    ) as res 
+                where res.id = classe.id';
+                END LOOP;
+                RETURN;                        
+            END
+        $BODY$
+        LANGUAGE plpgsql;
+        select dsgsnap('cb.rel_curva_nivel_l', 3000)
+        """.format(cl, str(tol), str(id))
+        return sql

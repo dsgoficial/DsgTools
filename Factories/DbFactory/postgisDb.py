@@ -1182,3 +1182,4 @@ class PostgisDb(AbstractDb):
                 raise Exception(self.tr('Problem densifying frame: ') + query.lastError().text())
         self.db.commit()
         self.db.close()
+        
