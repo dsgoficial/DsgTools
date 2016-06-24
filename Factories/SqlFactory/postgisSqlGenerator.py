@@ -708,9 +708,9 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = 'update {0} set geom = ST_SnapToGrid(geom,{1})'.format(cl, precision)
         return sql
     
-    def innerLayerSnap(self, cl, tol, id):
+    def makeRecursiveSnapFunction(self):
         sql = """
-        CREATE OR REPLACE FUNCTION dsgsnap(tabela text, snap int) RETURNS void AS 
+        CREATE OR REPLACE FUNCTION dsgsnap(tabela text, snap float) RETURNS void AS 
         $BODY$
             DECLARE
             id int;
@@ -732,6 +732,9 @@ class PostGISSqlGenerator(SqlGenerator):
             END
         $BODY$
         LANGUAGE plpgsql;
-        select dsgsnap('cb.rel_curva_nivel_l', 3000)
-        """.format(cl, str(tol), str(id))
+        """
+        return sql
+    
+    def executeRecursiveSnap(self, cl, tol):
+        sql = 'SELECT dsgsnap(\'{0}\', {1})'.format(cl, str(tol))
         return sql

@@ -1183,3 +1183,20 @@ class PostgisDb(AbstractDb):
         self.db.commit()
         self.db.close()
         
+    def recursiveSnap(self, classList, tol):
+        self.checkAndOpenDb()
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        sql = self.gen.makeRecursiveSnapFunction()
+        if not query.exec_(sql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem creating recursive snap function: ') + query.lastError().text())
+        for cl in classList:
+            sql = self.gen.executeRecursiveSnap(cl, tol)
+            if not query.exec_(sql):
+                self.db.rollback()
+                self.db.close()
+                raise Exception(self.tr('Problem snapping class: ') + query.lastError().text())
+        self.db.commit()
+        self.db.close()
