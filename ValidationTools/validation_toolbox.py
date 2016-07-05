@@ -192,7 +192,9 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         try:
             procReturn = self.validationManager.executeProcess(processName)
-        except:
+        except Exception as e:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             procReturn = 0
             QApplication.restoreOverrideCursor()
         QApplication.restoreOverrideCursor()
