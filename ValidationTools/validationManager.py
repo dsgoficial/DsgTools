@@ -43,6 +43,7 @@ class ValidationManager(QObject):
     def setAvailableProcesses(self):
         ignoredFiles = ['__init__.py', 'validationProcess.py']
         for root, dirs, files in os.walk(os.path.join(os.path.dirname(__file__), 'ValidationProcesses')):
+            files.sort()
             for file in files:
                 if file in ignoredFiles or file.split('.')[-1] != 'py':
                     continue
