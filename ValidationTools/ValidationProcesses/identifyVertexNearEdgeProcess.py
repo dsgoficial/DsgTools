@@ -24,8 +24,8 @@ from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class IdentifyVertexNearEdgeProcess(ValidationProcess):
-    def __init__(self, postgisDb):
-        super(self.__class__,self).__init__(postgisDb)
+    def __init__(self, postgisDb, codelist):
+        super(self.__class__,self).__init__(postgisDb, codelist)
         self.parameters = {'Tolerance': 1.0}
 
     def execute(self):

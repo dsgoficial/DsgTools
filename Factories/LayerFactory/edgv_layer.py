@@ -52,3 +52,4 @@ class EDGVLayer(QObject):
 
     def loadDomainTable(self,name):
         pass
+    

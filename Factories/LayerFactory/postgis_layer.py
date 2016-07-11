@@ -54,13 +54,13 @@ class PostGISLayer(EDGVLayer):
 
         self.qmlName = layer.replace('\r','')
 
-        host = abstractDb.db.hostName()
-        port = abstractDb.db.port()
-        database = abstractDb.db.databaseName()
-        user = abstractDb.db.userName()
-        password = abstractDb.db.password()
+        self.host = abstractDb.db.hostName()
+        self.port = abstractDb.db.port()
+        self.database = abstractDb.db.databaseName()
+        self.user = abstractDb.db.userName()
+        self.password = abstractDb.db.password()
         
-        self.uri.setConnection(str(host),str(port), str(database), str(user), str(password))
+        self.uri.setConnection(str(self.host),str(self.port), str(self.database), str(self.user), str(self.password))
         if self.layer_name[-1] == 'c':
             geomColumn = 'centroid'
         else:
@@ -68,7 +68,21 @@ class PostGISLayer(EDGVLayer):
         self.uri.setDataSource(self.schema, layer, geomColumn, sql, 'id')
         self.uri.disableSelectAtId(True)
 
-    def load(self, crs, idSubgrupo = None):
+    def checkLoaded(self, name):
+        loadedLayers = iface.legendInterface().layers()
+        loaded = None
+        for ll in loadedLayers:
+            if ll.name() == name:
+                candidateUri = QgsDataSourceURI(ll.dataProvider().dataSourceUri())
+                if self.host == candidateUri.host() and self.database == candidateUri.database() and self.port == int(candidateUri.port()):
+                    return ll
+        return loaded
+
+    def load(self, crs, idSubgrupo = None, uniqueLoad = False):
+        if uniqueLoad:
+            lyr = self.checkLoaded(self.layer_name)
+            if lyr:
+                return lyr
         qmldir = ''
         try:
             qmldir = self.abstractDb.getQmlDir()

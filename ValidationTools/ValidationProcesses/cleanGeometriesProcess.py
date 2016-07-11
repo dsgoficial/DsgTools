@@ -25,8 +25,8 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 import processing, binascii
 
 class CleanGeometriesProcess(ValidationProcess):
-    def __init__(self, postgisDb):
-        super(self.__class__,self).__init__(postgisDb)
+    def __init__(self, postgisDb, codelist):
+        super(self.__class__,self).__init__(postgisDb, codelist)
         self.parameters = {'Snap': 1.0, 'MinArea':0.001}
         
     def runProcessinAlg(self, cl):
