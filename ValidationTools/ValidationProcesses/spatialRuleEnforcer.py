@@ -23,64 +23,117 @@
 import os
 
 from PyQt4 import QtGui
+from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
-from qgis.core import QgsMessageLog, QgsDataSourceURI
+from qgis.core import QgsMessageLog, QgsDataSourceURI, QgsGeometry, QgsFeatureRequest
 
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class SpatialRuleEnforcer(ValidationProcess):
-    predicates = {'equal':'ST_Equals',
-                  'disjoint':'ST_Disjoint',
-                  'intersect':'ST_Intersects',
-                  'touch':'ST_Touches',
-                  'cross':'ST_Crosses',
-                  'within':'ST_Within',
-                  'overlap':'ST_Overlaps',
-                  'contain':'ST_Contains',
-                  'cover':'ST_Covers',
-                  'covered by':'ST_CoveredBy'}
+    #this relates the predicate with the methods present in the QgsGeometry class
+    predicates = {'equal':'equals',
+                  'disjoint':'disjoint',
+                  'intersect':'intersects',
+                  'touch':'touches',
+                  'cross':'crosses',
+                  'within':'within',
+                  'overlap':'overlaps',
+                  'contain':'contains',
+                  'cover':'overlaps',#we still must check what to do here
+                  'covered by':'overlaps'}#we still must check what to do here
     
-    necessity = {'must (be)':'\'f\'',
-                 'must not (be)':'\'t\''}
+    #we must check is this is violated to raise flags, hence the opposite idea
+    necessity = {'must (be)':False,
+                 'must not (be)':True}
     
-    def __init__(self, postgisDb, codelist):
+    def __init__(self, postgisDb, codelist, iface):
         super(self.__class__,self).__init__(postgisDb, codelist)
-        
+        self.iface = iface
         self.rulesFile = os.path.join(os.path.dirname(__file__), '..', 'ValidationRules', 'ruleLibrary.rul')
         
-    def connectEditingSignals(self, iface):
-        for layer in iface.mapCanvas().layers():
+    def connectEditingSignals(self):
+        '''
+        Connects all editing signals when the rule enforcer is turned on
+        '''
+        for layer in self.iface.mapCanvas().layers():
             layer.geometryChanged.connect(self.enforceSpatialRulesForChanges)
             layer.featureAdded.connect(self.enforceSpatialRulesForAddition)
             layer.featureDeleted.connect(self.enforceSpatialRulesForDeletion)
 
-    def disconnectEditingSignals(self, iface):
-        for layer in iface.mapCanvas().layers():
+    def disconnectEditingSignals(self):
+        '''
+        Disconnects all editing signals when the rule enforcer is turned off
+        '''
+        for layer in self.iface.mapCanvas().layers():
             layer.geometryChanged.disconnect(self.enforceSpatialRulesForChanges)
             layer.featureAdded.disconnect(self.enforceSpatialRulesForAddition)
             layer.featureDeleted.disconnect(self.enforceSpatialRulesForDeletion)
             
-    def enforceSpatialRulesForChanges(self):
+    def getFullLayerName(self, sender):
+        '''
+        Gets the layer name as present in the rules
+        '''
         layer = self.sender()
         uri = layer.dataProvider().dataSourceUri()
         dsUri = QgsDataSourceURI(uri)
         name = '.'.join([dsUri.schema(), dsUri.table()])
-        rules = self.getRules(name)
-        print rules
+        return name
+    
+    def getLayer(self, layername):
+        '''
+        Gets the QgsVectorLayer involved in the rule that is about to be tested
+        '''
+        for layer in self.iface.mapCanvas().layers():
+            if layer.name() == layername:
+                return layer
+      
+    @pyqtSlot(int, QgsGeometry)      
+    def enforceSpatialRulesForChanges(self, featureId, geometry):
+        '''
+        Slot that is activated when a feature is modified by the user
+        '''
+        #layer that sent the signal
+        layer = self.sender()
+        #layer name as present in the rules
+        layername = self.getFullLayerName(layer)
+        #rules involving the layer
+        rules = self.getRules(layername)
+        # for each rule we must test what is happening
+        changedFeature = layer.dataProvider().getFeatures(QgsFeatureRequest(featureId)).next()
+        for rule in rules:
+            layer1 = rule[0] #layer that defines the rule
+            layer2 = rule[3] #layer used to test the rule
+            necessity = rule[1] #rule necessity
+            vectorlayer2 = self.getLayer(layer2.split('.')[-1]) #correspondent QgsVectorLayer
+            method = getattr(geometry, rule[2]) #getting the correspondent QGSGeometry method to be used in the rule
+            print method
+            #Querying the features that intersect the geometry's bounding box
+            for feature in vectorlayer2.dataProvider().getFeatures(QgsFeatureRequest(geometry.boundingBox())):
+                if layer1 == layer2 and changedFeature['id'] == feature['id']:
+                    continue
+                #for each one of them we must execute the method
+                if method(feature.geometry()) == necessity:
+                    print 'we should raise flag: ', str(changedFeature['id']), 'violates', rule[6], 'with ', str(feature['id'])
 
-    def enforceSpatialRulesForAddition(self):
+    @pyqtSlot(int)      
+    def enforceSpatialRulesForAddition(self, featureId):
         layer = self.sender()
         print layer.name()
     
-    def enforceSpatialRulesForDeletion(self):
+    @pyqtSlot(int)      
+    def enforceSpatialRulesForDeletion(self, featureId):
         layer = self.sender()
         print layer.name()
     
-    def enforceSpatialRulesForMultipleDeletion(self):
+    @pyqtSlot(list)      
+    def enforceSpatialRulesForMultipleDeletion(self, ids):
         layer = self.sender()
         print layer.name()
         
     def getRules(self, layerName):
+        '''
+        Get a list of tuples (rules) using the configuration file
+        '''
         try:
             with open(self.rulesFile, 'r') as f:
                 rules = [line.rstrip('\n') for line in f]

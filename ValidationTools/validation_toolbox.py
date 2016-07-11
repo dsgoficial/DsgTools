@@ -227,8 +227,8 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_ruleEnforcerRadio_toggled(self, checked):
         if checked:
-            self.ruleEnforcer = SpatialRuleEnforcer(self.validationManager.postgisDb,self.validationManager.codelist)
-            self.ruleEnforcer.connectEditingSignals(self.iface)
+            self.ruleEnforcer = SpatialRuleEnforcer(self.validationManager.postgisDb,self.validationManager.codelist, self.iface)
+            self.ruleEnforcer.connectEditingSignals()
         else:
-            self.ruleEnforcer.disconnectEditingSignals(self.iface)
+            self.ruleEnforcer.disconnectEditingSignals()
             
