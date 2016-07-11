@@ -102,13 +102,25 @@ class ValidationProcess(QObject):
         self.setStatus('Process finished with errors.', 2) #Failed status
         self.clearClassesToBeDisplayedAfterProcess()        
     
-    def outputData(self, inputClass, dataLyr):
+    def outputGeometricData(self, type, inputClass, dataDict):
+        '''
+        type: postgis or qgsvectorlayer
+        inputClass: name of the class
+        dataDict: dict with the keys update, delete or insert. for each type, there is a proper data, ie:
+            postgis: tuple of (id,geom)
+            qgsvectorlayer: layer with geometry 
+        '''
         edgvLayer = self.layerFactory.makeLayer(self.abstractDb, self.codeList, inputClass)
         crs = self.abstractDb.getSrid()
         lyr = edgvLayer.load(crs, uniqueLoad = True)
-        updateList = []
-        addList = []
-        deleteList = []
+        if type == 'postgis':
+            ret = self.outputPostgisData(inputClass,dataDict)
+        else:
+            ret = self.outputVectorData(inputClass,dataDict)
         
-        
+    def outputPostgisData(self, inputClass,dataDict):
+        pass
+    
+    def outputVectorData(self, inputClass,dataDict):
+        pass
         
