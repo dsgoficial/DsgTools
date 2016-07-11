@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                              -------------------
-        begin                : 2015-09-10
+        begin                : 2016-07-11
         git sha              : $Format:%H$
         copyright            : (C) 2014 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
         email                : luiz.claudio@dsg.eb.mil.br
@@ -24,11 +24,11 @@ import os
 
 from PyQt4 import QtGui
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, QgsDataSourceURI
 
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
-class SpatialRuleProcess(ValidationProcess):
+class SpatialRuleEnforcer(ValidationProcess):
     predicates = {'equal':'ST_Equals',
                   'disjoint':'ST_Disjoint',
                   'intersect':'ST_Intersects',
@@ -43,12 +43,44 @@ class SpatialRuleProcess(ValidationProcess):
     necessity = {'must (be)':'\'f\'',
                  'must not (be)':'\'t\''}
     
-    def __init__(self, postgisDb):
-        super(self.__class__,self).__init__(postgisDb)
+    def __init__(self, postgisDb, codelist):
+        super(self.__class__,self).__init__(postgisDb, codelist)
         
         self.rulesFile = os.path.join(os.path.dirname(__file__), '..', 'ValidationRules', 'ruleLibrary.rul')
         
-    def getRules(self):
+    def connectEditingSignals(self, iface):
+        for layer in iface.mapCanvas().layers():
+            layer.geometryChanged.connect(self.enforceSpatialRulesForChanges)
+            layer.featureAdded.connect(self.enforceSpatialRulesForAddition)
+            layer.featureDeleted.connect(self.enforceSpatialRulesForDeletion)
+
+    def disconnectEditingSignals(self, iface):
+        for layer in iface.mapCanvas().layers():
+            layer.geometryChanged.disconnect(self.enforceSpatialRulesForChanges)
+            layer.featureAdded.disconnect(self.enforceSpatialRulesForAddition)
+            layer.featureDeleted.disconnect(self.enforceSpatialRulesForDeletion)
+            
+    def enforceSpatialRulesForChanges(self):
+        layer = self.sender()
+        uri = layer.dataProvider().dataSourceUri()
+        dsUri = QgsDataSourceURI(uri)
+        name = '.'.join([dsUri.schema(), dsUri.table()])
+        rules = self.getRules(name)
+        print rules
+
+    def enforceSpatialRulesForAddition(self):
+        layer = self.sender()
+        print layer.name()
+    
+    def enforceSpatialRulesForDeletion(self):
+        layer = self.sender()
+        print layer.name()
+    
+    def enforceSpatialRulesForMultipleDeletion(self):
+        layer = self.sender()
+        print layer.name()
+        
+    def getRules(self, layerName):
         try:
             with open(self.rulesFile, 'r') as f:
                 rules = [line.rstrip('\n') for line in f]
@@ -67,32 +99,7 @@ class SpatialRuleProcess(ValidationProcess):
             min_card = cardinality.split('..')[0]
             max_card = cardinality.split('..')[1]
             rule = split[1]+' '+split[2]
-            ret.append((layer1, necessity, predicate, layer2, min_card, max_card, rule))
+            if layer1 == layerName or layer2 == layerName:
+                ret.append((layer1, necessity, predicate, layer2, min_card, max_card, rule))
             
         return ret
-
-    def execute(self):
-        #abstract method. MUST be reimplemented.
-        QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        try:
-            self.setStatus('Running', 3) #now I'm running!
-            self.abstractDb.deleteProcessFlags(self.getName())
-            
-            rules = self.getRules()
-            for rule in rules:
-                invalidGeomRecordList = self.abstractDb.testSpatialRule(rule[0], rule[1], rule[2], rule[3], rule[4], rule[5], rule[6])
-                if len(invalidGeomRecordList) > 0:
-                    numberOfInvGeom = self.addFlag(invalidGeomRecordList)
-                    for tuple in invalidGeomRecordList:
-                        self.addClassesToBeDisplayedList(tuple[0])        
-                    self.setStatus('%s features are invalid. Check flags.\n' % numberOfInvGeom, 4) #Finished with flags
-                    QgsMessageLog.logMessage('%s features are invalid. Check flags.\n' % numberOfInvGeom, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                else:
-                    self.setStatus('All features are valid.\n', 1) #Finished
-                    QgsMessageLog.logMessage('All features are valid.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)   
-            return 1             
-        except Exception as e:
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            self.finishedWithError()
-            return 0
-

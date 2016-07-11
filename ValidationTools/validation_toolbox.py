@@ -44,6 +44,7 @@ from DsgTools.ValidationTools.validation_config import ValidationConfig
 from DsgTools.ValidationTools.validationManager import ValidationManager
 from DsgTools.ValidationTools.validation_history import ValidationHistory
 from DsgTools.ValidationTools.rules_editor import RulesEditor
+from DsgTools.ValidationTools.ValidationProcesses.spatialRuleEnforcer import SpatialRuleEnforcer
 
 class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     def __init__(self, iface, codeList):
@@ -67,6 +68,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.validationManager = None
         self.tableView.setContextMenuPolicy(Qt.CustomContextMenu)
         self.tableView.customContextMenuRequested.connect(self.createMenuEditFlagStatus)
+        self.ruleEnforcer = None
 
     def createMenuEditFlagStatus(self, position):
         menu = QMenu()
@@ -221,4 +223,12 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             dlg.exec_()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+str(e.args[0]))
-
+            
+    @pyqtSlot(bool)
+    def on_ruleEnforcerRadio_toggled(self, checked):
+        if checked:
+            self.ruleEnforcer = SpatialRuleEnforcer(self.validationManager.postgisDb,self.validationManager.codelist)
+            self.ruleEnforcer.connectEditingSignals(self.iface)
+        else:
+            self.ruleEnforcer.disconnectEditingSignals(self.iface)
+            

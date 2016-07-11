@@ -42,7 +42,7 @@ class ValidationManager(QObject):
             self.processList = []
 
     def setAvailableProcesses(self):
-        ignoredFiles = ['__init__.py', 'validationProcess.py']
+        ignoredFiles = ['__init__.py', 'validationProcess.py', 'spatialRuleEnforcer.py']
         for root, dirs, files in os.walk(os.path.join(os.path.dirname(__file__), 'ValidationProcesses')):
             files.sort()
             for file in files:
