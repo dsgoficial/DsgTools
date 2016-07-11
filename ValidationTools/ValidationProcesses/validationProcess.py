@@ -25,7 +25,7 @@ from PyQt4.QtGui import QMessageBox
 from PyQt4.Qt import QObject
 
 class ValidationProcess(QObject):
-    def __init__(self, postgisDb):
+    def __init__(self, postgisDb, codelist):
         super(ValidationProcess, self).__init__()
         self.abstractDb = postgisDb
         if self.getStatus() == None:
@@ -33,6 +33,7 @@ class ValidationProcess(QObject):
         self.classesToBeDisplayedAfterProcess = []
         self.parameters = None
         self.parametersDict = None
+        self.codelist = codelist
         
     def setParameters(self, params):
         self.parameters = params
@@ -100,3 +101,14 @@ class ValidationProcess(QObject):
     def finishedWithError(self):
         self.setStatus('Process finished with errors.', 2) #Failed status
         self.clearClassesToBeDisplayedAfterProcess()        
+    
+    def outputData(self, inputClass, dataLyr):
+        edgvLayer = self.layerFactory.makeLayer(self.abstractDb, self.codeList, inputClass)
+        crs = self.abstractDb.getSrid()
+        lyr = edgvLayer.load(crs, uniqueLoad = True)
+        updateList = []
+        addList = []
+        deleteList = []
+        
+        
+        

@@ -43,8 +43,8 @@ class SpatialRuleProcess(ValidationProcess):
     necessity = {'must (be)':'\'f\'',
                  'must not (be)':'\'t\''}
     
-    def __init__(self, postgisDb):
-        super(self.__class__,self).__init__(postgisDb)
+    def __init__(self, postgisDb, codelist):
+        super(self.__class__,self).__init__(postgisDb, codelist)
         
         self.rulesFile = os.path.join(os.path.dirname(__file__), '..', 'ValidationRules', 'ruleLibrary.rul')
         

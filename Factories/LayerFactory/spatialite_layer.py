@@ -61,7 +61,21 @@ class SpatialiteLayer(EDGVLayer):
             geomColumn = 'GEOMETRY'
         self.uri.setDataSource('', table, geomColumn)
 
-    def load(self, crs, idSubgrupo = None):
+    def checkLoaded(self, name):
+        loadedLayers = iface.legendInterface().layers()
+        loaded = None
+        for ll in loadedLayers:
+            if ll.name() == name:
+                candidateUri = QgsDataSourceURI(ll.dataProvider().dataSourceUri())
+                if database == candidateUri.database():
+                    return ll
+        return loaded
+
+    def load(self, crs, idSubgrupo = None, uniqueLoad = False):
+        if uniqueLoad:
+            lyr = self.checkLoaded(self.layer_name)
+            if lyr:
+                return lyr
         qmldir = ''
         try:
             qmldir = self.abstractDb.getQmlDir()

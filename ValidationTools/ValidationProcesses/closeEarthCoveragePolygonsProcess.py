@@ -29,8 +29,8 @@ import json
 #update imports
 
 class CloseEarthCoveragePolygonsProcess(ValidationProcess):
-    def __init__(self, postgisDb):
-        super(self.__class__,self).__init__(postgisDb)
+    def __init__(self, postgisDb, codelist):
+        super(self.__class__,self).__init__(postgisDb, codelist)
     
     def cleanCentroidsAreas(self, coverageClassList):
         for cl in coverageClassList:

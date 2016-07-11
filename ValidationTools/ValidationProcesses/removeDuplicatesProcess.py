@@ -24,8 +24,8 @@ from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class RemoveDuplicatesProcess(ValidationProcess):
-    def __init__(self, postgisDb):
-        super(self.__class__,self).__init__(postgisDb)
+    def __init__(self, postgisDb, codelist):
+        super(self.__class__,self).__init__(postgisDb, codelist)
     
     def dependsOn(self):
         #Abstract method. Should be reimplemented if necessary.
