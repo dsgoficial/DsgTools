@@ -163,10 +163,11 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             coordinateTransformer = QgsCoordinateTransform(mapLayerCrs, crsSrc)
             for feature in mapLayer.selectedFeatures():
                 geom = feature.geometry()
-                if 'Multi' not in geom.geometry().geometryType():
-                    geom.convertToMultiType()
-                    geom.geometry().dropMValue()
-                    geom.geometry().dropZValue()
+                geom.convertToMultiType()
+                if 'geometry' in dir(geom):
+                    if 'Multi' not in geom.geometry().geometryType():
+                        geom.geometry().dropMValue()
+                        geom.geometry().dropZValue()
                 newFeature = QgsFeature(reclassificationLayer.pendingFields())
                 geom.transform(coordinateTransformer)
                 newFeature.setGeometry(geom)
