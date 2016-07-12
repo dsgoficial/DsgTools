@@ -25,7 +25,7 @@ import os
 from PyQt4 import QtGui
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
-from qgis.core import QgsMessageLog, QgsDataSourceURI, QgsGeometry, QgsFeatureRequest
+from qgis.core import QgsMessageLog, QgsDataSourceURI, QgsGeometry, QgsFeatureRequest, QgsVectorLayerEditBuffer
 
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
@@ -134,10 +134,10 @@ class SpatialRuleEnforcer(ValidationProcess):
         #rules involving the layer
         rules = self.getRules(layername)
         # for each rule we must test what is happening
-        features = layer.dataProvider().getFeatures(QgsFeatureRequest(featureId))
-        for addedFeature in features:
+        features = layer.editBuffer().addedFeatures()
+        for key in features.keys():
             for rule in rules:
-                self.testRule(rule, addedFeature) #actual test
+                self.testRule(rule, features[key]) #actual test
         
     def getRules(self, layerName):
         '''
