@@ -149,7 +149,7 @@ class ValidationProcess(QObject):
                     elif attrList[i] == 'geom':
                         wkbGeom = tuple(i)
                         geom = QgsGeometry()
-                        geom.setWkb(tuple[i],len(tuple[i]))
+                        geom.fromWkb(tuple[i],len(tuple[i]))
                         newFeat.setGeometry(geom)
                     else:
                         fieldId = outputLayer.fieldNameIndex(attrList[i])
@@ -172,7 +172,7 @@ class ValidationProcess(QObject):
                     elif attrList[i] == 'geom':
                         wkbGeom = tuple(i)
                         geom = QgsGeometry()
-                        geom.setWkb(tuple[i],len(tuple[i]))
+                        geom.fromWkb(tuple[i],len(tuple[i]))
                 for i in range(attrList):
                     if attrList[i] not in ['id', 'geom']:
                         outputLayer.changeAttributeValue(id, fieldDict[attrList[i]], tuple[i])
