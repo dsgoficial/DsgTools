@@ -152,7 +152,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         reclassificationLayer.startEditing()
 
         mapLayers = self.iface.mapCanvas().layers()
-        crsSrc = QgsCoordinateReferenceSystem(self.widget.crs.geographicCRSAuthId())
+        crsSrc = QgsCoordinateReferenceSystem(self.widget.crs.authid())
         for mapLayer in mapLayers:
             if mapLayer.type() != QgsMapLayer.VectorLayer:
                 continue
