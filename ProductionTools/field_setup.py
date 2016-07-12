@@ -345,21 +345,23 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 # this guy is a QComboBox or a QListWidget
                 widgetItem = self.attributeTableWidget.cellWidget(i, 1)
     
+                # this guy is a QComboBox here
                 if isinstance(qmlDict[attribute], dict):
                     for i in range(widgetItem.count()):
                         text = widgetItem.itemText(i)
                         if qmlDict[attribute][text] == value:
                             widgetItem.setCurrentIndex(i)
-                            break
+                # this guy is a QListWidget here
                 if isinstance(qmlDict[attribute], tuple):
+                    #getting just the values
+                    multivalues = value.replace('{', '').replace('}', '').split(',')
                     (table, filterKeys) = qmlDict[attribute]
                     valueRelation = self.makeValueRelationDict(table, filterKeys)
-                    values = []
+                    #marking just the correct values
                     for i in range(widgetItem.count()):
-                        if widgetItem.item(i).checkState() == Qt.Checked:
-                            key = widgetItem.item(i).text()
-                            values.append(valueRelation[key])
-                    value = '{%s}' % ','.join(map(str, values))
+                        text = widgetItem.item(i).text()
+                        if str(valueRelation[text]) in multivalues:
+                            widgetItem.item(i).setCheckState(Qt.Checked)
             
     def makeReclassificationDict(self):
         '''
