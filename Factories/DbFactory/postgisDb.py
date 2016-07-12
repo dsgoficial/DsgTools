@@ -1200,3 +1200,17 @@ class PostgisDb(AbstractDb):
                 raise Exception(self.tr('Problem snapping class: ') + query.lastError().text())
         self.db.commit()
         self.db.close()
+
+    def updateFlag(self, flagTuple, processName):
+        self.checkAndOpenDb()
+        srid = self.findEPSG()
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        sql = self.gen.deleteFlagFromDb(flagTuple[0], str(flagTuple[1]), flagTuple[2], flagTuple[3], srid, processName)
+        if not query.exec_(sql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem deleting flag: ') + query.lastError().text())
+        self.db.commit()
+        
+        return self.insertFlags([flagTuple], processName)

@@ -72,7 +72,14 @@ class ValidationProcess(QObject):
     
     def addFlag(self, flagTupleList):
         try:
-            return self.abstractDb.insertFlags(flagTupleList,self.getName())
+            return self.abstractDb.insertFlags(flagTupleList, self.getName())
+        except Exception as e:
+            QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            
+    def updateFlag(self, flagTuple):
+        try:
+            return self.abstractDb.updateFlag(flagTuple, self.getName())
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

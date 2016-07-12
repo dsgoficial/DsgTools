@@ -738,3 +738,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def executeRecursiveSnap(self, cl, tol):
         sql = 'SELECT dsgsnap(\'{0}\', {1})'.format(cl, str(tol))
         return sql
+
+    def deleteFlagFromDb(self, layer, feat_id, reason, geom, srid, processName):
+        sql = "DELETE FROM validation.aux_flags_validacao WHERE process_name = '{0}' AND layer = '{1}' AND feat_id = {2} AND reason = '{3}'".format(processName, layer, feat_id, reason)
+        return sql

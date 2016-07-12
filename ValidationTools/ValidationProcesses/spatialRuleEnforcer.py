@@ -50,6 +50,7 @@ class SpatialRuleEnforcer(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, codelist)
         self.iface = iface
         self.rulesFile = os.path.join(os.path.dirname(__file__), '..', 'ValidationRules', 'ruleLibrary.rul')
+        self.flags = {}
         
     def connectEditingSignals(self):
         '''
@@ -107,15 +108,24 @@ class SpatialRuleEnforcer(ValidationProcess):
             if method(feature.geometry()) == necessity:
                 #making the reason
                 reason = 'Feature id %s from %s violates rule %s %s' % (str(featureId), layer1, rule, layer2)
+                
                 #geom must be the intersection
                 geom = geometry.intersection(feature.geometry())
-                #case the intersection in None, we should use the original geometry
+                #case the intersection is None, we should use the original geometry
                 if not geom:
                     geom = geometry
+                #hex geometry to be added as flag
+                hexa = binascii.hexlify(geom.asWkb())
+                
                 #creating the flag
-                flagTuple = (layer1, str(featureId), reason, binascii.hexlify(geom.asWkb()))
-                #adding the flag individually
-                self.addFlag([flagTuple])
+                flagTuple = (layer1, str(featureId), reason)
+                if flagTuple not in self.flags.keys():#if the flag is not already set we must set it and insert it into the DB
+                    self.flags[flagTuple] = True
+                    #adding the flag individually
+                    self.addFlag([(layer1, str(featureId), reason, hexa)])
+                else:
+                    #removing the old flag and inserting a new one adjusted
+                    self.updateFlag((layer1, str(featureId), reason, hexa))
       
     @pyqtSlot(int, QgsGeometry)      
     def enforceSpatialRulesForChanges(self, featureId, geometry):
