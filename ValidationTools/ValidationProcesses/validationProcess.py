@@ -152,7 +152,6 @@ class ValidationProcess(QObject):
                         geom.fromWkb(tuple[i],len(tuple[i]))
                         newFeat.setGeometry(geom)
                     else:
-                        fieldId = outputLayer.fieldNameIndex(attrList[i])
                         newFeat.setAttribute(fieldDict[attrList[i]],tuple[i])
                 featList.append(newFeat)
             outputLayer.addFeatures(featList)
