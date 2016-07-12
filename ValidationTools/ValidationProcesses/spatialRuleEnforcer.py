@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
+import os, binascii
 
 from PyQt4 import QtGui
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
@@ -55,6 +55,7 @@ class SpatialRuleEnforcer(ValidationProcess):
         '''
         Connects all editing signals when the rule enforcer is turned on
         '''
+        self.abstractDb.deleteProcessFlags(self.getName()) #deleting old flags when we start the watch dog again
         for layer in self.iface.mapCanvas().layers():
             layer.geometryChanged.connect(self.enforceSpatialRulesForChanges)
             layer.featureAdded.connect(self.enforceSpatialRulesForAddition)
@@ -84,7 +85,7 @@ class SpatialRuleEnforcer(ValidationProcess):
             if layer.name() == layername:
                 return layer
             
-    def testRule(self, rule, testFeature):
+    def testRule(self, rule, featureId, geometry):
         '''
         Tests the rule against the geometry passed as parameter
         '''
@@ -92,19 +93,29 @@ class SpatialRuleEnforcer(ValidationProcess):
         necessity = rule[1] #rule necessity
         predicate = rule[2]
         layer2 = rule[3] #layer used to test the rule
+        rule = rule[6]
         
         vectorlayer2 = self.getLayer(layer2.split('.')[-1]) #correspondent QgsVectorLayer
         
-        geometry = testFeature.geometry()
         method = getattr(geometry, predicate) #getting the correspondent QgsGeometry method to be used in the rule
 
         #querying the features that intersect the geometry's bounding box
         for feature in vectorlayer2.dataProvider().getFeatures(QgsFeatureRequest(geometry.boundingBox())):
-            if layer1 == layer2 and testFeature['id'] == feature['id']:
+            if layer1 == layer2 and featureId == feature['id']:
                 continue
             #for each one of them we must execute the method
             if method(feature.geometry()) == necessity:
-                print 'we should raise flag: ', str(testFeature['id']), 'violates', rule[6], 'with ', str(feature['id'])
+                #making the reason
+                reason = 'Feature id %s from %s violates rule %s %s' % (str(featureId), layer1, rule, layer2)
+                #geom must be the intersection
+                geom = geometry.intersection(feature.geometry())
+                #case the intersection in None, we should use the original geometry
+                if not geom:
+                    geom = geometry
+                #creating the flag
+                flagTuple = (layer1, str(featureId), reason, binascii.hexlify(geom.asWkb()))
+                #adding the flag individually
+                self.addFlag([flagTuple])
       
     @pyqtSlot(int, QgsGeometry)      
     def enforceSpatialRulesForChanges(self, featureId, geometry):
@@ -118,9 +129,8 @@ class SpatialRuleEnforcer(ValidationProcess):
         #rules involving the layer
         rules = self.getRules(layername)
         # for each rule we must test what is happening
-        changedFeature = layer.dataProvider().getFeatures(QgsFeatureRequest(featureId)).next()
         for rule in rules:
-            self.testRule(rule, changedFeature) #actual test
+            self.testRule(rule, featureId, geometry) #actual test
 
     @pyqtSlot(int)      
     def enforceSpatialRulesForAddition(self, featureId):
@@ -136,9 +146,12 @@ class SpatialRuleEnforcer(ValidationProcess):
         # for each rule we must test what is happening
         features = layer.editBuffer().addedFeatures()
         for key in features.keys():
+            #just checking the newly added feature, the other were already tested
+            if key != featureId:
+                continue
             for rule in rules:
-                self.testRule(rule, features[key]) #actual test
-        
+                self.testRule(rule, featureId, features[featureId].geometry()) #actual test
+                
     def getRules(self, layerName):
         '''
         Get a list of tuples (rules) using the configuration file
