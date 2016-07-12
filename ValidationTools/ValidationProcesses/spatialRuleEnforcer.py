@@ -58,7 +58,6 @@ class SpatialRuleEnforcer(ValidationProcess):
         for layer in self.iface.mapCanvas().layers():
             layer.geometryChanged.connect(self.enforceSpatialRulesForChanges)
             layer.featureAdded.connect(self.enforceSpatialRulesForAddition)
-            layer.featureDeleted.connect(self.enforceSpatialRulesForDeletion)
 
     def disconnectEditingSignals(self):
         '''
@@ -67,14 +66,12 @@ class SpatialRuleEnforcer(ValidationProcess):
         for layer in self.iface.mapCanvas().layers():
             layer.geometryChanged.disconnect(self.enforceSpatialRulesForChanges)
             layer.featureAdded.disconnect(self.enforceSpatialRulesForAddition)
-            layer.featureDeleted.disconnect(self.enforceSpatialRulesForDeletion)
             
     def getFullLayerName(self, sender):
         '''
         Gets the layer name as present in the rules
         '''
-        layer = self.sender()
-        uri = layer.dataProvider().dataSourceUri()
+        uri = sender.dataProvider().dataSourceUri()
         dsUri = QgsDataSourceURI(uri)
         name = '.'.join([dsUri.schema(), dsUri.table()])
         return name
@@ -86,6 +83,28 @@ class SpatialRuleEnforcer(ValidationProcess):
         for layer in self.iface.mapCanvas().layers():
             if layer.name() == layername:
                 return layer
+            
+    def testRule(self, rule, testFeature):
+        '''
+        Tests the rule against the geometry passed as parameter
+        '''
+        layer1 = rule[0] #layer that defines the rule
+        necessity = rule[1] #rule necessity
+        predicate = rule[2]
+        layer2 = rule[3] #layer used to test the rule
+        
+        vectorlayer2 = self.getLayer(layer2.split('.')[-1]) #correspondent QgsVectorLayer
+        
+        geometry = testFeature.geometry()
+        method = getattr(geometry, predicate) #getting the correspondent QgsGeometry method to be used in the rule
+
+        #querying the features that intersect the geometry's bounding box
+        for feature in vectorlayer2.dataProvider().getFeatures(QgsFeatureRequest(geometry.boundingBox())):
+            if layer1 == layer2 and testFeature['id'] == feature['id']:
+                continue
+            #for each one of them we must execute the method
+            if method(feature.geometry()) == necessity:
+                print 'we should raise flag: ', str(testFeature['id']), 'violates', rule[6], 'with ', str(feature['id'])
       
     @pyqtSlot(int, QgsGeometry)      
     def enforceSpatialRulesForChanges(self, featureId, geometry):
@@ -101,34 +120,24 @@ class SpatialRuleEnforcer(ValidationProcess):
         # for each rule we must test what is happening
         changedFeature = layer.dataProvider().getFeatures(QgsFeatureRequest(featureId)).next()
         for rule in rules:
-            layer1 = rule[0] #layer that defines the rule
-            layer2 = rule[3] #layer used to test the rule
-            necessity = rule[1] #rule necessity
-            vectorlayer2 = self.getLayer(layer2.split('.')[-1]) #correspondent QgsVectorLayer
-            method = getattr(geometry, rule[2]) #getting the correspondent QGSGeometry method to be used in the rule
-            print method
-            #Querying the features that intersect the geometry's bounding box
-            for feature in vectorlayer2.dataProvider().getFeatures(QgsFeatureRequest(geometry.boundingBox())):
-                if layer1 == layer2 and changedFeature['id'] == feature['id']:
-                    continue
-                #for each one of them we must execute the method
-                if method(feature.geometry()) == necessity:
-                    print 'we should raise flag: ', str(changedFeature['id']), 'violates', rule[6], 'with ', str(feature['id'])
+            self.testRule(rule, changedFeature) #actual test
 
     @pyqtSlot(int)      
     def enforceSpatialRulesForAddition(self, featureId):
+        '''
+        Slot that is activated when a feature is added by the user
+        '''
+        #layer that sent the signal
         layer = self.sender()
-        print layer.name()
-    
-    @pyqtSlot(int)      
-    def enforceSpatialRulesForDeletion(self, featureId):
-        layer = self.sender()
-        print layer.name()
-    
-    @pyqtSlot(list)      
-    def enforceSpatialRulesForMultipleDeletion(self, ids):
-        layer = self.sender()
-        print layer.name()
+        #layer name as present in the rules
+        layername = self.getFullLayerName(layer)
+        #rules involving the layer
+        rules = self.getRules(layername)
+        # for each rule we must test what is happening
+        features = layer.dataProvider().getFeatures(QgsFeatureRequest(featureId))
+        for addedFeature in features:
+            for rule in rules:
+                self.testRule(rule, addedFeature) #actual test
         
     def getRules(self, layerName):
         '''
