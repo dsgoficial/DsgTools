@@ -323,11 +323,43 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         '''
         Making the attribute table with the actual values present in the tree widget
         '''
+        # class row in the classListWidget
+        classRow = self.classListWidget.currentRow()
+
+        schemaName, tableName = self.abstractDb.getTableSchema(self.classListWidget.item(classRow).text())
+
+        qmlPath = os.path.join(self.qmlDir, tableName+'.qml')
+        qml = QmlParser(qmlPath)
+        # qml dict for this class (tableName)
+        qmlDict = qml.getDomainDict()
+
         for i in range(buttonItem.childCount()):
             attrItem = buttonItem.child(i)
             attribute = attrItem.text(0)
             value = attrItem.text(1)
-            print attribute, value
+            # accessing the attribute name and widget (QComboBox or QListWidget depending on data type)
+            for i in range(self.attributeTableWidget.rowCount()):
+                if attribute <> self.attributeTableWidget.item(i, 0).text():
+                    continue
+                
+                # this guy is a QComboBox or a QListWidget
+                widgetItem = self.attributeTableWidget.cellWidget(i, 1)
+    
+                if isinstance(qmlDict[attribute], dict):
+                    for i in range(widgetItem.count()):
+                        text = widgetItem.itemText(i)
+                        if qmlDict[attribute][text] == value:
+                            widgetItem.setCurrentIndex(i)
+                            break
+                if isinstance(qmlDict[attribute], tuple):
+                    (table, filterKeys) = qmlDict[attribute]
+                    valueRelation = self.makeValueRelationDict(table, filterKeys)
+                    values = []
+                    for i in range(widgetItem.count()):
+                        if widgetItem.item(i).checkState() == Qt.Checked:
+                            key = widgetItem.item(i).text()
+                            values.append(valueRelation[key])
+                    value = '{%s}' % ','.join(map(str, values))
             
     def makeReclassificationDict(self):
         '''
