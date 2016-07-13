@@ -66,7 +66,7 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 2.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -76,6 +76,29 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 2.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="ui_about.ui" line="89"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 2.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 2.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -2437,57 +2460,57 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Grande</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.ui" line="82"/>
+        <location filename="ProductionTools/field_setup.ui" line="89"/>
         <source>EDGV Version</source>
         <translation>Versão da EDGV</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.ui" line="90"/>
+        <location filename="ProductionTools/field_setup.ui" line="97"/>
         <source>Select a database version</source>
         <translation>Selecione uma versão de banco de dados</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.ui" line="95"/>
+        <location filename="ProductionTools/field_setup.ui" line="102"/>
         <source>2.1.3</source>
         <translation>2.1.3</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.ui" line="100"/>
+        <location filename="ProductionTools/field_setup.ui" line="107"/>
         <source>FTer_2a_Ed</source>
         <translation>FTer_2a_Ed</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.ui" line="117"/>
+        <location filename="ProductionTools/field_setup.ui" line="124"/>
         <source>Custom Elements</source>
         <translation>Elementos Customizados</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.ui" line="207"/>
+        <location filename="ProductionTools/field_setup.ui" line="214"/>
         <source>Value</source>
         <translation>Valor</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.ui" line="133"/>
+        <location filename="ProductionTools/field_setup.ui" line="140"/>
         <source>New Element</source>
         <translation>Novo Elemento</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.ui" line="145"/>
+        <location filename="ProductionTools/field_setup.ui" line="152"/>
         <source>Filter</source>
         <translation>Filtro</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.ui" line="189"/>
+        <location filename="ProductionTools/field_setup.ui" line="196"/>
         <source>Button Name</source>
         <translation>Nome do Botão</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.ui" line="202"/>
+        <location filename="ProductionTools/field_setup.ui" line="209"/>
         <source>Attribute</source>
         <translation>Atributo</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.ui" line="228"/>
+        <location filename="ProductionTools/field_setup.ui" line="235"/>
         <source>Add / Update</source>
         <translation>Adicionar / Atualizar</translation>
     </message>
@@ -2556,6 +2579,11 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <source>Field setup file saved successfully!</source>
         <translation>Configuração de campo salva com sucesso!</translation>
     </message>
+    <message>
+        <location filename="ProductionTools/field_setup.ui" line="78"/>
+        <source>Create buttons grouped by category</source>
+        <translation>Criar botões agrupados por categoria</translation>
+    </message>
 </context>
 <context>
     <name>FieldToolbox</name>
@@ -2575,42 +2603,42 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Ajuste</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_toolbox.py" line="115"/>
+        <location filename="ProductionTools/field_toolbox.py" line="187"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_toolbox.py" line="115"/>
+        <location filename="ProductionTools/field_toolbox.py" line="187"/>
         <source>Could not load the selected classes!</source>
         <translation>Não foi possível carregar as classes selecionadas!</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_toolbox.py" line="130"/>
+        <location filename="ProductionTools/field_toolbox.py" line="205"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_toolbox.py" line="120"/>
+        <location filename="ProductionTools/field_toolbox.py" line="195"/>
         <source>Please, select a database.</source>
         <translation>Por favor, selecione um banco de dados</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_toolbox.py" line="126"/>
+        <location filename="ProductionTools/field_toolbox.py" line="201"/>
         <source>Problem obtaining database version! Please, check log for details.</source>
         <translation>Problema obtendo versão do banco de dados! Por favor, verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_toolbox.py" line="130"/>
+        <location filename="ProductionTools/field_toolbox.py" line="205"/>
         <source>Database version does not match the field toolbox version.</source>
         <translation>Versão do banco de dados não coincide com a versão da caixa de ferramentas de campo.</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_toolbox.py" line="185"/>
+        <location filename="ProductionTools/field_toolbox.py" line="268"/>
         <source>Information!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_toolbox.py" line="185"/>
+        <location filename="ProductionTools/field_toolbox.py" line="268"/>
         <source>Features reclassified with success!</source>
         <translation>Feições reclassificadas com suceso!</translation>
     </message>
