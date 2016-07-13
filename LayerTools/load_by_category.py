@@ -222,9 +222,9 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
                 linha = []
                 area = []
                 if self.checkBoxOnlyWithElements.isChecked():
-                    parents = self.widget.abstractDb.getOrphanGeomTablesWithElements()
+                    parents = self.widget.abstractDb.getOrphanGeomTablesWithElements(loading = True)
                 else:
-                    parents = self.widget.abstractDb.getOrphanGeomTables()
+                    parents = self.widget.abstractDb.getOrphanGeomTables(loading = True)
                 for parent in parents:
                     if parent[-1] == 'p' and parent not in oldPoint:
                         oldPoint.append(parent)

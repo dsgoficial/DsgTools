@@ -992,9 +992,9 @@ class PostgisDb(AbstractDb):
             extent = (xmin, xmax, ymin, ymax)
         return extent
 
-    def getOrphanGeomTables(self):
+    def getOrphanGeomTables(self, loading = False):
         self.checkAndOpenDb()
-        sql = self.gen.getOrphanGeomTablesWithElements()
+        sql = self.gen.getOrphanGeomTablesWithElements(loading)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr('Problem getting orphan tables: ') + query.lastError().text())
@@ -1003,9 +1003,9 @@ class PostgisDb(AbstractDb):
             result.append(query.value(0))
         return result
 
-    def getOrphanGeomTablesWithElements(self):
+    def getOrphanGeomTablesWithElements(self, loading = False):
         self.checkAndOpenDb()
-        sql = self.gen.getOrphanGeomTablesWithElements()
+        sql = self.gen.getOrphanGeomTablesWithElements(loading)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr('Problem getting orphan tables: ') + query.lastError().text())
