@@ -36,7 +36,14 @@ class SnapToGridProcess(ValidationProcess):
             classesWithGeom = self.abstractDb.getOrphanGeomTablesWithElements()
             classesWithGeom.append('public.aux_moldura_a')
             tol = self.parameters['Snap']
-            self.abstractDb.snapToGrid(classesWithGeom, tol) #list only classes with elements.
+            srid = self.abstractDb.findEPSG()
+            for cl in classesWithGeom:
+                result = self.abstractDb.snapToGrid(cl, tol, srid) #list only classes with elements.
+                dataDict = dict()
+                dataDict['UPDATE'] = dict()
+                for key in result.keys():
+                    dataDict['UPDATE'][key] = result[key]
+                self.outputData('postgis', cl, dataDict)
             self.setStatus('All features snapped succesfully.\n', 1) #Finished
             QgsMessageLog.logMessage('All features snapped succesfully.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1

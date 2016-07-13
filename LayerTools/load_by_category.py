@@ -213,7 +213,38 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
                 ponto = self.point
                 linha = self.line
                 area = self.polygon
-    
+            
+            if self.onlyParentsCheckBox.isChecked() and self.widget.abstractDb.db.driverName() == 'QPSQL':
+                oldPoint = ponto
+                oldLine = linha
+                oldArea = area
+                ponto = []
+                linha = []
+                area = []
+                if self.checkBoxOnlyWithElements.isChecked():
+                    parents = self.widget.abstractDb.getOrphanGeomTablesWithElements()
+                else:
+                    parents = self.widget.abstractDb.getOrphanGeomTables()
+                for parent in parents:
+                    if parent[-1] == 'p' and parent not in oldPoint:
+                        oldPoint.append(parent)
+                    if parent[-1] == 'l' and parent not in oldLine:
+                        oldLine.append(parent)
+                    if parent[-1] == 'a' and parent not in oldArea:
+                        oldArea.append(parent)
+                for p in oldPoint:
+                    if p in parents:
+                        ponto.append(p)
+                for l in oldLine:
+                    if l in parents:
+                        linha.append(l)
+                for a in oldArea:
+                    if a in parents:
+                        area.append(a)
+                ponto.sort()
+                linha.sort()
+                area.sort()
+
             if len(self.listWidgetCategoryTo)>0:
                 categoriasSelecionadas = []
                 for i in range(self.listWidgetCategoryTo.__len__()):
@@ -273,7 +304,13 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
             if i[1] > 0:
                 self.polygonWithElement.append(i[0])
 
-    def loadLayers(self, type, categories, table_names):
+    def loadLayers(self, type, categoriesList, table_names):
+        categories = []
+        for cat in categoriesList:
+            for table in table_names:
+                if cat+'_' in table and cat not in categories:
+                    categories.append(cat)
+                    break
         dbName = self.widget.abstractDb.getDatabaseName()
         groupList = qgis.utils.iface.legendInterface().groups()
         groupRelationshipList = qgis.utils.iface.legendInterface().groupLayerRelationship()
@@ -317,4 +354,4 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
             schema, layerName = self.widget.abstractDb.getTableSchema(table_name)
             if (category.split('.')[1] == layerName.split('_')[0]) and (category.split('.')[0] == schema):
                 edgvLayer = self.layerFactory.makeLayer(self.widget.abstractDb, self.codeList, table_name)
-                edgvLayer.load(self.widget.crs, idSubgrupo)
+                edgvLayer.load(self.widget.crs, idSubgrupo, useInheritance = self.onlyParentsCheckBox.isChecked())

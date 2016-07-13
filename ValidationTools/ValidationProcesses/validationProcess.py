@@ -20,9 +20,17 @@
  *                                                                         *
  ***************************************************************************/
 """
+# Qt imports
 from qgis.core import QgsMessageLog
 from PyQt4.QtGui import QMessageBox
 from PyQt4.Qt import QObject
+
+#QGIS imports
+from qgis.core import QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature
+
+# DSGTools imports
+from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
+
 
 class ValidationProcess(QObject):
     def __init__(self, postgisDb, codelist):
@@ -33,7 +41,8 @@ class ValidationProcess(QObject):
         self.classesToBeDisplayedAfterProcess = []
         self.parameters = None
         self.parametersDict = None
-        self.codelist = codelist
+        self.codeList = codelist
+        self.layerFactory = LayerFactory() 
         
     def setParameters(self, params):
         self.parameters = params
@@ -111,10 +120,12 @@ class ValidationProcess(QObject):
             qgsvectorlayer: layer with geometry 
         '''
         edgvLayer = self.layerFactory.makeLayer(self.abstractDb, self.codeList, inputClass)
-        crs = self.abstractDb.getSrid()
-        outputLayer = edgvLayer.load(crs, uniqueLoad = True)
+        dbName = edgvLayer.prepareLoad()
+        epsg = self.abstractDb.findEPSG()
+        crs = QgsCoordinateReferenceSystem(epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
+        outputLayer = edgvLayer.load(crs, dbName, uniqueLoad = True)
         if type == 'postgis':
-            ret = self.outputPostgisData(outputLayer, inputClass,dataDict)
+            ret = self.outputPostgisData(outputLayer, inputClass, dataDict)
         else:
             ret = self.outputVectorData(outputLayer, inputClass,dataDict)
         
@@ -143,13 +154,13 @@ class ValidationProcess(QObject):
             for tuple in dataDict[type][attributes]:
                 newFeat = QgsFeature(outputLayer.pendingFields())
                 insertDict = dict()
-                for i in range(attrList):
+                for i in range(len(attrList)):
                     if attrList[i] == 'id':
                         pass
                     elif attrList[i] == 'geom':
-                        wkbGeom = tuple(i)
+                        wkbGeom = tuple[i]
                         geom = QgsGeometry()
-                        geom.fromWkb(tuple[i],len(tuple[i]))
+                        geom.fromWkb(wkbGeom)
                         newFeat.setGeometry(geom)
                     else:
                         newFeat.setAttribute(fieldDict[attrList[i]],tuple[i])
@@ -165,18 +176,18 @@ class ValidationProcess(QObject):
             featList = []
             for tuple in dataDict[type][attributes]:
                 insertDict = dict()
-                for i in range(attrList):
+                for i in range(len(attrList)):
                     if attrList[i] == 'id':
-                        id = attrList[i]
+                        id = tuple[i]
                     elif attrList[i] == 'geom':
-                        wkbGeom = tuple(i)
+                        wkbGeom = tuple[i]
                         geom = QgsGeometry()
-                        geom.fromWkb(tuple[i],len(tuple[i]))
-                for i in range(attrList):
+                        geom.fromWkb(wkbGeom)
+                for i in range(len(attrList)):
                     if attrList[i] not in ['id', 'geom']:
-                        outputLayer.changeAttributeValue(id, fieldDict[attrList[i]], tuple[i])
+                        outputLayer.changeAttributeValue(int(id), fieldDict[attrList[i]], tuple[i])
                     elif attrList[i] == 'geom':
-                        outputLayer.changeGeometry(id, geom)
+                        outputLayer.changeGeometry(int(id), geom)
     
     def deleteFeaturesFromPostgis(self, outputLayer, type, dataDict):
         for attributes in dataDict[type].keys():

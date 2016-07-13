@@ -78,11 +78,14 @@ class PostGISLayer(EDGVLayer):
                     return ll
         return loaded
 
-    def load(self, crs, idSubgrupo = None, uniqueLoad = False):
+    def load(self, crs, idSubgrupo = None, uniqueLoad = False, useInheritance = False):
         if uniqueLoad:
             lyr = self.checkLoaded(self.layer_name)
             if lyr:
                 return lyr
+        
+        if useInheritance:
+            self.uri.setSql('')
         qmldir = ''
         try:
             qmldir = self.abstractDb.getQmlDir()

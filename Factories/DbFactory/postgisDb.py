@@ -1142,19 +1142,6 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem getting class name: ') + query.lastError().text())
         while query.next():
             return query.value(0)
-    
-    def snapToGrid(self, classList, tol):
-        self.checkAndOpenDb()
-        self.db.transaction()
-        query = QSqlQuery(self.db)
-        for cl in classList:
-            sql = self.gen.snapToGrid(cl, tol)
-            if not query.exec_(sql):
-                self.db.rollback()
-                self.db.close()
-                raise Exception(self.tr('Problem snapping to grid: ') + query.lastError().text())
-        self.db.commit()
-        self.db.close()
 
     def snapLinesToFrame(self, classList, tol):
         self.checkAndOpenDb()
@@ -1200,3 +1187,27 @@ class PostgisDb(AbstractDb):
                 raise Exception(self.tr('Problem snapping class: ') + query.lastError().text())
         self.db.commit()
         self.db.close()
+    
+    def runQuery(self, cl, sql, errorMsg, params):
+        self.checkAndOpenDb()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(errorMsg + query.lastError().text())
+        result = dict()
+        key = ','.join(params)
+        result[key] = []
+        while query.next():
+            newElement = []
+            for i in range(len(params)):
+                newElement.append(query.value(i))
+            result[key].append(newElement)
+        self.db.close()
+        return result
+
+    def snapToGrid(self, cl, tol, srid):
+        sql = self.gen.snapToGrid(cl, tol, srid)
+        errorMsg = self.tr('Problem snapping to grid: ')
+        params = ['id','geom']
+        result = self.runQuery(cl, sql, errorMsg, params)
+        return result
+

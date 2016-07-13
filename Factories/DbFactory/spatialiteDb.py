@@ -315,3 +315,9 @@ class SpatialiteDb(AbstractDb):
 
     def getFrameLayerName(self):
         return 'public_aux_moldura_a'
+
+    def getOrphanGeomTablesWithElements(self):
+        return []
+    
+    def getOrphanGeomTables(self):
+        return []

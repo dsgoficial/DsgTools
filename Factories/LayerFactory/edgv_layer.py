@@ -53,3 +53,12 @@ class EDGVLayer(QObject):
     def loadDomainTable(self,name):
         pass
     
+    def prepareLoad(self):
+        dbName = self.abstractDb.getDatabaseName()
+        groupList =  iface.legendInterface().groups()
+        if dbName in groupList:
+            return groupList.index(dbName)
+        else:
+            parentTreeNode = iface.legendInterface().addGroup(self.abstractDb.getDatabaseName(), -1)
+            return parentTreeNode
+    
