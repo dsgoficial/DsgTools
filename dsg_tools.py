@@ -515,7 +515,7 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/icons/fieldToolbox.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Perform field acquisition'),
+            text=self.tr('Reclassify Feature Tool'),
             callback=self.showFieldToolbox,
             parent=productiontools,
             add_to_menu=False,

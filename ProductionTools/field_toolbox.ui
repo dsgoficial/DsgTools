@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Field Toolbox</string>
+   <string>Reclassification Toolbox</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout_3">
@@ -53,8 +53,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>281</width>
-         <height>316</height>
+         <width>275</width>
+         <height>282</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2"/>
