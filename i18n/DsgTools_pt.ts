@@ -2610,7 +2610,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="ProductionTools/field_toolbox.ui" line="67"/>
         <source>Setup</source>
-        <translation>Ajuste</translation>
+        <translation>Ajustar</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_toolbox.py" line="187"/>
