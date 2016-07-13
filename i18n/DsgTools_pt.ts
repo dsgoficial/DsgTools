@@ -412,6 +412,15 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>CloseEarthCoveragePolygonsProcess</name>
+    <message>
+        <location filename="ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="95"/>
+        <source>Problem executing qgis:polygonize. Check your installed libs.
+</source>
+        <translation>Problema executando o polygonize do qgis. Verifique suas bibliotecas instaladas.</translation>
+    </message>
+</context>
+<context>
     <name>CodeList</name>
     <message>
         <location filename="AttributeTools/code_list.py" line="128"/>
@@ -725,6 +734,67 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
 </context>
 <context>
+    <name>CreateView</name>
+    <message>
+        <location filename="ServerTools/createView.py" line="58"/>
+        <source>Success!</source>
+        <translation>Sucesso!</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/createView.py" line="58"/>
+        <source>Views created successfully on database </source>
+        <translation>Visões criadas com sucesso no banco de dados </translation>
+    </message>
+    <message>
+        <location filename="ServerTools/createView.py" line="61"/>
+        <source>Critical!</source>
+        <translation>Crítico!</translation>
+    </message>
+</context>
+<context>
+    <name>CreateViewsDialog</name>
+    <message>
+        <location filename="ServerTools/createView.ui" line="14"/>
+        <source>Create Domain Resolved Views</source>
+        <translation>Criar Views com domínios resolvidos</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/createView.ui" line="20"/>
+        <source>Database</source>
+        <translation>Banco de Dados</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/createView.ui" line="30"/>
+        <source>View Type</source>
+        <translation>Tipo de Visão</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/createView.ui" line="38"/>
+        <source>View</source>
+        <translation>Visão</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/createView.ui" line="43"/>
+        <source>Materialized View</source>
+        <translation>Visão Materializada</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/createView.ui" line="51"/>
+        <source>Inheritance Type</source>
+        <translation>Tipo de Herança</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/createView.ui" line="59"/>
+        <source>Do not use Inheritance</source>
+        <translation>Não usar herança</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/createView.ui" line="64"/>
+        <source>Use database Inheritance</source>
+        <translation>Usar herança do banco de dados</translation>
+    </message>
+</context>
+<context>
     <name>CriaSpatialite</name>
     <message>
         <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui" line="33"/>
@@ -818,6 +888,59 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="135"/>
         <source>Spatialite created successfully!</source>
         <translation>Spatialite criado com sucesso!</translation>
+    </message>
+</context>
+<context>
+    <name>CustomSelector</name>
+    <message>
+        <location filename="CustomWidgets/customSelector.ui" line="14"/>
+        <source>Form</source>
+        <translation>Formulário</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/customSelector.ui" line="20"/>
+        <source>Custom Selector</source>
+        <translation>Seletor Customizado</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/customSelector.ui" line="37"/>
+        <source>Select all categories in the database</source>
+        <translation>Selecione Todas as Categorias no BD</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/customSelector.ui" line="40"/>
+        <source>&gt;&gt;</source>
+        <translation>&gt;&gt;</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/customSelector.ui" line="47"/>
+        <source>Select only the selected</source>
+        <translation>Selecionar apenas as selecionadas</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/customSelector.ui" line="50"/>
+        <source>&gt;</source>
+        <translation>&gt;</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/customSelector.ui" line="57"/>
+        <source>Remove from list only the selected categories</source>
+        <translation>Remove da lista apenas as categorias selecionadas</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/customSelector.ui" line="60"/>
+        <source>&lt;</source>
+        <translation>&lt;</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/customSelector.ui" line="67"/>
+        <source>Remove all categories</source>
+        <translation>Remover todas as categorias</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/customSelector.ui" line="70"/>
+        <source>&lt;&lt;</source>
+        <translation>&lt;&lt;</translation>
     </message>
 </context>
 <context>
@@ -1634,6 +1757,121 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <source>Drop</source>
         <translation>Apagar</translation>
     </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="14"/>
+        <source>Validation Rules</source>
+        <translation>Regras de Validação</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="200"/>
+        <source>Layer #1</source>
+        <translation>Camada #1</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="205"/>
+        <source>Necessity</source>
+        <translation>Necessidade</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="46"/>
+        <source>must (be)</source>
+        <translation>deve (ser)</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="51"/>
+        <source>must not (be)</source>
+        <translation>não deve (ser)</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="63"/>
+        <source>Spatial predicate</source>
+        <translation>Predicado espacial</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="71"/>
+        <source>equal</source>
+        <translation>igual</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="76"/>
+        <source>disjoint</source>
+        <translation>disjunto</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="81"/>
+        <source>intersect</source>
+        <translation>intersectar</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="86"/>
+        <source>touch</source>
+        <translation>tocar</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="91"/>
+        <source>cross</source>
+        <translation>cruzar</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="96"/>
+        <source>within</source>
+        <translation>dentro</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="101"/>
+        <source>overlap</source>
+        <translation>sobrepor</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="106"/>
+        <source>contain</source>
+        <translation>conter</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="111"/>
+        <source>cover</source>
+        <translation>cobrir</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="116"/>
+        <source>covered by</source>
+        <translation>coberto por</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="215"/>
+        <source>Layer #2</source>
+        <translation>Camada #2</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="220"/>
+        <source>Cardinality</source>
+        <translation>Cardinalidade</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="176"/>
+        <source>Insert Rule</source>
+        <translation>Inserir Regra</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="183"/>
+        <source>Remove Rule</source>
+        <translation>Remover Regra</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="210"/>
+        <source>Predicate</source>
+        <translation>Predicato</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="149"/>
+        <source>9..9; </source>
+        <translation>9..9; </translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/workspace_editor.ui" line="152"/>
+        <source>1..1</source>
+        <translation>1..1</translation>
+    </message>
 </context>
 <context>
     <name>DockWidget</name>
@@ -2033,6 +2271,59 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     </message>
 </context>
 <context>
+    <name>EarthCoverageWidget</name>
+    <message>
+        <location filename="CustomWidgets/earthCoverageWidget.ui" line="14"/>
+        <source>Form</source>
+        <translation>Formulário</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/earthCoverageWidget.ui" line="33"/>
+        <source>Class of earth coverage</source>
+        <translation>Classe da cobertura terrestre</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/earthCoverageWidget.ui" line="38"/>
+        <source>Delimiter</source>
+        <translation>Delimitador</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/earthCoverageWidget.ui" line="58"/>
+        <source>Define Earth Coverage</source>
+        <translation>Definir Cobertura Terrestre</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/earthCoverageWidget.py" line="85"/>
+        <source>Critical!</source>
+        <translation>Crítico!</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/earthCoverageWidget.py" line="63"/>
+        <source>Select a database to manage earth coverage</source>
+        <translation>Selecione um banco de dados para gerenciar a cobertura terrestre</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/earthCoverageWidget.py" line="78"/>
+        <source>Question</source>
+        <translation>Questão</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/earthCoverageWidget.py" line="78"/>
+        <source>An earth coverage is already defined. Do you want to redefine it? All data will be lost.</source>
+        <translation>Uma cobertura terrestre já está definida. Você deseja redefinir ela? Todos os dados serão perdidos.</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/earthCoverageWidget.py" line="85"/>
+        <source>A problem occurred! Check log for details.</source>
+        <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
+    </message>
+    <message>
+        <location filename="CustomWidgets/earthCoverageWidget.py" line="110"/>
+        <source>Earth Coverage not loaded! Check log for details.</source>
+        <translation>Cobertura Terrestre não carregada! Verifique o log para detalhes.</translation>
+    </message>
+</context>
+<context>
     <name>ExploreDb</name>
     <message>
         <location filename="ServerTools/exploreDb.py" line="92"/>
@@ -2111,6 +2402,217 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <location filename="CustomWidgets/exploreServerWidget.py" line="93"/>
         <source>Problem executing query: </source>
         <translation>Problema executando a query: </translation>
+    </message>
+</context>
+<context>
+    <name>FieldSetup</name>
+    <message>
+        <location filename="ProductionTools/field_setup.ui" line="14"/>
+        <source>Dialog</source>
+        <translation>Diálogo</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.ui" line="22"/>
+        <source>Load from file</source>
+        <translation>Carregar de arquivo</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.ui" line="32"/>
+        <source>Load</source>
+        <translation>Carregar</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.ui" line="43"/>
+        <source>Button size:</source>
+        <translation>Tamanho do Botão</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.ui" line="52"/>
+        <source>Small</source>
+        <translation>Pequeno</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.ui" line="69"/>
+        <source>Big</source>
+        <translation>Grande</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.ui" line="82"/>
+        <source>EDGV Version</source>
+        <translation>Versão da EDGV</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.ui" line="90"/>
+        <source>Select a database version</source>
+        <translation>Selecione uma versão de banco de dados</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.ui" line="95"/>
+        <source>2.1.3</source>
+        <translation>2.1.3</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.ui" line="100"/>
+        <source>FTer_2a_Ed</source>
+        <translation>FTer_2a_Ed</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.ui" line="117"/>
+        <source>Custom Elements</source>
+        <translation>Elementos Customizados</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.ui" line="207"/>
+        <source>Value</source>
+        <translation>Valor</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.ui" line="133"/>
+        <source>New Element</source>
+        <translation>Novo Elemento</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.ui" line="145"/>
+        <source>Filter</source>
+        <translation>Filtro</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.ui" line="189"/>
+        <source>Button Name</source>
+        <translation>Nome do Botão</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.ui" line="202"/>
+        <source>Attribute</source>
+        <translation>Atributo</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.ui" line="228"/>
+        <source>Add / Update</source>
+        <translation>Adicionar / Atualizar</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="86"/>
+        <source>Warning!</source>
+        <translation>Alerta!</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="106"/>
+        <source>A problem occurred! Check log for details.</source>
+        <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="512"/>
+        <source>Critical!</source>
+        <translation>Crítico!</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="241"/>
+        <source>Enter a button name!</source>
+        <translation>Entre com um nome de botão!</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="475"/>
+        <source>Remove child node</source>
+        <translation>Remover nó filho</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="492"/>
+        <source>Open Field Setup configuration</source>
+        <translation>Abrir configuração de Ajuste de Campo</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="510"/>
+        <source>Field Setup Files (*.json)</source>
+        <translation>Arquivos de Configuração de Campo (*.json)</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="507"/>
+        <source>Question</source>
+        <translation>Questão</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="507"/>
+        <source>Do you want to save this field setup?</source>
+        <translation>Você deseja salvar esta configuração de campo?</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="510"/>
+        <source>Save Field Setup configuration</source>
+        <translation>Salvar ajustes de configuração de campo</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="512"/>
+        <source>Define a name for the field setup file!</source>
+        <translation>Defina um nome para o arquivo de configuração de campo!</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="519"/>
+        <source>Information!</source>
+        <translation>Informação!</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="519"/>
+        <source>Field setup file saved successfully!</source>
+        <translation>Configuração de campo salva com sucesso!</translation>
+    </message>
+</context>
+<context>
+    <name>FieldToolbox</name>
+    <message>
+        <location filename="ProductionTools/field_toolbox.ui" line="14"/>
+        <source>Field Toolbox</source>
+        <translation>Caixa de Ferramentas de Campo</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_toolbox.ui" line="21"/>
+        <source>Database connection</source>
+        <translation>Conexão do Banco de Dados</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_toolbox.ui" line="67"/>
+        <source>Setup</source>
+        <translation>Ajuste</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_toolbox.py" line="115"/>
+        <source>Error!</source>
+        <translation>Erro!</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_toolbox.py" line="115"/>
+        <source>Could not load the selected classes!</source>
+        <translation>Não foi possível carregar as classes selecionadas!</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_toolbox.py" line="130"/>
+        <source>Critical!</source>
+        <translation>Crítico!</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_toolbox.py" line="120"/>
+        <source>Please, select a database.</source>
+        <translation>Por favor, selecione um banco de dados</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_toolbox.py" line="126"/>
+        <source>Problem obtaining database version! Please, check log for details.</source>
+        <translation>Problema obtendo versão do banco de dados! Por favor, verifique o log para detalhes.</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_toolbox.py" line="130"/>
+        <source>Database version does not match the field toolbox version.</source>
+        <translation>Versão do banco de dados não coincide com a versão da caixa de ferramentas de campo.</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_toolbox.py" line="185"/>
+        <source>Information!</source>
+        <translation>Informação!</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_toolbox.py" line="185"/>
+        <source>Features reclassified with success!</source>
+        <translation>Feições reclassificadas com suceso!</translation>
     </message>
 </context>
 <context>
@@ -2541,6 +3043,69 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <location filename="LayerTools/load_by_class.py" line="94"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
+    </message>
+</context>
+<context>
+    <name>ManageAuxStructDialog</name>
+    <message>
+        <location filename="ServerTools/manageDBAuxiliarStructure.ui" line="32"/>
+        <source>Manage Database Auxiliar Structure</source>
+        <translation>Gerenciar Estrutura Auxiliar do Banco de Dados</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/manageDBAuxiliarStructure.ui" line="38"/>
+        <source>Line-Centroid Structure</source>
+        <translation>Estrutura Linha-Centróide</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/manageDBAuxiliarStructure.ui" line="50"/>
+        <source>Created</source>
+        <translation>Criado</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/manageDBAuxiliarStructure.ui" line="66"/>
+        <source>Not Created</source>
+        <translation>Não Criado</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/manageDBAuxiliarStructure.ui" line="82"/>
+        <source>Create</source>
+        <translation>Criar</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/manageDBAuxiliarStructure.ui" line="95"/>
+        <source>Drop</source>
+        <translation>Apagar</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/manageDBAuxiliarStructure.ui" line="116"/>
+        <source>Constraint and Defaults</source>
+        <translation>Restrições e Padrões</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/manageDBAuxiliarStructure.ui" line="128"/>
+        <source>On</source>
+        <translation>Ligado</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/manageDBAuxiliarStructure.ui" line="144"/>
+        <source>Off</source>
+        <translation>Desligado</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/manageDBAuxiliarStructure.ui" line="160"/>
+        <source>Turn On</source>
+        <translation>Ligar</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/manageDBAuxiliarStructure.ui" line="173"/>
+        <source>Turn Off</source>
+        <translation>Desligar</translation>
+    </message>
+    <message>
+        <location filename="ServerTools/manageDBAuxiliarStructure.ui" line="181"/>
+        <source>Close</source>
+        <translation>Fechar</translation>
     </message>
 </context>
 <context>
@@ -3188,6 +3753,31 @@ Olhe o Terminal Python para detalhes.</translation>
     </message>
 </context>
 <context>
+    <name>RulesEditor</name>
+    <message>
+        <location filename="ValidationTools/rules_editor.py" line="149"/>
+        <source>Warning!</source>
+        <translation>Alerta!</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/rules_editor.py" line="97"/>
+        <source>Problem reading file! 
+</source>
+        <translation>Problema lendo arquivo! </translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/rules_editor.py" line="146"/>
+        <source>Problem saving file! 
+</source>
+        <translation>Problema salvando arquivo! </translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/rules_editor.py" line="149"/>
+        <source>Profile saved successfully!</source>
+        <translation>Perfil salvo com sucesso!</translation>
+    </message>
+</context>
+<context>
     <name>ServerConfigurator</name>
     <message>
         <location filename="ServerTools/serverConfigurator.py" line="86"/>
@@ -3283,6 +3873,166 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     </message>
 </context>
 <context>
+    <name>SetupEarthCoverage</name>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage_backup.ui" line="14"/>
+        <source>Define earth coverage areas and lines</source>
+        <translation>Definir areas e linhas de cobertura terrestre</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.ui" line="27"/>
+        <source>1- Choose the area classes that build earth coverage (only parent classes are listed here).</source>
+        <translation>1- Escolha classes do tipo area para construir a cobertura terrestre (somente classes pai serão listadas aqui).</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.ui" line="41"/>
+        <source>2- Choose the line classes that, along with the frame, build the areas of earth coverage (only parent classes are listed here).
+If there is a constraint attribute in a selected class, right click it and define it.</source>
+        <translation>2- Escolha classes do tipo linha que, juntamente com a moldura, construa áreas de cobertura terrestre (somente classes pai serão listadas aqui).
+Se existe um atributo restritivo na classe selecionada, clique com o botão direito e defina-o.</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.ui" line="62"/>
+        <source>3- For each area class of earth coverage, define which lines are used to build it (note that frame is always used to close areas)</source>
+        <translation>3- Para cada classe do tipo area da cobertura terrestre, defina quais linhas são usadas para fechar elas (note que a moldura é sempre usada para fechar áreas)</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage_backup.ui" line="94"/>
+        <source>Class</source>
+        <translation>Classe</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage_backup.ui" line="99"/>
+        <source>Delimiters</source>
+        <translation>Delimitadores</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage_backup.ui" line="27"/>
+        <source>1- Choose the area classes that build earth coverage</source>
+        <translation>1- Escolha classes do tipo área que constroem a cobertura terrestre</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage_backup.ui" line="41"/>
+        <source>2- Choose the line classes that, along with the frame, build the areas of earth coverage</source>
+        <translation>2- Escolha as classes do tipo linha que, juntamente com a moldura, constroem areas da cobertura terrestre</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage_backup.ui" line="55"/>
+        <source>3- For each area class of earth coverage, define which lines are used to build it
+ (note that frame is always used to close areas)</source>
+        <translation>3- Para cada classe da cobertura terrestre, defina quais linhas são usadas para construir ela (note que a moldura é sempre usada para fechar áreas)</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="50"/>
+        <source>Areas</source>
+        <translation>Áreas</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="51"/>
+        <source>Lines</source>
+        <translation>Linhas</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="153"/>
+        <source>Question</source>
+        <translation>Questão</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="59"/>
+        <source>Do you want to open an earth coverage file?</source>
+        <translation>Você deseja abrir um arquivo de cobertura terrestre?</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="61"/>
+        <source>Open Earth Coverage Setup configuration</source>
+        <translation>Abrir ajustes de configuração de Cobertura Terrestre</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="155"/>
+        <source>Earth Coverage Files (*.json)</source>
+        <translation>Arquivos de Cobertura Terrestre (*.json)</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="106"/>
+        <source>Open Field Setup configuration</source>
+        <translation>Abrir ajsutes de Configuração de Campo</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="106"/>
+        <source>Field Setup Files (*.json)</source>
+        <translation>Arquivos de Configuração de Campo (*.json)</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="153"/>
+        <source>Do you want to save this earth coverage setup?</source>
+        <translation>Você deseja salvar este ajuste de cobertura terrestre?</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="155"/>
+        <source>Save Earth Coverage Setup configuration</source>
+        <translation>Salvar ajuste de Cobertura Terrestre</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="157"/>
+        <source>Critical!</source>
+        <translation>Crítico!</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="157"/>
+        <source>Define a name for the earth coverage file!</source>
+        <translation>Defina um nome para o arquivo de Cobertura Terrestre!</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="161"/>
+        <source>Information!</source>
+        <translation>Informação!</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="161"/>
+        <source>Field setup file saved successfully!</source>
+        <translation>Arquivo de ajuste de Campo salvo com sucesso!</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="165"/>
+        <source>Warning!</source>
+        <translation>Alerta!</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="165"/>
+        <source>Problem saving into database! 
+</source>
+        <translation>Problema salvando no banco de dados!</translation>
+    </message>
+</context>
+<context>
+    <name>SpatialRuleEnforcer</name>
+    <message>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="173"/>
+        <source>Warning!</source>
+        <translation>Alerta!</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="173"/>
+        <source>Problem reading file! 
+</source>
+        <translation>Problema lendo arquivo!</translation>
+    </message>
+</context>
+<context>
+    <name>SpatialRuleProcess</name>
+    <message>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="56"/>
+        <source>Warning!</source>
+        <translation>Alerta!</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="56"/>
+        <source>Problem reading file! 
+</source>
+        <translation>Problema lendo arquivo!</translation>
+    </message>
+</context>
+<context>
     <name>SpatialiteDb</name>
     <message>
         <location filename="Factories/DbFactory/spatialiteDb.py" line="200"/>
@@ -3351,6 +4101,267 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
         <location filename="Factories/LayerFactory/spatialite_layer.py" line="84"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
+    </message>
+</context>
+<context>
+    <name>ValidationConfig</name>
+    <message>
+        <location filename="ValidationTools/validation_config.ui" line="33"/>
+        <source>Validation Configuration</source>
+        <translation>Configuração de Validação</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_config.ui" line="46"/>
+        <source>Topology Tolerance (m)</source>
+        <translation>Tolerância de topologia (m)</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_config.ui" line="56"/>
+        <source>Scale</source>
+        <translation>Escala</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_config.ui" line="64"/>
+        <source>Choose Scale</source>
+        <translation>Escolha a escala</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_config.ui" line="69"/>
+        <source>500k</source>
+        <translation>500k</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_config.ui" line="74"/>
+        <source>250k</source>
+        <translation>250k</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_config.ui" line="79"/>
+        <source>100k</source>
+        <translation>100k</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_config.ui" line="84"/>
+        <source>50k</source>
+        <translation>50k</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_config.ui" line="89"/>
+        <source>25k</source>
+        <translation>25k</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_config.ui" line="94"/>
+        <source>10k</source>
+        <translation>10k</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_config.ui" line="99"/>
+        <source>5k</source>
+        <translation>5k</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_config.ui" line="104"/>
+        <source>2k</source>
+        <translation>2k</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_config.ui" line="109"/>
+        <source>1k</source>
+        <translation>1k</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_config.ui" line="147"/>
+        <source>Save Changes</source>
+        <translation>Salvar mudanças</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_config.ui" line="166"/>
+        <source>Close</source>
+        <translation>Fechar</translation>
+    </message>
+</context>
+<context>
+    <name>ValidationHistory</name>
+    <message>
+        <location filename="ValidationTools/validation_history.ui" line="36"/>
+        <source>Validation History</source>
+        <translation>Histórico de Validação</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_history.ui" line="76"/>
+        <source>Close</source>
+        <translation>Fechar</translation>
+    </message>
+</context>
+<context>
+    <name>ValidationManager</name>
+    <message>
+        <location filename="ValidationTools/validationManager.py" line="40"/>
+        <source>Critical!</source>
+        <translation>Crítico!</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validationManager.py" line="40"/>
+        <source>A problem occurred! Check log for details.</source>
+        <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
+    </message>
+</context>
+<context>
+    <name>ValidationProcess</name>
+    <message>
+        <location filename="ValidationTools/ValidationProcesses/validationProcess.py" line="105"/>
+        <source>Critical!</source>
+        <translation>Crítico!</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/ValidationProcesses/validationProcess.py" line="105"/>
+        <source>A problem occurred! Check log for details.</source>
+        <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
+    </message>
+</context>
+<context>
+    <name>ValidationToolbox</name>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.ui" line="14"/>
+        <source>Validation Toolbox</source>
+        <translation>Caixa de Ferramentas de Validação</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.ui" line="25"/>
+        <source>Processes</source>
+        <translation>Processos</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.ui" line="31"/>
+        <source>Database</source>
+        <translation>Banco de Dados</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.ui" line="41"/>
+        <source>Open</source>
+        <translation>Abrir</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.ui" line="48"/>
+        <source>Open History</source>
+        <translation>Abrir Histórico</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.ui" line="55"/>
+        <source>Run Process</source>
+        <translation>Rodar Processo</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.ui" line="62"/>
+        <source>Workspace</source>
+        <translation>Área de Trabalho</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.ui" line="70"/>
+        <source>Select a workspace</source>
+        <translation>Selecione uma área de trabalho</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.ui" line="75"/>
+        <source>Default</source>
+        <translation>Padrão</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.ui" line="80"/>
+        <source>Create new workspace...</source>
+        <translation>Criar uma nova área de trabalho...</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.ui" line="88"/>
+        <source>Edit</source>
+        <translation>Editar</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.ui" line="108"/>
+        <source>#</source>
+        <translation>#</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.ui" line="113"/>
+        <source>Processo</source>
+        <translation>Processo</translation>
+    </message>
+    <message utf8="true">
+        <location filename="ValidationTools/validation_toolbox.ui" line="118"/>
+        <source>Situação</source>
+        <translation>Situação</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.ui" line="127"/>
+        <source>Flags</source>
+        <translation>Flags</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.ui" line="155"/>
+        <source>Show suggestions</source>
+        <translation>Mostrar sugestões</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.ui" line="163"/>
+        <source>Rules</source>
+        <translation>Regras</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.ui" line="169"/>
+        <source>Show Rules Editor</source>
+        <translation>Mostrar Editor de Regras</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.ui" line="176"/>
+        <source>Start/Stop Spatial Rule Enforcer</source>
+        <translation>Iniciar/Para Reforçador de Regras Espaciais</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.py" line="77"/>
+        <source>Zoom to flag</source>
+        <translation>Zoom para a flag</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.py" line="78"/>
+        <source>Set Visited</source>
+        <translation>Marcar Visitado</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.py" line="79"/>
+        <source>Set Unvisited</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.py" line="226"/>
+        <source>Critical!</source>
+        <translation>Crítico!</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.py" line="199"/>
+        <source>A problem occurred! Check log for details.</source>
+        <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.py" line="206"/>
+        <source>Process error. Check log for details.</source>
+        <translation>Erro do processo. Verifique o log para detalhes.</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.py" line="208"/>
+        <source>Success!</source>
+        <translation>Sucesso!</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.py" line="208"/>
+        <source>Process successfully executed!</source>
+        <translation>Processo executado com sucesso!</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/validation_toolbox.py" line="226"/>
+        <source>Database not loaded or a problem occurred.
+</source>
+        <translation>Banco de Dados não carregado ou um problema ocorreu.</translation>
     </message>
 </context>
 <context>
