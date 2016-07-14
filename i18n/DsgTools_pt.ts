@@ -2547,12 +2547,12 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="ProductionTools/field_setup.py" line="492"/>
         <source>Open Field Setup configuration</source>
-        <translation>Abrir configuração de Ajuste de Campo</translation>
+        <translation type="obsolete">Abrir configuração de Ajuste de Campo</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_setup.py" line="510"/>
         <source>Field Setup Files (*.json)</source>
-        <translation>Arquivos de Configuração de Campo (*.json)</translation>
+        <translation type="obsolete">Arquivos de Configuração de Campo (*.json)</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_setup.py" line="507"/>
@@ -2567,12 +2567,12 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="ProductionTools/field_setup.py" line="510"/>
         <source>Save Field Setup configuration</source>
-        <translation>Salvar ajustes de configuração de campo</translation>
+        <translation type="obsolete">Salvar ajustes de configuração de campo</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_setup.py" line="512"/>
         <source>Define a name for the field setup file!</source>
-        <translation>Defina um nome para o arquivo de configuração de campo!</translation>
+        <translation type="obsolete">Defina um nome para o arquivo de configuração de campo!</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_setup.py" line="519"/>
@@ -2582,7 +2582,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="ProductionTools/field_setup.py" line="519"/>
         <source>Field setup file saved successfully!</source>
-        <translation>Configuração de campo salva com sucesso!</translation>
+        <translation type="obsolete">Configuração de campo salva com sucesso!</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_setup.ui" line="78"/>
@@ -2593,6 +2593,31 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <location filename="ProductionTools/field_setup.ui" line="14"/>
         <source>Reclassification Setup</source>
         <translation>Ajustes de Reclassificação</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="492"/>
+        <source>Open reclassification setup file</source>
+        <translation>Abrir arquivo de configuração de reclassificação</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="510"/>
+        <source>Reclassification Setup Files (*.reclas)</source>
+        <translation>Arquivo de Configuração de Reclassificação (*.reclas)</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="510"/>
+        <source>Save reclassification setup file</source>
+        <translation>Salvar arquivo de configuração de reclassificação</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="512"/>
+        <source>Define a name for the reclassification setup file!</source>
+        <translation>Defina um nome para o arquivo de configuração de reclassificação!</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="519"/>
+        <source>Reclassification setup file saved successfully!</source>
+        <translation>Arquivo de configuração de reclassificação salvo com sucesso!</translation>
     </message>
 </context>
 <context>

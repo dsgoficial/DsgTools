@@ -489,7 +489,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         '''
         self.loadedFileEdit.setText('')
         
-        filename = QFileDialog.getOpenFileName(self, self.tr('Open Field Setup configuration'), self.folder, self.tr('Field Setup Files (*.json)'))
+        filename = QFileDialog.getOpenFileName(self, self.tr('Open reclassification setup file'), self.folder, self.tr('Reclassification Setup Files (*.reclas)'))
         if not filename:
             return
         #makes the dictionary used to create the tree widget
@@ -507,14 +507,13 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         if QMessageBox.question(self, self.tr('Question'), self.tr('Do you want to save this field setup?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
             return
             
-        filename = QFileDialog.getSaveFileName(self, self.tr('Save Field Setup configuration'), self.folder, self.tr('Field Setup Files (*.json)'))
+        filename = QFileDialog.getSaveFileName(self, self.tr('Save reclassification setup file'), self.folder, self.tr('Reclassification Setup Files (*.reclas)'))
         if not filename:
-            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Define a name for the field setup file!'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Define a name for the reclassification setup file!'))
             return
         
         reclassificationDict = self.makeReclassificationDict()
         with open(filename, 'w') as outfile:
             json.dump(reclassificationDict, outfile, sort_keys=True, indent=4)
             
-        QMessageBox.information(self, self.tr('Information!'), self.tr('Field setup file saved successfully!'))
-        
+        QMessageBox.information(self, self.tr('Information!'), self.tr('Reclassification setup file saved successfully!'))
