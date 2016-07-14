@@ -142,7 +142,7 @@ class SpatialRuleEnforcer(ValidationProcess):
         if breaksCardinality:
             #making the reason
             reason = self.tr('Feature id ') + str(featureId) + self.tr(' from ') + layer1 + self.tr(" violates cardinality ")
-            reason += min_card + '..' + max_card + self.tr(' of rule: ') + rule + layer2
+            reason += min_card + '..' + max_card + self.tr(' of rule: ') + rule + ' ' + layer2
             #creating the flag
             flagTuple = (layer1, str(featureId), reason)
             #hex geometry to be added as flag
@@ -151,7 +151,7 @@ class SpatialRuleEnforcer(ValidationProcess):
 
         if breaksPredicate:
             #making the reason
-            reason = self.tr('Feature id ') + str(featureId) + self.tr(' from ') + layer1 + self.tr(' violates rule: ') + rule + layer2
+            reason = self.tr('Feature id ') + str(featureId) + self.tr(' from ') + layer1 + self.tr(' violates rule: ') + rule + ' ' + layer2
             for hexa in flagData:
                 self.createFlag(layer1, featureId, reason, hexa)
 
@@ -164,7 +164,7 @@ class SpatialRuleEnforcer(ValidationProcess):
         hexa: WKB geometry to be passed to the flag
         '''
         #creating the flag
-        flagTuple = (layer1, str(featureId), reason)
+        flagTuple = (layer1, str(featureId), reason, hexa)
         if flagTuple not in self.flags.keys():#if the flag is not already set we must set it and insert it into the DB
             self.flags[flagTuple] = True
             #adding the flag individually

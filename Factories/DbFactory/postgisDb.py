@@ -1206,7 +1206,7 @@ class PostgisDb(AbstractDb):
         srid = self.findEPSG()
         self.db.transaction()
         query = QSqlQuery(self.db)
-        sql = self.gen.deleteFlagFromDb(flagTuple[0], str(flagTuple[1]), flagTuple[2], flagTuple[3], srid, processName)
+        sql = self.gen.deleteFlagFromDb(flagTuple[0], str(flagTuple[1]), flagTuple[2], flagTuple[3], processName)
         if not query.exec_(sql):
             self.db.rollback()
             self.db.close()

@@ -739,6 +739,6 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = 'SELECT dsgsnap(\'{0}\', {1})'.format(cl, str(tol))
         return sql
 
-    def deleteFlagFromDb(self, layer, feat_id, reason, geom, srid, processName):
-        sql = "DELETE FROM validation.aux_flags_validacao WHERE process_name = '{0}' AND layer = '{1}' AND feat_id = {2} AND reason = '{3}'".format(processName, layer, feat_id, reason)
+    def deleteFlagFromDb(self, layer, feat_id, reason, geom, processName):
+        sql = "DELETE FROM validation.aux_flags_validacao WHERE process_name = '{0}' AND layer = '{1}' AND feat_id = {2} AND reason = '{3}' and geom = '{4}'".format(processName, layer, feat_id, reason, geom)
         return sql
