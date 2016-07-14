@@ -43,8 +43,8 @@ class SpatialRuleEnforcer(ValidationProcess):
                   'covered by':'overlaps'}#we still must check what to do here
     
     #we must check is this is violated to raise flags, hence the opposite idea
-    necessity = {'must (be)':False,
-                 'must not (be)':True}
+    necessity = {'must (be)':True,
+                 'must not (be)':False}
     
     def __init__(self, postgisDb, codelist, iface):
         super(self.__class__,self).__init__(postgisDb, codelist)
@@ -92,23 +92,28 @@ class SpatialRuleEnforcer(ValidationProcess):
         '''
         layer1 = rule[0] #layer that defines the rule
         necessity = rule[1] #rule necessity
-        predicate = rule[2]
+        predicate = rule[2] #spatial predicate
         layer2 = rule[3] #layer used to test the rule
-        rule = rule[6]
-        
+        min_card = rule[4] #minimum cardinality
+        max_card = rule[5] #maximum cardinality
+        rule = rule[6] #rule string
+
         vectorlayer2 = self.getLayer(layer2.split('.')[-1]) #correspondent QgsVectorLayer
         
         method = getattr(geometry, predicate) #getting the correspondent QgsGeometry method to be used in the rule
 
+        occurrences = 0 #number of times the rule checks out
+        flagData = []
         #querying the features that intersect the geometry's bounding box
         for feature in vectorlayer2.dataProvider().getFeatures(QgsFeatureRequest(geometry.boundingBox())):
             if layer1 == layer2 and featureId == feature['id']:
                 continue
             #for each one of them we must execute the method
             if method(feature.geometry()) == necessity:
-                #making the reason
-                reason = 'Feature id %s from %s violates rule %s %s' % (str(featureId), layer1, rule, layer2)
-                
+                #when this happens the rule is checked, but we still need to check the cardinality
+                occurrences += 1
+            else:
+                #when this happens the rule is broken and we need to get the geometry of the actual problem
                 #geom must be the intersection
                 geom = geometry.intersection(feature.geometry())
                 #case the intersection is None, we should use the original geometry
@@ -116,17 +121,58 @@ class SpatialRuleEnforcer(ValidationProcess):
                     geom = geometry
                 #hex geometry to be added as flag
                 hexa = binascii.hexlify(geom.asWkb())
-                
-                #creating the flag
-                flagTuple = (layer1, str(featureId), reason)
-                if flagTuple not in self.flags.keys():#if the flag is not already set we must set it and insert it into the DB
-                    self.flags[flagTuple] = True
-                    #adding the flag individually
-                    self.addFlag([(layer1, str(featureId), reason, hexa)])
-                else:
-                    #removing the old flag and inserting a new one adjusted
-                    self.updateFlag((layer1, str(featureId), reason, hexa))
-      
+                #storing the geometry that represents the rule violation
+                flagData.append(hexa)
+
+        # lets define when we should raise a flag:
+        # no occurrences or number of occurrences out of bounds.
+        # We must stay like this: min_card <= occurrences <= max_card
+        # there is the particular case when max_card = *, in this case we must stay like this: min_card <= occurrences
+        # so, we can summarize like this:
+        if max_card != '*':
+            breaksCardinality = occurrences < min_card or occurrences > max_card
+        else:
+            breaksCardinality = occurrences < min_card
+
+        if len(flagData) == 0:
+            breaksPredicate = False
+        else:
+            breaksPredicate = True
+
+        if breaksCardinality:
+            #making the reason
+            reason = self.tr('Feature id ') + str(featureId) + self.tr(' from ') + layer1 + self.tr(" violates cardinality ")
+            reason += min_card + '..' + max_card + self.tr(' of rule: ') + rule + layer2
+            #creating the flag
+            flagTuple = (layer1, str(featureId), reason)
+            #hex geometry to be added as flag
+            hexa = binascii.hexlify(geometry.asWkb())
+            self.createFlag(layer1, featureId, reason, hexa)
+
+        if breaksPredicate:
+            #making the reason
+            reason = self.tr('Feature id ') + str(featureId) + self.tr(' from ') + layer1 + self.tr(' violates rule: ') + rule + layer2
+            for hexa in flagData:
+                self.createFlag(layer1, featureId, reason, hexa)
+
+    def createFlag(self, layer1, featureId, reason, hexa):
+        '''
+        Makes a flag and checks if it needs to be updated
+        layer1: Layer name
+        featureId: Id of the feature that violates the rule
+        reason: Reason for which the rule was broken
+        hexa: WKB geometry to be passed to the flag
+        '''
+        #creating the flag
+        flagTuple = (layer1, str(featureId), reason)
+        if flagTuple not in self.flags.keys():#if the flag is not already set we must set it and insert it into the DB
+            self.flags[flagTuple] = True
+            #adding the flag individually
+            self.addFlag([(layer1, str(featureId), reason, hexa)])
+        else:
+            #removing the old flag and inserting a new one adjusted
+            self.updateFlag((layer1, str(featureId), reason, hexa))
+
     @pyqtSlot(int, QgsGeometry)      
     def enforceSpatialRulesForChanges(self, featureId, geometry):
         '''
@@ -184,7 +230,7 @@ class SpatialRuleEnforcer(ValidationProcess):
             min_card = cardinality.split('..')[0]
             max_card = cardinality.split('..')[1]
             rule = split[1]+' '+split[2]
-            if layer1 == layerName or layer2 == layerName:
+            if layer1 == layerName:
                 ret.append((layer1, necessity, predicate, layer2, min_card, max_card, rule))
             
         return ret
