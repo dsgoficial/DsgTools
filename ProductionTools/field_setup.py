@@ -504,7 +504,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         '''
         Saves the configuration work done so far.
         '''
-        if QMessageBox.question(self, self.tr('Question'), self.tr('Do you want to save this field setup?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
+        if QMessageBox.question(self, self.tr('Question'), self.tr('Do you want to save this reclassification setup?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
             return
             
         filename = QFileDialog.getSaveFileName(self, self.tr('Save reclassification setup file'), self.folder, self.tr('Reclassification Setup Files (*.reclas)'))

@@ -2562,7 +2562,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="ProductionTools/field_setup.py" line="507"/>
         <source>Do you want to save this field setup?</source>
-        <translation>Você deseja salvar esta configuração de campo?</translation>
+        <translation type="obsolete">Você deseja salvar esta configuração de campo?</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_setup.py" line="510"/>
@@ -2618,6 +2618,11 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <location filename="ProductionTools/field_setup.py" line="519"/>
         <source>Reclassification setup file saved successfully!</source>
         <translation>Arquivo de configuração de reclassificação salvo com sucesso!</translation>
+    </message>
+    <message>
+        <location filename="ProductionTools/field_setup.py" line="507"/>
+        <source>Do you want to save this reclassification setup?</source>
+        <translation>Você deseja salvar esta configuração de reclassificação?</translation>
     </message>
 </context>
 <context>
