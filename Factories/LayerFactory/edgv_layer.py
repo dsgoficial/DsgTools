@@ -53,6 +53,9 @@ class EDGVLayer(QObject):
     def loadDomainTable(self,name):
         pass
     
+    def getStyles(self):
+        pass
+    
     def prepareLoad(self):
         dbName = self.abstractDb.getDatabaseName()
         groupList =  iface.legendInterface().groups()
