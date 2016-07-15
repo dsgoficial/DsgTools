@@ -216,7 +216,7 @@ class SpatialRuleEnforcer(ValidationProcess):
             with open(self.rulesFile, 'r') as f:
                 rules = [line.rstrip('\n') for line in f]
         except Exception as e:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem reading file! \n'))
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem reading file!'))
             return
         
         ret = list()
