@@ -130,9 +130,9 @@ class SpatialRuleEnforcer(ValidationProcess):
         # there is the particular case when max_card = *, in this case we must stay like this: min_card <= occurrences
         # so, we can summarize like this:
         if max_card != '*':
-            breaksCardinality = occurrences < min_card or occurrences > max_card
+            breaksCardinality = occurrences < int(min_card) or occurrences > int(max_card)
         else:
-            breaksCardinality = occurrences < min_card
+            breaksCardinality = occurrences < int(min_card)
 
         if len(flagData) == 0:
             breaksPredicate = False
@@ -164,7 +164,7 @@ class SpatialRuleEnforcer(ValidationProcess):
         hexa: WKB geometry to be passed to the flag
         '''
         #creating the flag
-        flagTuple = (layer1, str(featureId), reason, hexa)
+        flagTuple = (layer1, str(featureId), reason)
         if flagTuple not in self.flags.keys():#if the flag is not already set we must set it and insert it into the DB
             self.flags[flagTuple] = True
             #adding the flag individually
