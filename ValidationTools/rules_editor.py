@@ -65,7 +65,8 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_insertRuleButton_clicked(self):
         self.insertRow(self.layer1Combo.currentText(), \
-                       self.necessityCombo.currentText(), self.predicateCombo.currentText(), \
+                       str(self.necessityCombo.currentIndex())+'_'+self.necessityCombo.currentText(), \
+                       str(self.predicateCombo.currentIndex())+'_'+self.predicateCombo.currentText(), \
                        self.layer2Combo.currentText(), self.cardinalityEdit.text())
 
     @pyqtSlot(bool)

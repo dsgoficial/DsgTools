@@ -66,7 +66,7 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 2.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -89,7 +89,7 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 2.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -3828,24 +3828,24 @@ Olhe o Terminal Python para detalhes.</translation>
 <context>
     <name>RulesEditor</name>
     <message>
-        <location filename="ValidationTools/rules_editor.py" line="149"/>
+        <location filename="ValidationTools/rules_editor.py" line="150"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/rules_editor.py" line="97"/>
+        <location filename="ValidationTools/rules_editor.py" line="98"/>
         <source>Problem reading file! 
 </source>
         <translation>Problema lendo arquivo! </translation>
     </message>
     <message>
-        <location filename="ValidationTools/rules_editor.py" line="146"/>
+        <location filename="ValidationTools/rules_editor.py" line="147"/>
         <source>Problem saving file! 
 </source>
         <translation>Problema salvando arquivo! </translation>
     </message>
     <message>
-        <location filename="ValidationTools/rules_editor.py" line="149"/>
+        <location filename="ValidationTools/rules_editor.py" line="150"/>
         <source>Profile saved successfully!</source>
         <translation>Perfil salvo com sucesso!</translation>
     </message>
@@ -4080,7 +4080,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
 <context>
     <name>SpatialRuleEnforcer</name>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="173"/>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="219"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
@@ -4088,6 +4088,36 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="173"/>
         <source>Problem reading file! 
 </source>
+        <translation type="obsolete">Problema lendo arquivo!</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="154"/>
+        <source>Feature id </source>
+        <translation>Feição id </translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="154"/>
+        <source> from </source>
+        <translation> de </translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="144"/>
+        <source> violates cardinality </source>
+        <translation> viola a cardinalidade </translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="145"/>
+        <source> of rule: </source>
+        <translation> da regra: </translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="154"/>
+        <source> violates rule: </source>
+        <translation> viola a regra: </translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="219"/>
+        <source>Problem reading file!</source>
         <translation>Problema lendo arquivo!</translation>
     </message>
 </context>

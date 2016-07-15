@@ -31,20 +31,20 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 
 class SpatialRuleEnforcer(ValidationProcess):
     #this relates the predicate with the methods present in the QgsGeometry class
-    predicates = {'equal':'equals',
-                  'disjoint':'disjoint',
-                  'intersect':'intersects',
-                  'touch':'touches',
-                  'cross':'crosses',
-                  'within':'within',
-                  'overlap':'overlaps',
-                  'contain':'contains',
-                  'cover':'overlaps',#we still must check what to do here
-                  'covered by':'overlaps'}#we still must check what to do here
+    predicates = {0:'equals',
+                  1:'disjoint',
+                  2:'intersects',
+                  3:'touches',
+                  4:'crosses',
+                  5:'within',
+                  6:'overlaps',
+                  7:'contains',
+                  8:'overlaps',#we still must check what to do here
+                  9:'overlaps'}#we still must check what to do here
     
     #we must check is this is violated to raise flags, hence the opposite idea
-    necessity = {'must (be)':True,
-                 'must not (be)':False}
+    necessity = {0:True,
+                 1:False}
     
     def __init__(self, postgisDb, codelist, iface):
         super(self.__class__,self).__init__(postgisDb, codelist)
@@ -116,8 +116,8 @@ class SpatialRuleEnforcer(ValidationProcess):
                 #when this happens the rule is broken and we need to get the geometry of the actual problem
                 #geom must be the intersection
                 geom = geometry.intersection(feature.geometry())
-                #case the intersection is None, we should use the original geometry
-                if not geom:
+                #case the intersection is WKBUnknown or  WKBNoGeometry, we should use the original geometry
+                if geom.wkbType() in [0,7]:
                     geom = geometry
                 #hex geometry to be added as flag
                 hexa = binascii.hexlify(geom.asWkb())
@@ -223,8 +223,8 @@ class SpatialRuleEnforcer(ValidationProcess):
         for line in rules:
             split = line.split(',')
             layer1 = split[0]    
-            necessity = self.necessity[split[1]]
-            predicate = self.predicates[split[2]]
+            necessity = self.necessity[int(split[1].split('_')[0])]
+            predicate = self.predicates[int(split[2].split('_')[0])]
             layer2 = split[3]
             cardinality = split[4]
             min_card = cardinality.split('..')[0]
