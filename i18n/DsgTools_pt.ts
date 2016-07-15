@@ -3849,6 +3849,11 @@ Olhe o Terminal Python para detalhes.</translation>
         <source>Profile saved successfully!</source>
         <translation>Perfil salvo com sucesso!</translation>
     </message>
+    <message>
+        <location filename="ValidationTools/rules_editor.py" line="133"/>
+        <source>disjoint</source>
+        <translation>disjunto</translation>
+    </message>
 </context>
 <context>
     <name>ServerConfigurator</name>
