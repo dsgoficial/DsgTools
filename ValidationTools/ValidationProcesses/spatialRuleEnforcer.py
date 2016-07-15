@@ -129,10 +129,12 @@ class SpatialRuleEnforcer(ValidationProcess):
         # We must stay like this: min_card <= occurrences <= max_card
         # there is the particular case when max_card = *, in this case we must stay like this: min_card <= occurrences
         # so, we can summarize like this:
-        if max_card != '*':
-            breaksCardinality = occurrences < int(min_card) or occurrences > int(max_card)
-        else:
-            breaksCardinality = occurrences < int(min_card)
+        breaksCardinality = False
+        if predicate != 'disjoint':
+            if max_card != '*':
+                breaksCardinality = occurrences < int(min_card) or occurrences > int(max_card)
+            else:
+                breaksCardinality = occurrences < int(min_card)
 
         if len(flagData) == 0:
             breaksPredicate = False
