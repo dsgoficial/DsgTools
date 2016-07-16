@@ -77,9 +77,9 @@ class ValidationProcess(QObject):
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             
-    def updateFlag(self, flagTuple):
+    def removeFeatureFlags(self, layer, featureId):
         try:
-            return self.abstractDb.updateFlag(flagTuple, self.getName())
+            return self.abstractDb.removeFeatureFlags(layer, featureId, self.getName())
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

@@ -50,7 +50,6 @@ class SpatialRuleEnforcer(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, codelist)
         self.iface = iface
         self.rulesFile = os.path.join(os.path.dirname(__file__), '..', 'ValidationRules', 'ruleLibrary.rul')
-        self.flags = {}
         
     def connectEditingSignals(self):
         '''
@@ -89,7 +88,7 @@ class SpatialRuleEnforcer(ValidationProcess):
     def testRule(self, rule, featureId, geometry):
         '''
         Tests the rule against the geometry passed as parameter
-        '''
+        '''        
         layer1 = rule[0] #layer that defines the rule
         necessity = rule[1] #rule necessity
         predicate = rule[2] #spatial predicate
@@ -98,14 +97,41 @@ class SpatialRuleEnforcer(ValidationProcess):
         max_card = rule[5] #maximum cardinality
         rule = rule[6] #rule string
 
+        #removing old flags for this featureId
+        self.removeFeatureFlags(layer1, featureId)
+
         vectorlayer2 = self.getLayer(layer2.split('.')[-1]) #correspondent QgsVectorLayer
         
         method = getattr(geometry, predicate) #getting the correspondent QgsGeometry method to be used in the rule
-
+        
+        #querying the features that intersect the geometry's bounding box
+        candidatesIter = vectorlayer2.dataProvider().getFeatures(QgsFeatureRequest(geometry.boundingBox()))
+        #making a list of features
+        candidates = [candidate for candidate in candidatesIter]
+        
+        # lets first check the presence of candidates and the disjoint predicate
+        if layer1 == layer2:
+            if len(candidates) == 1:
+                if predicate != 'disjoint':
+                    #raise flag
+                    self.makeBreaksPredicateFlag(layer1, featureId, rule, layer2, binascii.hexlify(geometry.asWkb()))
+                    return
+                else:
+                    return
+        else:
+            if len(candidates) == 0:
+                if predicate != 'disjoint':
+                    #raise flag
+                    self.makeBreaksPredicateFlag(layer1, featureId, rule, layer2, binascii.hexlify(geometry.asWkb()))
+                    return
+                else:
+                    return
+        
+        #checking the rule in the case the situation above does not happen
         occurrences = 0 #number of times the rule checks out
         flagData = []
-        #querying the features that intersect the geometry's bounding box
-        for feature in vectorlayer2.dataProvider().getFeatures(QgsFeatureRequest(geometry.boundingBox())):
+        #iterating over candidates
+        for feature in candidates:
             if layer1 == layer2 and featureId == feature['id']:
                 continue
             #for each one of them we must execute the method
@@ -116,7 +142,7 @@ class SpatialRuleEnforcer(ValidationProcess):
                 #when this happens the rule is broken and we need to get the geometry of the actual problem
                 #geom must be the intersection
                 geom = geometry.intersection(feature.geometry())
-                #case the intersection is WKBUnknown or  WKBNoGeometry, we should use the original geometry
+                #case the intersection is WKBUnknown or WKBNoGeometry, we should use the original geometry
                 if geom.wkbType() in [0,7]:
                     geom = geometry
                 #hex geometry to be added as flag
@@ -124,56 +150,59 @@ class SpatialRuleEnforcer(ValidationProcess):
                 #storing the geometry that represents the rule violation
                 flagData.append(hexa)
 
-        # lets define when we should raise a flag:
-        # no occurrences or number of occurrences out of bounds.
+        # lets define when we should raise a flag from now on:
+        # occurrences out of bounds.
         # We must stay like this: min_card <= occurrences <= max_card
         # there is the particular case when max_card = *, in this case we must stay like this: min_card <= occurrences
         # so, we can summarize like this:
-        breaksCardinality = False
-        if predicate != 'disjoint':
-            if max_card != '*':
-                breaksCardinality = occurrences < int(min_card) or occurrences > int(max_card)
-            else:
-                breaksCardinality = occurrences < int(min_card)
+        
+        #cardinality broken case
+        if max_card != '*':
+            breaksCardinality = occurrences < int(min_card) or occurrences > int(max_card)
+        else:
+            breaksCardinality = occurrences < int(min_card)
 
+        if breaksCardinality:
+            self.makeBreaksCardinalityFlag(layer1, featureId, rule, min_card, max_card, layer2, binascii.hexlify(geometry.asWkb()))
+
+        #predicate broken case
         if len(flagData) == 0:
             breaksPredicate = False
         else:
             breaksPredicate = True
 
-        if breaksCardinality:
-            #making the reason
-            reason = self.tr('Feature id ') + str(featureId) + self.tr(' from ') + layer1 + self.tr(" violates cardinality ")
-            reason += min_card + '..' + max_card + self.tr(' of rule: ') + rule + ' ' + layer2
-            #creating the flag
-            flagTuple = (layer1, str(featureId), reason)
-            #hex geometry to be added as flag
-            hexa = binascii.hexlify(geometry.asWkb())
-            self.createFlag(layer1, featureId, reason, hexa)
-
         if breaksPredicate:
-            #making the reason
-            reason = self.tr('Feature id ') + str(featureId) + self.tr(' from ') + layer1 + self.tr(' violates rule: ') + rule + ' ' + layer2
             for hexa in flagData:
-                self.createFlag(layer1, featureId, reason, hexa)
-
-    def createFlag(self, layer1, featureId, reason, hexa):
+                self.makeBreaksPredicateFlag(layer1, featureId, rule, layer2, hexa)
+                
+    def makeBreaksCardinalityFlag(self, layer1, featureId, rule, min_card, max_card, layer2, hexa):
         '''
-        Makes a flag and checks if it needs to be updated
-        layer1: Layer name
+        Makes a flag when the cardinality is broken
+        layer1: Layer1 name
         featureId: Id of the feature that violates the rule
-        reason: Reason for which the rule was broken
+        rule: Rule tested
+        min_card: minimum cardinality
+        max_card: maximum cardinality
+        layer2: Layer2 name
         hexa: WKB geometry to be passed to the flag
         '''
-        #creating the flag
-        flagTuple = (layer1, str(featureId), reason)
-        if flagTuple not in self.flags.keys():#if the flag is not already set we must set it and insert it into the DB
-            self.flags[flagTuple] = True
-            #adding the flag individually
-            self.addFlag([(layer1, str(featureId), reason, hexa)])
-        else:
-            #removing the old flag and inserting a new one adjusted
-            self.updateFlag((layer1, str(featureId), reason, hexa))
+        #making the reason
+        reason = self.tr('Feature id ') + str(featureId) + self.tr(' from ') + layer1 + self.tr(" violates cardinality ")
+        reason += min_card + '..' + max_card + self.tr(' of rule: ') + rule + ' ' + layer2
+        self.addFlag([(layer1, str(featureId), reason, hexa)])
+                
+    def makeBreaksPredicateFlag(self, layer1, featureId, rule, layer2, hexa):
+        '''
+        Makes a flag when the predicate is broken
+        layer1: Layer1 name
+        featureId: Id of the feature that violates the rule
+        rule: Rule tested
+        layer2: Layer2 name
+        hexa: WKB geometry to be passed to the flag
+        '''
+        #making the reason
+        reason = self.tr('Feature id ') + str(featureId) + self.tr(' from ') + layer1 + self.tr(' violates rule: ') + rule + ' ' + layer2
+        self.addFlag([(layer1, str(featureId), reason, hexa)])
 
     @pyqtSlot(int, QgsGeometry)      
     def enforceSpatialRulesForChanges(self, featureId, geometry):
