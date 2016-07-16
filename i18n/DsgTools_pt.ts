@@ -229,22 +229,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="UserTools/alter_user_password.ui" line="14"/>
         <source>Alter User Password</source>
-        <translation>Alterar Password de Usuário</translation>
+        <translation>Alterar Senha de Usuário</translation>
     </message>
     <message>
         <location filename="UserTools/alter_user_password.ui" line="20"/>
         <source>Repeat New Password</source>
-        <translation>Repetir Novo Password</translation>
+        <translation>Repetir Nova Senha</translation>
     </message>
     <message>
         <location filename="UserTools/alter_user_password.ui" line="37"/>
         <source>New Password</source>
-        <translation>Novo Password</translation>
+        <translation>Nova Senha</translation>
     </message>
     <message>
         <location filename="UserTools/alter_user_password.ui" line="54"/>
         <source>Alter Password</source>
-        <translation>Alterar Password</translation>
+        <translation>Alterar Senha</translation>
     </message>
     <message>
         <location filename="UserTools/alter_user_password.ui" line="61"/>
@@ -279,12 +279,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="UserTools/alter_user_password.py" line="51"/>
         <source>Password mismatch! Password not altered!</source>
-        <translation>Password não coincidente! Password não alterado!</translation>
+        <translation>Senha não coincidente! Senha não alterada!</translation>
     </message>
     <message>
         <location filename="UserTools/alter_user_password.py" line="60"/>
         <source> password successfully updated on database </source>
-        <translation> password atualizado com sucesso no banco de dados </translation>
+        <translation> senha atualizada com sucesso no banco de dados </translation>
     </message>
 </context>
 <context>
@@ -708,7 +708,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="UserTools/create_user.ui" line="44"/>
         <source>Re-enter Password</source>
-        <translation>Entre o Password novamente</translation>
+        <translation>Entre a Senha novamente</translation>
     </message>
     <message>
         <location filename="UserTools/create_user.ui" line="58"/>
@@ -748,7 +748,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="UserTools/create_user.py" line="58"/>
         <source>Password mismatch! User not created!</source>
-        <translation>Password não coincidente! Usuário não criado!</translation>
+        <translation>Senha não coincidente! Usuário não criado!</translation>
     </message>
     <message>
         <location filename="UserTools/create_user.py" line="75"/>
@@ -779,7 +779,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="ServerTools/createView.ui" line="14"/>
         <source>Create Domain Resolved Views</source>
-        <translation>Criar Views com domínios resolvidos</translation>
+        <translation>Criar Visões com domínios resolvidos</translation>
     </message>
     <message>
         <location filename="ServerTools/createView.ui" line="20"/>
@@ -928,7 +928,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="CustomWidgets/customSelector.ui" line="37"/>
         <source>Select all categories in the database</source>
-        <translation>Selecione Todas as Categorias no BD</translation>
+        <translation>Selecionar todas as categorias no banco de dados</translation>
     </message>
     <message>
         <location filename="CustomWidgets/customSelector.ui" line="40"/>
@@ -1226,7 +1226,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="ServerTools/ui_viewServers.ui" line="95"/>
         <source>Test</source>
-        <translation>Testa</translation>
+        <translation>Testar</translation>
     </message>
     <message>
         <location filename="ImageTools/ui_processingTools.ui" line="14"/>
@@ -1271,7 +1271,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="ImageTools/ui_processingTools.ui" line="124"/>
         <source>CRS</source>
-        <translation>SCR</translation>
+        <translation>SRC</translation>
     </message>
     <message>
         <location filename="ImageTools/ui_processingTools.ui" line="133"/>
@@ -1346,7 +1346,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="InventoryTools/ui_inventoryTools.ui" line="163"/>
         <source>Select Folder</source>
-        <translation>Selecione a Pasta</translation>
+        <translation>Selecionar Pasta</translation>
     </message>
     <message>
         <location filename="InventoryTools/ui_inventoryTools.ui" line="53"/>
@@ -1616,7 +1616,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="UserTools/user_profiles.ui" line="111"/>
         <source>Alter Password</source>
-        <translation>Alterar Password</translation>
+        <translation>Alterar Senha</translation>
     </message>
     <message>
         <location filename="UserTools/user_profiles.ui" line="118"/>
@@ -1723,7 +1723,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="ServerTools/exploreDb.ui" line="113"/>
         <source>Create Domain Resolved Views</source>
-        <translation>Criar Views com domínios resolvidos</translation>
+        <translation>Criar Visões com domínios resolvidos</translation>
     </message>
     <message>
         <location filename="ServerTools/exploreDb.ui" line="123"/>
@@ -1883,7 +1883,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="ValidationTools/workspace_editor.ui" line="210"/>
         <source>Predicate</source>
-        <translation>Predicato</translation>
+        <translation>Predicado</translation>
     </message>
     <message>
         <location filename="ValidationTools/workspace_editor.ui" line="149"/>
@@ -2452,7 +2452,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="ProductionTools/field_setup.ui" line="43"/>
         <source>Button size:</source>
-        <translation>Tamanho do Botão</translation>
+        <translation>Tamanho do Botão:</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_setup.ui" line="52"/>
@@ -2693,7 +2693,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="CustomWidgets/connectionWidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Form</translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <location filename="CustomWidgets/connectionWidget.ui" line="36"/>
@@ -2942,7 +2942,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="LayerTools/load_by_category.py" line="240"/>
         <source>WARNING!</source>
-        <translation>Alerta!</translation>
+        <translation>ALERTA!</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_category.py" line="229"/>
@@ -2952,7 +2952,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="LayerTools/load_by_category.py" line="260"/>
         <source>CRITICAL!</source>
-        <translation>Crítico!</translation>
+        <translation>CRÍTICO!</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_category.py" line="258"/>
@@ -3305,7 +3305,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="Factories/LayerFactory/postgis_layer.py" line="122"/>
         <source>Dominios</source>
-        <translation>Dominios</translation>
+        <translation>Domínios</translation>
     </message>
     <message>
         <location filename="Factories/LayerFactory/postgis_layer.py" line="91"/>
@@ -3351,7 +3351,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="466"/>
         <source>Problem altering user&apos;s password: </source>
-        <translation>Problema alterando password do usuário: </translation>
+        <translation>Problema alterando senha do usuário: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="474"/>
@@ -3386,7 +3386,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="640"/>
         <source>Problem creating views: </source>
-        <translation>Problema criando views: </translation>
+        <translation>Problema criando visões: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="109"/>
@@ -3521,7 +3521,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="853"/>
         <source>Problem getting duplicated geometries: </source>
-        <translation>Problema obtendo geometries duplicadas: </translation>
+        <translation>Problema obtendo geometrias duplicadas: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="866"/>
@@ -3654,7 +3654,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Problema ao realizar snap na classe: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1214"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1213"/>
         <source>Problem deleting flag: </source>
         <translation>Problema deletando flag: </translation>
     </message>
@@ -3670,8 +3670,8 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <location filename="Factories/ThreadFactory/postgisDbThread.py" line="43"/>
         <source>Problem creating the database structure!
  Check the Log terminal for details.</source>
-        <translation>Problema na Criação da Estrutura de Dados!
-Olhe o Terminal Python para detalhes.</translation>
+        <translation>Problema criando a estrutura do banco de dados!
+ Verifique o terminal Log para detalhes.</translation>
     </message>
     <message>
         <location filename="Factories/ThreadFactory/postgisDbThread.py" line="46"/>
@@ -3992,7 +3992,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="ValidationTools/setupEarthCoverage_backup.ui" line="41"/>
         <source>2- Choose the line classes that, along with the frame, build the areas of earth coverage</source>
-        <translation>2- Escolha as classes do tipo linha que, juntamente com a moldura, constroem areas da cobertura terrestre</translation>
+        <translation>2- Escolha as classes do tipo linha que, juntamente com a moldura, constroem áreas da cobertura terrestre</translation>
     </message>
     <message>
         <location filename="ValidationTools/setupEarthCoverage_backup.ui" line="55"/>
@@ -4085,7 +4085,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
 <context>
     <name>SpatialRuleEnforcer</name>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="219"/>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="232"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
@@ -4096,32 +4096,32 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation type="obsolete">Problema lendo arquivo!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="154"/>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="186"/>
         <source>Feature id </source>
         <translation>Feição id </translation>
     </message>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="154"/>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="186"/>
         <source> from </source>
         <translation> de </translation>
     </message>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="144"/>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="172"/>
         <source> violates cardinality </source>
         <translation> viola a cardinalidade </translation>
     </message>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="145"/>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="173"/>
         <source> of rule: </source>
         <translation> da regra: </translation>
     </message>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="154"/>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="186"/>
         <source> violates rule: </source>
         <translation> viola a regra: </translation>
     </message>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="219"/>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="232"/>
         <source>Problem reading file!</source>
         <translation>Problema lendo arquivo!</translation>
     </message>
@@ -4137,7 +4137,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <location filename="ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="56"/>
         <source>Problem reading file! 
 </source>
-        <translation>Problema lendo arquivo!</translation>
+        <translation>Problema lendo arquivo! </translation>
     </message>
 </context>
 <context>
@@ -4145,7 +4145,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="Factories/DbFactory/spatialiteDb.py" line="200"/>
         <source>Conversion not perfomed due to validation errors! Check log above for more information.</source>
-        <translation>Conversão não realizada devido à erros de validação! Verifique o log para maiores informações.</translation>
+        <translation>Conversão não realizada devido à erros de validação! Verifique o log acima para maiores informações.</translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/spatialiteDb.py" line="301"/>
@@ -4203,7 +4203,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="Factories/LayerFactory/spatialite_layer.py" line="112"/>
         <source>Dominios</source>
-        <translation>Dominios</translation>
+        <translation>Domínios</translation>
     </message>
     <message>
         <location filename="Factories/LayerFactory/spatialite_layer.py" line="84"/>
@@ -4423,7 +4423,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="ValidationTools/validation_toolbox.ui" line="176"/>
         <source>Start/Stop Spatial Rule Enforcer</source>
-        <translation>Iniciar/Para Reforçador de Regras Espaciais</translation>
+        <translation>Iniciar/Parar Reforçador de Regras Espaciais</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.py" line="77"/>
@@ -4438,7 +4438,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="ValidationTools/validation_toolbox.py" line="79"/>
         <source>Set Unvisited</source>
-        <translation></translation>
+        <translation>Marcar não visitado</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.py" line="226"/>
