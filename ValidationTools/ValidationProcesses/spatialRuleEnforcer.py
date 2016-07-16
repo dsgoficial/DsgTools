@@ -106,32 +106,12 @@ class SpatialRuleEnforcer(ValidationProcess):
         
         #querying the features that intersect the geometry's bounding box
         candidatesIter = vectorlayer2.dataProvider().getFeatures(QgsFeatureRequest(geometry.boundingBox()))
-        #making a list of features
-        candidates = [candidate for candidate in candidatesIter]
-        
-        # lets first check the presence of candidates and the disjoint predicate
-        if layer1 == layer2:
-            if len(candidates) == 1:
-                if predicate != 'disjoint':
-                    #raise flag
-                    self.makeBreaksPredicateFlag(layer1, featureId, rule, layer2, binascii.hexlify(geometry.asWkb()))
-                    return
-                else:
-                    return
-        else:
-            if len(candidates) == 0:
-                if predicate != 'disjoint':
-                    #raise flag
-                    self.makeBreaksPredicateFlag(layer1, featureId, rule, layer2, binascii.hexlify(geometry.asWkb()))
-                    return
-                else:
-                    return
-        
+                
         #checking the rule in the case the situation above does not happen
         occurrences = 0 #number of times the rule checks out
         flagData = []
         #iterating over candidates
-        for feature in candidates:
+        for feature in candidatesIter:
             if layer1 == layer2 and featureId == feature['id']:
                 continue
             #for each one of them we must execute the method
@@ -156,14 +136,16 @@ class SpatialRuleEnforcer(ValidationProcess):
         # there is the particular case when max_card = *, in this case we must stay like this: min_card <= occurrences
         # so, we can summarize like this:
         
-        #cardinality broken case
-        if max_card != '*':
-            breaksCardinality = occurrences < int(min_card) or occurrences > int(max_card)
-        else:
-            breaksCardinality = occurrences < int(min_card)
-
-        if breaksCardinality:
-            self.makeBreaksCardinalityFlag(layer1, featureId, rule, min_card, max_card, layer2, binascii.hexlify(geometry.asWkb()))
+        #if predicate is disjoint we do not need to check the cardinality
+        if predicate != 'disjoint':
+            #cardinality broken case
+            if max_card != '*':
+                breaksCardinality = occurrences < int(min_card) or occurrences > int(max_card)
+            else:
+                breaksCardinality = occurrences < int(min_card)
+    
+            if breaksCardinality:
+                self.makeBreaksCardinalityFlag(layer1, featureId, rule, min_card, max_card, layer2, binascii.hexlify(geometry.asWkb()))
 
         #predicate broken case
         if len(flagData) == 0:
