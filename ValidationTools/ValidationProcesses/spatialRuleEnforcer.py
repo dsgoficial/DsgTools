@@ -42,7 +42,6 @@ class SpatialRuleEnforcer(ValidationProcess):
                   8:'overlaps',#we still must check what to do here
                   9:'overlaps'}#we still must check what to do here
     
-    #we must check is this is violated to raise flags, hence the opposite idea
     necessity = {0:True,
                  1:False}
     
