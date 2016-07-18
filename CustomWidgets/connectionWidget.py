@@ -53,7 +53,6 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        
         self.setInitialState()
          
     def __del__(self):
@@ -63,6 +62,15 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         if self.abstractDb:
             del self.abstractDb
             self.abstractDb = None
+
+    def getStyles(self):
+        '''
+        The first iteration of walk lists all dirs as the second element of the list in os.walk(styleDir).next()[1]. 
+        As only God and Mauricio were going to remember this, I wrote it down.
+        '''
+        currentPath = os.path.dirname(__file__)
+        styleDir = os.path.join(currentPath, '..', 'Styles')
+        return os.walk(styleDir).next()[1]
 
     def setInitialState(self):
         self.filename = ''
@@ -83,7 +91,8 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.postGISCrsEdit.setReadOnly(True)
         self.spatialiteCrsEdit.setReadOnly(True)   
         self.edgvSpatialiteVersionEdit.setReadOnly(True)
-        self.edgvPostgisVersionEdit.setReadOnly(True)       
+        self.edgvPostgisVersionEdit.setReadOnly(True)      
+        self.styles = self.getStyles() 
 
     @pyqtSlot(int)
     def on_comboBoxPostgis_currentIndexChanged(self):

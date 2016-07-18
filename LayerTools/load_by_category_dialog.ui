@@ -249,11 +249,6 @@
                 <height>0</height>
                </size>
               </property>
-              <item>
-               <property name="text">
-                <string>Default</string>
-               </property>
-              </item>
              </widget>
             </item>
            </layout>
@@ -329,11 +324,8 @@
     </layout>
    </item>
   </layout>
-  <zorder>groupBox_3</zorder>
-  <zorder>groupBox_2</zorder>
   <zorder>groupBox</zorder>
   <zorder>widget</zorder>
-  <zorder>groupBox_3</zorder>
  </widget>
  <customwidgets>
   <customwidget>

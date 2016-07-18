@@ -458,7 +458,6 @@ class AbstractDb(QObject):
                     self.signals.updateLog.emit('\n\n'+'{:<50}'.format(cl+str(id)))
     
     def getQmlDir(self):
-        self.checkAndOpenDb()
         currentPath = os.path.dirname(__file__)
         if qgis.core.QGis.QGIS_VERSION_INT >= 20600:
             qmlVersionPath = os.path.join(currentPath, '..', '..', 'Qmls', 'qgis_26')
@@ -475,6 +474,10 @@ class AbstractDb(QObject):
         else:
             qmlPath = ''
         return qmlPath
+
+    def getStyleDir(self):
+        currentPath = os.path.dirname(__file__)
+        return os.path.join(currentPath, '..', '..', 'Styles')
     
     def makeValueRelationDict(self, table, codes):
         self.checkAndOpenDb()

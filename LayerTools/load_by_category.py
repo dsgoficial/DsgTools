@@ -90,9 +90,9 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         self.checkBoxAll.stateChanged.connect(self.setAllGroup)
         
         self.widget.tabWidget.currentChanged.connect(self.restoreInitialState)
-        
         self.codeList = codeList
         self.layerFactory = LayerFactory()
+        self.populateStyleCombo(self.widget.styles)
  
     def restoreInitialState(self):
         self.categories = []
@@ -355,3 +355,10 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
             if (category.split('.')[1] == layerName.split('_')[0]) and (category.split('.')[0] == schema):
                 edgvLayer = self.layerFactory.makeLayer(self.widget.abstractDb, self.codeList, table_name)
                 edgvLayer.load(self.widget.crs, idSubgrupo, useInheritance = self.onlyParentsCheckBox.isChecked())
+    
+    def populateStyleCombo(self, styleList):
+        for i in range(len(styleList)):
+            self.styleComboBox.addItem(styleList[i])
+            if styleList[i] == 'Default':
+                defaultIndex = i
+        self.styleComboBox.setCurrentIndex(defaultIndex)
