@@ -60,6 +60,9 @@ class EDGVLayer(QObject):
         styleDir = self.abstractDb.getStyleDir()
         return os.walk(styleDir).next()[1]
     
+    def getStyleFile(self, className):
+        pass
+    
     def prepareLoad(self):
         dbName = self.abstractDb.getDatabaseName()
         groupList =  iface.legendInterface().groups()
