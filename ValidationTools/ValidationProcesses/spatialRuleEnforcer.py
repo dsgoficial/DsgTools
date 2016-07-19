@@ -105,39 +105,51 @@ class SpatialRuleEnforcer(ValidationProcess):
         
         #querying the features that intersect the geometry's bounding box (i.e. our candidates)
         candidatesIter = vectorlayer2.dataProvider().getFeatures(QgsFeatureRequest(geometry.boundingBox()))
-                
-        #checking the rule in the case the situation above does not happen
-        occurrences = 0 #number of times the rule checks out
-        flagData = []
-        #iterating over candidates
-        for feature in candidatesIter:
-            #for the same layer we need to avoid to test a feature against it self
-            if layer1 == layer2 and featureId == feature['id']:
-                continue
-            #for each one of them we must execute the method
-            if method(feature.geometry()) == necessity:
-                #when this happens the rule is checked, but we still need to check the cardinality
-                occurrences += 1
-            else:
-                #when this happens the rule is broken and we need to get the geometry of the actual problem
-                #geom must be the intersection
-                geom = geometry.intersection(feature.geometry())
-                #case the intersection is WKBUnknown or WKBNoGeometry, we should use the original geometry
-                if geom.wkbType() in [0,7]:
-                    geom = geometry
-                #hex geometry to be added as flag
-                hexa = binascii.hexlify(geom.asWkb())
-                #storing the geometry that represents the rule violation
-                flagData.append(hexa)
-
-        # lets define when we should raise a flag from now on:
-        # occurrences out of bounds.
-        # We must stay like this: min_card <= occurrences <= max_card
-        # there is the particular case when max_card = *, in this case we must stay like this: min_card <= occurrences
-        # so, we can summarize like this:
         
-        #if predicate is disjoint we do not need to check the cardinality
-        if predicate != 'disjoint':
+        #first, lets separate the problem in disjoint case and not disjoint
+        #case 1: disjoint
+        if predicate == 'disjoint':
+            disjointBroken = False
+            flagData = []
+            #iterating over candidates
+            for feature in candidatesIter:
+                #for the same layer we need to avoid to test a feature against it self
+                if layer1 == layer2 and featureId == feature['id']:
+                    continue
+                #for each one of them we must execute the method
+                #for the disjoint case one fail is sufficient to raise the flag
+                if method(feature.geometry()) != necessity:
+                    disjointBroken = True
+                    #storing the geometry that represents the rule violation
+                    flagData.append(self.getGeometryProblem(geometry, feature))
+            
+            if disjointBroken:
+                for hexa in flagData:
+                    self.makeBreaksPredicateFlag(layer1, featureId, rule, layer2, hexa)
+        #case 2: not disjoint             
+        else:    
+            #checking the rule in the case the situation above does not happen
+            occurrences = 0 #number of times the rule checks out
+            flagData = []
+            #iterating over candidates
+            for feature in candidatesIter:
+                #for the same layer we need to avoid to test a feature against it self
+                if layer1 == layer2 and featureId == feature['id']:
+                    continue
+                #for each one of them we must execute the method
+                if method(feature.geometry()) == necessity:
+                    #when this happens the rule is checked, but we still need to check the cardinality
+                    occurrences += 1
+                else:
+                    #storing the geometry that represents the rule violation
+                    flagData.append(self.getGeometryProblem(geometry, feature))
+    
+            # lets define when we should raise a flag from now on:
+            # occurrences out of bounds.
+            # We must stay like this: min_card <= occurrences <= max_card
+            # there is the particular case when max_card = *, in this case we must stay like this: min_card <= occurrences
+            # so, we can summarize like this:
+            
             #cardinality broken case
             if max_card != '*':
                 breaksCardinality = occurrences < int(min_card) or occurrences > int(max_card)
@@ -146,23 +158,28 @@ class SpatialRuleEnforcer(ValidationProcess):
     
             if breaksCardinality:
                 self.makeBreaksCardinalityFlag(layer1, featureId, rule, min_card, max_card, layer2, binascii.hexlify(geometry.asWkb()))
-
-        #predicate broken case
-        if len(flagData) == 0:
-            breaksPredicate = False
-        else:
-            breaksPredicate = True
-
-        if predicate != 'disjoint':
+    
+            #predicate broken case
+            if len(flagData) == 0:
+                breaksPredicate = False
+            else:
+                breaksPredicate = True
+    
             #we only raise a breaksPredicate flag if flagData has elements and if occurrences = 0
             if breaksPredicate and occurrences == 0:
                 for hexa in flagData:
                     self.makeBreaksPredicateFlag(layer1, featureId, rule, layer2, hexa)
-        else:
-            if breaksPredicate and occurrences > 0:
-                for hexa in flagData:
-                    self.makeBreaksPredicateFlag(layer1, featureId, rule, layer2, hexa)
-            
+                    
+    def getGeometryProblem(self, geometry, feature):
+        #when this happens the rule is broken and we need to get the geometry of the actual problem
+        #geom must be the intersection
+        geom = geometry.intersection(feature.geometry())
+        #case the intersection is WKBUnknown or WKBNoGeometry, we should use the original geometry
+        if geom.wkbType() in [0,7]:
+            geom = geometry
+        #hex geometry to be added as flag
+        hexa = binascii.hexlify(geom.asWkb())
+        return hexa
                 
     def makeBreaksCardinalityFlag(self, layer1, featureId, rule, min_card, max_card, layer2, hexa):
         '''
