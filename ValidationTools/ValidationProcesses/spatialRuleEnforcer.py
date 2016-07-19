@@ -153,10 +153,16 @@ class SpatialRuleEnforcer(ValidationProcess):
         else:
             breaksPredicate = True
 
-        #we only raise a breaksPredicate flag if flagData has elements and if occurrences = 0
-        if breaksPredicate and occurrences == 0:
-            for hexa in flagData:
-                self.makeBreaksPredicateFlag(layer1, featureId, rule, layer2, hexa)
+        if predicate != 'disjoint':
+            #we only raise a breaksPredicate flag if flagData has elements and if occurrences = 0
+            if breaksPredicate and occurrences == 0:
+                for hexa in flagData:
+                    self.makeBreaksPredicateFlag(layer1, featureId, rule, layer2, hexa)
+        else:
+            if breaksPredicate and occurrences > 0:
+                for hexa in flagData:
+                    self.makeBreaksPredicateFlag(layer1, featureId, rule, layer2, hexa)
+            
                 
     def makeBreaksCardinalityFlag(self, layer1, featureId, rule, min_card, max_card, layer2, hexa):
         '''
