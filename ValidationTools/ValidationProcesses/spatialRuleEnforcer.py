@@ -103,7 +103,7 @@ class SpatialRuleEnforcer(ValidationProcess):
         
         method = getattr(geometry, predicate) #getting the correspondent QgsGeometry method to be used in the rule
         
-        #querying the features that intersect the geometry's bounding box
+        #querying the features that intersect the geometry's bounding box (i.e. our candidates)
         candidatesIter = vectorlayer2.dataProvider().getFeatures(QgsFeatureRequest(geometry.boundingBox()))
                 
         #checking the rule in the case the situation above does not happen
@@ -111,6 +111,7 @@ class SpatialRuleEnforcer(ValidationProcess):
         flagData = []
         #iterating over candidates
         for feature in candidatesIter:
+            #for the same layer we need to avoid to test a feature against it self
             if layer1 == layer2 and featureId == feature['id']:
                 continue
             #for each one of them we must execute the method
@@ -152,7 +153,8 @@ class SpatialRuleEnforcer(ValidationProcess):
         else:
             breaksPredicate = True
 
-        if breaksPredicate:
+        #we only raise a breaksPredicate flag if flagData has elements and if occurrences = 0
+        if breaksPredicate and occurrences == 0:
             for hexa in flagData:
                 self.makeBreaksPredicateFlag(layer1, featureId, rule, layer2, hexa)
                 
