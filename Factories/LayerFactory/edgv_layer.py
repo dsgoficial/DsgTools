@@ -44,7 +44,7 @@ class EDGVLayer(QObject):
         self.abstractDb = abstractDb
         self.codeList = codeList
         self.uri = QgsDataSourceURI()
-        self.qmlLoaded.connect(self.codeList.setState)        
+        self.qmlLoaded.connect(self.codeList.setState)      
         
     def load(self, crs, idSubgrupo = None):
         return None
@@ -52,16 +52,13 @@ class EDGVLayer(QObject):
     def loadDomainTable(self,name):
         pass
     
-    def getStyles(self):
-        '''
-        The first iteration of walk lists all dirs as the second element of the list in os.walk(styleDir).next()[1]. 
-        As only God and Mauricio were going to remember this, I wrote it down.
-        '''
-        styleDir = self.abstractDb.getStyleDir()
-        return os.walk(styleDir).next()[1]
-    
-    def getStyleFile(self, className):
-        pass
+    def getStyleFile(self, stylePath, className):
+        availableStyles = os.walk(stylePath).next()[2]
+        styleName = className+'.sld'
+        if styleName in availableStyles:
+            return os.path.join(stylePath,styleName)
+        else:
+            return None
     
     def prepareLoad(self):
         dbName = self.abstractDb.getDatabaseName()

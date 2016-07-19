@@ -43,7 +43,7 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
     connectionChanged = pyqtSignal()
     problemOccurred = pyqtSignal(str)
     dbChanged = pyqtSignal(AbstractDb)
-    
+    styleChanged = pyqtSignal(dict)
     def __init__(self, parent = None):
         """Constructor."""
         super(ConnectionWidget, self).__init__(parent)
@@ -62,15 +62,6 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         if self.abstractDb:
             del self.abstractDb
             self.abstractDb = None
-
-    def getStyles(self):
-        '''
-        The first iteration of walk lists all dirs as the second element of the list in os.walk(styleDir).next()[1]. 
-        As only God and Mauricio were going to remember this, I wrote it down.
-        '''
-        currentPath = os.path.dirname(__file__)
-        styleDir = os.path.join(currentPath, '..', 'Styles')
-        return os.walk(styleDir).next()[1]
 
     def setInitialState(self):
         self.filename = ''
@@ -92,7 +83,6 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.spatialiteCrsEdit.setReadOnly(True)   
         self.edgvSpatialiteVersionEdit.setReadOnly(True)
         self.edgvPostgisVersionEdit.setReadOnly(True)      
-        self.styles = self.getStyles() 
 
     @pyqtSlot(int)
     def on_comboBoxPostgis_currentIndexChanged(self):
@@ -154,6 +144,8 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
             self.abstractDb.checkAndOpenDb()
             self.dbLoaded = True
             self.dbVersion = self.abstractDb.getDatabaseVersion()
+            self.styles = self.abstractDb.getStyleDict(self.dbVersion)
+            self.styleChanged.emit(self.styles)
             if self.dbVersion == '-1':
                 self.problemOccurred.emit(self.tr('This is not a valid DsgTools database!'))
             else:

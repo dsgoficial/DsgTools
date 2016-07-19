@@ -90,9 +90,10 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         self.checkBoxAll.stateChanged.connect(self.setAllGroup)
         
         self.widget.tabWidget.currentChanged.connect(self.restoreInitialState)
+        self.widget.styleChanged.connect(self.populateStyleCombo)
         self.codeList = codeList
         self.layerFactory = LayerFactory()
-        self.populateStyleCombo(self.widget.styles)
+        self.styleDict = None
  
     def restoreInitialState(self):
         self.categories = []
@@ -112,6 +113,7 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         self.checkBoxLine.setCheckState(0)
         self.checkBoxPolygon.setCheckState(0)
         self.checkBoxAll.setCheckState(0)
+        self.styleDict = None
 
     def listCategoriesFromDatabase(self):
         self.listWidgetCategoryFrom.clear()
@@ -354,11 +356,23 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
             schema, layerName = self.widget.abstractDb.getTableSchema(table_name)
             if (category.split('.')[1] == layerName.split('_')[0]) and (category.split('.')[0] == schema):
                 edgvLayer = self.layerFactory.makeLayer(self.widget.abstractDb, self.codeList, table_name)
-                edgvLayer.load(self.widget.crs, idSubgrupo, useInheritance = self.onlyParentsCheckBox.isChecked())
+                selectedStyle = None
+                if self.styleComboBox.currentText() in self.styleDict.keys():
+                    selectedStyle = self.styleDict[self.styleComboBox.currentText()]
+                edgvLayer.load(self.widget.crs, idSubgrupo, useInheritance = self.onlyParentsCheckBox.isChecked(), stylePath = selectedStyle)
     
-    def populateStyleCombo(self, styleList):
-        for i in range(len(styleList)):
-            self.styleComboBox.addItem(styleList[i])
-            if styleList[i] == 'Default':
-                defaultIndex = i
-        self.styleComboBox.setCurrentIndex(defaultIndex)
+    def populateStyleCombo(self, styleDict):
+        self.styleComboBox.clear()
+        self.styleDict = styleDict
+        styleList = styleDict.keys()
+        numberOfStyles = len(styleList)
+        if numberOfStyles > 0:
+            self.styleComboBox.addItem(self.tr('Select Style'))
+            for i in range(numberOfStyles):
+                self.styleComboBox.addItem(styleList[i])
+                if styleList[i] == 'Default':
+                    defaultIndex = i
+            self.styleComboBox.setCurrentIndex(defaultIndex)
+        else:
+            self.syleComboBox.addItem(self.tr('No available styles'))
+        

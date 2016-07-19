@@ -78,7 +78,7 @@ class PostGISLayer(EDGVLayer):
                     return ll
         return loaded
 
-    def load(self, crs, idSubgrupo = None, uniqueLoad = False, useInheritance = False):
+    def load(self, crs, idSubgrupo = None, uniqueLoad = False, useInheritance = False, stylePath = None):
         if uniqueLoad:
             lyr = self.checkLoaded(self.layer_name)
             if lyr:
@@ -144,6 +144,11 @@ class PostGISLayer(EDGVLayer):
                     vlayer.setEditorWidgetV2Config(i,valueRelationDict)
     
             self.qmlLoaded.emit()
+        
+        if stylePath:
+            fullPath = self.getStyleFile(stylePath, self.qmlName)
+            if fullPath:
+                vlayer.loadNamedStyle(fullPath, False)
 
         iface.legendInterface().moveLayer(vlayer, idSubgrupo)
             

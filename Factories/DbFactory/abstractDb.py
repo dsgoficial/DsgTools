@@ -475,9 +475,23 @@ class AbstractDb(QObject):
             qmlPath = ''
         return qmlPath
 
-    def getStyleDir(self):
+    def getStyleDict(self, dbVersion):
+        '''
+        dbVersion: database version in the format of abstractDb.getVersion()
+        The first iteration of walk lists all dirs as the second element of the list in os.walk(styleDir).next()[1]. 
+        As only God and Mauricio were going to remember this, I wrote it down.
+        '''
         currentPath = os.path.dirname(__file__)
-        return os.path.join(currentPath, '..', '..', 'Styles')
+        styleDir = os.path.join(currentPath, '..', '..', 'Styles')
+        if dbVersion == '2.1.3':
+            styleDir = os.path.join(styleDir, 'edgv_213')
+        elif dbVersion == 'FTer_2a_Ed':
+            styleDir = os.path.join(styleDir, 'edgv_FTer_2a_Ed')
+        styleList = os.walk(styleDir).next()[1]
+        styleDict = dict()
+        for s in styleList:
+            styleDict[s] = os.path.join(styleDir, s)
+        return styleDict
     
     def makeValueRelationDict(self, table, codes):
         self.checkAndOpenDb()
