@@ -743,3 +743,6 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "DELETE FROM validation.aux_flags_validacao WHERE process_name = '{0}' AND layer = '{1}' AND feat_id = {2}".format(processName, layer, feat_id)
         return sql
     
+    def removeEmptyGeomtriesFromDb(self, layer):
+        sql = "DELETE FROM {0} WHERE st_isempty(geom)".format(layer)
+        return sql

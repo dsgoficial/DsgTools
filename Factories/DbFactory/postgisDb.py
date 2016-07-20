@@ -1212,3 +1212,15 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem deleting flag: ') + query.lastError().text())
         self.db.commit()
         self.db.close()
+        
+    def removeEmptyGeometries(self, layer):
+        self.checkAndOpenDb()
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        sql = self.gen.removeEmptyGeomtriesFromDb(layer)
+        if not query.exec_(sql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem removing empty geometries: ') + query.lastError().text())
+        self.db.commit()
+        self.db.close()

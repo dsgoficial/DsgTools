@@ -5,10 +5,10 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2016-04-06
+        begin                : 2016-07-20
         git sha              : $Format:%H$
-        copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba@dsg.eb.mil.br
+        copyright            : (C) 2016 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
+        email                : luiz.claudio@dsg.eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -23,25 +23,20 @@
 from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
-class RemoveDuplicatesProcess(ValidationProcess):
+class RemoveEmptyGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb, codelist):
         super(self.__class__,self).__init__(postgisDb, codelist)
     
-    def dependsOn(self):
-        #Abstract method. Should be reimplemented if necessary.
-        return ['IdentifyDuplicatedGeometriesProcess']
-
     def execute(self):
         #abstract method. MUST be reimplemented.
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
-            flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyDuplicatedGeometriesProcess')
-            numberOfProblems = 0
-            for cl in flagsDict.keys():
-                numberOfProblems += self.abstractDb.removeFeatures(cl,flagsDict[cl])
-            self.setStatus('%s features were removed.\n' % numberOfProblems, 1)
-            QgsMessageLog.logMessage('%s features were removed.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
+            for cl in classesWithGeom:
+                self.abstractDb.removeEmptyGeometries(cl)
+            self.setStatus('Process executed successfully!', 1) #Finished
+            QgsMessageLog.logMessage('Process executed successfully!', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
