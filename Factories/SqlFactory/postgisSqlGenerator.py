@@ -723,7 +723,7 @@ class PostGISSqlGenerator(SqlGenerator):
                     (
                         select st_snap(a.geom, st_collect(b.geom), '||snap||') as geom, a.id as id 
                         from '||tabela||' a, '||tabela||' b 
-                        where a.id != b.id and a.id = '||id||' 
+                        where a.id != b.id and st_isempty(a.geom) = FALSE and a.id = '||id||'
                         group by a.id, a.geom
                     ) as res 
                 where res.id = classe.id';
