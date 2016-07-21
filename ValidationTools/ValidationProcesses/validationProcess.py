@@ -117,5 +117,3 @@ class ValidationProcess(QObject):
         addList = []
         deleteList = []
         
-        
-        

@@ -744,5 +744,5 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def removeEmptyGeomtriesFromDb(self, layer):
-        sql = "DELETE FROM {0} WHERE st_isempty(geom)".format(layer)
+        sql = "DELETE FROM {0} WHERE st_isempty(geom) = TRUE".format(layer)
         return sql

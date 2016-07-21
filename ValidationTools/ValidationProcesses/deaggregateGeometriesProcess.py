@@ -28,13 +28,11 @@ class DeaggregateGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, codelist)
 
     def execute(self):
-        #abstract method. MUST be reimplemented.
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName())
             explodeIdDict = self.abstractDb.getExplodeCandidates() #list only classes with elements.
-            #TODO: Do something
             for cl in explodeIdDict.keys():
                 uri = self.abstractDb.getURI(cl)
                 layer = QgsVectorLayer(uri.uri(), cl, 'postgres')
@@ -45,8 +43,7 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                 for id in explodeIdDict[cl]:
                     layer.startEditing()
                     feat = layer.getFeatures(QgsFeatureRequest(id)).next()
-                    count = 1
-                    parts = feat.geometry().asGeometryCollection ()
+                    parts = feat.geometry().asGeometryCollection()
                     for part in parts:
                         part.convertToMultiType()
                     addList = []
