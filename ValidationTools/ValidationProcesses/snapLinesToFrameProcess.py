@@ -28,6 +28,12 @@ class SnapLinesToFrameProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, codelist)
         self.parameters = {'Snap': 5.0}
 
+    def preProcess(self):
+        return None
+        
+    def postProcess(self):
+        return 'SnapToGridProcess'
+
     def execute(self):
         #abstract method. MUST be reimplemented.
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)

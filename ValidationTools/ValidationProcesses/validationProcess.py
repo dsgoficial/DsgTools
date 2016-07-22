@@ -68,14 +68,22 @@ class ValidationProcess(QObject):
         return 'Ungrouped'
     
     def getClassesToBeDisplayedAfterProcess(self):
-        #returns classes to be loaded to TOC after executing this process.
+        '''
+        Returns classes to be loaded to TOC after executing this process.
+        '''
         return self.classesToBeDisplayedAfterProcess
     
     def addClassesToBeDisplayedList(self,className):
+        '''
+        Add a class into the class list that will be displayed after the process
+        '''
         if className not in self.classesToBeDisplayedAfterProcess:
             self.classesToBeDisplayedAfterProcess.append(className)
     
     def clearClassesToBeDisplayedAfterProcess(self):
+        '''
+        Clears the class list to be displayed
+        '''
         self.classesToBeDisplayedAfterProcess = []
     
     def preProcess(self):
@@ -91,6 +99,10 @@ class ValidationProcess(QObject):
         return None
     
     def addFlag(self, flagTupleList):
+        '''
+        Adds flags
+        flagTUpleList: list of tuples to be added as flag
+        '''
         try:
             return self.abstractDb.insertFlags(flagTupleList, self.getName())
         except Exception as e:
@@ -98,6 +110,11 @@ class ValidationProcess(QObject):
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             
     def removeFeatureFlags(self, layer, featureId):
+        '''
+        Removes specific flags from process
+        layer: Name of the layer that should be remove from the flags
+        featureId: Feature id from layer name that must be removed
+        '''
         try:
             return self.abstractDb.removeFeatureFlags(layer, featureId, self.getName())
         except Exception as e:
@@ -105,6 +122,9 @@ class ValidationProcess(QObject):
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
     def getStatus(self):
+        '''
+        Gets the process status
+        '''
         try:
             return self.abstractDb.getValidationStatus(self.getName())
         except Exception as e:
@@ -112,6 +132,9 @@ class ValidationProcess(QObject):
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
     def getStatusMessage(self):
+        '''
+        Gets the status message text
+        '''
         try:
             return self.abstractDb.getValidationStatusText(self.getName())
         except Exception as e:
@@ -119,6 +142,11 @@ class ValidationProcess(QObject):
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
     def setStatus(self, msg, status):
+        '''
+        Sets the status message
+        status: Status number
+        msg: Status text message
+        '''
         try:
             self.abstractDb.setValidationProcessStatus(self.getName(), msg, status)
         except Exception as e:
@@ -126,6 +154,10 @@ class ValidationProcess(QObject):
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
     def finishedWithError(self):
+        '''
+        Sets the finished with error status (status number 2)
+        Clears the classes to be displayed
+        '''
         self.setStatus('Process finished with errors.', 2) #Failed status
         self.clearClassesToBeDisplayedAfterProcess()        
     

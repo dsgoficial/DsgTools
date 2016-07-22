@@ -94,7 +94,6 @@ class ValidationManager(QObject):
             #check status
             QgsMessageLog.logMessage('Process %s Log:\n' % currProc.getName(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             currProc.execute() #run bitch run!
-            #status = currProc.getStatus() #must set status
             QgsMessageLog.logMessage('Process ran with status %s\n' % currProc.getStatusMessage(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             #checking for existing post process
             postProcessName = currProc.postProcess()

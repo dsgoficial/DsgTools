@@ -31,7 +31,13 @@ import json
 class CloseEarthCoveragePolygonsProcess(ValidationProcess):
     def __init__(self, postgisDb, codelist):
         super(self.__class__,self).__init__(postgisDb, codelist)
-    
+        
+    def preProcess(self):
+        return 'SnapLinesToFrameProcess'
+        
+    def postProcess(self):
+        return None
+
     def cleanCentroidsAreas(self, coverageClassList):
         for cl in coverageClassList:
             auxCentroidLyr = QgsVectorLayer(self.abstractDb.getURI(cl, False, geomColumn = 'geom').uri(), cl, "postgres")
