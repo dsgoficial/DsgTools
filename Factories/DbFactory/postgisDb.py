@@ -24,10 +24,10 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 from PyQt4.QtCore import QSettings
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceURI
+from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceURI, QgsFeature, QgsVectorLayer
 from osgeo import ogr
 from uuid import uuid4
-import codecs, os, json
+import codecs, os, json, binascii
 
 class PostgisDb(AbstractDb):
     
@@ -1201,7 +1201,6 @@ class PostgisDb(AbstractDb):
             for i in range(len(params)):
                 newElement.append(query.value(i))
             result[key].append(newElement)
-        self.db.close()
         return result
 
     def snapToGrid(self, cl, tol, srid):
@@ -1211,3 +1210,31 @@ class PostgisDb(AbstractDb):
         result = self.runQuery(cl, sql, errorMsg, params)
         return result
 
+    def createAndPopulateTempTableFromMap(self, tableName, featureMap):
+        self.checkAndOpenDb()
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        sql = self.gen.createTempTable(tableName)
+        sqls = sql.split('#')
+        for s in sqls:
+            if not query.exec_(s):
+                self.db.rollback()
+                self.db.close()
+                raise Exception(self.tr('Problem creating temp table: ') + query.lastError().text())
+        attributes = None
+        for feat in featureMap.values():
+            if not attributes:
+                attributes = [field.name() for field in feat.fields()]
+            values = feat.attributes()
+            geometry = binascii.hexlify(feat.geometry().asWkb())
+            insertSql = self.gen.populateTempTable(tableName, attributes, values, geometry)
+            if not query.exec_(insertSql):
+                self.db.rollback()
+                self.db.close()
+                raise Exception(self.tr('Problem populating temp table: ') + query.lastError().text())
+        indexSql = self.gen.createSpatialIndex(tableName)
+        if not query.exec_(indexSql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem creating spatial index on temp table: ') + query.lastError().text())
+        self.db.commit()

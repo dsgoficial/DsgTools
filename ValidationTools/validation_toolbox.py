@@ -152,7 +152,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.databaseLineEdit.setText(database)
             self.scale = self.configWindow.scaleComboBox.currentText()
             self.tolerance = self.configWindow.toleranceLineEdit.text()
-            self.validationManager = ValidationManager(self.configWindow.widget.abstractDb, self.codeList)
+            self.validationManager = ValidationManager(self.configWindow.widget.abstractDb, self.codeList, self.iface)
             self.populateProcessList()
             self.databaseLineEdit.setText(database)
         except Exception as e:

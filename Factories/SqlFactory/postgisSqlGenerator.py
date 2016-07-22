@@ -759,3 +759,28 @@ class PostGISSqlGenerator(SqlGenerator):
     def executeRecursiveSnap(self, cl, tol):
         sql = 'SELECT dsgsnap(\'{0}\', {1})'.format(cl, str(tol))
         return sql
+    
+    def createTempTable(self, tableName):
+        sql = '''DROP TABLE IF EXISTS {0}_temp#
+        CREATE TEMP TABLE {0}_temp as (select * from {1} where 1=2)'''.format(tableName.split('.')[-1],tableName)
+        return sql
+    
+    def populateTempTable(self, tableName, attributes, values, geometry):
+        auxName = tableName.split('.')[-1]
+        columnTupleString = ','.join(map(str,attributes))
+        columnTupleString += ',geom'
+        valueTupple = []
+        for value in values:
+            if isinstance(value, str):
+                valueTupple.append("'{0}'".format(value))
+            else:
+                valueTupple.append(value)
+        valueTupple.append("ST_SetSrid('{0}',{1})".format(geometry,str(3857)))
+        valueTuppleString = ','.join(map(str,valueTupple))
+        sql = """INSERT INTO {0}_temp({1}) VALUES ({2})""".format(auxName, columnTupleString, valueTuppleString)
+        return sql
+    
+    def createSpatialIndex(self, tableName):
+        auxName = tableName.split('.')[-1]
+        sql = 'create index {0}_gist on {0} using gist (geom)'.format(auxName)
+        return sql

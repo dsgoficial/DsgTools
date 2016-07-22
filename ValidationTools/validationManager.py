@@ -28,11 +28,12 @@ from PyQt4.QtGui import QMessageBox
 from PyQt4.Qt import QObject
 
 class ValidationManager(QObject):
-    def __init__(self,postgisDb,codelist):
+    def __init__(self,postgisDb,codelist, iface):
         super(ValidationManager, self).__init__()
         self.processList = []
         self.postgisDb = postgisDb
         self.codelist = codelist
+        self.iface = iface
         try:
             self.postgisDb.checkAndCreateValidationStructure()
             self.setAvailableProcesses()
@@ -62,7 +63,7 @@ class ValidationManager(QObject):
                 fileBaseName = ''.join(chars)
                 mod = __import__('DsgTools.ValidationTools.ValidationProcesses.'+fileBaseName, fromlist=[processClass])
                 klass = getattr(mod, processClass)
-                currProc = klass(self.postgisDb,self.codelist)
+                currProc = klass(self.postgisDb,self.codelist, self.iface)
                 return currProc
 
     def executeProcess(self, processName):

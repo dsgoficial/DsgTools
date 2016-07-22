@@ -24,8 +24,8 @@ from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class SnapToGridProcess(ValidationProcess):
-    def __init__(self, postgisDb, codelist):
-        super(self.__class__,self).__init__(postgisDb, codelist)
+    def __init__(self, postgisDb, codelist, iface):
+        super(self.__class__,self).__init__(postgisDb, codelist, iface  )
         self.parameters = {'Snap': 0.001}
 
     def execute(self):
@@ -33,17 +33,18 @@ class SnapToGridProcess(ValidationProcess):
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
-            classesWithGeom = self.abstractDb.getOrphanGeomTablesWithElements()
-            classesWithGeom.append('public.aux_moldura_a')
+            lyr = self.inputData() #qgsvectorlayer
+            featureMap = self.mapInputLayer(lyr)
+            tableName = self.getTableNameFromLayer(lyr)
+            self.prepareWorkingStructure(tableName,featureMap)
             tol = self.parameters['Snap']
             srid = self.abstractDb.findEPSG()
-            for cl in classesWithGeom:
-                result = self.abstractDb.snapToGrid(cl, tol, srid) #list only classes with elements.
-                dataDict = dict()
-                dataDict['UPDATE'] = dict()
-                for key in result.keys():
-                    dataDict['UPDATE'][key] = result[key]
-                self.outputData('postgis', cl, dataDict)
+            result = self.abstractDb.snapToGrid(tableName+'_temp', tol, srid) #list only classes with elements.
+            dataDict = dict()
+            dataDict['UPDATE'] = dict()
+            for key in result.keys():
+                dataDict['UPDATE'][key] = result[key]
+            self.outputData('postgis', cl, dataDict)
             self.setStatus('All features snapped succesfully.\n', 1) #Finished
             QgsMessageLog.logMessage('All features snapped succesfully.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1

@@ -26,14 +26,14 @@ from PyQt4.QtGui import QMessageBox
 from PyQt4.Qt import QObject
 
 #QGIS imports
-from qgis.core import QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature
+from qgis.core import QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceURI
 
 # DSGTools imports
 from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
 
 
 class ValidationProcess(QObject):
-    def __init__(self, postgisDb, codelist):
+    def __init__(self, postgisDb, codelist, iface):
         super(ValidationProcess, self).__init__()
         self.abstractDb = postgisDb
         if self.getStatus() == None:
@@ -42,6 +42,7 @@ class ValidationProcess(QObject):
         self.parameters = None
         self.parametersDict = None
         self.codeList = codelist
+        self.iface = iface
         self.layerFactory = LayerFactory() 
         
     def setParameters(self, params):
@@ -109,7 +110,49 @@ class ValidationProcess(QObject):
     
     def finishedWithError(self):
         self.setStatus('Process finished with errors.', 2) #Failed status
-        self.clearClassesToBeDisplayedAfterProcess()        
+        self.clearClassesToBeDisplayedAfterProcess()
+    
+    def inputData(self):
+        '''
+        Returns qgsvectorlayer
+        '''
+        return self.iface.activeLayer()
+
+    def getTableNameFromLayer(self, lyr):
+        '''
+        Gets the layer name as present in the rules
+        '''
+        uri = lyr.dataProvider().dataSourceUri()
+        dsUri = QgsDataSourceURI(uri)
+        name = '.'.join([dsUri.schema(), dsUri.table()])
+        return name
+
+    def mapInputLayer(self, inputLyr):
+        featureMap = dict()
+        blackList = inputLyr.editBuffer().deletedFeatureIds()
+        modelFeature = QgsFeature(inputLyr.pendingFields())
+        #1 - changed
+        changedMap = inputLyr.editBuffer().changedGeometries()
+        for featid in changedMap.keys():
+            newFeat = inputLyr.getFeatures(featid)
+            newFeat.changeGeometry(changedMap[featid])
+            featureMap[featid]= newFeat
+        #2 - old
+        for feat in inputLyr.getFeatures():
+            featid = feat.id()
+            if featid not in featureMap.keys() and featid not in blackList:
+                featureMap[featid] = feat
+        #3 -added
+        for feat in inputLyr.editBuffer().addedFeatures().values():
+            featureMap[featid] = feat
+        return featureMap
+    
+    def prepareWorkingStructure(self, tableName, featureMap):
+        try:
+            self.abstractDb.createAndPopulateTempTableFromMap(tableName, featureMap)
+        except Exception as e:
+            QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
     def outputData(self, type, inputClass, dataDict):
         '''
@@ -228,3 +271,4 @@ class ValidationProcess(QObject):
         #TODO
         featureList = dataDict[type]
         pass
+    
