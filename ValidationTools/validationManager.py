@@ -101,10 +101,10 @@ class ValidationManager(QObject):
                 currProc.setParameters(params)
             #check status
             QgsMessageLog.logMessage('Process %s Log:\n' % currProc.getName(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            currProc.execute() #run bitch run!
+            ret = currProc.execute() #run bitch run!
             #status = currProc.getStatus() #must set status
             QgsMessageLog.logMessage('Process ran with status %s\n' % currProc.getStatusMessage(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            return 1
+            return ret
     
 if __name__ == '__main__':
     from DsgTools.Factories.DbFactory.dbFactory import DbFactory

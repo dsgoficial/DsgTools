@@ -147,9 +147,9 @@ class ValidationProcess(QObject):
             featureMap[featid] = feat
         return featureMap
     
-    def prepareWorkingStructure(self, tableName, featureMap):
+    def prepareWorkingStructure(self, tableName, layer):
         try:
-            self.abstractDb.createAndPopulateTempTableFromMap(tableName, featureMap)
+            self.abstractDb.createAndPopulateTempTableFromMap(tableName, layer)
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

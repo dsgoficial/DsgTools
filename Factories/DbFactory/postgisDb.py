@@ -708,6 +708,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.checkValidationStructure()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            self.db.close()
             raise Exception(self.tr('Problem creating structure: ')+query.lastError().text())
         created = True
         while query.next():
@@ -731,6 +733,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.validationStatus(processName)
         query = QSqlQuery(sql,self.db)
         if not query.isActive():
+            self.db.rollback()
+            self.db.close()
             raise Exception(self.tr('Problem acquiring status: ') + query.lastError().text()) 
         ret = None
         while query.next():
@@ -742,6 +746,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.validationStatusText(processName)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            self.db.close()
             raise Exception(self.tr('Problem acquiring status: ') + query.lastError().text()) 
         ret = None
         while query.next():
@@ -753,6 +759,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.setValidationStatusQuery(processName,log,status)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
+            self.db.rollback()
+            self.db.close()
             raise Exception(self.tr('Problem setting status: ') + query.lastError().text())
     
     def getRunningProc(self):
@@ -760,6 +768,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getRunningProc()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            self.db.close()
             raise Exception(self.tr('Problem getting running process: ') + query.lastError().text()) 
         while query.next():
             processName = query.value(0)
@@ -783,6 +793,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.testSpatialRule(class_a, necessity, predicate_function, class_b, min_card, max_card)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            self.db.close()
             raise Exception(self.tr('Problem testing spatial rule: ') + query.lastError().text()) 
         ret = []
         while query.next():
@@ -797,6 +809,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getDimension(geom)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            self.db.close()
             raise Exception(self.tr('Problem getting dimension: ') + query.lastError().text()) 
         dimension = 0
         while query.next():
@@ -811,6 +825,8 @@ class PostgisDb(AbstractDb):
             sql= self.gen.getMulti(cl)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
+                self.db.rollback()
+                self.db.close()
                 raise Exception(self.tr('Problem exploding geometries: ') + query.lastError().text())
             idList = []
             while query.next():
@@ -849,6 +865,8 @@ class PostgisDb(AbstractDb):
                 sql = self.gen.getDuplicatedGeom(tableSchema, tableName)
                 query = QSqlQuery(sql, self.db)
                 if not query.isActive():
+                    self.db.rollback()
+                    self.db.close()
                     raise Exception(self.tr('Problem getting duplicated geometries: ') + query.lastError().text())
                 while query.next():
                     duplicatedDict = self.utils.buildNestedDict(duplicatedDict, [cl,query.value(0)], query.value(2))
@@ -862,6 +880,8 @@ class PostgisDb(AbstractDb):
             sql = self.gen.getSmallAreas(tableSchema, tableName, tol)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
+                self.db.rollback()
+                self.db.close()
                 raise Exception(self.tr('Problem getting small areas: ') + query.lastError().text())
             while query.next():
                 smallAreasDict = self.utils.buildNestedDict(smallAreasDict, [cl,query.value(0)], query.value(1))
@@ -875,6 +895,8 @@ class PostgisDb(AbstractDb):
             sql = self.gen.getSmallLines(tableSchema, tableName, tol)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
+                self.db.rollback()
+                self.db.close()
                 raise Exception(self.tr('Problem getting small lines: ') + query.lastError().text())
             while query.next():
                 smallLinesDict = self.utils.buildNestedDict(smallLinesDict, [cl,query.value(0)], query.value(1))
@@ -930,6 +952,8 @@ class PostgisDb(AbstractDb):
             sql = self.gen.getNotSimple(tableSchema, tableName)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
+                self.db.rollback()
+                self.db.close()
                 raise Exception(self.tr('Problem getting not simple geometries: ') + query.lastError().text())
             while query.next():
                 notSimpleDict = self.utils.buildNestedDict(notSimpleDict, [cl,query.value(0)], query.value(1))
@@ -941,6 +965,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getOutofBoundsAngles(tableSchema, tableName, tol)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            self.db.close()
             raise Exception(self.tr('Problem getting not out of bounds angles: ') + query.lastError().text())
         while query.next():
             id = query.value(0)
@@ -954,6 +980,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getFlagsByProcess(processName)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            self.db.close()
             raise Exception(self.tr('Problem getting flags dict: ') + query.lastError().text())
         while query.next():
             cl = query.value(0)
@@ -981,6 +1009,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getTableExtent(tableSchema, tableName)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            self.db.close()
             raise Exception(self.tr('Problem getting table extent: ') + query.lastError().text())
         
         extent = None
@@ -997,6 +1027,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getOrphanGeomTablesWithElements(loading)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            self.db.close()
             raise Exception(self.tr('Problem getting orphan tables: ') + query.lastError().text())
         result = []
         while query.next():
@@ -1008,6 +1040,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getOrphanGeomTablesWithElements(loading)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            self.db.close()
             raise Exception(self.tr('Problem getting orphan tables: ') + query.lastError().text())
         result = []
         while query.next():
@@ -1045,6 +1079,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.checkCentroidAuxStruct()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            self.db.close()
             raise Exception(self.tr('Problem checking structure: ')+query.lastError().text())
         while query.next():
             if query.value(0) == None:
@@ -1076,6 +1112,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getEarthCoverageDict()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            self.db.close()
             raise Exception(self.tr('Problem getting earth coverage tables: ') + query.lastError().text())
         result = []
         while query.next():
@@ -1087,6 +1125,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getEarthCoverageDict()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            self.db.close()
             raise Exception(self.tr('Problem getting earth coverage structure: ') + query.lastError().text())
         while query.next():
             return query.value(0)
@@ -1096,6 +1136,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.setEarthCoverageDict(textDict)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
+            self.db.rollback()
+            self.db.close()
             raise Exception(self.tr('Problem setting earth coverage structure: ') + query.lastError().text())
         self.db.commit()
         self.db.close()
@@ -1126,6 +1168,8 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         centroidList = []
         if not query.isActive():
+            self.db.rollback()
+            self.db.close()
             raise Exception(self.tr('Problem getting earth coverage structure: ') + query.lastError().text())
         while query.next():
             centroidList.append(query.value(0))
@@ -1139,6 +1183,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getWhoAmI(cl, id)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            self.db.close()
             raise Exception(self.tr('Problem getting class name: ') + query.lastError().text())
         while query.next():
             return query.value(0)
@@ -1192,6 +1238,8 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            self.db.close()
             raise Exception(errorMsg + query.lastError().text())
         result = dict()
         key = ','.join(params)
@@ -1232,9 +1280,9 @@ class PostgisDb(AbstractDb):
                 self.db.rollback()
                 self.db.close()
                 raise Exception(self.tr('Problem populating temp table: ') + query.lastError().text())
-        indexSql = self.gen.createSpatialIndex(tableName)
-        if not query.exec_(indexSql):
-            self.db.rollback()
-            self.db.close()
-            raise Exception(self.tr('Problem creating spatial index on temp table: ') + query.lastError().text())
+#         indexSql = self.gen.createSpatialIndex(tableName)
+#         if not query.exec_(indexSql):
+#             self.db.rollback()
+#             self.db.close()
+#             raise Exception(self.tr('Problem creating spatial index on temp table: ') + query.lastError().text())
         self.db.commit()

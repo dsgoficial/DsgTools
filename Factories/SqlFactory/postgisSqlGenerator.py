@@ -775,7 +775,7 @@ class PostGISSqlGenerator(SqlGenerator):
                 valueTupple.append("'{0}'".format(value))
             else:
                 valueTupple.append(value)
-        valueTupple.append("ST_SetSrid('{0}',{1})".format(geometry,str(3857)))
+        valueTupple.append("ST_SetSRID(ST_Multi('{0}'),{1})".format(geometry,str(3857)))
         valueTuppleString = ','.join(map(str,valueTupple))
         sql = """INSERT INTO {0}_temp({1}) VALUES ({2})""".format(auxName, columnTupleString, valueTuppleString)
         return sql
