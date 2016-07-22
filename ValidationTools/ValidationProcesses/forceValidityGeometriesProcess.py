@@ -26,6 +26,12 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 class ForceValidityGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb, codelist):
         super(self.__class__,self).__init__(postgisDb, codelist)
+        
+    def preProcess(self):
+        return 'IdentifyInvalidGeometriesProcess'
+        
+    def postProcess(self):
+        return 'DeaggregateGeometriesProcess'
 
     def execute(self):
         #abstract method. MUST be reimplemented.

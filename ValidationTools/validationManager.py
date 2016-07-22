@@ -79,18 +79,10 @@ class ValidationManager(QObject):
             return 0
         else:
             currProc = self.instantiateProcessByName(processName)
-            if len(currProc.dependsOn()) > 0:
-                #check dependency
-                unmetDep = []
-                for dep in currProc.dependsOn():
-                    procDep = self.instantiateProcessByName(dep)
-                    #possible status: (0,'Not yet ran'), (1,'Finished'), (2,'Failed'), (3,'Running'), (4,'Finished with flags')
-                    #must check if each dependency is met, so status must be 1
-                    if procDep.getStatus() not in [1,4]:
-                        unmetDep.append(dep)
-                if len(unmetDep) > 0:
-                    QgsMessageLog.logMessage('Unable to run process due to the following dependencies: %s\n' % ','.join(unmetDep), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                    return 0
+            #checking for existing pre process
+            preProcessName = currProc.preProcess()
+            if preProcessName:
+                self.executeProcess(preProcessName)
             # setting parameters
             if currProc.parameters:
                 dlg = ProcessParametersDialog(None, currProc.parameters, None, 'Process parameters setter')
@@ -104,6 +96,10 @@ class ValidationManager(QObject):
             currProc.execute() #run bitch run!
             #status = currProc.getStatus() #must set status
             QgsMessageLog.logMessage('Process ran with status %s\n' % currProc.getStatusMessage(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            #checking for existing post process
+            postProcessName = currProc.postProcess()
+            if postProcessName:
+                self.executeProcess(postProcessName)
             return 1
     
 if __name__ == '__main__':

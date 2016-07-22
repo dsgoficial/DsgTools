@@ -26,33 +26,45 @@ from PyQt4.Qt import QObject
 
 class ValidationProcess(QObject):
     def __init__(self, postgisDb, codelist):
+        '''
+        Constructor
+        '''
         super(ValidationProcess, self).__init__()
         self.abstractDb = postgisDb
         if self.getStatus() == None:
             self.setStatus('Instantianting process', 0)
         self.classesToBeDisplayedAfterProcess = []
         self.parameters = None
-        self.parametersDict = None
         self.codelist = codelist
         
     def setParameters(self, params):
+        '''
+        Define the process parameteres
+        '''
         self.parameters = params
 
-    def setParametersDict(self, params):
-        self.parametersDict = params
-    
     def execute(self):
-        #abstract method. MUST be reimplemented.
+        '''
+        Abstract method. MUST be reimplemented.
+        '''
         pass
     
     def shouldBeRunAgain(self):
-        #Abstract method. Should be reimplemented if necessary.
+        '''
+        Defines if the method should run again later
+        '''
         return False
     
     def getName(self):
+        '''
+        Gets the process name
+        '''
         return str(self.__class__).split('.')[-1].replace('\'>', '')
     
     def getProcessGroup(self):
+        '''
+        Returns the process group
+        '''
         return 'Ungrouped'
     
     def getClassesToBeDisplayedAfterProcess(self):
@@ -66,9 +78,17 @@ class ValidationProcess(QObject):
     def clearClassesToBeDisplayedAfterProcess(self):
         self.classesToBeDisplayedAfterProcess = []
     
-    def dependsOn(self):
-        #Abstract method. Should be reimplemented if necessary.
-        return []
+    def preProcess(self):
+        '''
+        Returns the name of the pre process that must run before, must be reimplemented in each process
+        '''
+        return None
+    
+    def postProcess(self):
+        '''
+        Returns the name of the post process that must run after, must be reimplemented in each process
+        '''        
+        return None
     
     def addFlag(self, flagTupleList):
         try:
