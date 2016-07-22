@@ -570,13 +570,13 @@ class PostGISSqlGenerator(SqlGenerator):
                         join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
                         left join pg_namespace pgmsp on pgcl.relnamespace = pgmsp.oid) 
             as pgcl2 on pgcl2.oid = pginh.inhrelid
-            where pgnsp.nspname in ('ge','pe', 'cb') and pgatt.attname IS NULL and pgcl.relkind = 'r'
+            where pgnsp.nspname in ('ge','pe', 'cb', 'public') and pgatt.attname IS NULL and pgcl.relkind = 'r'
         union 
         select distinct gc.f_table_schema || '.' || p.relname as tb from pg_class as p
             left join pg_inherits as inh  on inh.inhrelid = p.oid 
             left join geometry_columns as gc on gc.f_table_name = p.relname
             where (inh.inhrelid IS NULL) and 
-            gc.f_table_schema in ('cb', 'pe', 'ge')
+            gc.f_table_schema in ('cb', 'pe', 'ge', 'public')
         
         order by tb
         """
