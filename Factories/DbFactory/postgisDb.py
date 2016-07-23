@@ -1259,6 +1259,7 @@ class PostgisDb(AbstractDb):
         return result
 
     def createAndPopulateTempTableFromMap(self, tableName, featureMap):
+        srid = self.findEPSG()
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
@@ -1275,14 +1276,14 @@ class PostgisDb(AbstractDb):
                 attributes = [field.name() for field in feat.fields()]
             values = feat.attributes()
             geometry = binascii.hexlify(feat.geometry().asWkb())
-            insertSql = self.gen.populateTempTable(tableName, attributes, values, geometry)
+            insertSql = self.gen.populateTempTable(tableName, attributes, values, geometry, srid)
             if not query.exec_(insertSql):
                 self.db.rollback()
                 self.db.close()
                 raise Exception(self.tr('Problem populating temp table: ') + query.lastError().text())
-#         indexSql = self.gen.createSpatialIndex(tableName)
-#         if not query.exec_(indexSql):
-#             self.db.rollback()
-#             self.db.close()
-#             raise Exception(self.tr('Problem creating spatial index on temp table: ') + query.lastError().text())
+        indexSql = self.gen.createSpatialIndex(tableName)
+        if not query.exec_(indexSql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem creating spatial index on temp table: ') + query.lastError().text())
         self.db.commit()

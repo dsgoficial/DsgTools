@@ -762,11 +762,10 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def createTempTable(self, tableName):
         sql = '''DROP TABLE IF EXISTS {0}_temp#
-        CREATE TEMP TABLE {0}_temp as (select * from {1} where 1=2)'''.format(tableName.split('.')[-1],tableName)
+        CREATE TABLE {0}_temp as (select * from {1} where 1=2)'''.format(tableName,tableName)
         return sql
     
-    def populateTempTable(self, tableName, attributes, values, geometry):
-        auxName = tableName.split('.')[-1]
+    def populateTempTable(self, tableName, attributes, values, geometry, srid):
         columnTupleString = ','.join(map(str,attributes))
         columnTupleString += ',geom'
         valueTupple = []
@@ -775,12 +774,11 @@ class PostGISSqlGenerator(SqlGenerator):
                 valueTupple.append("'{0}'".format(value))
             else:
                 valueTupple.append(value)
-        valueTupple.append("ST_SetSRID(ST_Multi('{0}'),{1})".format(geometry,str(3857)))
+        valueTupple.append("ST_SetSRID(ST_Multi('{0}'),{1})".format(geometry,str(srid)))
         valueTuppleString = ','.join(map(str,valueTupple))
-        sql = """INSERT INTO {0}_temp({1}) VALUES ({2})""".format(auxName, columnTupleString, valueTuppleString)
+        sql = """INSERT INTO {0}_temp({1}) VALUES ({2})""".format(tableName, columnTupleString, valueTuppleString)
         return sql
     
     def createSpatialIndex(self, tableName):
-        auxName = tableName.split('.')[-1]
-        sql = 'create index {0}_gist on {0} using gist (geom)'.format(auxName)
+        sql = 'create index {0}_temp_gist on {1}_temp using gist (geom)'.format(tableName.split('.')[-1], tableName)
         return sql

@@ -33,20 +33,21 @@ class SnapToGridProcess(ValidationProcess):
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
-            lyr = self.inputData() #qgsvectorlayer
-            featureMap = self.mapInputLayer(lyr)
-            tableName = self.getTableNameFromLayer(lyr)
-            self.prepareWorkingStructure(tableName,featureMap)
-            tol = self.parameters['Snap']
-            srid = self.abstractDb.findEPSG()
-            result = self.abstractDb.snapToGrid(tableName+'_temp', tol, srid) #list only classes with elements.
-            dataDict = dict()
-            dataDict['UPDATE'] = dict()
-            for key in result.keys():
-                dataDict['UPDATE'][key] = result[key]
-            self.outputData('postgis', cl, dataDict)
-            self.setStatus('All features snapped succesfully.\n', 1) #Finished
-            QgsMessageLog.logMessage('All features snapped succesfully.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            lyrs = self.inputData()
+            for lyr in lyrs:
+                featureMap = self.mapInputLayer(lyr)
+                tableName = self.getTableNameFromLayer(lyr)
+                self.prepareWorkingStructure(tableName,featureMap)
+                tol = self.parameters['Snap']
+                srid = self.abstractDb.findEPSG()
+                result = self.abstractDb.snapToGrid(tableName+'_temp', tol, srid) #list only classes with elements.
+                dataDict = dict()
+                dataDict['UPDATE'] = dict()
+                for key in result.keys():
+                    dataDict['UPDATE'][key] = result[key]
+                self.outputData('postgis', tableName, dataDict)
+                self.setStatus('All features snapped succesfully.\n', 1) #Finished
+                QgsMessageLog.logMessage('All features snapped succesfully.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

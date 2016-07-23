@@ -26,7 +26,7 @@ from PyQt4.QtGui import QMessageBox
 from PyQt4.Qt import QObject
 
 #QGIS imports
-from qgis.core import QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceURI
+from qgis.core import QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceURI, QgsFeatureRequest
 
 # DSGTools imports
 from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
@@ -114,9 +114,9 @@ class ValidationProcess(QObject):
     
     def inputData(self):
         '''
-        Returns qgsvectorlayer
+        Returns current active layers
         '''
-        return self.iface.activeLayer()
+        return self.iface.mapCanvas().layers()
 
     def getTableNameFromLayer(self, lyr):
         '''
@@ -134,8 +134,8 @@ class ValidationProcess(QObject):
         #1 - changed
         changedMap = inputLyr.editBuffer().changedGeometries()
         for featid in changedMap.keys():
-            newFeat = inputLyr.getFeatures(featid)
-            newFeat.changeGeometry(changedMap[featid])
+            newFeat = inputLyr.getFeatures(QgsFeatureRequest(featid)).next()
+            newFeat.setGeometry(changedMap[featid])
             featureMap[featid]= newFeat
         #2 - old
         for feat in inputLyr.getFeatures():
