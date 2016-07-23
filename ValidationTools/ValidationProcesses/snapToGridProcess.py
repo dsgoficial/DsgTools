@@ -41,6 +41,7 @@ class SnapToGridProcess(ValidationProcess):
                 tol = self.parameters['Snap']
                 srid = self.abstractDb.findEPSG()
                 result = self.abstractDb.snapToGrid(tableName+'_temp', tol, srid) #list only classes with elements.
+                self.abstractDb.dropTempTable(tableName)
                 dataDict = dict()
                 dataDict['UPDATE'] = dict()
                 for key in result.keys():

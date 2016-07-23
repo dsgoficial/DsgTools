@@ -1287,3 +1287,14 @@ class PostgisDb(AbstractDb):
             self.db.close()
             raise Exception(self.tr('Problem creating spatial index on temp table: ') + query.lastError().text())
         self.db.commit()
+        
+    def dropTempTable(self, tableName):
+        self.checkAndOpenDb()
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        sql = self.gen.dropTempTable(tableName)
+        if not query.exec_(sql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem dropping temp table: ') + query.lastError().text())
+        
