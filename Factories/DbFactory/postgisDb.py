@@ -1236,6 +1236,7 @@ class PostgisDb(AbstractDb):
     
     def runQuery(self, cl, sql, errorMsg, params):
         self.checkAndOpenDb()
+        self.db.transaction()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             self.db.rollback()
@@ -1249,6 +1250,8 @@ class PostgisDb(AbstractDb):
             for i in range(len(params)):
                 newElement.append(query.value(i))
             result[key].append(newElement)
+        self.db.commit()
+        self.db.close()
         return result
 
     def snapToGrid(self, cl, tol, srid):
@@ -1287,6 +1290,7 @@ class PostgisDb(AbstractDb):
             self.db.close()
             raise Exception(self.tr('Problem creating spatial index on temp table: ') + query.lastError().text())
         self.db.commit()
+        self.db.close()
         
     def dropTempTable(self, tableName):
         self.checkAndOpenDb()
@@ -1297,4 +1301,6 @@ class PostgisDb(AbstractDb):
             self.db.rollback()
             self.db.close()
             raise Exception(self.tr('Problem dropping temp table: ') + query.lastError().text())
+        self.db.commit()
+        self.db.close()
         
