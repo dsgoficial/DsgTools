@@ -129,22 +129,30 @@ class ValidationProcess(QObject):
 
     def mapInputLayer(self, inputLyr):
         featureMap = dict()
-        blackList = inputLyr.editBuffer().deletedFeatureIds()
-        modelFeature = QgsFeature(inputLyr.pendingFields())
-        #1 - changed
-        changedMap = inputLyr.editBuffer().changedGeometries()
-        for featid in changedMap.keys():
-            newFeat = inputLyr.getFeatures(QgsFeatureRequest(featid)).next()
-            newFeat.setGeometry(changedMap[featid])
-            featureMap[featid]= newFeat
-        #2 - old
-        for feat in inputLyr.getFeatures():
-            featid = feat.id()
-            if featid not in featureMap.keys() and featid not in blackList:
+        editBuffer = inputLyr.editBuffer()
+        blackList = []
+        if editBuffer:
+            blackList = editBuffer.deletedFeatureIds()
+            #1 - changed
+            changedMap = editBuffer.changedGeometries()
+            for featid in changedMap.keys():
+                newFeat = inputLyr.getFeatures(QgsFeatureRequest(featid)).next()
+                newFeat.setGeometry(changedMap[featid])
+                featureMap[featid]= newFeat
+            #2 - old
+            for feat in inputLyr.getFeatures():
+                featid = feat.id()
+                if featid not in featureMap.keys() and featid not in blackList:
+                    featureMap[featid] = feat
+            #3 -added
+            for feat in editBuffer.addedFeatures().values():
                 featureMap[featid] = feat
-        #3 -added
-        for feat in inputLyr.editBuffer().addedFeatures().values():
-            featureMap[featid] = feat
+        else:
+            #2 - just the old
+            for feat in inputLyr.getFeatures():
+                featid = feat.id()
+                if featid not in featureMap.keys() and featid not in blackList:
+                    featureMap[featid] = feat            
         return featureMap
     
     def prepareWorkingStructure(self, tableName, layer):

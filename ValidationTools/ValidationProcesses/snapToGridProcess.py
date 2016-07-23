@@ -46,8 +46,8 @@ class SnapToGridProcess(ValidationProcess):
                 for key in result.keys():
                     dataDict['UPDATE'][key] = result[key]
                 self.outputData('postgis', tableName, dataDict)
-                self.setStatus('All features snapped succesfully.\n', 1) #Finished
-                QgsMessageLog.logMessage('All features snapped succesfully.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            self.setStatus('All features snapped succesfully.\n', 1) #Finished
+            QgsMessageLog.logMessage('All features snapped succesfully.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
