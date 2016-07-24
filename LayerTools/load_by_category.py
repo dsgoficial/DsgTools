@@ -357,8 +357,9 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
             if (category.split('.')[1] == layerName.split('_')[0]) and (category.split('.')[0] == schema):
                 edgvLayer = self.layerFactory.makeLayer(self.widget.abstractDb, self.codeList, table_name)
                 selectedStyle = None
-                if self.styleComboBox.currentText() in self.styleDict.keys():
-                    selectedStyle = self.styleDict[self.styleComboBox.currentText()]
+                if self.styleDict:
+                    if self.styleComboBox.currentText() in self.styleDict.keys():
+                        selectedStyle = self.styleDict[self.styleComboBox.currentText()]
                 edgvLayer.load(self.widget.crs, idSubgrupo, useInheritance = self.onlyParentsCheckBox.isChecked(), stylePath = selectedStyle)
     
     def populateStyleCombo(self, styleDict):
