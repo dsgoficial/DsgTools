@@ -148,7 +148,7 @@ class PostGISLayer(EDGVLayer):
         if stylePath:
             fullPath = self.getStyleFile(stylePath, self.qmlName)
             if fullPath:
-                vlayer.loadNamedStyle(fullPath, False)
+                vlayer.loadSldStyle(fullPath)
 
         iface.legendInterface().moveLayer(vlayer, idSubgrupo)
             
