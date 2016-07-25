@@ -71,6 +71,9 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.ruleEnforcer = None
 
     def createMenuEditFlagStatus(self, position):
+        '''
+        Creates the flag menu
+        '''
         menu = QMenu()
         item = self.tableView.indexAt(position)
         if item:
@@ -81,15 +84,27 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     
     @pyqtSlot()
     def on_theSelectionModel_selectionChanged(self):
+        '''
+        To do.
+        '''
         print 'mudou'
     
     def setFlagVisited(self):
+        '''
+        To do
+        '''
         print 'visited'
 
     def setFlagUnvisited(self):
+        '''
+        To do
+        '''
         print 'unvisited'
     
     def zoomToFlag(self):
+        '''
+        Zooms the map canvas to the current selected flag
+        '''
         idx =  self.tableView.selectionModel().selection().indexes()[0].data()
         
         dimension = self.tableView.selectionModel().selection().indexes()[6].data()
@@ -110,6 +125,10 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.iface.mapCanvas().refresh()
     
     def loadFlagLyr(self, layer):
+        '''
+        Loads the flag layer. It checks if the flag layer is already loaded, case not, it loads the flag layer into the TOC
+        layer: layer name
+        '''
         if not self.checkFlagsLoaded(layer):
             dbName = self.configWindow.widget.abstractDb.getDatabaseName()
             edgvLayer = self.layerFactory.makeLayer(self.configWindow.widget.abstractDb, self.codeList, 'validation.'+layer)
@@ -126,6 +145,10 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
                     return lyr
     
     def checkFlagsLoaded(self, layer):
+        '''
+        Checks if the flag layer is already loaded
+        layer: layer name
+        '''
         loadedLayers = self.iface.mapCanvas().layers()
         candidateLyrs = []
         for lyr in loadedLayers:
@@ -138,15 +161,24 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_openDbPushButton_clicked(self):
+        '''
+        Opend dialog for database connection
+        '''
         self.configWindow.show()
 
     @pyqtSlot(bool)
     def on_historyButton_clicked(self):
+        '''
+        Shows the validation history
+        '''
         historyWindow = ValidationHistory(self.configWindow.widget.abstractDb)
         historyWindow.exec_()
     
     @pyqtSlot()
     def updateDbLineEdit(self):
+        '''
+        Updates the database information
+        '''
         database, self.scale, self.tolerance = '', '', ''
         try:
             self.configWindow.widget.abstractDb.checkAndOpenDb()
@@ -162,6 +194,9 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.processTreeWidget.clear()
     
     def populateProcessList(self):
+        '''
+        Populates the process list. It also checks the status of each available process
+        '''
         self.processTreeWidget.clear()
         self.edgvLayer = None
         self.flagLyr = None
@@ -190,6 +225,9 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_runButton_clicked(self):
+        '''
+        Runs the current selected process
+        '''
         processName = self.processTreeWidget.selectedItems()[0].text(1)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         try:
@@ -209,6 +247,9 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot(int)
     def on_validationTabWidget_currentChanged(self):
+        '''
+        Changes the current tab in the validation tool box
+        '''
         if self.validationTabWidget.currentIndex() == 1 and self.configWindow.widget.abstractDb <> None:
             self.projectModel = QSqlTableModel(None,self.configWindow.widget.abstractDb.db)
             self.projectModel.setTable('validation.aux_flags_validacao')
@@ -217,6 +258,9 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_rulesEditorButton_clicked(self):
+        '''
+        Opens the spatial rule editor
+        '''
         try:
             self.configWindow.widget.abstractDb.checkAndOpenDb()
             dlg = RulesEditor(self.configWindow.widget.abstractDb)
@@ -226,6 +270,9 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             
     @pyqtSlot(bool)
     def on_ruleEnforcerRadio_toggled(self, checked):
+        '''
+        Toggles the spatial rule enforcer
+        '''
         if checked:
             self.ruleEnforcer = SpatialRuleEnforcer(self.validationManager.postgisDb,self.validationManager.codelist, self.iface)
             self.ruleEnforcer.connectEditingSignals()

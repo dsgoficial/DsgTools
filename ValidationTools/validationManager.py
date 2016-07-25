@@ -29,12 +29,17 @@ from PyQt4.Qt import QObject
 
 class ValidationManager(QObject):
     def __init__(self,postgisDb,codelist):
+        '''
+        Constructor
+        '''
         super(ValidationManager, self).__init__()
         self.processList = []
         self.postgisDb = postgisDb
         self.codelist = codelist
         try:
+            #creating validation structure
             self.postgisDb.checkAndCreateValidationStructure()
+            #setting available processes
             self.setAvailableProcesses()
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
@@ -42,6 +47,11 @@ class ValidationManager(QObject):
             self.processList = []
 
     def setAvailableProcesses(self):
+        '''
+        Sets all available processes.
+        This method is a dynamic method that scans the processes folder for .py files.
+        All .py files within the folder (minus the ignored ones) are listed as available processes
+        '''
         ignoredFiles = ['__init__.py', 'validationProcess.py', 'spatialRuleEnforcer.py']
         for root, dirs, files in os.walk(os.path.join(os.path.dirname(__file__), 'ValidationProcesses')):
             files.sort()
@@ -55,18 +65,34 @@ class ValidationManager(QObject):
                 self.processList.append(processClass)
             
     def instantiateProcessByName(self, processName):
+        '''
+        This method instantiate a process by its name.
+        The import is made dynamically using the __import__ function.
+        The class to be import is obtained using the getattr function.
+        The class instance is made using: klass(self.postgisDb, self.codelist)
+        '''
         currProc = None
         for processClass in self.processList:
             if processClass == processName:
                 chars = list(processClass)
+                #adjusting first character case
                 chars[0] = chars[0].lower()
+                #making file name
                 fileBaseName = ''.join(chars)
+                #setting up the module to be imported
                 mod = __import__('DsgTools.ValidationTools.ValidationProcesses.'+fileBaseName, fromlist=[processClass])
+                #obtaining the class name
                 klass = getattr(mod, processClass)
-                currProc = klass(self.postgisDb,self.codelist)
+                #instantiating the class
+                currProc = klass(self.postgisDb, self.codelist)
                 return currProc
 
     def executeProcess(self, processName):
+        '''
+        Executes a process by its name
+        processName: process name
+        '''
+        #checking for running processes
         runningProc = None
         try:
             runningProc = self.postgisDb.getRunningProc()
@@ -74,6 +100,7 @@ class ValidationManager(QObject):
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 0
             
+        #if there is a running process we should stop
         if runningProc != None:
             QgsMessageLog.logMessage('Unable to run process %s. Process %s is already running.\n' % (processName, runningProc), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 0
