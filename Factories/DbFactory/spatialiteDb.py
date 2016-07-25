@@ -29,30 +29,47 @@ from osgeo import ogr
 class SpatialiteDb(AbstractDb):
 
     def __init__(self):
+        '''
+        Constructor
+        '''
         super(SpatialiteDb,self).__init__()
         self.db = QSqlDatabase('QSQLITE')
         self.gen = SqlGeneratorFactory().createSqlGenerator(True)
     
     def getDatabaseName(self):
+        '''
+        Gets the database name
+        '''
         return self.db.databaseName().split('.sqlite')[0].split('/')[-1]
     
     def connectDatabase(self, conn = None):
+        '''
+        Connects to database
+        conn: Database name
+        '''
         if conn is None:
             self.connectDatabaseWithGui()
         else:
             self.db.setDatabaseName(conn)
     
     def connectDatabaseWithGui(self):
+        '''
+        Connects to database using user interface dialog
+        '''
         fd = QFileDialog()
         filename = fd.getOpenFileName(caption=self.tr('Select a DSGTools Spatialite file'),filter=self.tr('Spatialite file databases (*.sqlite)'))
         self.db.setDatabaseName(filename)
     
     def listGeomClassesFromDatabase(self):
+        '''
+        Gets a list with geometry classes from database
+        '''
         self.checkAndOpenDb()
         classList = []
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.close()
             raise Exception(self.tr("Problem listing geom classes: ")+query.lastError().text())
         while query.next():
             tableName = str(query.value(0))
@@ -63,11 +80,15 @@ class SpatialiteDb(AbstractDb):
         return classList
     
     def listComplexClassesFromDatabase(self):
+        '''
+        Gets a list with complex classes from database
+        '''
         self.checkAndOpenDb()
         classList = []
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.close()
             raise Exception(self.tr("Problem listing complex classes: ")+query.lastError().text())
         while query.next():
                 tableName = str(query.value(0))
@@ -78,11 +99,15 @@ class SpatialiteDb(AbstractDb):
         return classList    
 
     def getStructureDict(self):
+        '''
+        Gets database structure according to the edgv version
+        '''
         self.checkAndOpenDb()
         classDict = dict()
         sql = self.gen.getStructure(self.getDatabaseVersion())        
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.close()
             raise Exception(self.tr("Problem getting database structure: ")+query.lastError().text())
         while query.next():
             className = str(query.value(0))
@@ -104,10 +129,17 @@ class SpatialiteDb(AbstractDb):
         return classDict
     
     def makeOgrConn(self):
+        '''
+        Makes a connection string for spatialite databases (e.g just the name)
+        '''
         constring = self.db.databaseName()
         return constring
 
-    def validateWithOutputDatabaseSchema(self,outputAbstractDb):
+    def validateWithOutputDatabaseSchema(self, outputAbstractDb):
+        '''
+        Validates the conversion with the output database.
+        It generates a dictionary (invalidated) that stores conversion problems
+        '''
         self.checkAndOpenDb()
         invalidated = self.buildInvalidatedDict()
         inputdbStructure = self.getStructureDict()
@@ -126,6 +158,7 @@ class SpatialiteDb(AbstractDb):
                 sql = self.gen.getFeaturesWithSQL(inputClass,inputAttrList) 
                 query = QSqlQuery(sql, self.db)
                 if not query.isActive():
+                    self.db.close()
                     raise Exception(self.tr("Problem executing query: ")+query.lastError().text())
                 
                 while query.next():
@@ -174,24 +207,43 @@ class SpatialiteDb(AbstractDb):
                 invalidated['classNotFoundInOutput'].append(inputAttrList)
         return invalidated
     
-    def translateAbstractDbLayerNameToOutputFormat(self,lyr,outputAbstractDb):
+    def translateAbstractDbLayerNameToOutputFormat(self, lyr, outputAbstractDb):
+        '''
+        Translates abstractdb layer name to output format
+        lyr: layer name that will be translated
+        outputAbstractDb: output database
+        '''
         if outputAbstractDb.db.driverName() == 'QSQLITE':
             return lyr
         if outputAbstractDb.db.driverName() == 'QPSQL':
             return str(lyr.split('_')[0]+'.'+'_'.join(lyr.split('_')[1::]))
     
-    def translateOGRLayerNameToOutputFormat(self,lyr,ogrOutput):
+    def translateOGRLayerNameToOutputFormat(self, lyr, ogrOutput):
+        '''
+        Translates ogr layer name to output format
+        lyr: layer name that will be translated
+        ogrOutput: ogr output
+        '''
         if ogrOutput.GetDriver().name == 'SQLite':
             return lyr
         if ogrOutput.GetDriver().name == 'PostgreSQL':
             return str(lyr.split('_')[0]+'.'+'_'.join(lyr.split('_')[1::]))
     
     def getTableSchema(self,lyr):
+        '''
+        Gets the table schema
+        lyr: layer name
+        '''
         schema = lyr.split('_')[0]
         className = '_'.join(lyr.split('_')[1::])
         return (schema, className)
     
-    def convertToPostgis(self, outputAbstractDb,type=None):
+    def convertToPostgis(self, outputAbstractDb, type=None):
+        '''
+        Converts this to a postgis database
+        outputAbstractDb: postgis output
+        type: conversion type
+        '''
         (inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict) = self.prepareForConversion(outputAbstractDb)
         invalidated = self.validateWithOutputDatabaseSchema(outputAbstractDb)
         hasErrors = self.makeValidationSummary(invalidated)
@@ -212,6 +264,9 @@ class SpatialiteDb(AbstractDb):
         return False
     
     def getDatabaseVersion(self):
+        '''
+        Gets the database version
+        '''
         self.checkAndOpenDb()
         version = '2.1.3'
         sql = self.gen.getEDGVVersion()
@@ -223,11 +278,17 @@ class SpatialiteDb(AbstractDb):
         return version
     
     def obtainLinkColumn(self, complexClass, aggregatedClass):
+        '''
+        Obtains the link column between complex and aggregated class
+        complexClass: complex class name
+        aggregatedClass: aggregated class name
+        '''
         self.checkAndOpenDb()
         #query to obtain the link column between the complex and the feature layer
         sql = self.gen.getLinkColumn(complexClass.replace('complexos_', ''), aggregatedClass)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.close()
             raise Exception(self.tr("Problem obtaining link column: ")+query.lastError().text())
         column_name = ""
         while query.next():
@@ -235,6 +296,10 @@ class SpatialiteDb(AbstractDb):
         return column_name
 
     def loadAssociatedFeatures(self, complex):
+        '''
+        Loads all the features associated to the complex 
+        complex: complex class name
+        '''
         self.checkAndOpenDb()
         associatedDict = dict()
         #query to get the possible links to the selected complex in the combobox
@@ -242,6 +307,7 @@ class SpatialiteDb(AbstractDb):
         sql = self.gen.getComplexLinks(complexName)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.close()
             raise Exception(self.tr("Problem loading associated features: ")+query.lastError().text())
 
         while query.next():
@@ -259,6 +325,7 @@ class SpatialiteDb(AbstractDb):
             sql = self.gen.getComplexData(complex_schema, complex)
             complexQuery = QSqlQuery(sql, self.db)
             if not complexQuery.isActive():
+                self.db.close()
                 raise Exception(self.tr("Problem executing query: ")+complexQuery.lastError().text())
 
             while complexQuery.next():
@@ -274,6 +341,7 @@ class SpatialiteDb(AbstractDb):
                 sql = self.gen.getAssociatedFeaturesData(aggregated_schema, aggregated_class, column_name, complex_uuid)
                 associatedQuery = QSqlQuery(sql, self.db)
                 if not associatedQuery.isActive():
+                    self.db.close()
                     raise Exception(self.tr("Problem executing query: ")+associatedQuery.lastError().text())
 
                 while associatedQuery.next():
@@ -282,10 +350,15 @@ class SpatialiteDb(AbstractDb):
         return associatedDict
     
     def isComplexClass(self, className):
+        '''
+        Checks if a class is a complex class
+        className: class name to be checked
+        '''
         self.checkAndOpenDb()
         #getting all complex tables
         query = QSqlQuery(self.gen.getComplexTablesFromDatabase(), self.db)
         if not query.isActive():
+            self.db.close()
             raise Exception(self.tr("Problem executing query: ")+query.lastError().text())
 
         while query.next():
@@ -294,18 +367,29 @@ class SpatialiteDb(AbstractDb):
         return False
 
     def disassociateComplexFromComplex(self, aggregated_class, link_column, id):
+        '''
+        Disassociates a complex from another complex
+        aggregated_class: aggregated class that will be disassociated
+        link_column: link column between complex and its aggregated class
+        id: complex id (uid) to be disassociated
+        '''
         sql = self.gen.disassociateComplexFromComplex('complexos_'+aggregated_class, link_column, id)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
+            self.db.close()
             raise Exception(self.tr('Problem disassociating complex from complex: ') + '\n' + query.lastError().text())
 
     def getTablesFromDatabase(self):
+        '''
+        Gets all tables from database
+        '''
         self.checkAndOpenDb()
         ret = []
 
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.close()
             raise Exception(self.tr("Problem getting tables from database: ")+query.lastError().text())
 
         while query.next():
@@ -314,4 +398,7 @@ class SpatialiteDb(AbstractDb):
         return ret
 
     def getFrameLayerName(self):
+        '''
+        Gets the frame layer name
+        '''
         return 'public_aux_moldura_a'
