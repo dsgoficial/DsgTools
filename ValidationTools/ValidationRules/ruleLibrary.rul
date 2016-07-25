@@ -1,1 +1,1 @@
-cb.adm_area_pub_civil_a,1_não deve (ser),1_disjunto,cb.adm_area_pub_civil_a,..
+pe.hid_massa_dagua_a,0_deve (ser),3_tocar,pe.hid_limite_massa_dagua_l,1..*
