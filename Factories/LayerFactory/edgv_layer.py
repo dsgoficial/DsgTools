@@ -61,8 +61,9 @@ class EDGVLayer(QObject):
     
     def getStyleFile(self, stylePath, className):
         availableStyles = os.walk(stylePath).next()[2]
-        if className in availableStyles:
-            return os.path.join(stylePath, style+'.sld')
+        styleName = className+'.sld'
+        if styleName in availableStyles:
+            return os.path.join(stylePath, styleName)
     
     def prepareLoad(self):
         dbName = self.abstractDb.getDatabaseName()
@@ -72,7 +73,3 @@ class EDGVLayer(QObject):
         else:
             parentTreeNode = iface.legendInterface().addGroup(self.abstractDb.getDatabaseName(), -1)
             return parentTreeNode
-    
-    def loadStyle(self, vlayer, styleList):
-        for style in styleList:
-            pass

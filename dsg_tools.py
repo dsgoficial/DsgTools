@@ -719,7 +719,7 @@ class DsgTools:
             self.layerButton.setDefaultAction(self.toolbar.sender())
         except:
             pass
-        dlg = LoadByCategory(self.codeList)
+        dlg = LoadByCategory(self.codeList, self.iface)
         dlg.show()
         result = dlg.exec_()
         if result:

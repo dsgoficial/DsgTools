@@ -28,7 +28,7 @@ from qgis.gui import QgsMessageBar
 
 #PyQt imports
 from PyQt4 import QtGui, QtCore, uic
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, pyqtSlot
 from PyQt4.QtGui import QApplication, QCursor
 import qgis as qgis
 
@@ -68,7 +68,7 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
         QtCore.QObject.connect(self.pushButtonOk, QtCore.SIGNAL(("clicked()")), self.okSelected)
         
         self.widget.tabWidget.currentChanged.connect(self.restoreInitialState)
-        
+        self.widget.styleChanged.connect(self.populateStyleCombo)
         self.codeList = codeList
         self.layerFactory = LayerFactory()
 
@@ -86,6 +86,7 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
         self.classesListWidget.clear()
         self.dbVersion = self.widget.getDBVersion()
         self.qmlPath = self.widget.getQmlPath()
+        self.parentClassList = self.widget.abstractDb.getOrphanGeomTablesWithElements(loading = True)
 
         self.classes = []
         try:
@@ -94,7 +95,10 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
             self.bar.pushMessage(self.tr("CRITICAL!"), self.tr('A problem occurred! Check log for details.'), level=QgsMessageBar.CRITICAL)
             QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
 
-        self.classesListWidget.addItems(self.classes)
+        if self.onlyParentsCheckBox.isChecked() and not self.widget.isSpatialite:
+            self.classesListWidget.addItems(self.parentClassList)
+        else:
+            self.classesListWidget.addItems(self.classes)
         self.classesListWidget.sortItems()
 
     def on_filterEdit_textChanged(self, text):
@@ -155,3 +159,19 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
                 self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load the selected classes!"), level=QgsMessageBar.CRITICAL)
         else:
             self.bar.pushMessage(self.tr("Warning!"), self.tr("Please, select at least one class!"), level=QgsMessageBar.WARNING)
+
+    def populateStyleCombo(self, styleDict):
+        self.styleComboBox.clear()
+        self.styleDict = styleDict
+        styleList = styleDict.keys()
+        numberOfStyles = len(styleList)
+        if numberOfStyles > 0:
+            self.styleComboBox.addItem(self.tr('Select Style'))
+            for i in range(numberOfStyles):
+                self.styleComboBox.addItem(styleList[i])
+        else:
+            self.syleComboBox.addItem(self.tr('No available styles'))
+    
+    @pyqtSlot(int)
+    def on_onlyParentsCheckBox_stateChanged(self):
+        self.listClassesFromDatabase()

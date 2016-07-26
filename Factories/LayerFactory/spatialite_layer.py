@@ -134,6 +134,14 @@ class SpatialiteLayer(EDGVLayer):
     
             self.qmlLoaded.emit()
 
+        if stylePath:
+            fullPath = self.getStyle(stylePath, self.schema, self.qmlName)
+            if fullPath:
+                if '.sld' in fullPath:
+                    vlayer.loadSldStyle(fullPath)
+                else:
+                    vlayer.applyNamedStyle(fullPath)
+
         iface.legendInterface().moveLayer(vlayer, idSubgrupo)
             
         if not vlayer.isValid():

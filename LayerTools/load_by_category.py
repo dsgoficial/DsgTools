@@ -42,7 +42,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'load_by_category_dialog.ui'))
 
 class LoadByCategory(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, codeList, parent=None):
+    def __init__(self, codeList, iface, parent=None):
         """Constructor."""
         super(LoadByCategory, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -54,6 +54,7 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
 
         self.categories = []
         self.selectedClasses = []
+        self.iface = iface
  
         self.point = []
         self.line = []
@@ -263,6 +264,10 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
                 else:
                     self.restoreInitialState()
                     self.close()
+                if self.onlyParentsCheckBox.isChecked() and self.widget.isSpatialite:
+                    self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('Inheritance not supported in spatialite database!'), level=QgsMessageBar.INFO, duration=3)
+                    QgsMessageLog.logMessage(self.tr('Inheritance not supported in spatialite database!'), 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+                
             else:
                 if self.widget.db and not self.widget.crs:
                     self.bar.pushMessage(self.tr("CRITICAL!"), self.tr("Could not determine the coordinate reference system!"), level=QgsMessageBar.CRITICAL)
@@ -310,7 +315,7 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         categories = []
         for cat in categoriesList:
             for table in table_names:
-                if cat+'_' in table and cat not in categories:
+                if (cat+'_' in table or cat.replace('.','_')+'_' in table) and cat not in categories:
                     categories.append(cat)
                     break
         dbName = self.widget.abstractDb.getDatabaseName()
@@ -348,7 +353,7 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
                 idGrupo = groupList[self.parentTreeNode::].index(self.tr('Area'))
             for category in categories:
                 self.prepareLayer(category, table_names, idGrupo)
-                
+            
     def prepareLayer(self, category, table_names, idGrupo):
         idSubgrupo = qgis.utils.iface.legendInterface().addGroup(category, True, idGrupo)
         table_names.sort(reverse=True)

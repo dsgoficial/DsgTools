@@ -169,4 +169,4 @@ class SpatialiteSqlGenerator(SqlGenerator):
         return sql
     
     def getStylesFromDb(self, dbVersion):
-        return None    
+        return None

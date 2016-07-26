@@ -101,7 +101,7 @@
           <x>11</x>
           <y>26</y>
           <width>333</width>
-          <height>53</height>
+          <height>55</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -114,31 +114,12 @@
              </property>
             </widget>
            </item>
-           <item>
-            <widget class="QCheckBox" name="checkBoxOnlyWithElements">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-               <horstretch>100</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>120</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Only layers with Elements</string>
-             </property>
-            </widget>
-           </item>
           </layout>
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QCheckBox" name="checkBoxUseInheritance">
+            <widget class="QCheckBox" name="onlyParentsCheckBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -152,7 +133,7 @@
               </size>
              </property>
              <property name="text">
-              <string>Load only parent layers</string>
+              <string>List only parent layers</string>
              </property>
             </widget>
            </item>
