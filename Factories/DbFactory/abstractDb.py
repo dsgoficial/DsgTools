@@ -42,6 +42,9 @@ class DbSignals(QObject):
 
 class AbstractDb(QObject):
     def __init__(self):
+        '''
+        Constructor
+        '''
         super(AbstractDb,self).__init__()
         self.conversionTypeDict = dict({'QPSQL':'postgis','QSQLITE':'spatialite'})
         self.utils = Utils()
@@ -50,19 +53,31 @@ class AbstractDb(QObject):
         pass
     
     def __del__(self):
+        '''
+        Destructor
+        '''
         if self.db.isOpen():
             self.db.close()
             self.db = None
             
     def checkAndOpenDb(self):
+        '''
+        Check and open the database
+        '''
         if not self.db.isOpen():
             if not self.db.open():
                 raise Exception(self.tr('Error opening database: ')+self.db.lastError().text())
 
     def getType(self):
+        '''
+        Gets the driver name
+        '''
         return self.db.driverName()
 
     def countElements(self, layers):
+        '''
+        Counts the number of elements in each layer present in layers
+        '''
         self.checkAndOpenDb()
         listaQuantidades = []
         for layer in layers:
@@ -78,6 +93,9 @@ class AbstractDb(QObject):
         return listaQuantidades     
 
     def findEPSG(self):
+        '''
+        Finds the database EPSG
+        '''
         self.checkAndOpenDb()
         sql = self.gen.getSrid()
         query = QSqlQuery(sql, self.db)
@@ -89,6 +107,10 @@ class AbstractDb(QObject):
         return srid
 
     def listWithElementsFromDatabase(self, classList):
+        '''
+        List classes with elements
+        classList: class list
+        '''
         self.checkAndOpenDb()
         classListWithNumber = self.countElements(classList)
         classesWithElements = dict()
@@ -98,6 +120,9 @@ class AbstractDb(QObject):
         return classesWithElements
 
     def listClassesWithElementsFromDatabase(self):
+        '''
+        List classes with elements. Uses all classes (complex included)
+        '''
         geomClassList = self.listGeomClassesFromDatabase()
         complexClassList = self.listComplexClassesFromDatabase()
         classList = []
@@ -109,6 +134,9 @@ class AbstractDb(QObject):
         return self.listWithElementsFromDatabase(classList)
 
     def getAggregationAttributes(self):
+        '''
+        Gets complex link columns
+        '''
         self.checkAndOpenDb()
         columns = []
         sql = self.gen.getAggregationColumn()
@@ -121,19 +149,28 @@ class AbstractDb(QObject):
         return columns
 
     def getOgrDatabase(self):
+        '''
+        Builds a OGR database
+        '''
         if self.ogrDb != None:
             self.buildOgrDatabase()
             return self.ogrDb
 
     def buildFieldMap(self):
+        '''
+        Gets database structure according to the edgv version
+        '''
         self.checkAndOpenDb()
         fieldMap = self.getStructureDict()
         return fieldMap
 
-    def validateWithOutputDatabaseSchema(self,outputAbstractDb):
+    def validateWithOutputDatabaseSchema(self, outputAbstractDb):
         return None
     
-    def convertDatabase(self,outputAbstractDb,type):
+    def convertDatabase(self, outputAbstractDb, type):
+        '''
+        Converts database
+        '''
         self.signals.clearLog.emit()
         if outputAbstractDb.db.driverName() == 'QPSQL':
             return self.convertToPostgis(outputAbstractDb,type)
@@ -141,7 +178,10 @@ class AbstractDb(QObject):
             return self.convertToSpatialite(outputAbstractDb,type)
         return None
     
-    def makeValidationSummary(self,invalidatedDataDict):
+    def makeValidationSummary(self, invalidatedDataDict):
+        '''
+        Makes the database conversion validation summary
+        '''
         hasErrors = False
         for key in invalidatedDataDict.keys():
             if len(invalidatedDataDict[key]) > 0:
@@ -202,6 +242,9 @@ class AbstractDb(QObject):
         return hasErrors
             
     def buildReadSummary(self,inputOgrDb,outputAbstractDb,classList):
+        '''
+        Builds the conversion read summary
+        '''
         self.signals.clearLog.emit() #Clears log
         inputType = self.conversionTypeDict[self.db.driverName()]
         outputType = self.conversionTypeDict[outputAbstractDb.db.driverName()]
@@ -215,6 +258,9 @@ class AbstractDb(QObject):
         return None
     
     def makeTranslationMap(self, layerName, layer, outLayer, fieldMapper):
+        '''
+        Makes the translation map
+        '''
         layerFieldMapper=fieldMapper[layerName]
         layerDef = layer.GetLayerDefn()
         outLayerDef = outLayer.GetLayerDefn()
@@ -231,6 +277,9 @@ class AbstractDb(QObject):
         return panMap
     
     def translateLayer(self, inputLayer, inputLayerName, outputLayer, outputFileName, layerPanMap, errorDict, defaults={}, translateValues={}):
+        '''
+        Makes the layer conversion
+        '''
         inputLayer.ResetReading()
         inSpatialRef = inputLayer.GetSpatialRef()
         outSpatialRef = outputLayer.GetSpatialRef()
@@ -273,7 +322,10 @@ class AbstractDb(QObject):
             
         return count
     
-    def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList, errorDict,invalidated=None): 
+    def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList, errorDict,invalidated=None):
+        '''
+        Translates the data source
+        '''
         self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Write Summary')))
         self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements')+'\n\n')
         status = False
@@ -323,6 +375,9 @@ class AbstractDb(QObject):
         return status
     
     def buildInvalidatedDict(self):
+        '''
+        Builds the initial state of the conversion invalidated dictionary
+        '''
         invalidated = dict()
         invalidated['nullLine'] = dict()       
         invalidated['nullPk'] = dict()
@@ -333,6 +388,9 @@ class AbstractDb(QObject):
         return invalidated
     
     def prepareForConversion(self,outputAbstractDb):
+        '''
+        Executes preconditions for the conversion
+        '''
         self.checkAndOpenDb()
         outputAbstractDb.checkAndOpenDb()
         fieldMap = self.buildFieldMap()
@@ -344,7 +402,8 @@ class AbstractDb(QObject):
         return (inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict)
 
     def translateLayerWithDataFix(self, inputLayer, inputLayerName, outputLayer, outputFileName, layerPanMap, invalidated, errorDict, defaults={}, translateValues={}):
-        '''casos e tratamentos:
+        '''
+        casos e tratamentos:
         1. nullLine: os atributos devem ser varridos e, caso seja linha nula, ignorar o envio
         2. nullPk: caso seja complexo, gerar uma chave
         3. notInDomain: excluir do mapeamento aquele atributo caso ele seja mapeado
@@ -426,11 +485,18 @@ class AbstractDb(QObject):
             return -1
     
     def buildOgrDatabase(self):
+        '''
+        Build a OGR database
+        '''
         con = self.makeOgrConn()
         ogrDb = ogr.Open(con,update=1)
         return ogrDb
     
-    def reorderTupleList(self,ls):
+    def reorderTupleList(self, ls):
+        '''
+        Reorders a tuple list
+        ls: list to be reordered
+        '''
         if 'OGC_FID' in ls:
             idField = 'OGC_FID'
         else:
@@ -441,7 +507,10 @@ class AbstractDb(QObject):
         reordered.extend(ls[index+1::])
         return reordered
     
-    def getOgrLayerIndexDict(self,lyr):
+    def getOgrLayerIndexDict(self, lyr):
+        '''
+        Gets ogr field definitions
+        '''
         ogrDict = dict()
         layerDef = lyr.GetLayerDefn()
         for i in range(layerDef.GetFieldCount()):
@@ -449,6 +518,9 @@ class AbstractDb(QObject):
         return ogrDict
     
     def writeErrorLog(self,errorDict):
+        '''
+        Writes conversion error log
+        '''
         errorClasses = errorDict.keys()
         if len(errorClasses)>0:
             self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Features not converted')))
@@ -458,6 +530,9 @@ class AbstractDb(QObject):
                     self.signals.updateLog.emit('\n\n'+'{:<50}'.format(cl+str(id)))
     
     def getQmlDir(self):
+        '''
+        Gets the QML directory
+        '''
         self.checkAndOpenDb()
         currentPath = os.path.dirname(__file__)
         if qgis.core.QGis.QGIS_VERSION_INT >= 20600:
@@ -477,6 +552,9 @@ class AbstractDb(QObject):
         return qmlPath
     
     def makeValueRelationDict(self, table, codes):
+        '''
+        Makes the value relation dictionary (multi valued attributes)
+        '''
         self.checkAndOpenDb()
         ret = dict()
         in_clause = '(%s)' % ",".join(map(str, codes))

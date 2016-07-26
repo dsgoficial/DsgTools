@@ -63,7 +63,8 @@ class InventoryMessages(QObject):
 
 class InventoryThread(GenericThread):
     def __init__(self):
-        """Constructor.
+        """
+        Constructor.
         """
         super(InventoryThread, self).__init__()
 
@@ -81,6 +82,9 @@ class InventoryThread(GenericThread):
         self.isOnlyGeo = isOnlyGeo
     
     def run(self):
+        '''
+        Runs the thread
+        '''
         # Actual process
         (ret, msg) = self.makeInventory(self.parentFolder, self.outputFile, self.destinationFolder)
         
@@ -90,7 +94,8 @@ class InventoryThread(GenericThread):
         self.signals.processingFinished.emit(ret, msg, self.getId())
     
     def makeInventory(self, parentFolder, outputFile, destinationFolder):
-        '''Makes the inventory
+        '''
+        Makes the inventory
         '''
         # creating a csv file
         try:
@@ -167,6 +172,9 @@ class InventoryThread(GenericThread):
             return (1, self.messenger.getSuccessInventoryMessage())
         
     def computeBoxAndAttributes(self, layer, line, extension):
+        '''
+        Computes bounding box and inventory attributes
+        '''
         # get the bounding box and wkt projection
         (ogrPoly, prjWkt) = self.getExtent(line)
         # making a QGIS projection
@@ -180,7 +188,8 @@ class InventoryThread(GenericThread):
         self.insertIntoMemoryLayer(layer, qgsPolygon, attributes)
         
     def copyFiles(self, destinationFolder):
-        '''Copy inventoried files to the destination folder
+        '''
+        Copy inventoried files to the destination folder
         '''
         for fileName in self.files:
             if not self.stopped[0]:
@@ -204,7 +213,8 @@ class InventoryThread(GenericThread):
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())
 
     def copy(self, destinationFolder):
-        '''Copy inventoried files considering the dataset
+        '''
+        Copy inventoried files considering the dataset
         '''
         for fileName in self.files:
             # adjusting the separators according to the OS
@@ -228,26 +238,34 @@ class InventoryThread(GenericThread):
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())
     
     def copyGDALDataSource(self, gdalSrc, newFileName):
+        '''
+        Copies a GDAL datasource
+        '''
         driver = gdalSrc.GetDriver()
         dst_ds = driver.CreateCopy(newFileName, gdalSrc)
         ogrSrc = None
         dst_ds = None
     
     def copyOGRDataSource(self, ogrSrc, newFileName):
+        '''
+        Copies a OGR datasource
+        '''
         driver = ogrSrc.GetDriver()
         dst_ds = driver.CopyDataSource(ogrSrc, newFileName)
         ogrSrc = None
         dst_ds = None
 
     def isInFormatsList(self, ext):
-        '''Check if the extension is in the formats list
+        '''
+        Check if the extension is in the formats list
         '''
         if ext in self.formatsList:
                 return True         
         return False
     
     def inventoryFile(self, ext):
-        '''Check is the extension should be analyzed
+        '''
+        Check is the extension should be analyzed
         '''
         if self.isWhitelist:
             return self.isInFormatsList(ext)
@@ -255,13 +273,15 @@ class InventoryThread(GenericThread):
             return not self.isInFormatsList(ext)
         
     def writeLine(self, outwriter, line, extension):
-        '''Write CSV line
+        '''
+        Write CSV line
         '''
         row = self.makeAttributes(line, extension)
         outwriter.writerow(row)
         
     def makeAttributes(self, line, extension):
-        '''Make the attributes array
+        '''
+        Make the attributes array
         '''
         creationDate = time.ctime(os.path.getctime(line))
         size = os.path.getsize(line)/1000.
@@ -269,7 +289,8 @@ class InventoryThread(GenericThread):
         return [line, creationDate, size, extension]
         
     def getRasterExtent(self, gt, cols, rows):
-        ''' Return list of corner coordinates from a geotransform
+        ''' 
+        Return list of corner coordinates from a geotransform
             @param gt: geotransform
             @param cols: number of columns in the dataset
             @param rows: number of rows in the dataset
@@ -288,7 +309,8 @@ class InventoryThread(GenericThread):
         return ext        
 
     def getExtent(self, filename):
-        '''Makes a ogr polygon to represent the extent (i.e. bounding box)
+        '''
+        Makes a ogr polygon to represent the extent (i.e. bounding box)
         '''
         gdalSrc = gdal.Open(filename)
         ogrSrc = ogr.Open(filename)
@@ -336,6 +358,9 @@ class InventoryThread(GenericThread):
             return None
         
     def createMemoryLayer(self):
+        '''
+        Creates a memory layer
+        '''
         layer = QgsVectorLayer('Polygon?crs=4326', 'Inventory', 'memory')
         if not layer.isValid():
             return None
@@ -346,6 +371,9 @@ class InventoryThread(GenericThread):
         return layer
     
     def reprojectBoundingBox(self, crsSrc, ogrPoly):
+        '''
+        Reprojects the bounding box
+        '''
         crsDest = QgsCoordinateReferenceSystem(4326)
         coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest)
         
@@ -359,7 +387,8 @@ class InventoryThread(GenericThread):
         return qgsPolygon
     
     def insertIntoMemoryLayer(self, layer, poly, attributes):
-        """Inserts the poly into memory layer
+        """
+        Inserts the poly into memory layer
         """
         provider = layer.dataProvider()
 

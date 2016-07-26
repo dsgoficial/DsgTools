@@ -69,6 +69,9 @@ class PostGISLayer(EDGVLayer):
         self.uri.disableSelectAtId(True)
 
     def checkLoaded(self, name):
+        '''
+        Checks if the layer is already loaded
+        '''
         loadedLayers = iface.legendInterface().layers()
         loaded = None
         for ll in loadedLayers:
@@ -79,6 +82,12 @@ class PostGISLayer(EDGVLayer):
         return loaded
 
     def load(self, crs, idSubgrupo = None, uniqueLoad = False):
+        '''
+        Loads the layer into the TOC
+        crs: EPSG
+        idSubgrupo: group id
+        uniqueLoad: unique load bool
+        '''
         if uniqueLoad:
             lyr = self.checkLoaded(self.layer_name)
             if lyr:
@@ -149,5 +158,5 @@ class PostGISLayer(EDGVLayer):
 
         return vlayer
     
-    def loadDomainTable(self,name):
+    def loadDomainTable(self, name):
         pass

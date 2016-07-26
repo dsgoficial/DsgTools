@@ -48,8 +48,14 @@ class EDGVLayer(QObject):
         self.qmlLoaded.connect(self.codeList.setState)        
         
     def load(self, crs, idSubgrupo = None):
+        '''
+        Reimplemented
+        '''
         return None
 
     def loadDomainTable(self,name):
+        '''
+        Reimplemented
+        '''
         pass
     

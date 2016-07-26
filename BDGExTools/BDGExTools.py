@@ -33,6 +33,9 @@ from PyQt4.QtGui import QMessageBox
 
 class BDGExTools(QObject):
     def __init__(self,parent=None):
+        '''
+        Constructor
+        '''
         super(BDGExTools, self).__init__()
 
         self.wmtsDict = dict()
@@ -48,6 +51,9 @@ class BDGExTools(QObject):
         pass
     
     def setUrllibProxy(self, url):
+        '''
+        Sets the proxy
+        '''
         (enabled, host, port, user, password, type, urlsList) = self.getProxyConfiguration()
         if enabled == 'false' or type != 'HttpProxy':
             return
@@ -66,6 +72,9 @@ class BDGExTools(QObject):
         return          
 
     def getProxyConfiguration(self):
+        '''
+        Gets the proxy configuration from QSettings
+        '''
         settings = QSettings()
         settings.beginGroup('proxy')
         enabled = settings.value('proxyEnabled')
@@ -83,6 +92,9 @@ class BDGExTools(QObject):
         return (enabled, host, port, user, password, type, urlsList)
 
     def getTileCache(self,layerName):
+        '''
+        Makes the requisition to the tile cache service
+        '''
         url = "http://www.geoportal.eb.mil.br/tiles?request=GetCapabilities"
         # set proxy
         self.setUrllibProxy(url)

@@ -61,13 +61,26 @@ class DpiMessages(QObject):
 
 class DpiThread(GenericThread):
     def __init__(self):
-        """Constructor.
+        """
+        Constructor.
         """
         super(DpiThread, self).__init__()
 
         self.messenger = DpiMessages(self)
 
     def setParameters(self, filesList, rasterType, minOutValue, maxOutValue, outDir, percent, epsg, stopped, bands = []):
+        '''
+        Sets thread parameters
+        filesList: files processed
+        rasterType: raster type (e.g byte)
+        minOutValue: min value
+        maxOutValue: max value
+        outDir: outpu directory
+        percent: process progress in percent
+        epsg: epsg code
+        stopped: process stopped
+        bands: bands used
+        '''
         self.filesList = filesList
         self.rasterType = rasterType
         self.minOutValue = minOutValue
@@ -79,11 +92,18 @@ class DpiThread(GenericThread):
         self.bands = bands
 
     def run(self):
+        '''
+        Runs the thread
+        '''
         # Actual process
         (ret, msg) = self.processImages(self.filesList)
         self.signals.processingFinished.emit(ret, msg, self.getId())
 
     def processImages(self, filesList):
+        '''
+        Processes the images
+        filesList: file list to be processed
+        '''
         # Progress bar steps calculated
         self.signals.rangeCalculated.emit(len(filesList), self.getId())
 
@@ -117,8 +137,9 @@ class DpiThread(GenericThread):
             return (1, self.messenger.getSuccessFeedbackMessage())
 
     def stretchImage(self, inFile, outDir, percent, epsg, bands):
-        """Method that applies a specific histogram stretching to a group of images.
-            The method also performs a conversion changing the raster type.
+        """
+        Method that applies a specific histogram stretching to a group of images.
+        The method also performs a conversion changing the raster type.
         """
         #Getting the output raster type
         (rasterType, minOutValue, maxOutValue) = (self.rasterType, self.minOutValue, self.maxOutValue)

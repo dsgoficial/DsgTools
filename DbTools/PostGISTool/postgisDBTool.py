@@ -62,10 +62,16 @@ class PostgisDBTool(QDialog, FORM_CLASS):
         self.epsg = 4326
 
     def getParameters(self):
+        '''
+        Gets database parameters
+        '''
         return (self.getDatabase(self.databaseEdit.text()), self.versionCombo.currentText(), self.epsg)
 
     @pyqtSlot(bool)
     def on_saveButton_clicked(self):
+        '''
+        Creates a postgis database
+        '''
         if self.createDatabase(self.databaseEdit.text()):
             self.storeConnectionConfiguration(self.serversCombo.currentText(), self.databaseEdit.text())
             self.done(1)
@@ -74,10 +80,16 @@ class PostgisDBTool(QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
+        '''
+        Cancels everything
+        '''
         self.done(-1)
 
     @pyqtSlot(bool)
     def on_configureServerButton_clicked(self):
+        '''
+        Opens the ViewServer dialog
+        '''
         dlg = ViewServers(self.iface)
         dlg.show()
         result = dlg.exec_()
@@ -85,6 +97,9 @@ class PostgisDBTool(QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_srsButton_clicked(self):
+        '''
+        Opens the CRS selector dialog
+        '''
         projSelector = QgsGenericProjectionSelector()
         message = 'Select the Spatial Reference System!'
         projSelector.setMessage(theMessage=message)
@@ -100,6 +115,9 @@ class PostgisDBTool(QDialog, FORM_CLASS):
             QMessageBox.warning(self, self.tr("Warning!"), self.tr(message))
 
     def createDatabase(self, name):
+        '''
+        Creates the database
+        '''
         sql = self.gen.getCreateDatabase(name)
 
         db = self.getDatabase()
@@ -114,6 +132,9 @@ class PostgisDBTool(QDialog, FORM_CLASS):
         return True
 
     def getDatabase(self, database = 'postgres'):
+        '''
+        Gets a a QSqlDatabase 
+        '''
         (host, port, user, password) = self.getServerConfiguration(self.serversCombo.currentText())
         db = QSqlDatabase("QPSQL")
         db.setConnectOptions('connect_timeout=10')
@@ -134,6 +155,12 @@ class PostgisDBTool(QDialog, FORM_CLASS):
         return db
 
     def setCredentials(self, db, conInfo, user):
+        '''
+        Sets connection credentials
+        db: QSqlDatabase used
+        conInfo: connection information
+        user: user name
+        '''
         (success, user, password) = QgsCredentials.instance().get(conInfo, user, None)
         if not success:
             return
@@ -145,25 +172,41 @@ class PostgisDBTool(QDialog, FORM_CLASS):
                 QgsCredentials.instance().put(conInfo, user, password)
 
     def updateConnectionName(self):
+        '''
+        Updates connection name
+        '''
         server = self.serversCombo.currentText()
         database = self.databaseEdit.text()
         name = server+'_'+database
         self.connectionEdit.setText(name)
 
     def on_serversCombo_currentIndexChanged(self, index):
+        '''
+        Slot to update the connection name
+        '''
         self.updateConnectionName()
 
     def on_databaseEdit_textEdited(self, text):
+        '''
+        Adjusts the text before updating the connection name
+        '''
         text = text.lower()
         self.databaseEdit.setText(text)
         self.updateConnectionName()
 
     def checkFields(self):
+        '''
+        Check fields prior the next step
+        '''
         if self.serversCombo.currentText() == '' or self.databaseEdit.text() == '' or self.srsEdit.text() == '':
             return False
         return True
 
     def getServerConfiguration(self, name):
+        '''
+        Gets server configuration from QSettings
+        name: server name
+        '''
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers/'+name)
         host = settings.value('host')
@@ -174,6 +217,11 @@ class PostgisDBTool(QDialog, FORM_CLASS):
         return (host, port, user, password)
 
     def storeConnectionConfiguration(self, server, database):
+        '''
+        Stores the new configuration
+        server: server name
+        database: database name
+        '''
         name = self.connectionEdit.text()
 
         (host, port, user, password) = self.getServerConfiguration(server)
@@ -188,6 +236,9 @@ class PostgisDBTool(QDialog, FORM_CLASS):
         settings.endGroup()
 
     def getServers(self):
+        '''
+        Gets all servers from QSettings
+        '''
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers')
         currentConnections = settings.childGroups()
@@ -195,6 +246,9 @@ class PostgisDBTool(QDialog, FORM_CLASS):
         return currentConnections
 
     def populateServersCombo(self):
+        '''
+        Populates the server combo box
+        '''
         self.serversCombo.clear()
         currentConnections = self.getServers()
         for connection in currentConnections:

@@ -48,17 +48,26 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
 
     @pyqtSlot(AbstractDb)
     def setDatabase(self, db):
+        '''
+        Sets the database and create validation structure
+        '''
         self.abstractDb = db
-        if AbstractDb:
+        if db:
             self.abstractDb.checkAndCreateValidationStructure()
             self.loadEarthCoverage()
 
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
+        '''
+        Closes the window
+        '''
         self.hide()
 
     @pyqtSlot(bool)
     def on_defineEarthCoverageButton_clicked(self):
+        '''
+        Defines a earth coverage configuration
+        '''
         if not self.abstractDb:
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a database to manage earth coverage'))
             return
@@ -87,9 +96,15 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
         pass
 
     def clearTree(self):
+        '''
+        Clear the configuration tree widget
+        '''
         self.earthCoverageTreeWidget.invisibleRootItem().takeChildren()
 
     def loadEarthCoverage(self):
+        '''
+        Loads a previously saved earth converage configuration
+        '''
         try:
             self.clearTree()
             data = self.abstractDb.getEarthCoverageDict()
