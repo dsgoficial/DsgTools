@@ -93,7 +93,6 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
             self.edgvPostgisVersionEdit.setReadOnly(True)  
             self.loadDatabase()
             self.connectionChanged.emit()
-            self.dbChanged.emit(self.abstractDb)
         
     @pyqtSlot(bool)
     def on_pushButtonOpenFile_clicked(self):  
@@ -144,6 +143,7 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
             self.abstractDb.checkAndOpenDb()
             self.dbLoaded = True
             self.dbVersion = self.abstractDb.getDatabaseVersion()
+            self.abstractDb.checkAndCreateStyleTable()
             self.styles = self.abstractDb.getStyleDict(self.dbVersion)
             self.styleChanged.emit(self.styles)
             if self.dbVersion == '-1':

@@ -143,3 +143,6 @@ class SpatialiteLayer(EDGVLayer):
 
     def loadDomainTable(self,name):
         pass
+
+    def getStyleFromDb(self, edgvVersion, className):
+        return None

@@ -166,4 +166,7 @@ class SpatialiteSqlGenerator(SqlGenerator):
     
     def getEDGVVersion(self):
         sql = "SELECT edgvversion FROM public_db_metadata LIMIT 1"
-        return sql    
+        return sql
+    
+    def getStylesFromDb(self, dbVersion):
+        return None    

@@ -490,7 +490,13 @@ class AbstractDb(QObject):
         styleList = os.walk(styleDir).next()[1]
         styleDict = dict()
         for s in styleList:
-            styleDict[s] = os.path.join(styleDir, s)
+            styleDict['dir:'+s] = os.path.join(styleDir, s)
+        #here we get the styles from db if there are any
+        dbStyles = self.getStylesFromDb(dbVersion)
+        if dbStyles:
+            for style in dbStyles:
+                name = style.split('/')[-1]
+                styleDict['db:'+name] = 'db:'+style
         return styleDict
     
     def makeValueRelationDict(self, table, codes):

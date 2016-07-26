@@ -1234,7 +1234,7 @@ class PostgisDb(AbstractDb):
         self.db.commit()
         self.db.close()
     
-    def runQuery(self, cl, sql, errorMsg, params):
+    def runQuery(self, sql, errorMsg, params):
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(sql, self.db)
@@ -1258,7 +1258,7 @@ class PostgisDb(AbstractDb):
         sql = self.gen.snapToGrid(cl, tol, srid)
         errorMsg = self.tr('Problem snapping to grid: ')
         params = ['id','geom']
-        result = self.runQuery(cl, sql, errorMsg, params)
+        result = self.runQuery(sql, errorMsg, params)
         return result
 
     def createAndPopulateTempTableFromMap(self, tableName, featureMap):
@@ -1303,4 +1303,50 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem dropping temp table: ') + query.lastError().text())
         self.db.commit()
         self.db.close()
-        
+
+    def checkAndCreateStyleTable(self):
+        self.checkAndOpenDb()
+        sql = self.gen.checkStyleTable()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr("Problem getting style table: ") + query.lastError().text())
+        query.next()
+        if not query.value(0):
+            self.db.transaction()
+            createSql = self.gen.createStyleTable()
+            query = QSqlQuery(self.db)
+            if not query.exec_(createSql):
+                self.db.rollback()
+                self.db.close()
+                raise Exception(self.tr('Problem creating style table: ') + query.lastError().text())
+            self.db.commit()
+        self.db.close()
+    
+    def getStylesFromDb(self,dbVersion):
+        self.checkAndOpenDb()
+        sql = self.gen.getStylesFromDb(dbVersion)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
+        styleList = []
+        while query.next():
+            styleList.append(query.value(0))
+        return styleList
+    
+    def getStyle(self, styleName, schema, table_name):
+        self.checkAndOpenDb()
+        sql = self.gen.getStyle(styleName, schema, table_name)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
+        styleList = []
+        query.next()
+        qml = query.value(0)
+        #TODO: post parse qml to remove possible attribute value type
+        return qml

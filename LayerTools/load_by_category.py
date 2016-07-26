@@ -371,9 +371,6 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
             self.styleComboBox.addItem(self.tr('Select Style'))
             for i in range(numberOfStyles):
                 self.styleComboBox.addItem(styleList[i])
-                if styleList[i] == 'Default':
-                    defaultIndex = i
-            self.styleComboBox.setCurrentIndex(defaultIndex)
         else:
             self.syleComboBox.addItem(self.tr('No available styles'))
         

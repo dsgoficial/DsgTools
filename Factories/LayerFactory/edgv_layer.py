@@ -33,6 +33,7 @@ from qgis.utils import iface
 
 #DsgTools imports
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
+from wx.tools.XRCed.params import StylePanel
 
 class EDGVLayer(QObject):
     qmlLoaded = pyqtSignal()
@@ -52,13 +53,16 @@ class EDGVLayer(QObject):
     def loadDomainTable(self,name):
         pass
     
+    def getStyle(self, stylePath, schema, className):
+        if 'db:' in stylePath:
+            return self.abstractDb.getStyle(stylePath.split(':')[-1], schema, className)
+        else:
+            return self.getStyleFile(stylePath, className)
+    
     def getStyleFile(self, stylePath, className):
         availableStyles = os.walk(stylePath).next()[2]
-        styleName = className+'.sld'
-        if styleName in availableStyles:
-            return os.path.join(stylePath,styleName)
-        else:
-            return None
+        if className in availableStyles:
+            return os.path.join(stylePath, style+'.sld')
     
     def prepareLoad(self):
         dbName = self.abstractDb.getDatabaseName()
@@ -69,3 +73,6 @@ class EDGVLayer(QObject):
             parentTreeNode = iface.legendInterface().addGroup(self.abstractDb.getDatabaseName(), -1)
             return parentTreeNode
     
+    def loadStyle(self, vlayer, styleList):
+        for style in styleList:
+            pass

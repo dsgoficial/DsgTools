@@ -146,9 +146,12 @@ class PostGISLayer(EDGVLayer):
             self.qmlLoaded.emit()
         
         if stylePath:
-            fullPath = self.getStyleFile(stylePath, self.qmlName)
+            fullPath = self.getStyle(stylePath, self.schema, self.qmlName)
             if fullPath:
-                vlayer.loadSldStyle(fullPath)
+                if '.sld' in fullPath:
+                    vlayer.loadSldStyle(fullPath)
+                else:
+                    vlayer.applyNamedStyle(fullPath)
 
         iface.legendInterface().moveLayer(vlayer, idSubgrupo)
             
@@ -156,6 +159,9 @@ class PostGISLayer(EDGVLayer):
             QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
         return vlayer
-    
+
     def loadDomainTable(self,name):
         pass
+
+    def getStyleFromDb(self, edgvVersion, className):
+        return self.abstractDb.getLyrStyle(edgvVersion,className)

@@ -788,3 +788,44 @@ class PostGISSqlGenerator(SqlGenerator):
     def createSpatialIndex(self, tableName):
         sql = 'create index {0}_temp_gist on {1}_temp using gist (geom)'.format(tableName.split('.')[-1], tableName)
         return sql
+    
+    def getStyles(self):
+        sql = 'select description, f_table_schema, f_table_name, stylename from public.layer_styles where f_table_catalog = current_database()'
+        return sql
+
+    def checkStyleTable(self):
+        sql = "select relname from pg_class where relname = 'layer_styles' limit 1"
+        return sql
+    
+    def createStyleTable(self):
+        sql = """
+        CREATE TABLE public.layer_styles
+        (
+          id integer NOT NULL DEFAULT nextval('layer_styles_id_seq'::regclass),
+          f_table_catalog character varying,
+          f_table_schema character varying,
+          f_table_name character varying,
+          f_geometry_column character varying,
+          stylename character varying(30),
+          styleqml xml,
+          stylesld xml,
+          useasdefault boolean,
+          description text,
+          owner character varying(30),
+          ui xml,
+          update_time timestamp without time zone DEFAULT now(),
+          CONSTRAINT layer_styles_pkey PRIMARY KEY (id)
+        )
+        """
+        return sql
+    
+    def getStylesFromDb(self, dbVersion):
+        if dbVersion == '2.1.3':
+            sql = """select distinct description from public.layer_styles where f_table_catalog = current_database() and description like 'edgv_213%'"""
+        elif dbVersion == 'FTer_2a_Ed':
+            sql = """select distinct description from public.layer_styles where f_table_catalog = current_database() and description like 'edgv_FTer_2a_Ed%'"""
+        return sql
+    
+    def getStyle(self, styleName, schema, table_name):
+        sql = """SELECT styleqml from public.layer_styles where f_table_schema = '{0}' and f_table_name = '{1}' and description = '{2}' and f_table_catalog = current_database()""".format(schema, table_name, styleName)
+        return sql
