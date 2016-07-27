@@ -41,7 +41,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
     def __init__(self, codeList, parent=None):
-        """Constructor."""
+        """
+        Constructor
+        """
         super(self.__class__, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -71,13 +73,22 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_pushButtonCancel_clicked(self):
+        '''
+        Closes the dialog
+        '''
         self.close()
         
     def pushMessage(self, msg):
+        '''
+        Pushes a message into message bar
+        '''
         self.bar.pushMessage("", msg, level=QgsMessageBar.CRITICAL)
 
     @pyqtSlot(bool)
     def on_pushButtonOk_clicked(self):
+        '''
+        Checks the linee-centroid structure and loads the correspondent layers 
+        '''
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         auxCreated = self.widget.abstractDb.checkCentroidAuxStruct()
         if not auxCreated:
@@ -90,6 +101,9 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
         self.close()
 
     def loadLayers(self):
+        '''
+        Loads the layers defined in the line-centroid structure
+        '''
         try:
             auxClassesDict = json.loads(self.widget.abstractDb.getEarthCoverageClasses()[0])
             auxClasses = []

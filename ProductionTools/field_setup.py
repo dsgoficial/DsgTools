@@ -44,7 +44,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class FieldSetup(QtGui.QDialog, FORM_CLASS):
     def __init__(self, parent = None):
-        """Constructor."""
+        """
+        Constructor
+        """
         super(self.__class__, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing

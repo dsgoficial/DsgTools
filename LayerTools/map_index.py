@@ -27,7 +27,9 @@ import string, os
 
 class UtmGrid:
     def __init__(self):
-        """Constructor."""
+        """
+        Constructor
+        """
         self.scales=[1000,500,250,100,50,25,10,5,2,1]
         nomen1000=['Nao Recorta']
         nomen500=[['V','X'],['Y','Z']]
@@ -50,11 +52,14 @@ class UtmGrid:
         self.MIRdict=[]
         
     def __del__(self):
-        """Destructor."""
+        """
+        Destructor
+        """
         pass
     
     def findScaleText(self,scaleText,scaleId):
-        """Get the scale matrix for the given scaleText and scaleId
+        """
+        Get the scale matrix for the given scaleText and scaleId
         """
         j=-1
         for j,row in enumerate(self.scaleText[scaleId]):
@@ -64,23 +69,27 @@ class UtmGrid:
         return (i,len(self.scaleText[scaleId])-j-1) 
         
     def getScale(self, inomen):
-        """Get scale for the given map index
+        """
+        Get scale for the given map index
         """
         return self.scales[ self.getScaleIdFromiNomen(inomen) ]
     
     def getScaleIdFromiNomen(self, inomen):
-        """Get scale index in self.scales object for the given map index
+        """
+        Get scale index in self.scales object for the given map index
         """
         id = len(inomen.split('-')) - 2
         return id
      
     def getScaleIdFromScale(self, scale):
-        """Get scale if for the given scale (e.g. 1, 2, 25, 250)
+        """
+        Get scale if for the given scale (e.g. 1, 2, 25, 250)
         """
         return self.scales.index(scale)
 
     def getSpacingX(self,scale):
-        """Get X spacing fot the given scale
+        """
+        Get X spacing fot the given scale
         """
         scaleId=self.scales.index(scale)
         if (scaleId<0): return 0
@@ -94,7 +103,8 @@ class UtmGrid:
         return self.spacingX[scaleId]
     
     def getSpacingY(self,scale): 
-        """Get Y spacing fot the given scale
+        """
+        Get Y spacing fot the given scale
         """
         scaleId=self.scales.index(scale)
         if (scaleId<0): return 0
@@ -108,7 +118,8 @@ class UtmGrid:
         return self.spacingY[scaleId]
     
     def makeQgsPolygon(self, xmin, ymin, xmax, ymax):
-        """Creating a polygon for the given coordinates
+        """
+        Creating a polygon for the given coordinates
         """
         dx = (xmax - xmin)/3
         dy = (ymax - ymin)/3
@@ -146,7 +157,8 @@ class UtmGrid:
         return qgsPolygon
         
     def getHemisphereMultiplier(self,inomen):
-        """Check the hemisphere
+        """
+        Check the hemisphere
         """
         if (len(inomen) > 1):
             h = inomen[0].upper()
@@ -156,7 +168,8 @@ class UtmGrid:
                 return 1
 
     def getLLCornerLatitude1kk(self,inomen):
-        """Get lower left Latitude for 1:1.000.000 scale
+        """
+        Get lower left Latitude for 1:1.000.000 scale
         """
         l=inomen[1].upper()
         y = 0.0;
@@ -167,7 +180,8 @@ class UtmGrid:
         return y
 
     def getLLCornerLongitude1kk(self,inomen):
-        """Get lower left Longitude for 1:1.000.000 scale
+        """
+        Get lower left Longitude for 1:1.000.000 scale
         """
         fuso=int(inomen[3:5])
         x=0  
@@ -176,7 +190,8 @@ class UtmGrid:
         return x
     
     def getLLCorner(self,inomen):
-        """Get lower left coordinates for scale determined by the given map index
+        """
+        Get lower left coordinates for scale determined by the given map index
         """
         x=self.getLLCornerLongitude1kk(inomen)
         y=self.getLLCornerLatitude1kk(inomen)
@@ -193,7 +208,8 @@ class UtmGrid:
         return (x,y)
     
     def computeNumberOfSteps(self,startScaleId,stopScaleId):
-        """Compute the number of steps to build a progress
+        """
+        Compute the number of steps to build a progress
         """
         steps=1
         for i in range(startScaleId+1,stopScaleId+1):
@@ -201,6 +217,11 @@ class UtmGrid:
         return steps
     
     def createFrame(self, map_index, layer):
+        '''
+        Creates a frame based on a map index
+        layer: layer where the frame will be created
+        map_index: map index
+        '''
         stopScale = self.getScale(map_index)
         
         # Enter in edit mode
@@ -212,6 +233,12 @@ class UtmGrid:
         layer.commitChanges()        
     
     def createFrame(self, map_index, layer, stopScale):
+        '''
+        Creates a frame based on a map index
+        layer: layer where the frame will be created
+        map_index: map index
+        stopScale: the desired scale
+        '''
         # Enter in edit mode
         layer.startEditing()
 
@@ -221,7 +248,8 @@ class UtmGrid:
         layer.commitChanges()
         
     def getQgsPolygonFrame(self, map_index):
-        """Particular case used to create frame polygon for the given
+        """
+        Particular case used to create frame polygon for the given
         map_index
         """
         scale = self.getScale(map_index)
@@ -232,7 +260,8 @@ class UtmGrid:
         return poly
     
     def populateQgsLayer(self, iNomen, stopScale, layer):
-        """Generic recursive method to create frame polygon for the given
+        """
+        Generic recursive method to create frame polygon for the given
         stopScale within the given map index (iNomen)
         """
         scale = self.getScale(iNomen)            
@@ -262,7 +291,8 @@ class UtmGrid:
                     self.populateQgsLayer(inomen2, stopScale, layer)
                     
     def insertFrameIntoQgsLayer(self, layer, poly, map_index):
-        """Inserts the poly into layer
+        """
+        Inserts the poly into layer
         """
         provider = layer.dataProvider()
 
@@ -276,16 +306,25 @@ class UtmGrid:
         provider.addFeatures([feature])
     
     def getMIdict(self):
+        '''
+        Gets the MI dictionary from file
+        '''
         if not self.MIdict:
             self.MIdict = self.getDict("MI100.csv")
         return self.MIdict
             
     def getMIRdict(self):
+        '''
+        Gets the MIR dictionary from file
+        '''
         if not self.MIRdict:
             self.MIRdict = self.getDict("MIR250.csv")
         return self.MIRdict    
     
     def getDict(self, file_name):    
+        '''
+        Gets a dictionary from file
+        '''
         csvFile = open(os.path.join(os.path.dirname(__file__),file_name))
         data = csvFile.readlines()
         csvFile.close()
@@ -294,12 +333,25 @@ class UtmGrid:
         return dicionario
 
     def getINomenFromMI(self,mi):
+        '''
+        Gets the name index from MI
+        mi: map index (i.e. 2215 for brasilia in 1:100.000)
+        '''
         return self.getINomen(self.getMIdict(), mi)
 
     def getINomenFromMIR(self,mir):
+        '''
+        Gets the name index from MIR
+        mir: map index reduced
+        '''
         return self.getINomen(self.getMIRdict(), mir)
         
     def getINomen(self, dict, index):
+        '''
+        Gets the name index
+        dict: dictionary used
+        index:index used to determine inomen
+        '''
         key = index.split('-')[0]
         otherParts = index.split('-')[1:]
         if (dict.has_key(key)):

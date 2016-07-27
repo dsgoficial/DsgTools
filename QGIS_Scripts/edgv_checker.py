@@ -6,6 +6,9 @@ import csv, os
 from osgeo import ogr
 
 def edgv_checker(folder, output):
+    '''
+    Checks if a spatialite is a dsgtools database
+    '''
     csvfile = open(output, 'wb')
     outwriter = csv.writer(csvfile)
     outwriter.writerow(['arquivo', 'edgv'])

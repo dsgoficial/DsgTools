@@ -39,7 +39,9 @@ import qgis as qgis
 
 class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
     def __init__(self, iface, codeList, parent=None):
-        """Constructor."""
+        """
+        Constructor
+        """
         super(CreateInomDialog, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -57,6 +59,9 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot()
     def on_okButton_clicked(self):
+        '''
+        Creates the frame and inserts it in the layer
+        '''
         if not self.widget.dbLoaded:
             QMessageBox.warning(self, self.tr("Warning!"), self.tr('Please, select a database first.'))
             return
@@ -69,7 +74,11 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         self.insertFrameIntoLayer(reprojected)
         self.done(1)
 
-    def insertFrameIntoLayer(self,reprojected):
+    def insertFrameIntoLayer(self, reprojected):
+        '''
+        Insert the reprojected frame in the layer
+        reprojected: reprojected frame to be inserted
+        '''
         self.dbVersion = self.widget.getDBVersion()
         self.qmlPath = self.widget.getQmlPath()
 
@@ -106,7 +115,10 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         self.iface.mapCanvas().setExtent(bbox)
         self.iface.mapCanvas().refresh()
 
-    def getFrameLayer(self,ifaceLayers):
+    def getFrameLayer(self, ifaceLayers):
+        '''
+        Gets the frame layer
+        '''
         for lyr in ifaceLayers:
             if 'aux_moldura_a' in lyr.name():
                 dbname = self.getDBNameFromLayer(lyr)
@@ -115,6 +127,9 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         return None
     
     def getDBNameFromLayer(self, lyr):
+        '''
+        Gets the databse name
+        '''
         dbname = None
         splitUri = lyr.dataProvider().dataSourceUri().split(' ')
         if len(splitUri) > 0:
@@ -128,21 +143,34 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot()
     def on_cancelButton_clicked(self):
+        '''
+        Cancels the process
+        '''
         self.done(0)
 
     @pyqtSlot(str)
     def on_miLineEdit_textChanged(self,s):
+        '''
+        Slot to update the inom text using the MI text as base
+        '''
         if (s!=''):
             self.inomen=self.map_index.getINomenFromMI(str(s))
             self.inomLineEdit.setText(self.inomen)
 
     @pyqtSlot(str)
     def on_mirLineEdit_textChanged(self,s):
+        '''
+        Slot to update the inom text using the MIR text as base
+        '''
         if (s!=''):
             self.inomen=self.map_index.getINomenFromMIR(str(s))
             self.inomLineEdit.setText(self.inomen)
 
     def reprojectFrame(self, poly):
+        '''
+        Reprojects the frame to the layer CRS
+        poly: polygon to be reprojected
+        '''
         crsSrc = QgsCoordinateReferenceSystem(self.widget.crs.geographicCRSAuthId())
         coordinateTransformer = QgsCoordinateTransform(crsSrc, self.widget.crs)
         polyline = poly.asMultiPolygon()[0][0]
@@ -153,6 +181,9 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         return qgsPolygon
 
     def setValidCharacters(self):
+        '''
+        Sets the available characters used to create INOM
+        '''
         self.chars = []
 
         chars = 'NS'
@@ -186,6 +217,9 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         self.chars.append(chars)
 
     def setMask(self):
+        '''
+        Creates the mask used to enter the INOM (from 1:1.000.000 to 1:1.000)
+        '''
         if self.scaleCombo.currentText() == '1000k':
             self.inomLineEdit.setInputMask('NN-NN')
         elif self.scaleCombo.currentText() == '500k':
@@ -208,6 +242,9 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
             self.inomLineEdit.setInputMask('NN-NN-N-N-Nnn-0-NN-N-Nnn-0-N')
 
     def validateMI(self):
+        '''
+        Validates the MI using the available characters (method setValidCharacters)
+        '''
         mi = self.inomLineEdit.text()
         split = mi.split('-')
         for i in range(len(split)):
@@ -264,16 +301,25 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         return True
 
     def disableAll(self):
+        '''
+        Disables the widget items
+        '''
         self.mirLineEdit.setEnabled(False)
         self.miLineEdit.setEnabled(False)
         self.inomLineEdit.setEnabled(False)
 
     @pyqtSlot(int)
     def on_scaleCombo_currentIndexChanged(self):
+        '''
+        Sets the mask according to the scale set
+        '''
         self.setMask()
 
     @pyqtSlot(bool)
     def on_mirRadioButton_toggled(self, toggled):
+        '''
+        Toggles the use of MIR values
+        '''
         if toggled:
             self.mirLineEdit.setEnabled(True)
         else:
@@ -281,6 +327,9 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_miRadioButton_toggled(self, toggled):
+        '''
+        Toggles the use of MI values
+        '''
         if toggled:
             self.miLineEdit.setEnabled(True)
         else:
@@ -288,6 +337,9 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_inomRadioButton_toggled(self, toggled):
+        '''
+        Toggles the use of INOM values
+        '''
         if toggled:
             self.inomLineEdit.setEnabled(True)
         else:

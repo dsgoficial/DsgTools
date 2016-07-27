@@ -95,6 +95,9 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         self.layerFactory = LayerFactory()
  
     def restoreInitialState(self):
+        '''
+        Restores the dialogs initial state
+        '''
         self.categories = []
         self.selectedClasses = []
         self.listWidgetCategoryFrom.clear()
@@ -114,6 +117,9 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         self.checkBoxAll.setCheckState(0)
 
     def listCategoriesFromDatabase(self):
+        '''
+        Lists all categories from the database
+        '''
         self.listWidgetCategoryFrom.clear()
         self.listWidgetCategoryTo.clear()
 
@@ -142,12 +148,19 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         self.listWidgetCategoryFrom.sortItems()
 
     def insertIntoListView(self, item_name):
+        '''
+        Inserts a new category into the listWidgetCategoryFrom in case it is not yet there
+        item_name: item to be added
+        '''
         found = self.listWidgetCategoryFrom.findItems(item_name, Qt.MatchExactly)
         if len(found) == 0:
             item = QtGui.QListWidgetItem(item_name)
             self.listWidgetCategoryFrom.addItem(item)
 
     def selectAll(self):
+        '''
+        Selects all categories
+        '''
         tam = self.listWidgetCategoryFrom.__len__()
         for i in range(tam+1,1,-1):
             item = self.listWidgetCategoryFrom.takeItem(i-2)
@@ -155,6 +168,9 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         self.listWidgetCategoryTo.sortItems()
 
     def deselectAll(self):
+        '''
+        Deselects all categories
+        '''
         tam = self.listWidgetCategoryTo.__len__()
         for i in range(tam+1,1,-1):
             item = self.listWidgetCategoryTo.takeItem(i-2)
@@ -162,6 +178,9 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         self.listWidgetCategoryFrom.sortItems()
 
     def selectOne(self):
+        '''
+        Selects only one category
+        '''
         listedItems = self.listWidgetCategoryFrom.selectedItems()
         for i in listedItems:
             item = self.listWidgetCategoryFrom.takeItem(self.listWidgetCategoryFrom.row(i))
@@ -169,6 +188,9 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         self.listWidgetCategoryTo.sortItems()
 
     def deselectOne(self):
+        '''
+        Deselects only one category
+        '''
         listedItems = self.listWidgetCategoryTo.selectedItems()
         for i in listedItems:
             item = self.listWidgetCategoryTo.takeItem(self.listWidgetCategoryTo.row(i))
@@ -176,6 +198,9 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         self.listWidgetCategoryFrom.sortItems()
 
     def setAllGroup(self):
+        '''
+        Checks all primitives to be loaded (point, line and polygon)
+        '''
         if self.checkBoxAll.isChecked():
             self.checkBoxPoint.setCheckState(2)
             self.checkBoxLine.setCheckState(2)
@@ -186,13 +211,22 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
             self.checkBoxPolygon.setCheckState(0)
             
     def pushMessage(self, msg):
+        '''
+        Pushes a message into the message bar
+        '''
         self.bar.pushMessage('', msg, level=QgsMessageBar.WARNING)
 
     def cancel(self):
+        '''
+        Cancels everything
+        '''
         self.restoreInitialState()
         self.close()
 
     def getSelectedItems(self):
+        '''
+        Gets the selected items from classesListWidget and populates selectedClasses
+        '''
         lista = self.classesListWidget.selectedItems()
         self.selectedClasses = []
         tam = len(lista)
@@ -201,6 +235,9 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
         self.selectedClasses.sort()
 
     def okSelected(self):
+        '''
+        Executes the load by category
+        '''
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
     
@@ -248,6 +285,9 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
             QApplication.restoreOverrideCursor()
 
     def setLayersWithElements(self):
+        '''
+        Just loads layers with elements
+        '''
         self.pointWithElement = []
         self.lineWithElement = []
         self.polygonWithElement = []
@@ -274,6 +314,12 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
                 self.polygonWithElement.append(i[0])
 
     def loadLayers(self, type, categories, table_names):
+        '''
+        Load the categories
+        type: layer type
+        categories: categories to be loaded
+        table_names: table names
+        '''
         dbName = self.widget.abstractDb.getDatabaseName()
         groupList = qgis.utils.iface.legendInterface().groups()
         groupRelationshipList = qgis.utils.iface.legendInterface().groupLayerRelationship()
@@ -311,6 +357,12 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
                 self.prepareLayer(category, table_names, idGrupo)
                 
     def prepareLayer(self, category, table_names, idGrupo):
+        '''
+        Prepare the layer to be loaded
+        category: category name
+        table_names: table name within the category
+        idGrupo: group id used
+        '''
         idSubgrupo = qgis.utils.iface.legendInterface().addGroup(category, True, idGrupo)
         table_names.sort(reverse=True)
         for table_name in table_names:
