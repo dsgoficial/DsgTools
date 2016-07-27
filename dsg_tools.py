@@ -42,6 +42,7 @@ from DsgTools.DbTools.PostGISTool.postgisDBTool import PostgisDBTool
 from DsgTools.ComplexTools.complexWindow import ComplexWindow
 from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.ServerTools.exploreDb import ExploreDb
+from DsgTools.ServerTools.batchDbManager import BatchDbManager
 from DsgTools.ImageTools.processingTools import ProcessingTools
 from DsgTools.ProcessingTools.processManager import ProcessManager
 from DsgTools.BDGExTools.BDGExTools import BDGExTools
@@ -395,6 +396,16 @@ class DsgTools:
             icon_path,
             text=self.tr('Explore Server'),
             callback=self.exploreDB,
+            parent=server,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        server.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/server.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Manage Dbs from Server'),
+            callback=self.batchDbManager,
             parent=server,
             add_to_menu=False,
             add_to_toolbar=False)
@@ -767,6 +778,13 @@ class DsgTools:
     
     def exploreDB(self):
         dlg = ExploreDb()
+        dlg.show()
+        result = dlg.exec_()
+        if result:
+            pass
+
+    def batchDbManager(self):
+        dlg = BatchDbManager()
         dlg.show()
         result = dlg.exec_()
         if result:

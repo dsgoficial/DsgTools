@@ -371,7 +371,6 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_loadButton_clicked(self):
         self.loadedFileEdit.setText('')
-        
         filename = QFileDialog.getOpenFileName(self, self.tr('Open Field Setup configuration'), self.folder, self.tr('Field Setup Files (*.json)'))
         if not filename:
             return
