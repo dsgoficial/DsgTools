@@ -15,14 +15,10 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_8">
    <item row="0" column="0">
-    <widget class="ExploreServerWidget" name="serverWidget" native="true">
-     <zorder>tabWidget</zorder>
-    </widget>
+    <widget class="ExploreServerWidget" name="serverWidget" native="true"/>
    </item>
    <item row="1" column="0">
-    <widget class="CustomSelector" name="linesCustomSelector" native="true">
-     <zorder>tabWidget</zorder>
-    </widget>
+    <widget class="CustomSelector" name="dbsCustomSelector" native="true"/>
    </item>
    <item row="2" column="0">
     <widget class="QTabWidget" name="tabWidget">
@@ -93,7 +89,6 @@
          </layout>
          <zorder>applyModsFromFilePushButton</zorder>
          <zorder>resetToFactoryPushButton</zorder>
-         <zorder>groupBox_6</zorder>
          <zorder>pushButton</zorder>
         </widget>
        </item>

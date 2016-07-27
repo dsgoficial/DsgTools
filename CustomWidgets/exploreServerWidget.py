@@ -119,5 +119,6 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
                 QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
                 return
             (host, port, user, password) = self.abstractDb.getServerConfiguration(self.serversCombo.currentText())
-            self.abstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
-            self.abstractDbLoaded.emit()
+            if host or port or user:
+                self.abstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
+                self.abstractDbLoaded.emit()

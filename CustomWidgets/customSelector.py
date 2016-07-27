@@ -45,6 +45,11 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         self.toLs = []
         self.setupUi(self)
     
+    def setInitialState(self, fromList):
+        self.fromList.clear()
+        self.toList.clear()
+        self.setFromList(fromList)
+    
     def setFromList(self, fromList):
         self.fromLs = fromList
         self.fromList.addItems(fromList)
