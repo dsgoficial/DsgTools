@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>752</width>
-    <height>751</height>
+    <width>757</width>
+    <height>389</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,6 +27,12 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>800</width>
+       <height>300</height>
+      </size>
      </property>
      <property name="currentIndex">
       <number>0</number>
@@ -92,14 +98,57 @@
          <zorder>pushButton</zorder>
         </widget>
        </item>
-       <item row="2" column="0">
+      </layout>
+     </widget>
+     <widget class="QWidget" name="styleManagement">
+      <attribute name="title">
+       <string>Style Management</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_11">
+       <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox_6">
+         <property name="maximumSize">
+          <size>
+           <width>800</width>
+           <height>400</height>
+          </size>
+         </property>
          <property name="title">
           <string>Manage Styles</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="1">
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QPushButton" name="importStyles">
+              <property name="text">
+               <string>Import Styles</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="deleteStyles">
+              <property name="text">
+               <string>Delete Styles</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
           <item row="0" column="0">
            <widget class="QTreeWidget" name="treeWidget_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>800</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <attribute name="headerDefaultSectionSize">
              <number>100</number>
             </attribute>
@@ -152,24 +201,6 @@
              </property>
             </item>
            </widget>
-          </item>
-          <item row="0" column="1">
-           <layout class="QVBoxLayout" name="verticalLayout">
-            <item>
-             <widget class="QPushButton" name="importStyles">
-              <property name="text">
-               <string>Import Styles</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="deleteStyles">
-              <property name="text">
-               <string>Delete Styles</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
           </item>
          </layout>
         </widget>
