@@ -215,6 +215,7 @@ class InventoryThread(GenericThread):
     def copy(self, destinationFolder):
         '''
         Copy inventoried files considering the dataset
+        destinationFolder: copy destination folder
         '''
         for fileName in self.files:
             # adjusting the separators according to the OS
@@ -240,6 +241,8 @@ class InventoryThread(GenericThread):
     def copyGDALDataSource(self, gdalSrc, newFileName):
         '''
         Copies a GDAL datasource
+        gdalSrc: original gdal source
+        newFileName: new file name
         '''
         driver = gdalSrc.GetDriver()
         dst_ds = driver.CreateCopy(newFileName, gdalSrc)
@@ -249,6 +252,8 @@ class InventoryThread(GenericThread):
     def copyOGRDataSource(self, ogrSrc, newFileName):
         '''
         Copies a OGR datasource
+        ogrSrc: original ogr source
+        newFileName: new file name
         '''
         driver = ogrSrc.GetDriver()
         dst_ds = driver.CopyDataSource(ogrSrc, newFileName)
@@ -258,6 +263,7 @@ class InventoryThread(GenericThread):
     def isInFormatsList(self, ext):
         '''
         Check if the extension is in the formats list
+        ext: file extension
         '''
         if ext in self.formatsList:
                 return True         
@@ -266,6 +272,7 @@ class InventoryThread(GenericThread):
     def inventoryFile(self, ext):
         '''
         Check is the extension should be analyzed
+        ext: file extension
         '''
         if self.isWhitelist:
             return self.isInFormatsList(ext)
@@ -275,6 +282,9 @@ class InventoryThread(GenericThread):
     def writeLine(self, outwriter, line, extension):
         '''
         Write CSV line
+        outwriter: csv file
+        line: csv line
+        extension: file extension
         '''
         row = self.makeAttributes(line, extension)
         outwriter.writerow(row)
@@ -282,6 +292,8 @@ class InventoryThread(GenericThread):
     def makeAttributes(self, line, extension):
         '''
         Make the attributes array
+        line: csv line
+        extension: file extension
         '''
         creationDate = time.ctime(os.path.getctime(line))
         size = os.path.getsize(line)/1000.
@@ -311,6 +323,7 @@ class InventoryThread(GenericThread):
     def getExtent(self, filename):
         '''
         Makes a ogr polygon to represent the extent (i.e. bounding box)
+        filename: file name
         '''
         gdalSrc = gdal.Open(filename)
         ogrSrc = ogr.Open(filename)
@@ -373,6 +386,8 @@ class InventoryThread(GenericThread):
     def reprojectBoundingBox(self, crsSrc, ogrPoly):
         '''
         Reprojects the bounding box
+        crsSrc:source crs
+        ogrPoly: ogr polygon
         '''
         crsDest = QgsCoordinateReferenceSystem(4326)
         coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest)
@@ -389,6 +404,9 @@ class InventoryThread(GenericThread):
     def insertIntoMemoryLayer(self, layer, poly, attributes):
         """
         Inserts the poly into memory layer
+        layer: QgsVectorLayer
+        poly: QgsGeometry
+        attributes: Attributes list
         """
         provider = layer.dataProvider()
 

@@ -40,6 +40,9 @@ import unittest, itertools
 # class CreateFeatureTest(unittest.TestCase):
 class CreateFeatureTest(): 
     def __init__(self, layers, geomClass = True):
+        '''
+        Constructor
+        '''
         self.geomClass = geomClass
 
         #Connecting to the database that will be tested
@@ -72,6 +75,11 @@ class CreateFeatureTest():
             count += 1
 
     def createFeatures(self, layer, domainDict):
+        '''
+        Creates dummy features to test the database structure
+        layer: table used
+        domainDict: domain dict made from the QML files
+        '''
         #Getting the layer provider
         provider = layer.dataProvider()
         #Getting all fields
@@ -136,6 +144,11 @@ class CreateFeatureTest():
         file.close()
         
     def executeSql(self, query, sql):
+        '''
+        Executes the sql query that creates the dummy features
+        query: QSqlQuery object
+        sql: actual query
+        '''
         # try to execute the query
         text = ''
         if not query.exec_(sql):
@@ -149,6 +162,10 @@ class CreateFeatureTest():
         return text
 
     def createGeom(self, layer):
+        '''
+        Creates the dummy geometry according to the layer type
+        layer: layer used to create the dummy geometries
+        '''
         #Creating dummy geometries
         geom = None
         if layer.name().split('_')[-1] == 'p':
@@ -179,6 +196,9 @@ class CreateFeatureTest():
         return geom
     
     def testComplexAggregation(self):
+        '''
+        Tests complex aggregation. If a problem occurs a log file is made with information about it.
+        '''
         #Creating the log file
         file = open(os.path.join(currentPath, 'LayerTools', 'Problemas', 'complexos_relatorio_banco_2016_03_29.txt'), 'w')
         

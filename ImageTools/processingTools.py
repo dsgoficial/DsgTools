@@ -57,6 +57,9 @@ class ProcessingTools(QDialog, FORM_CLASS):
 
     @pyqtSlot()
     def on_buttonBox_accepted(self):
+        '''
+        Starts to process the selected images
+        '''
         if self.fileListWidget.count() == 0:
             QMessageBox.warning(self.iface.mainWindow(), self.tr("Warning!"), self.tr("Please select at least one image."))
             return
@@ -73,11 +76,17 @@ class ProcessingTools(QDialog, FORM_CLASS):
             self.filesList.append(str(inFile))
 
     def getParameters(self):
+        '''
+        Gets the process parameters
+        '''
         (rasterType, minOutValue, maxOutValue) = self.getGDALRasterType()
         return (self.filesList, rasterType, minOutValue, maxOutValue, str(self.outputFolderEdit.text()), self.getStretchingPercentage(), self.epsg)
 
     @pyqtSlot(bool)
     def on_srsButton_clicked(self):
+        '''
+        Opens the dialog to select CRS
+        '''
         projSelector = QgsGenericProjectionSelector()
         message = self.tr('Select the Spatial Reference System!')
         projSelector.setMessage(theMessage=message)
@@ -91,11 +100,17 @@ class ProcessingTools(QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_addButton_clicked(self):
+        '''
+        Adds image files to be processed
+        '''
         fileNames = QFileDialog.getOpenFileNames(self, self.tr("Select Images"), "", self.tr("Image files (*.tif)"))
         self.fileListWidget.addItems(fileNames)
 
     @pyqtSlot(bool)
     def on_removeButton_clicked(self):
+        '''
+        Remove files from processing list
+        '''
         selectedItems = self.fileListWidget.selectedItems()
         for item in selectedItems:
             row = self.fileListWidget.row(item)
@@ -103,6 +118,9 @@ class ProcessingTools(QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_addFolderButton_clicked(self):
+        '''
+        Adds a folder to be processed
+        '''
         folder = QFileDialog.getExistingDirectory(self, self.tr("Select Directory"))
         for dirName, subdirList, fileList in os.walk(folder):
             for fileName in fileList:
@@ -111,10 +129,16 @@ class ProcessingTools(QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_outputFolderButton_clicked(self):
+        '''
+        Defines the output folder
+        '''
         folder = QFileDialog.getExistingDirectory(self, self.tr("Select Directory"))
         self.outputFolderEdit.setText(folder)
 
     def getStretchingPercentage(self):
+        '''
+        Gets the histogram stretching percentage
+        '''
         index = self.stretchComboBox.currentIndex()
         if index == 0:
             return 0
@@ -122,6 +146,9 @@ class ProcessingTools(QDialog, FORM_CLASS):
             return 2
 
     def getGDALRasterType(self):
+        '''
+        Gets the output raster type
+        '''
         index = self.numberComboBox.currentIndex()
         if index == 0:
             min = numpy.iinfo(numpy.uint8).min
