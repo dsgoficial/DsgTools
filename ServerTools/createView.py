@@ -33,7 +33,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class CreateView(QtGui.QDialog, FORM_CLASS):
     def __init__(self, abstractDb, dbName, parent = None):
-        """Constructor."""
+        """
+        Constructor
+        """
         super(self.__class__, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -49,6 +51,9 @@ class CreateView(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot()
     def on_buttonBox_accepted(self):
+        '''
+        Creates view with resolved domain values
+        '''
         createViewClause = self.viewTypeDict[self.viewTypeComboBox.currentIndex()]
         fromClause = self.inheritanceType[self.inheritanceTypeComboBox.currentIndex()]
         try:

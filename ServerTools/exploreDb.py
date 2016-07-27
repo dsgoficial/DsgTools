@@ -39,7 +39,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class ExploreDb(QtGui.QDialog, FORM_CLASS):
     def __init__(self, parent = None):
-        """Constructor."""
+        """
+        Constructor
+        """
         super(self.__class__, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -58,6 +60,9 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
         self.treeWidget.customContextMenuRequested.connect(self.createMenuAssigned)
         
     def populateListWithDatabasesFromServer(self):
+        '''
+        Populates databases list from server
+        '''
         dbList = []
         try:
             dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer()
@@ -72,19 +77,31 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
+        '''
+        Closes the dialog
+        '''
         self.done(0)
     
     def renewDb(self):
+        '''
+        Renews the database
+        '''
         if self.localDb:
             del self.localDb
             self.localDb = None
     
     def clearAll(self):
+        '''
+        Clears the database list
+        '''
         self.dbListWidget.clear()
         self.treeWidget.clear()
         self.renewDb()
     
     def checkSuperUser(self):
+        '''
+        Checks if the user is a super user
+        '''
         try:
             if self.serverWidget.abstractDb.checkSuperUser():
                 self.populateListWithDatabasesFromServer()
@@ -94,6 +111,9 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
             QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
     
     def createItem(self, parent, text, column):
+        '''
+        Creates a tree widget item
+        '''
         item = QtGui.QTreeWidgetItem(parent)
         item.setFlags(QtCore.Qt.ItemIsEnabled)
         item.setText(column, text)
@@ -101,6 +121,9 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(QListWidgetItem, QListWidgetItem)
     def on_dbListWidget_currentItemChanged(self, current, previous):
+        '''
+        Updates the information related with the database (e.g. users and roles for instance)
+        '''
         self.treeWidget.clear()
         if not current:
             return
@@ -122,6 +145,9 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
                     self.createItem(userItem, perm,1)
     
     def createMenuAssigned(self, position):
+        '''
+        Creates a pop up menu
+        '''
         menu = QMenu()
         item = self.treeWidget.itemAt(position)
         if item:
@@ -129,6 +155,9 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
         menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
               
     def showAssignedProperties(self):
+        '''
+        Shows information about the selected permissions model 
+        '''
         permission = self.treeWidget.currentItem().text(1)
         dbname = self.dbListWidget.currentItem().text().split(' ')[0]
 
@@ -143,6 +172,9 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_dropDatabasePushButton_clicked(self):
+        '''
+        Drops a database and updates QSettings
+        '''
         currentItem = self.dbListWidget.currentItem()
         if not currentItem:
             return
@@ -164,6 +196,9 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_createViewsPushButton_clicked(self):
+        '''
+        Creates view button
+        '''
         if not self.localDb:
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a database to create view'))
             return
@@ -172,6 +207,9 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
         pass
     
     def clearQSettings(self,database):
+        '''
+        Clear the database from QSettings
+        '''
         name = self.serverWidget.serversCombo.currentText()+'_'+database
         settings = QSettings()
         settings.beginGroup('PostgreSQL/connections/'+name)
@@ -180,6 +218,9 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_manageAuxStructPushButton_clicked(self):
+        '''
+        Opens the dialog to manage database auxiliar structure
+        '''
         if not self.localDb:
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a database to manage auxiliar structure'))
             return

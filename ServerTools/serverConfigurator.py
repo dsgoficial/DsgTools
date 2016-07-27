@@ -30,7 +30,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class ServerConfigurator(QDialog, FORM_CLASS):
     def __init__(self, iface):
-        """Constructor."""
+        """
+        Constructor
+        """
         super(ServerConfigurator, self).__init__()
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -47,6 +49,9 @@ class ServerConfigurator(QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_saveButton_clicked(self):
+        '''
+        Saves a new server
+        '''
         if self.checkFields():
             name = self.servEdit.text()
             host = self.hostEdit.text()
@@ -62,14 +67,23 @@ class ServerConfigurator(QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
+        '''
+        Cancel everything
+        '''
         self.done(0)
 
     def checkFields(self):
+        '''
+        Checks if the fields are filled
+        '''
         if self.hostEdit.text() == '' or self.portEdit.text() == '' or self.userEdit.text() == '':
             return False
         return True
 
     def storeServerConfiguration(self, name, host, port, user, password):
+        '''
+        Stores server configuration in QSettings
+        '''
         if '_' in name:
             QMessageBox.warning(self, self.tr("Warning!"), self.tr("Server name cannot contain the character \"_\"."))
             self.servEdit.setStyleSheet('background-color: rgb(255, 150, 150)')
@@ -94,6 +108,9 @@ class ServerConfigurator(QDialog, FORM_CLASS):
         return 1
 
     def setServerConfiguration(self, name):
+        '''
+        Sets server confogiration by its name
+        '''
         self.isEdit = 1
         self.oldName=name
         settings = QSettings()
