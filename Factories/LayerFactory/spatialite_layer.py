@@ -146,7 +146,7 @@ class SpatialiteLayer(EDGVLayer):
             
         if not vlayer.isValid():
             QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-
+        vlayer = self.createMeasureColumn(vlayer)
         return vlayer
 
     def loadDomainTable(self,name):

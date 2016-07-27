@@ -24,11 +24,11 @@ import os
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
+from PyQt4.QtCore import pyqtSlot, pyqtSignal, QVariant
 from PyQt4.Qt import QObject
 
 # QGIS imports
-from qgis.core import QgsVectorLayer,QgsDataSourceURI, QgsMessageLog
+from qgis.core import QgsVectorLayer,QgsDataSourceURI, QgsMessageLog, QgsField, QGis
 from qgis.utils import iface
 
 #DsgTools imports
@@ -73,3 +73,10 @@ class EDGVLayer(QObject):
         else:
             parentTreeNode = iface.legendInterface().addGroup(self.abstractDb.getDatabaseName(), -1)
             return parentTreeNode
+
+    def createMeasureColumn(self, layer):
+        if layer.geometryType() == QGis.Polygon:
+            layer.addExpressionField('$area', QgsField('area_otf', QVariant.Double))
+        elif layer.geometryType() == QGis.Line:
+            layer.addExpressionField('$length', QgsField('comprimento_otf', QVariant.Double))
+        return layer
