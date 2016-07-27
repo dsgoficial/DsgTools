@@ -41,9 +41,12 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
+        self.fromLs = []
+        self.toLs = []
         self.setupUi(self)
     
     def setFromList(self, fromList):
+        self.fromLs = fromList
         self.fromList.addItems(fromList)
         self.fromList.sortItems()
 
@@ -60,6 +63,8 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         for i in listedItems:
             item = self.fromList.takeItem(self.fromList.row(i))
             self.toList.addItem(item)
+            self.toLs.append(item.text())
+            self.fromLs.remove(item.text())
         self.toList.sortItems()
         self.selectionChanged.emit()
 
@@ -69,6 +74,8 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         for i in range(tam+1,1,-1):
             item = self.fromList.takeItem(i-2)
             self.toList.addItem(item)
+            self.toLs.append(item.text())
+            self.fromLs.remove(item.text())
         self.toList.sortItems()
         self.selectionChanged.emit()
 
@@ -77,6 +84,8 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         listedItems = self.toList.selectedItems()
         for i in listedItems:
             item = self.toList.takeItem(self.toList.row(i))
+            self.fromLs.append(item.text())
+            self.toLs.remove(item.text())
             self.fromList.addItem(item)
         self.fromList.sortItems()
         self.selectionChanged.emit()
@@ -86,6 +95,15 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         tam = self.toList.__len__()
         for i in range(tam+1,1,-1):
             item = self.toList.takeItem(i-2)
+            self.fromLs.append(item.text())
+            self.toLs.remove(item.text())
             self.fromList.addItem(item)
         self.fromList.sortItems()
         self.selectionChanged.emit()
+    
+    def on_filterLineEdit_textChanged(self, text):
+        classes = [edgvClass for edgvClass in self.fromLs if text in edgvClass]
+        filteredClasses = [i for i in classes if i not in self.toLs]
+        self.fromList.clear()
+        self.fromList.addItems(classes)
+        self.fromList.sortItems()

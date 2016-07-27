@@ -146,6 +146,7 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
             self.abstractDb.checkAndCreateStyleTable()
             self.styles = self.abstractDb.getStyleDict(self.dbVersion)
             self.styleChanged.emit(self.styles)
+            self.dbChanged.emit(self.abstractDb)
             if self.dbVersion == '-1':
                 self.problemOccurred.emit(self.tr('This is not a valid DsgTools database!'))
             else:
