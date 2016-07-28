@@ -177,6 +177,8 @@ class SpatialRuleEnforcer(ValidationProcess):
         '''
         Gets geometry problems.
         When this happens the rule is broken and we need to get the geometry of the actual problem
+        geometry: geometry used during edition mode
+        feature: feature related to the geometry
         '''
         #geom must be the intersection
         geom = geometry.intersection(feature.geometry())
