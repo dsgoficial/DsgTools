@@ -144,15 +144,19 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
         self.getSelectedItems()
         if len(self.selectedClasses)>0:
             try:
+                selectedStyle = None
+                if self.styleDict:
+                    if self.styleComboBox.currentText() in self.styleDict.keys():
+                        selectedStyle = self.styleDict[self.styleComboBox.currentText()] 
                 for layer in self.selectedClasses:
                     dbName = self.widget.abstractDb.getDatabaseName()
                     groupList =  qgis.utils.iface.legendInterface().groups()
                     edgvLayer = self.layerFactory.makeLayer(self.widget.abstractDb, self.codeList, layer)
                     if dbName in groupList:
-                        edgvLayer.load(self.widget.crs,groupList.index(dbName))
+                        edgvLayer.load(self.widget.crs, groupList.index(dbName), stylePath = selectedStyle)
                     else:
                         self.parentTreeNode = qgis.utils.iface.legendInterface().addGroup(self.widget.abstractDb.getDatabaseName(), -1)
-                        edgvLayer.load(self.widget.crs,self.parentTreeNode)
+                        edgvLayer.load(self.widget.crs, self.parentTreeNode, stylePath = selectedStyle)
                 self.restoreInitialState()
                 self.close()
             except:
