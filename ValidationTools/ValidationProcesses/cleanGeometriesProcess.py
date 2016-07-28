@@ -26,10 +26,16 @@ import processing, binascii
 
 class CleanGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb, codelist):
+        '''
+        Constructor
+        '''
         super(self.__class__,self).__init__(postgisDb, codelist)
         self.parameters = {'Snap': 1.0, 'MinArea':0.001}
         
     def runProcessinAlg(self, cl):
+        '''
+        Runs the actual process
+        '''
         alg = 'grass7:v.clean.advanced'
         
         #creating vector layer
@@ -67,6 +73,11 @@ class CleanGeometriesProcess(ValidationProcess):
         return self.getProcessingErrors(errorLayer)
 
     def updateOriginalLayer(self, pgInputLyr, grassOutputLyr):
+        '''
+        Updates the original layer using the grass output layer
+        pgInputLyr: postgis input layer
+        grassOutputLyr: grass output layer
+        '''
         grassIdList = []
         deleteList = []
         provider = pgInputLyr.dataProvider()
@@ -107,13 +118,19 @@ class CleanGeometriesProcess(ValidationProcess):
         pgInputLyr.commitChanges()
     
     def getProcessingErrors(self, layer):
+        '''
+        Gets processing errors
+        layer: error layer output made by grass
+        '''
         recordList = []
         for feature in layer.getFeatures():
             recordList.append((feature['id'], binascii.hexlify(feature.geometry().asWkb())))
         return recordList
         
     def execute(self):
-        #abstract method. MUST be reimplemented.
+        '''
+        Reimplementation of the execute method from the parent class
+        '''
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!

@@ -32,7 +32,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class CreateUser(QtGui.QDialog, FORM_CLASS):
     def __init__(self, user = None, abstractDb = None, parent = None):
-        """Constructor."""
+        """
+        Constructor
+        """
         super(CreateUser, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -44,6 +46,9 @@ class CreateUser(QtGui.QDialog, FORM_CLASS):
         self.refreshScreen()
     
     def refreshScreen(self):
+        '''
+        Restores the initial state
+        '''
         self.userLineEdit.setText('')
         self.passwordLineEdit.setText('')
         self.passwordLineEdit_2.setText('')
@@ -51,6 +56,9 @@ class CreateUser(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_createUserButton_clicked(self):
+        '''
+        Creates the user in the database (i.e create user sql query)
+        '''
         user = self.userLineEdit.text()
         password = self.passwordLineEdit.text()
         password_2 = self.passwordLineEdit_2.text()
@@ -78,4 +86,7 @@ class CreateUser(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_closeButton_clicked(self):
+        '''
+        Closes the dialog
+        '''
         self.close()

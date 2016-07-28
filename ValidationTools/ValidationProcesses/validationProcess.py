@@ -168,4 +168,3 @@ class ValidationProcess(QObject):
         updateList = []
         addList = []
         deleteList = []
-        

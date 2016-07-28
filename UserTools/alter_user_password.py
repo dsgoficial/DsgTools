@@ -31,7 +31,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class AlterUserPassword(QtGui.QDialog, FORM_CLASS):
     def __init__(self, user = None, abstractDb = None, parent = None):
-        """Constructor."""
+        """
+        Constructor
+        """
         super(AlterUserPassword, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -45,6 +47,9 @@ class AlterUserPassword(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_alterPasswordButton_clicked(self):
+        '''
+        Slot to alter user's password
+        '''
         newpassword = self.newPasswordLineEdit.text()
         newpassword_2 = self.newPasswordLineEdit_2.text()
         if newpassword <> newpassword_2:
@@ -62,4 +67,7 @@ class AlterUserPassword(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
+        '''
+        Cancels everything
+        '''
         self.close()

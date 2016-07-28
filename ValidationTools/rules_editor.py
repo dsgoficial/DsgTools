@@ -35,7 +35,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class RulesEditor(QtGui.QDialog, FORM_CLASS):
     def __init__(self, postgisDb, parent = None):
-        """Constructor."""
+        """
+        Constructor
+        """
         super(RulesEditor, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -57,6 +59,9 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
         self.readFile()
         
     def fillLayers(self):
+        '''
+        List classes from database
+        '''
         classList = self.postgisDb.listGeomClassesFromDatabase()
         classList.sort()
         self.layer1Combo.addItems(classList)
@@ -64,6 +69,9 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_insertRuleButton_clicked(self):
+        '''
+        Inserts a new rule
+        '''
         self.insertRow(self.layer1Combo.currentText(), \
                        str(self.necessityCombo.currentIndex())+'_'+self.necessityCombo.currentText(), \
                        str(self.predicateCombo.currentIndex())+'_'+self.predicateCombo.currentText(), \
@@ -71,11 +79,18 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_removeRuleButton_clicked(self):
+        '''
+        Remove a selected rule
+        '''
         selectedItems = self.tableWidget.selectedItems()
         row = self.tableWidget.row(selectedItems[0])
         self.tableWidget.removeRow(row)
         
     def insertRow(self, layer1, necessity, predicate, layer2, cardinality):
+        '''
+        Inserts a new rule row in the rules table
+        Parameters: layer1, necessity, predicate, layer2, cardinality
+        '''
         layer1Item = QtGui.QTableWidgetItem(layer1)
         necessityItem = QtGui.QTableWidgetItem(necessity)
         predicateItem = QtGui.QTableWidgetItem(predicate)
@@ -91,6 +106,9 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
         self.tableWidget.setItem(self.tableWidget.rowCount()-1, 4, cardinalityItem)        
 
     def readFile(self):
+        '''
+        Reads the rule file
+        '''
         try:
             with open(self.rulesFile, 'r') as f:
                 rules = [line.rstrip('\n') for line in f]
@@ -108,6 +126,9 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
             self.insertRow(layer1, necessity, predicate, layer2, cardinality)    
 
     def makeRulesList(self):
+        '''
+        Makes a rule list from the table
+        '''
         rules = list()
         for row in range(self.tableWidget.rowCount()):
             layer1Item = self.tableWidget.item(row, 0)
@@ -130,6 +151,9 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(int)
     def on_predicateCombo_currentIndexChanged(self, id):
+        '''
+        Slot to update cardinality in case the predicate is ''disjoint
+        '''
         if self.predicateCombo.currentText() == self.tr('disjoint'):
             self.cardinalityEdit.setText('..')
             self.cardinalityEdit.setEnabled(False)
@@ -139,6 +163,9 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot()
     def on_buttonBox_accepted(self):
+        '''
+        Saves the rule list created
+        '''
         try:
             with open(self.rulesFile, 'w') as outfile:
                 for line in self.makeRulesList():

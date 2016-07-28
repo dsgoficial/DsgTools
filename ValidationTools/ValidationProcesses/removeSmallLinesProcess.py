@@ -25,14 +25,21 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 
 class RemoveSmallLinesProcess(ValidationProcess):
     def __init__(self, postgisDb, codelist):
+        '''
+        Constructor
+        '''
         super(self.__class__,self).__init__(postgisDb, codelist)
     
-    def dependsOn(self):
-        #Abstract method. Should be reimplemented if necessary.
-        return ['IdentifySmallLinesProcess']
+    def preProcess(self):
+        '''
+        Gets the process that should be execute before this one
+        '''
+        return 'IdentifySmallLinesProcess'
 
     def execute(self):
-        #abstract method. MUST be reimplemented.
+        '''
+        Reimplementation of the execute method from the parent class
+        '''
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!

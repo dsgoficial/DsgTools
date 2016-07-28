@@ -48,7 +48,9 @@ from DsgTools.ValidationTools.ValidationProcesses.spatialRuleEnforcer import Spa
 
 class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     def __init__(self, iface, codeList):
-        """Constructor."""
+        """
+        Constructor
+        """
         super(ValidationToolbox, self).__init__()
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -56,7 +58,6 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        #TODO enable tab when db is set
         self.layerFactory = LayerFactory()
         self.edgvLayer = None
         self.flagLyr = None
@@ -278,4 +279,3 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.ruleEnforcer.connectEditingSignals()
         else:
             self.ruleEnforcer.disconnectEditingSignals()
-            

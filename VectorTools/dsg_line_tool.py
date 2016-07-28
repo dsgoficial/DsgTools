@@ -31,6 +31,9 @@ class DsgLineTool(QgsMapTool):
     lineCreated = pyqtSignal(QgsGeometry)
 
     def __init__(self, canvas):
+        '''
+        Constructor
+        '''
         super(DsgLineTool, self).__init__(canvas)
         
         self.canvas = canvas
@@ -38,10 +41,16 @@ class DsgLineTool(QgsMapTool):
         self.reset()
 
     def deactivate(self):
+        '''
+        Deativates this tool
+        '''
         self.canvas.scene().removeItem(self.rubberBand)
         super(DsgLineTool, self).deactivate()
         
     def defineRubberBand(self):
+        '''
+        Defines the rubber band style
+        '''
         settings = QSettings()
         myRed = int(settings.value("/qgis/default_measure_color_red", 222))
         myGreen = int(settings.value("/qgis/default_measure_color_green", 155))
@@ -52,12 +61,18 @@ class DsgLineTool(QgsMapTool):
         self.rubberBand.setWidth(3)
         
     def reset(self):
+        '''
+        Resets the tool
+        '''
         if self.rubberBand:
             self.rubberBand.reset(QGis.Line)
         self.isEmittingPoint = False
         self.defineRubberBand()
 
     def canvasPressEvent(self, e):
+        '''
+        Reimplementation to add a point to the rubber band or reset it
+        '''
         if self.isEmittingPoint:
             point = self.snapPoint(e.pos())
             self.rubberBand.addPoint(point, True)
@@ -67,6 +82,9 @@ class DsgLineTool(QgsMapTool):
         self.isEmittingPoint = True
         
     def canvasReleaseEvent(self, e):
+        '''
+        Reimplementation to add a vertex to the rubber band or to finish the rubber band according to the button used
+        '''
         point = self.snapPoint(e.pos())
         if e.button() == Qt.RightButton:
             geom = self.rubberBand.asGeometry()
@@ -78,6 +96,9 @@ class DsgLineTool(QgsMapTool):
         self.rubberBand.addPoint(point, True)
 
     def canvasMoveEvent(self, e):
+        '''
+        Reimplementation to move the rubber band
+        '''
         if not self.isEmittingPoint:
             return
         
@@ -85,6 +106,9 @@ class DsgLineTool(QgsMapTool):
         self.rubberBand.movePoint(point)
         
     def snapPoint(self, p):
+        '''
+        Reimplementation to make use of the snap
+        '''
         m = self.canvas.snappingUtils().snapToMap(p)
         if m.isValid():
             return m.point()

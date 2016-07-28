@@ -39,7 +39,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class AssignProfiles(QtGui.QDialog, FORM_CLASS):
     def __init__(self, index = None, parent = None):
-        """Constructor."""
+        """
+        Constructor
+        """
         super(AssignProfiles, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -58,7 +60,10 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
         #Objects Connections
         QtCore.QObject.connect(self.widget, QtCore.SIGNAL(("connectionChanged()")), self.getInstalledProfiles)
 
-    def parseJson(self, filename):       
+    def parseJson(self, filename):
+        '''
+        Parses the profile file and creates a dictionary
+        '''
         try:
             file = open(filename, 'r')
             data = file.read()
@@ -69,6 +74,9 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
             return None
         
     def getModelProfiles(self):
+        '''
+        Scans the profile folder for files and make a list with them
+        '''
         self.possibleProfiles.clear()
         
         ret = []
@@ -82,6 +90,9 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
         self.possibleProfiles.addItems(ret)
         
     def getInstalledProfiles(self):
+        '''
+        Gets the installed profiles from a database
+        '''
         self.assignedProfiles.clear()
         
         if not self.widget.abstractDb:
@@ -97,6 +108,9 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_installButton_clicked(self):
+        '''
+        Installs the selected profiles into the database selected
+        '''
         if len(self.possibleProfiles.selectedItems()) == 0:
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one profile and try again!'))
             return 
@@ -122,16 +136,25 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_closeButton_clicked(self):
+        '''
+        Closes the dialog
+        '''
         self.close()
         
     @pyqtSlot(bool)
     def on_openProfileEditor_clicked(self):
+        '''
+        Opens the profile editor dialog
+        '''
         dlg = ProfileEditor()
         dlg.exec_()
         self.getModelProfiles()
         
     @pyqtSlot(bool)
     def on_removeButton_clicked(self):
+        '''
+        Removes a installed profile from the database (i.e we execute a drop role sql query)
+        '''
         if len(self.assignedProfiles.selectedItems()) == 0:
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one profile and try again!'))
             return 
@@ -157,6 +180,9 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_removeJson_clicked(self):
+        '''
+        Deletes a profile file
+        '''
         if len(self.possibleProfiles.selectedItems()) == 0:
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one profile and try again!'))
             return 

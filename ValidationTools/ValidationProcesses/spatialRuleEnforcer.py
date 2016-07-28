@@ -46,6 +46,9 @@ class SpatialRuleEnforcer(ValidationProcess):
                  1:False}
     
     def __init__(self, postgisDb, codelist, iface):
+        '''
+        Constructor
+        '''
         super(self.__class__,self).__init__(postgisDb, codelist)
         self.iface = iface
         self.rulesFile = os.path.join(os.path.dirname(__file__), '..', 'ValidationRules', 'ruleLibrary.rul')
@@ -171,7 +174,10 @@ class SpatialRuleEnforcer(ValidationProcess):
                     self.makeBreaksPredicateFlag(layer1, featureId, rule, layer2, hexa)
                     
     def getGeometryProblem(self, geometry, feature):
-        #when this happens the rule is broken and we need to get the geometry of the actual problem
+        '''
+        Gets geometry problems.
+        When this happens the rule is broken and we need to get the geometry of the actual problem
+        '''
         #geom must be the intersection
         geom = geometry.intersection(feature.geometry())
         #case the intersection is WKBUnknown or WKBNoGeometry, we should use the original geometry
