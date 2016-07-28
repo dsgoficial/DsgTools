@@ -176,7 +176,7 @@ class SpatialRuleEnforcer(ValidationProcess):
     def getGeometryProblem(self, geometry, feature):
         '''
         Gets geometry problems.
-        When this happens the rule is broken and we need to get the geometry of the actual problem
+        When this happens the rule is broken and we need to get the geometry of the actual problem.
         geometry: geometry used during edition mode
         feature: feature related to the geometry
         '''
