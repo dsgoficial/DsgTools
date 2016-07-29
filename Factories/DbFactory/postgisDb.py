@@ -1394,10 +1394,13 @@ class PostgisDb(AbstractDb):
             stylePath = os.path.join(path,style)
             
             #check if style already exists. If it does, update it.
+            #if style does not exist, create one.
             if self.getStyle(styleFolder, tableName, parsing = False):
                 self.updateStyle(styleFolder, tableName, stylePath)
             else:
                 self.importStyle(styleFolder, tableName, stylePath)
-                
-            #if style does not exist, create one.
-        pass
+
+    def getStylesFromDir(self):
+        fd = QFileDialog()
+        filename = fd.getOpenFileName(caption=self.tr('Select a style folder'),filter=self.tr('Spatialite file databases (*.sqlite)'))
+        self.db.setDatabaseName(filename)

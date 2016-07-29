@@ -120,7 +120,7 @@
           <item row="0" column="1">
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
-             <widget class="QPushButton" name="importStyles">
+             <widget class="QPushButton" name="importStylesPushButton">
               <property name="text">
                <string>Import Styles</string>
               </property>
@@ -167,39 +167,6 @@
               <string>Timestamp</string>
              </property>
             </column>
-            <item>
-             <property name="text">
-              <string>New Item</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>New Item</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>New Item</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </item>
            </widget>
           </item>
          </layout>

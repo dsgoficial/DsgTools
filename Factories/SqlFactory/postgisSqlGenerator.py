@@ -831,9 +831,11 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def updateStyle(self, styleName, table_name, parsedQml):
-        pass
+        sql = """UPDATE public.layer_styles SET styleqml = '{0}' where f_table_name = '{1}' and description = '{2}'""".format(parsedQml,table_name, styleName)
+        return sql
     
     def importStyle(self, styleName, table_name, parsedQml):
-        pass
+        sql = """INSERT INTO  public.layer_styles (styleqml, f_table_name, description) VALUES ('{0}','{1}','{2}')""".format(parsedQml, table_name, styleName)
+        return sql
     
     
