@@ -109,117 +109,117 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Erro abrindo banco de dados.</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="76"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="91"/>
         <source>Problem counting elements: </source>
         <translation>Problema na contagem dos elementos: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="150"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="190"/>
         <source>Validation Problems Summary</source>
         <translation>Resumo de Problemas de Validação</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="154"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="194"/>
         <source>Classes with null lines:</source>
         <translation>Classes com linhas nulas:</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="455"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="527"/>
         <source>Class</source>
         <translation>Classe</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="278"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="330"/>
         <source>Elements</source>
         <translation>Elementos</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="160"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="200"/>
         <source>Classes with null primary keys:</source>
         <translation>Classes com chaves primárias nulas: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="166"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="206"/>
         <source>Features with attributes not in domain:</source>
         <translation>Feições com atributos fora do domínio:</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="198"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="238"/>
         <source>Class: </source>
         <translation>Classe: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="179"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="219"/>
         <source>Features with null attributes in a not null field:</source>
         <translation>Feições com atributos nulos em campo não nulo:</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="191"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="231"/>
         <source>Classes with classes that have elements but do not have output equivalent:</source>
         <translation>Classes com classes que tem elementos mas não tem equivalente de saída:</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="196"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="236"/>
         <source>Classes with attributes that have no output attribute equivalent:</source>
         <translation>Classes com atributos que não possuem atributo de saída equivalente:</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="208"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="251"/>
         <source>Conversion type: </source>
         <translation>Tipo de Conversão: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="209"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="252"/>
         <source>Input database: </source>
         <translation>Banco de dados de entrada: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="210"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="253"/>
         <source>Output database: </source>
         <translation>Banco de dados de saída: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="211"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="254"/>
         <source>Read Summary</source>
         <translation>Resumo de Leitura</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="277"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="329"/>
         <source>Write Summary</source>
         <translation>Resumo de Escrita</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="313"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="365"/>
         <source>Error on layer </source>
         <translation>Erro na camada </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="313"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="365"/>
         <source>. Conversion not performed.</source>
         <translation>. Conversão não realizada.</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="454"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="526"/>
         <source>Features not converted</source>
         <translation>Feições não convertidas</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="455"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="527"/>
         <source>Feature id</source>
         <translation>Id da Feição</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="85"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="103"/>
         <source>Problem finding EPSG: </source>
         <translation>Problema para encontrar EPSG: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="117"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="145"/>
         <source>Problem getting aggregation attributes: </source>
         <translation>Problema ao obter atributos de agregação: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/abstractDb.py" line="60"/>
+        <location filename="Factories/DbFactory/abstractDb.py" line="69"/>
         <source>Error opening database: </source>
         <translation>Erro abrindo banco de dados: </translation>
     </message>
@@ -252,7 +252,7 @@ p, li { white-space: pre-wrap; }
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="UserTools/alter_user_password.py" line="57"/>
+        <location filename="UserTools/alter_user_password.py" line="62"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -267,22 +267,22 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Problema alterando password do usuário: </translation>
     </message>
     <message>
-        <location filename="UserTools/alter_user_password.py" line="60"/>
+        <location filename="UserTools/alter_user_password.py" line="65"/>
         <source>Success!</source>
         <translation>Sucesso!</translation>
     </message>
     <message>
-        <location filename="UserTools/alter_user_password.py" line="60"/>
+        <location filename="UserTools/alter_user_password.py" line="65"/>
         <source>User </source>
         <translation>Usuário </translation>
     </message>
     <message>
-        <location filename="UserTools/alter_user_password.py" line="51"/>
+        <location filename="UserTools/alter_user_password.py" line="56"/>
         <source>Password mismatch! Password not altered!</source>
         <translation>Senha não coincidente! Senha não alterada!</translation>
     </message>
     <message>
-        <location filename="UserTools/alter_user_password.py" line="60"/>
+        <location filename="UserTools/alter_user_password.py" line="65"/>
         <source> password successfully updated on database </source>
         <translation> senha atualizada com sucesso no banco de dados </translation>
     </message>
@@ -290,7 +290,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AssignProfiles</name>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="174"/>
+        <location filename="UserTools/assign_profiles.py" line="200"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -300,12 +300,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Problema atribuindo perfil: </translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="161"/>
+        <location filename="UserTools/assign_profiles.py" line="187"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="119"/>
+        <location filename="UserTools/assign_profiles.py" line="133"/>
         <source>Profiles assigned successfully!</source>
         <translation>Perfis atribuídos com sucesso!</translation>
     </message>
@@ -315,27 +315,27 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Problema ao remover perfil: </translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="154"/>
+        <location filename="UserTools/assign_profiles.py" line="177"/>
         <source>Profiles removed successfully!</source>
         <translation>Perfis removidos com sucesso!</translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="164"/>
+        <location filename="UserTools/assign_profiles.py" line="190"/>
         <source>Question</source>
         <translation>Questão</translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="164"/>
+        <location filename="UserTools/assign_profiles.py" line="190"/>
         <source>Do you really want to remove selected profile models?</source>
         <translation>Você deseja realmente remover os modelos de perfil selecionados?</translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="174"/>
+        <location filename="UserTools/assign_profiles.py" line="200"/>
         <source>Problem removing profile model: </source>
         <translation>Problema removendo o modelo de perfil: </translation>
     </message>
     <message>
-        <location filename="UserTools/assign_profiles.py" line="161"/>
+        <location filename="UserTools/assign_profiles.py" line="187"/>
         <source>Select at least one profile and try again!</source>
         <translation>Selecione pelo menos uma permissão de usuário e tente de novo!</translation>
     </message>
@@ -351,22 +351,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>BDGExTools</name>
     <message>
-        <location filename="BDGExTools/BDGExTools.py" line="95"/>
+        <location filename="BDGExTools/BDGExTools.py" line="107"/>
         <source>URL Error!</source>
         <translation>Erro na URL!</translation>
     </message>
     <message>
-        <location filename="BDGExTools/BDGExTools.py" line="98"/>
+        <location filename="BDGExTools/BDGExTools.py" line="110"/>
         <source>HTTP Error!</source>
         <translation>Erro no HTTP!</translation>
     </message>
     <message>
-        <location filename="BDGExTools/BDGExTools.py" line="104"/>
+        <location filename="BDGExTools/BDGExTools.py" line="116"/>
         <source>Parse Error!</source>
         <translation>Erro de Análise!</translation>
     </message>
     <message>
-        <location filename="BDGExTools/BDGExTools.py" line="104"/>
+        <location filename="BDGExTools/BDGExTools.py" line="116"/>
         <source>Invalid GetCapabilities response:</source>
         <translation>Resposta do GetCapabilities Inválida:</translation>
     </message>
@@ -374,27 +374,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CalcContour</name>
     <message>
-        <location filename="VectorTools/calc_contour.py" line="80"/>
+        <location filename="VectorTools/calc_contour.py" line="91"/>
         <source>Select a Layer</source>
         <translation>Selecione uma camada</translation>
     </message>
     <message>
-        <location filename="VectorTools/calc_contour.py" line="104"/>
+        <location filename="VectorTools/calc_contour.py" line="121"/>
         <source>Information</source>
         <translation>Informação</translation>
     </message>
     <message>
-        <location filename="VectorTools/calc_contour.py" line="100"/>
+        <location filename="VectorTools/calc_contour.py" line="117"/>
         <source>A layer must be selected!</source>
         <translation>Uma camada deve ser selecionada!</translation>
     </message>
     <message>
-        <location filename="VectorTools/calc_contour.py" line="104"/>
+        <location filename="VectorTools/calc_contour.py" line="121"/>
         <source>A field must be selected!</source>
         <translation>Um campo deve ser selecionado!</translation>
     </message>
     <message>
-        <location filename="VectorTools/calc_contour.py" line="111"/>
+        <location filename="VectorTools/calc_contour.py" line="128"/>
         <source>Layer successfully updated!</source>
         <translation>Camada atualizada com sucesso!</translation>
     </message>
@@ -409,35 +409,40 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Erro!</translation>
     </message>
     <message>
-        <location filename="VectorTools/calc_contour.py" line="111"/>
+        <location filename="VectorTools/calc_contour.py" line="128"/>
         <source>Information!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="VectorTools/calc_contour.py" line="117"/>
+        <location filename="VectorTools/calc_contour.py" line="136"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="VectorTools/calc_contour.py" line="113"/>
+        <location filename="VectorTools/calc_contour.py" line="130"/>
         <source>Could not update features!</source>
         <translation>Não pôde atualizar feições!</translation>
     </message>
     <message>
-        <location filename="VectorTools/calc_contour.py" line="115"/>
+        <location filename="VectorTools/calc_contour.py" line="132"/>
         <source>Problem ordering the features!</source>
         <translation>Problema ordenando as feições!</translation>
     </message>
     <message>
-        <location filename="VectorTools/calc_contour.py" line="117"/>
+        <location filename="VectorTools/calc_contour.py" line="134"/>
         <source>The line created does not cross any features in the selected layer!</source>
         <translation>A linha criada não cruza nenhuma feição na camada selecionada!</translation>
+    </message>
+    <message>
+        <location filename="VectorTools/calc_contour.py" line="136"/>
+        <source>Assign a value for the selected attribute of the first crossed feature!</source>
+        <translation>Atribua um valor para o atributo selecionado da primeira feição cruzada!</translation>
     </message>
 </context>
 <context>
     <name>CloseEarthCoveragePolygonsProcess</name>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="95"/>
+        <location filename="ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="113"/>
         <source>Problem executing qgis:polygonize. Check your installed libs.
 </source>
         <translation>Problema executando o polygonize do qgis. Verifique suas bibliotecas instaladas.</translation>
@@ -446,22 +451,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CodeList</name>
     <message>
-        <location filename="AttributeTools/code_list.py" line="128"/>
+        <location filename="AttributeTools/code_list.py" line="143"/>
         <source>Value</source>
         <translation>Valor</translation>
     </message>
     <message>
-        <location filename="AttributeTools/code_list.py" line="128"/>
+        <location filename="AttributeTools/code_list.py" line="143"/>
         <source>Code</source>
         <translation>Código</translation>
     </message>
     <message>
-        <location filename="AttributeTools/code_list.py" line="109"/>
+        <location filename="AttributeTools/code_list.py" line="118"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="AttributeTools/code_list.py" line="109"/>
+        <location filename="AttributeTools/code_list.py" line="118"/>
         <source>Problem obtaining domain values: </source>
         <translation>Problema ao obter valores de domínio: </translation>
     </message>
@@ -469,67 +474,67 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ComplexWindow</name>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="133"/>
+        <location filename="ComplexTools/complexWindow.py" line="154"/>
         <source>select a complex class</source>
         <translation>selecione a classe complexa</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="146"/>
+        <location filename="ComplexTools/complexWindow.py" line="170"/>
         <source>select a database</source>
         <translation>selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="410"/>
+        <location filename="ComplexTools/complexWindow.py" line="476"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="182"/>
+        <location filename="ComplexTools/complexWindow.py" line="215"/>
         <source>Please, select an item to zoom.</source>
         <translation>Por favor, selecione um item para aproximar.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="201"/>
+        <location filename="ComplexTools/complexWindow.py" line="234"/>
         <source>The associated classes must be loaded in the table of contents.</source>
         <translation>As classes associadas precisam ser carregadas na tabela de conteúdo.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="216"/>
+        <location filename="ComplexTools/complexWindow.py" line="249"/>
         <source>Select a complex.</source>
         <translation>Selecione um complexo.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="283"/>
+        <location filename="ComplexTools/complexWindow.py" line="328"/>
         <source>The class you&apos;re trying to disassociate must loaded in the table of contents.</source>
         <translation>A classe que você está tentando desassociar precisa ser carregada na tabela de conteúdo.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="319"/>
+        <location filename="ComplexTools/complexWindow.py" line="376"/>
         <source>Please, select an aggregated class or aggregated id.</source>
         <translation>Por favor, selecione uma classe agregada ou o identificador dela.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="363"/>
+        <location filename="ComplexTools/complexWindow.py" line="429"/>
         <source>Please, select a complex.</source>
         <translation>Por favor, selecione um complexo.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="407"/>
+        <location filename="ComplexTools/complexWindow.py" line="473"/>
         <source>The following layers cannot be associated to complexes from </source>
         <translation>As camadas a seguir não podem ser associadas a complexos de</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="302"/>
+        <location filename="ComplexTools/complexWindow.py" line="354"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="386"/>
+        <location filename="ComplexTools/complexWindow.py" line="452"/>
         <source>Critical</source>
         <translation>Crítico</translation>
     </message>
     <message>
-        <location filename="ComplexTools/complexWindow.py" line="386"/>
+        <location filename="ComplexTools/complexWindow.py" line="452"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detaalhes.</translation>
     </message>
@@ -537,22 +542,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ConnectionWidget</name>
     <message>
-        <location filename="CustomWidgets/connectionWidget.py" line="163"/>
+        <location filename="CustomWidgets/connectionWidget.py" line="184"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.py" line="178"/>
+        <location filename="CustomWidgets/connectionWidget.py" line="202"/>
         <source>Select Database</source>
         <translation>Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.py" line="152"/>
+        <location filename="CustomWidgets/connectionWidget.py" line="170"/>
         <source>This is not a valid DsgTools database!</source>
         <translation>Este não é um banco DsgTools válido!</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/connectionWidget.py" line="200"/>
+        <location filename="CustomWidgets/connectionWidget.py" line="233"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
@@ -575,49 +580,49 @@ p, li { white-space: pre-wrap; }
         <translation>spatialite2postgis</translation>
     </message>
     <message>
-        <location filename="ConversionTools/convert_database.py" line="155"/>
+        <location filename="ConversionTools/convert_database.py" line="167"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="ConversionTools/convert_database.py" line="117"/>
+        <location filename="ConversionTools/convert_database.py" line="129"/>
         <source>Enter input database!</source>
         <translation>Entre com o bancos de dados de entrada!</translation>
     </message>
     <message>
-        <location filename="ConversionTools/convert_database.py" line="120"/>
+        <location filename="ConversionTools/convert_database.py" line="132"/>
         <source>Enter output database!</source>
         <translation>Entre com o banco de dados de saída!</translation>
     </message>
     <message>
-        <location filename="ConversionTools/convert_database.py" line="123"/>
+        <location filename="ConversionTools/convert_database.py" line="135"/>
         <source>Version mismatch!
 Conversion must be between databases with the same version!</source>
         <translation>Erro de versão!
 A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
     <message>
-        <location filename="ConversionTools/convert_database.py" line="153"/>
+        <location filename="ConversionTools/convert_database.py" line="165"/>
         <source>Success!</source>
         <translation>Sucesso!</translation>
     </message>
     <message>
-        <location filename="ConversionTools/convert_database.py" line="153"/>
+        <location filename="ConversionTools/convert_database.py" line="165"/>
         <source>Conversion successfully completed!</source>
         <translation>Conversão completada com sucesso!</translation>
     </message>
     <message>
-        <location filename="ConversionTools/convert_database.py" line="155"/>
+        <location filename="ConversionTools/convert_database.py" line="167"/>
         <source>Conversion not performed! Check log for details.</source>
         <translation>Conversão não realizada! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="ConversionTools/convert_database.py" line="140"/>
+        <location filename="ConversionTools/convert_database.py" line="152"/>
         <source>Question</source>
         <translation>Questão</translation>
     </message>
     <message>
-        <location filename="ConversionTools/convert_database.py" line="140"/>
+        <location filename="ConversionTools/convert_database.py" line="152"/>
         <source>Databases CRS are different. Conversor will reproject spatial data. Do you want to proceed?</source>
         <translation>Os Sistemas de Referência Espacial dos bancos são diferentes. O Conversor reprojetará os dados espaciais. Você deseja prosseguir?</translation>
     </message>
@@ -625,12 +630,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
 <context>
     <name>CreateInomDialog</name>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="65"/>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="70"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="65"/>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="70"/>
         <source>Map name index not valid!</source>
         <translation>O índice de nomenclatura é inválido!</translation>
     </message>
@@ -660,7 +665,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation type="obsolete">Por favor, selecione pelo menos uma classe!</translation>
     </message>
     <message>
-        <location filename="LayerTools/ui_create_inom_dialog.py" line="61"/>
+        <location filename="LayerTools/ui_create_inom_dialog.py" line="66"/>
         <source>Please, select a database first.</source>
         <translation>Por favor, selecione um banco de dados antes.</translation>
     </message>
@@ -668,22 +673,22 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
 <context>
     <name>CreateProfile</name>
     <message>
-        <location filename="UserTools/create_profile.py" line="121"/>
+        <location filename="UserTools/create_profile.py" line="135"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="UserTools/create_profile.py" line="121"/>
+        <location filename="UserTools/create_profile.py" line="135"/>
         <source>Fill the profile name!</source>
         <translation>Preencha o nome do perfil!</translation>
     </message>
     <message>
-        <location filename="UserTools/create_profile.py" line="89"/>
+        <location filename="UserTools/create_profile.py" line="100"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="UserTools/create_profile.py" line="89"/>
+        <location filename="UserTools/create_profile.py" line="100"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -721,7 +726,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Fechar</translation>
     </message>
     <message>
-        <location filename="UserTools/create_user.py" line="71"/>
+        <location filename="UserTools/create_user.py" line="79"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -736,22 +741,22 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation type="obsolete">Problema criando usuário: </translation>
     </message>
     <message>
-        <location filename="UserTools/create_user.py" line="75"/>
+        <location filename="UserTools/create_user.py" line="83"/>
         <source>Success!</source>
         <translation>Sucesso!</translation>
     </message>
     <message>
-        <location filename="UserTools/create_user.py" line="75"/>
+        <location filename="UserTools/create_user.py" line="83"/>
         <source>User </source>
         <translation>Usuário </translation>
     </message>
     <message>
-        <location filename="UserTools/create_user.py" line="58"/>
+        <location filename="UserTools/create_user.py" line="66"/>
         <source>Password mismatch! User not created!</source>
         <translation>Senha não coincidente! Usuário não criado!</translation>
     </message>
     <message>
-        <location filename="UserTools/create_user.py" line="75"/>
+        <location filename="UserTools/create_user.py" line="83"/>
         <source> created successfully on database </source>
         <translation> criado com sucesso no banco de dados </translation>
     </message>
@@ -759,17 +764,17 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
 <context>
     <name>CreateView</name>
     <message>
-        <location filename="ServerTools/createView.py" line="58"/>
+        <location filename="ServerTools/createView.py" line="63"/>
         <source>Success!</source>
         <translation>Sucesso!</translation>
     </message>
     <message>
-        <location filename="ServerTools/createView.py" line="58"/>
+        <location filename="ServerTools/createView.py" line="63"/>
         <source>Views created successfully on database </source>
         <translation>Visões criadas com sucesso no banco de dados </translation>
     </message>
     <message>
-        <location filename="ServerTools/createView.py" line="61"/>
+        <location filename="ServerTools/createView.py" line="66"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -873,42 +878,42 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
 <context>
     <name>CriaSpatialiteDialog</name>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="142"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="160"/>
         <source>Please, select the coordinate system</source>
         <translation>Por favor, selecione o sistema de coordenadas</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="137"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="155"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="137"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="155"/>
         <source>Problem creating the database!</source>
         <translation>Problema criando o banco de dados!</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="146"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="164"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="144"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="162"/>
         <source>Please, select a folder to save the database</source>
         <translation>Por favor, selecione uma pasta para salvar o banco</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="146"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="164"/>
         <source>Please, fill the file name.</source>
         <translation>Por favor, preencha o nome do arquivo.</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="135"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="153"/>
         <source>Information</source>
         <translation>Informação</translation>
     </message>
     <message>
-        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="135"/>
+        <location filename="DbTools/SpatialiteTool/cria_spatialite_dialog.py" line="153"/>
         <source>Spatialite created successfully!</source>
         <translation>Spatialite criado com sucesso!</translation>
     </message>
@@ -2020,147 +2025,147 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>DsgTools</name>
     <message>
-        <location filename="dsg_tools.py" line="602"/>
+        <location filename="dsg_tools.py" line="612"/>
         <source>&amp;DSG Tools</source>
         <translation>&amp;Ferramentas DSG</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="225"/>
+        <location filename="dsg_tools.py" line="233"/>
         <source>DSG Tools</source>
         <translation>Ferramentas DSG</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="230"/>
+        <location filename="dsg_tools.py" line="238"/>
         <source>Server Catalog</source>
         <translation>Catálogo de Servidores</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="231"/>
+        <location filename="dsg_tools.py" line="239"/>
         <source>Database Tools</source>
         <translation>Ferramentas de BD</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="232"/>
+        <location filename="dsg_tools.py" line="240"/>
         <source>Layer Tools</source>
         <translation>Ferramentas de Camadas</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="444"/>
+        <location filename="dsg_tools.py" line="452"/>
         <source>About</source>
         <translation>Sobre</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="470"/>
+        <location filename="dsg_tools.py" line="478"/>
         <source>Create Spatialite</source>
         <translation>Criar Spatialite</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="482"/>
+        <location filename="dsg_tools.py" line="490"/>
         <source>Create PostGIS</source>
         <translation>Criar PostGIS</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="550"/>
+        <location filename="dsg_tools.py" line="558"/>
         <source>Load by Category</source>
         <translation>Carregar por Categoria</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="562"/>
+        <location filename="dsg_tools.py" line="570"/>
         <source>Load by Class</source>
         <translation>Carregar por Classe</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="584"/>
+        <location filename="dsg_tools.py" line="592"/>
         <source>Create Frame</source>
         <translation>Criar Moldura</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="404"/>
+        <location filename="dsg_tools.py" line="412"/>
         <source>Image tools</source>
         <translation>Ferramentas para Imagens</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="454"/>
+        <location filename="dsg_tools.py" line="462"/>
         <source>Help</source>
         <translation>Ajuda</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="233"/>
+        <location filename="dsg_tools.py" line="241"/>
         <source>BDGEx</source>
         <translation>BDGEx</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="238"/>
+        <location filename="dsg_tools.py" line="246"/>
         <source>Product Indexes</source>
         <translation>Índices de Produtos</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="240"/>
+        <location filename="dsg_tools.py" line="248"/>
         <source>Vectorial Charts</source>
         <translation>Cartas Vetoriais</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="344"/>
+        <location filename="dsg_tools.py" line="352"/>
         <source>1:250,000</source>
         <translation>1:250.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="354"/>
+        <location filename="dsg_tools.py" line="362"/>
         <source>1:100,000</source>
         <translation>1:100.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="364"/>
+        <location filename="dsg_tools.py" line="372"/>
         <source>1:50,000</source>
         <translation>1:50.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="374"/>
+        <location filename="dsg_tools.py" line="382"/>
         <source>1:25,000</source>
         <translation>1:25.000</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="239"/>
+        <location filename="dsg_tools.py" line="247"/>
         <source>Topographic Charts</source>
         <translation>Cartas Topográficas</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="814"/>
+        <location filename="dsg_tools.py" line="907"/>
         <source>1:250k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="818"/>
+        <location filename="dsg_tools.py" line="914"/>
         <source>1:100k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="822"/>
+        <location filename="dsg_tools.py" line="921"/>
         <source>1:50k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="826"/>
+        <location filename="dsg_tools.py" line="928"/>
         <source>1:25k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:25k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="830"/>
+        <location filename="dsg_tools.py" line="935"/>
         <source>1:250k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="834"/>
+        <location filename="dsg_tools.py" line="942"/>
         <source>1:100k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="838"/>
+        <location filename="dsg_tools.py" line="949"/>
         <source>1:50k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="842"/>
+        <location filename="dsg_tools.py" line="956"/>
         <source>1:25k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:25k</translation>
     </message>
@@ -2170,27 +2175,27 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Visualizar Servidor</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="237"/>
+        <location filename="dsg_tools.py" line="245"/>
         <source>Coverage Layers</source>
         <translation>Camadas de Cobertura</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="284"/>
+        <location filename="dsg_tools.py" line="292"/>
         <source>Landsat 7</source>
         <translation>Landsat 7</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="294"/>
+        <location filename="dsg_tools.py" line="302"/>
         <source>RapidEye</source>
         <translation>RapidEye</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="414"/>
+        <location filename="dsg_tools.py" line="422"/>
         <source>Inventory tools</source>
         <translation>Ferramentas de Inventário</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="424"/>
+        <location filename="dsg_tools.py" line="432"/>
         <source>Models and Scripts Installer</source>
         <translation>Instalador de Modelos e Scripts</translation>
     </message>
@@ -2215,7 +2220,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Gerenciar Perfis de Usuário</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="434"/>
+        <location filename="dsg_tools.py" line="442"/>
         <source>Convert Database</source>
         <translation>Converter Banco de Dados</translation>
     </message>
@@ -2230,47 +2235,47 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Gerenciar Modelos de Perfil</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="493"/>
+        <location filename="dsg_tools.py" line="501"/>
         <source>Manage User Permissions</source>
         <translation>Gerenciar Permissões de Usuário</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="528"/>
+        <location filename="dsg_tools.py" line="536"/>
         <source>User Permissions Tools</source>
         <translation>Ferramentas de Permissões de Usuário</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="530"/>
+        <location filename="dsg_tools.py" line="538"/>
         <source>User Permissions Editor</source>
         <translation>Editor de Permissões de Usuário</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="540"/>
+        <location filename="dsg_tools.py" line="548"/>
         <source>Install/Remove User Permissions</source>
         <translation>Instalar/Remover Permissões de Usuário</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="234"/>
+        <location filename="dsg_tools.py" line="242"/>
         <source>Vector Tools</source>
         <translation>Ferramentas Vetoriais</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="504"/>
+        <location filename="dsg_tools.py" line="512"/>
         <source>Assign Contour Values</source>
         <translation>Linha Cotadora</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="394"/>
+        <location filename="dsg_tools.py" line="402"/>
         <source>Explore Server</source>
         <translation>Explorar Servidor</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="384"/>
+        <location filename="dsg_tools.py" line="392"/>
         <source>Configure Servers</source>
         <translation>Configurar Servidores</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="235"/>
+        <location filename="dsg_tools.py" line="243"/>
         <source>Production Tools</source>
         <translation>Ferramentas de Produção</translation>
     </message>
@@ -2280,12 +2285,12 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Realizar aquisição de campo</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="573"/>
+        <location filename="dsg_tools.py" line="581"/>
         <source>Load Auxiliar Structure</source>
         <translation>Carregar Estrutura Auxiliar</translation>
     </message>
     <message>
-        <location filename="dsg_tools.py" line="516"/>
+        <location filename="dsg_tools.py" line="524"/>
         <source>Reclassify Feature Tool</source>
         <translation>Ferramenta de Reclassificação de Feições</translation>
     </message>
@@ -2321,32 +2326,32 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Definir Cobertura Terrestre</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/earthCoverageWidget.py" line="85"/>
+        <location filename="CustomWidgets/earthCoverageWidget.py" line="94"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/earthCoverageWidget.py" line="63"/>
+        <location filename="CustomWidgets/earthCoverageWidget.py" line="72"/>
         <source>Select a database to manage earth coverage</source>
         <translation>Selecione um banco de dados para gerenciar a cobertura terrestre</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/earthCoverageWidget.py" line="78"/>
+        <location filename="CustomWidgets/earthCoverageWidget.py" line="87"/>
         <source>Question</source>
         <translation>Questão</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/earthCoverageWidget.py" line="78"/>
+        <location filename="CustomWidgets/earthCoverageWidget.py" line="87"/>
         <source>An earth coverage is already defined. Do you want to redefine it? All data will be lost.</source>
         <translation>Uma cobertura terrestre já está definida. Você deseja redefinir ela? Todos os dados serão perdidos.</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/earthCoverageWidget.py" line="85"/>
+        <location filename="CustomWidgets/earthCoverageWidget.py" line="94"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/earthCoverageWidget.py" line="110"/>
+        <location filename="CustomWidgets/earthCoverageWidget.py" line="125"/>
         <source>Earth Coverage not loaded! Check log for details.</source>
         <translation>Cobertura Terrestre não carregada! Verifique o log para detalhes.</translation>
     </message>
@@ -2354,57 +2359,57 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>ExploreDb</name>
     <message>
-        <location filename="ServerTools/exploreDb.py" line="92"/>
+        <location filename="ServerTools/exploreDb.py" line="109"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="ServerTools/exploreDb.py" line="92"/>
+        <location filename="ServerTools/exploreDb.py" line="109"/>
         <source>Connection refused. Connect with a super user to inspect server.</source>
         <translation>Conexão recusada. Conecte com um super usuário para inspecionar o servidor.</translation>
     </message>
     <message>
-        <location filename="ServerTools/exploreDb.py" line="128"/>
+        <location filename="ServerTools/exploreDb.py" line="154"/>
         <source>Show properties</source>
         <translation>Mostrar propriedades</translation>
     </message>
     <message>
-        <location filename="ServerTools/exploreDb.py" line="149"/>
+        <location filename="ServerTools/exploreDb.py" line="181"/>
         <source>Question</source>
         <translation>Questão</translation>
     </message>
     <message>
-        <location filename="ServerTools/exploreDb.py" line="149"/>
+        <location filename="ServerTools/exploreDb.py" line="181"/>
         <source>Do you really want to drop database: </source>
         <translation>Você realmente deseja apagar o banco de dados: </translation>
     </message>
     <message>
-        <location filename="ServerTools/exploreDb.py" line="157"/>
+        <location filename="ServerTools/exploreDb.py" line="189"/>
         <source>Success!</source>
         <translation>Sucesso!</translation>
     </message>
     <message>
-        <location filename="ServerTools/exploreDb.py" line="157"/>
+        <location filename="ServerTools/exploreDb.py" line="189"/>
         <source>Database </source>
         <translation>Banco de Dados </translation>
     </message>
     <message>
-        <location filename="ServerTools/exploreDb.py" line="157"/>
+        <location filename="ServerTools/exploreDb.py" line="189"/>
         <source> dropped successfully!</source>
         <translation> apagado com sucesso!</translation>
     </message>
     <message>
-        <location filename="ServerTools/exploreDb.py" line="184"/>
+        <location filename="ServerTools/exploreDb.py" line="225"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="ServerTools/exploreDb.py" line="168"/>
+        <location filename="ServerTools/exploreDb.py" line="203"/>
         <source>Select a database to create view</source>
         <translation>Selecione um banco de dados para criar view</translation>
     </message>
     <message>
-        <location filename="ServerTools/exploreDb.py" line="184"/>
+        <location filename="ServerTools/exploreDb.py" line="225"/>
         <source>Select a database to manage auxiliar structure</source>
         <translation>Selecione um banco de dados para gerenciar a estrutura auxiliar</translation>
     </message>
@@ -2412,22 +2417,22 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>ExploreServerWidget</name>
     <message>
-        <location filename="CustomWidgets/exploreServerWidget.py" line="108"/>
+        <location filename="CustomWidgets/exploreServerWidget.py" line="126"/>
         <source>Select Server</source>
         <translation>Selecione um Servidor</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/exploreServerWidget.py" line="119"/>
+        <location filename="CustomWidgets/exploreServerWidget.py" line="140"/>
         <source>Critical</source>
         <translation>Crítico</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/exploreServerWidget.py" line="119"/>
+        <location filename="CustomWidgets/exploreServerWidget.py" line="140"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/exploreServerWidget.py" line="93"/>
+        <location filename="CustomWidgets/exploreServerWidget.py" line="105"/>
         <source>Problem executing query: </source>
         <translation>Problema executando a query: </translation>
     </message>
@@ -2520,27 +2525,27 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Adicionar / Atualizar</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.py" line="86"/>
+        <location filename="ProductionTools/field_setup.py" line="88"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.py" line="106"/>
+        <location filename="ProductionTools/field_setup.py" line="108"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.py" line="512"/>
+        <location filename="ProductionTools/field_setup.py" line="514"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.py" line="241"/>
+        <location filename="ProductionTools/field_setup.py" line="243"/>
         <source>Enter a button name!</source>
         <translation>Entre com um nome de botão!</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.py" line="475"/>
+        <location filename="ProductionTools/field_setup.py" line="477"/>
         <source>Remove child node</source>
         <translation>Remover nó filho</translation>
     </message>
@@ -2555,7 +2560,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Arquivos de Configuração de Campo (*.json)</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.py" line="507"/>
+        <location filename="ProductionTools/field_setup.py" line="509"/>
         <source>Question</source>
         <translation>Questão</translation>
     </message>
@@ -2575,7 +2580,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Defina um nome para o arquivo de configuração de campo!</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.py" line="519"/>
+        <location filename="ProductionTools/field_setup.py" line="521"/>
         <source>Information!</source>
         <translation>Informação!</translation>
     </message>
@@ -2595,32 +2600,32 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Ajustes de Reclassificação</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.py" line="492"/>
+        <location filename="ProductionTools/field_setup.py" line="494"/>
         <source>Open reclassification setup file</source>
         <translation>Abrir arquivo de configuração de reclassificação</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.py" line="510"/>
+        <location filename="ProductionTools/field_setup.py" line="512"/>
         <source>Reclassification Setup Files (*.reclas)</source>
         <translation>Arquivo de Configuração de Reclassificação (*.reclas)</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.py" line="510"/>
+        <location filename="ProductionTools/field_setup.py" line="512"/>
         <source>Save reclassification setup file</source>
         <translation>Salvar arquivo de configuração de reclassificação</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.py" line="512"/>
+        <location filename="ProductionTools/field_setup.py" line="514"/>
         <source>Define a name for the reclassification setup file!</source>
         <translation>Defina um nome para o arquivo de configuração de reclassificação!</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.py" line="519"/>
+        <location filename="ProductionTools/field_setup.py" line="521"/>
         <source>Reclassification setup file saved successfully!</source>
         <translation>Arquivo de configuração de reclassificação salvo com sucesso!</translation>
     </message>
     <message>
-        <location filename="ProductionTools/field_setup.py" line="507"/>
+        <location filename="ProductionTools/field_setup.py" line="509"/>
         <source>Do you want to save this reclassification setup?</source>
         <translation>Você deseja salvar esta configuração de reclassificação?</translation>
     </message>
@@ -2660,7 +2665,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="ProductionTools/field_toolbox.py" line="195"/>
         <source>Please, select a database.</source>
-        <translation>Por favor, selecione um banco de dados</translation>
+        <translation>Por favor, selecione um banco de dados.</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_toolbox.py" line="201"/>
@@ -2772,52 +2777,52 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>InventoryTools</name>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="77"/>
+        <location filename="InventoryTools/inventoryTools.py" line="85"/>
         <source>Insert Extension</source>
         <translation>Inserir Extensão</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="80"/>
+        <location filename="InventoryTools/inventoryTools.py" line="88"/>
         <source>Remove Extension</source>
         <translation>Remover extensão</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="85"/>
+        <location filename="InventoryTools/inventoryTools.py" line="96"/>
         <source>Type the extension</source>
         <translation>Escreva a extensão</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="85"/>
+        <location filename="InventoryTools/inventoryTools.py" line="96"/>
         <source>File extension</source>
         <translation>Extensão do arquivo</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="112"/>
+        <location filename="InventoryTools/inventoryTools.py" line="135"/>
         <source>Select Directory</source>
         <translation>Selecione um Diretório</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="120"/>
+        <location filename="InventoryTools/inventoryTools.py" line="146"/>
         <source>Save Output File</source>
         <translation>Salvar arquivo de saída</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="156"/>
+        <location filename="InventoryTools/inventoryTools.py" line="191"/>
         <source>Information!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="141"/>
+        <location filename="InventoryTools/inventoryTools.py" line="176"/>
         <source>Please, fill all fields.</source>
         <translation>Por favor, preencha todos os campos.</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="156"/>
+        <location filename="InventoryTools/inventoryTools.py" line="191"/>
         <source>Please, choose a location to save the files.</source>
         <translation>Por favor, escolha um local para salvar os arquivos.</translation>
     </message>
     <message>
-        <location filename="InventoryTools/inventoryTools.py" line="148"/>
+        <location filename="InventoryTools/inventoryTools.py" line="183"/>
         <source>Please, insert file extensions to be considered.</source>
         <translation>Por favor, insira extensões de arquivo que devem ser consideradas.</translation>
     </message>
@@ -2900,12 +2905,12 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Agrupar por Geometria</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="291"/>
+        <location filename="LayerTools/load_by_category.py" line="337"/>
         <source>Point</source>
         <translation>Ponto</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="300"/>
+        <location filename="LayerTools/load_by_category.py" line="346"/>
         <source>Line</source>
         <translation>Linha</translation>
     </message>
@@ -2940,17 +2945,17 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="240"/>
+        <location filename="LayerTools/load_by_category.py" line="277"/>
         <source>WARNING!</source>
         <translation>ALERTA!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="229"/>
+        <location filename="LayerTools/load_by_category.py" line="266"/>
         <source>Please, select at least one type of layer!</source>
         <translation>Por favor, selecione pelo menos um tipo de camada!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="260"/>
+        <location filename="LayerTools/load_by_category.py" line="300"/>
         <source>CRITICAL!</source>
         <translation>CRÍTICO!</translation>
     </message>
@@ -2960,17 +2965,17 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Problema na carga das categorias!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="238"/>
+        <location filename="LayerTools/load_by_category.py" line="275"/>
         <source>Could not determine the coordinate reference system!</source>
         <translation>Não foi possível determinar o Sistema de Coordenadas de Referência!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="237"/>
+        <location filename="LayerTools/load_by_category.py" line="274"/>
         <source>Database not loaded properly!</source>
         <translation>Banco de dados não foi carregado corretamente!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="240"/>
+        <location filename="LayerTools/load_by_category.py" line="277"/>
         <source>Please, select at least one category!</source>
         <translation>Por favor, selecione pelo menos uma categoria!</translation>
     </message>
@@ -2990,19 +2995,19 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>&lt;&lt;</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="309"/>
+        <location filename="LayerTools/load_by_category.py" line="355"/>
         <source>Area</source>
         <translation>Área</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="128"/>
+        <location filename="LayerTools/load_by_category.py" line="134"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_category.py" line="260"/>
+        <location filename="LayerTools/load_by_category.py" line="300"/>
         <source>A problem occurred! Check log for details</source>
-        <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
+        <translation>Um problema ocorreu! Verifique o log para detalhes</translation>
     </message>
 </context>
 <context>
@@ -3073,22 +3078,22 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="155"/>
+        <location filename="LayerTools/load_by_class.py" line="185"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="155"/>
+        <location filename="LayerTools/load_by_class.py" line="185"/>
         <source>Could not load the selected classes!</source>
         <translation>Não foi possível carregar as classes selecionadas!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="157"/>
+        <location filename="LayerTools/load_by_class.py" line="187"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="157"/>
+        <location filename="LayerTools/load_by_class.py" line="187"/>
         <source>Please, select at least one class!</source>
         <translation>Por favor, selecione pelo menos uma classe!</translation>
     </message>
@@ -3108,12 +3113,12 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Filtro:</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="94"/>
+        <location filename="LayerTools/load_by_class.py" line="102"/>
         <source>CRITICAL!</source>
         <translation>CRÍTICO!</translation>
     </message>
     <message>
-        <location filename="LayerTools/load_by_class.py" line="94"/>
+        <location filename="LayerTools/load_by_class.py" line="102"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
@@ -3184,32 +3189,32 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>ManageComplexDialog</name>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="319"/>
+        <location filename="ComplexTools/manageComplex.py" line="384"/>
         <source>edit this field</source>
         <translation>edite este campo</translation>
     </message>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="342"/>
+        <location filename="ComplexTools/manageComplex.py" line="416"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="342"/>
+        <location filename="ComplexTools/manageComplex.py" line="416"/>
         <source>The field: &apos;nome&apos; must be filled in all rows. Please, check and try again.</source>
         <translation>O campo &apos;nome&apos; precisa ser preenchido em todas as linhas. Por favor, verifique e tente novamente.</translation>
     </message>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="355"/>
+        <location filename="ComplexTools/manageComplex.py" line="432"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="220"/>
+        <location filename="ComplexTools/manageComplex.py" line="263"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="ComplexTools/manageComplex.py" line="220"/>
+        <location filename="ComplexTools/manageComplex.py" line="263"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
@@ -3217,12 +3222,12 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>ManageUserProfiles</name>
     <message>
-        <location filename="UserTools/user_profiles.py" line="123"/>
+        <location filename="UserTools/user_profiles.py" line="140"/>
         <source>Select a User</source>
         <translation>Selecione um Usuário</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="234"/>
+        <location filename="UserTools/user_profiles.py" line="274"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -3237,22 +3242,22 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Problema ao revogar perfil: </translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="291"/>
+        <location filename="UserTools/user_profiles.py" line="346"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="239"/>
+        <location filename="UserTools/user_profiles.py" line="279"/>
         <source>User updated successfully!</source>
         <translation>Usuário atualizado com sucesso!</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="185"/>
+        <location filename="UserTools/user_profiles.py" line="218"/>
         <source>First select a database!</source>
         <translation>Selecione um banco de dados antes!</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="167"/>
+        <location filename="UserTools/user_profiles.py" line="197"/>
         <source>First select a user to remove!</source>
         <translation>Primeiro selecione um usuário para remover!</translation>
     </message>
@@ -3262,32 +3267,32 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Problema removendo usuário: </translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="178"/>
+        <location filename="UserTools/user_profiles.py" line="208"/>
         <source>User removed successfully!</source>
         <translation>Usuário removido com sucesso!</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="188"/>
+        <location filename="UserTools/user_profiles.py" line="221"/>
         <source>First select a user!</source>
         <translation>Primeiro selecione um usuário!</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="93"/>
+        <location filename="UserTools/user_profiles.py" line="104"/>
         <source>Show properties</source>
         <translation>Mostrar propriedades</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="249"/>
+        <location filename="UserTools/user_profiles.py" line="295"/>
         <source>No profiles installed! Install at least one and try again.</source>
         <translation>Não há permissões de usuário instaladas! Instale pelo menos uma e tente de novo.</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="263"/>
+        <location filename="UserTools/user_profiles.py" line="312"/>
         <source>No profiles assigned! Assign at least one and try again.</source>
         <translation>Não há permissões de usuário atribuídas! Atribua pelo menos uma e tente de novo.</translation>
     </message>
     <message>
-        <location filename="UserTools/user_profiles.py" line="291"/>
+        <location filename="UserTools/user_profiles.py" line="346"/>
         <source>Select a profile first!</source>
         <translation>Selecione uma permissão de usuário primeiro!</translation>
     </message>
@@ -3295,7 +3300,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>ModelsAndScriptsInstaller</name>
     <message>
-        <location filename="ToolboxTools/models_and_scripts_installer.py" line="94"/>
+        <location filename="ToolboxTools/models_and_scripts_installer.py" line="112"/>
         <source>Error copying file: </source>
         <translation>Erro copiando arquivo: </translation>
     </message>
@@ -3303,12 +3308,12 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>PostGISLayer</name>
     <message>
-        <location filename="Factories/LayerFactory/postgis_layer.py" line="122"/>
+        <location filename="Factories/LayerFactory/postgis_layer.py" line="131"/>
         <source>Dominios</source>
         <translation>Domínios</translation>
     </message>
     <message>
-        <location filename="Factories/LayerFactory/postgis_layer.py" line="91"/>
+        <location filename="Factories/LayerFactory/postgis_layer.py" line="100"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
@@ -3316,7 +3321,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>PostgisDBTool</name>
     <message>
-        <location filename="DbTools/PostGISTool/postgisDBTool.py" line="110"/>
+        <location filename="DbTools/PostGISTool/postgisDBTool.py" line="128"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
@@ -3329,52 +3334,52 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Erro!</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="248"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="307"/>
         <source>Operation not defined for this database version!</source>
         <translation>Operação não definida para esta versão de banco de dados!</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="368"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="472"/>
         <source>Problem disassociating complex from complex: </source>
         <translation>Problema disassociando complexo de complexo: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="444"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="567"/>
         <source>Problem assigning profile: </source>
         <translation>Problema atribuindo perfil: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="458"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="585"/>
         <source>Problem removing profile: </source>
         <translation>Problema removendo perfil: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="466"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="599"/>
         <source>Problem altering user&apos;s password: </source>
         <translation>Problema alterando senha do usuário: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="474"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="614"/>
         <source>Problem creating user: </source>
         <translation>Problema criando usuário: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="482"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="627"/>
         <source>Problem removing user: </source>
         <translation>Problema removendo usuário: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="490"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="641"/>
         <source>Problem granting profile: </source>
         <translation>Problema ao atribuir perfil: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="498"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="655"/>
         <source>Problem revoking profile: </source>
         <translation>Problema ao revogar perfil: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="622"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="811"/>
         <source>Problem dropping database: </source>
         <translation>Problema apagando o banco de dados: </translation>
     </message>
@@ -3384,72 +3389,72 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Problema acessando banco de dados: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="640"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="834"/>
         <source>Problem creating views: </source>
         <translation>Problema criando visões: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="109"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="137"/>
         <source>Problem getting database version: </source>
         <translation>Problema obtendo a versão do banco de dados: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="121"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="153"/>
         <source>Problem listing geom classes: </source>
         <translation>Problema ao listar classes geométricas: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="138"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="174"/>
         <source>Problem listing complex classes: </source>
         <translation>Problema ao listar classes complexas: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="191"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="242"/>
         <source>Problem getting database structure: </source>
         <translation>Problema ao obter a estrutura do banco: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="357"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="454"/>
         <source>Problem executing query: </source>
         <translation>Problema ao executar a query: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="301"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="386"/>
         <source>Problem obtaining link column: </source>
         <translation>Problema obtendo a coluna de ligação: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="345"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="437"/>
         <source>Problem loading associated features: </source>
         <translation>Problema ao carregar feições associadas: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="377"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="485"/>
         <source>Problem getting users: </source>
         <translation>Problema ao obter usuários: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="393"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="507"/>
         <source>Problem getting user roles: </source>
         <translation>Problema ao obter permissões de usuários: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="414"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="532"/>
         <source>Problem getting roles: </source>
         <translation>Problema ao obter permissões: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="520"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="689"/>
         <source>Problem getting role privileges: </source>
         <translation>Problema ao obter privilégios da permissão: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="566"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="742"/>
         <source>Problem getting EDGV databases: </source>
         <translation>Problema ao obter bancos EDGV: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="583"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="759"/>
         <source>Problem opening EDGV databases: </source>
         <translation>Problema ao abrir bancos EDGV: </translation>
     </message>
@@ -3459,204 +3464,214 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Problema ao acessar bancos de dados: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="598"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="778"/>
         <source>Problem getting databases: </source>
         <translation>Problema ao obter bancos: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="613"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="797"/>
         <source>Problem checking user: </source>
         <translation>Problema ao checar usuário: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="664"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="865"/>
         <source>Problem getting invalid geometries: </source>
         <translation>Problema obtendo geometrias inválidas: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="687"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="893"/>
         <source>Problem inserting flags: </source>
         <translation>Problema inserindo flags: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="703"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="914"/>
         <source>Problem deleting flags: </source>
         <translation>Problema removendo flags: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="726"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="941"/>
         <source>Problem creating structure: </source>
         <translation>Problema criando estrutura: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="746"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="971"/>
         <source>Problem acquiring status: </source>
         <translation>Problema adquirindo status: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="757"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="987"/>
         <source>Problem setting status: </source>
         <translation>Problema ajustando o status: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="764"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="998"/>
         <source>Problem getting running process: </source>
         <translation>Problema obtendo processo atual: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="787"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1028"/>
         <source>Problem testing spatial rule: </source>
         <translation>Problema testando regra espacial: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="801"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1047"/>
         <source>Problem getting dimension: </source>
         <translation>Problema obtendo dimensão: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="815"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1065"/>
         <source>Problem exploding geometries: </source>
         <translation>Problema explodindo geometrias: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="853"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1114"/>
         <source>Problem getting duplicated geometries: </source>
         <translation>Problema obtendo geometrias duplicadas: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="866"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1133"/>
         <source>Problem getting small areas: </source>
         <translation>Problema obtendo áreas pequenas: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="879"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1151"/>
         <source>Problem getting small lines: </source>
         <translation>Problema obtendo linhas pequenas: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="895"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1173"/>
         <source>Problem preparing auxiliary structure: </source>
         <translation>Problema preparando estrutura auxiliar: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="903"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1181"/>
         <source>Problem getting vertex near edges: </source>
         <translation>Problema obtendo vértice próximo à arestas: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="921"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1204"/>
         <source>Problem deleting features from </source>
-        <translation>Problema deletando feições de: </translation>
+        <translation>Problema deletando feições de </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="934"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1222"/>
         <source>Problem getting not simple geometries: </source>
         <translation>Problema obtendo geometrias não simples: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="945"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1240"/>
         <source>Problem getting not out of bounds angles: </source>
         <translation>Problema obtendo ângulos fora dos limites: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="958"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1258"/>
         <source>Problem getting flags dict: </source>
         <translation>Problema obtendo dicionário de flags: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="975"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1280"/>
         <source>Problem forcing validity of features from </source>
-        <translation>Problema forçando validade de feições de: </translation>
+        <translation>Problema forçando validade de feições de  </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="985"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1296"/>
         <source>Problem getting table extent: </source>
         <translation>Problema obtendo extensão da tabela: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1012"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1331"/>
         <source>Problem getting orphan tables: </source>
         <translation>Problema obtendo tabelas órfãs: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1019"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1339"/>
         <source>Problem counting orphan table: </source>
         <translation>Problema contando tabelas órfãs: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1035"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1361"/>
         <source>Problem updating geometries: </source>
         <translation>Problema atualizando geometrias: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1040"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1368"/>
         <source>Problem deleting geometries: </source>
         <translation>Problema deletando geometrias: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1049"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1381"/>
         <source>Problem checking structure: </source>
         <translation>Problema checando estrutura: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1068"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1404"/>
         <source>Problem creating centroid structure: </source>
         <translation>Problema criando estrutura de centróides: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1080"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1425"/>
         <source>Problem getting earth coverage tables: </source>
         <translation>Problema obtendo tabelas de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1130"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1498"/>
         <source>Problem getting earth coverage structure: </source>
         <translation>Problema obtendo estrutura de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1100"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1456"/>
         <source>Problem setting earth coverage structure: </source>
         <translation>Problema ajustando a estrutura de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1113"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1473"/>
         <source>Problem dropping centroids: </source>
         <translation>Problema apagando centróides: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1143"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1514"/>
         <source>Problem getting class name: </source>
         <translation>Problema obtendo nome da classe: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1156"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1532"/>
         <source>Problem snapping to grid: </source>
         <translation>Problema ao realizar snap para o grid: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1170"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1551"/>
         <source>Problem snapping to frame: </source>
         <translation>Problema ao realizar snap para a moldura: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1183"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1568"/>
         <source>Problem densifying frame: </source>
         <translation>Problema densificando moldura: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1195"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1585"/>
         <source>Problem creating recursive snap function: </source>
         <translation>Problema criando função de snap recursivo: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1201"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1591"/>
         <source>Problem snapping class: </source>
         <translation>Problema ao realizar snap na classe: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1213"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1609"/>
         <source>Problem deleting flag: </source>
         <translation>Problema deletando flag: </translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/postgisDb.py" line="668"/>
+        <source>Problem getting tables from database: </source>
+        <translation>Problema ao obter tabelas do banco: </translation>
+    </message>
+    <message>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1625"/>
+        <source>Problem removing empty geometries: </source>
+        <translation>Problema removendo geometrias vazias: </translation>
     </message>
 </context>
 <context>
@@ -3687,17 +3702,17 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>ProcessManager</name>
     <message>
-        <location filename="ProcessingTools/processManager.py" line="109"/>
+        <location filename="ProcessingTools/processManager.py" line="141"/>
         <source>Creating database structure...</source>
         <translation>Criando a estrutura do banco de dados...</translation>
     </message>
     <message>
-        <location filename="ProcessingTools/processManager.py" line="123"/>
+        <location filename="ProcessingTools/processManager.py" line="158"/>
         <source>Processing images...</source>
         <translation>Processando as imagens...</translation>
     </message>
     <message>
-        <location filename="ProcessingTools/processManager.py" line="138"/>
+        <location filename="ProcessingTools/processManager.py" line="176"/>
         <source>Making inventory, please wait...</source>
         <translation>Fazendo o inventário, por favor espere...</translation>
     </message>
@@ -3705,47 +3720,47 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>ProcessingTools</name>
     <message>
-        <location filename="ImageTools/processingTools.py" line="85"/>
+        <location filename="ImageTools/processingTools.py" line="94"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ImageTools/processingTools.py" line="61"/>
+        <location filename="ImageTools/processingTools.py" line="64"/>
         <source>Please select at least one image.</source>
         <translation>Por favor selecione pelo menos uma imagem.</translation>
     </message>
     <message>
-        <location filename="ImageTools/processingTools.py" line="65"/>
+        <location filename="ImageTools/processingTools.py" line="68"/>
         <source>Please select at the output folder.</source>
         <translation>Por favor selecione o diretório de saída.</translation>
     </message>
     <message>
-        <location filename="ImageTools/processingTools.py" line="68"/>
+        <location filename="ImageTools/processingTools.py" line="71"/>
         <source>Information!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="ImageTools/processingTools.py" line="68"/>
+        <location filename="ImageTools/processingTools.py" line="71"/>
         <source>The processing may take several minutes. Please wait the final message.</source>
         <translation>O processamento pode levar vários minutos. Por favor aguarde a messagem de conclusão.</translation>
     </message>
     <message>
-        <location filename="ImageTools/processingTools.py" line="82"/>
+        <location filename="ImageTools/processingTools.py" line="91"/>
         <source>Select the Spatial Reference System!</source>
         <translation>Selecione o Sistema de Referência Espacial!</translation>
     </message>
     <message>
-        <location filename="ImageTools/processingTools.py" line="94"/>
+        <location filename="ImageTools/processingTools.py" line="106"/>
         <source>Select Images</source>
         <translation>Selecione as Imagens</translation>
     </message>
     <message>
-        <location filename="ImageTools/processingTools.py" line="94"/>
+        <location filename="ImageTools/processingTools.py" line="106"/>
         <source>Image files (*.tif)</source>
         <translation>Arquivos de Inagem (*.tif)</translation>
     </message>
     <message>
-        <location filename="ImageTools/processingTools.py" line="114"/>
+        <location filename="ImageTools/processingTools.py" line="135"/>
         <source>Select Directory</source>
         <translation>Selecione um Diretório</translation>
     </message>
@@ -3753,12 +3768,12 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>ProfileEditor</name>
     <message>
-        <location filename="UserTools/profile_editor.py" line="63"/>
+        <location filename="UserTools/profile_editor.py" line="68"/>
         <source>Select a profile</source>
         <translation>Selecione um perfil</translation>
     </message>
     <message>
-        <location filename="UserTools/profile_editor.py" line="193"/>
+        <location filename="UserTools/profile_editor.py" line="231"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
@@ -3773,17 +3788,17 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Problema ao salvar o arquivo!</translation>
     </message>
     <message>
-        <location filename="UserTools/profile_editor.py" line="193"/>
+        <location filename="UserTools/profile_editor.py" line="231"/>
         <source>Profile saved successfully!</source>
         <translation>Perfil salvo com sucesso!</translation>
     </message>
     <message>
-        <location filename="UserTools/profile_editor.py" line="179"/>
+        <location filename="UserTools/profile_editor.py" line="217"/>
         <source>Select a profile model!</source>
         <translation>Selecione um modelo de perfil!</translation>
     </message>
     <message>
-        <location filename="UserTools/profile_editor.py" line="190"/>
+        <location filename="UserTools/profile_editor.py" line="228"/>
         <source>Problem saving file! 
 </source>
         <translation>Problema salvando arquivo!</translation>
@@ -3792,12 +3807,12 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>QmlParser</name>
     <message>
-        <location filename="QmlTools/qmlParser.py" line="82"/>
+        <location filename="QmlTools/qmlParser.py" line="100"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="QmlTools/qmlParser.py" line="82"/>
+        <location filename="QmlTools/qmlParser.py" line="100"/>
         <source>QML file not loaded properly. Enum values won&apos;t be available.</source>
         <translation>Arquivo QML não carregado corretamente. Os mapas de valores não estarão disponíveis.</translation>
     </message>
@@ -3828,29 +3843,29 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>RulesEditor</name>
     <message>
-        <location filename="ValidationTools/rules_editor.py" line="150"/>
+        <location filename="ValidationTools/rules_editor.py" line="177"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/rules_editor.py" line="98"/>
+        <location filename="ValidationTools/rules_editor.py" line="116"/>
         <source>Problem reading file! 
 </source>
         <translation>Problema lendo arquivo! </translation>
     </message>
     <message>
-        <location filename="ValidationTools/rules_editor.py" line="147"/>
+        <location filename="ValidationTools/rules_editor.py" line="174"/>
         <source>Problem saving file! 
 </source>
         <translation>Problema salvando arquivo! </translation>
     </message>
     <message>
-        <location filename="ValidationTools/rules_editor.py" line="150"/>
+        <location filename="ValidationTools/rules_editor.py" line="177"/>
         <source>Profile saved successfully!</source>
         <translation>Perfil salvo com sucesso!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/rules_editor.py" line="133"/>
+        <location filename="ValidationTools/rules_editor.py" line="157"/>
         <source>disjoint</source>
         <translation>disjunto</translation>
     </message>
@@ -3858,32 +3873,32 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>ServerConfigurator</name>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="86"/>
+        <location filename="ServerTools/serverConfigurator.py" line="100"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="62"/>
+        <location filename="ServerTools/serverConfigurator.py" line="67"/>
         <source>Fill all parameters.</source>
         <translation>Preencha todos os parâmetros.</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="59"/>
+        <location filename="ServerTools/serverConfigurator.py" line="64"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="59"/>
+        <location filename="ServerTools/serverConfigurator.py" line="64"/>
         <source>Server stored.</source>
         <translation>Servidor armazenado.</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="86"/>
+        <location filename="ServerTools/serverConfigurator.py" line="100"/>
         <source>Already has a server with this name.</source>
         <translation>Já existe um servidor com este nome.</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverConfigurator.py" line="75"/>
+        <location filename="ServerTools/serverConfigurator.py" line="89"/>
         <source>Server name cannot contain the character &quot;_&quot;.</source>
         <translation>O nome do servidor não pode conter o caractere &quot;_&quot;.</translation>
     </message>
@@ -3896,14 +3911,14 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Selecione Servidor</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="126"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="143"/>
         <source>Information:
 </source>
         <translation>Informação:
 </translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="128"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="145"/>
         <source>The following databases connections already exist:
 </source>
         <translation>Os seguintes conexões de bancos de dados já existem:</translation>
@@ -3917,12 +3932,12 @@ The following databases connections were created successfully!:
 As seguintes conexões de bancos de dados foram criadas com sucesso!:</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="168"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="191"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="132"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="149"/>
         <source>
 The following databases connections were created successfully:
 </source>
@@ -3931,7 +3946,7 @@ As seguintes conexões de banco de dados foram criadas com sucesso:
 </translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="165"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="188"/>
         <source>
 The following databases connections were removed successfully:
 </source>
@@ -3940,12 +3955,12 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
 </translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="167"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="190"/>
         <source>No connections were removed.</source>
         <translation>Nenhuma conexão foi removida.</translation>
     </message>
     <message>
-        <location filename="ServerTools/serverDBExplorer.py" line="156"/>
+        <location filename="ServerTools/serverDBExplorer.py" line="179"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -4001,82 +4016,82 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation>3- Para cada classe da cobertura terrestre, defina quais linhas são usadas para construir ela (note que a moldura é sempre usada para fechar áreas)</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="50"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="52"/>
         <source>Areas</source>
         <translation>Áreas</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="51"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="53"/>
         <source>Lines</source>
         <translation>Linhas</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="153"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="178"/>
         <source>Question</source>
         <translation>Questão</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="59"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="63"/>
         <source>Do you want to open an earth coverage file?</source>
         <translation>Você deseja abrir um arquivo de cobertura terrestre?</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="61"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="65"/>
         <source>Open Earth Coverage Setup configuration</source>
         <translation>Abrir ajustes de configuração de Cobertura Terrestre</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="155"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="180"/>
         <source>Earth Coverage Files (*.json)</source>
         <translation>Arquivos de Cobertura Terrestre (*.json)</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="106"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="120"/>
         <source>Open Field Setup configuration</source>
         <translation>Abrir ajsutes de Configuração de Campo</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="106"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="120"/>
         <source>Field Setup Files (*.json)</source>
         <translation>Arquivos de Configuração de Campo (*.json)</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="153"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="178"/>
         <source>Do you want to save this earth coverage setup?</source>
         <translation>Você deseja salvar este ajuste de cobertura terrestre?</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="155"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="180"/>
         <source>Save Earth Coverage Setup configuration</source>
         <translation>Salvar ajuste de Cobertura Terrestre</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="157"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="182"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="157"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="182"/>
         <source>Define a name for the earth coverage file!</source>
         <translation>Defina um nome para o arquivo de Cobertura Terrestre!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="161"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="186"/>
         <source>Information!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="161"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="186"/>
         <source>Field setup file saved successfully!</source>
         <translation>Arquivo de ajuste de Campo salvo com sucesso!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="165"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="190"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="165"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="190"/>
         <source>Problem saving into database! 
 </source>
         <translation>Problema salvando no banco de dados!</translation>
@@ -4085,7 +4100,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
 <context>
     <name>SpatialRuleEnforcer</name>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="232"/>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="264"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
@@ -4096,32 +4111,32 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation type="obsolete">Problema lendo arquivo!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="186"/>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="218"/>
         <source>Feature id </source>
         <translation>Feição id </translation>
     </message>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="186"/>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="218"/>
         <source> from </source>
         <translation> de </translation>
     </message>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="172"/>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="204"/>
         <source> violates cardinality </source>
         <translation> viola a cardinalidade </translation>
     </message>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="173"/>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="205"/>
         <source> of rule: </source>
         <translation> da regra: </translation>
     </message>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="186"/>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="218"/>
         <source> violates rule: </source>
         <translation> viola a regra: </translation>
     </message>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="232"/>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="264"/>
         <source>Problem reading file!</source>
         <translation>Problema lendo arquivo!</translation>
     </message>
@@ -4129,7 +4144,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
 <context>
     <name>SpatialRuleProcess</name>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="56"/>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="64"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
@@ -4137,63 +4152,68 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <location filename="ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="56"/>
         <source>Problem reading file! 
 </source>
-        <translation>Problema lendo arquivo! </translation>
+        <translation type="obsolete">Problema lendo arquivo! </translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="64"/>
+        <source>Problem reading file!</source>
+        <translation>Problema lendo arquivo!</translation>
     </message>
 </context>
 <context>
     <name>SpatialiteDb</name>
     <message>
-        <location filename="Factories/DbFactory/spatialiteDb.py" line="200"/>
+        <location filename="Factories/DbFactory/spatialiteDb.py" line="252"/>
         <source>Conversion not perfomed due to validation errors! Check log above for more information.</source>
         <translation>Conversão não realizada devido à erros de validação! Verifique o log acima para maiores informações.</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/spatialiteDb.py" line="301"/>
+        <location filename="Factories/DbFactory/spatialiteDb.py" line="381"/>
         <source>Problem disassociating complex from complex: </source>
         <translation>Problema disassociando complexo de complexo: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/spatialiteDb.py" line="47"/>
+        <location filename="Factories/DbFactory/spatialiteDb.py" line="60"/>
         <source>Select a DSGTools Spatialite file</source>
         <translation>Selecione um arquivo spatialite DsgTools</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/spatialiteDb.py" line="47"/>
+        <location filename="Factories/DbFactory/spatialiteDb.py" line="60"/>
         <source>Spatialite file databases (*.sqlite)</source>
         <translation>Banco de dados Spatialite (*.sqlite)</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/spatialiteDb.py" line="56"/>
+        <location filename="Factories/DbFactory/spatialiteDb.py" line="73"/>
         <source>Problem listing geom classes: </source>
         <translation>Problema ao listar classes geométricas: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/spatialiteDb.py" line="71"/>
+        <location filename="Factories/DbFactory/spatialiteDb.py" line="92"/>
         <source>Problem listing complex classes: </source>
         <translation>Problema ao listar classes complexas: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/spatialiteDb.py" line="86"/>
+        <location filename="Factories/DbFactory/spatialiteDb.py" line="111"/>
         <source>Problem getting database structure: </source>
         <translation>Problema ao obter estrutura do banco: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/spatialiteDb.py" line="290"/>
+        <location filename="Factories/DbFactory/spatialiteDb.py" line="363"/>
         <source>Problem executing query: </source>
         <translation>Problema ao executar query: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/spatialiteDb.py" line="231"/>
+        <location filename="Factories/DbFactory/spatialiteDb.py" line="292"/>
         <source>Problem obtaining link column: </source>
         <translation>Problema ao obter coluna de ligação: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/spatialiteDb.py" line="246"/>
+        <location filename="Factories/DbFactory/spatialiteDb.py" line="312"/>
         <source>Problem loading associated features: </source>
         <translation>Problema ao carregar feições associadas: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/spatialiteDb.py" line="310"/>
+        <location filename="Factories/DbFactory/spatialiteDb.py" line="394"/>
         <source>Problem getting tables from database: </source>
         <translation>Problema ao obter tabelas do banco: </translation>
     </message>
@@ -4201,12 +4221,12 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
 <context>
     <name>SpatialiteLayer</name>
     <message>
-        <location filename="Factories/LayerFactory/spatialite_layer.py" line="112"/>
+        <location filename="Factories/LayerFactory/spatialite_layer.py" line="121"/>
         <source>Dominios</source>
         <translation>Domínios</translation>
     </message>
     <message>
-        <location filename="Factories/LayerFactory/spatialite_layer.py" line="84"/>
+        <location filename="Factories/LayerFactory/spatialite_layer.py" line="93"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
@@ -4305,12 +4325,12 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
 <context>
     <name>ValidationManager</name>
     <message>
-        <location filename="ValidationTools/validationManager.py" line="40"/>
+        <location filename="ValidationTools/validationManager.py" line="45"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validationManager.py" line="40"/>
+        <location filename="ValidationTools/validationManager.py" line="45"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
@@ -4318,12 +4338,12 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
 <context>
     <name>ValidationProcess</name>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/validationProcess.py" line="105"/>
+        <location filename="ValidationTools/ValidationProcesses/validationProcess.py" line="153"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/validationProcess.py" line="105"/>
+        <location filename="ValidationTools/ValidationProcesses/validationProcess.py" line="153"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
@@ -4426,47 +4446,47 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation>Iniciar/Parar Reforçador de Regras Espaciais</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validation_toolbox.py" line="77"/>
+        <location filename="ValidationTools/validation_toolbox.py" line="81"/>
         <source>Zoom to flag</source>
         <translation>Zoom para a flag</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validation_toolbox.py" line="78"/>
+        <location filename="ValidationTools/validation_toolbox.py" line="82"/>
         <source>Set Visited</source>
         <translation>Marcar Visitado</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validation_toolbox.py" line="79"/>
+        <location filename="ValidationTools/validation_toolbox.py" line="83"/>
         <source>Set Unvisited</source>
         <translation>Marcar não visitado</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validation_toolbox.py" line="226"/>
+        <location filename="ValidationTools/validation_toolbox.py" line="271"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validation_toolbox.py" line="199"/>
+        <location filename="ValidationTools/validation_toolbox.py" line="238"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validation_toolbox.py" line="206"/>
+        <location filename="ValidationTools/validation_toolbox.py" line="245"/>
         <source>Process error. Check log for details.</source>
         <translation>Erro do processo. Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validation_toolbox.py" line="208"/>
+        <location filename="ValidationTools/validation_toolbox.py" line="247"/>
         <source>Success!</source>
         <translation>Sucesso!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validation_toolbox.py" line="208"/>
+        <location filename="ValidationTools/validation_toolbox.py" line="247"/>
         <source>Process successfully executed!</source>
         <translation>Processo executado com sucesso!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validation_toolbox.py" line="226"/>
+        <location filename="ValidationTools/validation_toolbox.py" line="271"/>
         <source>Database not loaded or a problem occurred.
 </source>
         <translation>Banco de Dados não carregado ou um problema ocorreu.</translation>
@@ -4475,22 +4495,22 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
 <context>
     <name>ViewServers</name>
     <message>
-        <location filename="ServerTools/viewServers.py" line="161"/>
+        <location filename="ServerTools/viewServers.py" line="198"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="161"/>
+        <location filename="ServerTools/viewServers.py" line="198"/>
         <source>Select one server.</source>
         <translation>Selecione um servidor.</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="118"/>
+        <location filename="ServerTools/viewServers.py" line="139"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="101"/>
+        <location filename="ServerTools/viewServers.py" line="119"/>
         <source>Server removed.</source>
         <translation>Servidor removido.</translation>
     </message>
@@ -4500,7 +4520,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation type="obsolete">Limpar</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="70"/>
+        <location filename="ServerTools/viewServers.py" line="76"/>
         <source>Saved</source>
         <translation>Salvo</translation>
     </message>
@@ -4515,27 +4535,27 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation type="obsolete">Servidor Offline.</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="68"/>
+        <location filename="ServerTools/viewServers.py" line="74"/>
         <source>Not Saved</source>
         <translation>Não Salvo</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="116"/>
+        <location filename="ServerTools/viewServers.py" line="137"/>
         <source>Connection online.</source>
         <translation>Conexão online.</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="118"/>
+        <location filename="ServerTools/viewServers.py" line="139"/>
         <source>Connection was not successful. Check log for details.</source>
         <translation>A conexão não foi bem sucedida. Confira o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="154"/>
+        <location filename="ServerTools/viewServers.py" line="188"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="ServerTools/viewServers.py" line="154"/>
+        <location filename="ServerTools/viewServers.py" line="188"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>

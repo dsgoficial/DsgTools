@@ -119,6 +119,8 @@ class ContourTool():
         first_feature = ordered[0][1]
         #getting the initial value
         first_value = first_feature.attribute(attribute)
+        if not first_value:
+            return -3
 
         #getting the filed index that must be updated
         fieldIndex = self.reference.fieldNameIndex(attribute)

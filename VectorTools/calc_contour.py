@@ -132,7 +132,9 @@ class CalcContour(QtGui.QDockWidget, FORM_CLASS):
             self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('Problem ordering the features!'), level=QgsMessageBar.CRITICAL, duration=3)
         elif ret == -2:
             self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('The line created does not cross any features in the selected layer!'), level=QgsMessageBar.CRITICAL, duration=3)
-        
+        elif ret == -3:
+            self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('Assign a value for the selected attribute of the first crossed feature!'), level=QgsMessageBar.CRITICAL, duration=3)
+
     @pyqtSlot(int)
     def on_layerCombo_currentIndexChanged(self):
         '''
