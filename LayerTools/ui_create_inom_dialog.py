@@ -81,10 +81,10 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
             groupList =  qgis.utils.iface.legendInterface().groups()
             edgvLayer = self.layerFactory.makeLayer(self.widget.abstractDb, self.codeList, lyrName)
             if dbName in groupList:
-                layer = edgvLayer.load(self.widget.crs,groupList.index(dbName))
+                layer = edgvLayer.load(self.widget.crs, idSubgrupo = groupList.index(dbName), uniqueLoad = True)
             else:
                 self.parentTreeNode = qgis.utils.iface.legendInterface().addGroup(self.widget.abstractDb.getDatabaseName(), -1)
-                layer = edgvLayer.load(self.widget.crs,self.parentTreeNode)
+                layer = edgvLayer.load(self.widget.crs,idSubgrupo = self.parentTreeNode, uniqueLoad = True)
         
         if not layer:
             return

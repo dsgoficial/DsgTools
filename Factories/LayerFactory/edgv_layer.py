@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 import os
+from xml.dom.minidom import parse, parseString
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
@@ -33,7 +34,7 @@ from qgis.utils import iface
 
 #DsgTools imports
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
-from wx.tools.XRCed.params import StylePanel
+
 
 class EDGVLayer(QObject):
     qmlLoaded = pyqtSignal()
@@ -61,7 +62,7 @@ class EDGVLayer(QObject):
     
     def getStyleFile(self, stylePath, className):
         availableStyles = os.walk(stylePath).next()[2]
-        styleName = className+'.sld'
+        styleName = className+'.qml'
         if styleName in availableStyles:
             return os.path.join(stylePath, styleName)
     
@@ -80,3 +81,14 @@ class EDGVLayer(QObject):
         elif layer.geometryType() == QGis.Line:
             layer.addExpressionField('$length', QgsField('comprimento_otf', QVariant.Double))
         return layer
+    
+    def parseStyle(self, qml):
+        if '.qml' in qml:
+            doc = parse(qml)
+        else:
+            doc = parseString()
+        forbiddenNode = doc.getElementsByTagName('edittypes')[0]
+        qgisNode = doc.getElementsByTagName('qgis')[0]
+        qgisNode.removeChild(forbiddenNode)
+        return doc.toxml('utf-8')
+        
