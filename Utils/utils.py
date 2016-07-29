@@ -95,3 +95,13 @@ class Utils:
             return fileDict
         except:
             return dict()
+        
+    def parseStyle(self, qml):
+        if '.qml' in qml:
+            doc = parse(qml)
+        else:
+            doc = parseString()
+        forbiddenNode = doc.getElementsByTagName('edittypes')[0]
+        qgisNode = doc.getElementsByTagName('qgis')[0]
+        qgisNode.removeChild(forbiddenNode)
+        return doc.toxml('utf-8')

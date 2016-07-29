@@ -826,6 +826,14 @@ class PostGISSqlGenerator(SqlGenerator):
             sql = """select distinct description from public.layer_styles where f_table_catalog = current_database() and description like 'edgv_FTer_2a_Ed%'"""
         return sql
     
-    def getStyle(self, styleName, schema, table_name):
-        sql = """SELECT styleqml from public.layer_styles where f_table_schema = '{0}' and f_table_name = '{1}' and description = '{2}' and f_table_catalog = current_database()""".format(schema, table_name, styleName)
+    def getStyle(self, styleName, table_name):
+        sql = """SELECT styleqml from public.layer_styles where f_table_name = '{0}' and description = '{1}' and f_table_catalog = current_database()""".format(table_name, styleName)
         return sql
+    
+    def updateStyle(self, styleName, table_name, parsedQml):
+        pass
+    
+    def importStyle(self, styleName, table_name, parsedQml):
+        pass
+    
+    

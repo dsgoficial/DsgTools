@@ -34,6 +34,7 @@ from qgis.utils import iface
 
 #DsgTools imports
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.Utils.utils import Utils
 
 
 class EDGVLayer(QObject):
@@ -46,7 +47,8 @@ class EDGVLayer(QObject):
         self.abstractDb = abstractDb
         self.codeList = codeList
         self.uri = QgsDataSourceURI()
-        self.qmlLoaded.connect(self.codeList.setState)      
+        self.qmlLoaded.connect(self.codeList.setState)  
+        self.utils = Utils()    
         
     def load(self, crs, idSubgrupo = None):
         return None
@@ -54,9 +56,9 @@ class EDGVLayer(QObject):
     def loadDomainTable(self,name):
         pass
     
-    def getStyle(self, stylePath, schema, className):
+    def getStyle(self, stylePath, className):
         if 'db:' in stylePath:
-            return self.abstractDb.getStyle(stylePath.split(':')[-1], schema, className)
+            return self.abstractDb.getStyle(stylePath.split(':')[-1], className)
         else:
             return self.getStyleFile(stylePath, className)
     
@@ -82,13 +84,4 @@ class EDGVLayer(QObject):
             layer.addExpressionField('$length', QgsField('comprimento_otf', QVariant.Double))
         return layer
     
-    def parseStyle(self, qml):
-        if '.qml' in qml:
-            doc = parse(qml)
-        else:
-            doc = parseString()
-        forbiddenNode = doc.getElementsByTagName('edittypes')[0]
-        qgisNode = doc.getElementsByTagName('qgis')[0]
-        qgisNode.removeChild(forbiddenNode)
-        return doc.toxml('utf-8')
         
