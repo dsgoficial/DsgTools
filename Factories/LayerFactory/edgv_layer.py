@@ -60,13 +60,17 @@ class EDGVLayer(QObject):
         if 'db:' in stylePath:
             return self.abstractDb.getStyle(stylePath.split(':')[-1], className)
         else:
-            return self.getStyleFile(stylePath, className)
+            return self.getStyleFromFile(stylePath, className)
     
-    def getStyleFile(self, stylePath, className):
+    def getStyleFromFile(self, stylePath, className):
         availableStyles = os.walk(stylePath).next()[2]
         styleName = className+'.qml'
         if styleName in availableStyles:
-            return os.path.join(stylePath, styleName)
+            path = os.path.join(stylePath, styleName)
+            qml = self.utils.parseStyle(path)
+            return qml
+        else:
+            return None
     
     def prepareLoad(self):
         dbName = self.abstractDb.getDatabaseName()

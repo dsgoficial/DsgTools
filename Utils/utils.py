@@ -99,11 +99,14 @@ class Utils:
             return dict()
         
     def parseStyle(self, qml):
+        qml = qml.replace("''","'").encode('utf-8')
         if '.qml' in qml:
             doc = parse(qml)
         else:
-            doc = parseString()
-        forbiddenNode = doc.getElementsByTagName('edittypes')[0]
-        qgisNode = doc.getElementsByTagName('qgis')[0]
-        qgisNode.removeChild(forbiddenNode)
+            doc = parseString(qml)
+        forbiddenList = doc.getElementsByTagName('edittypes')
+        if len(forbiddenList) > 0:
+            forbiddenNode = forbiddenList[0]
+            qgisNode = doc.getElementsByTagName('qgis')[0]
+            qgisNode.removeChild(forbiddenNode)
         return doc.toxml('utf-8').replace('<?xml version="1.0" encoding="utf-8"?>','')

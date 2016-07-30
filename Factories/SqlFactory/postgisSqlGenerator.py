@@ -831,7 +831,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def updateStyle(self, styleName, table_name, parsedQml, tableSchema):
-        sql = """UPDATE public.layer_styles SET styleqml = '{0}' where f_table_name = '{1}' and description = '{2}'""".format(parsedQml,table_name, styleName)
+        sql = """UPDATE public.layer_styles SET styleqml = '{0}', update_time = now() where f_table_name = '{1}' and description = '{2}'""".format(parsedQml.replace("'","''"),table_name, styleName)
         return sql
     
     def importStyle(self, styleName, table_name, parsedQml, tableSchema, dbName):
@@ -839,7 +839,7 @@ class PostGISSqlGenerator(SqlGenerator):
             geomColumn = 'centroid'
         else:
             geomColumn = 'geom'
-        sql = """INSERT INTO  public.layer_styles (styleqml, f_table_name, description, f_geometry_column, stylename, f_table_schema, f_table_catalog, useasdefault) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',FALSE)""".format(parsedQml.replace('"','""').replace("'","''"), table_name, styleName, geomColumn, styleName.split('/')[-1]+'/'+table_name, tableSchema, dbName)
+        sql = """INSERT INTO  public.layer_styles (styleqml, f_table_name, description, f_geometry_column, stylename, f_table_schema, f_table_catalog, useasdefault) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',FALSE)""".format(parsedQml.replace("'","''"), table_name, styleName, geomColumn, styleName.split('/')[-1]+'/'+table_name, tableSchema, dbName)
         return sql
     
     def getTableSchemaFromDb(self, table):

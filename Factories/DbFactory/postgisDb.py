@@ -1401,7 +1401,10 @@ class PostgisDb(AbstractDb):
             if self.getStyle(styleFolder, tableName, parsing = False):
                 self.updateStyle(styleFolder, tableName, localStyle, tableSchema)
             else:
-                self.importStyle(styleFolder, tableName, localStyle, tableSchema)
+                try:
+                    self.importStyle(styleFolder, tableName, localStyle, tableSchema)
+                except Exception as e:
+                    raise Exception(self.tr('Problem importing style ')+style+':'+str(e.args[0]))
 
     def getTableSchemaFromDb(self,table):
         self.checkAndOpenDb()

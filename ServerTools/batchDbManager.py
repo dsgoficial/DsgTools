@@ -167,6 +167,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         dbsDict = self.instantiateAbstractDbs()
         exceptionDict = dict()
         versionList = []
+        
         for dbName in dbsDict.keys():
             try:
                 version = dbsDict[dbName].getDatabaseVersion()
@@ -182,7 +183,9 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         dlg = SelectStyles(styleList)
         dlg.exec_()
         selectedStyles = dlg.selectedStyles
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         successList, exceptionDict = self.batchImportStyles(dbsDict, styleDir, selectedStyles, versionList[0])
+        QApplication.restoreOverrideCursor()
         header = self.tr('Import operation complete. \n')
         self.outputMessage(header, successList, exceptionDict)
         closeExceptionDict = self.closeAbstractDbs(dbsDict)
