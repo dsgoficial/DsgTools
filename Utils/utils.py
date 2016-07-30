@@ -21,6 +21,8 @@
  ***************************************************************************/
 """
 import json
+from xml.dom.minidom import parse, parseString
+
 class Utils:
     def mergeDict(self,dictionary1, dictionary2):
         output = dict()
@@ -104,4 +106,4 @@ class Utils:
         forbiddenNode = doc.getElementsByTagName('edittypes')[0]
         qgisNode = doc.getElementsByTagName('qgis')[0]
         qgisNode.removeChild(forbiddenNode)
-        return doc.toxml('utf-8')
+        return doc.toxml('utf-8').replace('<?xml version="1.0" encoding="utf-8"?>','')

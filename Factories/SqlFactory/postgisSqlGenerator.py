@@ -801,12 +801,12 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """
         CREATE TABLE public.layer_styles
         (
-          id integer NOT NULL DEFAULT nextval('layer_styles_id_seq'::regclass),
+          id serial NOT NULL,
           f_table_catalog character varying,
           f_table_schema character varying,
           f_table_name character varying,
           f_geometry_column character varying,
-          stylename character varying(30),
+          stylename text,
           styleqml text,
           stylesld text,
           useasdefault boolean,
@@ -830,12 +830,18 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """SELECT styleqml from public.layer_styles where f_table_name = '{0}' and description = '{1}' and f_table_catalog = current_database()""".format(table_name, styleName)
         return sql
     
-    def updateStyle(self, styleName, table_name, parsedQml):
+    def updateStyle(self, styleName, table_name, parsedQml, tableSchema):
         sql = """UPDATE public.layer_styles SET styleqml = '{0}' where f_table_name = '{1}' and description = '{2}'""".format(parsedQml,table_name, styleName)
         return sql
     
-    def importStyle(self, styleName, table_name, parsedQml):
-        sql = """INSERT INTO  public.layer_styles (styleqml, f_table_name, description) VALUES ('{0}','{1}','{2}')""".format(parsedQml, table_name, styleName)
+    def importStyle(self, styleName, table_name, parsedQml, tableSchema, dbName):
+        if table_name[-1] == 'c':
+            geomColumn = 'centroid'
+        else:
+            geomColumn = 'geom'
+        sql = """INSERT INTO  public.layer_styles (styleqml, f_table_name, description, f_geometry_column, stylename, f_table_schema, f_table_catalog, useasdefault) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',FALSE)""".format(parsedQml.replace('"','""').replace("'","''"), table_name, styleName, geomColumn, styleName.split('/')[-1]+'/'+table_name, tableSchema, dbName)
         return sql
     
-    
+    def getTableSchemaFromDb(self, table):
+        sql = """select distinct table_schema from information_schema.columns where table_name = '{0}'""".format(table)
+        return sql

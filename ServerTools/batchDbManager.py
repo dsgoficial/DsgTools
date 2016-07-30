@@ -39,6 +39,8 @@ from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.UserTools.permission_properties import PermissionProperties
 from DsgTools.ServerTools.createView import CreateView
 from DsgTools.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
+from DsgTools.ServerTools.selectStyles import SelectStyles
+
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -62,7 +64,6 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         self.serverWidget.populateServersCombo()
         self.serverWidget.abstractDbLoaded.connect(self.checkSuperUser)
         self.dbsCustomSelector.setTitle(self.tr('Server Databases'))
-        self.dbsCustomSelector.selectionChanged.connect(self.instantiateAbstractDbs)
 
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
@@ -131,7 +132,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         if len(errorDbList)> 0:
             msg += self.tr('\nDatabases with error:')
             msg+= ', '.join(errorDbList)
-            msg+= self.tr('Error messages for each database were output in qgis log.')
+            msg+= self.tr('\nError messages for each database were output in qgis log.')
             for errorDb in errorDbList:
                 QgsMessageLog.logMessage(self.tr('Error for database ')+ errorDb + ': ' +exceptionDict[errorDb], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         return msg 
@@ -164,9 +165,24 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_importStylesPushButton_clicked(self):
         dbsDict = self.instantiateAbstractDbs()
-        styleDir = self.getStyleDir()
-        styleList, version = self.getStyleList(styleDir)
-        successList, exceptionDict = self.batchImportStyles(dbsDict, styleDir, styleList, version)
+        exceptionDict = dict()
+        versionList = []
+        for dbName in dbsDict.keys():
+            try:
+                version = dbsDict[dbName].getDatabaseVersion()
+                if version not in versionList:
+                    versionList.append(version)
+            except Exception as e:
+                self.logInternalError(exceptionDict)
+        if len(versionList) > 1:
+            QMessageBox.warning(self, self.tr('Warning'), self.tr('Multiple edgv versions are not allowed!'))
+            return
+        styleDir = self.getStyleDir(versionList)
+        styleList = self.getStyleList(styleDir)
+        dlg = SelectStyles(styleList)
+        dlg.exec_()
+        selectedStyles = dlg.selectedStyles
+        successList, exceptionDict = self.batchImportStyles(dbsDict, styleDir, selectedStyles, versionList[0])
         header = self.tr('Import operation complete. \n')
         self.outputMessage(header, successList, exceptionDict)
         closeExceptionDict = self.closeAbstractDbs(dbsDict)
@@ -174,6 +190,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
             
     
     def getStyleList(self, styleDir):
+        #TODO: Reimplement
         styleList = []
         version = None
         if os.path.basename(styleDir) in ['edgv_213','edgv_FTer_2a_Ed']:
@@ -181,11 +198,11 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         else:
             parentFolder = os.path.dirname(styleDir)
             version = os.path.basename(parentFolder)
-        for style in os.walk(styleDir)[1]:
-            styleList.append('/'.join(version,style))
+        for style in os.walk(styleDir).next()[1]:
+            styleList.append('/'.join([version,style]))
         if len(styleList) == 0:
             styleList = [version+'/'+os.path.basename(styleDir)]
-        return styleList, version
+        return styleList
     
     def batchImportStyles(self, dbsDict, styleDir, styleList, version):
         exceptionDict = dict()
@@ -193,29 +210,13 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         for dbName in dbsDict.keys():
             for style in styleList:
                 try:
-                    dbsDict[dbName].importStylesIntoDb(styleDir,style)
+                    dbsDict[dbName].importStylesIntoDb(style)
                     successList.append(dbName)
                 except Exception as e:
                     exceptionDict[dbName] =  str(e.args[0])
         return successList, exceptionDict
     
-    def getStyleDir(self):
-        currentPath = os.path.join(os.path.dirname(__file__),'..','Styles', 'edgv_213')
-        dialog = QFileDialog()
-        dialog.setFileMode(QtGui.QFileDialog.Directory)
-        dialog.setOption(QtGui.QFileDialog.ShowDirsOnly, True)
-        dialog.setDirectory(currentPath)
-        selectedDir = None
-        if dialog.exec_():
-            selectedDir = dialog.selectedFiles()[0]
-        styleDir213 = os.path.join(expanduser("~"),'.qgis2','python', 'plugins','DsgTools','Styles','edgv_213')
-        styleDirFTer = os.path.join(expanduser("~"),'.qgis2','python', 'plugins','DsgTools','Styles','edgv_FTer_2a_Ed')
-        if os.path.join(expanduser("~"),'.qgis2','python', 'plugins','DsgTools','Styles') not in selectedDir:
-            QMessageBox.critical(self, self.tr('Critical!'), self.tr("Styles must be chosen inside DSGTools' directory and only one EDGV Version is allowed."))
-            return None
-        elif 'edgv_213' in selectedDir or 'edgv_FTer_2a_Ed' in selectedDir:
-            return selectedDir
-        else:
-            QMessageBox.critical(self, self.tr('Critical!'), self.tr("Invalid chosen dir."))
-            return None
+    def getStyleDir(self, versionList):
+        currentPath = os.path.join(os.path.dirname(__file__),'..','Styles', self.serverWidget.abstractDb.versionFolderDict[versionList[0]])
+        return currentPath
                 

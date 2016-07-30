@@ -1352,55 +1352,64 @@ class PostgisDb(AbstractDb):
         qml = query.value(0)
         #TODO: post parse qml to remove possible attribute value type
         if parsing:
-            qml = self.utils.parseStyle(qml)
+            if qml:
+                qml = self.utils.parseStyle(qml)
         return qml
     
-    def importStyle(self, styleName, table_name, qml):
+    def importStyle(self, styleName, table_name, qml, tableSchema):
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
         parsedQml = self.utils.parseStyle(qml)
-        sql = self.gen.importStyle(styleName, table_name, parsedQml)
+        dbName = self.db.databaseName()
+        sql = self.gen.importStyle(styleName, table_name, parsedQml, tableSchema,dbName)
         if not query.exec_(sql):
             self.db.rollback()
             self.db.close()
             raise Exception(self.tr('Problem importing style')+ styleName+'/'+ table_name +':' + query.lastError().text())
         self.db.commit()
-        self.db.close()
     
-    def updateStyle(self, styleName, table_name, qml):
+    def updateStyle(self, styleName, table_name, qml, tableSchema):
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
         parsedQml = self.utils.parseStyle(qml)
-        sql = self.gen.updateStyle(styleName, table_name, parsedQml)
+        sql = self.gen.updateStyle(styleName, table_name, parsedQml, tableSchema)
         if not query.exec_(sql):
             self.db.rollback()
             self.db.close()
             raise Exception(self.tr('Problem importing style')+ styleName+'/'+ table_name +':' + query.lastError().text())
         self.db.commit()
-        self.db.close()
     
-    def importStylesIntoDb(self, path, styleFolder):
+    def importStylesIntoDb(self, styleFolder):
         '''
         path: path to folder
         styleFolder: folder with version. Example: edgv_213/example
         '''
+        if self.versionFolderDict[self.getDatabaseVersion()] not in styleFolder:
+            raise Exception(self.tr('Style ')+styleFolder+self.tr(' does not match the version of database ') + self.db.databaseName())
+        path = os.path.join(os.path.dirname(__file__),'..', '..','Styles')
         stylePath = os.path.join(path,styleFolder)
         availableStyles = os.walk(stylePath).next()[2]
         created = self.checkAndCreateStyleTable()
         for style in availableStyles:
             tableName = style.split('.')[0]
-            stylePath = os.path.join(path,style)
-            
+            localStyle = os.path.join(stylePath,style)
+            tableSchema = self.getTableSchemaFromDb(tableName)
             #check if style already exists. If it does, update it.
             #if style does not exist, create one.
             if self.getStyle(styleFolder, tableName, parsing = False):
-                self.updateStyle(styleFolder, tableName, stylePath)
+                self.updateStyle(styleFolder, tableName, localStyle, tableSchema)
             else:
-                self.importStyle(styleFolder, tableName, stylePath)
+                self.importStyle(styleFolder, tableName, localStyle, tableSchema)
 
-    def getStylesFromDir(self):
-        fd = QFileDialog()
-        filename = fd.getOpenFileName(caption=self.tr('Select a style folder'),filter=self.tr('Spatialite file databases (*.sqlite)'))
-        self.db.setDatabaseName(filename)
+    def getTableSchemaFromDb(self,table):
+        self.checkAndOpenDb()
+        sql = self.gen.getTableSchemaFromDb(table)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
+        while query.next():
+            return query.value(0)
