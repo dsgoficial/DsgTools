@@ -183,6 +183,8 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         dlg = SelectStyles(styleList)
         dlg.exec_()
         selectedStyles = dlg.selectedStyles
+        if len(selectedStyles) == 0:
+            return
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         successList, exceptionDict = self.batchImportStyles(dbsDict, styleDir, selectedStyles, versionList[0])
         QApplication.restoreOverrideCursor()

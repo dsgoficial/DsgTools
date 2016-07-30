@@ -61,3 +61,5 @@ class SelectStyles(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot()
     def on_buttonBox_accepted(self):
         self.selectedStyles = self.customSelector.toLs
+        if len(self.selectedStyles) == 0:
+            QMessageBox.warning(self, self.tr('Warning'), self.tr('Select at least one style!'))
