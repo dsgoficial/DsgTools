@@ -305,3 +305,31 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                 except Exception as e:
                     exceptionDict[dbName] =  str(e.args[0])
         return successList, exceptionDict
+    
+    def getSQLFile(self):
+        fd = QFileDialog()
+        filename = fd.getOpenFileName(caption=self.tr('Select a SQL file'),filter=self.tr('sql file (*.sql)'))
+        return filename
+    
+    @pyqtSlot(bool)
+    def on_customizeFromSQLFilePushButton_clicked(self):
+        dbsDict = self.instantiateAbstractDbs()
+        sqlFilePath = self.getSQLFile()
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        successList, exceptionDict = self.batchCustomizeFromSQLFile(dbsDict, sqlFilePath)
+        QApplication.restoreOverrideCursor()
+        header = self.tr('Customize from SQL file operation complete. \n')
+        self.outputMessage(header, successList, exceptionDict)
+        closeExceptionDict = self.closeAbstractDbs(dbsDict)
+        self.logInternalError(closeExceptionDict)
+    
+    def batchCustomizeFromSQLFile(self, dbsDict, sqlFilePath):
+        exceptionDict = dict()
+        successList = []
+        for dbName in dbsDict.keys():
+            try:
+                dbsDict[dbName].runSqlFromFile(sqlFilePath)
+                successList.append(dbName)
+            except Exception as e:
+                exceptionDict[dbName] =  str(e.args[0])
+        return successList, exceptionDict

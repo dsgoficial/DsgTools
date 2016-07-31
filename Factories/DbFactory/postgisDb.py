@@ -28,6 +28,7 @@ from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceURI, QgsFeatur
 from osgeo import ogr
 from uuid import uuid4
 import codecs, os, json, binascii
+import psycopg2
 
 class PostgisDb(AbstractDb):
     
@@ -1452,4 +1453,15 @@ class PostgisDb(AbstractDb):
             elif perspective == 'database':
                 styleDict = self.utils.buildNestedDict(styleDict, [dbName, styleName, tableName], timestamp)
         return styleDict
-                
+    
+    def runSqlFromFile(self, sqlFilePath):
+        self.checkAndOpenDb()
+        file = open(sqlFilePath,'r')
+        sql = file.read()
+        sql = sql.replace('\xef\xbb\xbf','')
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem running sql ')+ sqlFilePath +':' + query.lastError().text())
+        self.db.commit()

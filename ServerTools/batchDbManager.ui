@@ -86,7 +86,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="customizeFromSQLFilePushButton">
             <property name="text">
              <string>Apply sql from provided file</string>
             </property>
@@ -95,7 +95,7 @@
          </layout>
          <zorder>applyModsFromFilePushButton</zorder>
          <zorder>resetToFactoryPushButton</zorder>
-         <zorder>pushButton</zorder>
+         <zorder>customizeFromSQLFilePushButton</zorder>
         </widget>
        </item>
       </layout>
