@@ -1381,6 +1381,17 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem importing style')+ styleName+'/'+ table_name +':' + query.lastError().text())
         self.db.commit()
     
+    def deleteStyle(self, styleName):
+        self.checkAndOpenDb()
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        sql = self.gen.deleteStyle(styleName)
+        if not query.exec_(sql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem importing style')+ styleName+'/'+ table_name +':' + query.lastError().text())
+        self.db.commit()
+    
     def importStylesIntoDb(self, styleFolder):
         '''
         path: path to folder
@@ -1417,7 +1428,12 @@ class PostgisDb(AbstractDb):
         while query.next():
             return query.value(0)
     
-    def getAllStylesDict(self):
+    def getAllStylesDict(self, perspective = 'style'):
+        '''
+        Returns a dict of styles in a form acording to perspective:
+            if perspective = 'style'    : [styleName][dbName][tableName] = timestamp
+            if perspective = 'database' : [dbName][styleName][tableName] = timestamp 
+        '''
         self.checkAndOpenDb()
         sql = self.gen.getAllStylesFromDb()
         query = QSqlQuery(sql, self.db)
@@ -1431,6 +1447,9 @@ class PostgisDb(AbstractDb):
             styleName = query.value(1)
             tableName = query.value(2)
             timestamp = query.value(3)
-            styleDict = self.utils.buildNestedDict(styleDict, [styleName, dbName, tableName], timestamp)
+            if perspective == 'style':
+                styleDict = self.utils.buildNestedDict(styleDict, [styleName, dbName, tableName], timestamp)
+            elif perspective == 'database':
+                styleDict = self.utils.buildNestedDict(styleDict, [dbName, styleName, tableName], timestamp)
         return styleDict
                 

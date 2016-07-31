@@ -193,6 +193,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         QApplication.restoreOverrideCursor()
         header = self.tr('Import operation complete. \n')
         self.outputMessage(header, successList, exceptionDict)
+        self.populateStylesInterface()
         closeExceptionDict = self.closeAbstractDbs(dbsDict)
         self.logInternalError(closeExceptionDict)            
             
@@ -228,13 +229,18 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         currentPath = os.path.join(os.path.dirname(__file__),'..','Styles', self.serverWidget.abstractDb.versionFolderDict[versionList[0]])
         return currentPath
     
-    def getStylesFromDbs(self):
+    def getStylesFromDbs(self, perspective = 'style'):
+        '''
+        Returns a dict of styles in a form acording to perspective:
+            if perspective = 'style'    : [styleName][dbName][tableName] = timestamp
+            if perspective = 'database' : [dbName][styleName][tableName] = timestamp 
+        '''
         dbsDict = self.instantiateAbstractDbs()
         allStylesDict = dict()
         exceptionDict = dict()
         for dbName in dbsDict.keys():
             try:
-                newDict =dbsDict[dbName].getAllStylesDict()
+                newDict =dbsDict[dbName].getAllStylesDict(perspective)
                 allStylesDict = self.utils.mergeDict(newDict, allStylesDict)
             except Exception as e:
                 exceptionDict[dbName] = str(e.args[0])
@@ -269,4 +275,33 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                 parentTimeList.append(max(timeList))
                 dbItem.setText(3,max(timeList))
             parentStyleItem.setText(3,'\n'.join(parentTimeList))
-                
+    
+    
+    @pyqtSlot(bool)
+    def on_deleteStyles_clicked(self):
+        dbsDict = self.instantiateAbstractDbs()
+        styleDict = self.getStylesFromDbs()
+        styleList = styleDict.keys()
+        dlg = SelectStyles(styleList)
+        dlg.exec_()
+        selectedStyles = dlg.selectedStyles
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        successList, exceptionDict = self.batchDeleteStyles(dbsDict, styleDict)
+        QApplication.restoreOverrideCursor()
+        header = self.tr('Delete operation complete. \n')
+        self.outputMessage(header, successList, exceptionDict)
+        self.populateStylesInterface()
+        closeExceptionDict = self.closeAbstractDbs(dbsDict)
+        self.logInternalError(closeExceptionDict)       
+    
+    def batchDeleteStyles(self, dbsDict, styleDict):
+        exceptionDict = dict()
+        successList = []
+        for style in styleDict.keys():
+            for dbName in styleDict[style].keys():
+                try:
+                    dbsDict[dbName].deleteStyle(style)
+                    successList.append(dbName)
+                except Exception as e:
+                    exceptionDict[dbName] =  str(e.args[0])
+        return successList, exceptionDict

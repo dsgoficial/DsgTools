@@ -849,3 +849,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def getAllStylesFromDb(self):
         sql = """SELECT DISTINCT f_table_catalog, description, f_table_name, update_time from public.layer_styles order by f_table_catalog, description, f_table_name asc """
         return sql
+    
+    def deleteStyle(self, styleName):
+        sql = """delete from public.layer_styles where description = '{0}'""".format(styleName)
+        return sql
