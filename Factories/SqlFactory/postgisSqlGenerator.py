@@ -845,3 +845,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def getTableSchemaFromDb(self, table):
         sql = """select distinct table_schema from information_schema.columns where table_name = '{0}'""".format(table)
         return sql
+    
+    def getAllStylesFromDb(self):
+        sql = """SELECT DISTINCT f_table_catalog, description, f_table_name, update_time from public.layer_styles order by f_table_catalog, description, f_table_name asc """
+        return sql

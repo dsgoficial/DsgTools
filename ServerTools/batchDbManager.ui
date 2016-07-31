@@ -136,7 +136,7 @@
            </layout>
           </item>
           <item row="0" column="0">
-           <widget class="QTreeWidget" name="treeWidget_2">
+           <widget class="QTreeWidget" name="stylesTreeWidget">
             <property name="sizePolicy">
              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -160,6 +160,11 @@
             <column>
              <property name="text">
               <string>Database</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Class</string>
              </property>
             </column>
             <column>

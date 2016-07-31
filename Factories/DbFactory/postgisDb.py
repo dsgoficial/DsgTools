@@ -1416,3 +1416,21 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
         while query.next():
             return query.value(0)
+    
+    def getAllStylesDict(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getAllStylesFromDb()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
+        styleDict = dict()
+        while query.next():
+            dbName = query.value(0)
+            styleName = query.value(1)
+            tableName = query.value(2)
+            timestamp = query.value(3)
+            styleDict = self.utils.buildNestedDict(styleDict, [styleName, dbName, tableName], timestamp)
+        return styleDict
+                

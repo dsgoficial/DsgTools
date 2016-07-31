@@ -64,6 +64,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         self.serverWidget.populateServersCombo()
         self.serverWidget.abstractDbLoaded.connect(self.checkSuperUser)
         self.dbsCustomSelector.setTitle(self.tr('Server Databases'))
+        self.dbsCustomSelector.selectionChanged.connect(self.populateStylesInterface)
 
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
@@ -174,7 +175,9 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                 if version not in versionList:
                     versionList.append(version)
             except Exception as e:
-                self.logInternalError(exceptionDict)
+                exceptionDict[dbName] = str(e.args[0])
+        if len(exceptionDict.keys())>0:
+            self.logInternalError(exceptionDict)
         if len(versionList) > 1:
             QMessageBox.warning(self, self.tr('Warning'), self.tr('Multiple edgv versions are not allowed!'))
             return
@@ -224,4 +227,46 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     def getStyleDir(self, versionList):
         currentPath = os.path.join(os.path.dirname(__file__),'..','Styles', self.serverWidget.abstractDb.versionFolderDict[versionList[0]])
         return currentPath
+    
+    def getStylesFromDbs(self):
+        dbsDict = self.instantiateAbstractDbs()
+        allStylesDict = dict()
+        exceptionDict = dict()
+        for dbName in dbsDict.keys():
+            try:
+                newDict =dbsDict[dbName].getAllStylesDict()
+                allStylesDict = self.utils.mergeDict(newDict, allStylesDict)
+            except Exception as e:
+                exceptionDict[dbName] = str(e.args[0])
+        if len(exceptionDict.keys())>0:
+            self.logInternalError(exceptionDict)
+        return allStylesDict
+
+    def createItem(self, parent, text, column):
+        item = QtGui.QTreeWidgetItem(parent)
+        item.setText(column, text)
+        return item
+
+    def populateStylesInterface(self):
+        self.stylesTreeWidget.clear()
+        allStylesDict = self.getStylesFromDbs()
+        rootNode = self.stylesTreeWidget.invisibleRootItem()
+        for styleName in allStylesDict.keys():
+            parentStyleItem = self.createItem(rootNode, styleName, 0)
+            dbList = allStylesDict[styleName].keys()
+            parentStyleItem.setText(1,'\n'.join(dbList))
+            parentTimeList = []
+            for dbName in dbList:
+                dbItem = self.createItem(parentStyleItem, dbName, 1)
+                tableList = allStylesDict[styleName][dbName].keys()
+                tableList.sort()
+                timeList = []
+                for table in tableList:
+                    tableItem = self.createItem(dbItem, table, 2)
+                    timeStamp = allStylesDict[styleName][dbName][table].toString()
+                    timeList.append(timeStamp)
+                    tableItem.setText(3,allStylesDict[styleName][dbName][table].toString())
+                parentTimeList.append(max(timeList))
+                dbItem.setText(3,max(timeList))
+            parentStyleItem.setText(3,'\n'.join(parentTimeList))
                 
