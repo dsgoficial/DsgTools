@@ -25,6 +25,8 @@ from DsgTools.Factories.CustomizationFactory.classCustomization import ClassCust
 from DsgTools.Factories.CustomizationFactory.codeNameCustomization import CodeNameCustomization
 from DsgTools.Factories.CustomizationFactory.attributeCustomization import AttributeCustomization
 from DsgTools.Factories.CustomizationFactory.domainCustomization import DomainCustomization
+from DsgTools.Factories.CustomizationFactory.nullityCustomization import NullityCustomization
+from DsgTools.Factories.CustomizationFactory.defaultCustomization import DefaultCustomization
 
 class CustomizationFactory:
     def createCustomization(self, type, validatedJSONDict):
@@ -36,3 +38,7 @@ class CustomizationFactory:
             return AttributeCustomization(validatedJSONDict)
         if type == 'domain':
             return DomainCustomization(validatedJSONDict)
+        if tyle == 'nullity':
+            return NullityCustomization(validatedJSONDict)
+        if tyle == 'default':
+            return DefaultCustomization(validatedJSONDict)
