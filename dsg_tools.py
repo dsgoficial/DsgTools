@@ -51,6 +51,7 @@ from DsgTools.ToolboxTools.models_and_scripts_installer import ModelsAndScriptsI
 from DsgTools.UserTools.profile_editor import ProfileEditor
 from DsgTools.UserTools.assign_profiles import AssignProfiles
 from DsgTools.UserTools.user_profiles import ManageUserProfiles
+from DsgTools.PostgisCustomization.createDatabaseCustomization import CreateDatabaseCustomization
 from DsgTools.ConversionTools.convert_database import ConvertDatabase
 from DsgTools.aboutdialog import AboutDialog
 from DsgTools.VectorTools.calc_contour import CalcContour
@@ -503,6 +504,17 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/icons/manageUserProfiles.png'
         action = self.add_action(
             icon_path,
+            text=self.tr('Create Database Customization'),
+            callback=self.createDbCustom,
+            parent=database,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        database.addAction(action)
+        self.databaseButton.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/manageUserProfiles.png'
+        action = self.add_action(
+            icon_path,
             text=self.tr('Manage User Permissions'),
             callback=self.manageUserProfiles,
             parent=database,
@@ -650,6 +662,13 @@ class DsgTools:
     def removeProfiles(self):
         dlg = RemoveProfiles()
         dlg.exec_()
+
+    def createDbCustom(self):
+        dlg = CreateDatabaseCustomization()
+        dlg.show()
+        result = dlg.exec_()
+        if result:
+            pass
 
     def manageUserProfiles(self):
         dlg = ManageUserProfiles()
