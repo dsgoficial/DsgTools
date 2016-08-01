@@ -21,14 +21,14 @@
  ***************************************************************************/
 """
 #DsgTools imports
-from DsgTools.Factories.CustomizationFactory.classCustomization import ClassCustomization
-from DsgTools.Factories.CustomizationFactory.codeNameCustomization import CodeNameCustomization
-from DsgTools.Factories.CustomizationFactory.attributeCustomization import AttributeCustomization
-from DsgTools.Factories.CustomizationFactory.domainCustomization import DomainCustomization
-from DsgTools.Factories.CustomizationFactory.nullityCustomization import NullityCustomization
-from DsgTools.Factories.CustomizationFactory.defaultCustomization import DefaultCustomization
+from DsgTools.Factories.DbCustomizationFactory.classCustomization import ClassCustomization
+from DsgTools.Factories.DbCustomizationFactory.codeNameCustomization import CodeNameCustomization
+from DsgTools.Factories.DbCustomizationFactory.attributeCustomization import AttributeCustomization
+from DsgTools.Factories.DbCustomizationFactory.domainCustomization import DomainCustomization
+from DsgTools.Factories.DbCustomizationFactory.nullityCustomization import NullityCustomization
+from DsgTools.Factories.DbCustomizationFactory.defaultCustomization import DefaultCustomization
 
-class CustomizationFactory:
+class DbCustomizationFactory:
     def createCustomization(self, type, validatedJSONDict):
         if type == 'class':
             return ClassCustomization(validatedJSONDict)

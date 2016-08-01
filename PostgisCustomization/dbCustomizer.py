@@ -50,3 +50,6 @@ class DbCustomizer(QObject):
     
     def buildCustomizer(self, jsonFile, type):
         pass
+    
+    def getAvailableCustomizationsDict(self):
+        pass
