@@ -27,9 +27,33 @@ class DefaultCustomization(DbCustomization):
     def __init__(self, customJson):
         super(DefaultCustomization, self).__init__(customJson)
     
-    def buildSql(self):
+    def buildSql(self, abstractDb):
         #Abstract method. Must be reimplemented in each child.
-        pass
+        sql = ''
+        if self.jsonDict['default'].keys() == ['all']:
+            classList = abstractDb.getTablesFromDatabase()
+            for cl in classList:
+                if self.jsonDict['default']['all'].keys() == ['all']:
+                    attrList = abstractDb.getColumnsFromTable(cl)
+                    value = self.jsonDict['default']['all']['all']
+                    for attribute in attrList:
+                        sql += """ALTER TABLE ONLY '{0}' ALTER COLUMN {1} SET DEFAULT {2};\n""".format(cl,attribute,str(value))
+                else:
+                    for attribute in self.jsonDict['default']['all'].keys():
+                         value = self.jsonDict['default']['all'][attribute]
+                         sql += """ALTER TABLE ONLY '{0}' ALTER COLUMN {1} SET DEFAULT {2};\n""".format(cl,attribute,str(value))
+        else:
+            for cl in self.jsonDict['default'].keys():
+                if self.jsonDict['default'][cl].keys() == ['all']:
+                    attrList = abstractDb.getColumnsFromTable(cl)
+                    value = self.jsonDict['default'][cl]['all']
+                    for attribute in attrList:
+                        sql += """ALTER TABLE ONLY '{0}' ALTER COLUMN {1} SET DEFAULT {2};\n""".format(cl,attribute,str(value))
+                else:
+                    for attribute in self.jsonDict['default'][cl].keys():
+                        value = self.jsonDict['default'][cl][attribute]
+                        sql += """ALTER TABLE ONLY '{0}' ALTER COLUMN {1} SET DEFAULT {2};\n""".format(cl,attribute,str(value))
+        return sql
     
     def buildUndoSql(self):
         #Abstract method. Must be reimplemented in each child.
