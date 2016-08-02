@@ -1465,3 +1465,72 @@ class PostgisDb(AbstractDb):
             self.db.close()
             raise Exception(self.tr('Problem running sql ')+ sqlFilePath +':' + query.lastError().text())
         self.db.commit()
+    
+    def getStructureDict(self):
+        self.checkAndOpenDb()
+        
+        if self.getDatabaseVersion() == '2.1.3':
+            schemaList = ['cb', 'complexos', 'dominios']
+        elif self.getDatabaseVersion() == 'FTer_2a_Ed':
+            schemaList = ['pe','ge', 'complexos']
+        else:
+            QgsMessageLog.logMessage(self.tr('Operation not defined for this database version!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return
+        
+        sql = self.gen.validateWithDomain(schemaList)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem executing query: ")+query.lastError().text())
+
+        classDict = dict()
+        domainDict = dict()
+        while query.next():
+            schemaName = str(query.value(0))
+            className = str(query.value(1))
+            attName = str(query.value(2))
+            domainName = str(query.value(3))
+            domainTable = str(query.value(4))
+            domainQuery = str(query.value(5))
+            cl = schemaName+'.'+className
+            query2 = QSqlQuery(domainQuery,self.db)
+            while query2.next():
+                value = int(query2.value(0))
+                code_name = query2.value(1)
+                classDict = self.utils.buildNestedDict(classDict,[str(cl),str(attName)],[(value,code_name)])
+        #TODO: get constraints
+        return classDict
+    
+    def getGeomSchemaList(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getGeometricSchemas()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
+        schemaList = []
+        while query.next():
+            schemaList.append(query.value(0))
+        return schemaList
+    
+    def getGeomDict(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getGeomTablesFromGeometryColumns()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
+        geomDict = dict()
+        geomDict['databasePerspective'] = dict()
+        geomDict['tablePerspective'] = dict()
+        while query.next():
+            srid = query.value(0)
+            geometryColumn = query.value(1)
+            geometryType = query.value(2)
+            tableSchema = query.value(3)
+            tableName = query.value(4)
+            geomDict['databasePerspective'] = self.utils.buildNestedDict(geomDict['databasePerspective'], [str(srid),geometryColumn,geometryType,tableSchema], [tableName])
+            if tableName not in geomDict['tablePerspective'].keys():
+                geomDict['tablePerspective'][tableName] = dict()
+                geomDict['tablePerspective'][tableName]['schema'] = tableSchema
+                geomDict['tablePerspective'][tableName]['srid'] = str(srid)
+                geomDict['tablePerspective'][tableName]['geometryColumn'] = geometryColumn
+                geomDict['tablePerspective'][tableName]['geometryType'] = geometryType
+        return geomDict

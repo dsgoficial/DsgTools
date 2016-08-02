@@ -853,3 +853,22 @@ class PostGISSqlGenerator(SqlGenerator):
     def deleteStyle(self, styleName):
         sql = """delete from public.layer_styles where description = '{0}'""".format(styleName)
         return sql
+    
+    def getConstraints(self, schemaList):
+        sql = """select sch.nspname, cl.relname, c.conname, c.consrc from 
+            (
+                select * from pg_constraint where contype = 'c'
+            ) as c join (
+                select oid, nspname from pg_namespace where nspname in ({0})
+            ) as sch on sch.oid = c.connamespace
+            left join pg_class as cl on c.conrelid = cl.oid
+            """.format(','.schemaList)
+        return sql
+    
+    def getGeometricSchemas(self):
+        sql = 'select distinct f_table_schema from public.geometry_columns'
+        return sql
+    
+    def getGeomTablesFromGeometryColumns(self):
+        sql = 'select srid, f_geometry_column, type, f_table_schema, f_table_name from public.geometry_columns'
+        return sql

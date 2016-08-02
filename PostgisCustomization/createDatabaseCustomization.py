@@ -29,7 +29,7 @@ from qgis.gui import QgsCollapsibleGroupBox
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
 from PyQt4.QtSql import QSqlQuery
-from PyQt4.QtGui import QFormLayout
+from PyQt4.QtGui import QFormLayout, QMessageBox
 
 # DSGTools imports
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.newClassWidget import NewClassWidget
@@ -69,21 +69,53 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         self.customDict['nullity'] = self.tr('Attribute Nullity Customization')
         for type in self.customDict.keys():
             self.customizationSelectionComboBox.addItem(self.customDict[type])
+            
     
     @pyqtSlot(bool)
     def on_addAttributePushButton_clicked(self):
-        self.addClassWidget()
+        if self.customizationSelectionComboBox.currentText() == self.tr('Attribute Customization'):
+            self.addAttributeWidget()
+        elif self.customizationSelectionComboBox.currentText() == self.tr('Class Customization'):
+            self.addClassWidget()
+        elif self.customizationSelectionComboBox.currentText() == self.tr('Code Name Customization'):
+            self.addCodeNameWidget()
+        elif self.customizationSelectionComboBox.currentText() == self.tr('Default Customization'):
+            self.addDefaultWidget()
+        elif self.customizationSelectionComboBox.currentText() == self.tr('Domain Customization'):
+            self.addDomainWidget()
+        elif self.customizationSelectionComboBox.currentText() == self.tr('Attribute Nullity Customization'):
+            self.addNullityWidget()
+        else:
+            QMessageBox.warning(self, self.tr('Warning'), self.tr('Select a custom operation!'))
     
-    def addWidget(self, widget, title):
-        layout = QtGui.QFormLayout()
-        layout.addRow(widget)
-        groupBox = QgsCollapsibleGroupBox(title)
-
-        groupBox.setLayout(layout)
-        self.scrollAreaLayout.addWidget(groupBox)
+    def addAttributeWidget(self):
+        pass 
     
     def addClassWidget(self):
         widget = NewClassWidget()
         title = self.tr('New Custom Class')
         self.addWidget(widget, title)
+    
+    def addCodeNameWidget(self):
+        pass
+
+    def addDefaultWidget(self):
+        pass 
+
+    def addDomainWidget(self):
+        pass
+
+    def addNullityWidget(self):
+        pass
+    
+    def addWidget(self, widget, title):
+        layout = QtGui.QFormLayout()
+        layout.addRow(widget)
+        groupBox = QgsCollapsibleGroupBox(title)
+        groupBox.setCollapsed(False)
+        groupBox.setSaveCollapsedState(False)
+        groupBox.setLayout(layout)
+        self.scrollAreaLayout.addWidget(groupBox)
+    
+
         
