@@ -1511,7 +1511,7 @@ class PostgisDb(AbstractDb):
             schemaList.append(query.value(0))
         return schemaList
     
-    def getGeomDict(self):
+    def getGeomDict(self, getCentroids = False):
         self.checkAndOpenDb()
         sql = self.gen.getGeomTablesFromGeometryColumns()
         query = QSqlQuery(sql, self.db)
@@ -1521,11 +1521,13 @@ class PostgisDb(AbstractDb):
         geomDict['databasePerspective'] = dict()
         geomDict['tablePerspective'] = dict()
         while query.next():
+            isCentroid = False
             srid = query.value(0)
             geometryColumn = query.value(1)
             geometryType = query.value(2)
             tableSchema = query.value(3)
             tableName = query.value(4)
+            
             geomDict['databasePerspective'] = self.utils.buildNestedDict(geomDict['databasePerspective'], [str(srid),geometryColumn,geometryType,tableSchema], [tableName])
             if tableName not in geomDict['tablePerspective'].keys():
                 geomDict['tablePerspective'][tableName] = dict()
