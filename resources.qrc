@@ -27,5 +27,8 @@
         <file>icons/centroid.png</file>
         <file>icons/fieldToolbox.png</file>
         <file>icons/productiontools.png</file>
+	<file>icons/plus.png</file>
+	<file>icons/remove.png</file>
+	<file>icons/areaTool.png</file>
     </qresource>
 </RCC>

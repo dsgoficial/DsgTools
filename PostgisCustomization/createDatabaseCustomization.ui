@@ -45,8 +45,8 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>../icons/plus.png</normaloff>../icons/plus.png</iconset>
+          <iconset resource="../resources.qrc">
+           <normaloff>:/plugins/DsgTools/icons/plus.png</normaloff>:/plugins/DsgTools/icons/plus.png</iconset>
          </property>
         </widget>
        </item>
@@ -79,8 +79,8 @@
         <string>Remove Selected</string>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>../icons/remove.png</normaloff>../icons/remove.png</iconset>
+        <iconset resource="../resources.qrc">
+         <normaloff>:/plugins/DsgTools/icons/remove.png</normaloff>:/plugins/DsgTools/icons/remove.png</iconset>
        </property>
       </widget>
      </item>
@@ -120,8 +120,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>680</width>
-        <height>694</height>
+        <width>672</width>
+        <height>676</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -162,7 +162,9 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>
