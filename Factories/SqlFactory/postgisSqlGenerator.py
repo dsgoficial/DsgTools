@@ -889,13 +889,22 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = 'select srid, f_geometry_column, type, f_table_schema, f_table_name from public.geometry_columns'
         return sql
     
-    def getDomainTables(self):
-        sql = """SELECT conrelid::regclass, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'f';"""
+    def getGeomTablesDomains(self, version):
+        if version == '2.1.3':
+            sql = """SELECT distinct conrelid::regclass as cl, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'f' and conrelid::regclass::text in 
+            (select f_table_schema||'.'||f_table_name from public.geometry_columns)"""
+        elif version == 'FTer_2a_Ed':
+            sql = """SELECT distinct conrelid::regclass as cl, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'f' and conrelid::regclass::text in 
+        (select f_table_name from public.geometry_columns) """
         return sql
     
-    def getGeomTableConstraints(self):
-        sql = """SELECT conrelid::regclass as cl, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'c' and conrelid::regclass::text in 
-        (select f_table_name from public.geometry_columns)"""
+    def getGeomTableConstraints(self, version):
+        if version == '2.1.3':
+            sql = """SELECT distinct conrelid::regclass as cl, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'c' and conrelid::regclass::text in 
+            (select f_table_schema||'.'||f_table_name from public.geometry_columns)"""
+        elif version == 'FTer_2a_Ed':
+            sql = """SELECT distinct conrelid::regclass as cl, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'c' and conrelid::regclass::text in 
+        (select f_table_name from public.geometry_columns) """
         return sql
     
     def getMultiColumns(self, schemaList):
@@ -906,4 +915,12 @@ class PostGISSqlGenerator(SqlGenerator):
                 ) as t group by t.table_name
             ) as a
         """.format(','.join(schemaList))
+        return sql
+    
+    def getGeomByPrimitive(self):
+        sql = """select row_to_json(a) from (select type as geomtype, array_agg(f_table_name) as classlist from public.geometry_columns group by type) as a"""
+        return sql
+    
+    def getGeomColumnDict(self):
+        sql = """select row_to_json(row(f_table_schema||'.'||f_table_name, f_geometry_column)) from public.geometry_columns"""
         return sql

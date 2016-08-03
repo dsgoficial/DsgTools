@@ -86,6 +86,7 @@ class PostGISLayer(EDGVLayer):
         2. Load Layers;
         '''
         dbGroup = self.getDatabaseGroup()
+        
 
         if self.schema <> 'views':
             vlayer.loadNamedStyle(vlayerQml, False)
@@ -155,7 +156,11 @@ class PostGISLayer(EDGVLayer):
         vlayer.setCrs(crs)
         pass
 
-    def loadDomainTable(self,name):
+    def getDomainsToBeLoaded(self,layerList):
+        self.abstractDb
+        pass
+
+    def loadDomains(self,domainList):
         pass
 
     def getStyleFromDb(self, edgvVersion, className):
