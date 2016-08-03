@@ -1516,23 +1516,27 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getGeomTablesFromGeometryColumns()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
+            raise Exception(self.tr("Problem getting geom tables from db: ")+query.lastError().text())
         geomDict = dict()
         geomDict['databasePerspective'] = dict()
         geomDict['tablePerspective'] = dict()
         while query.next():
             isCentroid = False
             srid = query.value(0)
-            geometryColumn = query.value(1)
             geometryType = query.value(2)
             tableSchema = query.value(3)
             tableName = query.value(4)
-            
-            geomDict['databasePerspective'] = self.utils.buildNestedDict(geomDict['databasePerspective'], [str(srid),geometryColumn,geometryType,tableSchema], [tableName])
-            if tableName not in geomDict['tablePerspective'].keys():
-                geomDict['tablePerspective'][tableName] = dict()
-                geomDict['tablePerspective'][tableName]['schema'] = tableSchema
-                geomDict['tablePerspective'][tableName]['srid'] = str(srid)
-                geomDict['tablePerspective'][tableName]['geometryColumn'] = geometryColumn
-                geomDict['tablePerspective'][tableName]['geometryType'] = geometryType
+            geometryColumn = query.value(1)
+            layerName = tableName
+            if geometryColumn == 'centroid':
+                table = layerName.split('_')
+                layerName = table[:-1]+table[-1].replace('c','a')
+            geomDict['databasePerspective'] = self.utils.buildNestedDict(geomDict['databasePerspective'], [str(srid),geometryColumn,geometryType,layerName], [tableName])
+            if layerName not in geomDict['tablePerspective'].keys():
+                geomDict['tablePerspective'][layerName] = dict()
+                geomDict['tablePerspective'][layerName]['schema'] = tableSchema
+                geomDict['tablePerspective'][layerName]['srid'] = str(srid)
+                geomDict['tablePerspective'][layerName]['geometryColumn'] = geometryColumn
+                geomDict['tablePerspective'][layerName]['geometryType'] = geometryType
+                geomDict['tablePerspective'][layerName]['tableName'] = tableName
         return geomDict

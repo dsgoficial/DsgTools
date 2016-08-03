@@ -41,7 +41,7 @@ class PostGISLayer(EDGVLayer):
         
         self.provider = 'postgres'
         
-        self.schema, self.layer_name = abstractDb.getTableSchema(table)
+        schema, self.layer_name = abstractDb.getTableSchema(table)
         if table[-1] == 'c':
             layer = self.layer_name[:-1]+self.layer_name[-1].replace('c','a')
         else:
@@ -54,19 +54,14 @@ class PostGISLayer(EDGVLayer):
 
         self.qmlName = layer.replace('\r','')
 
-        self.host = abstractDb.db.hostName()
-        self.port = abstractDb.db.port()
-        self.database = abstractDb.db.databaseName()
-        self.user = abstractDb.db.userName()
-        self.password = abstractDb.db.password()
+        self.setDatabaseConnection()
         
         self.uri.setConnection(str(self.host),str(self.port), str(self.database), str(self.user), str(self.password))
         if self.layer_name[-1] == 'c':
             geomColumn = 'centroid'
         else:
             geomColumn = 'geom'
-        self.uri.setDataSource(self.schema, layer, geomColumn, sql, 'id')
-        self.uri.disableSelectAtId(True)
+        self.setDataSource(schema, layer, geomColumn, sql)
 
     def checkLoaded(self, name):
         loadedLayers = iface.legendInterface().layers()
@@ -77,6 +72,20 @@ class PostGISLayer(EDGVLayer):
                 if self.host == candidateUri.host() and self.database == candidateUri.database() and self.port == int(candidateUri.port()):
                     return ll
         return loaded
+    
+    def setDatabaseConnection(self):
+        self.host = self.abstractDb.db.hostName()
+        self.port = self.abstractDb.db.port()
+        self.database = self.abstractDb.db.databaseName()
+        self.user = self.abstractDb.db.userName()
+        self.password = self.abstractDb.db.password()
+    
+    def buildUri(self):
+        self.uri.setConnection(str(self.host),str(self.port), str(self.database), str(self.user), str(self.password))
+    
+    def setDataSource(self, schema, layer, geomColumn, sql):
+        self.uri.setDataSource(schema, layer, geomColumn, sql, 'id')
+        self.uri.disableSelectAtId(True)
 
     def load(self, crs, idSubgrupo = None, uniqueLoad = False, useInheritance = False, stylePath = None):
         if uniqueLoad:
@@ -162,3 +171,11 @@ class PostGISLayer(EDGVLayer):
 
     def getStyleFromDb(self, edgvVersion, className):
         return self.abstractDb.getLyrStyle(edgvVersion,className)
+    
+    def isLoaded(self,lyr):
+        return False
+
+    def getDomainValuesFromDb(self, lyrName):
+        pass
+    
+    
