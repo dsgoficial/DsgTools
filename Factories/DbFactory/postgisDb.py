@@ -1540,3 +1540,115 @@ class PostgisDb(AbstractDb):
                 geomDict['tablePerspective'][layerName]['geometryType'] = geometryType
                 geomDict['tablePerspective'][layerName]['tableName'] = tableName
         return geomDict
+    
+    def getDomainDict(self):
+        '''
+        returns a dict like this:
+        {'adm_posto_fiscal_a': {
+            'schema':'cb'
+            'columns':{
+                'operacional': {'references':'dominios.operacional', 'refPk':'code'}
+                'situacaofisica': {'references':'dominios.situacaofisica', 'refPk':'code'}
+                'tipopostofisc': {'references':'dominios.tipopostofisc', 'refPk':'code'}
+                }
+            }
+        }
+        '''
+        self.checkAndOpenDb()
+        #gets only schemas of classes with geom, to speed up the process.
+        schemaList = self.getGeomSchemaList()
+        sql = self.gen.getDomainTables()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
+        geomDict = dict()
+        while query.next():
+            #parse done in parseFkQuery to make code cleaner.
+            tableSchema, tableName, fkAttribute, domainTable, domainReferencedAttribute = self.parseFkQuery(query.value(0),query.value(1))
+            if tableSchema <> None and tableName <> None and fkAttribute <> None and domainTable <> None and domainReferencedAttribute <> None:
+                if tableName not in geomDict.keys():
+                    geomDict[table] = dict()
+                geomDict[table]['schema'] = tableSchema
+                if 'columns' not in geomDict[table].keys():
+                    geomDict['columns'] = dict()
+                if fkAttribute not in geomDict['columns'].keys():
+                    geomDict['columns'][fkAttribute] = dict()
+                geomDict['columns'][fkAttribute]['references'] = domainTable
+                geomDict['columns'][fkAttribute]['refPk'] = domainReferencedAttribute
+        return geomDict
+    
+    def getCheckConstraintDict(self):
+        '''
+        returns a dict like this:
+        {'asb_dep_abast_agua_a': {
+            'schema':'cb'
+            'columns':{
+                'finalidade': [2,3,4]
+                'construcao': [1,2]
+                'situacaofisica': [0,1,2,3,5]
+                }
+            }
+        }
+        '''
+        self.checkAndOpenDb()
+        #gets only schemas of classes with geom, to speed up the process.
+        sql = self.gen.getGeomTableConstraints()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
+        geomDict = dict()
+        while query.next():
+            #parse done in parseFkQuery to make code cleaner.
+            tableSchema, tableName, fkAttribute, domainTable, domainReferencedAttribute = self.parseCheckConstraintQuery(schemaList, query.value(0),query.value(1))
+            if tableSchema <> None and tableName <> None and fkAttribute <> None and domainTable <> None and domainReferencedAttribute <> None:
+                if tableName not in geomDict.keys():
+                    geomDict[table] = dict()
+                geomDict[table]['schema'] = tableSchema
+                if 'columns' not in geomDict[table].keys():
+                    geomDict['columns'] = dict()
+                if fkAttribute not in geomDict['columns'].keys():
+                    geomDict['columns'][fkAttribute] = dict()
+                geomDict['columns'][fkAttribute]['references'] = domainTable
+                geomDict['columns'][fkAttribute]['refPk'] = domainReferencedAttribute
+        return geomDict
+    
+    def parseFkQuery(self, schemaList, queryValue0, queryValue1):
+        splitList = queryValue0.split('.')
+        if len(splitList)>0:
+            tableSchema = splitList[0]
+            if tableSchema in schemaList:
+                tableName = splitList[1]
+                fkText = queryValue1
+                fkAttribute = fkText.split(')')[0].replace('FOREIGN KEY (','')
+                subtextList = fkText.split(' REFERENCES ')[-1].replace(' MATCH FULL','').split('(')
+                domainTable = subtextList[0]
+                domainReferencedAttribute = subtextList[0].replace(')') 
+                return tableSchema, tableName, fkAttribute, domainTable, domainReferencedAttribute
+            else:
+                return None, None, None, None
+        else:
+            return None, None, None, None 
+    
+    def parseCheckConstraintQuery(self, input):
+        edgvVersion = self.getDatabaseVersion(input)
+        if edgvVersion == '2.1.3':
+            return self.parseCheckConstraint213()
+        elif edgvVersion == 'FTer_2a_Ed':
+            return self.parseCheckConstraintFTer()
+        else:
+            return None
+    
+    def getMultiColumnsDict(self):
+        self.checkAndOpenDb()
+        #gets only schemas of classes with geom, to speed up the process.
+        schemaList = self.getGeomSchemaList()
+        sql = self.gen.getDomainTables()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
+        geomDict = dict()
+        while query.next():
+            aux = json.loads(query.value(0))
+            geomDict[aux['table_name']]=aux['attributes']
+        return geomDict
+            

@@ -211,6 +211,22 @@ class PostGISSqlGenerator(SqlGenerator):
                             ON ccu.constraint_name = tc.constraint_name
                 WHERE constraint_type = 'FOREIGN KEY' and tc.constraint_schema in (%s)''' % schemas
         return sql
+    
+    def getTableDomains(self,tableList):
+        schemas = '\''+'\',\''.join(schemaList)+'\''
+        sql = '''SELECT
+                tc.table_schema,tc.table_name, kcu.column_name, 
+                ccu.table_name AS foreign_table_name,
+                ccu.column_name AS foreign_column_name,
+                'SELECT ' || ccu.column_name || ' FROM dominios.' || ccu.table_name || ' ORDER BY ' || ccu.column_name || ' ASC'
+                    FROM 
+                        information_schema.table_constraints AS tc 
+                        JOIN information_schema.key_column_usage AS kcu
+                        ON tc.constraint_name = kcu.constraint_name
+                        JOIN information_schema.constraint_column_usage AS ccu
+                            ON ccu.constraint_name = tc.constraint_name
+                WHERE constraint_type = 'FOREIGN KEY' and tc.constraint_schema in (%s)''' % schemas
+        return sql
 
     def getNotNullFields(self,schemaList):
         schemas = '\''+'\',\''.join(schemaList)+'\''
@@ -871,4 +887,23 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def getGeomTablesFromGeometryColumns(self):
         sql = 'select srid, f_geometry_column, type, f_table_schema, f_table_name from public.geometry_columns'
+        return sql
+    
+    def getDomainTables(self):
+        sql = """SELECT conrelid::regclass, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'f';"""
+        return sql
+    
+    def getGeomTableConstraints(self):
+        sql = """SELECT conrelid::regclass as cl, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'c' and conrelid::regclass::text in 
+        (select f_table_name from public.geometry_columns)"""
+        return sql
+    
+    def getMultiColumns(self, schemaList):
+        sql = """select row_to_json(a) from (
+                select t.table_name, array_agg(t.column_name::text) as attributes from 
+                (select table_name, column_name from information_schema.columns  
+                where data_type = 'ARRAY' and table_schema in ({0}) 
+                ) as t group by t.table_name
+            ) as a
+        """.format(','.join(schemaList))
         return sql

@@ -48,8 +48,7 @@ class AbstractDb(QObject):
         self.signals = DbSignals()
         self.slotConnected = False
         self.versionFolderDict = dict({'2.1.3':'edgv_213','FTer_2a_Ed':'edgv_FTer_2a_Ed'})
-        pass
-    
+
     def __del__(self):
         if self.db.isOpen():
             self.db.close()

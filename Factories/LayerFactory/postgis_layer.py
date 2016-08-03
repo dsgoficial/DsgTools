@@ -35,33 +35,15 @@ from qgis.utils import iface
 from DsgTools.Factories.LayerFactory.edgv_layer import EDGVLayer
 
 class PostGISLayer(EDGVLayer):
-    def __init__(self, abstractDb, codeList, table):
+    def __init__(self, iface, abstractDb, codeList, table=None):
         """Constructor."""
-        super(PostGISLayer, self).__init__(abstractDb, codeList)
+        super(PostGISLayer, self).__init__(iface, bstractDb, codeList)
         
         self.provider = 'postgres'
-        
-        schema, self.layer_name = abstractDb.getTableSchema(table)
-        if table[-1] == 'c':
-            layer = self.layer_name[:-1]+self.layer_name[-1].replace('c','a')
-        else:
-            layer = self.layer_name
-        
-        if table[-1] == 'c':
-            sql = abstractDb.gen.loadLayerFromDatabase(table[:-1]+table[-1].replace('c','a'))
-        else:
-            sql = abstractDb.gen.loadLayerFromDatabase(table)
-
-        self.qmlName = layer.replace('\r','')
-
+#         self.qmlName = layer.replace('\r','')
         self.setDatabaseConnection()
-        
-        self.uri.setConnection(str(self.host),str(self.port), str(self.database), str(self.user), str(self.password))
-        if self.layer_name[-1] == 'c':
-            geomColumn = 'centroid'
-        else:
-            geomColumn = 'geom'
         self.setDataSource(schema, layer, geomColumn, sql)
+        self.geomDict = self.abstractDb.getGeomDict()
 
     def checkLoaded(self, name):
         loadedLayers = iface.legendInterface().layers()
@@ -86,36 +68,25 @@ class PostGISLayer(EDGVLayer):
     def setDataSource(self, schema, layer, geomColumn, sql):
         self.uri.setDataSource(schema, layer, geomColumn, sql, 'id')
         self.uri.disableSelectAtId(True)
+    
+    def getDatabaseGroup(self):
+        dbName = self.abstractDb.getDatabaseName()
+        groupList =  qgis.utils.iface.legendInterface().groups()
+        if dbName in groupList:
+            return groupList.index(dbName)
+        else:
+            return self.iface.legendInterface().addGroup(dbName, -1)
+    
+    def createGroups(self):
+        pass
 
-    def load(self, crs, idSubgrupo = None, uniqueLoad = False, useInheritance = False, stylePath = None):
-        if uniqueLoad:
-            lyr = self.checkLoaded(self.layer_name)
-            if lyr:
-                return lyr
-        
-        if useInheritance:
-            self.uri.setSql('')
-        qmldir = ''
-        try:
-            qmldir = self.abstractDb.getQmlDir()
-        except Exception as e:
-            self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            return None
+    def load(self, layerList, useQml = False, idSubgrupo = None, uniqueLoad = False, useInheritance = False, stylePath = None, groupByGeom = True):
+        '''
+        1. Load domains;
+        2. Load Layers;
+        '''
+        dbGroup = self.getDatabaseGroup()
 
-        vlayerQml = os.path.join(qmldir, self.qmlName+'.qml')
-        
-        host = self.abstractDb.db.hostName()
-        port = self.abstractDb.db.port()
-        database = self.abstractDb.db.databaseName()
-        user = self.abstractDb.db.userName()
-        password = self.abstractDb.db.password()
-
-        vlayer = iface.addVectorLayer(self.uri.uri(), self.layer_name, self.provider)
-        if not vlayer:
-            return None
-
-        vlayer.setCrs(crs)
         if self.schema <> 'views':
             vlayer.loadNamedStyle(vlayerQml, False)
             attrList = vlayer.pendingFields()
@@ -151,7 +122,6 @@ class PostGISLayer(EDGVLayer):
                         iface.legendInterface().moveLayer(domLayer, domainIdGroup)
                     valueRelationDict['Layer'] = domLayer.id()
                     vlayer.setEditorWidgetV2Config(i,valueRelationDict)
-    
             self.qmlLoaded.emit()
         
         if stylePath:
@@ -166,6 +136,25 @@ class PostGISLayer(EDGVLayer):
         vlayer = self.createMeasureColumn(vlayer)
         return vlayer
 
+    def loadLayer(self, lyrName, uniqueLoad = False, useInheritance = False, stylePath = None):
+        if uniqueLoad:
+            lyr = self.checkLoaded(self.layer_name)
+            if lyr:
+                return lyr
+        if useInheritance:
+            self.uri.setSql('')
+        qmldir = ''
+        try:
+            qmldir = self.abstractDb.getQmlDir()
+        except Exception as e:
+            self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return None
+        vlayerQml = os.path.join(qmldir, self.qmlName+'.qml')
+        vlayer = iface.addVectorLayer(self.uri.uri(), self.layer_name, self.provider)
+        vlayer.setCrs(crs)
+        pass
+
     def loadDomainTable(self,name):
         pass
 
@@ -177,5 +166,4 @@ class PostGISLayer(EDGVLayer):
 
     def getDomainValuesFromDb(self, lyrName):
         pass
-    
     

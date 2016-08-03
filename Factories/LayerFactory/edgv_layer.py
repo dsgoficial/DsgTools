@@ -40,7 +40,7 @@ from DsgTools.Utils.utils import Utils
 class EDGVLayer(QObject):
     qmlLoaded = pyqtSignal()
     
-    def __init__(self, abstractDb, codeList):
+    def __init__(self, iface, abstractDb, codeList):
         """Constructor."""
         super(EDGVLayer, self).__init__()
         
@@ -48,6 +48,7 @@ class EDGVLayer(QObject):
         self.codeList = codeList
         self.uri = QgsDataSourceURI()
         self.qmlLoaded.connect(self.codeList.setState)  
+        self.iface = iface
         self.utils = Utils()    
         
     def load(self, crs, idSubgrupo = None):
