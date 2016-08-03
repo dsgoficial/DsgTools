@@ -45,8 +45,7 @@ class PostGISLayer(EDGVLayer):
         self.setDataSource(schema, layer, geomColumn, sql)
         self.geomDict = self.abstractDb.getGeomDict()
 
-    def checkLoaded(self, name):
-        loadedLayers = iface.legendInterface().layers()
+    def checkLoaded(self, name, loadedLayers):
         loaded = None
         for ll in loadedLayers:
             if ll.name() == name:
@@ -72,20 +71,27 @@ class PostGISLayer(EDGVLayer):
     def getDatabaseGroup(self):
         dbName = self.abstractDb.getDatabaseName()
         groupList =  qgis.utils.iface.legendInterface().groups()
-        if dbName in groupList:
-            return groupList.index(dbName)
+        if groupName in groupList:
+            return groupList.index(groupName)
         else:
-            return self.iface.legendInterface().addGroup(dbName, -1)
-    
-    def createGroups(self):
-        pass
+            return self.iface.legendInterface().addGroup(groupName, parent)
+        
+    def createGroup(self, groupList, groupName, parent):
+        if groupName in groupList:
+            return groupList.index(groupName)
+        else:
+            return self.iface.legendInterface().addGroup(groupName, parent)
 
-    def load(self, layerList, useQml = False, idSubgrupo = None, uniqueLoad = False, useInheritance = False, stylePath = None, groupByGeom = True):
+    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, groupByGeom = True):
         '''
         1. Load domains;
         2. Load Layers;
         '''
+        geomDict = self.abstractDb.getGeomDict()
         dbGroup = self.getDatabaseGroup()
+        domainGroup = self.iface.legendInterface().addGroup(self.tr("Dominios"), True, dbGroup)
+        loadedLayers = iface.legendInterface().layers()
+        domLayerDict = self.loadDomains(layerList, loadedLayers,domainGroup)
         
 
         if self.schema <> 'views':
@@ -156,12 +162,40 @@ class PostGISLayer(EDGVLayer):
         vlayer.setCrs(crs)
         pass
 
-    def getDomainsToBeLoaded(self,layerList):
-        self.abstractDb
-        pass
+    def getDomainsFromDb(self,layerList, loadedLayers):
+        domainDict = self.abstractDb.getDomainDict()
+        domainList = []
+        keys = domainDict.keys()
+        for lyr in layerList:
+            if lyr in keys:
+                for attr in domainDict[lyr]['columns']:
+                    dom = domainDict[lyr]['columns']['references']
+                    if dom not in domainList:
+                        domainList.append(dom)
+        return domainList
 
-    def loadDomains(self,domainList):
-        pass
+    def getDomainsToBeLoaded(self, layerList, loadedLayers):
+        domains = self.getDomainsFromDb(layerList)
+        loadedDomains = []
+        for domain in domains:
+            domLyr = self.checkLoaded(domain, loadedLayers)
+            if domLyr:
+                loadedDomains.append(domLyr.name())
+        domainsToBeLoaded = []
+        for domain in domains:
+            if domain not in loadedDomains:
+                domainsToBeLoaded.append(domain)
+        return domainsToBeLoaded
+
+    def loadDomains(self,layerList, loadedLayers, domainGroup):
+        domainsToBeLoaded = self.getDomainsToBeLoaded(layerList, loadedLayers)
+        domLayerDict = dict()
+        for domainTableName in domainsToBeLoaded:
+            uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (self.database, self.host, self.port, self.user, self.password, domainTableName)
+            domLayer = iface.addVectorLayer(uri, domainTableName, self.provider)
+            domLayerDict[domainTableName]=domLayer
+            iface.legendInterface().moveLayer(domLayer, domainIdGroup)
+        return domLayerDict
 
     def getStyleFromDb(self, edgvVersion, className):
         return self.abstractDb.getLyrStyle(edgvVersion,className)
@@ -172,3 +206,5 @@ class PostGISLayer(EDGVLayer):
     def getDomainValuesFromDb(self, lyrName):
         pass
     
+    def loadAuxStructure(self):
+        pass
