@@ -1648,6 +1648,7 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
         geomDict = dict()
         while query.next():
+            #TODO: check if 2.1.3 raises problem, because of empty query
             aux = json.loads(query.value(0))
             geomDict[aux['table_name']]=aux['attributes']
         return geomDict

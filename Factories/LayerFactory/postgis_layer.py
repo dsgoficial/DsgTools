@@ -84,17 +84,28 @@ class PostGISLayer(EDGVLayer):
 
     def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, groupByGeom = True):
         '''
-        1. Load domains;
-        2. Load Layers;
+        1. Get loaded layers
+        2. Load domains;
+        3. Get Aux Dicts;
+        4. Build Groups;
+        5. Load Layers;
         '''
-        geomDict = self.abstractDb.getGeomDict()
+        #1. Get Loaded Layers
+        loadedLayers = iface.legendInterface().layers()
+        #2. Load Domains
         dbGroup = self.getDatabaseGroup()
         domainGroup = self.iface.legendInterface().addGroup(self.tr("Dominios"), True, dbGroup)
-        loadedLayers = iface.legendInterface().layers()
+        #3. Get Aux dicts
+        geomDict = self.abstractDb.getGeomDict()
         domLayerDict = self.loadDomains(layerList, loadedLayers,domainGroup)
+        domainDict = self.abstractDb.getDomainDict()
+        constraintDict = self.abstractDb.getCheckConstraintDict()
+        multiColumnsDict = self.abstractDb.getMultiColumnsDict()
+        #4. Build Groups
         
+        #5. load layers
+            
 
-        if self.schema <> 'views':
             vlayer.loadNamedStyle(vlayerQml, False)
             attrList = vlayer.pendingFields()
             for field in attrList:
@@ -189,6 +200,7 @@ class PostGISLayer(EDGVLayer):
 
     def loadDomains(self,layerList, loadedLayers, domainGroup):
         domainsToBeLoaded = self.getDomainsToBeLoaded(layerList, loadedLayers)
+        domainsToBeLoaded.sort(reverse=True)
         domLayerDict = dict()
         for domainTableName in domainsToBeLoaded:
             uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (self.database, self.host, self.port, self.user, self.password, domainTableName)
