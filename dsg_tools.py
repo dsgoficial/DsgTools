@@ -60,6 +60,8 @@ from DsgTools.AttributeTools.code_list import CodeList
 from DsgTools.AttributeTools.attributes_viewer import AttributesViewer
 from DsgTools.ValidationTools.validation_toolbox import ValidationToolbox
 from DsgTools.ProductionTools.MinimumAreaTool.minimumAreaTool import MinimumAreaTool
+from DsgTools.ProductionTools.InspectFeatures.inspectFeatures import InspectFeatures
+
 from qgis.utils import showPluginHelp
 
 class DsgTools:
@@ -115,6 +117,7 @@ class DsgTools:
 
         self.BDGExTools = BDGExTools()
         self.minimumAreaTool = MinimumAreaTool(iface)
+        self.inspectFeatures = InspectFeatures(iface)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -621,6 +624,8 @@ class DsgTools:
         #self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.attributesViewer)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.validationToolbox)
         self.toolbar.addWidget(self.minimumAreaTool)
+        self.toolbar.addWidget(self.inspectFeatures)
+
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
