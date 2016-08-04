@@ -1681,3 +1681,11 @@ class PostgisDb(AbstractDb):
                 geomDict[aux['f2']] = []
             geomDict[aux['f2']].append(aux['f1'])
         return geomDict
+    
+    def getLayersFilterByInheritance(self, layerList):
+        filter = [i.split('.')[-1] for i in self.getOrphanGeomTables(loading = True)]
+        filtered = []
+        for lyr in layerList:
+            if i in filter:
+                filtered.append(lyr)
+        return filtered

@@ -75,8 +75,20 @@ class AbstractDb(QObject):
                 if not query.exec_(sql):
                     raise Exception(self.tr("Problem counting elements: ")+query.lastError().text())
                 listaQuantidades.append([layer, number])
-        return listaQuantidades     
-
+        return listaQuantidades
+    
+    def getLayersWithElements(self, layerList):
+        self.checkAndOpenDb()
+        lyrWithElemList = []
+        for lyr in layerList:
+            schema=self.getTableSchemaFromDb(lyr)
+            sql = self.gen.getElementCountFromLayer(schema,lyr)
+            query = QSqlQuery(sql,self.db)
+            query.next()
+            if query.value(0) > 1:
+                lyrWithElemList.appen(lyr)
+        return lyrWithElemList
+    
     def findEPSG(self):
         self.checkAndOpenDb()
         sql = self.gen.getSrid()

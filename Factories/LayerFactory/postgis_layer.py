@@ -68,41 +68,94 @@ class PostGISLayer(EDGVLayer):
         self.uri.setDataSource(schema, layer, geomColumn, sql, 'id')
         self.uri.disableSelectAtId(True)
     
-    def getDatabaseGroup(self):
+    def getDatabaseGroup(self, groupList):
         dbName = self.abstractDb.getDatabaseName()
-        groupList =  qgis.utils.iface.legendInterface().groups()
         if groupName in groupList:
             return groupList.index(groupName)
         else:
             return self.iface.legendInterface().addGroup(groupName, parent)
-        
+    
+    def getLyrDict(self, lyrList):
+        lyrDict = dict()
+        lyrList.sort()
+        for lyr in lyrList:
+            cat = lyr.split('_')[0]
+            if lyr[-1] == 'p':
+                if self.tr('Point') not in lyrDict.keys():
+                    lyrDict[self.tr('Point')] = dict()
+                if cat not in lyrDict[self.tr('Point')].keys():
+                    lyrDict[self.tr('Point')][cat] = []
+                lyrDict[self.tr('Point')][cat].append(lyr)
+            if lyr[-1] == 'l':
+                if self.tr('Line') not in lyrDict.keys():
+                    lyrDict[self.tr('Line')] = dict()
+                if cat not in lyrDict[self.tr('Line')].keys():
+                    lyrDict[self.tr('Line')][cat] = []
+                lyrDict[self.tr('Line')][cat].append(lyr)
+            if lyr[-1] == 'a':
+                if self.tr('Area') not in lyrDict.keys():
+                    lyrDict[self.tr('Area')] = dict()
+                if cat not in lyrDict[self.tr('Area')].keys():
+                    lyrDict[self.tr('Area')][cat] = []
+                lyrDict[self.tr('Area')][cat].append(lyr)
+        return lyrDict
+    
+    def prepareGroups(self, groupList, parent, lyrDict):
+        aux = dict()
+        groupDict = dict()
+        for geomNode in lyrDict.keys():
+            groupDict[geomNode] = dict()
+            aux = self.createGroup(groupList, geomNode, parent)
+            for catNode in lyrDict[geomNode].keys():
+                groupDict[geomNode][catNode] = self.createGroup(groupList, catNode, geomNode)
+        return groupDict
+    
     def createGroup(self, groupList, groupName, parent):
         if groupName in groupList:
-            return groupList.index(groupName)
+            return groupList.index(groupName) #verificar
         else:
             return self.iface.legendInterface().addGroup(groupName, parent)
+    
+    def filterLayerList(self, layerList, useInheritance, onlyWithElements):
+        filterList = []
+        if onlyWithElements:
+            lyrsWithElements = self.abstractDb.getLayersWithElements(layerList)
+        else:
+            lyrsWithElements = layerList
+        if useInheritance:
+            finalList = self.abstractDb.getLayersFilterByInheritance(lyrsWithElements)
+        else:
+            finalList = layerList
+        return finalList
 
-    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, groupByGeom = True):
+    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False):
         '''
         1. Get loaded layers
         2. Load domains;
-        3. Get Aux Dicts;
-        4. Build Groups;
-        5. Load Layers;
+        3. Filter layers;
+        4. Get Aux Dicts;
+        5. Build Groups;
+        6. Load Layers;
         '''
         #1. Get Loaded Layers
-        loadedLayers = iface.legendInterface().layers()
+        loadedLayers = self.iface.legendInterface().layers()
+        loadedGroups = self.iface.legendInterface().groups()
         #2. Load Domains
-        dbGroup = self.getDatabaseGroup()
-        domainGroup = self.iface.legendInterface().addGroup(self.tr("Dominios"), True, dbGroup)
+        dbGroup = self.getDatabaseGroup(loadedGroups)
+        domainGroup = self.createGroup(loadedGroups, self.tr("Domains"), dbGroup)
+        #4. Filter Layers:
+        filteredLayerList = self.filterLayerList(layerList, useInheritance, onlyWithElements)
         #3. Get Aux dicts
         geomDict = self.abstractDb.getGeomDict()
-        domLayerDict = self.loadDomains(layerList, loadedLayers,domainGroup)
+        domLayerDict = self.loadDomains(filteredLayerList, loadedLayers,domainGroup)
         domainDict = self.abstractDb.getDomainDict()
         constraintDict = self.abstractDb.getCheckConstraintDict()
         multiColumnsDict = self.abstractDb.getMultiColumnsDict()
+        lyrDict = self.getLyrDict(filteredLayerList)
         #4. Build Groups
-        
+        groupDict = self.prepareGroups(loadedGroups, dbGroup, filteredLayerList)
+        if onlyWithElements:
+            lyrsWithElements = self.abstractDb.getLayersWithElements(filteredLayerList)
         #5. load layers
             
 

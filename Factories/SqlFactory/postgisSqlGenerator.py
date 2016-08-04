@@ -79,8 +79,8 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "INSERT INTO aux_moldura_a(geom) VALUES(ST_GeomFromText("+wkt+"))"
         return sql
 
-    def getElementCountFromLayer(self, layer):
-        sql = "SELECT count(*) FROM ONLY "+layer
+    def getElementCountFromLayer(self, schema, table):
+        sql = "SELECT count(id) FROM ONLY {0}.{1} limit 1".format(schema,table)
         return sql
 
     def getElementCountFromLayerWithInh(self, layer):
