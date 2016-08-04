@@ -11,7 +11,6 @@
         mod history          : 2015-04-12 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : luiz.claudio@dsg.eb.mil.br
  ***************************************************************************/
-
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -69,7 +68,6 @@ class DsgTools:
 
     def __init__(self, iface):
         """Constructor.
-
         :param iface: An interface instance that will be passed to this class
             which provides the hook by which you can manipulate the QGIS
             application at run time.
@@ -122,12 +120,9 @@ class DsgTools:
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
-
         We implement this ourselves since we do not inherit QObject.
-
         :param message: String for translation.
         :type message: str, QString
-
         :returns: Translated version of message.
         :rtype: QString
         """
@@ -147,39 +142,29 @@ class DsgTools:
         whats_this=None,
         parent=None):
         """Add a toolbar icon to the InaSAFE toolbar.
-
         :param icon_path: Path to the icon for this action. Can be a resource
             path (e.g. ':/plugins/foo/bar.png') or a normal file system path.
         :type icon_path: str
-
         :param text: Text that should be shown in menu items for this action.
         :type text: str
-
         :param callback: Function to be called when the action is triggered.
         :type callback: function
-
         :param enabled_flag: A flag indicating if the action should be enabled
             by default. Defaults to True.
         :type enabled_flag: bool
-
         :param add_to_menu: Flag indicating whether the action should also
             be added to the menu. Defaults to True.
         :type add_to_menu: bool
-
         :param add_to_toolbar: Flag indicating whether the action should also
             be added to the toolbar. Defaults to True.
         :type add_to_toolbar: bool
-
         :param status_tip: Optional text to show in a popup when mouse pointer
             hovers over the action.
         :type status_tip: str
-
         :param parent: Parent widget for the new action. Defaults None.
         :type parent: QWidget
-
         :param whats_this: Optional text to show in the status bar when the
             mouse pointer hovers over the action.
-
         :returns: The action that was created. Note that the action is also
             added to self.actions list.
         :rtype: QAction
