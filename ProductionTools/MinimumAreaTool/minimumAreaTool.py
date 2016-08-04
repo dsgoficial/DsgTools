@@ -26,12 +26,14 @@ import os
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
-import resources 
 from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject
-import qgis.utils
-from DsgTools.ProductionTools.MinimumAreaTool.shapeTool import ShapeTool
-from PyQt4.QtGui import QSplitter, QPushButton, QComboBox, QIcon, QMessageBox
 from PyQt4.Qt import QWidget, QObject
+
+#qgis imports
+import qgis.utils
+from qgis.gui import QgsMessageBar
+#DsgTools Imports
+from DsgTools.ProductionTools.MinimumAreaTool.shapeTool import ShapeTool
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'minimumAreaTool.ui'))
@@ -42,8 +44,6 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         super(MinimumAreaTool, self).__init__(parent)
         self.setupUi(self)
         self.iface = iface
-        self.canvas = self.iface.mapCanvas()
-        self.valuees={}
         self.scale = None
         self.shape = None
         self.size = None
@@ -61,14 +61,8 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         self.sizes[u"0.8mm"] = {self.tr('value'): 0.8,self.tr('type'): self.tr('distance')}
     
     @pyqtSlot(int)
-    def on_scalesComboBox_currentIndexChanged(self):
-        if self.scalesComboBox.currentIndex() <> 0:
-            self.scale = self.scalesComboBox.currentText()
-    
-    @pyqtSlot(int)
     def on_sizesComboBox_currentIndexChanged(self):
         if self.sizesComboBox.currentIndex() <> 0:
-            self.size = self.sizesComboBox.currentText()
             if self.sizesComboBox.currentText() == '0.8mm':
                 self.shapesComboBox.setCurrentIndex(2)
                 self.shapesComboBox.setEnabled(False)
@@ -78,7 +72,6 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
     @pyqtSlot(int)
     def on_shapesComboBox_currentIndexChanged(self):
         if self.shapesComboBox.currentIndex() <> 0:
-            self.shape = self.shapesComboBox.currentText()
             if self.sizesComboBox.currentText() == '0.8mm':
                 self.shapesComboBox.setCurrentIndex(2)
                 self.shapesComboBox.setEnabled(False)
@@ -87,28 +80,35 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_drawShape_clicked(self):
-        if self.scale and self.size and self.shape:
-            self.run()
+        scale = self.scalesComboBox.currentText()
+        size = self.sizesComboBox.currentText()
+        shape = self.shapesComboBox.currentText()
+        validated = self.validateCombos(scale, size, shape)
+        if validated:
+            crs = self.iface.mapCanvas().mapRenderer().destinationCrs()
+            if crs.mapUnits() == 2:
+                self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('This tool does not work with angular unit reference system!'), level=QgsMessageBar.WARNING, duration=3)
+            else:
+                self.run(scale, size, shape)
         else:
-            QMessageBox.warning(self.iface.mainWindow(), self.tr(u"Error!"), self.tr(u"<font color=red>Shape value not defined :</font><br><font color=blue>Define all values to activate tool!</font>"), QMessageBox.Close)    
+            QMessageBox.warning(self.iface.mainWindow(), self.tr(u"Error!"), self.tr(u"<font color=red>Shape value not defined :</font><br><font color=blue>Define all values to activate tool!</font>"), QMessageBox.Close)              
     
-    def unload(self):
-        try:
-            self.iface.mapCanvas().unsetMapTool(self.tool)
-
-        except:
-            pass           
-    
-    def run(self):
-        if (self.sizes[self.size][self.tr('type')] == self.tr('area')):
-            param = (float(self.scale)**2)*float(self.sizes[self.size][self.tr('value')])
+    def run(self, scale, size, shape):
+        if (self.sizes[size][self.tr('type')] == self.tr('area')):
+            param = (float(scale)**2)*float(self.sizes[size][self.tr('value')])
         else:
-            param = float(self.scale)*float(self.sizes[self.size][self.tr('value')])
-        self.tool = ShapeTool(self.iface.mapCanvas(), self.shape, param, self.sizes[self.size][self.tr('type')] )
-        self.tool.toolFinished.connect(self.refreshCombo)
-        self.tool.setCursor(self.tool)        
-        self.iface.mapCanvas().setMapTool(self.tool)            
+            param = float(scale)*float(self.sizes[size][self.tr('value')])
+        tool = ShapeTool(self.iface.mapCanvas(), shape, param, self.sizes[size][self.tr('type')] )
+        tool.toolFinished.connect(self.refreshCombo)
+        tool.setCursor(tool)
+        self.iface.mapCanvas().setMapTool(tool)         
 
     def refreshCombo(self):
         self.shapesComboBox.setEnabled(True)
+    
+    def validateCombos(self,scale,size,shape):
+        if scale <> 0 and size <> 0 and shape <> 0:
+            return True
+        else:
+            return False
 
