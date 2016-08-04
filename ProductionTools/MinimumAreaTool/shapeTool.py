@@ -75,20 +75,21 @@ class ShapeTool(QgsMapTool):
             self.showRect(self.endPoint, self.param)
 
     def showCircle(self, startPoint):
+        nPoints = 50
         if self.type == self.tr('distance'):
             r = self.param
             self.rubberBand.reset(QGis.Polygon)
             center = startPoint
-            for itheta in range(100+1):
-                theta = itheta*(2.0*pi/100)
+            for itheta in range(nPoints+1):
+                theta = itheta*(2.0*pi/nPoints)
                 self.rubberBand.addPoint(QgsPoint(center.x()+r*cos(theta), center.y()+r*sin(theta)))
             self.rubberBand.show()
         else:
             r = sqrt(self.param/pi)
             self.rubberBand.reset(QGis.Polygon)
             center = startPoint            
-            for itheta in range(100+1):
-                theta = itheta*(2.0*pi/100)
+            for itheta in range(nPoints+1):
+                theta = itheta*(2.0*pi/nPoints)
                 self.rubberBand.addPoint(QgsPoint(center.x()+r*cos(theta), center.y()+r*sin(theta)))
             self.rubberBand.show()
             

@@ -10,6 +10,7 @@
         copyright            : (C) 2015 by Brazilian Army - Geographic Service Bureau
         email                : suporte.dsgtools@dsg.eb.mil.br
  ***************************************************************************/
+
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -39,7 +40,7 @@ from DsgTools.Utils.utils import Utils
 class EDGVLayer(QObject):
     qmlLoaded = pyqtSignal()
     
-    def __init__(self, abstractDb, codeList):
+    def __init__(self, iface, abstractDb, codeList):
         """Constructor."""
         super(EDGVLayer, self).__init__()
         
@@ -47,6 +48,7 @@ class EDGVLayer(QObject):
         self.codeList = codeList
         self.uri = QgsDataSourceURI()
         self.qmlLoaded.connect(self.codeList.setState)  
+        self.iface = iface
         self.utils = Utils()    
         
     def load(self, crs, idSubgrupo = None):
@@ -86,3 +88,5 @@ class EDGVLayer(QObject):
         elif layer.geometryType() == QGis.Line:
             layer.addExpressionField('$length', QgsField('comprimento_otf', QVariant.Double))
         return layer
+    
+        

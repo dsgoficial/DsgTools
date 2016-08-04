@@ -10,6 +10,7 @@
         copyright            : (C) 2015 by Brazilian Army - Geographic Service Bureau
         email                : suporte.dsgtools@dsg.eb.mil.br
  ***************************************************************************/
+
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -33,39 +34,32 @@ from qgis.utils import iface
 #DsgTools imports
 from DsgTools.Factories.LayerFactory.edgv_layer import EDGVLayer
 
-class PostGISLayer(EDGVLayer):
+class SpatialiteLayer(EDGVLayer):
     def __init__(self, abstractDb, codeList, table):
         """Constructor."""
-        super(PostGISLayer, self).__init__(abstractDb, codeList)
+        super(SpatialiteLayer, self).__init__(abstractDb, codeList)
         
-        self.provider = 'postgres'
+        self.provider = 'spatialite'
         
         self.schema, self.layer_name = abstractDb.getTableSchema(table)
-        if table[-1] == 'c':
-            layer = self.layer_name[:-1]+self.layer_name[-1].replace('c','a')
-        else:
-            layer = self.layer_name
         
-        if table[-1] == 'c':
-            sql = abstractDb.gen.loadLayerFromDatabase(table[:-1]+table[-1].replace('c','a'))
+        try:
+            dbVersion = abstractDb.getDatabaseVersion()
+        except Exception as e:
+            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            return
+            
+        if dbVersion == '3.0' or dbVersion == '2.1.3' or dbVersion == 'FTer_2a_Ed':
+            self.qmlName = '_'.join(table.replace('\r', '').split('_')[1::])
         else:
-            sql = abstractDb.gen.loadLayerFromDatabase(table)
-
-        self.qmlName = layer.replace('\r','')
-
-        self.host = abstractDb.db.hostName()
-        self.port = abstractDb.db.port()
-        self.database = abstractDb.db.databaseName()
-        self.user = abstractDb.db.userName()
-        self.password = abstractDb.db.password()
-        
-        self.uri.setConnection(str(self.host),str(self.port), str(self.database), str(self.user), str(self.password))
+            self.qmlName = table.replace('\r','')
+            
+        self.uri.setDatabase(abstractDb.db.databaseName())
         if self.layer_name[-1] == 'c':
-            geomColumn = 'centroid'
+            geomColumn = 'CENTROID'
         else:
-            geomColumn = 'geom'
-        self.uri.setDataSource(self.schema, layer, geomColumn, sql, 'id')
-        self.uri.disableSelectAtId(True)
+            geomColumn = 'GEOMETRY'
+        self.uri.setDataSource('', table, geomColumn)
 
     def checkLoaded(self, name):
         loadedLayers = iface.legendInterface().layers()
@@ -73,7 +67,7 @@ class PostGISLayer(EDGVLayer):
         for ll in loadedLayers:
             if ll.name() == name:
                 candidateUri = QgsDataSourceURI(ll.dataProvider().dataSourceUri())
-                if self.host == candidateUri.host() and self.database == candidateUri.database() and self.port == int(candidateUri.port()):
+                if database == candidateUri.database():
                     return ll
         return loaded
 
@@ -82,9 +76,6 @@ class PostGISLayer(EDGVLayer):
             lyr = self.checkLoaded(self.layer_name)
             if lyr:
                 return lyr
-        
-        if useInheritance:
-            self.uri.setSql('')
         qmldir = ''
         try:
             qmldir = self.abstractDb.getQmlDir()
@@ -94,12 +85,8 @@ class PostGISLayer(EDGVLayer):
             return None
 
         vlayerQml = os.path.join(qmldir, self.qmlName+'.qml')
-        
-        host = self.abstractDb.db.hostName()
-        port = self.abstractDb.db.port()
+
         database = self.abstractDb.db.databaseName()
-        user = self.abstractDb.db.userName()
-        password = self.abstractDb.db.password()
 
         vlayer = iface.addVectorLayer(self.uri.uri(), self.layer_name, self.provider)
         if not vlayer:
@@ -114,11 +101,12 @@ class PostGISLayer(EDGVLayer):
                 if vlayer.editorWidgetV2(i) == 'ValueRelation':
                     groupList = iface.legendInterface().groups()
                     groupRelationshipList = iface.legendInterface().groupLayerRelationship()
-                    if database not in groupList:
-                        idx = iface.legendInterface().addGroup(database, True,-1)
+                    filename = os.path.basename(database).split('.')[0]
+                    if filename not in groupList:
+                        idx = iface.legendInterface().addGroup(filename, True,-1)
                         domainIdGroup = iface.legendInterface().addGroup(self.tr("Dominios"), True, idx)
                     else:
-                        idx = groupList.index(database)
+                        idx = groupList.index(filename)
                         if "Dominios" not in groupList[idx::]:
                             domainIdGroup = iface.legendInterface().addGroup(self.tr("Dominios"), True, idx)
                         else:
@@ -131,23 +119,26 @@ class PostGISLayer(EDGVLayer):
                     for ll in loadedLayers:
                         if ll.name() == domainTableName:
                             candidateUri = QgsDataSourceURI(ll.dataProvider().dataSourceUri())
-                            if host == candidateUri.host() and database == candidateUri.database() and port == int(candidateUri.port()):
+                            if database == candidateUri.database():
                                 domainLoaded = True
                                 domLayer = ll
                     if not domainLoaded:
-                        uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (database, host, port, user, password, domainTableName)
+                        uri = QgsDataSourceURI()
+                        uri.setDatabase(database)
+                        uri.setDataSource('', 'dominios_'+domainTableName, None)
                         #TODO Load domain layer into a group
-                        domLayer = iface.addVectorLayer(uri, domainTableName, self.provider)
+                        domLayer = iface.addVectorLayer(uri.uri(), domainTableName, self.provider)
                         iface.legendInterface().moveLayer(domLayer, domainIdGroup)
                     valueRelationDict['Layer'] = domLayer.id()
                     vlayer.setEditorWidgetV2Config(i,valueRelationDict)
     
             self.qmlLoaded.emit()
-        
+
         if stylePath:
             fullPath = self.getStyle(stylePath, self.qmlName)
             if fullPath:
-                vlayer.applyNamedStyle(fullPath)
+                style = self.utils.parseStyle(fullPath)
+                vlayer.applyNamedStyle(style)
 
         iface.legendInterface().moveLayer(vlayer, idSubgrupo)
             
@@ -160,4 +151,4 @@ class PostGISLayer(EDGVLayer):
         pass
 
     def getStyleFromDb(self, edgvVersion, className):
-        return self.abstractDb.getLyrStyle(edgvVersion,className)
+        return None

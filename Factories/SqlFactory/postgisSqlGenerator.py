@@ -79,7 +79,11 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "INSERT INTO aux_moldura_a(geom) VALUES(ST_GeomFromText("+wkt+"))"
         return sql
 
-    def getElementCountFromLayer(self, schema, table):
+    def getElementCountFromLayer(self, table):
+        sql = "SELECT count(id) FROM ONLY {0} limit 1".format(table)
+        return sql
+    
+    def getElementCountFromLayerV2(self, schema, table):
         sql = "SELECT count(id) FROM ONLY {0}.{1} limit 1".format(schema,table)
         return sql
 
@@ -927,4 +931,8 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def getNotNullDict(self):
         sql = """select row_to_json(row(table_name, table_schema,  array_agg(column_name::text))) from information_schema.columns where table_name in (select distinct f_table_name from public.geometry_columns) and is_nullable = 'NO' and data_type = 'smallint' group by table_name, table_schema"""
+        return sql
+    
+    def getDomainDict(self, domainTable):
+        sql = """select row_to_json(row(code, code_name)) from {0}""".format(domainTable)
         return sql

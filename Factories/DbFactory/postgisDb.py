@@ -1512,6 +1512,11 @@ class PostgisDb(AbstractDb):
         return schemaList
     
     def getGeomDict(self, getCentroids = False):
+        '''
+        returns a dict like this:
+        {'tablePerspective' : {
+            'layerName' :
+        '''
         self.checkAndOpenDb()
         sql = self.gen.getGeomTablesFromGeometryColumns()
         query = QSqlQuery(sql, self.db)
@@ -1545,9 +1550,9 @@ class PostgisDb(AbstractDb):
         returns a dict like this:
         {'adm_posto_fiscal_a': {
             'columns':{
-                'operacional': {'references':'dominios.operacional', 'refPk':'code'}
-                'situacaofisica': {'references':'dominios.situacaofisica', 'refPk':'code'}
-                'tipopostofisc': {'references':'dominios.tipopostofisc', 'refPk':'code'}
+                'operacional': {'references':'dominios.operacional', 'refPk':'code', 'values':{-dict of code_name:value -}}
+                'situacaofisica': {'references':'dominios.situacaofisica', 'refPk':'code', 'values':{-dict of code_name:value -}}
+                'tipopostofisc': {'references':'dominios.tipopostofisc', 'refPk':'code', 'values':{-dict of code_name:value -}}
                 }
             }
         }
@@ -1570,6 +1575,7 @@ class PostgisDb(AbstractDb):
                 geomDict[tableName]['columns'][fkAttribute] = dict()
             geomDict[tableName]['columns'][fkAttribute]['references'] = domainTable
             geomDict[tableName]['columns'][fkAttribute]['refPk'] = domainReferencedAttribute
+            geomDict[tableName]['columns'][fkAttribute]['values'] = self.getDomainDict(domainTable)
         return geomDict
     
     def getCheckConstraintDict(self):
@@ -1639,6 +1645,9 @@ class PostgisDb(AbstractDb):
         return tableName, attribute, checkList
     
     def getMultiColumnsDict(self):
+        '''
+        { 'table_name':[-list of columns-] } 
+        '''
         self.checkAndOpenDb()
         #gets only schemas of classes with geom, to speed up the process.
         schemaList = self.getGeomSchemaList()
@@ -1690,7 +1699,7 @@ class PostgisDb(AbstractDb):
                 filtered.append(lyr)
         return filtered
 
-    def getNotNullDict(self):
+    def getNotNullDictV2(self):
         '''
         Dict in the form 'geomName': { 'schema':-name of the schema'
                                         'attributes':[-list of table names-]}
@@ -1710,3 +1719,14 @@ class PostgisDb(AbstractDb):
                 notNullDict[aux['f1']]['attributes'] = []
             notNullDict[aux['f1']]['attributes'].append(aux['f3'])
         return notNullDict
+    
+    def getDomainDict(self, domainTable):
+        self.checkAndOpenDb()
+        sql = self.gen.getDomainDict(domainTable)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting domain dict from table ")+domainTable+':'+query.lastError().text())
+        domainDict = dict()
+        while query.next():
+            aux = json.loads(query.value(0))
+            domainDict[aux['f2']] = aux['f1']
+        return domainDict
