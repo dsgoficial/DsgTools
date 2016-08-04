@@ -924,3 +924,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def getGeomColumnDict(self):
         sql = """select row_to_json(row(f_table_schema||'.'||f_table_name, f_geometry_column)) from public.geometry_columns"""
         return sql
+    
+    def getNotNullDict(self):
+        sql = """select row_to_json(row(table_name, table_schema,  array_agg(column_name::text))) from information_schema.columns where table_name in (select distinct f_table_name from public.geometry_columns) and is_nullable = 'NO' and data_type = 'smallint' group by table_name, table_schema"""
+        return sql

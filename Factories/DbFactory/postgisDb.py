@@ -1689,3 +1689,24 @@ class PostgisDb(AbstractDb):
             if i in filter:
                 filtered.append(lyr)
         return filtered
+
+    def getNotNullDict(self):
+        '''
+        Dict in the form 'geomName': { 'schema':-name of the schema'
+                                        'attributes':[-list of table names-]}
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.getNotNullDict()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting not null dict: ")+query.lastError().text())
+        notNullDict = dict()
+        while query.next():
+            aux = json.loads(query.value(0))
+            if aux['f1'] not in notNullDict.keys():
+                notNullDict[aux['f1']] = dict()
+            notNullDict[aux['f1']]['schema'] = aux['f2']
+            if 'attributes' not in notNullDict[aux['f1']].keys():
+                notNullDict[aux['f1']]['attributes'] = []
+            notNullDict[aux['f1']]['attributes'].append(aux['f3'])
+        return notNullDict

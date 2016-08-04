@@ -131,8 +131,8 @@ class PostGISLayer(EDGVLayer):
     def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False):
         '''
         1. Get loaded layers
-        2. Load domains;
-        3. Filter layers;
+        2. Filter layers;
+        3. Load domains;
         4. Get Aux Dicts;
         5. Build Groups;
         6. Load Layers;
@@ -140,91 +140,107 @@ class PostGISLayer(EDGVLayer):
         #1. Get Loaded Layers
         loadedLayers = self.iface.legendInterface().layers()
         loadedGroups = self.iface.legendInterface().groups()
+        #4. Filter Layers:
+        filteredLayerList = self.filterLayerList(layerList, useInheritance, onlyWithElements)
         #2. Load Domains
         dbGroup = self.getDatabaseGroup(loadedGroups)
         domainGroup = self.createGroup(loadedGroups, self.tr("Domains"), dbGroup)
-        #4. Filter Layers:
-        filteredLayerList = self.filterLayerList(layerList, useInheritance, onlyWithElements)
+        domLayerDict = self.loadDomains(filteredLayerList, loadedLayers,domainGroup)
         #3. Get Aux dicts
         geomDict = self.abstractDb.getGeomDict()
-        domLayerDict = self.loadDomains(filteredLayerList, loadedLayers,domainGroup)
         domainDict = self.abstractDb.getDomainDict()
         constraintDict = self.abstractDb.getCheckConstraintDict()
         multiColumnsDict = self.abstractDb.getMultiColumnsDict()
         lyrDict = self.getLyrDict(filteredLayerList)
         #4. Build Groups
         groupDict = self.prepareGroups(loadedGroups, dbGroup, filteredLayerList)
-        if onlyWithElements:
-            lyrsWithElements = self.abstractDb.getLayersWithElements(filteredLayerList)
         #5. load layers
-            
+        for prim in lyrDict.keys():
+            for cat in lyrDict[prim].keys():
+                self.loadLayer(lyrDict[prim][cat],groupDict[prim][cat], useInheritance, useQml,uniqueLoad,stylePath,geomDict,domainDict,constraintDict,multiColumnsDict)
+# 
+#             vlayer.loadNamedStyle(vlayerQml, False)
+#             attrList = vlayer.pendingFields()
+#             for field in attrList:
+#                 i = vlayer.fieldNameIndex(field.name())
+#                 if vlayer.editorWidgetV2(i) == 'ValueRelation':
+#                     groupList = iface.legendInterface().groups()
+#                     groupRelationshipList = iface.legendInterface().groupLayerRelationship()
+#                     if database not in groupList:
+#                         idx = iface.legendInterface().addGroup(database, True,-1)
+#                         domainIdGroup = iface.legendInterface().addGroup(self.tr("Dominios"), True, idx)
+#                     else:
+#                         idx = groupList.index(database)
+#                         if "Dominios" not in groupList[idx::]:
+#                             domainIdGroup = iface.legendInterface().addGroup(self.tr("Dominios"), True, idx)
+#                         else:
+#                             domainIdGroup = groupList[idx::].index("Dominios")
+#     
+#                     valueRelationDict = vlayer.editorWidgetV2Config(i)
+#                     domainTableName = valueRelationDict['Layer']
+#                     loadedLayers = iface.legendInterface().layers()
+#                     domainLoaded = False
+#                     for ll in loadedLayers:
+#                         if ll.name() == domainTableName:
+#                             candidateUri = QgsDataSourceURI(ll.dataProvider().dataSourceUri())
+#                             if host == candidateUri.host() and database == candidateUri.database() and port == int(candidateUri.port()):
+#                                 domainLoaded = True
+#                                 domLayer = ll
+#                     if not domainLoaded:
+#                         uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (database, host, port, user, password, domainTableName)
+#                         #TODO Load domain layer into a group
+#                         domLayer = iface.addVectorLayer(uri, domainTableName, self.provider)
+#                         iface.legendInterface().moveLayer(domLayer, domainIdGroup)
+#                     valueRelationDict['Layer'] = domLayer.id()
+#                     vlayer.setEditorWidgetV2Config(i,valueRelationDict)
+#             self.qmlLoaded.emit()
+#         
+#         if stylePath:
+#             fullPath = self.getStyle(stylePath, self.qmlName)
+#             if fullPath:
+#                 vlayer.applyNamedStyle(fullPath)
+# 
+#         iface.legendInterface().moveLayer(vlayer, idSubgrupo)
+#             
+#         if not vlayer.isValid():
+#             QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+#         vlayer = self.createMeasureColumn(vlayer)
+#         return vlayer
 
-            vlayer.loadNamedStyle(vlayerQml, False)
-            attrList = vlayer.pendingFields()
-            for field in attrList:
-                i = vlayer.fieldNameIndex(field.name())
-                if vlayer.editorWidgetV2(i) == 'ValueRelation':
-                    groupList = iface.legendInterface().groups()
-                    groupRelationshipList = iface.legendInterface().groupLayerRelationship()
-                    if database not in groupList:
-                        idx = iface.legendInterface().addGroup(database, True,-1)
-                        domainIdGroup = iface.legendInterface().addGroup(self.tr("Dominios"), True, idx)
-                    else:
-                        idx = groupList.index(database)
-                        if "Dominios" not in groupList[idx::]:
-                            domainIdGroup = iface.legendInterface().addGroup(self.tr("Dominios"), True, idx)
-                        else:
-                            domainIdGroup = groupList[idx::].index("Dominios")
-    
-                    valueRelationDict = vlayer.editorWidgetV2Config(i)
-                    domainTableName = valueRelationDict['Layer']
-                    loadedLayers = iface.legendInterface().layers()
-                    domainLoaded = False
-                    for ll in loadedLayers:
-                        if ll.name() == domainTableName:
-                            candidateUri = QgsDataSourceURI(ll.dataProvider().dataSourceUri())
-                            if host == candidateUri.host() and database == candidateUri.database() and port == int(candidateUri.port()):
-                                domainLoaded = True
-                                domLayer = ll
-                    if not domainLoaded:
-                        uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (database, host, port, user, password, domainTableName)
-                        #TODO Load domain layer into a group
-                        domLayer = iface.addVectorLayer(uri, domainTableName, self.provider)
-                        iface.legendInterface().moveLayer(domLayer, domainIdGroup)
-                    valueRelationDict['Layer'] = domLayer.id()
-                    vlayer.setEditorWidgetV2Config(i,valueRelationDict)
-            self.qmlLoaded.emit()
-        
+    def loadLayer(self, lyrName, idSubgrupo, useInheritance, useQml, uniqueLoad,stylePath,geomDict,domainDict,constraintDict,multiColumnsDict):
+        if uniqueLoad:
+            lyr = self.checkLoaded(lyrName)
+            if lyr:
+                return lyr
+        if useInheritance:
+            sql = ''
+        schema = geomDict['tablePerspective'][lyrName]['schema']
+        geomColumn = geomDict['tablePerspective'][lyrName]['geometryColumn']
+        crs =  geomDict['tablePerspective'][lyrName]['srid']
+        sql = self.abstractDb.gen.loadLayerFromDatabase(schema+'.'+lyrName)
+        self.setDataSource(schema, layer, geomColumn, sql)
+
+        vlayer = iface.addVectorLayer(self.uri.uri(), lyrName, self.provider)
+        vlayer.setCrs(crs)
+        if useQml:
+            qmldir = ''
+            try:
+                qmldir = self.abstractDb.getQmlDir()
+            except Exception as e:
+                self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
+                QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return None
+            vlayerQml = os.path.join(qmldir, self.qmlName+'.qml')
+        else:
+            vlayer = self.setDomainsAndRestrictions(vlayer, domainDict, constraintDict, multiColumnsDict)
         if stylePath:
             fullPath = self.getStyle(stylePath, self.qmlName)
             if fullPath:
                 vlayer.applyNamedStyle(fullPath)
-
-        iface.legendInterface().moveLayer(vlayer, idSubgrupo)
-            
+        iface.legendInterface().moveLayer(vlayer, idSubgrupo)   
         if not vlayer.isValid():
             QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         vlayer = self.createMeasureColumn(vlayer)
-        return vlayer
-
-    def loadLayer(self, lyrName, uniqueLoad = False, useInheritance = False, stylePath = None):
-        if uniqueLoad:
-            lyr = self.checkLoaded(self.layer_name)
-            if lyr:
-                return lyr
-        if useInheritance:
-            self.uri.setSql('')
-        qmldir = ''
-        try:
-            qmldir = self.abstractDb.getQmlDir()
-        except Exception as e:
-            self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            return None
-        vlayerQml = os.path.join(qmldir, self.qmlName+'.qml')
-        vlayer = iface.addVectorLayer(self.uri.uri(), self.layer_name, self.provider)
-        vlayer.setCrs(crs)
-        pass
 
     def getDomainsFromDb(self,layerList, loadedLayers):
         domainDict = self.abstractDb.getDomainDict()
@@ -268,8 +284,15 @@ class PostGISLayer(EDGVLayer):
     def isLoaded(self,lyr):
         return False
 
-    def getDomainValuesFromDb(self, lyrName):
-        pass
-    
-    def loadAuxStructure(self):
-        pass
+    def setDomainsAndRestrictions(self, lyr, domainDict,constraintDict,multiColumnsDict):
+        lyrAttributes = lyr.pendingFields()
+        for i in len(lyrAttributes):
+            if lyrAttributes[i] == 'id' or 'id_' in lyrAttributes[i]:
+                pass
+            else:
+                if lyr in domainDict.keys():
+                    if lyrAttributes[i] in domainDict[lyr]['columns'].keys():
+                        refTable = domainDict[lyr]['columns'][attr]['references']
+                        refPk = domainDict[lyr]['columns'][attr]['refPk']
+                        filter = 
+        return lyr
