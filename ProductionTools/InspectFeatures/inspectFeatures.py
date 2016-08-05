@@ -137,6 +137,6 @@ class InspectFeatures(QWidget,FORM_CLASS):
     def zoomFeature(self, zoom):
         self.iface.actionZoomToSelected().trigger()
         if self.canvas.currentLayer().geometryType() == 0 :
-            self.iface.mapCanvas().zoomScales(str(zoom))
+            self.iface.mapCanvas().zoomScale(float(1/zoom))
         
         
