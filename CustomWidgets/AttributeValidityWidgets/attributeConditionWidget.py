@@ -47,4 +47,4 @@ class AttributeConditionWidget(QtGui.QWidget, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
 
- 
+
