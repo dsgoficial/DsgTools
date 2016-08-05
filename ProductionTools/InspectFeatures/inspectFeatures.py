@@ -26,6 +26,8 @@ from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.Qt import QWidget, QObject
 
+from qgis.core import QgsMapLayer
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'inspectFeatures.ui'))
 
@@ -36,8 +38,20 @@ class InspectFeatures(QWidget,FORM_CLASS):
         super(InspectFeatures, self).__init__(parent)
         self.setupUi(self)
         self.iface = iface
+        self.iface.currentLayerChanged.connect(self.enableScale)
+        self.mScaleWidget.setScaleString('1:40000')
+        self.mScaleWidget.setEnabled(False)
         self.canvas = self.iface.mapCanvas()
         self.AllLayers={}
+        
+    def enableScale(self):
+        currentLayer = self.iface.activeLayer()
+        if QgsMapLayer is not None and currentLayer:
+                if currentLayer.type() == QgsMapLayer.VectorLayer:
+                    if currentLayer.geometryType() == 0:
+                        self.mScaleWidget.setEnabled(True)
+                    else:
+                        self.mScaleWidget.setEnabled(False)
  
     @pyqtSlot(bool)
     def on_nextInspectButton_clicked(self):
@@ -123,6 +137,6 @@ class InspectFeatures(QWidget,FORM_CLASS):
     def zoomFeature(self, zoom):
         self.iface.actionZoomToSelected().trigger()
         if self.canvas.currentLayer().geometryType() == 0 :
-            self.iface.mapCanvas().zoomScale(float(zoom))
+            self.iface.mapCanvas().zoomScales(str(zoom))
         
         
