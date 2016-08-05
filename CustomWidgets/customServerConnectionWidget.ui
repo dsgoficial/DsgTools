@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CustomServerConnectionWidget</class>
+ <widget class="QDialog" name="CustomServerConnectionWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>757</width>
+    <height>245</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Manage Databases from a Server</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <widget class="QTabWidget" name="serverConnectionTab">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Postgis</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0" colspan="2">
+        <widget class="ExploreServerWidget" name="serverWidget" native="true"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QComboBox" name="postgisEdgvComboFilter">
+         <item>
+          <property name="text">
+           <string>Load EDGV 2.1.3</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Load EDGV FTer 2a Ed</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>569</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="CustomSelector" name="postgisCustomSelector" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Spatialite</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0" colspan="2">
+        <widget class="SelectFileWidget" name="customFileSelector" native="true"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QComboBox" name="spatialiteEdgvComboFilter">
+         <item>
+          <property name="text">
+           <string>Load EDGV 2.1.3</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Load EDGV FTer 2a Ed</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>569</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="CustomSelector" name="spatialiteCustomSelector" native="true"/>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ExploreServerWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.exploreServerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CustomSelector</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.customSelector.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SelectFileWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.selectFileWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

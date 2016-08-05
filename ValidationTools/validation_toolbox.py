@@ -44,10 +44,14 @@ from DsgTools.ValidationTools.validation_config import ValidationConfig
 from DsgTools.ValidationTools.validationManager import ValidationManager
 from DsgTools.ValidationTools.validation_history import ValidationHistory
 from DsgTools.ValidationTools.rules_editor import RulesEditor
+from DsgTools.ValidationTools.ValidationProcesses.spatialRuleEnforcer import SpatialRuleEnforcer
+from DsgTools.ValidationTools.attributeRulesEditor import AttributeRulesEditor
 
 class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     def __init__(self, iface, codeList):
-        """Constructor."""
+        """
+        Constructor
+        """
         super(ValidationToolbox, self).__init__()
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -55,7 +59,6 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        #TODO enable tab when db is set
         self.layerFactory = LayerFactory()
         self.edgvLayer = None
         self.flagLyr = None
@@ -67,8 +70,12 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.validationManager = None
         self.tableView.setContextMenuPolicy(Qt.CustomContextMenu)
         self.tableView.customContextMenuRequested.connect(self.createMenuEditFlagStatus)
+        self.ruleEnforcer = None
 
     def createMenuEditFlagStatus(self, position):
+        '''
+        Creates the flag menu
+        '''
         menu = QMenu()
         item = self.tableView.indexAt(position)
         if item:
@@ -79,15 +86,27 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     
     @pyqtSlot()
     def on_theSelectionModel_selectionChanged(self):
+        '''
+        To do.
+        '''
         print 'mudou'
     
     def setFlagVisited(self):
+        '''
+        To do
+        '''
         print 'visited'
 
     def setFlagUnvisited(self):
+        '''
+        To do
+        '''
         print 'unvisited'
     
     def zoomToFlag(self):
+        '''
+        Zooms the map canvas to the current selected flag
+        '''
         idx =  self.tableView.selectionModel().selection().indexes()[0].data()
         
         dimension = self.tableView.selectionModel().selection().indexes()[6].data()
@@ -108,6 +127,10 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.iface.mapCanvas().refresh()
     
     def loadFlagLyr(self, layer):
+        '''
+        Loads the flag layer. It checks if the flag layer is already loaded, case not, it loads the flag layer into the TOC
+        layer: layer name
+        '''
         if not self.checkFlagsLoaded(layer):
             dbName = self.configWindow.widget.abstractDb.getDatabaseName()
             edgvLayer = self.layerFactory.makeLayer(self.configWindow.widget.abstractDb, self.codeList, 'validation.'+layer)
@@ -124,6 +147,10 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
                     return lyr
     
     def checkFlagsLoaded(self, layer):
+        '''
+        Checks if the flag layer is already loaded
+        layer: layer name
+        '''
         loadedLayers = self.iface.mapCanvas().layers()
         candidateLyrs = []
         for lyr in loadedLayers:
@@ -136,15 +163,24 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_openDbPushButton_clicked(self):
+        '''
+        Opend dialog for database connection
+        '''
         self.configWindow.show()
 
     @pyqtSlot(bool)
     def on_historyButton_clicked(self):
+        '''
+        Shows the validation history
+        '''
         historyWindow = ValidationHistory(self.configWindow.widget.abstractDb)
         historyWindow.exec_()
     
     @pyqtSlot()
     def updateDbLineEdit(self):
+        '''
+        Updates the database information
+        '''
         database, self.scale, self.tolerance = '', '', ''
         try:
             self.configWindow.widget.abstractDb.checkAndOpenDb()
@@ -152,14 +188,18 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.databaseLineEdit.setText(database)
             self.scale = self.configWindow.scaleComboBox.currentText()
             self.tolerance = self.configWindow.toleranceLineEdit.text()
-            self.validationManager = ValidationManager(self.configWindow.widget.abstractDb, self.codeList, self.iface)
+            self.validationManager = ValidationManager(self.configWindow.widget.abstractDb, self.codeList)
             self.populateProcessList()
             self.databaseLineEdit.setText(database)
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(self.tr('Error loading db: ')+e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.processTreeWidget.clear()
     
     def populateProcessList(self):
+        '''
+        Populates the process list. It also checks the status of each available process
+        '''
         self.processTreeWidget.clear()
         self.edgvLayer = None
         self.flagLyr = None
@@ -188,6 +228,9 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_runButton_clicked(self):
+        '''
+        Runs the current selected process
+        '''
         processName = self.processTreeWidget.selectedItems()[0].text(1)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         try:
@@ -207,6 +250,9 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot(int)
     def on_validationTabWidget_currentChanged(self):
+        '''
+        Changes the current tab in the validation tool box
+        '''
         if self.validationTabWidget.currentIndex() == 1 and self.configWindow.widget.abstractDb <> None:
             self.projectModel = QSqlTableModel(None,self.configWindow.widget.abstractDb.db)
             self.projectModel.setTable('validation.aux_flags_validacao')
@@ -215,10 +261,36 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_rulesEditorButton_clicked(self):
+        '''
+        Opens the spatial rule editor
+        '''
         try:
             self.configWindow.widget.abstractDb.checkAndOpenDb()
             dlg = RulesEditor(self.configWindow.widget.abstractDb)
             dlg.exec_()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+str(e.args[0]))
-
+            
+    @pyqtSlot(bool)
+    def on_ruleEnforcerRadio_toggled(self, checked):
+        '''
+        Toggles the spatial rule enforcer
+        '''
+        if checked:
+            self.ruleEnforcer = SpatialRuleEnforcer(self.validationManager.postgisDb,self.validationManager.codelist, self.iface)
+            self.ruleEnforcer.connectEditingSignals()
+        else:
+            self.ruleEnforcer.disconnectEditingSignals()
+    
+    @pyqtSlot(bool)
+    def on_attributeRulesEditorPushButton_clicked(self):
+        '''
+        Opens the attribute rule editor
+        '''
+        try:
+            self.configWindow.widget.abstractDb.checkAndOpenDb()
+            dlg = AttributeRulesEditor(self.configWindow.widget.abstractDb)
+            dlg.exec_()
+        except Exception as e:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+str(e.args[0]))
+            

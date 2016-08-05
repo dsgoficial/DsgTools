@@ -28,12 +28,11 @@ from PyQt4.QtGui import QMessageBox
 from PyQt4.Qt import QObject
 
 class ValidationManager(QObject):
-    def __init__(self,postgisDb,codelist, iface):
+    def __init__(self,postgisDb,codelist):
         super(ValidationManager, self).__init__()
         self.processList = []
         self.postgisDb = postgisDb
         self.codelist = codelist
-        self.iface = iface
         try:
             self.postgisDb.checkAndCreateValidationStructure()
             self.setAvailableProcesses()
