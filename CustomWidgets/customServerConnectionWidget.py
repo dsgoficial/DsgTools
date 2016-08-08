@@ -54,15 +54,25 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.dbFactory = DbFactory()
         self.factory = SqlGeneratorFactory()
         self.serverWidget.populateServersCombo()
-#         self.serverWidget.abstractDbLoaded.connect(self.checkSuperUser) 
         self.serverWidget.abstractDbLoaded.connect(self.getDatabasesFromServer)
+        self.comboDict = {self.tr('Load EDGV 2.1.3'):'2.1.3', self.tr('Load EDGV FTer 2a Ed'):'FTer_2a_Ed'}
+        
     
     def getDatabasesFromServer(self):
         if self.serverConnectionTab.currentIndex() == 0:
             self.populatePostgisSelector()
         elif self.serverConnectionTab.currentIndex() == 1:
             self.populateSpatialiteSelector()
-        
+    
+    @pyqtSlot(int)
+    def on_serverConnectionTab_currentChanged(self, currentTab):
+        if currentTab == 0:
+            self.clearSpatialiteTab()
+            self.populatePostgisSelector()
+        elif currentTab == 1:
+            self.clearPostgisTab()
+            self.populateSpatialiteSelector()
+        pass
     
     def populatePostgisSelector(self):
         dbList = []
@@ -79,6 +89,9 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
     def populateSpatialiteSelector(self):
         pass
     
-    @pyqtSlot()
-    def on_buttonBox_rejected(self):
-        self.done(0)
+    def clearSpatialiteTab(self):
+        pass
+    
+    def clearPostgisTab(self):
+        pass
+    

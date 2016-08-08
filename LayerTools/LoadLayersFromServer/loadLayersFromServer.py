@@ -60,4 +60,12 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         self.customServerConnectionWidget.postgisCustomSelector.setTitle(self.tr('Select Databases'))
         self.customServerConnectionWidget.spatialiteCustomSelector.setTitle(self.tr('Selected Spatialites'))
         self.layersCustomSelector.setTitle(self.tr('Select layers to be loaded'))
+        self.domainDict = dict()
+    
+    def populateLayers(self):
+        pass
+    
+    @pyqtSlot()
+    def on_buttonBox_rejected(self):
+        self.close()
  
