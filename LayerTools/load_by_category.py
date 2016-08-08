@@ -377,5 +377,5 @@ class LoadByCategory(QtGui.QDialog, FORM_CLASS):
             for i in range(numberOfStyles):
                 self.styleComboBox.addItem(styleList[i])
         else:
-            self.syleComboBox.addItem(self.tr('No available styles'))
+            self.styleComboBox.addItem(self.tr('No available styles'))
         

@@ -31,7 +31,7 @@ import resources_rc
 
 currentPath = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-
+from DsgTools.LayerTools.LoadLayersFromServer.loadLayersFromServer import LoadLayersFromServer
 from DsgTools.LayerTools.load_by_class import LoadByClass
 from DsgTools.LayerTools.load_by_category import LoadByCategory
 from DsgTools.LayerTools.loadAuxStruct import LoadAuxStruct
@@ -570,6 +570,18 @@ class DsgTools:
         layers.addAction(action)
         self.layerButton.addAction(action)
         self.layerButton.setDefaultAction(action)
+    
+        icon_path = ':/plugins/DsgTools/icons/category.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Load Layers From Server'),
+            callback=self.loadLayersFromServer,
+            parent=layers,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        layers.addAction(action)
+        self.layerButton.addAction(action)
+        self.layerButton.setDefaultAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/class.png'
         action = self.add_action(
@@ -765,6 +777,17 @@ class DsgTools:
         except:
             pass
         dlg = LoadByClass(self.codeList)
+        dlg.show()
+        result = dlg.exec_()
+        if result:
+            pass
+    
+    def loadLayersFromServer(self):
+        try:
+            self.layerButton.setDefaultAction(self.toolbar.sender())
+        except:
+            pass
+        dlg = LoadLayersFromServer(self.codeList, self.iface)
         dlg.show()
         result = dlg.exec_()
         if result:
