@@ -31,7 +31,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'customSelector.ui'))
 
 class CustomSelector(QtGui.QWidget, FORM_CLASS):
-    selectionChanged = pyqtSignal()
+    selectionChanged = pyqtSignal(list)
 
     def __init__(self, parent = None):
         """Constructor."""
@@ -44,6 +44,11 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         self.fromLs = []
         self.toLs = []
         self.setupUi(self)
+    
+    def clearAll(self):
+        self.fromList.clear()
+        self.toList.clear()
+        self.filterLineEdit.clear()        
     
     def setInitialState(self, fromList):
         self.fromList.clear()
@@ -71,7 +76,7 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
             self.toLs.append(item.text())
             self.fromLs.remove(item.text())
         self.toList.sortItems()
-        self.selectionChanged.emit()
+        self.selectionChanged.emit(self.toLs)
 
     @pyqtSlot(bool)
     def on_pushButtonSelectAll_clicked(self):
@@ -82,7 +87,7 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
             self.toLs.append(item.text())
             self.fromLs.remove(item.text())
         self.toList.sortItems()
-        self.selectionChanged.emit()
+        self.selectionChanged.emit(self.toLs)
 
     @pyqtSlot(bool)
     def on_pushButtonDeselectOne_clicked(self):
@@ -93,7 +98,7 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
             self.toLs.remove(item.text())
             self.fromList.addItem(item)
         self.fromList.sortItems()
-        self.selectionChanged.emit()
+        self.selectionChanged.emit(self.toLs)
 
     @pyqtSlot(bool)
     def on_pushButtonDeselectAll_clicked(self):
@@ -104,7 +109,7 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
             self.toLs.remove(item.text())
             self.fromList.addItem(item)
         self.fromList.sortItems()
-        self.selectionChanged.emit()
+        self.selectionChanged.emit(self.toLs)
     
     def on_filterLineEdit_textChanged(self, text):
         classes = [edgvClass for edgvClass in self.fromLs if text in edgvClass]

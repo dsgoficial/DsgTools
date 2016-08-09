@@ -24,6 +24,7 @@ import os
 
 # Qt imports
 from PyQt4 import QtGui, uic
+from PyQt4.QtGui import QMessageBox
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
 from DsgTools.Utils.utils import Utils
@@ -40,6 +41,8 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
     selectionChanged = pyqtSignal()
+    resetAll = pyqtSignal()
+    dbDictChanged = pyqtSignal(dict)
 
     def __init__(self, parent = None):
         """Constructor."""
@@ -55,8 +58,14 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.factory = SqlGeneratorFactory()
         self.serverWidget.populateServersCombo()
         self.serverWidget.abstractDbLoaded.connect(self.getDatabasesFromServer)
-        self.comboDict = {self.tr('Load EDGV 2.1.3'):'2.1.3', self.tr('Load EDGV FTer 2a Ed'):'FTer_2a_Ed'}
-        
+        self.comboDict = {self.tr('Load EDGV v. 2.1.3'):'2.1.3', self.tr('Load EDGV v. FTer_2a_Ed'):'FTer_2a_Ed'}
+        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[]}
+        self.selectedDbsList = []
+        self.selectedDbsDict = dict()
+    
+    def selectedDatabases(self,dbList):
+        #TODO: build selectedDbsDict and emit dbDictChanged()
+        pass
     
     def getDatabasesFromServer(self):
         if self.serverConnectionTab.currentIndex() == 0:
@@ -77,12 +86,18 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
     def populatePostgisSelector(self):
         dbList = []
         try:
-            dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer()
+            if self.serverWidget.abstractDb:
+                dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer()
+            else:
+                self.clearPostgisTab()
+                return
         except Exception as e:
             QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            self.clearPostgisTab()
         dbList.sort()
         dbTextList = []
         for (dbname, dbversion) in dbList:
+            
             dbTextList.append(dbname+' (EDGV v. '+dbversion+')')
         self.postgisCustomSelector.setInitialState(dbTextList) 
     
@@ -93,5 +108,8 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         pass
     
     def clearPostgisTab(self):
-        pass
+        self.postgisCustomSelector.clearAll()
+        self.serverWidget.clearAll()
+        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[]}
+        self.resetAll.emit()
     
