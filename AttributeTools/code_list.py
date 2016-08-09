@@ -61,17 +61,20 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         if not self.currLayer:
             return
         
-        if self.currLayer.type() != QgsMapLayer.VectorLayer:
-            return
-        
-        for field in self.currLayer.pendingFields():
-            valueDict, keys = self.getCodeListDict(field.name())
-            if len(keys) > 0:
-                self.comboBox.addItem(field.name())
-        self.comboBox.setCurrentIndex(0)
-        
-        self.loadCodeList()
-        
+        try:
+            if QgsMapLayer is not None:
+                if self.currLayer.type() != QgsMapLayer.VectorLayer:
+                    return        
+                for field in self.currLayer.pendingFields():
+                    valueDict, keys = self.getCodeListDict(field.name())
+                    if len(keys) > 0:
+                        self.comboBox.addItem(field.name())
+                self.comboBox.setCurrentIndex(0)
+            
+                self.loadCodeList()
+        except:
+            pass
+                
     def getCodeListDict(self, field):
         '''
         Gets the code list dictionary

@@ -43,7 +43,7 @@
       </layout>
      </widget>
     </item>
-    <item row="1" column="0">
+    <item row="2" column="0">
      <widget class="QScrollArea" name="scrollArea">
       <property name="widgetResizable">
        <bool>true</bool>
@@ -53,18 +53,25 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>275</width>
-         <height>282</height>
+         <width>281</width>
+         <height>291</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2"/>
       </widget>
      </widget>
     </item>
-    <item row="2" column="0">
+    <item row="3" column="0">
      <widget class="QPushButton" name="setupButton">
       <property name="text">
        <string>Setup</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QCheckBox" name="checkBox">
+      <property name="text">
+       <string>Use real time editing</string>
       </property>
      </widget>
     </item>
@@ -75,7 +82,7 @@
   <customwidget>
    <class>QgsCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qgis.gui</header>
+   <header>qgi.gui</header>
    <container>1</container>
   </customwidget>
   <customwidget>

@@ -24,12 +24,12 @@ import os
 
 # Qt imports
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot
+from PyQt4.QtCore import pyqtSlot, Qt
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem
-from qgis.gui import QgsMessageBar
+from qgis.core import QgsMapLayer, QgsDataSourceURI, QgsGeometry, QgsMapLayerRegistry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsEditFormConfig
+from qgis.gui import QgsMessageBar, QgisInterface
 import qgis as qgis
 
 #DsgTools imports
@@ -52,8 +52,11 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.setupUi(self)
         self.iface = iface
         self.codeList = codeList
-        
-        self.layerFactory = LayerFactory()
+        self.buttons = []
+        self.prevLayer = None
+        self.buttonName = ''
+        self.category = ''
+        self.layerFactory = LayerFactory()        
         
     @pyqtSlot(bool)
     def on_setupButton_clicked(self):
@@ -72,6 +75,29 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             withTabs = dlg.checkBox.isChecked()
             #actual button creation step
             self.createButtons(self.reclassificationDict, withTabs)
+            
+    @pyqtSlot(int)
+    def on_checkBox_stateChanged(self, state):
+        '''
+        Adjusts tool behavior. The default state makes the tool work with selected features
+        but the user can choose to acquire a feature in real time. When working in real time the buttons must be checkable.
+        '''
+        if self.checkBox.checkState() == Qt.Checked:
+            #connecting iface signals
+            self.iface.currentLayerChanged.connect(self.acquire)
+            for button in self.buttons:
+                #disconnecting the clicked signal
+                button.clicked.disconnect(self.reclassify)
+                #changing button behavior
+                button.setCheckable(True)
+        else:
+            #disconnecting iface signals
+            self.iface.currentLayerChanged.disconnect(self.acquire)
+            for button in self.buttons:
+                #connecting the clicked signal
+                button.clicked.connect(self.reclassify)
+                #changing button behavior
+                button.setCheckable(False)            
         
     def createWidgetWithoutTabs(self, formLayout):
         '''
@@ -102,6 +128,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         '''
         pushButton = QtGui.QPushButton(button)
         pushButton.clicked.connect(self.reclassify)
+        pushButton.toggled.connect(self.acquire)
         if self.size == 0:
             pushButton.setMinimumSize(100, 25)
             pushButton.setStyleSheet('font-size:12px')
@@ -111,6 +138,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         elif self.size == 2:            
             pushButton.setMinimumSize(100, 80)
             pushButton.setStyleSheet('font-size:30px')
+        self.buttons.append(pushButton)
         return pushButton        
         
     def createButtons(self, reclassificationDict, createTabs = False):
@@ -118,6 +146,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         Convenience method to create buttons
         createTabs: Indicates if the buttons must be created within tabs
         '''
+        self.buttons = []
         widget = self.scrollArea.takeWidget()
         if createTabs:
             self.createButtonsWithTabs(reclassificationDict)
@@ -186,29 +215,32 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         except:
             QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('Could not load the selected classes!'))
             
-    @pyqtSlot()
-    def reclassify(self):
+    def checkConditions(self):
         '''
-        Performs the actual reclassification, moving the geometry to the correct layer along with the specified attributes
+        Check the conditions to see if the tool can be used
         '''
         if not self.widget.abstractDb:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Please, select a database.'))
-            return
+            return False
         
         try:
             version = self.widget.abstractDb.getDatabaseVersion()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem obtaining database version! Please, check log for details.'))
             QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return False
             
         if self.reclassificationDict['version'] != version:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database version does not match the field toolbox version.'))
-            return             
-        
-        #button that sent the signal
-        button = self.sender().text()
+            return False
+        return True
+    
+    def getLayerFromButton(self, button):
+        '''
+        Gets the correct layer to be used in the tool
+        '''
         #edgvClass found in the dictionary (this is made using the sqlite seed)
-        (category, edgvClass, button) = self.findReclassificationClass(button)
+        (category, edgvClass) = self.findReclassificationClass(button)
         #reclassification layer name
         reclassificationClass = '_'.join(edgvClass.split('_')[1::])
         
@@ -223,9 +255,126 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         reclassificationLayer = self.searchLayer(root, reclassificationClass)
         if not reclassificationLayer:
             reclassificationLayer = self.loadLayer(dsgClass)
-
+             
+        self.iface.setActiveLayer(reclassificationLayer)
+            
         #entering in editing mode
         reclassificationLayer.startEditing()
+
+        return (reclassificationLayer, category, edgvClass)
+    
+    @pyqtSlot(int)
+    def setAttributesFromButton(self, featureId):
+        '''
+        Sets the attributes for the newly added feature
+        featureId: added feature
+        '''
+        #layer that sent the signal
+        layer = self.sender()
+        #accessing added features
+        editBuffer = layer.editBuffer()
+        features = editBuffer.addedFeatures()
+        for key in features.keys():
+            #just checking the newly added feature, the other I don't care
+            if key == featureId:
+                feature = features[key]
+                #setting the attributes using the reclassification dictionary
+                self.setFeatureAttributes(feature, editBuffer)
+                
+    def setFeatureAttributes(self, newFeature, editBuffer = None):
+        '''
+        Changes attribute values according to the reclassification dict using the edit buffer
+        newFeature: newly added
+        editBuffer: layer edit buffer
+        '''
+        #setting the attributes using the reclassification dictionary
+        for attribute in self.reclassificationDict[self.category][self.edgvClass][self.buttonName].keys():
+            idx = newFeature.fieldNameIndex(attribute)
+            #value to be changed
+            value = self.reclassificationDict[self.category][self.edgvClass][self.buttonName][attribute]
+            #actual attribute change
+            if editBuffer:
+                #this way we are working with the edit buffer
+                editBuffer.changeAttributeValue(newFeature.id(), idx, value)
+            else:
+                #this way are working with selected features and inserting a new one in the layer
+                newFeature.setAttribute(idx, value)
+                
+        if not editBuffer:
+            # we should return when under the normal behavior
+            return newFeature
+        
+    def disconnectLayerSignals(self):
+        '''
+        Disconnecting the signals from the previous layer
+        '''
+        if self.prevLayer:
+            try:
+                self.prevLayer.featureAdded.disconnect(self.setAttributesFromButton)
+            except:
+                pass
+            self.prevLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOff)
+            
+    @pyqtSlot(bool)
+    def acquire(self, pressed):
+        '''
+        Performs the actual reclassification, moving the geometry to the correct layer along with the specified attributes.
+        The difference here is the use of real time editing to make the reclassification
+        '''
+        if pressed:
+            if not self.checkConditions():
+                return
+            
+            #getting the object that sent the signal
+            sender = self.sender()
+            
+            #if the sender is out iface object, this means that the user made the click and changed the current layer
+            #when this happens we should untoggle all buttons
+            if isinstance(sender, QgisInterface):
+                #checking if another button is checked
+                for button in self.buttons:
+                    button.setChecked(False)
+                #return and do nothing else
+                return
+
+            #button that sent the signal
+            self.buttonName = sender.text()
+    
+            #checking if another button is checked
+            for button in self.buttons:
+                if button.text() != self.buttonName and button.isChecked():
+                    button.setChecked(False)
+                    
+            #disconnecting the previous layer
+            self.disconnectLayerSignals()
+    
+            (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
+            #suppressing the form dialog
+            reclassificationLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOn)
+            #connecting addedFeature signal
+            reclassificationLayer.featureAdded.connect(self.setAttributesFromButton)
+            #triggering the add feature tool
+            self.iface.actionAddFeature().trigger()            
+
+            #setting the previous layer             
+            self.prevLayer = reclassificationLayer                
+        else:
+            #disconnecting the previous layer
+            self.disconnectLayerSignals()
+            
+    @pyqtSlot()
+    def reclassify(self):
+        '''
+        Performs the actual reclassification, moving the geometry to the correct layer along with the specified attributes
+        '''
+        if not self.checkConditions():
+            return
+        
+        somethingMade = False
+        
+        #button that sent the signal
+        self.buttonName = self.sender().text()
+        (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
 
         mapLayers = self.iface.mapCanvas().layers()
         crsSrc = QgsCoordinateReferenceSystem(self.widget.crs.authid())
@@ -252,12 +401,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                 #setting the geometry
                 newFeature.setGeometry(geom)
                 #setting the attributes using the reclassification dictionary
-                for attribute in self.reclassificationDict[category][edgvClass][button].keys():
-                    idx = newFeature.fieldNameIndex(attribute)
-                    value = self.reclassificationDict[category][edgvClass][button][attribute]
-                    newFeature.setAttribute(idx, value)
+                newFeature = self.setFeatureAttributes(newFeature)
                 #adding the newly created feature to the addition list
                 featList.append(newFeature)
+                somethingMade = True
             #actual feature insertion
             reclassificationLayer.addFeatures(featList, False)
         
@@ -265,7 +412,8 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                 mapLayer.startEditing()
                 mapLayer.deleteSelectedFeatures()
         
-        self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('Features reclassified with success!'), level=QgsMessageBar.INFO, duration=3)
+        if somethingMade:
+            self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('Features reclassified with success!'), level=QgsMessageBar.INFO, duration=3)
     
     def findReclassificationClass(self, button):
         '''
@@ -279,7 +427,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                 for buttonName in self.reclassificationDict[category][edgvClass].keys():
                     if button == buttonName:
                         #returning the desired edgvClass
-                        return (category, edgvClass, button)
+                        return (category, edgvClass)
         return ()
                     
     def searchLayer(self, group, name):
