@@ -123,6 +123,12 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
                 self.abstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
                 self.abstractDbLoaded.emit()
     
+    def getServerParameters(self):
+        if self.serversCombo.currentIndex() != 0:
+            return self.abstractDb.getServerConfiguration(self.serversCombo.currentText())
+        else:
+            return (None, None, None, None)
+    
     def clearAll(self):
         if self.abstractDb:
             self.abstractDb.__del__()

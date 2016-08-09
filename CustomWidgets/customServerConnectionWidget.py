@@ -42,7 +42,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
     selectionChanged = pyqtSignal()
     resetAll = pyqtSignal()
-    dbDictChanged = pyqtSignal(dict)
+    dbDictChanged = pyqtSignal(str,list)
 
     def __init__(self, parent = None):
         """Constructor."""
@@ -60,12 +60,27 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.serverWidget.abstractDbLoaded.connect(self.getDatabasesFromServer)
         self.comboDict = {self.tr('Load EDGV v. 2.1.3'):'2.1.3', self.tr('Load EDGV v. FTer_2a_Ed'):'FTer_2a_Ed'}
         self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[]}
-        self.selectedDbsList = []
         self.selectedDbsDict = dict()
+        self.postgisCustomSelector.selectionChanged.connect(self.selectedDatabases)
     
-    def selectedDatabases(self,dbList):
+    def selectedDatabases(self,dbList,type):
         #TODO: build selectedDbsDict and emit dbDictChanged()
-        pass
+        #1- Iterate over dbList and check if all layers on dbList are on dict. If not, add it.
+        if type == 'added':
+            (host, port, user, password) = self.serverWidget.getServerParameters()
+            for dbName in dbList:
+                if dbName not in self.selectedDbsDict.keys():
+                    if host and port and user and password:
+                        localDb = self.dbFactory.createDbFactory('QPSQL')
+                        localDb.connectDatabaseWithParameters(host, port, dbName, user, password)
+                        self.selectedDbsDict[dbName] = localDb
+            self.dbDictChanged.emit('added', dbList)
+        #2- Iterate over selectedDbsDict and if there is a key not in dbList, close db and pop item
+        if type == 'removed':
+            for dbName in self.selectedDbsDict.keys():
+                if dbName in dbList:
+                    self.selectedDbsDict.pop(dbName)
+            self.dbDictChanged.emit('removed', dbList)
     
     def getDatabasesFromServer(self):
         if self.serverConnectionTab.currentIndex() == 0:
@@ -84,6 +99,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         pass
     
     def populatePostgisSelector(self):
+        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[]}
         dbList = []
         try:
             if self.serverWidget.abstractDb:
@@ -95,11 +111,11 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
             QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
             self.clearPostgisTab()
         dbList.sort()
-        dbTextList = []
         for (dbname, dbversion) in dbList:
-            
-            dbTextList.append(dbname+' (EDGV v. '+dbversion+')')
-        self.postgisCustomSelector.setInitialState(dbTextList) 
+            if dbversion in self.dbDict.keys():
+                self.dbDict[dbversion].append(dbname)
+        comboText = self.postgisEdgvComboFilter.currentText()
+        self.postgisCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]]) 
     
     def populateSpatialiteSelector(self):
         pass
@@ -107,9 +123,15 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
     def clearSpatialiteTab(self):
         pass
     
+    @pyqtSlot(int)
+    def on_postgisEdgvComboFilter_currentIndexChanged(self):
+        comboText = self.postgisEdgvComboFilter.currentText()
+        self.postgisCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]]) 
+    
     def clearPostgisTab(self):
         self.postgisCustomSelector.clearAll()
         self.serverWidget.clearAll()
         self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[]}
+        self.selectedDbsDict = dict()
         self.resetAll.emit()
     

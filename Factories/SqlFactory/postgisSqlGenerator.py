@@ -922,11 +922,11 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getGeomByPrimitive(self):
-        sql = """select row_to_json(a) from (select type as geomtype, array_agg(f_table_name) as classlist from public.geometry_columns group by type) as a"""
+        sql = """select row_to_json(a) from (select type as geomtype, array_agg(f_table_name) as classlist from public.geometry_columns where f_table_schema not in ('views','topology','validation') group by type) as a"""
         return sql
     
     def getGeomColumnDict(self):
-        sql = """select row_to_json(row(f_table_schema||'.'||f_table_name, f_geometry_column)) from public.geometry_columns"""
+        sql = """select row_to_json(row(f_table_schema||'.'||f_table_name, f_geometry_column)) from public.geometry_columns where f_table_schema not in ('views','topology','validation')"""
         return sql
     
     def getNotNullDict(self):

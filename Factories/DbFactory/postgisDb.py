@@ -1730,3 +1730,6 @@ class PostgisDb(AbstractDb):
             aux = json.loads(query.value(0))
             domainDict[aux['f2']] = aux['f1']
         return domainDict
+    
+    def getLayerDictByCategory(self):
+        pass

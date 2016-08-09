@@ -41,7 +41,6 @@ from DsgTools.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStruc
 from DsgTools.ServerTools.selectStyles import SelectStyles
 
 
-
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'loadLayersFromServer.ui'))
 
@@ -56,16 +55,51 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.iface = iface
         self.codeList = codeList
+        self.utils = Utils()
         self.setupUi(self)
         self.customServerConnectionWidget.postgisCustomSelector.setTitle(self.tr('Select Databases'))
         self.customServerConnectionWidget.spatialiteCustomSelector.setTitle(self.tr('Selected Spatialites'))
         self.layersCustomSelector.setTitle(self.tr('Select layers to be loaded'))
         self.domainDict = dict()
+        self.customServerConnectionWidget.dbDictChanged.connect(self.updateLayersFromDbs)
+        self.customServerConnectionWidget.resetAll.connect(self.resetInterface)
+        self.lyrDict = dict()
     
-    def populateLayers(self):
+    def resetInterface(self):
+        self.layersCustomSelector.clearAll()
         pass
     
     @pyqtSlot()
     def on_buttonBox_rejected(self):
         self.close()
- 
+    
+    def updateLayersFromDbs(self, type, dbList):
+        errorDict = dict()
+        if type == 'added':
+            for dbName in dbList:
+                try:
+                    geomDict = self.customServerConnectionWidget.selectedDbsDict[dbName].getGeomColumnDict()
+                    for geom in geomDict.keys():
+                        for lyr in geomDict[geom]:
+                            if lyr not in self.lyrDict.keys():
+                                self.lyrDict[lyr] = []
+                            if dbName not in self.lyrDict[lyr]:
+                                self.lyrDict[lyr].append(dbName)
+                except Exception as e:
+                    errorDict[dbName] = str(e.args[0])
+                
+        elif type == 'removed':
+            for lyr in self.lyrDict.keys():
+                popList = []
+                for i in range(len(self.lyrDict[lyr])):
+                    if len(self.lyrDict[lyr]) > 0:
+                        if self.lyrDict[lyr][i] in dbList:
+                            popList.append(i)
+                popList.sort(reverse=True)
+                for i in popList:
+                    self.lyrDict[lyr].pop(i)
+                if len(self.lyrDict[lyr]) == 0:
+                    self.lyrDict.pop(lyr)
+        self.layersCustomSelector.setInitialState(self.lyrDict.keys(),unique = True)
+
+    
