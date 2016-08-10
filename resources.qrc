@@ -34,5 +34,7 @@
 		<file>icons/nextInspect.png</file>
 		<file>icons/minAreaTool.png</file>
 		<file>icons/inspectFeatures.png</file>
+		<file>icons/validationtools.png</file>
+		<file>icons/codelist.png</file>
     </qresource>
 </RCC>

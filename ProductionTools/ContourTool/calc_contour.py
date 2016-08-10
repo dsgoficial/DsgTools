@@ -32,8 +32,8 @@ from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry
 from qgis.gui import QgsMessageBar
 
 #DSGTools imports
-from DsgTools.VectorTools.dsg_line_tool import DsgLineTool
-from DsgTools.VectorTools.contour_tool import ContourTool
+from DsgTools.ProductionTools.ContourTool.dsg_line_tool import DsgLineTool
+from DsgTools.ProductionTools.ContourTool.contour_tool import ContourTool
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'calc_contour.ui'))
