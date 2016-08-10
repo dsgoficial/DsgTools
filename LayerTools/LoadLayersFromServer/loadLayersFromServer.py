@@ -68,6 +68,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
     
     def resetInterface(self):
         self.layersCustomSelector.clearAll()
+        #TODO: refresh optional parameters
         pass
     
     @pyqtSlot()
@@ -104,12 +105,16 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                 if len(self.lyrDict[lyr]) == 0:
                     self.lyrDict.pop(lyr)
         self.layersCustomSelector.setInitialState(self.lyrDict.keys(),unique = True)
-
-#     def progressBar(self, parent):
-#         messageBar = self.iface.messageBar().createMessage('Doing something time consuming...', )
-#         progressBar = QProgressBar()
-#         progressBar.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
-#         messageBar.layout().addWidget(progressBar)
-#         messageBar.layout().addWidget(cancelButton)
-#         self.iface.messageBar().pushWidget(messageBar, self.iface.messageBar().INFO)
-#         self.messageBar = messageBar
+    
+    
+    @pyqtSlot(bool)
+    def on_showCategoriesRadioButton_toggled(self):
+        if self.lyrDict <> dict():
+            lyrDictKeys = self.lyrDict.keys()
+            cats = [i.split('_')[0] for i in lyrDictKeys]
+            self.layersCustomSelector.setInitialState(cats,unique = True)
+    
+    @pyqtSlot(bool)
+    def on_showClassesRadioButton_toggled(self):
+        if self.lyrDict <> dict():
+            self.layersCustomSelector.setInitialState(self.lyrDict.keys(),unique = True)

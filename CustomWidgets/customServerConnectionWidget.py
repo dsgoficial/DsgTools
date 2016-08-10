@@ -126,7 +126,8 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(int)
     def on_postgisEdgvComboFilter_currentIndexChanged(self):
         comboText = self.postgisEdgvComboFilter.currentText()
-        self.postgisCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]]) 
+        self.postgisCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]])
+        self.resetAll.emit()
     
     def clearPostgisTab(self):
         self.postgisCustomSelector.clearAll()
