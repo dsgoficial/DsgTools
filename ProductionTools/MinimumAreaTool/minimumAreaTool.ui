@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>474</width>
-    <height>47</height>
+    <width>454</width>
+    <height>50</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,10 +26,19 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+   <item row="0" column="1">
     <widget class="QSplitter" name="splitter">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="childrenCollapsible">
+      <bool>true</bool>
      </property>
      <widget class="QComboBox" name="scalesComboBox">
       <item>
@@ -111,6 +120,35 @@
         <normaloff>:/plugins/DsgTools/icons/areaTool.png</normaloff>:/plugins/DsgTools/icons/areaTool.png</iconset>
       </property>
      </widget>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QPushButton" name="showPushButton">
+     <property name="maximumSize">
+      <size>
+       <width>32</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Minimum Area Tool</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources.qrc">
+       <normaloff>:/plugins/DsgTools/icons/minAreaTool.png</normaloff>:/plugins/DsgTools/icons/minAreaTool.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>28</width>
+       <height>28</height>
+      </size>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
   </layout>

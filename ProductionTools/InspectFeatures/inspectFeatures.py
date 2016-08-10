@@ -37,6 +37,7 @@ class InspectFeatures(QWidget,FORM_CLASS):
         """Constructor."""
         super(InspectFeatures, self).__init__(parent)
         self.setupUi(self)
+        self.splitter.hide()
         self.iface = iface
         self.iface.currentLayerChanged.connect(self.enableScale)
         self.mScaleWidget.setScaleString('1:40000')
@@ -139,4 +140,9 @@ class InspectFeatures(QWidget,FORM_CLASS):
         if self.canvas.currentLayer().geometryType() == 0 :
             self.iface.mapCanvas().zoomScale(float(1/zoom))
         
-        
+    @pyqtSlot(bool)
+    def on_inspectPushButton_toggled(self, toggled):
+        if toggled:
+            self.splitter.show()
+        else:
+            self.splitter.hide()

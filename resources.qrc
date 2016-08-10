@@ -32,5 +32,7 @@
 		<file>icons/areaTool.png</file>
 		<file>icons/backInspect.png</file>
 		<file>icons/nextInspect.png</file>
+		<file>icons/minAreaTool.png</file>
+		<file>icons/inspectFeatures.png</file>
     </qresource>
 </RCC>

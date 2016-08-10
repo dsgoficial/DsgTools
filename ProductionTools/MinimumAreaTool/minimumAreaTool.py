@@ -43,6 +43,7 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         """Constructor."""
         super(MinimumAreaTool, self).__init__(parent)
         self.setupUi(self)
+        self.splitter.hide()
         self.iface = iface
         self.scale = None
         self.shape = None
@@ -112,3 +113,12 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         else:
             return False
 
+    @pyqtSlot(bool)
+    def on_showPushButton_toggled(self, toggled):
+        if toggled:
+            self.splitter.show()
+        else:
+            self.splitter.hide()
+            
+        
+    
