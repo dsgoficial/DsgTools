@@ -41,7 +41,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class MinimumAreaTool(QWidget,FORM_CLASS):
     def __init__(self, iface, parent = None):
-        """Constructor."""
+        """
+        Constructor
+        """
         super(MinimumAreaTool, self).__init__(parent)
         self.setupUi(self)
         self.splitter.hide()
@@ -52,36 +54,55 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         self.createDict()
     
     def initGui(self):
+        '''
+        Adds the tool bar in QGIS
+        '''
         self.iface.addToolBarWidget(self.splitter)
         
     def createDict(self):
+        '''
+        Creates the dictionary used to create the geometry templates
+        '''
         self.sizes = {}
         self.sizes[u"25mm²"] = {self.tr('value'): 25, self.tr('type'): self.tr('area')}
         self.sizes[u"4mm²"] = {self.tr('value'): 4, self.tr('type'): self.tr('area')}
         self.sizes[u"1x1mm²"] = {self.tr('value'): 1, self.tr('type'): self.tr('area')}
         self.sizes[u"0.8x0.8mm²"] = {self.tr('value'): 0.64, self.tr('type'): self.tr('area')}
         self.sizes[u"0.8mm"] = {self.tr('value'): 0.8,self.tr('type'): self.tr('distance')}
+        
+    def shapeComboSetter(self):
+        '''
+        Sets the correct index for the shapes combo box according to the text select in the sizes combo box
+        '''
+        if self.sizesComboBox.currentText() == '0.8mm':
+            self.shapesComboBox.setCurrentIndex(2)
+            self.shapesComboBox.setEnabled(False)
+        else:
+            self.shapesComboBox.setEnabled(True)
     
     @pyqtSlot(int)
     def on_sizesComboBox_currentIndexChanged(self):
+        '''
+        Slot used to check if the user selected 0.8mm (this is used for linear features).
+        In this case we should force the use of circle and set the shape combo box enabled(False)
+        '''
         if self.sizesComboBox.currentIndex() <> 0:
-            if self.sizesComboBox.currentText() == '0.8mm':
-                self.shapesComboBox.setCurrentIndex(2)
-                self.shapesComboBox.setEnabled(False)
-            else:
-                self.shapesComboBox.setEnabled(True)
+            self.shapeComboSetter()
     
     @pyqtSlot(int)
     def on_shapesComboBox_currentIndexChanged(self):
+        '''
+        Slot used to check if the user selected 0.8mm (this is used for linear features).
+        In this case we should force the use of circle and set the shape combo box enabled(False)
+        '''
         if self.shapesComboBox.currentIndex() <> 0:
-            if self.sizesComboBox.currentText() == '0.8mm':
-                self.shapesComboBox.setCurrentIndex(2)
-                self.shapesComboBox.setEnabled(False)
-            else:
-                self.shapesComboBox.setEnabled(True)
+            self.shapeComboSetter()
     
     @pyqtSlot(bool)
     def on_drawShape_clicked(self):
+        '''
+        Draws the select template shape on the map canvas
+        '''
         scale = self.scalesComboBox.currentText()
         size = self.sizesComboBox.currentText()
         shape = self.shapesComboBox.currentText()
@@ -96,6 +117,10 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
             QMessageBox.warning(self.iface.mainWindow(), self.tr(u"Error!"), self.tr(u"<font color=red>Shape value not defined :</font><br><font color=blue>Define all values to activate tool!</font>"), QMessageBox.Close)              
     
     def run(self, scale, size, shape):
+        '''
+        Runs the ShapeTool and set it as the current map tool
+        '''
+        #checking the selected type
         if (self.sizes[size][self.tr('type')] == self.tr('area')):
             param = (float(scale)**2)*float(self.sizes[size][self.tr('value')])
         else:
@@ -106,9 +131,15 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         self.iface.mapCanvas().setMapTool(tool)         
 
     def refreshCombo(self):
+        '''
+        Re-enables the shapes combo
+        '''
         self.shapesComboBox.setEnabled(True)
     
     def validateCombos(self,scale,size,shape):
+        '''
+        Checks if all combos correctly selected
+        '''
         if scale <> 0 and size <> 0 and shape <> 0:
             return True
         else:
@@ -116,6 +147,9 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_showPushButton_toggled(self, toggled):
+        '''
+        Slot to show/hide the tool bar
+        '''
         if toggled:
             self.splitter.show()
         else:
