@@ -29,8 +29,12 @@ from PyQt4.QtCore import pyqtSignal, QObject
 from math import sqrt, cos, sin, pi
 
 class ShapeTool(QgsMapTool):
+    #signal emitted when the mouse is clicked. This indicates that the tool finished its job
     toolFinished = pyqtSignal()
     def __init__(self, canvas, geometryType, param, type):
+        '''
+        Constructor
+        '''
         QgsMapTool.__init__(self, canvas)
         self.canvas = canvas
         self.active = False
@@ -43,6 +47,9 @@ class ShapeTool(QgsMapTool):
         self.reset()
         
     def setColor(self):
+        '''
+        Adjusting the color to create the rubber band
+        '''
         if self.type == self.tr('area'):
             mFillColor = QColor( 254, 178, 76, 63 )
         else:
@@ -51,6 +58,9 @@ class ShapeTool(QgsMapTool):
         self.rubberBand.setWidth(1)
     
     def reset(self):
+        '''
+        Resetting the rubber band
+        '''
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
         try:
@@ -59,14 +69,22 @@ class ShapeTool(QgsMapTool):
             pass
 
     def setCursor(self, cursor):
-        self.cursor=cursor
+        '''
+        '''
+        self.cursor = cursor
 
     def canvasPressEvent(self, e):
+        '''
+        When the canvas is pressed the tool finishes its job
+        '''
         if self.cursor != None:
             self.canvas.unsetMapTool(self.cursor)
             self.toolFinished.emit()
 
     def canvasMoveEvent(self, e):
+        '''
+        Deals with mouse move event to update the rubber band position in the canvas
+        '''
         self.canvas.refresh()
         self.endPoint = self.toMapCoordinates( e.pos() )
         if self.geometryType == self.tr(u"Circle"):
@@ -75,6 +93,9 @@ class ShapeTool(QgsMapTool):
             self.showRect(self.endPoint, self.param)
 
     def showCircle(self, startPoint):
+        '''
+        Draws a circle in the canvas
+        '''
         nPoints = 50
         if self.type == self.tr('distance'):
             r = self.param
@@ -94,7 +115,10 @@ class ShapeTool(QgsMapTool):
             self.rubberBand.show()
             
 
-    def showRect(self, startPoint, param):     
+    def showRect(self, startPoint, param):   
+        '''
+        Draws a rectangle in the canvas
+        '''  
         self.rubberBand.reset(QGis.Polygon)
         point1 = QgsPoint(startPoint.x() - sqrt(param)/2, startPoint.y() - sqrt(param)/2)
         point2 = QgsPoint(startPoint.x() - sqrt(param)/2, startPoint.y() + sqrt(param)/2)
@@ -107,13 +131,22 @@ class ShapeTool(QgsMapTool):
         self.rubberBand.show()
     
     def deactivate(self):
+        '''
+        Deactivates the tool and hides the rubber band
+        '''
         self.rubberBand.hide()
         QgsMapTool.deactivate(self)
         
     def activate(self):
+        '''
+        Activates the tool
+        '''
         QgsMapTool.activate(self)
     
     def reproject(self, geom, canvasCrs):
+        '''
+        Reprojects geom from the canvas crs to the reference crs
+        '''
         destCrs = self.reference.crs()
         if canvasCrs.authid() != destCrs.authid():
             coordinateTransformer = QgsCoordinateTransform(canvasCrs, destCrs)
