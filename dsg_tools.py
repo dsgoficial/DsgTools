@@ -53,7 +53,7 @@ from DsgTools.UserTools.user_profiles import ManageUserProfiles
 from DsgTools.PostgisCustomization.createDatabaseCustomization import CreateDatabaseCustomization
 from DsgTools.ConversionTools.convert_database import ConvertDatabase
 from DsgTools.aboutdialog import AboutDialog
-from DsgTools.VectorTools.calc_contour import CalcContour
+from DsgTools.ProductionTools.ContourTool.calc_contour import CalcContour
 from DsgTools.ProductionTools.field_toolbox import FieldToolbox
 from DsgTools.AttributeTools.code_list import CodeList
 from DsgTools.AttributeTools.attributes_viewer import AttributesViewer
@@ -104,10 +104,10 @@ class DsgTools:
         self.menuBar = self.iface.mainWindow().menuBar()
 
         #QDockWidgets
-        self.complexWindow = ComplexWindow(iface)
+        self.complexWindow = None
         self.codeList = CodeList(iface)
         #self.attributesViewer = AttributesViewer(iface)
-        self.validationToolbox = ValidationToolbox(iface,self.codeList)
+        self.validationToolbox = None
         self.contourDock = None
         self.fieldDock = None
 
@@ -223,8 +223,8 @@ class DsgTools:
         database = self.addMenu(self.dsgTools, u'database', self.tr('Database Tools'),':/plugins/DsgTools/icons/database.png')
         layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/icons/layers.png')
         bdgex = self.addMenu(self.dsgTools, u'bdgex', self.tr('BDGEx'),':/plugins/DsgTools/icons/eb.png')
-        vectortools = self.addMenu(self.dsgTools, u'vectortools', self.tr('Vector Tools'),':/plugins/DsgTools/icons/vectortools.png')
         productiontools = self.addMenu(self.dsgTools, u'productiontools', self.tr('Production Tools'),':/plugins/DsgTools/icons/productiontools.png')
+        validationtools = self.addMenu(self.dsgTools, u'validationtools', self.tr('Validation Tools'),':/plugins/DsgTools/icons/validationtools.png')
         topocharts = self.addMenu(bdgex, u'topocharts', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
         coverageLyr = self.addMenu(bdgex, u'coverageLyr', self.tr('Coverage Layers'),':/plugins/DsgTools/icons/eb.png')
         indexes = self.addMenu(bdgex, u'indexes', self.tr('Product Indexes'),':/plugins/DsgTools/icons/eb.png')
@@ -465,7 +465,7 @@ class DsgTools:
         #QToolButtons
         self.databaseButton = self.createToolButton(self.toolbar, u'DatabaseTools')
         self.layerButton = self.createToolButton(self.toolbar, u'LayerTools')
-        self.vectorButton = self.createToolButton(self.toolbar, u'VectorTools')
+        self.validationButton = self.createToolButton(self.toolbar, u'ValidationTools')
         self.productionButton = self.createToolButton(self.toolbar, u'ProductionTools')
 
         icon_path = ':/plugins/DsgTools/icons/spatialite.png'
@@ -478,7 +478,6 @@ class DsgTools:
             add_to_toolbar=False)
         database.addAction(action)
         self.databaseButton.addAction(action)
-        self.databaseButton.setDefaultAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/postgis.png'
         action = self.add_action(
@@ -490,6 +489,7 @@ class DsgTools:
             add_to_toolbar=False)
         database.addAction(action)
         self.databaseButton.addAction(action)
+        self.databaseButton.setDefaultAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/manageUserProfiles.png'
         action = self.add_action(
@@ -513,18 +513,18 @@ class DsgTools:
         database.addAction(action)
         self.databaseButton.addAction(action)
 
-        icon_path = ':/plugins/DsgTools/icons/calccontour.png'
+        icon_path = ':/plugins/DsgTools/icons/validationtools.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Assign Contour Values'),
-            callback=self.showCalcContour,
-            parent=vectortools,
+            text=self.tr('Perform database validation'),
+            callback=self.showValidationToolbox,
+            parent=validationtools,
             add_to_menu=False,
             add_to_toolbar=False)
-        vectortools.addAction(action)
-        self.vectorButton.addAction(action)
-        self.vectorButton.setDefaultAction(action)
-        
+        validationtools.addAction(action)
+        self.validationButton.addAction(action)
+        self.validationButton.setDefaultAction(action)
+
         icon_path = ':/plugins/DsgTools/icons/fieldToolbox.png'
         action = self.add_action(
             icon_path,
@@ -537,6 +537,39 @@ class DsgTools:
         self.productionButton.addAction(action)
         self.productionButton.setDefaultAction(action)
 
+        icon_path = ':/plugins/DsgTools/icons/complex.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Build Complex Structures'),
+            callback=self.showComplexDock,
+            parent=productiontools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        productiontools.addAction(action)
+        self.productionButton.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/calccontour.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Assign Contour Values'),
+            callback=self.showCalcContour,
+            parent=productiontools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        productiontools.addAction(action)
+        self.productionButton.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/codelist.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('View Code List Codes and Values'),
+            callback=self.showCodeList,
+            parent=productiontools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        productiontools.addAction(action)
+        self.productionButton.addAction(action)
+        
         #User Permissions submenu
         permissions = self.addMenu(database, u'layers', self.tr('User Permissions Tools'),':/plugins/DsgTools/icons/profile.png')
         icon_path = ':/plugins/DsgTools/icons/profile.png'
@@ -616,10 +649,9 @@ class DsgTools:
         layers.addAction(action)
         self.layerButton.addAction(action)
 
-        self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.codeList)
+        #self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
         #self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.attributesViewer)
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.validationToolbox)
+        #self.iface.addDockWidget(Qt.RightDockWidgetArea, self.validationToolbox)
         self.toolbar.addWidget(self.minimumAreaTool)
         self.toolbar.addWidget(self.inspectFeatures)
 
@@ -713,6 +745,12 @@ class DsgTools:
             self.contourDock = CalcContour(self.iface)
         self.contourDock.activateTool()
         self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.contourDock)
+    
+    def showCodeList(self):
+        if self.codeList:
+            self.iface.removeDockWidget(self.codeList)
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.codeList)
+
 
     def showFieldToolbox(self):
         if self.fieldDock:
@@ -720,6 +758,20 @@ class DsgTools:
         else:
             self.fieldToolbox = FieldToolbox(self.iface, self.codeList)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.fieldToolbox)
+    
+    def showValidationToolbox(self):
+        if self.validationToolbox:
+            self.iface.removeDockWidget(self.validationToolbox)
+        else:
+            self.validationToolbox = ValidationToolbox(self.iface,self.codeList)
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.validationToolbox)
+
+    def showComplexDock(self):
+        if self.complexWindow:
+            self.iface.removeDockWidget(self.complexWindow)
+        else:
+            self.complexWindow = ComplexWindow(self.iface)
+        self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
             
     def installModelsAndScripts(self):
         dlg = ModelsAndScriptsInstaller()
