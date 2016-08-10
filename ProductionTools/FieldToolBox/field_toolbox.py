@@ -33,7 +33,7 @@ from qgis.gui import QgsMessageBar, QgisInterface
 import qgis as qgis
 
 #DsgTools imports
-from DsgTools.ProductionTools.field_setup import FieldSetup
+from DsgTools.ProductionTools.FieldToolBox.field_setup import FieldSetup
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
 

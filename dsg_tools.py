@@ -53,7 +53,7 @@ from DsgTools.UserTools.user_profiles import ManageUserProfiles
 from DsgTools.ConversionTools.convert_database import ConvertDatabase
 from DsgTools.aboutdialog import AboutDialog
 from DsgTools.VectorTools.calc_contour import CalcContour
-from DsgTools.ProductionTools.field_toolbox import FieldToolbox
+from DsgTools.ProductionTools.FieldToolBox.field_toolbox import FieldToolbox
 from DsgTools.AttributeTools.code_list import CodeList
 from DsgTools.AttributeTools.attributes_viewer import AttributesViewer
 from DsgTools.ValidationTools.validation_toolbox import ValidationToolbox

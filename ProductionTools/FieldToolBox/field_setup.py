@@ -75,11 +75,11 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         '''
         currentPath = os.path.dirname(__file__)
         if self.versionCombo.currentText() == '2.1.3':
-            edgvPath = os.path.join(currentPath, '..', 'DbTools', 'SpatialiteTool', 'template', '213', 'seed_edgv213.sqlite')
-            sqlPath = os.path.join(currentPath, '..', 'DbTools', 'PostGISTool', 'sqls', '213', 'edgv213.sql')
+            edgvPath = os.path.join(currentPath, '..', '..', 'DbTools', 'SpatialiteTool', 'template', '213', 'seed_edgv213.sqlite')
+            sqlPath = os.path.join(currentPath, '..', '..', 'DbTools', 'PostGISTool', 'sqls', '213', 'edgv213.sql')
         elif self.versionCombo.currentText() == 'FTer_2a_Ed':
-            edgvPath = os.path.join(currentPath, '..', 'DbTools', 'SpatialiteTool', 'template', 'FTer_2a_Ed', 'seed_edgvfter_2a_ed.sqlite')
-            sqlPath = os.path.join(currentPath, '..', 'DbTools', 'PostGISTool', 'sqls', 'FTer_2a_Ed', 'edgvFter_2a_Ed.sql')
+            edgvPath = os.path.join(currentPath, '..', '..', 'DbTools', 'SpatialiteTool', 'template', 'FTer_2a_Ed', 'seed_edgvfter_2a_ed.sqlite')
+            sqlPath = os.path.join(currentPath, '..', '..', 'DbTools', 'PostGISTool', 'sqls', 'FTer_2a_Ed', 'edgvFter_2a_Ed.sql')
             
         self.notNullDict = acquisition_tools.sqlParser(sqlPath, True)
 
