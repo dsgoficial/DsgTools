@@ -648,10 +648,7 @@ class DsgTools:
             add_to_toolbar=False)
         layers.addAction(action)
         self.layerButton.addAction(action)
-
-        #self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
-        #self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.attributesViewer)
-        #self.iface.addDockWidget(Qt.RightDockWidgetArea, self.validationToolbox)
+        
         self.toolbar.addWidget(self.minimumAreaTool)
         self.toolbar.addWidget(self.inspectFeatures)
 
@@ -667,10 +664,6 @@ class DsgTools:
         if self.dsgTools is not None:
             self.menuBar.removeAction(self.dsgTools.menuAction())
 
-            self.iface.removeDockWidget(self.complexWindow)
-            self.iface.removeDockWidget(self.codeList)
-            #self.iface.removeDockWidget(self.attributesViewer)
-            self.iface.removeDockWidget(self.validationToolbox)
 
     def run(self):
         """Run method that performs all the real work"""

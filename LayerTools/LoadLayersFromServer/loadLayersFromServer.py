@@ -28,7 +28,7 @@ from qgis.core import QgsMessageLog
 # Qt imports
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, Qt, QSettings
-from PyQt4.QtGui import QListWidgetItem, QMessageBox, QMenu, QApplication, QCursor, QFileDialog
+from PyQt4.QtGui import QListWidgetItem, QMessageBox, QMenu, QApplication, QCursor, QFileDialog, QProgressBar
 from PyQt4.QtSql import QSqlDatabase,QSqlQuery
 
 # DSGTools imports
@@ -39,6 +39,7 @@ from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.ServerTools.createView import CreateView
 from DsgTools.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
 from DsgTools.ServerTools.selectStyles import SelectStyles
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -76,6 +77,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
     def updateLayersFromDbs(self, type, dbList):
         errorDict = dict()
         if type == 'added':
+            progress = ProgressWidget(1,len(dbList),self.tr('Reading selected databases... '), parent = self)
             for dbName in dbList:
                 try:
                     geomDict = self.customServerConnectionWidget.selectedDbsDict[dbName].getGeomColumnDict()
@@ -87,6 +89,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                                 self.lyrDict[lyr].append(dbName)
                 except Exception as e:
                     errorDict[dbName] = str(e.args[0])
+                progress.step()
                 
         elif type == 'removed':
             for lyr in self.lyrDict.keys():
@@ -102,4 +105,11 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                     self.lyrDict.pop(lyr)
         self.layersCustomSelector.setInitialState(self.lyrDict.keys(),unique = True)
 
-    
+#     def progressBar(self, parent):
+#         messageBar = self.iface.messageBar().createMessage('Doing something time consuming...', )
+#         progressBar = QProgressBar()
+#         progressBar.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+#         messageBar.layout().addWidget(progressBar)
+#         messageBar.layout().addWidget(cancelButton)
+#         self.iface.messageBar().pushWidget(messageBar, self.iface.messageBar().INFO)
+#         self.messageBar = messageBar
