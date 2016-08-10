@@ -153,6 +153,8 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         else:
             self.createButtonsWithoutTabs(reclassificationDict)
             
+        self.on_checkBox_stateChanged(0)
+            
     def createButtonsWithoutTabs(self, reclassificationDict):
         '''
         Specific method to create buttons without tabs
