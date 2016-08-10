@@ -33,9 +33,6 @@ from qgis.gui import QgsMessageBar
 import qgis as qgis
 
 #DsgTools imports
-from DsgTools.ProductionTools.field_setup import FieldSetup
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'militarySimbologyDock.ui'))

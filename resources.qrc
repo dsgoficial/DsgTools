@@ -36,5 +36,6 @@
 		<file>icons/inspectFeatures.png</file>
 		<file>icons/validationtools.png</file>
 		<file>icons/codelist.png</file>
+		<file>icons/militarySimbology.png</file>
     </qresource>
 </RCC>
