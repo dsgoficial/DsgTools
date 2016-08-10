@@ -68,18 +68,12 @@ class ShapeTool(QgsMapTool):
         except:
             pass
 
-    def setCursor(self, cursor):
-        '''
-        '''
-        self.cursor = cursor
-
     def canvasPressEvent(self, e):
         '''
         When the canvas is pressed the tool finishes its job
         '''
-        if self.cursor != None:
-            self.canvas.unsetMapTool(self.cursor)
-            self.toolFinished.emit()
+        self.canvas.unsetMapTool(self)
+        self.toolFinished.emit()
 
     def canvasMoveEvent(self, e):
         '''
@@ -113,7 +107,6 @@ class ShapeTool(QgsMapTool):
                 theta = itheta*(2.0*pi/nPoints)
                 self.rubberBand.addPoint(QgsPoint(center.x()+r*cos(theta), center.y()+r*sin(theta)))
             self.rubberBand.show()
-            
 
     def showRect(self, startPoint, param):   
         '''
@@ -146,6 +139,8 @@ class ShapeTool(QgsMapTool):
     def reproject(self, geom, canvasCrs):
         '''
         Reprojects geom from the canvas crs to the reference crs
+        geom: geometry to be reprojected
+        canvasCrs: canvas crs (from crs)
         '''
         destCrs = self.reference.crs()
         if canvasCrs.authid() != destCrs.authid():
