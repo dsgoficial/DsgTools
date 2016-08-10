@@ -26,6 +26,7 @@ import os
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
+from PyQt4.QtGui import QMessageBox
 from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject
 from PyQt4.Qt import QWidget, QObject
 
@@ -84,7 +85,7 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         scale = self.scalesComboBox.currentText()
         size = self.sizesComboBox.currentText()
         shape = self.shapesComboBox.currentText()
-        validated = self.validateCombos(scale, size, shape)
+        validated = self.validateCombos(self.scalesComboBox.currentIndex(), self.sizesComboBox.currentIndex(), self.shapesComboBox.currentIndex())
         if validated:
             crs = self.iface.mapCanvas().mapRenderer().destinationCrs()
             if crs.mapUnits() == 2:
