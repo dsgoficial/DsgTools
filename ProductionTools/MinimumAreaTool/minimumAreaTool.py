@@ -127,8 +127,7 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
             param = float(scale)*float(self.sizes[size][self.tr('value')])
         tool = ShapeTool(self.iface.mapCanvas(), shape, param, self.sizes[size][self.tr('type')] )
         tool.toolFinished.connect(self.refreshCombo)
-        tool.setCursor(tool)
-        self.iface.mapCanvas().setMapTool(tool)         
+        self.iface.mapCanvas().setMapTool(tool)
 
     def refreshCombo(self):
         '''
