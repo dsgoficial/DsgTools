@@ -226,7 +226,7 @@ class DsgTools:
         layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/icons/layers.png')
         bdgex = self.addMenu(self.dsgTools, u'bdgex', self.tr('BDGEx'),':/plugins/DsgTools/icons/eb.png')
         productiontools = self.addMenu(self.dsgTools, u'productiontools', self.tr('Production Tools'),':/plugins/DsgTools/icons/productiontools.png')
-        validationtools = self.addMenu(self.dsgTools, u'validationtools', self.tr('Validation Tools'),':/plugins/DsgTools/icons/validationtools.png')
+        validationtools = self.addMenu(productiontools, u'validationtools', self.tr('Validation Tools'),':/plugins/DsgTools/icons/validationtools.png')
         militarysimbologytools = self.addMenu(self.dsgTools, u'militarysimbologytools', self.tr('Military Simbology Tools'),':/plugins/DsgTools/icons/militarySimbology.png')
         topocharts = self.addMenu(bdgex, u'topocharts', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
         coverageLyr = self.addMenu(bdgex, u'coverageLyr', self.tr('Coverage Layers'),':/plugins/DsgTools/icons/eb.png')
@@ -468,7 +468,6 @@ class DsgTools:
         #QToolButtons
         self.databaseButton = self.createToolButton(self.toolbar, u'DatabaseTools')
         self.layerButton = self.createToolButton(self.toolbar, u'LayerTools')
-        self.validationButton = self.createToolButton(self.toolbar, u'ValidationTools')
         self.productionButton = self.createToolButton(self.toolbar, u'ProductionTools')
 
         icon_path = ':/plugins/DsgTools/icons/spatialite.png'
@@ -525,8 +524,8 @@ class DsgTools:
             add_to_menu=False,
             add_to_toolbar=False)
         validationtools.addAction(action)
-        self.validationButton.addAction(action)
-        self.validationButton.setDefaultAction(action)
+        self.productionButton.addAction(action)
+        self.productionButton.setDefaultAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/fieldToolbox.png'
         action = self.add_action(
@@ -538,7 +537,6 @@ class DsgTools:
             add_to_toolbar=False)
         productiontools.addAction(action)
         self.productionButton.addAction(action)
-        self.productionButton.setDefaultAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/complex.png'
         action = self.add_action(
@@ -580,7 +578,7 @@ class DsgTools:
             callback=self.showMilitarySimbologyDock,
             parent=militarysimbologytools,
             add_to_menu=False,
-            add_to_toolbar=True)
+            add_to_toolbar=False)
         militarysimbologytools.addAction(action)
         
         #User Permissions submenu
