@@ -45,7 +45,7 @@ class InspectFeatures(QWidget,FORM_CLASS):
         self.mScaleWidget.setScaleString('1:40000')
         self.mScaleWidget.setEnabled(False)
         self.canvas = self.iface.mapCanvas()
-        self.AllLayers={}
+        self.allLayers={}
         
     def enableScale(self):
         '''
@@ -67,35 +67,23 @@ class InspectFeatures(QWidget,FORM_CLASS):
         method = getattr(self, 'testIndexFoward')
         self.iterateFeature(method)
     
-    def testIndexFoward(self, Index, id, AllIds):
+    def testIndexFoward(self, index, maxId, minId):
         '''
         Gets the next index
         '''
-        if Index == None:
-            if id == '':
-                Index = 0
-            else:
-                Index = int(id)
-        elif Index >= (len(AllIds)-1):
-            Index=0 
-        else:
-            Index+=1
-        return Index
+        index += 1
+        if index > maxId:
+            index = minId
+        return index
     
-    def testIndexBackwards(self, Index, id, AllIds):
+    def testIndexBackwards(self, index, maxId, minId):
         '''
         gets the previous index
         '''
-        if Index == None:
-            if id == '':
-                Index = (len(AllIds)-1)
-            else:
-                Index = int(id)
-        elif Index <= 0:
-            Index=(len(AllIds)-1)
-        else:
-            Index-=1 
-        return Index
+        index -= 1
+        if index < minId:
+            index = maxId
+        return index
             
     @pyqtSlot(bool)
     def on_backInspectButton_clicked(self):
@@ -112,19 +100,34 @@ class InspectFeatures(QWidget,FORM_CLASS):
         '''
         currentLayer = self.iface.activeLayer()
         lyrName = currentLayer.name()
-        id = self.idSpinBox.value() 
+        
         zoom = self.mScaleWidget.scale()
+        
+        #getting all features ids
         featIdList = currentLayer.allFeatureIds()
         #sort is faster than sorted (but sort is just available for lists)
         featIdList.sort()
+        
         if currentLayer and len(featIdList) > 0 :
+            #getting max and min ids
             maxId = max(featIdList)
             minId = min(featIdList)
+            
+            #checking the spin box value
+            id = self.idSpinBox.value()
+
             self.idSpinBox.setMaximum(maxId)
             self.idSpinBox.setMinimum(minId)
-            initialIndex = self.AllLayers.get(lyrName)
-            index = method(initialIndex, id, featIdList)
-            self.AllLayers[lyrName] = index          
+
+            #if the value is 0 and there is no entry for lyrName in self.allLayers
+            if id == 0 and (lyrName not in self.allLayers.keys()):
+                self.idSpinBox.setValue(minId)
+                index = minId
+            else:
+                index = id
+
+            index = method(index, maxId, minId)
+            self.allLayers[lyrName] = index          
             self.idSpinBox.setValue(index)
             self.selectLayer(index, currentLayer)
             self.zoomFeature(zoom)
