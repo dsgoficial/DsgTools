@@ -118,3 +118,11 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
     def on_showClassesRadioButton_toggled(self):
         if self.lyrDict <> dict():
             self.layersCustomSelector.setInitialState(self.lyrDict.keys(),unique = True)
+            
+    @pyqtSlot()
+    def on_buttonBox_accepted(self):
+        #1- filter classes if categories is checked.
+        #2- build list
+        #3- Build factory dict
+        #4- load for each db
+        pass
