@@ -259,10 +259,11 @@ class PostGISLayer(EDGVLayer):
                     if attrName in domainDict[lyr]['columns'].keys():
                         refTable = domainDict[lyr]['columns'][attr]['references']
                         refPk = domainDict[lyr]['columns'][attr]['refPk']
+                        valueDict = domainDict[lyr]['columns'][attr]['values']
                         #TODO: treat both cases: Value Relation and Value Map
                         #TODO: implement checkMulti
                         isMulti = self.checkMulti(tableName, attrName, multiColumnsDict)
-                        editDict = {'Layer':dom.id(),'Key':'code','Value':'code_name','AllowMulti':False,'AllowNull':False}
+                        editDict = {'Layer':dom.id(),'Key':refPk,'Value':'code_name','AllowMulti':False,'AllowNull':False}
                         lyr.setEditorWidgetV2(i,'ValueRelation')
         return lyr
 

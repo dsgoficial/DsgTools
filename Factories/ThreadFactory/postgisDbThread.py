@@ -128,7 +128,8 @@ class PostgisDbThread(GenericThread):
         if not query.exec_(sql):
             QgsMessageLog.logMessage(self.messenger.getProblemMessage(command, query), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return (0, self.messenger.getProblemFeedbackMessage())
-        
+        #this commit was missing, so alter database statement was not commited.
+        self.db.commit()
         self.db.close()
         QgsMessageLog.logMessage(self.messenger.getSuccessFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
         return (1, self.messenger.getSuccessFeedbackMessage())

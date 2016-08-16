@@ -894,21 +894,21 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getGeomTablesDomains(self, version):
-        if version == '2.1.3':
-            sql = """SELECT distinct conrelid::regclass as cl, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'f' and conrelid::regclass::text in 
-            (select f_table_schema||'.'||f_table_name from public.geometry_columns where f_table_schema <> 'views')"""
-        elif version == 'FTer_2a_Ed':
-            sql = """SELECT distinct conrelid::regclass as cl, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'f' and conrelid::regclass::text in 
-        (select f_table_name from public.geometry_columns f_table_schema <> 'views') """
+#         if version == '2.1.3':
+#             sql = """SELECT distinct conrelid::regclass as cl, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'f' and conrelid::regclass::text in 
+#             (select f_table_schema||'.'||f_table_name from public.geometry_columns where f_table_schema <> 'views')"""
+#         elif version == 'FTer_2a_Ed':
+        sql = """SELECT distinct conrelid::regclass as cl, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'f' and conrelid::regclass::text in 
+        (select f_table_name from public.geometry_columns where f_table_schema <> 'views') """
         return sql
     
     def getGeomTableConstraints(self, version):
-        if version == '2.1.3':
-            sql = """SELECT distinct conrelid::regclass as cl, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'c' and conrelid::regclass::text in 
-            (select f_table_schema||'.'||f_table_name from public.geometry_columns f_table_schema <> 'views')"""
-        elif version == 'FTer_2a_Ed':
-            sql = """SELECT distinct conrelid::regclass as cl, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'c' and conrelid::regclass::text in 
-        (select f_table_name from public.geometry_columns f_table_schema <> 'views') """
+#         if version == '2.1.3':
+#             sql = """SELECT distinct conrelid::regclass as cl, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'c' and conrelid::regclass::text in 
+#             (select f_table_schema||'.'||f_table_name from public.geometry_columns f_table_schema <> 'views')"""
+#         elif version == 'FTer_2a_Ed':
+        sql = """SELECT distinct conrelid::regclass as cl, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'c' and conrelid::regclass::text in 
+        (select f_table_name from public.geometry_columns where f_table_schema <> 'views') """
         return sql
     
     def getMultiColumns(self, schemaList):
@@ -935,4 +935,8 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def getDomainDict(self, domainTable):
         sql = """select row_to_json(row(code, code_name)) from {0}""".format(domainTable)
+        return sql
+
+    def getDomainCodeDict(self, domainTable):
+        sql = """select row_to_json(a) from (select * from {0}) as a""".format(domainTable)
         return sql

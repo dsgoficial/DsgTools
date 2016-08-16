@@ -1545,7 +1545,7 @@ class PostgisDb(AbstractDb):
                 geomDict['tablePerspective'][layerName]['tableName'] = tableName
         return geomDict
     
-    def getDomainDict(self):
+    def getDbDomainDict(self):
         '''
         returns a dict like this:
         {'adm_posto_fiscal_a': {
@@ -1559,7 +1559,8 @@ class PostgisDb(AbstractDb):
         '''
         self.checkAndOpenDb()
         #gets only schemas of classes with geom, to speed up the process.
-        sql = self.gen.getGeomTablesDomains()
+        version = self.getDatabaseVersion()
+        sql = self.gen.getGeomTablesDomains(version)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
@@ -1569,13 +1570,13 @@ class PostgisDb(AbstractDb):
             tableName, fkAttribute, domainTable, domainReferencedAttribute = self.parseFkQuery(query.value(0),query.value(1))
             if tableName not in geomDict.keys():
                 geomDict[tableName] = dict()
-            if 'columns' not in geomDict[table].keys():
+            if 'columns' not in geomDict[tableName].keys():
                 geomDict[tableName]['columns'] = dict()
             if fkAttribute not in geomDict[tableName]['columns'].keys():
                 geomDict[tableName]['columns'][fkAttribute] = dict()
             geomDict[tableName]['columns'][fkAttribute]['references'] = domainTable
             geomDict[tableName]['columns'][fkAttribute]['refPk'] = domainReferencedAttribute
-            geomDict[tableName]['columns'][fkAttribute]['values'] = self.getDomainDict(domainTable)
+            geomDict[tableName]['columns'][fkAttribute]['values'] = self.getLayerColumnDict(domainReferencedAttribute, domainTable)
         return geomDict
     
     def getCheckConstraintDict(self):
@@ -1605,14 +1606,16 @@ class PostgisDb(AbstractDb):
         return geomDict
     
     def parseFkQuery(self, queryValue0, queryValue1):
-        splitList = queryValue0.split('.')
-        tableSchema = splitList[0]
-        tableName = splitList[1]
+        if '.' in queryValue0:
+            splitList = queryValue0.split('.')
+            tableName = splitList[1]
+        else:
+            tableName = queryValue0
         fkText = queryValue1
         fkAttribute = fkText.split(')')[0].replace('FOREIGN KEY (','')
         subtextList = fkText.split(' REFERENCES ')[-1].replace(' MATCH FULL','').split('(')
         domainTable = subtextList[0]
-        domainReferencedAttribute = subtextList[0].replace(')') 
+        domainReferencedAttribute = subtextList[1].replace(')','') 
         return tableName, fkAttribute, domainTable, domainReferencedAttribute
 
     def parseCheckConstraintQuery(self, edgvVersion, queryValue0, queryValue1):
@@ -1623,10 +1626,13 @@ class PostgisDb(AbstractDb):
         else:
             raise Exception(self.tr("EDGV Version not recognized!"))
     
-    def parseCheckConstraint213(queryValue0, queryValue1):
-        query0Split = queryValue0.split('.')
-        tableSchema = query0Split[0]
-        tableName = query0Split[1]
+    def parseCheckConstraint213(self, queryValue0, queryValue1):
+        if '.' in queryValue0:
+            query0Split = queryValue0.split('.')
+            tableSchema = query0Split[0]
+            tableName = query0Split[1]
+        else:
+            tableName = queryValue0
         query1Split = queryValue1.replace('CHECK ','').replace('(','').replace(')','').replace(' ','').replace('"','').split('OR')
         checkList = []
         for i in query1Split:
@@ -1635,8 +1641,13 @@ class PostgisDb(AbstractDb):
             checkList.append(attrSplit[1])
         return tableName, attribute, checkList
     
-    def parseCheckConstraintFTer(queryValue0, queryValue1):
-        tableName = queryValue0
+    def parseCheckConstraintFTer(self, queryValue0, queryValue1):
+        if '.' in queryValue0:
+            query0Split = queryValue0.split('.')
+            tableSchema = query0Split[0]
+            tableName = query0Split[1]
+        else:
+            tableName = queryValue0
         query1Split = queryValue1.replace('"','').replace('ANY','').replace('ARRAY','').replace('::smallint','').replace('(','').replace(')','').replace('CHECK','').replace('[','').replace(']','').replace(' ','').replace('<@','')
         checkList = []
         for i in query1Split.split('='):
@@ -1723,6 +1734,7 @@ class PostgisDb(AbstractDb):
     def getDomainDict(self, domainTable):
         self.checkAndOpenDb()
         sql = self.gen.getDomainDict(domainTable)
+        query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting domain dict from table ")+domainTable+':'+query.lastError().text())
         domainDict = dict()
@@ -1731,5 +1743,18 @@ class PostgisDb(AbstractDb):
             domainDict[aux['f2']] = aux['f1']
         return domainDict
     
-    def getLayerDictByCategory(self):
-        pass
+    def getLayerColumnDict(self, refPk, domainTable):
+        self.checkAndOpenDb()
+        sql = self.gen.getDomainCodeDict(domainTable)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting layer column dict from table ")+domainTable+':'+query.lastError().text())
+        domainDict = dict()
+        otherKey = None
+        while query.next():
+            aux = json.loads(query.value(0))
+            if not otherKey:
+                otherKey = [key for key in aux.keys() if key <> 'code'][0]
+            domainDict[aux[refPk]] = aux[otherKey]
+        return domainDict
+    
