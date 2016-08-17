@@ -115,8 +115,9 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         Opens the View Server dialog
         '''
         createNewServer = ViewServers(self)
-        createNewServer.exec_()
-        self.populateServersCombo()
+        result = createNewServer.exec_()
+        if result:
+            self.populateServersCombo()
 
     def populateServersCombo(self):
         '''
