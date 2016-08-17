@@ -263,8 +263,18 @@ class PostGISLayer(EDGVLayer):
                         #TODO: treat both cases: Value Relation and Value Map
                         #TODO: implement checkMulti
                         isMulti = self.checkMulti(tableName, attrName, multiColumnsDict)
-                        editDict = {'Layer':dom.id(),'Key':refPk,'Value':'code_name','AllowMulti':False,'AllowNull':False}
-                        lyr.setEditorWidgetV2(i,'ValueRelation')
+                        if isMulti:
+                            #Do value relation
+                            pass
+                        else:
+                            #Value Map
+                            lyr.setEditorWidgetV2(i,'ValueMap')
+                            lyr.setEditorWidgetV2Config(i,valueDict)
+                        #setEditorWidgetV2Config is deprecated. We will change it eventually.
+                    elif 'id' == attrName or 'id_' in attrName:
+                        pass
+                        
+                        
         return lyr
 
     def checkMulti(self, tableName, attrName, multiColumnsDict):
