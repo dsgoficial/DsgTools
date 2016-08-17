@@ -514,6 +514,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('Define a name for the reclassification setup file!'))
             return
         
+        if '.reclas' not in filename:
+            filename = filename + '.reclas'
+
         reclassificationDict = self.makeReclassificationDict()
         with open(filename, 'w') as outfile:
             json.dump(reclassificationDict, outfile, sort_keys=True, indent=4)
