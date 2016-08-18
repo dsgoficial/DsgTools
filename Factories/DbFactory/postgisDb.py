@@ -1550,21 +1550,20 @@ class PostgisDb(AbstractDb):
         returns a dict like this:
         {'adm_posto_fiscal_a': {
             'columns':{
-                'operacional': {'references':'dominios.operacional', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}}
-                'situacaofisica': {'references':'dominios.situacaofisica', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}}
-                'tipopostofisc': {'references':'dominios.tipopostofisc', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}}
+                'operacional': {'references':'dominios.operacional', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3]}
+                'situacaofisica': {'references':'dominios.situacaofisica', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3]}
+                'tipopostofisc': {'references':'dominios.tipopostofisc', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3]}
                 }
             }
         }
         '''
         self.checkAndOpenDb()
         #gets only schemas of classes with geom, to speed up the process.
+        checkConstraintDict = self.getCheckConstraintDict()
+        notNullDict = self.getNotNullDictV2()
         version = self.getDatabaseVersion()
         sql = self.gen.getGeomTablesDomains(version)
         query = QSqlQuery(sql, self.db)
-        checkConstraintDict = self.getCheckConstraintDict()
-        notNullDict = self.getNotNullDictV2()
-        multiDict = self.getMultiColumnsDict()
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
         geomDict = dict()
@@ -1582,9 +1581,14 @@ class PostgisDb(AbstractDb):
             values, otherKey = self.getLayerColumnDict(domainReferencedAttribute, domainTable)
             geomDict[tableName]['columns'][fkAttribute]['values'] = values
             geomDict[tableName]['columns'][fkAttribute]['otherKey'] = otherKey
-            #TODO: add constraint list
-            #TODO: add isNull
-            #TODO: add isMulti
+            geomDict[tableName]['columns'][fkAttribute]['constraintList'] = []
+            if tableName in checkConstraintDict.keys():
+                if fkAttribute in checkConstraintDict[tableName].keys():
+                    geomDict[tableName]['columns'][fkAttribute]['constraintList'] = checkConstraintDict[tableName][fkAttribute]
+            geomDict[tableName]['columns'][fkAttribute]['nullable'] = True
+            if tableName in notNullDict.keys():
+                if fkAttribute in notNullDict[tableName]['attributes']:
+                    geomDict[tableName]['columns'][fkAttribute]['nullable'] = False
         return geomDict
     
     def getCheckConstraintDict(self):
@@ -1646,7 +1650,7 @@ class PostgisDb(AbstractDb):
         for i in query1Split:
             attrSplit = i.split('=')
             attribute = attrSplit[0]
-            checkList.append(attrSplit[1])
+            checkList.append(int(attrSplit[1]))
         return tableName, attribute, checkList
     
     def parseCheckConstraintFTer(self, queryValue0, queryValue1):
@@ -1656,11 +1660,16 @@ class PostgisDb(AbstractDb):
             tableName = query0Split[1]
         else:
             tableName = queryValue0
-        query1Split = queryValue1.replace('"','').replace('ANY','').replace('ARRAY','').replace('::smallint','').replace('(','').replace(')','').replace('CHECK','').replace('[','').replace(']','').replace(' ','').replace('<@','')
+        query1Split = queryValue1.replace('"','').replace('ANY','').replace('ARRAY','').replace('::smallint','').replace('(','').replace(')','').replace('CHECK','').replace('[','').replace(']','').replace(' ','')
         checkList = []
-        for i in query1Split.split('='):
-            attribute = i[0]
-            checkList = i[1].split(',')
+        splitToken = ''
+        if '=' in query1Split:
+            splitToken = '='
+        elif '<@' in query1Split:
+            splitToken = '<@'
+        equalSplit = query1Split.split(splitToken)
+        attribute = equalSplit[0]
+        checkList = map(int,equalSplit[1].split(','))
         return tableName, attribute, checkList
     
     def getMultiColumnsDict(self):

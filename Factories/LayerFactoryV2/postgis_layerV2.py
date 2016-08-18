@@ -159,11 +159,11 @@ class PostGISLayer(EDGVLayer):
         #5. load layers
         for prim in lyrDict.keys():
             for cat in lyrDict[prim].keys():
-                self.loadLayer(lyrDict[prim][cat],groupDict[prim][cat], useInheritance, useQml,uniqueLoad,stylePath,geomDict,domainDict,constraintDict,multiColumnsDict,notNullDict,domLayerDict)
+                self.loadLayer(lyrDict[prim][cat],groupDict[prim][cat], useInheritance, useQml,uniqueLoad,stylePath,geomDict,domainDict,multiColumnsDict,domLayerDict)
         self.qmlLoaded.emit()
 
 
-    def loadLayer(self, lyrName, idSubgrupo, useInheritance, useQml, uniqueLoad,stylePath,geomDict,domainDict,constraintDict,multiColumnsDict, notNullDict, domLayerDict):
+    def loadLayer(self, lyrName, idSubgrupo, useInheritance, useQml, uniqueLoad,stylePath,geomDict,domainDict,multiColumnsDict, domLayerDict):
         if uniqueLoad:
             lyr = self.checkLoaded(lyrName)
             if lyr:
@@ -181,7 +181,7 @@ class PostGISLayer(EDGVLayer):
         if useQml:
             vlayer = self.setDomainsAndRestrictionsWithQml(vlayer)
         else:
-            vlayer = self.setDomainsAndRestrictions(vlayer, lyrName, domainDict, constraintDict, multiColumnsDict, domLayerDict)
+            vlayer = self.setDomainsAndRestrictions(vlayer, lyrName, domainDict, multiColumnsDict, domLayerDict)
         if stylePath:
             fullPath = self.getStyle(stylePath, self.qmlName)
             if fullPath:
@@ -248,7 +248,7 @@ class PostGISLayer(EDGVLayer):
     def isLoaded(self,lyr):
         return False
 
-    def setDomainsAndRestrictions(self, lyr, lyrName, domainDict, constraintDict, multiColumnsDict, notNullDict, domLayerDict):
+    def setDomainsAndRestrictions(self, lyr, lyrName, domainDict, multiColumnsDict, domLayerDict):
         lyrAttributes = lyr.pendingFields()
         constraintKeys = constraintDict.keys()
         #TODO: UPDATE code with new dict from getDbDomainDict
@@ -265,34 +265,30 @@ class PostGISLayer(EDGVLayer):
                         valueDict = domainDict[lyrName]['columns'][attr]['values']
                         #TODO: treat both cases: Value Relation and Value Map
                         #TODO: implement checkMulti
-                        isMulti = self.checkMulti(tableName, attrName, multiColumnsDict, domainDict)
-                        allowNull = self.checkNotNull(tableName, attrName, notNullDict)
+                        isMulti = self.checkMulti(tableName, attrName, multiColumnsDict)
                         if isMulti:
                             #Do value relation
-                            
+                            lyr.setEditorWidgetV2(i,'ValueRelation')
                             #make filter
-                            
+                            filter = '{0} in ({1})'.format(refPk,','.join(map(str,geomDict[tableName]['columns'][fkAttribute]['constraintList'])))
                             #make editDict
-                            editDict = {'Layer':dom.id(),'Key':refPk,'Value':otherKey,'AllowMulti':True,'AllowNull':allowNull}
-                            pass
+                            editDict = {'Layer':dom.id(),'Key':refPk,'Value':otherKey,'AllowMulti':True,'AllowNull':allowNull,'FilterExpression':filter}
+                            lyr.setEditorWidgetV2Config(i,editDict)
                         else:
                             #Value Map
                             lyr.setEditorWidgetV2(i,'ValueMap')
                             #filter value dict
-                            if lyrName in constraintDict.keys():
-                                if attrName in constraintDict[lyrName].keys():
-                                    for filterValue in constraintDict[lyrName][attrName]:
-                                        valueDict.pop(filterValue)
-                            #check if not null
+                            for filterValue in domainDict[lyrName]['columns'][attr]['constraintList']:
+                                valueDict.pop(filterValue)
                             lyr.setEditorWidgetV2Config(i,valueDict)
-                        #setEditorWidgetV2Config is deprecated. We will change it eventually.
-                                        
-                        
+                            #setEditorWidgetV2Config is deprecated. We will change it eventually.
         return lyr
 
-    def checkMulti(self, tableName, attrName, multiColumnsDict, domainDict):
-        #TODO: Implement
-        pass
+    def checkMulti(self, tableName, attrName, multiColumnsDict):
+        if tableName in multiColumnsDict.keys():
+            if attrName in multiColumnsDict[tableName]:
+                return True
+        return False
     
     def checkNotNull(self, lyrName, notNullDict):
         allowNull = True
