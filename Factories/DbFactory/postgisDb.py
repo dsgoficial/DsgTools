@@ -1562,6 +1562,9 @@ class PostgisDb(AbstractDb):
         version = self.getDatabaseVersion()
         sql = self.gen.getGeomTablesDomains(version)
         query = QSqlQuery(sql, self.db)
+        checkConstraintDict = self.getCheckConstraintDict()
+        notNullDict = self.getNotNullDictV2()
+        multiDict = self.getMultiColumnsDict()
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
         geomDict = dict()
@@ -1579,6 +1582,9 @@ class PostgisDb(AbstractDb):
             values, otherKey = self.getLayerColumnDict(domainReferencedAttribute, domainTable)
             geomDict[tableName]['columns'][fkAttribute]['values'] = values
             geomDict[tableName]['columns'][fkAttribute]['otherKey'] = otherKey
+            #TODO: add constraint list
+            #TODO: add isNull
+            #TODO: add isMulti
         return geomDict
     
     def getCheckConstraintDict(self):
@@ -1714,7 +1720,7 @@ class PostgisDb(AbstractDb):
 
     def getNotNullDictV2(self):
         '''
-        Dict in the form 'geomName': { 'schema':-name of the schema'
+        Dict in the form 'tableName': { 'schema':-name of the schema'
                                         'attributes':[-list of table names-]}
         '''
         self.checkAndOpenDb()
@@ -1730,10 +1736,10 @@ class PostgisDb(AbstractDb):
             notNullDict[aux['f1']]['schema'] = aux['f2']
             if 'attributes' not in notNullDict[aux['f1']].keys():
                 notNullDict[aux['f1']]['attributes'] = []
-            notNullDict[aux['f1']]['attributes'].append(aux['f3'])
+            notNullDict[aux['f1']]['attributes'] = aux['f3']
         return notNullDict
     
-    def getDomainDict(self, domainTable):
+    def getDomainDictV2(self, domainTable):
         self.checkAndOpenDb()
         sql = self.gen.getDomainDict(domainTable)
         query = QSqlQuery(sql, self.db)

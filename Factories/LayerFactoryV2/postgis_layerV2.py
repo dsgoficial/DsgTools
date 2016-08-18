@@ -146,10 +146,10 @@ class PostGISLayer(EDGVLayer):
         #TODO: load only domains of multi
         dbGroup = self.getDatabaseGroup(loadedGroups)
         domainGroup = self.createGroup(loadedGroups, self.tr("Domains"), dbGroup)
-        domLayerDict = self.loadDomains(filteredLayerList, loadedLayers,domainGroup)
+        domLayerDict = self.loadDomains(filteredLayerList, loadedLayers, domainGroup)
         #3. Get Aux dicts
         geomDict = self.abstractDb.getGeomDict()
-        domainDict = self.abstractDb.getDomainDict()
+        domainDict = self.abstractDb.getDbDomainDict()
         constraintDict = self.abstractDb.getCheckConstraintDict()
         multiColumnsDict = self.abstractDb.getMultiColumnsDict()
         notNullDict = self.abstractDb.getNotNullDictV2()
@@ -181,7 +181,7 @@ class PostGISLayer(EDGVLayer):
         if useQml:
             vlayer = self.setDomainsAndRestrictionsWithQml(vlayer)
         else:
-            vlayer = self.setDomainsAndRestrictions(vlayer, domainDict, constraintDict, multiColumnsDict, domLayerDict)
+            vlayer = self.setDomainsAndRestrictions(vlayer, lyrName, domainDict, constraintDict, multiColumnsDict, domLayerDict)
         if stylePath:
             fullPath = self.getStyle(stylePath, self.qmlName)
             if fullPath:
@@ -205,7 +205,7 @@ class PostGISLayer(EDGVLayer):
         return vlayer
 
     def getDomainsFromDb(self, layerList, loadedLayers, multiColumnsDict):
-        domainDict = self.abstractDb.getDomainDict()
+        domainDict = self.abstractDb.getDomainDictV2()
         domainList = []
         keys = domainDict.keys()
         multiLayers = multiColumnsDict.keys()
@@ -231,7 +231,7 @@ class PostGISLayer(EDGVLayer):
                 domainsToBeLoaded.append(domain)
         return domainsToBeLoaded
 
-    def loadDomains(self,layerList, loadedLayers, domainGroup):
+    def loadDomains(self, layerList, loadedLayers, domainGroup):
         domainsToBeLoaded = self.getDomainsToBeLoaded(layerList, loadedLayers)
         domainsToBeLoaded.sort(reverse=True)
         domLayerDict = dict()
@@ -248,36 +248,55 @@ class PostGISLayer(EDGVLayer):
     def isLoaded(self,lyr):
         return False
 
-    def setDomainsAndRestrictions(self, lyr, domainDict, constraintDict, multiColumnsDict, notNullDict, domLayerDict):
+    def setDomainsAndRestrictions(self, lyr, lyrName, domainDict, constraintDict, multiColumnsDict, notNullDict, domLayerDict):
         lyrAttributes = lyr.pendingFields()
+        constraintKeys = constraintDict.keys()
+        #TODO: UPDATE code with new dict from getDbDomainDict
         for i in len(lyrAttributes):
             attrName = lyrAttributes[i].name()
             if attrName == 'id' or 'id_' in lyrAttributes[i]:
                 lyr.setFieldEditable(i,False)
             else:
-                if lyr in domainDict.keys():
-                    if attrName in domainDict[lyr]['columns'].keys():
-                        refTable = domainDict[lyr]['columns'][attr]['references']
-                        refPk = domainDict[lyr]['columns'][attr]['refPk']
-                        otherKey = domainDict[lyr]['columns'][attr]['otherKey']
-                        valueDict = domainDict[lyr]['columns'][attr]['values']
+                if lyrName in domainDict.keys():
+                    if attrName in domainDict[lyrName]['columns'].keys():
+                        refTable = domainDict[lyrName]['columns'][attr]['references']
+                        refPk = domainDict[lyrName]['columns'][attr]['refPk']
+                        otherKey = domainDict[lyrName]['columns'][attr]['otherKey']
+                        valueDict = domainDict[lyrName]['columns'][attr]['values']
                         #TODO: treat both cases: Value Relation and Value Map
                         #TODO: implement checkMulti
-                        isMulti = self.checkMulti(tableName, attrName, multiColumnsDict)
-                        isNotNull = self.checkNotNull(tableName, attrName, notNullDict)
+                        isMulti = self.checkMulti(tableName, attrName, multiColumnsDict, domainDict)
+                        allowNull = self.checkNotNull(tableName, attrName, notNullDict)
                         if isMulti:
                             #Do value relation
-                            editDict = {'Layer':dom.id(),'Key':refPk,'Value':otherKey,'AllowMulti':True,'AllowNull':False}
+                            
+                            #make filter
+                            
+                            #make editDict
+                            editDict = {'Layer':dom.id(),'Key':refPk,'Value':otherKey,'AllowMulti':True,'AllowNull':allowNull}
                             pass
                         else:
                             #Value Map
                             lyr.setEditorWidgetV2(i,'ValueMap')
+                            #filter value dict
+                            if lyrName in constraintDict.keys():
+                                if attrName in constraintDict[lyrName].keys():
+                                    for filterValue in constraintDict[lyrName][attrName]:
+                                        valueDict.pop(filterValue)
+                            #check if not null
                             lyr.setEditorWidgetV2Config(i,valueDict)
                         #setEditorWidgetV2Config is deprecated. We will change it eventually.
                                         
                         
         return lyr
 
-    def checkMulti(self, tableName, attrName, multiColumnsDict):
+    def checkMulti(self, tableName, attrName, multiColumnsDict, domainDict):
         #TODO: Implement
         pass
+    
+    def checkNotNull(self, lyrName, notNullDict):
+        allowNull = True
+        if lyrName in notNullDict.keys():
+            if attrName in notNullDict[lyrName]['attributes']:
+                allowNull = False
+        return allowNull

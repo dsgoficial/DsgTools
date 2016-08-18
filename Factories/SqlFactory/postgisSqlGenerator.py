@@ -918,7 +918,7 @@ class PostGISSqlGenerator(SqlGenerator):
                 where data_type = 'ARRAY' and table_schema in ({0}) 
                 ) as t group by t.table_name
             ) as a
-        """.format(','.join(schemaList))
+        """.format("'"+"','".join(schemaList)+"'")
         return sql
     
     def getGeomByPrimitive(self):
