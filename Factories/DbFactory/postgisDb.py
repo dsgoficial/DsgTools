@@ -1550,9 +1550,9 @@ class PostgisDb(AbstractDb):
         returns a dict like this:
         {'adm_posto_fiscal_a': {
             'columns':{
-                'operacional': {'references':'dominios.operacional', 'refPk':'code', 'values':{-dict of code_name:value -}}
-                'situacaofisica': {'references':'dominios.situacaofisica', 'refPk':'code', 'values':{-dict of code_name:value -}}
-                'tipopostofisc': {'references':'dominios.tipopostofisc', 'refPk':'code', 'values':{-dict of code_name:value -}}
+                'operacional': {'references':'dominios.operacional', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}}
+                'situacaofisica': {'references':'dominios.situacaofisica', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}}
+                'tipopostofisc': {'references':'dominios.tipopostofisc', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}}
                 }
             }
         }
@@ -1576,7 +1576,9 @@ class PostgisDb(AbstractDb):
                 geomDict[tableName]['columns'][fkAttribute] = dict()
             geomDict[tableName]['columns'][fkAttribute]['references'] = domainTable
             geomDict[tableName]['columns'][fkAttribute]['refPk'] = domainReferencedAttribute
-            geomDict[tableName]['columns'][fkAttribute]['values'] = self.getLayerColumnDict(domainReferencedAttribute, domainTable)
+            values, otherKey = self.getLayerColumnDict(domainReferencedAttribute, domainTable)
+            geomDict[tableName]['columns'][fkAttribute]['values'] = values
+            geomDict[tableName]['columns'][fkAttribute]['otherKey'] = otherKey
         return geomDict
     
     def getCheckConstraintDict(self):
@@ -1756,5 +1758,5 @@ class PostgisDb(AbstractDb):
             if not otherKey:
                 otherKey = [key for key in aux.keys() if key <> 'code'][0]
             domainDict[aux[refPk]] = aux[otherKey]
-        return domainDict
+        return domainDict, otherKey
     

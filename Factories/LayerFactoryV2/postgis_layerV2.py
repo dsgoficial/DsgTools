@@ -253,27 +253,28 @@ class PostGISLayer(EDGVLayer):
         for i in len(lyrAttributes):
             attrName = lyrAttributes[i].name()
             if attrName == 'id' or 'id_' in lyrAttributes[i]:
-                pass
+                lyr.setFieldEditable(i,False)
             else:
                 if lyr in domainDict.keys():
                     if attrName in domainDict[lyr]['columns'].keys():
                         refTable = domainDict[lyr]['columns'][attr]['references']
                         refPk = domainDict[lyr]['columns'][attr]['refPk']
+                        otherKey = domainDict[lyr]['columns'][attr]['otherKey']
                         valueDict = domainDict[lyr]['columns'][attr]['values']
                         #TODO: treat both cases: Value Relation and Value Map
                         #TODO: implement checkMulti
                         isMulti = self.checkMulti(tableName, attrName, multiColumnsDict)
+                        isNotNull = self.checkNotNull(tableName, attrName, notNullDict)
                         if isMulti:
                             #Do value relation
+                            editDict = {'Layer':dom.id(),'Key':refPk,'Value':otherKey,'AllowMulti':True,'AllowNull':False}
                             pass
                         else:
                             #Value Map
                             lyr.setEditorWidgetV2(i,'ValueMap')
                             lyr.setEditorWidgetV2Config(i,valueDict)
                         #setEditorWidgetV2Config is deprecated. We will change it eventually.
-                    elif 'id' == attrName or 'id_' in attrName:
-                        pass
-                        
+                                        
                         
         return lyr
 
