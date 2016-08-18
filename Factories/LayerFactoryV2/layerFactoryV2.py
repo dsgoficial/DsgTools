@@ -27,11 +27,11 @@ from DsgTools.Factories.LayerFactory.spatialite_layer import SpatialiteLayer
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 
 class LayerFactory:
-    def makeLayer(self, abstractDb, codeList, table):
+    def makeFactory(self, abstractDb):
         driverName = abstractDb.getType()
         if driverName == "QSQLITE":
-            return SpatialiteLayer(abstractDb, codeList, table)
+            return SpatialiteLayer(abstractDb)
         if driverName == "QPSQL":
-            return PostGISLayer(abstractDb, codeList, table)
+            return PostGISLayer(abstractDb)
         else:
             return None

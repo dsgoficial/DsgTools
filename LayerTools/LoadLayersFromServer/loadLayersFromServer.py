@@ -84,10 +84,14 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                     geomDict = self.customServerConnectionWidget.selectedDbsDict[dbName].getGeomColumnDict()
                     for geom in geomDict.keys():
                         for lyr in geomDict[geom]:
-                            if lyr not in self.lyrDict.keys():
-                                self.lyrDict[lyr] = []
-                            if dbName not in self.lyrDict[lyr]:
-                                self.lyrDict[lyr].append(dbName)
+                            schema, lyrName = lyr.split('.')
+                            if lyrName not in self.lyrDict.keys():
+                                self.lyrDict[lyrName] = dict()
+                                self.lyrDict[lyrName]['dbList'] = []
+                            self.lyrDict[lyrName]['schema'] = schema
+                            self.lyrDict[lyrName]['cat'] = lyrName.split('_')[0]
+                            if dbName not in self.lyrDict[lyrName]['dbList']:
+                                self.lyrDict[lyrName]['dbList'].append(dbName)
                 except Exception as e:
                     errorDict[dbName] = str(e.args[0])
                 progress.step()
@@ -95,14 +99,14 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         elif type == 'removed':
             for lyr in self.lyrDict.keys():
                 popList = []
-                for i in range(len(self.lyrDict[lyr])):
-                    if len(self.lyrDict[lyr]) > 0:
-                        if self.lyrDict[lyr][i] in dbList:
+                for i in range(len(self.lyrDict[lyr]['dbList'])):
+                    if len(self.lyrDict[lyr]['dbList']) > 0:
+                        if self.lyrDict[lyr]['dbList'][i] in dbList:
                             popList.append(i)
                 popList.sort(reverse=True)
                 for i in popList:
-                    self.lyrDict[lyr].pop(i)
-                if len(self.lyrDict[lyr]) == 0:
+                    self.lyrDict[lyr]['dbList'].pop(i)
+                if len(self.lyrDict[lyr]['dbList']) == 0:
                     self.lyrDict.pop(lyr)
         self.layersCustomSelector.setInitialState(self.lyrDict.keys(),unique = True)
     
@@ -110,8 +114,10 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_showCategoriesRadioButton_toggled(self):
         if self.lyrDict <> dict():
-            lyrDictKeys = self.lyrDict.keys()
-            cats = [i.split('_')[0] for i in lyrDictKeys]
+            cats = []
+            for lyr in self.lyrDict.keys():
+                 if self.lyrDict[lyr]['cat'] not in cats:
+                     cats.append(self.lyrDict[lyr]['cat'])
             self.layersCustomSelector.setInitialState(cats,unique = True)
     
     @pyqtSlot(bool)
@@ -122,6 +128,16 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot()
     def on_buttonBox_accepted(self):
         #1- filter classes if categories is checked.
+        selected = self.layersCustomSelector.toLs
+        print selected
+        selectedClasses = []
+        if self.showCategoriesRadioButton.isChecked():
+            for lyr in self.lyrDict.keys():
+                if self.lyrDict[lyr]['cat'] in selected and lyr not in selectedClasses:
+                    selectedClasses.append(lyr)
+        else:
+            selectedClasses = self.layersCustomSelector.toLs
+        print selectedClasses
         #2- build list
         #3- Build factory dict
         #4- load for each db

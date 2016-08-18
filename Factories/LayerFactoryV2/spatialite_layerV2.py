@@ -35,9 +35,9 @@ from qgis.utils import iface
 from DsgTools.Factories.LayerFactory.edgv_layer import EDGVLayer
 
 class SpatialiteLayer(EDGVLayer):
-    def __init__(self, abstractDb, codeList, table):
+    def __init__(self, abstractDb, table):
         """Constructor."""
-        super(SpatialiteLayer, self).__init__(abstractDb, codeList)
+        super(SpatialiteLayer, self).__init__(abstractDb)
         
         self.provider = 'spatialite'
         

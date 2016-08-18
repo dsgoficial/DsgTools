@@ -35,14 +35,12 @@ from qgis.utils import iface
 from DsgTools.Factories.LayerFactory.edgv_layer import EDGVLayer
 
 class PostGISLayer(EDGVLayer):
-    def __init__(self, iface, abstractDb, codeList, table=None):
+    def __init__(self, iface, abstractDb):
         """Constructor."""
-        super(PostGISLayer, self).__init__(iface, bstractDb, codeList)
+        super(PostGISLayer, self).__init__(iface, bstractDb)
         
         self.provider = 'postgres'
-#         self.qmlName = layer.replace('\r','')
         self.setDatabaseConnection()
-        self.setDataSource(schema, layer, geomColumn, sql)
         self.geomDict = self.abstractDb.getGeomDict()
 
     def checkLoaded(self, name, loadedLayers):
@@ -199,7 +197,7 @@ class PostGISLayer(EDGVLayer):
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return None
-        vlayerQml = os.path.join(qmldir, self.qmlName+'.qml')
+        vlayerQml = os.path.join(qmldir, vlayer.name()+'.qml')
         #treat case of qml with multi
         vlayer.loadNamedStyle(vlayerQml, False)
         return vlayer
@@ -250,8 +248,6 @@ class PostGISLayer(EDGVLayer):
 
     def setDomainsAndRestrictions(self, lyr, lyrName, domainDict, multiColumnsDict, domLayerDict):
         lyrAttributes = lyr.pendingFields()
-        constraintKeys = constraintDict.keys()
-        #TODO: UPDATE code with new dict from getDbDomainDict
         for i in len(lyrAttributes):
             attrName = lyrAttributes[i].name()
             if attrName == 'id' or 'id_' in lyrAttributes[i]:
@@ -263,14 +259,13 @@ class PostGISLayer(EDGVLayer):
                         refPk = domainDict[lyrName]['columns'][attr]['refPk']
                         otherKey = domainDict[lyrName]['columns'][attr]['otherKey']
                         valueDict = domainDict[lyrName]['columns'][attr]['values']
-                        #TODO: treat both cases: Value Relation and Value Map
-                        #TODO: implement checkMulti
                         isMulti = self.checkMulti(tableName, attrName, multiColumnsDict)
                         if isMulti:
                             #Do value relation
                             lyr.setEditorWidgetV2(i,'ValueRelation')
                             #make filter
                             filter = '{0} in ({1})'.format(refPk,','.join(map(str,geomDict[tableName]['columns'][fkAttribute]['constraintList'])))
+                            allowNull = domainDict[lyrName]['columns'][attr]['nullable']
                             #make editDict
                             editDict = {'Layer':dom.id(),'Key':refPk,'Value':otherKey,'AllowMulti':True,'AllowNull':allowNull,'FilterExpression':filter}
                             lyr.setEditorWidgetV2Config(i,editDict)
