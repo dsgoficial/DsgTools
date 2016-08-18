@@ -51,6 +51,8 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         self.filterLineEdit.clear()        
     
     def setInitialState(self, fromList, unique = False):
+        self.fromLs = []
+        self.toLs = []
         self.fromList.clear()
         self.toList.clear()
         self.setFromList(fromList, unique)
