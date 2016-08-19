@@ -64,6 +64,9 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.postgisCustomSelector.selectionChanged.connect(self.selectedDatabases)
     
     def selectedDatabases(self,dbList,type):
+        '''
+        selectedDbsDict = { 'dbName' : 'abstractDb' }
+        '''
         #TODO: build selectedDbsDict and emit dbDictChanged()
         #1- Iterate over dbList and check if all layers on dbList are on dict. If not, add it.
         if type == 'added':

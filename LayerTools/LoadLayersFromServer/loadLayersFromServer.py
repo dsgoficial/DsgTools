@@ -36,6 +36,7 @@ from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.Factories.LayerFactoryV2.layerFactoryV2 import LayerFactory
 from DsgTools.ServerTools.createView import CreateView
 from DsgTools.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
 from DsgTools.ServerTools.selectStyles import SelectStyles
@@ -46,28 +47,23 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'loadLayersFromServer.ui'))
 
 class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, codeList, iface, parent = None):
+    def __init__(self, iface, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.iface = iface
-        self.codeList = codeList
         self.utils = Utils()
         self.setupUi(self)
+        self.layerFactory = LayerFactory()
         self.customServerConnectionWidget.postgisCustomSelector.setTitle(self.tr('Select Databases'))
         self.customServerConnectionWidget.spatialiteCustomSelector.setTitle(self.tr('Selected Spatialites'))
         self.layersCustomSelector.setTitle(self.tr('Select layers to be loaded'))
-        self.domainDict = dict()
         self.customServerConnectionWidget.dbDictChanged.connect(self.updateLayersFromDbs)
         self.customServerConnectionWidget.resetAll.connect(self.resetInterface)
         self.lyrDict = dict()
     
     def resetInterface(self):
         self.layersCustomSelector.clearAll()
+        self.styleComboBox.clear()
         #TODO: refresh optional parameters
         pass
     
@@ -127,9 +123,8 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
             
     @pyqtSlot()
     def on_buttonBox_accepted(self):
-        #1- filter classes if categories is checked.
+        #1- filter classes if categories is checked and build list.
         selected = self.layersCustomSelector.toLs
-        print selected
         selectedClasses = []
         if self.showCategoriesRadioButton.isChecked():
             for lyr in self.lyrDict.keys():
@@ -137,8 +132,33 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                     selectedClasses.append(lyr)
         else:
             selectedClasses = self.layersCustomSelector.toLs
-        print selectedClasses
-        #2- build list
+        #2- get parameters
+        
         #3- Build factory dict
+        factoryDict = dict()
+        dbList = self.customServerConnectionWidget.selectedDbsDict.keys()
+        for dbName in dbList:
+            factoryDict[dbName] = self.layerFactory.makeFactory(self.iface, self.customServerConnectionWidget.selectedDbsDict[dbName])
         #4- load for each db
-        pass
+        exceptionDict = dict()
+        progress = ProgressWidget(1,len(dbList),self.tr('Loading layers from selected databases... '), parent = self)
+        for dbName in factoryDict.keys():
+            try:
+                factoryDict[dbName].load(selectedClasses)
+            except Exception as e:
+                exceptionDict[dbName] = str(e.args[0])
+            progress.step()
+        
+        self.logInternalError(exceptionDict)
+        self.close()
+    
+    def logInternalError(self, exceptionDict):
+        msg = ''
+        errorDbList = exceptionDict.keys()
+        if len(errorDbList)> 0:
+            msg += self.tr('\nDatabases with error:')
+            msg+= ', '.join(errorDbList)
+            msg+= self.tr('\nError messages for each database were output in qgis log.')
+            for errorDb in errorDbList:
+                QgsMessageLog.logMessage(self.tr('Error for database ')+ errorDb + ': ' +exceptionDict[errorDb], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        return msg 

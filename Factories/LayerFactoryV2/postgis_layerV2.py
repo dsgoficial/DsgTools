@@ -28,19 +28,20 @@ from PyQt4.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.Qt import QObject
 
 # QGIS imports
-from qgis.core import QgsMapLayerRegistry, QgsVectorLayer,QgsDataSourceURI, QgsMessageLog
+from qgis.core import QgsMapLayerRegistry, QgsVectorLayer,QgsDataSourceURI, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog
 from qgis.utils import iface
 
 #DsgTools imports
-from DsgTools.Factories.LayerFactory.edgv_layer import EDGVLayer
+from DsgTools.Factories.LayerFactoryV2.edgv_layerV2 import EDGVLayerV2
 
-class PostGISLayer(EDGVLayer):
+class PostGISLayerV2(EDGVLayerV2):
     def __init__(self, iface, abstractDb):
         """Constructor."""
-        super(PostGISLayer, self).__init__(iface, bstractDb)
+        super(self.__class__, self).__init__(iface, abstractDb)
         
         self.provider = 'postgres'
         self.setDatabaseConnection()
+        self.buildUri()
         self.geomDict = self.abstractDb.getGeomDict()
 
     def checkLoaded(self, name, loadedLayers):
@@ -68,10 +69,10 @@ class PostGISLayer(EDGVLayer):
     
     def getDatabaseGroup(self, groupList):
         dbName = self.abstractDb.getDatabaseName()
-        if groupName in groupList:
-            return groupList.index(groupName)
+        if dbName in groupList:
+            return groupList.index(dbName)
         else:
-            return self.iface.legendInterface().addGroup(groupName, parent)
+            return self.iface.legendInterface().addGroup(dbName, True, -1)
     
     def getLyrDict(self, lyrList):
         lyrDict = dict()
@@ -105,14 +106,14 @@ class PostGISLayer(EDGVLayer):
             groupDict[geomNode] = dict()
             aux = self.createGroup(groupList, geomNode, parent)
             for catNode in lyrDict[geomNode].keys():
-                groupDict[geomNode][catNode] = self.createGroup(groupList, catNode, geomNode)
+                groupDict[geomNode][catNode] = self.createGroup(groupList, catNode, aux)
         return groupDict
     
     def createGroup(self, groupList, groupName, parent):
         if groupName in groupList:
             return groupList.index(groupName) #verificar
         else:
-            return self.iface.legendInterface().addGroup(groupName, parent)
+            return self.iface.legendInterface().addGroup(groupName, True, parent)
     
     def filterLayerList(self, layerList, useInheritance, onlyWithElements):
         filterList = []
@@ -144,7 +145,6 @@ class PostGISLayer(EDGVLayer):
         #TODO: load only domains of multi
         dbGroup = self.getDatabaseGroup(loadedGroups)
         domainGroup = self.createGroup(loadedGroups, self.tr("Domains"), dbGroup)
-        domLayerDict = self.loadDomains(filteredLayerList, loadedLayers, domainGroup)
         #3. Get Aux dicts
         geomDict = self.abstractDb.getGeomDict()
         domainDict = self.abstractDb.getDbDomainDict()
@@ -152,29 +152,32 @@ class PostGISLayer(EDGVLayer):
         multiColumnsDict = self.abstractDb.getMultiColumnsDict()
         notNullDict = self.abstractDb.getNotNullDictV2()
         lyrDict = self.getLyrDict(filteredLayerList)
+        
+        domLayerDict = self.loadDomains(filteredLayerList, loadedLayers, domainGroup, domainDict, multiColumnsDict)
         #4. Build Groups
-        groupDict = self.prepareGroups(loadedGroups, dbGroup, filteredLayerList)
+        groupDict = self.prepareGroups(loadedGroups, dbGroup, lyrDict)
         #5. load layers
         for prim in lyrDict.keys():
             for cat in lyrDict[prim].keys():
-                self.loadLayer(lyrDict[prim][cat],groupDict[prim][cat], useInheritance, useQml,uniqueLoad,stylePath,geomDict,domainDict,multiColumnsDict,domLayerDict)
-        self.qmlLoaded.emit()
-
+                for lyr in lyrDict[prim][cat]:
+                    self.loadLayer(lyr, groupDict[prim][cat], useInheritance, useQml,uniqueLoad,stylePath,geomDict,domainDict,multiColumnsDict,domLayerDict)
 
     def loadLayer(self, lyrName, idSubgrupo, useInheritance, useQml, uniqueLoad,stylePath,geomDict,domainDict,multiColumnsDict, domLayerDict):
         if uniqueLoad:
             lyr = self.checkLoaded(lyrName)
             if lyr:
                 return lyr
-        if useInheritance:
-            sql = ''
         schema = geomDict['tablePerspective'][lyrName]['schema']
         geomColumn = geomDict['tablePerspective'][lyrName]['geometryColumn']
-        crs =  geomDict['tablePerspective'][lyrName]['srid']
-        sql = self.abstractDb.gen.loadLayerFromDatabase(schema+'.'+lyrName)
-        self.setDataSource(schema, layer, geomColumn, sql)
+        srid =  geomDict['tablePerspective'][lyrName]['srid']
+        if useInheritance:
+            sql = ''
+        else:
+            sql = self.abstractDb.gen.loadLayerFromDatabase(schema+'.'+lyrName)            
+        self.setDataSource(schema, lyrName, geomColumn, sql)
 
         vlayer = iface.addVectorLayer(self.uri.uri(), lyrName, self.provider)
+        crs = QgsCoordinateReferenceSystem(int(srid), QgsCoordinateReferenceSystem.EpsgCrsId)
         vlayer.setCrs(crs)
         if useQml:
             vlayer = self.setDomainsAndRestrictionsWithQml(vlayer)
@@ -202,8 +205,7 @@ class PostGISLayer(EDGVLayer):
         vlayer.loadNamedStyle(vlayerQml, False)
         return vlayer
 
-    def getDomainsFromDb(self, layerList, loadedLayers, multiColumnsDict):
-        domainDict = self.abstractDb.getDomainDictV2()
+    def getDomainsFromDb(self, layerList, loadedLayers, domainDict, multiColumnsDict):
         domainList = []
         keys = domainDict.keys()
         multiLayers = multiColumnsDict.keys()
@@ -216,8 +218,8 @@ class PostGISLayer(EDGVLayer):
                             domainList.append(dom)
         return domainList
 
-    def getDomainsToBeLoaded(self, layerList, loadedLayers, multiColumnsDict):
-        domains = self.getDomainsFromDb(layerList, loadedLayers, multiColumnsDict)
+    def getDomainsToBeLoaded(self, layerList, loadedLayers, domainDict, multiColumnsDict):
+        domains = self.getDomainsFromDb(layerList, loadedLayers, domainDict, multiColumnsDict)
         loadedDomains = []
         for domain in domains:
             domLyr = self.checkLoaded(domain, loadedLayers)
@@ -229,8 +231,8 @@ class PostGISLayer(EDGVLayer):
                 domainsToBeLoaded.append(domain)
         return domainsToBeLoaded
 
-    def loadDomains(self, layerList, loadedLayers, domainGroup):
-        domainsToBeLoaded = self.getDomainsToBeLoaded(layerList, loadedLayers)
+    def loadDomains(self, layerList, loadedLayers, domainGroup, domainDict, multiColumnsDict):
+        domainsToBeLoaded = self.getDomainsToBeLoaded(layerList, loadedLayers, domainDict, multiColumnsDict)
         domainsToBeLoaded.sort(reverse=True)
         domLayerDict = dict()
         for domainTableName in domainsToBeLoaded:
@@ -247,25 +249,25 @@ class PostGISLayer(EDGVLayer):
         return False
 
     def setDomainsAndRestrictions(self, lyr, lyrName, domainDict, multiColumnsDict, domLayerDict):
-        lyrAttributes = lyr.pendingFields()
-        for i in len(lyrAttributes):
+        lyrAttributes = [i for i in lyr.pendingFields()]
+        for i in range(len(lyrAttributes)):
             attrName = lyrAttributes[i].name()
-            if attrName == 'id' or 'id_' in lyrAttributes[i]:
+            if attrName == 'id' or 'id_' in lyrAttributes[i].name():
                 lyr.setFieldEditable(i,False)
             else:
                 if lyrName in domainDict.keys():
                     if attrName in domainDict[lyrName]['columns'].keys():
-                        refTable = domainDict[lyrName]['columns'][attr]['references']
-                        refPk = domainDict[lyrName]['columns'][attr]['refPk']
-                        otherKey = domainDict[lyrName]['columns'][attr]['otherKey']
-                        valueDict = domainDict[lyrName]['columns'][attr]['values']
-                        isMulti = self.checkMulti(tableName, attrName, multiColumnsDict)
+                        refTable = domainDict[lyrName]['columns'][attrName]['references']
+                        refPk = domainDict[lyrName]['columns'][attrName]['refPk']
+                        otherKey = domainDict[lyrName]['columns'][attrName]['otherKey']
+                        valueDict = domainDict[lyrName]['columns'][attrName]['values']
+                        isMulti = self.checkMulti(lyrName, attrName, multiColumnsDict)
                         if isMulti:
                             #Do value relation
                             lyr.setEditorWidgetV2(i,'ValueRelation')
                             #make filter
                             filter = '{0} in ({1})'.format(refPk,','.join(map(str,geomDict[tableName]['columns'][fkAttribute]['constraintList'])))
-                            allowNull = domainDict[lyrName]['columns'][attr]['nullable']
+                            allowNull = domainDict[lyrName]['columns'][attrName]['nullable']
                             #make editDict
                             editDict = {'Layer':dom.id(),'Key':refPk,'Value':otherKey,'AllowMulti':True,'AllowNull':allowNull,'FilterExpression':filter}
                             lyr.setEditorWidgetV2Config(i,editDict)
@@ -273,9 +275,14 @@ class PostGISLayer(EDGVLayer):
                             #Value Map
                             lyr.setEditorWidgetV2(i,'ValueMap')
                             #filter value dict
-                            for filterValue in domainDict[lyrName]['columns'][attr]['constraintList']:
-                                valueDict.pop(filterValue)
-                            lyr.setEditorWidgetV2Config(i,valueDict)
+                            constraintList = domainDict[lyrName]['columns'][attrName]['constraintList']
+                            valueRelationDict = dict()
+                            for key in valueDict.keys():
+                                if len(constraintList) > 0 and key in constraintList:
+                                    valueRelationDict[valueDict[key]] = str(key)
+                                else:
+                                    valueRelationDict[valueDict[key]] = str(key)
+                            lyr.setEditorWidgetV2Config(i,valueRelationDict)
                             #setEditorWidgetV2Config is deprecated. We will change it eventually.
         return lyr
 
