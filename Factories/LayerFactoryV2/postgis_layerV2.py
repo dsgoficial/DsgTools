@@ -279,8 +279,9 @@ class PostGISLayerV2(EDGVLayerV2):
                             constraintList = domainDict[lyrName]['columns'][attrName]['constraintList']
                             valueRelationDict = dict()
                             for key in valueDict.keys():
-                                if len(constraintList) > 0 and key in constraintList:
-                                    valueRelationDict[valueDict[key]] = str(key)
+                                if len(constraintList) > 0: 
+                                    if key in constraintList:
+                                        valueRelationDict[valueDict[key]] = str(key)
                                 else:
                                     valueRelationDict[valueDict[key]] = str(key)
                             lyr.setEditorWidgetV2Config(i,valueRelationDict)
