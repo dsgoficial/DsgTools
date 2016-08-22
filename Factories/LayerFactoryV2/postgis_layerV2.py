@@ -146,8 +146,8 @@ class PostGISLayerV2(EDGVLayerV2):
         #2. Load Domains
         #do this only if EDGV Version = FTer
         edgvVersion = self.abstractDb.getDatabaseVersion()
+        dbGroup = self.getDatabaseGroup(loadedGroups)
         if edgvVersion == 'FTer_2a_Ed':
-            dbGroup = self.getDatabaseGroup(loadedGroups)
             domainGroup = self.createGroup(loadedGroups, self.tr("Domains"), dbGroup)
             domLayerDict = self.loadDomains(filteredLayerList, loadedLayers, domainGroup)
         else:
