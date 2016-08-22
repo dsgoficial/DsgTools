@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 import json
+import os
 from xml.dom.minidom import parse, parseString
 
 class Utils:
@@ -110,3 +111,18 @@ class Utils:
             qgisNode = doc.getElementsByTagName('qgis')[0]
             qgisNode.removeChild(forbiddenNode)
         return doc.toxml().replace('<?xml version="1.0" encoding="utf-8"?>','')
+    
+    def parseMultiQml(self, qmlPath, lyrList):
+        '''
+        dict in the form {'lyrName': {'attributeName':'domainTableName'}}
+        '''
+        refDict = dict()
+        for lyr in lyrList:
+            qml = os.path.join(qmlPath,lyr+'.qml')
+            doc = parse(qml)
+            refDict[lyr] = dict()
+            for node in doc.getElementsByTagName('edittype'):
+                if node.getAttribute('widgetv2type') == 'ValueRelation':
+                    attrName = node.getAttribute('name')
+                    refDict[lyr][attrName] = node.getElementsByTagName('widgetv2config')[0].getAttribute('Layer')
+        return refDict

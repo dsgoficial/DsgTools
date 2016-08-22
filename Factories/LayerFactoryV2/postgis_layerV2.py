@@ -143,9 +143,14 @@ class PostGISLayerV2(EDGVLayerV2):
         #4. Filter Layers:
         filteredLayerList = self.filterLayerList(layerList, useInheritance, onlyWithElements)
         #2. Load Domains
-        #TODO: load only domains of multi
-        dbGroup = self.getDatabaseGroup(loadedGroups)
-        domainGroup = self.createGroup(loadedGroups, self.tr("Domains"), dbGroup)
+        #do this only if EDGV Version = FTer
+        edgvVersion = self.abstractDb.getDatabaseVersion()
+        if edgvVersion == 'FTer_2a_Ed':
+            dbGroup = self.getDatabaseGroup(loadedGroups)
+            domainGroup = self.createGroup(loadedGroups, self.tr("Domains"), dbGroup)
+            domLayerDict = self.loadDomains(filteredLayerList, loadedLayers, domainGroup)
+        else:
+            domLayerDict = dict()
         #3. Get Aux dicts
         geomDict = self.abstractDb.getGeomDict()
         domainDict = self.abstractDb.getDbDomainDict()
@@ -154,7 +159,7 @@ class PostGISLayerV2(EDGVLayerV2):
         notNullDict = self.abstractDb.getNotNullDictV2()
         lyrDict = self.getLyrDict(filteredLayerList)
         
-        domLayerDict = self.loadDomains(filteredLayerList, loadedLayers, domainGroup, domainDict, multiColumnsDict)
+        
         #4. Build Groups
         groupDict = self.prepareGroups(loadedGroups, dbGroup, lyrDict)
         #5. load layers
@@ -219,28 +224,40 @@ class PostGISLayerV2(EDGVLayerV2):
                             domainList.append(dom)
         return domainList
 
-    def getDomainsToBeLoaded(self, layerList, loadedLayers, domainDict, multiColumnsDict):
-        domains = self.getDomainsFromDb(layerList, loadedLayers, domainDict, multiColumnsDict)
+    def getDomainsToBeLoaded(self, layerList, loadedLayers, domLayerDict):
+        qmlPath = self.abstractDb.getQmlDir()
+        qmlDict = self.utils.parseMultiQml(qmlPath, layerList)
         loadedDomains = []
-        for domain in domains:
-            domLyr = self.checkLoaded(domain, loadedLayers)
-            if domLyr:
-                loadedDomains.append(domLyr.name())
         domainsToBeLoaded = []
-        for domain in domains:
-            if domain not in loadedDomains:
-                domainsToBeLoaded.append(domain)
+        for lyr in layerList:
+            for attr in qmlDict[lyr].keys():
+                domain = qmlDict[lyr][attr]
+                domLyr = self.checkLoaded(domain, loadedLayers)
+                if domLyr:
+                    domLyrName = domLyr.name()
+                    loadedDomains.append(domLyrName)
+                    if lyr not in domLayerDict.keys():
+                        domLayerDict[lyr] = dict()
+                    if attr not in domLayerDict[lyr].keys():
+                        domLayerDict[lyr][attr] = domLyr
+                        
+                if domain not in loadedDomains and domain not in domainsToBeLoaded:
+                    domainsToBeLoaded.append((domain,lyr,attr))
         return domainsToBeLoaded
 
-    def loadDomains(self, layerList, loadedLayers, domainGroup, domainDict, multiColumnsDict):
-        domainsToBeLoaded = self.getDomainsToBeLoaded(layerList, loadedLayers, domainDict, multiColumnsDict)
-        domainsToBeLoaded.sort(reverse=True)
+    def loadDomains(self, layerList, loadedLayers, domainGroup):
         domLayerDict = dict()
-        for domainTableName in domainsToBeLoaded:
+        domainsToBeLoaded = self.getDomainsToBeLoaded(layerList, loadedLayers, domLayerDict)
+        domainsToBeLoaded.sort(reverse=True)
+        for domainTableName, lyr, attr in domainsToBeLoaded:
             uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (self.database, self.host, self.port, self.user, self.password, domainTableName)
             domLayer = iface.addVectorLayer(uri, domainTableName, self.provider)
-            domLayerDict[domainTableName] = domLayer
-            iface.legendInterface().moveLayer(domLayer, domainIdGroup)
+            if lyr not in domLayerDict.keys():
+                 domLayerDict[lyr] = dict()
+            if attr not in domLayerDict[lyr].keys():
+                 domLayerDict[lyr][attr] = domLayer
+
+            iface.legendInterface().moveLayer(domLayer, domainGroup)
         return domLayerDict
 
     def getStyleFromDb(self, edgvVersion, className):
@@ -267,9 +284,10 @@ class PostGISLayerV2(EDGVLayerV2):
                             #Do value relation
                             lyr.setEditorWidgetV2(i,'ValueRelation')
                             #make filter
-                            filter = '{0} in ({1})'.format(refPk,','.join(map(str,geomDict[tableName]['columns'][fkAttribute]['constraintList'])))
+                            filter = '{0} in ({1})'.format(refPk,','.join(map(str,domainDict[lyrName]['columns'][attrName]['constraintList'])))
                             allowNull = domainDict[lyrName]['columns'][attrName]['nullable']
                             #make editDict
+                            dom = domLayerDict[lyrName][attrName]
                             editDict = {'Layer':dom.id(),'Key':refPk,'Value':otherKey,'AllowMulti':True,'AllowNull':allowNull,'FilterExpression':filter}
                             lyr.setEditorWidgetV2Config(i,editDict)
                         else:

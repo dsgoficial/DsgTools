@@ -1550,9 +1550,9 @@ class PostgisDb(AbstractDb):
         returns a dict like this:
         {'adm_posto_fiscal_a': {
             'columns':{
-                'operacional': {'references':'dominios.operacional', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3]}
-                'situacaofisica': {'references':'dominios.situacaofisica', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3]}
-                'tipopostofisc': {'references':'dominios.tipopostofisc', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3]}
+                'operacional': {'references':'dominios.operacional', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3], 'isMulti':False}
+                'situacaofisica': {'references':'dominios.situacaofisica', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3], 'isMulti':False}
+                'tipopostofisc': {'references':'dominios.tipopostofisc', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3], 'isMulti':False}
                 }
             }
         }
@@ -1561,6 +1561,7 @@ class PostgisDb(AbstractDb):
         #gets only schemas of classes with geom, to speed up the process.
         checkConstraintDict = self.getCheckConstraintDict()
         notNullDict = self.getNotNullDictV2()
+        multiDict = self.getMultiColumnsDict()
         sql = self.gen.getGeomTablesDomains()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
@@ -1581,6 +1582,7 @@ class PostgisDb(AbstractDb):
             geomDict[tableName]['columns'][fkAttribute]['values'] = values
             geomDict[tableName]['columns'][fkAttribute]['otherKey'] = otherKey
             geomDict[tableName]['columns'][fkAttribute]['constraintList'] = []
+            geomDict[tableName]['columns'][fkAttribute]['isMulti'] = False
             if tableName in checkConstraintDict.keys():
                 if fkAttribute in checkConstraintDict[tableName].keys():
                     geomDict[tableName]['columns'][fkAttribute]['constraintList'] = checkConstraintDict[tableName][fkAttribute]
@@ -1588,6 +1590,32 @@ class PostgisDb(AbstractDb):
             if tableName in notNullDict.keys():
                 if fkAttribute in notNullDict[tableName]['attributes']:
                     geomDict[tableName]['columns'][fkAttribute]['nullable'] = False
+            if tableName in multiDict.keys():
+                if fkAttribute in multiDict[tableName]:
+                    geomDict[tableName]['columns'][fkAttribute]['isMulti'] = True
+        auxGeomDict = self.getGeomDict()
+        for tableName in multiDict.keys():
+            if tableName in auxGeomDict['tablePerspective'].keys():
+                for fkAttribute in multiDict[tableName]:
+                    if tableName not in geomDict.keys():
+                        geomDict[tableName] = dict()
+                    if 'columns' not in geomDict[tableName].keys():
+                        geomDict[tableName]['columns'] = dict()
+                    if fkAttribute not in geomDict[tableName]['columns'].keys():
+                        geomDict[tableName]['columns'][fkAttribute] = dict()
+                    geomDict[tableName]['columns'][fkAttribute]['references'] = None
+                    if fkAttribute in checkConstraintDict[tableName].keys():
+                        geomDict[tableName]['columns'][fkAttribute]['constraintList'] = checkConstraintDict[tableName][fkAttribute]
+                    geomDict[tableName]['columns'][fkAttribute]['nullable'] = True
+                    if tableName in notNullDict.keys():
+                            if fkAttribute in notNullDict[tableName]['attributes']:
+                                geomDict[tableName]['columns'][fkAttribute]['nullable'] = False
+                    if tableName in multiDict.keys():
+                        if fkAttribute in multiDict[tableName]:
+                            geomDict[tableName]['columns'][fkAttribute]['isMulti'] = True
+                            geomDict[tableName]['columns'][fkAttribute]['refPk'] = 'code'
+                            geomDict[tableName]['columns'][fkAttribute]['otherKey'] = 'code_name'
+                            geomDict[tableName]['columns'][fkAttribute]['values'] = dict()
         return geomDict
     
     def getCheckConstraintDict(self):
