@@ -225,42 +225,29 @@ class PostGISLayerV2(EDGVLayerV2):
                             domainList.append(dom)
         return domainList
 
-    def getDomainsToBeLoaded(self, layerList, loadedLayers, domLayerDict):
+    def loadDomains(self, layerList, loadedLayers, domainGroup):
+        domLayerDict = dict()
         qmlPath = self.abstractDb.getQmlDir()
         qmlDict = self.utils.parseMultiQml(qmlPath, layerList)
-        domainsToBeLoaded = []
-        loadedDomains = []
         for lyr in layerList:
             for attr in qmlDict[lyr].keys():
                 domain = qmlDict[lyr][attr]
                 domLyr = self.checkLoaded(domain, loadedLayers)
-                if domLyr:
-                    domLyrName = domLyr.name()
-                    loadedDomains.append(domLyrName)
-                    if lyr not in domLayerDict.keys():
-                        domLayerDict[lyr] = dict()
-                    if attr not in domLayerDict[lyr].keys():
-                        domLayerDict[lyr][attr] = domLyr
-                        
-                if domain not in loadedDomains:
-                    domainsToBeLoaded.append((domain,lyr,attr))
-                    loadedDomains.append(domain)
-        return domainsToBeLoaded
-
-    def loadDomains(self, layerList, loadedLayers, domainGroup):
-        domLayerDict = dict()
-        domainsToBeLoaded = self.getDomainsToBeLoaded(layerList, loadedLayers, domLayerDict)
-        domainsToBeLoaded.sort(reverse=True)
-        for domainTableName, lyr, attr in domainsToBeLoaded:
-            uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (self.database, self.host, self.port, self.user, self.password, domainTableName)
-            domLayer = iface.addVectorLayer(uri, domainTableName, self.provider)
-            if lyr not in domLayerDict.keys():
-                 domLayerDict[lyr] = dict()
-            if attr not in domLayerDict[lyr].keys():
-                 domLayerDict[lyr][attr] = domLayer
-
-            iface.legendInterface().moveLayer(domLayer, domainGroup)
+                if not domLyr:
+                    domLyr = self.loadDomain(domain, domainGroup)
+                    loadedLayers.append(domLyr)
+                domLyrName = domLyr.name()
+                if lyr not in domLayerDict.keys():
+                    domLayerDict[lyr] = dict()
+                if attr not in domLayerDict[lyr].keys():
+                    domLayerDict[lyr][attr] = domLyr
         return domLayerDict
+    
+    def loadDomain(self, domainTableName, domainGroup):
+        uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (self.database, self.host, self.port, self.user, self.password, domainTableName)
+        domLayer = iface.addVectorLayer(uri, domainTableName, self.provider)
+        self.iface.legendInterface().moveLayer(domLayer, domainGroup)
+        return domLayer
 
     def getStyleFromDb(self, edgvVersion, className):
         return self.abstractDb.getLyrStyle(edgvVersion,className)

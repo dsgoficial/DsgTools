@@ -50,9 +50,6 @@ class EDGVLayerV2(QObject):
         
     def load(self, crs, idSubgrupo = None):
         return None
-
-    def loadDomainTable(self,name):
-        pass
     
     def getStyle(self, stylePath, className):
         if 'db:' in stylePath:
