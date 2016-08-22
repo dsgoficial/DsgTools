@@ -133,7 +133,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         else:
             selectedClasses = self.layersCustomSelector.toLs
         #2- get parameters
-        
+        withElements = self.checkBoxOnlyWithElements.isChecked()
         #3- Build factory dict
         factoryDict = dict()
         dbList = self.customServerConnectionWidget.selectedDbsDict.keys()
@@ -144,10 +144,11 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         progress = ProgressWidget(1,len(dbList),self.tr('Loading layers from selected databases... '), parent = self)
         for dbName in factoryDict.keys():
             try:
-                factoryDict[dbName].load(selectedClasses)
+                factoryDict[dbName].load(selectedClasses,onlyWithElements=withElements)
+                progress.step()
             except Exception as e:
                 exceptionDict[dbName] = str(e.args[0])
-            progress.step()
+                progress.step()
         
         self.logInternalError(exceptionDict)
         self.close()

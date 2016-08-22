@@ -1561,8 +1561,7 @@ class PostgisDb(AbstractDb):
         #gets only schemas of classes with geom, to speed up the process.
         checkConstraintDict = self.getCheckConstraintDict()
         notNullDict = self.getNotNullDictV2()
-        version = self.getDatabaseVersion()
-        sql = self.gen.getGeomTablesDomains(version)
+        sql = self.gen.getGeomTablesDomains()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
@@ -1604,7 +1603,7 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         edgvVersion = self.getDatabaseVersion()
         #gets only schemas of classes with geom, to speed up the process.
-        sql = self.gen.getGeomTableConstraints(edgvVersion)
+        sql = self.gen.getGeomTableConstraints()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())

@@ -89,6 +89,18 @@ class AbstractDb(QObject):
                 lyrWithElemList.appen(lyr)
         return lyrWithElemList
     
+    def getLayersWithElementsV2(self, layerList):
+        self.checkAndOpenDb()
+        lyrWithElemList = []
+        for lyr in layerList:
+            schema=self.getTableSchemaFromDb(lyr)
+            sql = self.gen.getElementCountFromLayerV2(schema,lyr)
+            query = QSqlQuery(sql,self.db)
+            query.next()
+            if query.value(0) > 0:
+                lyrWithElemList.append(lyr)
+        return lyrWithElemList
+    
     def findEPSG(self):
         self.checkAndOpenDb()
         sql = self.gen.getSrid()

@@ -110,21 +110,22 @@ class PostGISLayerV2(EDGVLayerV2):
         return groupDict
     
     def createGroup(self, groupList, groupName, parent):
-        if groupName in groupList:
-            return groupList.index(groupName) #verificar
+        subgroup = groupList[parent::]
+        if groupName in subgroup:
+            return parent+subgroup.index(groupName) #verificar
         else:
             return self.iface.legendInterface().addGroup(groupName, True, parent)
     
     def filterLayerList(self, layerList, useInheritance, onlyWithElements):
         filterList = []
         if onlyWithElements:
-            lyrsWithElements = self.abstractDb.getLayersWithElements(layerList)
+            lyrsWithElements = self.abstractDb.getLayersWithElementsV2(layerList)
         else:
             lyrsWithElements = layerList
         if useInheritance:
             finalList = self.abstractDb.getLayersFilterByInheritance(lyrsWithElements)
         else:
-            finalList = layerList
+            finalList = lyrsWithElements
         return finalList
 
     def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False):

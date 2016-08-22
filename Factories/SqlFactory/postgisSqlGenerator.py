@@ -893,22 +893,29 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = 'select srid, f_geometry_column, type, f_table_schema, f_table_name from public.geometry_columns'
         return sql
     
-    def getGeomTablesDomains(self, version):
-#         if version == '2.1.3':
-#             sql = """SELECT distinct conrelid::regclass as cl, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'f' and conrelid::regclass::text in 
-#             (select f_table_schema||'.'||f_table_name from public.geometry_columns where f_table_schema <> 'views')"""
-#         elif version == 'FTer_2a_Ed':
-        sql = """SELECT distinct conrelid::regclass as cl, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'f' and conrelid::regclass::text in 
-        (select f_table_name from public.geometry_columns where f_table_schema <> 'views') """
+    def getGeomTablesDomains(self):
+        sql = """select distinct case 
+            when split_part(conrelid::regclass::text,'.',2) = '' then split_part(conrelid::regclass::text,'.',1)
+            else split_part(conrelid::regclass::text,'.',2)
+        end as cl, pg_get_constraintdef(oid) FROM 
+ pg_constraint WHERE contype = 'f' and case 
+            when split_part(conrelid::regclass::text,'.',2) = '' then split_part(conrelid::regclass::text,'.',1)
+            else split_part(conrelid::regclass::text,'.',2)
+        end in (select f_table_name from public.geometry_columns where f_table_schema <> 'views')
+"""
         return sql
     
-    def getGeomTableConstraints(self, version):
-#         if version == '2.1.3':
-#             sql = """SELECT distinct conrelid::regclass as cl, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'c' and conrelid::regclass::text in 
-#             (select f_table_schema||'.'||f_table_name from public.geometry_columns f_table_schema <> 'views')"""
-#         elif version == 'FTer_2a_Ed':
-        sql = """SELECT distinct conrelid::regclass as cl, pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = 'c' and conrelid::regclass::text in 
-        (select f_table_name from public.geometry_columns where f_table_schema <> 'views') """
+    def getGeomTableConstraints(self):
+        sql = """select distinct case 
+            when split_part(conrelid::regclass::text,'.',2) = '' then split_part(conrelid::regclass::text,'.',1)
+            else split_part(conrelid::regclass::text,'.',2)
+        end as cl, pg_get_constraintdef(oid) FROM 
+ pg_constraint WHERE contype = 'c' and case 
+            when split_part(conrelid::regclass::text,'.',2) = '' then split_part(conrelid::regclass::text,'.',1)
+            else split_part(conrelid::regclass::text,'.',2)
+        end in (select f_table_name from public.geometry_columns where f_table_schema <> 'views')
+
+"""
         return sql
     
     def getMultiColumns(self, schemaList):
