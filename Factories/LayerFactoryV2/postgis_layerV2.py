@@ -75,6 +75,7 @@ class PostGISLayerV2(EDGVLayerV2):
             return self.iface.legendInterface().addGroup(dbName, True, -1)
     
     def getLyrDict(self, lyrList):
+        #redo
         lyrDict = dict()
         lyrList.sort()
         for lyr in lyrList:
@@ -227,8 +228,8 @@ class PostGISLayerV2(EDGVLayerV2):
     def getDomainsToBeLoaded(self, layerList, loadedLayers, domLayerDict):
         qmlPath = self.abstractDb.getQmlDir()
         qmlDict = self.utils.parseMultiQml(qmlPath, layerList)
-        loadedDomains = []
         domainsToBeLoaded = []
+        loadedDomains = []
         for lyr in layerList:
             for attr in qmlDict[lyr].keys():
                 domain = qmlDict[lyr][attr]
@@ -241,8 +242,9 @@ class PostGISLayerV2(EDGVLayerV2):
                     if attr not in domLayerDict[lyr].keys():
                         domLayerDict[lyr][attr] = domLyr
                         
-                if domain not in loadedDomains and domain not in domainsToBeLoaded:
+                if domain not in loadedDomains:
                     domainsToBeLoaded.append((domain,lyr,attr))
+                    loadedDomains.append(domain)
         return domainsToBeLoaded
 
     def loadDomains(self, layerList, loadedLayers, domainGroup):
