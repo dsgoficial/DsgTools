@@ -296,19 +296,20 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             # this guy is a QComboBox or a QListWidget
             widgetItem = self.attributeTableWidget.cellWidget(i, 1)
             
-            if attribute not in qmlDict.keys():continue
-
-            if isinstance(qmlDict[attribute], dict):
-                value = qmlDict[attribute][widgetItem.currentText()]
-            if isinstance(qmlDict[attribute], tuple):
-                (table, filterKeys) = qmlDict[attribute]
-                valueRelation = self.makeValueRelationDict(table, filterKeys)
-                values = []
-                for i in range(widgetItem.count()):
-                    if widgetItem.item(i).checkState() == Qt.Checked:
-                        key = widgetItem.item(i).text()
-                        values.append(valueRelation[key])
-                value = '{%s}' % ','.join(map(str, values))
+            if attribute in qmlDict.keys():
+                if isinstance(qmlDict[attribute], dict):
+                    value = qmlDict[attribute][widgetItem.currentText()]
+                elif isinstance(qmlDict[attribute], tuple):
+                    (table, filterKeys) = qmlDict[attribute]
+                    valueRelation = self.makeValueRelationDict(table, filterKeys)
+                    values = []
+                    for i in range(widgetItem.count()):
+                        if widgetItem.item(i).checkState() == Qt.Checked:
+                            key = widgetItem.item(i).text()
+                            values.append(valueRelation[key])
+                    value = '{%s}' % ','.join(map(str, values))
+            else:
+                value = widgetItem.text() 
             
             #sweep tree for attribute
             attrFound = False
@@ -349,23 +350,26 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 # this guy is a QComboBox or a QListWidget
                 widgetItem = self.attributeTableWidget.cellWidget(i, 1)
     
-                # this guy is a QComboBox here
-                if isinstance(qmlDict[attribute], dict):
-                    for i in range(widgetItem.count()):
-                        text = widgetItem.itemText(i)
-                        if qmlDict[attribute][text] == value:
-                            widgetItem.setCurrentIndex(i)
-                # this guy is a QListWidget here
-                if isinstance(qmlDict[attribute], tuple):
-                    #getting just the values
-                    multivalues = value.replace('{', '').replace('}', '').split(',')
-                    (table, filterKeys) = qmlDict[attribute]
-                    valueRelation = self.makeValueRelationDict(table, filterKeys)
-                    #marking just the correct values
-                    for i in range(widgetItem.count()):
-                        text = widgetItem.item(i).text()
-                        if str(valueRelation[text]) in multivalues:
-                            widgetItem.item(i).setCheckState(Qt.Checked)
+                if attribute in qmlDict.keys():
+                    # this guy is a QComboBox here
+                    if isinstance(qmlDict[attribute], dict):
+                        for i in range(widgetItem.count()):
+                            text = widgetItem.itemText(i)
+                            if qmlDict[attribute][text] == value:
+                                widgetItem.setCurrentIndex(i)
+                    # this guy is a QListWidget here
+                    if isinstance(qmlDict[attribute], tuple):
+                        #getting just the values
+                        multivalues = value.replace('{', '').replace('}', '').split(',')
+                        (table, filterKeys) = qmlDict[attribute]
+                        valueRelation = self.makeValueRelationDict(table, filterKeys)
+                        #marking just the correct values
+                        for i in range(widgetItem.count()):
+                            text = widgetItem.item(i).text()
+                            if str(valueRelation[text]) in multivalues:
+                                widgetItem.item(i).setCheckState(Qt.Checked)
+                else:
+                    widgetItem.setText(value)
             
     def makeReclassificationDict(self):
         '''
@@ -438,6 +442,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         '''
         Adjusts the button visualization according to the selected item in the tree widget
         '''
+        self.filterEdit.setText('')
         depth = self.depth(previous)
         if depth == 1:
             self.buttonNameLineEdit.setText('')
@@ -454,7 +459,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             classItems = self.classListWidget.findItems(previous.parent().parent().text(0), Qt.MatchExactly)
             self.classListWidget.setCurrentItem(classItems[0])
             self.buttonNameLineEdit.setText(previous.parent().text(0))
-            self.recreateAttributeTable(previous.parent())        
+            self.recreateAttributeTable(previous.parent())
         
     def depth(self, item):
         '''
