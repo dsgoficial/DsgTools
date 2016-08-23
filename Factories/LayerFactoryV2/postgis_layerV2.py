@@ -120,7 +120,7 @@ class PostGISLayerV2(EDGVLayerV2):
     def filterLayerList(self, layerList, useInheritance, onlyWithElements):
         filterList = []
         if onlyWithElements:
-            lyrsWithElements = self.abstractDb.getLayersWithElementsV2(layerList)
+            lyrsWithElements = self.abstractDb.getLayersWithElementsV2(layerList, useInheritance = onlyWithElements)
         else:
             lyrsWithElements = layerList
         if useInheritance:
@@ -244,6 +244,7 @@ class PostGISLayerV2(EDGVLayerV2):
         return domLayerDict
     
     def loadDomain(self, domainTableName, domainGroup):
+        #TODO: Avaliar se o table = deve ser diferente
         uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (self.database, self.host, self.port, self.user, self.password, domainTableName)
         domLayer = iface.addVectorLayer(uri, domainTableName, self.provider)
         self.iface.legendInterface().moveLayer(domLayer, domainGroup)

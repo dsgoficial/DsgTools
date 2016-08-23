@@ -138,6 +138,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         selectedStyle = None
         if self.styleComboBox.currentIndex() <> 0:
             selectedStyle = self.customServerConnectionWidget.stylesDict[self.styleComboBox.currentText()]
+        onlyParents = self.onlyParentsCheckBox.isChecked()
         #3- Build factory dict
         factoryDict = dict()
         dbList = self.customServerConnectionWidget.selectedDbsDict.keys()
@@ -148,7 +149,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         progress = ProgressWidget(1,len(dbList),self.tr('Loading layers from selected databases... '), parent = self)
         for dbName in factoryDict.keys():
             try:
-                factoryDict[dbName].load(selectedClasses,onlyWithElements=withElements, stylePath = selectedStyle)
+                factoryDict[dbName].load(selectedClasses,onlyWithElements=withElements, stylePath = selectedStyle, useInheritance = onlyParents)
                 progress.step()
             except Exception as e:
                 exceptionDict[dbName] = str(e.args[0])

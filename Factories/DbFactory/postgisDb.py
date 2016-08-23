@@ -1750,7 +1750,7 @@ class PostgisDb(AbstractDb):
         filter = [i.split('.')[-1] for i in self.getOrphanGeomTables(loading = True)]
         filtered = []
         for lyr in layerList:
-            if i in filter:
+            if lyr in filter:
                 filtered.append(lyr)
         return filtered
 
