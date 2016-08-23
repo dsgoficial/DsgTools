@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>386</width>
-    <height>172</height>
+    <width>356</width>
+    <height>186</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,14 +23,208 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
+     <widget class="QWidget" name="tabPostGIS">
+      <attribute name="title">
+       <string>PostGIS</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title">
+          <string>Connections</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="ExploreServerWidget" name="serverWidget" native="true"/>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <item>
+               <widget class="QLabel" name="label_8">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                  <horstretch>10</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>150</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Select database</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_6">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Minimum</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>10</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QComboBox" name="comboBoxPostgis">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>10</width>
+                  <height>0</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_12">
+            <item>
+             <widget class="QLabel" name="label_7">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>10</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Coordinate System</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>10</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="postGISCrsEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>100</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QLabel" name="label_4">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>20</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>EDGV Version</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>10</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="edgvPostgisVersionEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>100</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tabSpatialite">
       <attribute name="title">
        <string>Spatialite</string>
@@ -44,9 +238,21 @@
             <widget class="QLabel" name="label">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-               <horstretch>0</horstretch>
+               <horstretch>10</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>120</width>
+               <height>16777215</height>
+              </size>
              </property>
              <property name="text">
               <string>File                    </string>
@@ -63,14 +269,21 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>95</width>
+               <width>10</width>
                <height>20</height>
               </size>
              </property>
             </spacer>
            </item>
            <item>
-            <widget class="QLineEdit" name="spatialiteFileEdit"/>
+            <widget class="QLineEdit" name="spatialiteFileEdit">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QPushButton" name="pushButtonOpenFile">
@@ -87,9 +300,15 @@
             <widget class="QLabel" name="label_2">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-               <horstretch>0</horstretch>
+               <horstretch>10</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>120</width>
+               <height>16777215</height>
+              </size>
              </property>
              <property name="text">
               <string>Coordinate System</string>
@@ -106,14 +325,27 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>5</width>
+               <width>10</width>
                <height>20</height>
               </size>
              </property>
             </spacer>
            </item>
            <item>
-            <widget class="QLineEdit" name="spatialiteCrsEdit"/>
+            <widget class="QLineEdit" name="spatialiteCrsEdit">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -123,9 +355,15 @@
             <widget class="QLabel" name="label_3">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-               <horstretch>0</horstretch>
+               <horstretch>20</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>120</width>
+               <height>16777215</height>
+              </size>
              </property>
              <property name="text">
               <string>EDGV Version</string>
@@ -142,14 +380,27 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>51</width>
+               <width>10</width>
                <height>20</height>
               </size>
              </property>
             </spacer>
            </item>
            <item>
-            <widget class="QLineEdit" name="edgvSpatialiteVersionEdit"/>
+            <widget class="QLineEdit" name="edgvSpatialiteVersionEdit">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -157,176 +408,18 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabPostGIS">
-      <attribute name="title">
-       <string>PostGIS</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title">
-          <string>Connections</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="0">
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="0" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
-              <item>
-               <widget class="QComboBox" name="comboBoxPostgis">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>10</width>
-                  <height>0</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="addConnectionButton">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>10</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="toolTip">
-                 <string extracomment="Configure Connections"/>
-                </property>
-                <property name="text">
-                 <string>Configure Connections</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="1" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout_12">
-              <item>
-               <widget class="QLabel" name="label_7">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Coordinate System</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_5">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Minimum</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>10</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="postGISCrsEdit">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>100</width>
-                  <height>0</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="2" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout_5">
-              <item>
-               <widget class="QLabel" name="label_4">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                  <horstretch>50</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>EDGV Version</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_3">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Minimum</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>35</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="edgvPostgisVersionEdit">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>100</width>
-                  <height>0</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ExploreServerWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.exploreServerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

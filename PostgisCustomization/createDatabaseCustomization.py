@@ -50,7 +50,7 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.connectionWidget.tabWidget.setTabEnabled(0, False)
+        self.connectionWidget.tabWidget.setTabEnabled(1, False)
         self.populateCustomizationCombo()
     
     def getStructDict(self):

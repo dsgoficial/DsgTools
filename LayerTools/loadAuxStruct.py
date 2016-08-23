@@ -51,9 +51,9 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
         self.setupUi(self)
 
         self.selectedClasses = []
-        self.widget.tabWidget.setTabEnabled(1,True)
-        self.widget.tabWidget.setTabEnabled(0,False)
-        self.widget.tabWidget.setCurrentIndex(1)
+        self.widget.tabWidget.setTabEnabled(0,True)
+        self.widget.tabWidget.setTabEnabled(1,False)
+        self.widget.tabWidget.setCurrentIndex(0)
         self.bar = QgsMessageBar()
         self.setLayout(QtGui.QGridLayout(self))
         self.layout().setContentsMargins(0,0,0,0)

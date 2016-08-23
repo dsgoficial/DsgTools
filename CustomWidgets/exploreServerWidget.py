@@ -28,6 +28,7 @@ from qgis.core import QgsMessageLog
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
 from PyQt4.QtSql import QSqlQuery
+from PyQt4.QtGui import QMessageBox
 
 # DSGTools imports
 from DsgTools.ServerTools.viewServers import ViewServers
@@ -49,6 +50,7 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.superNeeded = False
         self.dbFactory = DbFactory()
 
     #TODO
@@ -61,20 +63,32 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
     
     #TODO
     def browseServer(self,dbList,host,port,user,password):
-        gen = self.factory.createSqlGenerator(False)
-        edvgDbList = []
-        for database in dbList:
-            db = self.getPostGISDatabaseWithParams(database, host, port, user, password)
-            if not db.open():
-                qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+db.lastError().databaseText(), level=QgsMessageBar.CRITICAL)
-
-            query = QSqlQuery(db)
-            if query.exec_(gen.getEDGVVersion()):
-                while query.next():
-                    version = query.value(0)
-                    if version:
-                        edvgDbList.append((database, version))
-        return edvgDbList
+        canLoad = True
+        if self.superNeeded:
+            canLoad = False
+            try:
+                if self.serverWidget.abstractDb.checkSuperUser():
+                    canLoad = True
+                else:
+                    QMessageBox.warning(self, self.tr('Info!'), self.tr('Connection refused. Connect with a super user to inspect server.'))
+                    return []
+            except Exception as e:
+                QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+        if canLoad:
+            gen = self.factory.createSqlGenerator(False)
+            edvgDbList = []
+            for database in dbList:
+                db = self.getPostGISDatabaseWithParams(database, host, port, user, password)
+                if not db.open():
+                    qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+db.lastError().databaseText(), level=QgsMessageBar.CRITICAL)
+    
+                query = QSqlQuery(db)
+                if query.exec_(gen.getEDGVVersion()):
+                    while query.next():
+                        version = query.value(0)
+                        if version:
+                            edvgDbList.append((database, version))
+            return edvgDbList
     
     #TODO
     def getDbsFromServer(self,name):
@@ -121,6 +135,14 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
             (host, port, user, password) = self.abstractDb.getServerConfiguration(self.serversCombo.currentText())
             if host or port or user:
                 self.abstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
+                if self.superNeeded:
+                    try:
+                        if not self.abstractDb.checkSuperUser():
+                            QMessageBox.warning(self, self.tr('Info!'), self.tr('Connection refused. Connect with a super user to inspect server.'))
+                            self.serversCombo.setCurrentIndex(0)
+                            return
+                    except Exception as e:
+                        QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
                 self.abstractDbLoaded.emit()
     
     def getServerParameters(self):
@@ -130,7 +152,11 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
             return (None, None, None, None)
     
     def clearAll(self):
-        if self.abstractDb:
-            self.abstractDb.__del__()
-            self.abstractDb = None
+        try:
+            if self.abstractDb:
+                self.abstractDb.__del__()
+                self.abstractDb = None
+        except:
+            pass
         self.serversCombo.setCurrentIndex(0)
+            

@@ -43,9 +43,9 @@ class ValidationConfig(QtGui.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.widget.tabWidget.setTabEnabled(1,True)
-        self.widget.tabWidget.setTabEnabled(0,False)
-        self.widget.tabWidget.setCurrentIndex(1)
+        self.widget.tabWidget.setTabEnabled(0,True)
+        self.widget.tabWidget.setTabEnabled(1,False)
+        self.widget.tabWidget.setCurrentIndex(0)
         self.widget.dbChanged.connect(self.widgetConv.setDatabase)
 
     @pyqtSlot(bool)

@@ -38,7 +38,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'assign_profiles.ui'))
 
 class AssignProfiles(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, index = None, parent = None):
+    def __init__(self, serverIndex = None, index = None, parent = None):
         """Constructor."""
         super(AssignProfiles, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -47,10 +47,11 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.widget.tabWidget.setTabEnabled(0, False)
-        if index:
+        self.widget.tabWidget.setTabEnabled(1, False)
+        if index and serverIndex:
+            self.widget.serverWidget.serversCombo.setCurrentIndex(serverIndex)
             self.widget.comboBoxPostgis.setCurrentIndex(index)
-        
+        self.widget.serverWidget.superNeeded = True
         self.folder = os.path.join(os.path.dirname(__file__), 'profiles')
         self.getModelProfiles()
         self.getInstalledProfiles()
