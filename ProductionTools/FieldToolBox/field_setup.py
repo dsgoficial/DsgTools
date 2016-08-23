@@ -128,7 +128,16 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             self.populateAttributeFormFromSpatialite(row)
         elif self.abstractDb.db.driverName(row) == 'QPSQL':
             self.populateAttributeFormFromPostgis()
-
+            
+    def buildQmlDict(self, fullTableName):
+        qml = QmlParser(self.qmlPath)
+        qmlDict = qml.getDomainDict()
+        if fullTableName in self.nullDict.keys():
+            for attr in self.nullDict[fullTableName]:
+                if attr in qmlDict.keys():
+                    if not isinstance(qmlDict[attr],tuple):
+                        qmlDict[attr]['']=''
+        return qmlDict
                      
     def populateAttributeFormFromSpatialite(self, row):
         '''
@@ -158,24 +167,10 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         elif self.edgvVersion == 'FTer_2a_Ed':
             sqlPath = os.path.join(currentPath, '..', '..', 'DbTools', 'PostGISTool', 'sqls', 'FTer_2a_Ed', 'edgvFter_2a_Ed.sql')
         self.notNullDict, self.nullDict = acquisition_tools.sqlParser(sqlPath, True)
-        qml = QmlParser(self.qmlPath)
-        qmlDict = qml.getDomainDict()
+        qmlDict = self.buildQmlDict(fullTableName)
         count = 0
         #creating the items in the attribute table, not null attributes must be in red
         self.createAttributeItems(fullTableName, self.notNullDict, qmlDict, count, colour = Qt.red)
-            
-        for attr in qmlDict.keys():
-            #analyzing attributes not yet created in the table
-            if fullTableName in self.notNullDict.keys() and attr in self.notNullDict[fullTableName]:
-                continue
-
-            self.attributeTableWidget.insertRow(count)
-            item = QTableWidgetItem()
-            item.setText(attr)
-            self.attributeTableWidget.setItem(count, 0, item)
-            #creating the specific cell widget. It can be a QCombobox, a QLineEdit or a QListWidget
-            self.createCellWidget(qmlDict, attr, count)
-            count+=1
             
         self.createAttributeItems(fullTableName, self.nullDict, qmlDict, count)
     
@@ -203,7 +198,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             #case the type is dict the cell widget must be a combobox
             if isinstance(qmlDict[attr],dict):
                 comboItem = QComboBox()
-                comboItem.addItems(qmlDict[attr].keys())
+                comboItem.addItems(sorted(qmlDict[attr].keys()))
                 self.attributeTableWidget.setCellWidget(count, 1, comboItem)
             #case the type is tuple the cell widget must be a listwidget
             if isinstance(qmlDict[attr],tuple):
@@ -238,7 +233,10 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         classRow = self.classListWidget.currentRow()
 
         schemaName, tableName = self.abstractDb.getTableSchema(self.classListWidget.item(classRow).text())
-        category = schemaName + '_' + tableName.split('_')[0]
+        if self.abstractDb.db.driverName() == 'QSQLITE':
+            category = schemaName + '_' + tableName.split('_')[0]
+        else:
+            category = schemaName + '.' + tableName.split('_')[0]
 
         # creating items in tree
         buttonInTree = False
@@ -272,10 +270,10 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             buttonItem = QTreeWidgetItem(item)
             buttonItem.setText(0, self.buttonNameLineEdit.text())
 
-        qmlPath = os.path.join(self.qmlDir, tableName+'.qml')
-        qml = QmlParser(qmlPath)
+        self.qmlPath = os.path.join(self.qmlDir, tableName+'.qml')
         # qml dict for this class (tableName)
-        qmlDict = qml.getDomainDict()
+        fullTableName = schemaName+'_'+tableName
+        qmlDict = self.buildQmlDict(fullTableName)
         
         # accessing the attribute name and widget (QComboBox or QListWidget depending on data type)
         for i in range(self.attributeTableWidget.rowCount()):
@@ -284,19 +282,21 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             # this guy is a QComboBox or a QListWidget
             widgetItem = self.attributeTableWidget.cellWidget(i, 1)
             
-            if attribute not in qmlDict.keys():continue
-
-            if isinstance(qmlDict[attribute], dict):
-                value = qmlDict[attribute][widgetItem.currentText()]
-            if isinstance(qmlDict[attribute], tuple):
-                (table, filterKeys) = qmlDict[attribute]
-                valueRelation = self.makeValueRelationDict(table, filterKeys)
-                values = []
-                for i in range(widgetItem.count()):
-                    if widgetItem.item(i).checkState() == Qt.Checked:
-                        key = widgetItem.item(i).text()
-                        values.append(valueRelation[key])
-                value = '{%s}' % ','.join(map(str, values))
+            if attribute in qmlDict.keys():
+                if isinstance(qmlDict[attribute], dict):
+                    if widgetItem.currentText() in qmlDict[attribute].keys():
+                        value = qmlDict[attribute][widgetItem.currentText()]
+                if isinstance(qmlDict[attribute], tuple):
+                    (table, filterKeys) = qmlDict[attribute]
+                    valueRelation = self.makeValueRelationDict(table, filterKeys)
+                    values = []
+                    for i in range(widgetItem.count()):
+                        if widgetItem.item(i).checkState() == Qt.Checked:
+                            key = widgetItem.item(i).text()
+                            values.append(valueRelation[key])
+                    value = '{%s}' % ','.join(map(str, values))
+            else:
+                value = widgetItem.text()
             
             #sweep tree for attribute
             attrFound = False
@@ -320,10 +320,19 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
 
         schemaName, tableName = self.abstractDb.getTableSchema(self.classListWidget.item(classRow).text())
 
-        qmlPath = os.path.join(self.qmlDir, tableName+'.qml')
-        qml = QmlParser(qmlPath)
+
         # qml dict for this class (tableName)
-        qmlDict = qml.getDomainDict()
+        if self.abstractDb.db.driverName() == 'QSQLITE':
+            qmlPath = os.path.join(self.qmlDir, tableName+'.qml')
+            qml = QmlParser(qmlPath)
+            qmlDict = qml.getDomainDict()
+            if tableName in self.nullDict.keys():
+                for attr in self.nullDict[tableName]:
+                    if attr in qmlDict.keys():
+                        qmlDict[attr]['']=''
+        elif self.abstractDb.db.driverName() == 'QPSQL':
+            #TODO
+            qmlDict = None
 
         for i in range(buttonItem.childCount()):
             attrItem = buttonItem.child(i)
@@ -336,24 +345,28 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 
                 # this guy is a QComboBox or a QListWidget
                 widgetItem = self.attributeTableWidget.cellWidget(i, 1)
-    
+                
                 # this guy is a QComboBox here
-                if isinstance(qmlDict[attribute], dict):
-                    for i in range(widgetItem.count()):
-                        text = widgetItem.itemText(i)
-                        if qmlDict[attribute][text] == value:
-                            widgetItem.setCurrentIndex(i)
-                # this guy is a QListWidget here
-                if isinstance(qmlDict[attribute], tuple):
-                    #getting just the values
-                    multivalues = value.replace('{', '').replace('}', '').split(',')
-                    (table, filterKeys) = qmlDict[attribute]
-                    valueRelation = self.makeValueRelationDict(table, filterKeys)
-                    #marking just the correct values
-                    for i in range(widgetItem.count()):
-                        text = widgetItem.item(i).text()
-                        if str(valueRelation[text]) in multivalues:
-                            widgetItem.item(i).setCheckState(Qt.Checked)
+                if attribute in qmlDict.keys():
+                    if isinstance(qmlDict[attribute], dict):
+                        for i in range(widgetItem.count()):
+                            text = widgetItem.itemText(i)
+                            if text in qmlDict[attribute].keys():
+                                if qmlDict[attribute][text] == value:
+                                    widgetItem.setCurrentIndex(i)
+                    # this guy is a QListWidget here
+                    if isinstance(qmlDict[attribute], tuple):
+                        #getting just the values
+                        multivalues = value.replace('{', '').replace('}', '').split(',')
+                        (table, filterKeys) = qmlDict[attribute]
+                        valueRelation = self.makeValueRelationDict(table, filterKeys)
+                        #marking just the correct values
+                        for i in range(widgetItem.count()):
+                            text = widgetItem.item(i).text()
+                            if str(valueRelation[text]) in multivalues:
+                                widgetItem.item(i).setCheckState(Qt.Checked)
+                else:
+                    value = widgetItem.setText(value)
             
     def makeReclassificationDict(self):
         '''
@@ -398,8 +411,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         '''
         Makes the treewidget using the reclassification dictionary obtained from the configuration file
         '''
-        index = self.versionCombo.findText(reclassificationDict['version'])
-        self.versionCombo.setCurrentIndex(index)
+        index = self.edgvVersion
         
         self.treeWidget.clear()
         
@@ -426,6 +438,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         '''
         Adjusts the button visualization according to the selected item in the tree widget
         '''
+        self.filterEdit.setText('')
         depth = self.depth(previous)
         if depth == 1:
             self.buttonNameLineEdit.setText('')

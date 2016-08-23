@@ -60,7 +60,8 @@ def sqlParser(sqlFile, isSpatialite):
                 att = field.split(' ')[0]
                 if  att not in  ['','id','geom'] and 'id_' not in att and 'CONSTRAINT' not in att:
                     if tableKey in otherAttrDict.keys():
-                        otherAttrDict[tableKey].append(att)
+                        if att not in otherAttrDict[tableKey]:
+                            otherAttrDict[tableKey].append(att)
                         
         if 'INHERITS' in item:
             parent = item.split('INHERITS(')[-1].split(')')[0]
@@ -74,7 +75,10 @@ def sqlParser(sqlFile, isSpatialite):
                 notNullDict[tableKey] += notNullDict[parentKey]
             
             if parentKey in otherAttrDict.keys():
-                otherAttrDict[tableKey] += otherAttrDict[parentKey]
+                for item in otherAttrDict[parentKey]:
+                    if item not in otherAttrDict[tableKey]:
+                        otherAttrDict[tableKey].append(item)
+                    
                         
     for key in notNullDict.keys():
         if notNullDict[key] == []:
