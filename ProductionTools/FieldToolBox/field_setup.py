@@ -42,7 +42,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'field_setup.ui'))
 
 class FieldSetup(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, parent = None):
+    def __init__(self, abstractDb, parent = None):
         """
         Constructor
         """
@@ -52,14 +52,13 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
-        self.abstractDb = None
-        self.abstractDbFactory = DbFactory()
+        self.abstractDb = abstractDb
+
         self.setupUi(self)
-        
+        self.populateClassList()
         self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.treeWidget.customContextMenuRequested.connect(self.createMenu)        
-        
-        self.geomClasses = []
+        self.edgvVersion = self.abstractDb.getDatabaseVersion()
         
         self.folder = os.path.join(os.path.dirname(__file__), 'FieldSetupConfigs')
     
@@ -67,33 +66,6 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         if self.abstractDb:
             del self.abstractDb
             self.abstractDb = None
-        
-    def getDbInfo(self):
-        '''
-        Gather information about the database and QML's used
-        '''
-        currentPath = os.path.dirname(__file__)
-        if self.versionCombo.currentText() == '2.1.3':
-            edgvPath = os.path.join(currentPath, '..', '..', 'DbTools', 'SpatialiteTool', 'template', '213', 'seed_edgv213.sqlite')
-            sqlPath = os.path.join(currentPath, '..', '..', 'DbTools', 'PostGISTool', 'sqls', '213', 'edgv213.sql')
-        elif self.versionCombo.currentText() == 'FTer_2a_Ed':
-            edgvPath = os.path.join(currentPath, '..', '..', 'DbTools', 'SpatialiteTool', 'template', 'FTer_2a_Ed', 'seed_edgvfter_2a_ed.sqlite')
-            sqlPath = os.path.join(currentPath, '..', '..', 'DbTools', 'PostGISTool', 'sqls', 'FTer_2a_Ed', 'edgvFter_2a_Ed.sql')
-            
-        self.notNullDict = acquisition_tools.sqlParser(sqlPath, True)
-
-        self.abstractDb = self.abstractDbFactory.createDbFactory('QSQLITE')
-        if not self.abstractDb:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('A problem occurred! Check log for details.'))
-            return
-        self.abstractDb.connectDatabase(edgvPath)
-
-        try:
-            self.abstractDb.checkAndOpenDb()
-        except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
-        self.qmlDir = self.abstractDb.getQmlDir()
     
     def populateClassList(self):
         '''
@@ -106,6 +78,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+        self.geomClasses.sort()
         self.classListWidget.addItems(self.geomClasses)
         
     def on_filterEdit_textChanged(self, text):
@@ -116,19 +89,6 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.classListWidget.clear()
         self.classListWidget.addItems(classes)
         self.classListWidget.sortItems()        
-    
-    @pyqtSlot(int)
-    def on_versionCombo_currentIndexChanged(self, clear=True):
-        '''
-        Updates the class list when EDGV version is changed
-        '''
-        if self.versionCombo.currentIndex() <> 0:
-            self.getDbInfo()
-            self.populateClassList()
-            if clear:
-                self.treeWidget.invisibleRootItem().takeChildren()
-        else:
-            self.classListWidget.clear()
     
     def clearAttributeTableWidget(self):
         '''
@@ -160,7 +120,19 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(int)
     def on_classListWidget_currentRowChanged(self,row):
         '''
-        Creates the attribute table according to the QML file.
+        Creates the attribute table according to database.
+        Creates specific widgets for each attribute, which can be a QCombobox, a QLineEdit or a QListWidget.
+        All mandatory attributes are shown in RED.
+        '''
+        if self.abstractDb.db.driverName() == 'QSQLITE':
+            self.populateAttributeFormFromSpatialite(row)
+        elif self.abstractDb.db.driverName(row) == 'QPSQL':
+            self.populateAttributeFormFromPostgis()
+
+                     
+    def populateAttributeFormFromSpatialite(self, row):
+        '''
+        Creates the attribute table according to the QML file to spatialite
         Creates specific widgets for each attribute, which can be a QCombobox, a QLineEdit or a QListWidget.
         All mandatory attributes are shown in RED.
         '''
@@ -176,22 +148,21 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         #getting schema name and table name
         schemaName, tableName = self.abstractDb.getTableSchema(fullTableName)
         #getting the QML path
-        qmlPath = os.path.join(self.qmlDir,tableName+'.qml')
+        self.qmlDir = self.abstractDb.getQmlDir()
+        self.qmlPath = os.path.join(self.qmlDir,tableName+'.qml')
         
-        qml = QmlParser(qmlPath)
+        currentPath = os.path.dirname(__file__)
+        
+        if self.edgvVersion == '2.1.3':
+            sqlPath = os.path.join(currentPath, '..', '..', 'DbTools', 'PostGISTool', 'sqls', '213', 'edgv213.sql')
+        elif self.edgvVersion == 'FTer_2a_Ed':
+            sqlPath = os.path.join(currentPath, '..', '..', 'DbTools', 'PostGISTool', 'sqls', 'FTer_2a_Ed', 'edgvFter_2a_Ed.sql')
+        self.notNullDict, self.nullDict = acquisition_tools.sqlParser(sqlPath, True)
+        qml = QmlParser(self.qmlPath)
         qmlDict = qml.getDomainDict()
         count = 0
         #creating the items in the attribute table, not null attributes must be in red
-        if fullTableName in self.notNullDict.keys():
-            for attr in self.notNullDict[fullTableName]:
-                self.attributeTableWidget.insertRow(count)
-                item = QTableWidgetItem()
-                item.setText(attr)
-                item.setBackgroundColor(Qt.red)
-                self.attributeTableWidget.setItem(count, 0, item)
-                #creating the specific cell widget. It can be a QCombobox, a QLineEdit or a QListWidget
-                self.createCellWidget(qmlDict, attr, count)
-                count+=1
+        self.createAttributeItems(fullTableName, self.notNullDict, qmlDict, count, colour = Qt.red)
             
         for attr in qmlDict.keys():
             #analyzing attributes not yet created in the table
@@ -205,6 +176,24 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             #creating the specific cell widget. It can be a QCombobox, a QLineEdit or a QListWidget
             self.createCellWidget(qmlDict, attr, count)
             count+=1
+            
+        self.createAttributeItems(fullTableName, self.nullDict, qmlDict, count)
+    
+    def populateAttributeFormFromPostgis(self, row):
+        pass
+
+    def createAttributeItems(self, fullTableName, currentDict, qmlDict, count, colour = None):
+        if fullTableName in currentDict.keys():
+            for attr in currentDict[fullTableName]:
+                self.attributeTableWidget.insertRow(count)
+                item = QTableWidgetItem()
+                item.setText(attr)
+                if colour:
+                    item.setBackgroundColor(colour)
+                self.attributeTableWidget.setItem(count, 0, item)
+                #creating the specific cell widget. It can be a QCombobox, a QLineEdit or a QListWidget
+                self.createCellWidget(qmlDict, attr, count)
+                count+=1
                         
     def createCellWidget(self, qmlDict, attr, count):
         '''
@@ -372,7 +361,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         '''
         reclassificationDict = dict()
         
-        reclassificationDict['version'] = self.versionCombo.currentText()
+        reclassificationDict['version'] = self.edgvVersion
         
         #invisible root item
         rootItem = self.treeWidget.invisibleRootItem()

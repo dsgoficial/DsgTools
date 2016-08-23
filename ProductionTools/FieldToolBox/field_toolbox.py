@@ -62,7 +62,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         '''
         Creates the buttons according to the field setup
         '''
-        dlg = FieldSetup()
+        if self.widget.abstractDb == None:
+            QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('First select a database!'))
+            return
+        dlg = FieldSetup(self.widget.abstractDb)
         result = dlg.exec_()
         
         if result == 1:

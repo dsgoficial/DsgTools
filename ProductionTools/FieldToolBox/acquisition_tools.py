@@ -34,6 +34,7 @@ def sqlParser(sqlFile, isSpatialite):
     createList = [command for command in commandList if 'CREATE TABLE' in command]
     
     notNullDict = dict()
+    otherAttrDict = dict()
     for item in createList:
         item = item.replace('CREATE TABLE ','').replace('\n','')
         tableName = item.split('(')[0]
@@ -44,7 +45,8 @@ def sqlParser(sqlFile, isSpatialite):
             tableKey = tableName
             
         if tableName.split('.')[0] not in ['dominios', 'public']:
-            notNullDict[tableKey] = []  
+            notNullDict[tableKey] = []
+            otherAttrDict[tableKey] = []    
                           
         attString = item.split(tableName)[-1].replace('\n','').replace('\t','').replace('\n\t','').replace('(','').replace(')','')
         
@@ -54,6 +56,11 @@ def sqlParser(sqlFile, isSpatialite):
                 if att not in  ['','id','geom']:
                     if tableKey in notNullDict.keys():
                         notNullDict[tableKey].append(att)
+            else:
+                att = field.split(' ')[0]
+                if  att not in  ['','id','geom'] and 'id_' not in att and 'CONSTRAINT' not in att:
+                    if tableKey in otherAttrDict.keys():
+                        otherAttrDict[tableKey].append(att)
                         
         if 'INHERITS' in item:
             parent = item.split('INHERITS(')[-1].split(')')[0]
@@ -65,12 +72,19 @@ def sqlParser(sqlFile, isSpatialite):
 
             if parentKey in notNullDict.keys():
                 notNullDict[tableKey] += notNullDict[parentKey]
+            
+            if parentKey in otherAttrDict.keys():
+                otherAttrDict[tableKey] += otherAttrDict[parentKey]
                         
     for key in notNullDict.keys():
         if notNullDict[key] == []:
             notNullDict.pop(key)
+    
+    for key in otherAttrDict.keys():
+        if otherAttrDict[key] == []:
+            otherAttrDict.pop(key)
             
-    return notNullDict
+    return notNullDict, otherAttrDict
 
 # coisa = sqlParser('/home/luiz/.qgis2/python/plugins/DsgTools/DbTools/PostGISTool/sqls/FTer_2a_Ed/edgvFter_2a_Ed.sql', True)
 # coisa = sqlParser('/home/luiz/.qgis2/python/plugins/DsgTools/DbTools/PostGISTool/sqls/213/edgv213.sql', True)
