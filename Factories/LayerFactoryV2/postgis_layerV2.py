@@ -43,6 +43,8 @@ class PostGISLayerV2(EDGVLayerV2):
         self.setDatabaseConnection()
         self.buildUri()
         self.geomDict = self.abstractDb.getGeomDict()
+        self.logErrorDict = dict()
+        self.errorLog = ''
 
     def checkLoaded(self, name, loadedLayers):
         loaded = None
@@ -167,7 +169,11 @@ class PostGISLayerV2(EDGVLayerV2):
         for prim in lyrDict.keys():
             for cat in lyrDict[prim].keys():
                 for lyr in lyrDict[prim][cat]:
-                    self.loadLayer(lyr, groupDict[prim][cat], useInheritance, useQml,uniqueLoad,stylePath,geomDict,domainDict,multiColumnsDict,domLayerDict)
+                    try:
+                        self.loadLayer(lyr, groupDict[prim][cat], useInheritance, useQml,uniqueLoad,stylePath,geomDict,domainDict,multiColumnsDict,domLayerDict)
+                    except Exception as e:
+                        self.logErrorDict[lyr] = self.tr('Error for layer ')+lyr+': '+str(e.args[0])
+                        self.logError()
 
     def loadLayer(self, lyrName, idSubgrupo, useInheritance, useQml, uniqueLoad,stylePath,geomDict,domainDict,multiColumnsDict, domLayerDict):
         if uniqueLoad:
@@ -308,3 +314,9 @@ class PostGISLayerV2(EDGVLayerV2):
             if attrName in notNullDict[lyrName]['attributes']:
                 allowNull = False
         return allowNull
+
+    def logError(self):
+        msg = ''
+        for lyr in self.logErrorDict:
+            msg += self.tr('Error for lyr ')+ lyr + ': ' +self.logErrorDict[lyr] + '\n'
+        self.errorLog += msg

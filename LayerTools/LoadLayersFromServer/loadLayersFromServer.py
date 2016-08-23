@@ -159,7 +159,14 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                 progress.step()
             except Exception as e:
                 exceptionDict[dbName] = str(e.args[0])
+                QApplication.restoreOverrideCursor()
                 progress.step()
+            QApplication.restoreOverrideCursor()
+            if factoryDict[dbName].errorLog <> '':
+                if dbName in exceptionDict.keys():
+                    exceptionDict[dbName] += '\n'+factoryDict[dbName].errorLog
+                else:
+                    exceptionDict[dbName] = factoryDict[dbName].errorLog
         QApplication.restoreOverrideCursor()
         self.logInternalError(exceptionDict)
         self.close()
