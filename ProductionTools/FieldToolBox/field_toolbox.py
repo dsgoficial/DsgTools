@@ -10,7 +10,6 @@
         copyright            : (C) 2016 by Brazilian Army - Geographic Service Bureau
         email                : suporte.dsgtools@dsg.eb.mil.br
  ***************************************************************************/
-
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -92,7 +91,8 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                 button.setCheckable(True)
         else:
             #disconnecting iface signals
-            self.iface.currentLayerChanged.disconnect(self.acquire)
+            try:self.iface.currentLayerChanged.disconnect(self.acquire)
+            except:pass
             for button in self.buttons:
                 #connecting the clicked signal
                 button.clicked.connect(self.reclassify)

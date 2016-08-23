@@ -10,7 +10,6 @@
         copyright            : (C) 2016 by Brazilian Army - Geographic Service Bureau
         email                : suporte.dsgtools@dsg.eb.mil.br
  ***************************************************************************/
-
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -295,6 +294,8 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             
             # this guy is a QComboBox or a QListWidget
             widgetItem = self.attributeTableWidget.cellWidget(i, 1)
+            
+            if attribute not in qmlDict.keys():continue
 
             if isinstance(qmlDict[attribute], dict):
                 value = qmlDict[attribute][widgetItem.currentText()]
@@ -516,7 +517,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         
         if '.reclas' not in filename:
             filename = filename + '.reclas'
-        
+
         reclassificationDict = self.makeReclassificationDict()
         with open(filename, 'w') as outfile:
             json.dump(reclassificationDict, outfile, sort_keys=True, indent=4)
