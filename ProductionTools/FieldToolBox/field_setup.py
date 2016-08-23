@@ -295,6 +295,8 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             
             # this guy is a QComboBox or a QListWidget
             widgetItem = self.attributeTableWidget.cellWidget(i, 1)
+            
+            if attribute not in qmlDict.keys():continue
 
             if isinstance(qmlDict[attribute], dict):
                 value = qmlDict[attribute][widgetItem.currentText()]
