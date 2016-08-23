@@ -59,6 +59,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         self.layersCustomSelector.setTitle(self.tr('Select layers to be loaded'))
         self.customServerConnectionWidget.dbDictChanged.connect(self.updateLayersFromDbs)
         self.customServerConnectionWidget.resetAll.connect(self.resetInterface)
+        self.customServerConnectionWidget.styleChanged.connect(self.populateStyleCombo)
         self.lyrDict = dict()
     
     def resetInterface(self):
@@ -134,6 +135,9 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
             selectedClasses = self.layersCustomSelector.toLs
         #2- get parameters
         withElements = self.checkBoxOnlyWithElements.isChecked()
+        selectedStyle = None
+        if self.styleComboBox.currentIndex() <> 0:
+            selectedStyle = self.customServerConnectionWidget.stylesDict[self.styleComboBox.currentText()]
         #3- Build factory dict
         factoryDict = dict()
         dbList = self.customServerConnectionWidget.selectedDbsDict.keys()
@@ -144,7 +148,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         progress = ProgressWidget(1,len(dbList),self.tr('Loading layers from selected databases... '), parent = self)
         for dbName in factoryDict.keys():
             try:
-                factoryDict[dbName].load(selectedClasses,onlyWithElements=withElements)
+                factoryDict[dbName].load(selectedClasses,onlyWithElements=withElements, stylePath = selectedStyle)
                 progress.step()
             except Exception as e:
                 exceptionDict[dbName] = str(e.args[0])
@@ -163,3 +167,14 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
             for errorDb in errorDbList:
                 QgsMessageLog.logMessage(self.tr('Error for database ')+ errorDb + ': ' +exceptionDict[errorDb], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         return msg 
+
+    def populateStyleCombo(self, styleDict):
+        self.styleComboBox.clear()
+        styleList = styleDict.keys()
+        numberOfStyles = len(styleList)
+        if numberOfStyles > 0:
+            self.styleComboBox.addItem(self.tr('Select Style'))
+            for i in range(numberOfStyles):
+                self.styleComboBox.addItem(styleList[i])
+        else:
+            self.styleComboBox.addItem(self.tr('No available styles'))

@@ -52,10 +52,10 @@ class EDGVLayerV2(QObject):
         return None
     
     def getStyle(self, stylePath, className):
-        if 'db:' in stylePath:
+        if 'db:' in stylePath['style']:
             return self.abstractDb.getStyle(stylePath.split(':')[-1], className)
         else:
-            return self.getStyleFromFile(stylePath, className)
+            return self.getStyleFromFile(stylePath['style'], className)
     
     def getStyleFromFile(self, stylePath, className):
         availableStyles = os.walk(stylePath).next()[2]
