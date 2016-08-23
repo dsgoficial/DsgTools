@@ -80,6 +80,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
             progress = ProgressWidget(1,len(dbList),self.tr('Reading selected databases... '), parent = self)
             for dbName in dbList:
                 try:
+                    QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
                     geomDict = self.customServerConnectionWidget.selectedDbsDict[dbName].getGeomColumnDict()
                     for geom in geomDict.keys():
                         for lyr in geomDict[geom]:
@@ -93,7 +94,9 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                                 self.lyrDict[lyrName]['dbList'].append(dbName)
                 except Exception as e:
                     errorDict[dbName] = str(e.args[0])
+                    QApplication.restoreOverrideCursor()
                 progress.step()
+                QApplication.restoreOverrideCursor()
                 
         elif type == 'removed':
             for lyr in self.lyrDict.keys():
