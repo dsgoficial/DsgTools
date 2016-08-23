@@ -1802,3 +1802,23 @@ class PostgisDb(AbstractDb):
             domainDict[aux[refPk]] = aux[otherKey]
         return domainDict, otherKey
     
+    def getGeomStructDict(self):
+        '''
+        Returns dict in the following format:
+        {'tableName': { 'attrName1':isNullable, 'attrName2':isNullable} }
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.getGeomStructDict()
+        yesNoDict = {'YES':True, 'NO':False}
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom struct dict: ")+query.lastError().text())
+        geomStructDict = dict()
+        while query.next():
+            aux = json.loads(query.value(0))
+            tableName = aux['table_name']
+            if tableName not in geomStructDict.keys():
+                geomStructDict[tableName] = dict()
+            for d in aux['array_agg']:
+                geomStructDict[tableName][d['f1']] = yesNoDict[d['f2']]
+        return geomStructDict

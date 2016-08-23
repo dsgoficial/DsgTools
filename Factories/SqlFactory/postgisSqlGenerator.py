@@ -950,3 +950,15 @@ class PostGISSqlGenerator(SqlGenerator):
     def getDomainCodeDict(self, domainTable):
         sql = """select row_to_json(a) from (select * from {0}) as a""".format(domainTable)
         return sql
+
+    def getGeomStructDict(self):
+        sql = """select row_to_json(a) from (
+                    select table_name, array_agg(row_to_json(row(column_name::text, is_nullable))) from information_schema.columns where 
+                        table_name in (select f_table_name from public.geometry_columns) 
+                        and column_name not like 'id_%' 
+                        and column_name not in ('id','geom') 
+                        and table_schema not in ('validation','views')
+                    group by table_name
+                    ) as a
+        """
+        return sql

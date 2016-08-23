@@ -59,6 +59,12 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.treeWidget.customContextMenuRequested.connect(self.createMenu)        
         self.edgvVersion = self.abstractDb.getDatabaseVersion()
+        if self.abstractDb.db.driverName() == 'QPSQL':
+            self.domainDict = self.abstractDb.getDbDomainDict()
+            self.geomStructDict = self.abstractDb.getGeomStructDict()
+#             if self.edgvVersion == 'FTer_2a_Ed':
+#                 qmlPath = self.abstractDb.getQmlDir()
+#                 qmlDict = self.utils.parseMultiQml(qmlPath, layerList)
         
         self.folder = os.path.join(os.path.dirname(__file__), 'FieldSetupConfigs')
     
@@ -126,19 +132,52 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         '''
         if self.abstractDb.db.driverName() == 'QSQLITE':
             self.populateAttributeFormFromSpatialite(row)
-        elif self.abstractDb.db.driverName(row) == 'QPSQL':
-            self.populateAttributeFormFromPostgis()
+        elif self.abstractDb.db.driverName() == 'QPSQL':
+            self.populateAttributeFormFromPostgis(row)
             
     def buildQmlDict(self, fullTableName):
-        qml = QmlParser(self.qmlPath)
-        qmlDict = qml.getDomainDict()
-        if fullTableName in self.nullDict.keys():
-            for attr in self.nullDict[fullTableName]:
-                if attr in qmlDict.keys():
-                    if not isinstance(qmlDict[attr],tuple):
-                        qmlDict[attr]['']=''
-        return qmlDict
-                     
+        if self.abstractDb.db.driverName() == 'QSQLITE':
+            qml = QmlParser(self.qmlPath)
+            qmlDict = qml.getDomainDict()
+            if fullTableName in self.nullDict.keys():
+                for attr in self.nullDict[fullTableName]:
+                    if attr in qmlDict.keys():
+                        if not isinstance(qmlDict[attr],tuple):
+                            qmlDict[attr]['']=''
+            return qmlDict
+        elif self.abstractDb.db.driverName() == 'QPSQL':
+            qmlDict = dict()
+            schemaName, tableName = self.abstractDb.getTableSchema(fullTableName)
+            for attrName in self.domainDict[tableName]['columns'].keys():
+                valueDict = self.domainDict[tableName]['columns'][attrName]['values']
+                constraintList = self.domainDict[tableName]['columns'][attrName]['constraintList']
+                valueRelationDict = dict()
+                for key in valueDict.keys():
+                    if len(constraintList) > 0: 
+                        if key in constraintList:
+                            qmlDict[valueDict[key]] = key
+                    else:
+                        qmlDict[valueDict[key]] = key
+                if tableName in self.geomStructDict.keys():
+                    if attrName in self.geomStructDict[tableName].keys():
+                        if self.geomStructDict[tableName][attrName]:
+                            qmlDict[attrName]['']=''
+    
+    def buildNullityDicts(self):
+        nullDict = dict()
+        notNullDict = dict()
+        for tableName in self.geomStructDict.keys():
+            if tableName not in nullDict.keys():
+                nullDict[tableName] = []
+            if tableName not in notNullDict.keys():
+                notNullDict[tableName] = []
+            for attr in self.geomStructDict[tableName].keys():
+                if self.geomStructDict[tableName][attr]:
+                    nullDict[tableName].append(attr)
+                else:
+                    notNullDict[tableName].append(attr)
+        return nullDict, notNullDict
+    
     def populateAttributeFormFromSpatialite(self, row):
         '''
         Creates the attribute table according to the QML file to spatialite
@@ -175,7 +214,30 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.createAttributeItems(fullTableName, self.nullDict, qmlDict, count)
     
     def populateAttributeFormFromPostgis(self, row):
-        pass
+        '''
+        Creates the attribute table according to the postgis dict
+        Creates specific widgets for each attribute, which can be a QCombobox, a QLineEdit or a QListWidget.
+        All mandatory attributes are shown in RED.
+        '''
+        #reset the button name
+        self.buttonNameLineEdit.setText('')
+        #clear the attribute table
+        self.clearAttributeTableWidget()
+        
+        if not self.classListWidget.item(row):
+            return
+        
+        fullTableName = self.classListWidget.item(row).text()
+        #getting schema name and table name
+        qmlDict = self.buildQmlDict(fullTableName)
+        count = 0
+        #creating the items in the attribute table, not null attributes must be in red
+        
+        self.nullDict, self.notNullDict = self.buildNullityDicts()
+        
+        self.createAttributeItems(fullTableName, self.notNullDict, qmlDict, count, colour = Qt.red)
+            
+        self.createAttributeItems(fullTableName, self.nullDict, qmlDict, count)
 
     def createAttributeItems(self, fullTableName, currentDict, qmlDict, count, colour = None):
         if fullTableName in currentDict.keys():
