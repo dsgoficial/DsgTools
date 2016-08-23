@@ -98,7 +98,8 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
             for key in self.stylesDict.keys():
                 for db in self.stylesDict[key]['dbList']:
                     if db in dbList:
-                        self.stylesDict[key]['dbList'].pop(db)
+                        idx = self.stylesDict[key]['dbList'].index(db)
+                        self.stylesDict[key]['dbList'].pop(idx)
                 if len(self.stylesDict[key]['dbList']) == 0:
                     self.stylesDict.pop(key)
             self.styleChanged.emit(self.stylesDict)

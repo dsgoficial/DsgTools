@@ -66,6 +66,8 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         self.layersCustomSelector.clearAll()
         self.styleComboBox.clear()
         #TODO: refresh optional parameters
+        self.checkBoxOnlyWithElements.setCheckState(0)
+        self.onlyParentsCheckBox.setCheckState(0)
         pass
     
     @pyqtSlot()
@@ -148,13 +150,14 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         exceptionDict = dict()
         progress = ProgressWidget(1,len(dbList),self.tr('Loading layers from selected databases... '), parent = self)
         for dbName in factoryDict.keys():
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             try:
                 factoryDict[dbName].load(selectedClasses,onlyWithElements=withElements, stylePath = selectedStyle, useInheritance = onlyParents)
                 progress.step()
             except Exception as e:
                 exceptionDict[dbName] = str(e.args[0])
                 progress.step()
-        
+        QApplication.restoreOverrideCursor()
         self.logInternalError(exceptionDict)
         self.close()
     
