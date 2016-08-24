@@ -28,12 +28,14 @@ from qgis.core import QgsMessageLog
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
 from PyQt4.QtSql import QSqlQuery
+from PyQt4.QtGui import QFileDialog
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'selectFileWidget.ui'))
 
 class SelectFileWidget(QtGui.QWidget, FORM_CLASS):
+    filesSelected = pyqtSignal()
     def __init__(self, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
@@ -43,3 +45,18 @@ class SelectFileWidget(QtGui.QWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.fileNameList = []
+        self.lineEdit.setReadOnly(True)
+        self.caption = self.tr('Select a DSGTools Spatialite file')
+        self.filter = self.tr('Spatialite file databases (*.sqlite)')
+
+    @pyqtSlot(bool)
+    def on_selectFilePushButton_clicked(self):
+        fd = QFileDialog()
+        self.fileNameList = fd.getOpenFileNames(caption=self.caption,filter=self.filter)
+        selectedFiles = ', '.join(self.fileNameList)
+        self.lineEdit.setText(selectedFiles)
+        self.filesSelected.emit()
+    
+    def resetAll(self):
+        self.lineedit.clear()

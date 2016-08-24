@@ -57,12 +57,15 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.dbFactory = DbFactory()
         self.factory = SqlGeneratorFactory()
         self.serverWidget.populateServersCombo()
-        self.serverWidget.abstractDbLoaded.connect(self.getDatabasesFromServer)
+        self.serverWidget.abstractDbLoaded.connect(self.populatePostgisSelector)
+        self.customFileSelector.filesSelected.connect(self.populateSpatialiteSelector)
         self.comboDict = {self.tr('Load EDGV v. 2.1.3'):'2.1.3', self.tr('Load EDGV v. FTer_2a_Ed'):'FTer_2a_Ed'}
         self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[]}
         self.selectedDbsDict = dict()
         self.stylesDict = dict()
         self.postgisCustomSelector.selectionChanged.connect(self.selectedDatabases)
+        self.spatialiteCustomSelector.selectionChanged.connect(self.selectedFiles)
+        self.path = None
     
     def selectedDatabases(self,dbList,type):
         '''
@@ -104,11 +107,8 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
                     self.stylesDict.pop(key)
             self.styleChanged.emit(self.stylesDict)
     
-    def getDatabasesFromServer(self):
-        if self.serverConnectionTab.currentIndex() == 0:
-            self.populatePostgisSelector()
-        elif self.serverConnectionTab.currentIndex() == 1:
-            self.populateSpatialiteSelector()
+    def selectedFiles(self,dbList,type):
+        pass
     
     @pyqtSlot(int)
     def on_serverConnectionTab_currentChanged(self, currentTab):
@@ -140,7 +140,25 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.postgisCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]]) 
     
     def populateSpatialiteSelector(self):
-        pass
+        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[]}
+        dbList = []
+        try:
+            for dbPath in self.customFileSelector.fileNameList:
+                auxAbstractDb = self.dbFactory.createDbFactory('QSQLITE')
+                dbName = os.path.basename(dbPath).split('.')[0]
+                self.path = os.path.dirname(dbPath)
+                auxAbstractDb.connectDatabase(conn = dbPath)
+                version = auxAbstractDb.getDatabaseVersion()
+                dbList.append((dbName,version))
+        except Exception as e:
+            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            self.clearSpatialiteTab()
+        dbList.sort()
+        for (dbname, dbversion) in dbList:
+            if dbversion in self.dbDict.keys():
+                self.dbDict[dbversion].append(dbname)
+        comboText = self.spatialiteEdgvComboFilter.currentText()
+        self.spatialiteCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]]) 
     
     def clearSpatialiteTab(self):
         pass
@@ -149,6 +167,12 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
     def on_postgisEdgvComboFilter_currentIndexChanged(self):
         comboText = self.postgisEdgvComboFilter.currentText()
         self.postgisCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]])
+        self.resetAll.emit()
+    
+    @pyqtSlot(int)
+    def on_spatialiteEdgvComboFilter_currentIndexChanged(self):
+        comboText = self.spatialiteEdgvComboFilter.currentText()
+        self.spatialiteCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]])
         self.resetAll.emit()
     
     def clearPostgisTab(self):
