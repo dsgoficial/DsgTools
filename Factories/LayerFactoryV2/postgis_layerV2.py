@@ -42,9 +42,7 @@ class PostGISLayerV2(EDGVLayerV2):
         self.provider = 'postgres'
         self.setDatabaseConnection()
         self.buildUri()
-        self.geomDict = self.abstractDb.getGeomDict()
-        self.logErrorDict = dict()
-        self.errorLog = ''
+        
 
     def checkLoaded(self, name, loadedLayers):
         loaded = None
@@ -65,64 +63,10 @@ class PostGISLayerV2(EDGVLayerV2):
     def buildUri(self):
         self.uri.setConnection(str(self.host),str(self.port), str(self.database), str(self.user), str(self.password))
     
-    def setDataSource(self, schema, layer, geomColumn, sql):
-        self.uri.setDataSource(schema, layer, geomColumn, sql, 'id')
-        self.uri.disableSelectAtId(True)
-    
-    def getDatabaseGroup(self, groupList):
-        dbName = self.abstractDb.getDatabaseName()
-        if dbName in groupList:
-            return groupList.index(dbName)
-        else:
-            return self.iface.legendInterface().addGroup(dbName, True, -1)
-    
-    def getLyrDict(self, lyrList):
-        #redo
-        lyrDict = dict()
-        lyrList.sort()
-        for lyr in lyrList:
-            cat = lyr.split('_')[0]
-            if lyr[-1] == 'p':
-                if self.tr('Point') not in lyrDict.keys():
-                    lyrDict[self.tr('Point')] = dict()
-                if cat not in lyrDict[self.tr('Point')].keys():
-                    lyrDict[self.tr('Point')][cat] = []
-                lyrDict[self.tr('Point')][cat].append(lyr)
-            if lyr[-1] == 'l':
-                if self.tr('Line') not in lyrDict.keys():
-                    lyrDict[self.tr('Line')] = dict()
-                if cat not in lyrDict[self.tr('Line')].keys():
-                    lyrDict[self.tr('Line')][cat] = []
-                lyrDict[self.tr('Line')][cat].append(lyr)
-            if lyr[-1] == 'a':
-                if self.tr('Area') not in lyrDict.keys():
-                    lyrDict[self.tr('Area')] = dict()
-                if cat not in lyrDict[self.tr('Area')].keys():
-                    lyrDict[self.tr('Area')][cat] = []
-                lyrDict[self.tr('Area')][cat].append(lyr)
-        return lyrDict
-    
-    def prepareGroups(self, groupList, parent, lyrDict):
-        aux = dict()
-        groupDict = dict()
-        for geomNode in lyrDict.keys():
-            groupDict[geomNode] = dict()
-            aux = self.createGroup(groupList, geomNode, parent)
-            for catNode in lyrDict[geomNode].keys():
-                groupDict[geomNode][catNode] = self.createGroup(groupList, catNode, aux)
-        return groupDict
-    
-    def createGroup(self, groupList, groupName, parent):
-        subgroup = groupList[parent::]
-        if groupName in subgroup:
-            return parent+subgroup.index(groupName) #verificar
-        else:
-            return self.iface.legendInterface().addGroup(groupName, True, parent)
-    
     def filterLayerList(self, layerList, useInheritance, onlyWithElements):
         filterList = []
         if onlyWithElements:
-            lyrsWithElements = self.abstractDb.getLayersWithElementsV2(layerList, useInheritance = onlyWithElements)
+            lyrsWithElements = self.abstractDb.getLayersWithElementsV2(layerList, useInheritance = useInheritance)
         else:
             lyrsWithElements = layerList
         if useInheritance:
@@ -155,7 +99,6 @@ class PostGISLayerV2(EDGVLayerV2):
         else:
             domLayerDict = dict()
         #3. Get Aux dicts
-        geomDict = self.abstractDb.getGeomDict()
         domainDict = self.abstractDb.getDbDomainDict()
         constraintDict = self.abstractDb.getCheckConstraintDict()
         multiColumnsDict = self.abstractDb.getMultiColumnsDict()
@@ -166,23 +109,26 @@ class PostGISLayerV2(EDGVLayerV2):
         #4. Build Groups
         groupDict = self.prepareGroups(loadedGroups, dbGroup, lyrDict)
         #5. load layers
+        loadedDict = dict()
         for prim in lyrDict.keys():
             for cat in lyrDict[prim].keys():
                 for lyr in lyrDict[prim][cat]:
                     try:
-                        self.loadLayer(lyr, groupDict[prim][cat], useInheritance, useQml,uniqueLoad,stylePath,geomDict,domainDict,multiColumnsDict,domLayerDict)
+                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], useInheritance, useQml,uniqueLoad,stylePath,domainDict,multiColumnsDict,domLayerDict)
+                        loadedDict[lyr]=vlayer
                     except Exception as e:
                         self.logErrorDict[lyr] = self.tr('Error for layer ')+lyr+': '+str(e.args[0])
                         self.logError()
+        return loadedDict
 
-    def loadLayer(self, lyrName, idSubgrupo, useInheritance, useQml, uniqueLoad,stylePath,geomDict,domainDict,multiColumnsDict, domLayerDict):
+    def loadLayer(self, lyrName, idSubgrupo, useInheritance, useQml, uniqueLoad,stylePath,domainDict,multiColumnsDict, domLayerDict):
         if uniqueLoad:
             lyr = self.checkLoaded(lyrName)
             if lyr:
                 return lyr
-        schema = geomDict['tablePerspective'][lyrName]['schema']
-        geomColumn = geomDict['tablePerspective'][lyrName]['geometryColumn']
-        srid =  geomDict['tablePerspective'][lyrName]['srid']
+        schema = self.geomDict['tablePerspective'][lyrName]['schema']
+        geomColumn = self.geomDict['tablePerspective'][lyrName]['geometryColumn']
+        srid =  self.geomDict['tablePerspective'][lyrName]['srid']
         if useInheritance:
             sql = ''
         else:
@@ -204,18 +150,6 @@ class PostGISLayerV2(EDGVLayerV2):
         if not vlayer.isValid():
             QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         vlayer = self.createMeasureColumn(vlayer)
-
-    def setDomainsAndRestrictionsWithQml(self, vlayer):
-        qmldir = ''
-        try:
-            qmldir = self.abstractDb.getQmlDir()
-        except Exception as e:
-            self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            return None
-        vlayerQml = os.path.join(qmldir, vlayer.name()+'.qml')
-        #treat case of qml with multi
-        vlayer.loadNamedStyle(vlayerQml, False)
         return vlayer
 
     def getDomainsFromDb(self, layerList, loadedLayers, domainDict, multiColumnsDict):
@@ -230,24 +164,6 @@ class PostGISLayerV2(EDGVLayerV2):
                         if dom not in domainList:
                             domainList.append(dom)
         return domainList
-
-    def loadDomains(self, layerList, loadedLayers, domainGroup):
-        domLayerDict = dict()
-        qmlPath = self.abstractDb.getQmlDir()
-        qmlDict = self.utils.parseMultiQml(qmlPath, layerList)
-        for lyr in layerList:
-            for attr in qmlDict[lyr].keys():
-                domain = qmlDict[lyr][attr]
-                domLyr = self.checkLoaded(domain, loadedLayers)
-                if not domLyr:
-                    domLyr = self.loadDomain(domain, domainGroup)
-                    loadedLayers.append(domLyr)
-                domLyrName = domLyr.name()
-                if lyr not in domLayerDict.keys():
-                    domLayerDict[lyr] = dict()
-                if attr not in domLayerDict[lyr].keys():
-                    domLayerDict[lyr][attr] = domLyr
-        return domLayerDict
     
     def loadDomain(self, domainTableName, domainGroup):
         #TODO: Avaliar se o table = deve ser diferente
@@ -258,9 +174,6 @@ class PostGISLayerV2(EDGVLayerV2):
 
     def getStyleFromDb(self, edgvVersion, className):
         return self.abstractDb.getLyrStyle(edgvVersion,className)
-    
-    def isLoaded(self,lyr):
-        return False
 
     def setDomainsAndRestrictions(self, lyr, lyrName, domainDict, multiColumnsDict, domLayerDict):
         lyrAttributes = [i for i in lyr.pendingFields()]
@@ -314,9 +227,3 @@ class PostGISLayerV2(EDGVLayerV2):
             if attrName in notNullDict[lyrName]['attributes']:
                 allowNull = False
         return allowNull
-
-    def logError(self):
-        msg = ''
-        for lyr in self.logErrorDict:
-            msg += self.tr('Error for lyr ')+ lyr + ': ' +self.logErrorDict[lyr] + '\n'
-        self.errorLog += msg
