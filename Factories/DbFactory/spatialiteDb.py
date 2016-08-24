@@ -375,3 +375,22 @@ class SpatialiteDb(AbstractDb):
                 geomDict['tablePerspective'][layerName]['geometryType'] = geometryType
                 geomDict['tablePerspective'][layerName]['tableName'] = tableName
         return geomDict
+    
+    def getGeomColumnDict(self):
+        '''
+        Dict in the form 'geomName':[-list of table names-]
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.getGeomColumnDict()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom column dict: ")+query.lastError().text())
+        geomDict = dict()
+        while query.next():
+            geomColumn = query.value(0)
+            tableName = query.value(1)
+            lyrName = '_'.join(tableName.split('_')[1::])
+            if geomColumn not in geomDict.keys():
+                geomDict[geomColumn] = []
+            geomDict[geomColumn].append(lyrName)
+        return geomDict

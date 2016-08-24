@@ -28,7 +28,7 @@ from PyQt4.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.Qt import QObject
 
 # QGIS imports
-from qgis.core import QgsMapLayerRegistry, QgsVectorLayer,QgsDataSourceURI, QgsMessageLog
+from qgis.core import QgsMapLayerRegistry, QgsVectorLayer,QgsDataSourceURI, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog
 from qgis.utils import iface
 
 #DsgTools imports
@@ -46,11 +46,6 @@ class SpatialiteLayerV2(EDGVLayerV2):
         except Exception as e:
             QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
             return
-            
-        if dbVersion == '3.0' or dbVersion == '2.1.3' or dbVersion == 'FTer_2a_Ed':
-            self.qmlName = '_'.join(table.replace('\r', '').split('_')[1::])
-        else:
-            self.qmlName = table.replace('\r','')
 
         self.buildUri()
 
@@ -101,14 +96,14 @@ class SpatialiteLayerV2(EDGVLayerV2):
             for cat in lyrDict[prim].keys():
                 for lyr in lyrDict[prim][cat]:
                     try:
-                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], useInheritance, useQml,uniqueLoad,stylePath,domainDict,multiColumnsDict,domLayerDict)
+                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], uniqueLoad, stylePath, domLayerDict)
                         loadedDict[lyr]=vlayer
                     except Exception as e:
                         self.logErrorDict[lyr] = self.tr('Error for layer ')+lyr+': '+str(e.args[0])
                         self.logError()
         return loadedDict
 
-    def loadLayer(self, lyrName, idSubgrupo, useInheritance, useQml, uniqueLoad,stylePath,domainDict,multiColumnsDict, domLayerDict):
+    def loadLayer(self, lyrName, idSubgrupo, uniqueLoad, stylePath, domLayerDict):
         if uniqueLoad:
             lyr = self.checkLoaded(lyrName)
             if lyr:

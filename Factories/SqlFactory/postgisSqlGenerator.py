@@ -936,7 +936,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getGeomColumnDict(self):
-        sql = """select row_to_json(row(f_table_schema||'.'||f_table_name, f_geometry_column)) from public.geometry_columns where f_table_schema not in ('views','topology','validation')"""
+        sql = """select row_to_json(row(f_table_name, f_geometry_column)) from public.geometry_columns where f_table_schema not in ('views','topology','validation')"""
         return sql
     
     def getNotNullDict(self):

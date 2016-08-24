@@ -34,6 +34,7 @@ from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.ServerTools.createView import CreateView
 from DsgTools.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
 from DsgTools.ServerTools.selectStyles import SelectStyles
+from psycopg2.tests.testconfig import dbname
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -108,7 +109,42 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
             self.styleChanged.emit(self.stylesDict)
     
     def selectedFiles(self,dbList,type):
-        pass
+        '''
+        selectedDbsDict = { 'dbName' : 'abstractDb' }
+        '''
+        #TODO: build selectedDbsDict and emit dbDictChanged()
+        #1- Iterate over dbList and check if all layers on dbList are on dict. If not, add it.
+        if type == 'added':
+            for dbName in dbList:
+                if dbName not in self.selectedDbsDict.keys():
+                    localDb = self.dbFactory.createDbFactory('QSQLITE')
+                    localDb.connectDatabase(conn = self.spatialiteDict[dbName])
+                    self.selectedDbsDict[dbName] = localDb
+                    #do get dicts
+                    localDict = localDb.getStyleDict(localDb.getDatabaseVersion())
+                    for key in localDict.keys():
+                        if key not in self.stylesDict.keys():
+                            self.stylesDict[key] = dict()
+                            self.stylesDict[key]['dbList'] = []
+                        self.stylesDict[key]['style'] = localDict[key]
+                        if dbName not in self.stylesDict[key]['dbList']:
+                            self.stylesDict[key]['dbList'].append(dbName)
+            self.dbDictChanged.emit('added', dbList)
+            self.styleChanged.emit(self.stylesDict)
+        #2- Iterate over selectedDbsDict and if there is a key not in dbList, close db and pop item
+        if type == 'removed':
+            for dbName in self.selectedDbsDict.keys():
+                if dbName in dbList:
+                    self.selectedDbsDict.pop(dbName)
+            self.dbDictChanged.emit('removed', dbList)
+            for key in self.stylesDict.keys():
+                for db in self.stylesDict[key]['dbList']:
+                    if db in dbList:
+                        idx = self.stylesDict[key]['dbList'].index(db)
+                        self.stylesDict[key]['dbList'].pop(idx)
+                if len(self.stylesDict[key]['dbList']) == 0:
+                    self.stylesDict.pop(key)
+            self.styleChanged.emit(self.stylesDict)
     
     @pyqtSlot(int)
     def on_serverConnectionTab_currentChanged(self, currentTab):
@@ -141,6 +177,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
     
     def populateSpatialiteSelector(self):
         self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[]}
+        self.spatialiteDict = dict()
         dbList = []
         try:
             for dbPath in self.customFileSelector.fileNameList:
@@ -150,6 +187,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
                 auxAbstractDb.connectDatabase(conn = dbPath)
                 version = auxAbstractDb.getDatabaseVersion()
                 dbList.append((dbName,version))
+                self.spatialiteDict[dbName] = dbPath
         except Exception as e:
             QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
             self.clearSpatialiteTab()

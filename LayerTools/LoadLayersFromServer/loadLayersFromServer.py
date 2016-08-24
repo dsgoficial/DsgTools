@@ -83,12 +83,10 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                     QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
                     geomDict = self.customServerConnectionWidget.selectedDbsDict[dbName].getGeomColumnDict()
                     for geom in geomDict.keys():
-                        for lyr in geomDict[geom]:
-                            schema, lyrName = lyr.split('.')
+                        for lyrName in geomDict[geom]:
                             if lyrName not in self.lyrDict.keys():
                                 self.lyrDict[lyrName] = dict()
                                 self.lyrDict[lyrName]['dbList'] = []
-                            self.lyrDict[lyrName]['schema'] = schema
                             self.lyrDict[lyrName]['cat'] = lyrName.split('_')[0]
                             if dbName not in self.lyrDict[lyrName]['dbList']:
                                 self.lyrDict[lyrName]['dbList'].append(dbName)

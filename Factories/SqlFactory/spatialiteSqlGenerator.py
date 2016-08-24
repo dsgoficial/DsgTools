@@ -178,3 +178,7 @@ class SpatialiteSqlGenerator(SqlGenerator):
     def getGeomByPrimitive(self):
         sql = """select type, f_table_name from geometry_columns"""
         return sql
+    
+    def getGeomColumnDict(self):
+        sql = """select f_geometry_column, f_table_name from geometry_columns"""
+        return sql
