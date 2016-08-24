@@ -59,6 +59,7 @@ from DsgTools.ValidationTools.validation_toolbox import ValidationToolbox
 from DsgTools.ProductionTools.MinimumAreaTool.minimumAreaTool import MinimumAreaTool
 from DsgTools.ProductionTools.InspectFeatures.inspectFeatures import InspectFeatures
 from DsgTools.MilitarySimbologyTools.militarySimbologyDock import MilitarySimbologyDock
+from DsgTools.DbTools.BatchDbCreator.batchDbCreator import BatchDbCreator
 
 from qgis.utils import showPluginHelp
 
@@ -491,6 +492,17 @@ class DsgTools:
             add_to_toolbar=False)
         dbcreation.addAction(action)
         self.databaseButton.addAction(action) 
+        
+        icon_path = ':/plugins/DsgTools/icons/batchDatabase.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Batch Database Creation'),
+            callback=self.batchDatabaseCreation,
+            parent=dbcreation,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        dbcreation.addAction(action)
+        self.databaseButton.addAction(action) 
 
         icon_path = ':/plugins/DsgTools/icons/manageUserProfiles.png'
         action = self.add_action(
@@ -772,6 +784,16 @@ class DsgTools:
         except:
             pass
         dlg = CriaSpatialiteDialog()
+        result = dlg.exec_()
+        if result:
+            pass
+    
+    def batchDatabaseCreation(self):
+        try:
+            self.databaseButton.setDefaultAction(self.toolbar.sender())
+        except:
+            pass
+        dlg = BatchDbCreator()
         result = dlg.exec_()
         if result:
             pass

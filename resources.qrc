@@ -37,5 +37,6 @@
 		<file>icons/validationtools.png</file>
 		<file>icons/codelist.png</file>
 		<file>icons/militarySimbology.png</file>
+		<file>icons/batchDatabase.png</file>
     </qresource>
 </RCC>
