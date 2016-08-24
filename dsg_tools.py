@@ -32,8 +32,6 @@ import resources_rc
 currentPath = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from DsgTools.LayerTools.LoadLayersFromServer.loadLayersFromServer import LoadLayersFromServer
-from DsgTools.LayerTools.load_by_class import LoadByClass
-from DsgTools.LayerTools.load_by_category import LoadByCategory
 from DsgTools.LayerTools.loadAuxStruct import LoadAuxStruct
 from DsgTools.LayerTools.ui_create_inom_dialog import CreateInomDialog
 from DsgTools.DbTools.SpatialiteTool.cria_spatialite_dialog import CriaSpatialiteDialog
@@ -223,6 +221,8 @@ class DsgTools:
         #Sub menus
         server = self.addMenu(self.dsgTools, u'server', self.tr('Server Catalog'),':/plugins/DsgTools/icons/server.png')
         database = self.addMenu(self.dsgTools, u'database', self.tr('Database Tools'),':/plugins/DsgTools/icons/database.png')
+        dbcreation = self.addMenu(database, u'dbcreation', self.tr('Database Creation Tools'),':/plugins/DsgTools/icons/database.png')
+        dbmanagement = self.addMenu(database, u'dbmanagement', self.tr('Database Management Tools'),':/plugins/DsgTools/icons/database.png')
         layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/icons/layers.png')
         bdgex = self.addMenu(self.dsgTools, u'bdgex', self.tr('BDGEx'),':/plugins/DsgTools/icons/eb.png')
         productiontools = self.addMenu(self.dsgTools, u'productiontools', self.tr('Production Tools'),':/plugins/DsgTools/icons/productiontools.png')
@@ -234,7 +234,6 @@ class DsgTools:
         rasterIndex = self.addMenu(indexes, u'rasterindex', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
         vectorIndex = self.addMenu(indexes, u'vectorindex', self.tr('Vectorial Charts'),':/plugins/DsgTools/icons/eb.png')
 
-        icon_path = ':/plugins/DsgTools/icons/eb.png'
         icon_path = ':/plugins/DsgTools/icons/eb.png'
         action = self.add_action(
             icon_path,
@@ -470,35 +469,35 @@ class DsgTools:
         self.layerButton = self.createToolButton(self.toolbar, u'LayerTools')
         self.productionButton = self.createToolButton(self.toolbar, u'ProductionTools')
 
-        icon_path = ':/plugins/DsgTools/icons/spatialite.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Create Spatialite'),
-            callback=self.createSpatialiteDatabase,
-            parent=database,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        database.addAction(action)
-        self.databaseButton.addAction(action)
-
         icon_path = ':/plugins/DsgTools/icons/postgis.png'
         action = self.add_action(
             icon_path,
             text=self.tr('Create PostGIS'),
             callback=self.createPostGISDatabase,
-            parent=database,
+            parent=dbcreation,
             add_to_menu=False,
             add_to_toolbar=False)
-        database.addAction(action)
+        dbcreation.addAction(action)
         self.databaseButton.addAction(action)
         self.databaseButton.setDefaultAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/spatialite.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Create Spatialite'),
+            callback=self.createSpatialiteDatabase,
+            parent=dbcreation,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        dbcreation.addAction(action)
+        self.databaseButton.addAction(action) 
 
         icon_path = ':/plugins/DsgTools/icons/manageUserProfiles.png'
         action = self.add_action(
             icon_path,
             text=self.tr('Create Database Customization'),
             callback=self.createDbCustom,
-            parent=database,
+            parent=dbmanagement,
             add_to_menu=False,
             add_to_toolbar=False)
         database.addAction(action)
@@ -509,10 +508,10 @@ class DsgTools:
             icon_path,
             text=self.tr('Manage User Permissions'),
             callback=self.manageUserProfiles,
-            parent=database,
+            parent=dbmanagement,
             add_to_menu=False,
             add_to_toolbar=False)
-        database.addAction(action)
+        dbmanagement.addAction(action)
         self.databaseButton.addAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/validationtools.png'
@@ -582,7 +581,7 @@ class DsgTools:
         militarysimbologytools.addAction(action)
         
         #User Permissions submenu
-        permissions = self.addMenu(database, u'layers', self.tr('User Permissions Tools'),':/plugins/DsgTools/icons/profile.png')
+        permissions = self.addMenu(dbmanagement, u'layers', self.tr('User Permissions Tools'),':/plugins/DsgTools/icons/profile.png')
         icon_path = ':/plugins/DsgTools/icons/profile.png'
         action = self.add_action(
             icon_path,
@@ -602,18 +601,6 @@ class DsgTools:
             add_to_menu=False,
             add_to_toolbar=False)
         permissions.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/category.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Load by Category'),
-            callback=self.loadByCategory,
-            parent=layers,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        layers.addAction(action)
-        self.layerButton.addAction(action)
-        self.layerButton.setDefaultAction(action)
     
         icon_path = ':/plugins/DsgTools/icons/category.png'
         action = self.add_action(
@@ -626,17 +613,6 @@ class DsgTools:
         layers.addAction(action)
         self.layerButton.addAction(action)
         self.layerButton.setDefaultAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/class.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Load by Class'),
-            callback=self.loadByClass,
-            parent=layers,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        layers.addAction(action)
-        self.layerButton.addAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/centroid.png'
         action = self.add_action(
