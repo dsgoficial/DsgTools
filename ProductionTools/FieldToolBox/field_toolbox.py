@@ -246,13 +246,16 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         '''
         #edgvClass found in the dictionary (this is made using the sqlite seed)
         (category, edgvClass) = self.findReclassificationClass(button)
-        #reclassification layer name
-        reclassificationClass = '_'.join(edgvClass.split('_')[1::])
+        
         
         driverName = self.widget.abstractDb.getType()
         if driverName == "QSQLITE":
+            #reclassification layer name
+            reclassificationClass = '_'.join(edgvClass.split('_')[1::])
             dsgClass = edgvClass # do not change the class name, already is in schema_table form
         if driverName == "QPSQL":
+            #reclassification layer name
+            reclassificationClass = '_'.join(edgvClass.split('.')[1::])
             dsgClass = edgvClass.split('_')[0] +'.'+ '_'.join(edgvClass.split('_')[1::]) # change the class name, must be in schema.table form
             
         #searching the QgsVectorLayer to perform the reclassification

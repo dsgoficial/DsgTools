@@ -62,6 +62,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         if self.abstractDb.db.driverName() == 'QPSQL':
             self.domainDict = self.abstractDb.getDbDomainDict()
             self.geomStructDict = self.abstractDb.getGeomStructDict()
+            self.geomDict = self.abstractDb.getGeomDict()
 #             if self.edgvVersion == 'FTer_2a_Ed':
 #                 qmlPath = self.abstractDb.getQmlDir()
 #                 qmlDict = self.utils.parseMultiQml(qmlPath, layerList)
@@ -149,33 +150,38 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             qmlDict = dict()
             schemaName, tableName = self.abstractDb.getTableSchema(fullTableName)
             for attrName in self.domainDict[tableName]['columns'].keys():
+                if attrName not in qmlDict.keys():
+                    qmlDict[attrName] = dict()
                 valueDict = self.domainDict[tableName]['columns'][attrName]['values']
                 constraintList = self.domainDict[tableName]['columns'][attrName]['constraintList']
                 valueRelationDict = dict()
                 for key in valueDict.keys():
                     if len(constraintList) > 0: 
                         if key in constraintList:
-                            qmlDict[valueDict[key]] = key
+                            qmlDict[attrName][valueDict[key]] = str(key)
                     else:
-                        qmlDict[valueDict[key]] = key
+                        qmlDict[attrName][valueDict[key]] = str(key)
                 if tableName in self.geomStructDict.keys():
                     if attrName in self.geomStructDict[tableName].keys():
                         if self.geomStructDict[tableName][attrName]:
                             qmlDict[attrName]['']=''
+            return qmlDict
     
     def buildNullityDicts(self):
         nullDict = dict()
         notNullDict = dict()
         for tableName in self.geomStructDict.keys():
-            if tableName not in nullDict.keys():
-                nullDict[tableName] = []
-            if tableName not in notNullDict.keys():
-                notNullDict[tableName] = []
+            schema = self.geomDict['tablePerspective'][tableName]['schema']
+            fullTableName = schema + '.' + tableName
+            if fullTableName not in nullDict.keys():
+                nullDict[fullTableName] = []
+            if fullTableName not in notNullDict.keys():
+                notNullDict[fullTableName] = []
             for attr in self.geomStructDict[tableName].keys():
                 if self.geomStructDict[tableName][attr]:
-                    nullDict[tableName].append(attr)
+                    nullDict[fullTableName].append(attr)
                 else:
-                    notNullDict[tableName].append(attr)
+                    notNullDict[fullTableName].append(attr)
         return nullDict, notNullDict
     
     def populateAttributeFormFromSpatialite(self, row):
@@ -332,9 +338,11 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             buttonItem = QTreeWidgetItem(item)
             buttonItem.setText(0, self.buttonNameLineEdit.text())
 
-        self.qmlPath = os.path.join(self.qmlDir, tableName+'.qml')
-        # qml dict for this class (tableName)
-        fullTableName = schemaName+'_'+tableName
+        if self.abstractDb.db.driverName() == 'QSQLITE':
+            self.qmlPath = os.path.join(self.qmlDir, tableName+'.qml')
+            fullTableName = schemaName+'_'+tableName
+        else:
+            fullTableName = schemaName+'.'+tableName
         qmlDict = self.buildQmlDict(fullTableName)
         
         # accessing the attribute name and widget (QComboBox or QListWidget depending on data type)
@@ -382,19 +390,13 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
 
         schemaName, tableName = self.abstractDb.getTableSchema(self.classListWidget.item(classRow).text())
 
-
         # qml dict for this class (tableName)
         if self.abstractDb.db.driverName() == 'QSQLITE':
-            qmlPath = os.path.join(self.qmlDir, tableName+'.qml')
-            qml = QmlParser(qmlPath)
-            qmlDict = qml.getDomainDict()
-            if tableName in self.nullDict.keys():
-                for attr in self.nullDict[tableName]:
-                    if attr in qmlDict.keys():
-                        qmlDict[attr]['']=''
+            fullTableName = schemaName + '_' + tableName
         elif self.abstractDb.db.driverName() == 'QPSQL':
-            #TODO
-            qmlDict = None
+            fullTableName = schemaName + '.' + tableName
+
+        qmlDict = self.buildQmlDict(fullTableName)
 
         for i in range(buttonItem.childCount()):
             attrItem = buttonItem.child(i)
