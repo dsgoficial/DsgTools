@@ -32,9 +32,9 @@ from qgis.core import QgsMapLayerRegistry, QgsVectorLayer,QgsDataSourceURI, QgsM
 from qgis.utils import iface
 
 #DsgTools imports
-from DsgTools.Factories.LayerFactoryV2.edgv_layerV2 import EDGVLayerV2
+from DsgTools.Factories.LayerLoaderFactory.edgvLayerLoader import EDGVLayerLoader
 
-class PostGISLayerV2(EDGVLayerV2):
+class PostGISLayerLoader(EDGVLayerLoader):
     def __init__(self, iface, abstractDb):
         """Constructor."""
         super(self.__class__, self).__init__(iface, abstractDb)
@@ -114,16 +114,18 @@ class PostGISLayerV2(EDGVLayerV2):
             for cat in lyrDict[prim].keys():
                 for lyr in lyrDict[prim][cat]:
                     try:
-                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], useInheritance, useQml,uniqueLoad,stylePath,domainDict,multiColumnsDict,domLayerDict)
-                        loadedDict[lyr]=vlayer
+                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], loadedLayers, useInheritance, useQml,uniqueLoad,stylePath,domainDict,multiColumnsDict,domLayerDict)
+                        if vlayer:
+                            loadedLayers.append(vlayer)
+                            loadedDict[lyr]=vlayer
                     except Exception as e:
                         self.logErrorDict[lyr] = self.tr('Error for layer ')+lyr+': '+str(e.args[0])
                         self.logError()
         return loadedDict
 
-    def loadLayer(self, lyrName, idSubgrupo, useInheritance, useQml, uniqueLoad,stylePath,domainDict,multiColumnsDict, domLayerDict):
+    def loadLayer(self, lyrName, idSubgrupo, loadedLayers, useInheritance, useQml, uniqueLoad,stylePath,domainDict,multiColumnsDict, domLayerDict):
         if uniqueLoad:
-            lyr = self.checkLoaded(lyrName)
+            lyr = self.checkLoaded(lyrName,loadedLayers)
             if lyr:
                 return lyr
         schema = self.geomDict['tablePerspective'][lyrName]['schema']

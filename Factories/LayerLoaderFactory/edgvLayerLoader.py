@@ -37,11 +37,11 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.Utils.utils import Utils
 
 
-class EDGVLayerV2(QObject):
+class EDGVLayerLoader(QObject):
     
     def __init__(self, iface, abstractDb):
         """Constructor."""
-        super(EDGVLayerV2, self).__init__()
+        super(EDGVLayerLoader, self).__init__()
         
         self.abstractDb = abstractDb
         self.uri = QgsDataSourceURI() 

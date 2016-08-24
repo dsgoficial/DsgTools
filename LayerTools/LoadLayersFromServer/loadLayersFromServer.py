@@ -36,7 +36,7 @@ from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.Factories.LayerFactoryV2.layerFactoryV2 import LayerFactory
+from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 from DsgTools.ServerTools.createView import CreateView
 from DsgTools.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
 from DsgTools.ServerTools.selectStyles import SelectStyles
@@ -53,7 +53,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         self.iface = iface
         self.utils = Utils()
         self.setupUi(self)
-        self.layerFactory = LayerFactory()
+        self.layerFactory = LayerLoaderFactory()
         self.customServerConnectionWidget.postgisCustomSelector.setTitle(self.tr('Select Databases'))
         self.customServerConnectionWidget.spatialiteCustomSelector.setTitle(self.tr('Selected Spatialites'))
         self.layersCustomSelector.setTitle(self.tr('Select layers to be loaded'))
@@ -146,7 +146,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         factoryDict = dict()
         dbList = self.customServerConnectionWidget.selectedDbsDict.keys()
         for dbName in dbList:
-            factoryDict[dbName] = self.layerFactory.makeFactory(self.iface, self.customServerConnectionWidget.selectedDbsDict[dbName])
+            factoryDict[dbName] = self.layerFactory.makeLoader(self.iface, self.customServerConnectionWidget.selectedDbsDict[dbName])
         #4- load for each db
         exceptionDict = dict()
         progress = ProgressWidget(1,len(dbList),self.tr('Loading layers from selected databases... '), parent = self)

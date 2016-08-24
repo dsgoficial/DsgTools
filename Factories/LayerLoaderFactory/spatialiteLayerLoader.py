@@ -32,9 +32,9 @@ from qgis.core import QgsMapLayerRegistry, QgsVectorLayer,QgsDataSourceURI, QgsM
 from qgis.utils import iface
 
 #DsgTools imports
-from DsgTools.Factories.LayerFactoryV2.edgv_layerV2 import EDGVLayerV2
+from DsgTools.Factories.LayerLoaderFactory.edgvLayerLoader import EDGVLayerLoader
 
-class SpatialiteLayerV2(EDGVLayerV2):
+class SpatialiteLayerLoader(EDGVLayerLoader):
     def __init__(self, iface, abstractDb):
         """Constructor."""
         super(self.__class__, self).__init__(iface, abstractDb)

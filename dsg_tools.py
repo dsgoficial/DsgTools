@@ -760,7 +760,7 @@ class DsgTools:
         if self.fieldDock:
             self.iface.removeDockWidget(self.fieldToolbox)
         else:
-            self.fieldToolbox = FieldToolbox(self.iface, self.codeList)
+            self.fieldToolbox = FieldToolbox(self.iface)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.fieldToolbox)
     
     def showValidationToolbox(self):

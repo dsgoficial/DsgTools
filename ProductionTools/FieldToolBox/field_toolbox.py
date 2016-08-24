@@ -34,13 +34,13 @@ import qgis as qgis
 #DsgTools imports
 from DsgTools.ProductionTools.FieldToolBox.field_setup import FieldSetup
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
+from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'field_toolbox.ui'))
 
 class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
-    def __init__(self, iface, codeList, parent = None):
+    def __init__(self, iface, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -50,13 +50,15 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.iface = iface
-        self.codeList = codeList
         self.buttons = []
         self.prevLayer = None
         self.buttonName = ''
         self.category = ''
-        self.layerFactory = LayerFactory()        
-        
+        self.widget.dbChanged.connect(self.defineFactory)
+    
+    def defineFactory(self,abstractDb):
+        self.layerLoader = LayerLoaderFactory().makeLoader(self.iface,abstractDb)
+    
     @pyqtSlot(bool)
     def on_setupButton_clicked(self):
         '''
@@ -209,16 +211,9 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         layer: Layer name
         '''
         try:
-            dbName = self.widget.abstractDb.getDatabaseName()
-            groupList =  qgis.utils.iface.legendInterface().groups()
-            edgvLayer = self.layerFactory.makeLayer(self.widget.abstractDb, self.codeList, layer)
-            if dbName in groupList:
-                return edgvLayer.load(self.widget.crs, groupList.index(dbName))
-            else:
-                parentTreeNode = qgis.utils.iface.legendInterface().addGroup(dbName, -1)
-                return edgvLayer.load(self.widget.crs, parentTreeNode)
-        except:
-            QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('Could not load the selected classes!'))
+            return self.layerLoader.load([layer],uniqueLoad=True)[layer]
+        except Exception as e:
+            QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('Could not load the selected classes!\n')+str(e.args[0]))
             
     def checkConditions(self):
         '''
@@ -247,27 +242,24 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         #edgvClass found in the dictionary (this is made using the sqlite seed)
         (category, edgvClass) = self.findReclassificationClass(button)
         
-        
         driverName = self.widget.abstractDb.getType()
         if driverName == "QSQLITE":
             #reclassification layer name
             reclassificationClass = '_'.join(edgvClass.split('_')[1::])
-            dsgClass = edgvClass # do not change the class name, already is in schema_table form
         if driverName == "QPSQL":
             #reclassification layer name
             reclassificationClass = '_'.join(edgvClass.split('.')[1::])
-            dsgClass = edgvClass.split('_')[0] +'.'+ '_'.join(edgvClass.split('_')[1::]) # change the class name, must be in schema.table form
             
         #searching the QgsVectorLayer to perform the reclassification
         root = QgsProject.instance().layerTreeRoot()
         reclassificationLayer = self.searchLayer(root, reclassificationClass)
         if not reclassificationLayer:
-            reclassificationLayer = self.loadLayer(dsgClass)
-             
-        self.iface.setActiveLayer(reclassificationLayer)
+            reclassificationLayer = self.loadLayer(reclassificationClass)
             
-        #entering in editing mode
-        reclassificationLayer.startEditing()
+        if reclassificationLayer:
+            self.iface.setActiveLayer(reclassificationLayer)
+            #entering in editing mode
+            reclassificationLayer.startEditing()
 
         return (reclassificationLayer, category, edgvClass)
     
@@ -383,6 +375,9 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         #button that sent the signal
         self.buttonName = self.sender().text()
         (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
+        
+        if not reclassificationLayer:
+            return
 
         mapLayers = self.iface.mapCanvas().layers()
         crsSrc = QgsCoordinateReferenceSystem(self.widget.crs.authid())
