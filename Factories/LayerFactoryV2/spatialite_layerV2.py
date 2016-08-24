@@ -54,6 +54,7 @@ class SpatialiteLayerV2(EDGVLayerV2):
     
     def checkLoaded(self, name, loadedLayers):
         loaded = None
+        database = self.abstractDb.db.databaseName()
         for ll in loadedLayers:
             if ll.name() == name:
                 candidateUri = QgsDataSourceURI(ll.dataProvider().dataSourceUri())
@@ -117,7 +118,7 @@ class SpatialiteLayerV2(EDGVLayerV2):
         crs = QgsCoordinateReferenceSystem(int(srid), QgsCoordinateReferenceSystem.EpsgCrsId)
         vlayer.setCrs(crs)
         vlayer = self.setDomainsAndRestrictionsWithQml(vlayer)
-        
+        vlayer = self.setMulti(vlayer,domLayerDict)
         if stylePath:
             fullPath = self.getStyle(stylePath, lyrName)
             if fullPath:
@@ -131,7 +132,7 @@ class SpatialiteLayerV2(EDGVLayerV2):
     def loadDomain(self, domainTableName, domainGroup):
         #TODO: Avaliar se o table = deve ser diferente
         uri = QgsDataSourceURI()
-        uri.setDatabase(database)
+        uri.setDatabase(self.abstractDb.db.databaseName())
         uri.setDataSource('', 'dominios_'+domainTableName, None)
         #TODO Load domain layer into a group
         domLayer = iface.addVectorLayer(uri.uri(), domainTableName, self.provider)
@@ -149,3 +150,15 @@ class SpatialiteLayerV2(EDGVLayerV2):
             lyrsWithElements = layerList
 
         return lyrsWithElements
+    
+    def setMulti(self, vlayer, domLayerDict):
+        #sweep vlayer to find v2
+        attrList = vlayer.pendingFields()
+        for field in attrList:
+            i = vlayer.fieldNameIndex(field.name())
+            if vlayer.editorWidgetV2(i) == 'ValueRelation':
+                valueRelationDict = vlayer.editorWidgetV2Config(i)
+                domLayer = domLayerDict[vlayer.name()][field.name()]
+                valueRelationDict['Layer'] = domLayer.id()
+                vlayer.setEditorWidgetV2Config(i,valueRelationDict)
+        return vlayer
