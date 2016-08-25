@@ -63,8 +63,8 @@ class SelectFileWidget(QtGui.QWidget, FORM_CLASS):
                 self.fileNameList = selectedFiles
         elif self.type == 'dir':
              selectedFiles = fd.getExistingDirectory(directory = os.path.expanduser('~'), caption=self.caption,options=QFileDialog.ShowDirsOnly)
-             if selectedDir <> '':
-                 self.fileNameList = [selectedDir]
+             if selectedFiles <> '':
+                 self.fileNameList = [selectedFiles]
         self.lineEdit.setText(selectedFiles)
         self.filesSelected.emit()
     
