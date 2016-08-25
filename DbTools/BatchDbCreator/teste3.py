@@ -28,12 +28,11 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import QMessageBox, QFileDialog
 from fileinput import filename
 from DsgTools.Utils.utils import Utils
-from DsgTools.DbTools.BatchDbCreator.teste3 import Teste3
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'teste2.ui'))
+    os.path.dirname(__file__), 'teste3.ui'))
 
-class Teste2(QtGui.QWizardPage, FORM_CLASS):
+class Teste3(QtGui.QWizardPage, FORM_CLASS):
     coverageChanged = pyqtSignal()
     def __init__(self, parent=None):
         '''Constructor.'''
@@ -44,4 +43,4 @@ class Teste2(QtGui.QWizardPage, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        
+        self.setFinalPage(True)

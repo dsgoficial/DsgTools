@@ -47,16 +47,38 @@ class SelectFileWidget(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.fileNameList = []
         self.lineEdit.setReadOnly(True)
-        self.caption = self.tr('Select a DSGTools Spatialite file')
-        self.filter = self.tr('Spatialite file databases (*.sqlite)')
+        self.caption = ''
+        self.filter = ''
+        self.type = 'single'
 
     @pyqtSlot(bool)
     def on_selectFilePushButton_clicked(self):
         fd = QFileDialog()
-        self.fileNameList = fd.getOpenFileNames(caption=self.caption,filter=self.filter)
-        selectedFiles = ', '.join(self.fileNameList)
+        if self.type == 'multi':
+            self.fileNameList = fd.getOpenFileNames(caption=self.caption,filter=self.filter)
+            selectedFiles = ', '.join(self.fileNameList)
+        elif self.type == 'single':
+            selectedFiles = fd.getOpenFileName(caption=self.caption,filter=self.filter)
+            if selectedFiles <> '':
+                self.fileNameList = selectedFiles
+        elif self.type == 'dir':
+             selectedFiles = fd.getExistingDirectory(directory = os.path.expanduser('~'), caption=self.caption,options=QFileDialog.ShowDirsOnly)
+             if selectedDir <> '':
+                 self.fileNameList = [selectedDir]
         self.lineEdit.setText(selectedFiles)
         self.filesSelected.emit()
     
     def resetAll(self):
         self.lineedit.clear()
+    
+    def setTitle(self,text):
+        self.label.setText(text)
+    
+    def setCaption(self, caption):
+        self.caption = caption
+    
+    def setFilter(self,filter):
+        self.filter = filter
+    
+    def setType(self,type):
+        self.type = type

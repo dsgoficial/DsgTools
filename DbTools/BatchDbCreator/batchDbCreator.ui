@@ -36,7 +36,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox">
+       <widget class="QComboBox" name="driverNameComboBox">
         <item>
          <property name="text">
           <string>PostGIS</string>
@@ -52,21 +52,28 @@
      </layout>
     </item>
     <item row="1" column="0">
-     <widget class="QRadioButton" name="radioButton">
+     <widget class="QRadioButton" name="csvRadioButton">
       <property name="text">
        <string>Create databases from csv file list</string>
       </property>
      </widget>
     </item>
     <item row="2" column="0">
-     <widget class="QRadioButton" name="radioButton_2">
+     <widget class="QRadioButton" name="miListRadioButton">
+      <property name="text">
+       <string>Create databases based on an map index list</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QRadioButton" name="userRadioButton">
       <property name="text">
        <string>Create databases from list inserted by user</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="0">
-     <widget class="QRadioButton" name="radioButton_3">
+    <item row="4" column="0">
+     <widget class="QRadioButton" name="patternRadioButton">
       <property name="text">
        <string>Create databases based on an auto incrementing pattern</string>
       </property>

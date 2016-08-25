@@ -67,6 +67,9 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.postgisCustomSelector.selectionChanged.connect(self.selectedDatabases)
         self.spatialiteCustomSelector.selectionChanged.connect(self.selectedFiles)
         self.path = None
+        self.customFileSelector.setCaption(self.tr('Select a DSGTools Spatialite file'))
+        self.customFileSelector.setFilter(self.tr('Spatialite file databases (*.sqlite)'))
+        self.customFileSelector.setType('multi')
     
     def selectedDatabases(self,dbList,type):
         '''

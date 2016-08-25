@@ -28,12 +28,11 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import QMessageBox, QFileDialog
 from fileinput import filename
 from DsgTools.Utils.utils import Utils
-from DsgTools.DbTools.BatchDbCreator.teste3 import Teste3
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'teste2.ui'))
+    os.path.dirname(__file__), 'createBatchIncrementingSpatialite.ui'))
 
-class Teste2(QtGui.QWizardPage, FORM_CLASS):
+class CreateBatchIncrementingSpatialite(QtGui.QWizardPage, FORM_CLASS):
     coverageChanged = pyqtSignal()
     def __init__(self, parent=None):
         '''Constructor.'''
@@ -44,4 +43,38 @@ class Teste2(QtGui.QWizardPage, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        
+        self.outputDirSelector.setCaption(self.tr('Select the output dir'))
+        self.outputDirSelector.setFilter(self.tr('Comma Separated Values File (*.csv)'))
+        self.outputDirSelector.setType('dir')
+        self.outputDirSelector.setTitle(self.tr('Output Directory'))
+    
+    def getParameters(self):
+        #Get outputDir, outputDbNameList, refSys
+        pass
+    
+    def getOutputDbNameList(self):
+        prefix = None
+        sufix = None
+        dbBaseName = self.dbNameLineEdit.text()
+        outputDbNameList = []
+        if self.prefixLineEdit.text() <> '':
+            prefix = self.prefixLineEdit.text()
+        if self.sufixLineEdit.text() <> '':
+            sufix = self.prefixLineEdit.text()
+        for i in range(self.spinBox.value()):
+            attrNameList = []
+            if prefix:
+                attrNameList.append(prefix)
+            attrNameList.append(dbBaseName+str(i+1))
+            if sufix:
+                attrNameList.append(sufix)
+            dbName = '_'.join(attrNameList)
+            outputDbNameList.append(dbName)
+        return outputDbNameList
+
+    def validatePage(self):
+        if self.dbNameLineEdit.text() == '':
+            return False
+        if self.outputDirSelector.fileNameList == []:
+            return False
+        return True
