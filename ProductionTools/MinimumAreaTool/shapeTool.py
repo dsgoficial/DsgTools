@@ -79,33 +79,32 @@ class ShapeTool(QgsMapTool):
         '''
         Deals with mouse move event to update the rubber band position in the canvas
         '''
-        self.canvas.refresh()
         self.endPoint = self.toMapCoordinates( e.pos() )
         if self.geometryType == self.tr(u"Circle"):
             self.showCircle(self.endPoint)
         elif self.geometryType == self.tr(u"Square"):
-            self.showRect(self.endPoint, self.param)
+            self.showRect(self.endPoint, sqrt(self.param)/2)
 
     def showCircle(self, startPoint):
         '''
         Draws a circle in the canvas
         '''
         nPoints = 50
+        x = startPoint.x()
+        y = startPoint.y()
         if self.type == self.tr('distance'):
             r = self.param
             self.rubberBand.reset(QGis.Polygon)
-            center = startPoint
             for itheta in range(nPoints+1):
                 theta = itheta*(2.0*pi/nPoints)
-                self.rubberBand.addPoint(QgsPoint(center.x()+r*cos(theta), center.y()+r*sin(theta)))
+                self.rubberBand.addPoint(QgsPoint(x+r*cos(theta), y+r*sin(theta)))
             self.rubberBand.show()
         else:
             r = sqrt(self.param/pi)
             self.rubberBand.reset(QGis.Polygon)
-            center = startPoint            
             for itheta in range(nPoints+1):
                 theta = itheta*(2.0*pi/nPoints)
-                self.rubberBand.addPoint(QgsPoint(center.x()+r*cos(theta), center.y()+r*sin(theta)))
+                self.rubberBand.addPoint(QgsPoint(x+r*cos(theta), y+r*sin(theta)))
             self.rubberBand.show()
 
     def showRect(self, startPoint, param):   
@@ -113,10 +112,12 @@ class ShapeTool(QgsMapTool):
         Draws a rectangle in the canvas
         '''  
         self.rubberBand.reset(QGis.Polygon)
-        point1 = QgsPoint(startPoint.x() - sqrt(param)/2, startPoint.y() - sqrt(param)/2)
-        point2 = QgsPoint(startPoint.x() - sqrt(param)/2, startPoint.y() + sqrt(param)/2)
-        point3 = QgsPoint(startPoint.x() + sqrt(param)/2, startPoint.y() + sqrt(param)/2)
-        point4 = QgsPoint(startPoint.x() + sqrt(param)/2, startPoint.y() - sqrt(param)/2)
+        x = startPoint.x()
+        y = startPoint.y()
+        point1 = QgsPoint(x - param, y - param)
+        point2 = QgsPoint(x - param, y + param)
+        point3 = QgsPoint(x + param, y + param)
+        point4 = QgsPoint(x + param, y - param)
         self.rubberBand.addPoint(point1, False)
         self.rubberBand.addPoint(point2, False)
         self.rubberBand.addPoint(point3, False)

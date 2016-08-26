@@ -153,6 +153,3 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
             self.splitter.show()
         else:
             self.splitter.hide()
-            
-        
-    
