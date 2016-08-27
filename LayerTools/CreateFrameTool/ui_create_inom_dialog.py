@@ -31,8 +31,8 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_create_inom_dialog_base.ui'))
 
 #DsgTools imports
-from DsgTools.LayerTools.map_index import UtmGrid
-from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
+from DsgTools.LayerTools.CreateFrameTool.map_index import UtmGrid
+from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 
 #qgis imports
 import qgis as qgis
@@ -53,7 +53,6 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         self.setValidCharacters()
         self.setMask()
         self.codeList = codeList
-        self.layerFactory = LayerFactory()
 
     @pyqtSlot()
     def on_okButton_clicked(self):
@@ -70,22 +69,8 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         self.done(1)
 
     def insertFrameIntoLayer(self,reprojected):
-        self.dbVersion = self.widget.getDBVersion()
-        self.qmlPath = self.widget.getQmlPath()
-
-        layer = self.getFrameLayer(self.iface.legendInterface().layers())
-
-        if layer == None:
-            lyrName = self.widget.abstractDb.getFrameLayerName()          
-            dbName = self.widget.abstractDb.getDatabaseName()
-            groupList =  qgis.utils.iface.legendInterface().groups()
-            edgvLayer = self.layerFactory.makeLayer(self.widget.abstractDb, self.codeList, lyrName)
-            if dbName in groupList:
-                layer = edgvLayer.load(self.widget.crs, idSubgrupo = groupList.index(dbName), uniqueLoad = True)
-            else:
-                self.parentTreeNode = qgis.utils.iface.legendInterface().addGroup(self.widget.abstractDb.getDatabaseName(), -1)
-                layer = edgvLayer.load(self.widget.crs,idSubgrupo = self.parentTreeNode, uniqueLoad = True)
-        
+        loader = LayerLoaderFactory().makeLoader(self.iface,self.widget.abstractDb)        
+        layer = loader.load(['aux_moldura_a'], uniqueLoad=True)['aux_moldura_a']
         if not layer:
             return
 

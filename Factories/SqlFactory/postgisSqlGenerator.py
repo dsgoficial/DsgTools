@@ -962,3 +962,6 @@ class PostGISSqlGenerator(SqlGenerator):
                     ) as a
         """
         return sql
+    
+    def insertFrame(self,scale,mi,inom,frame,srid):
+        sql = """INSERT INTO public.aux_moldura_a (mi,inom,escala,geom) VALUES ('{0}','{1}','{2}',ST_SetSRID(ST_Multi({3}),{4}))""".format(mi,inom,scale,frame,srid)

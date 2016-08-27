@@ -28,6 +28,7 @@ from osgeo import ogr, osr
 # DsgTools imports
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.Utils.utils import Utils
+from DsgTools.LayerTools.CreateFrameTool.map_index import UtmGrid
 
 #PyQt imports
 from PyQt4.QtSql import QSqlQuery, QSqlDatabase
@@ -540,3 +541,45 @@ class AbstractDb(QObject):
             code_name = query.value(1)
             ret[code_name] = code
         return ret
+    
+    def createFrame(self, type, scale, param, crs, utmGrid):
+        if type == 'mapIndex':
+            mi = str(param)
+            if scale == '250k':
+                inom = utmGrid.getINomenFromMIR(str(param))
+            else:
+                inom = utmGrid.getINomenFromMI(str(param))
+        elif type == 'inom':
+            inom = str(param)
+            if scale == '250k':
+                mi = utmGrid.getMIR(inom)
+            else:
+                mi = utmGrid.getMI(inom)
+        frame = self.createFrameFromInom(inom, utmGrid, crs)
+        self.insertFrame(scale,mi,inom,frame)
+    
+    def createFrameFromInom(self, inom, utmGrid, crs):
+        frame = utmGrid.getQgsPolygonFrame(inom)
+        reprojected = self.reprojectFrame(frame, crs)
+        return reprojected
+    
+    def reprojectFrame(self, poly, crs):
+        crsSrc = QgsCoordinateReferenceSystem(crs.geographicCRSAuthId())
+        coordinateTransformer = QgsCoordinateTransform(crsSrc, crs)
+        polyline = poly.asMultiPolygon()[0][0]
+        newPolyline = []
+        for point in polyline:
+            newPolyline.append(coordinateTransformer.transform(point))
+        qgsPolygon = QgsGeometry.fromMultiPolygon([[newPolyline]])
+        return qgsPolygon
+    
+    def insertFrame(self,scale,mi,inom,frame):
+        self.checkAndOpenDb()
+        sql = self.gen.insertFrame(scale,mi,inom,frame)
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem inserting frame: ') + query.lastError().text())
+        self.db.commit()

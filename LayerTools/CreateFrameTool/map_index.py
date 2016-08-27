@@ -80,7 +80,7 @@ class UtmGrid:
         return self.scales.index(scale)
 
     def getSpacingX(self,scale):
-        """Get X spacing fot the given scale
+        """Get X spacing for the given scale
         """
         scaleId=self.scales.index(scale)
         if (scaleId<0): return 0
@@ -94,7 +94,7 @@ class UtmGrid:
         return self.spacingX[scaleId]
     
     def getSpacingY(self,scale): 
-        """Get Y spacing fot the given scale
+        """Get Y spacing for the given scale
         """
         scaleId=self.scales.index(scale)
         if (scaleId<0): return 0
@@ -306,14 +306,36 @@ class UtmGrid:
             return dict[key]+'-'+string.join(otherParts,'-')
         else:
             return ''
-        
+    
+    def getMIfromInom(self,inom):
+        return self.getMI(self.getMIdict(),inom)
+    
+    def getMI(self, miDict, inom):
+        parts = inom.split('-')
+        hundredInom = '-'.join(parts[0:5])
+        remains = parts[5::]
+        for k,v in miDict.iteritems():
+            if v == hundredInom:
+                return '-'.join([k]+remains)
+    
+    def getMIR(self, miDict, inom):
+        parts = inom.split('-')
+        hundredInom = '-'.join(parts[0:4])
+        remains = parts[4::]
+        for k,v in miDict.iteritems():
+            if v == hundredInom:
+                return '-'.join([k]+remains)
+
+
 if (__name__=="__main__"):
     test=UtmGrid()
-    mi="2895-1"
-    inomen=test.getINomenFromMI(mi)
-    print 'Working test:',inomen,'.'
-    mi='teste'
-    inomen=test.getINomenFromMI(mi)
-    print 'Not working test:',inomen,'.'
+    #mi="2895-1"
+    #inomen=test.getINomenFromMI(mi)
+    #print 'Working test:',inomen,'.'
+    #mi='teste'
+    #inomen=test.getINomenFromMI(mi)
+    #print 'Not working test:',inomen,'.'
     #print test.getQgsPolygonFrame(inomen).exportToWkt()
+    inom = 'SA-23-Y-C-IV-4'
+    print test.getMIfromInom(inom)
     

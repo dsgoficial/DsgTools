@@ -33,7 +33,7 @@ currentPath = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from DsgTools.LayerTools.LoadLayersFromServer.loadLayersFromServer import LoadLayersFromServer
 from DsgTools.LayerTools.loadAuxStruct import LoadAuxStruct
-from DsgTools.LayerTools.ui_create_inom_dialog import CreateInomDialog
+from DsgTools.LayerTools.CreateFrameTool.ui_create_inom_dialog import CreateInomDialog
 from DsgTools.DbTools.SpatialiteTool.cria_spatialite_dialog import CriaSpatialiteDialog
 from DsgTools.DbTools.PostGISTool.postgisDBTool import PostgisDBTool
 from DsgTools.ComplexTools.complexWindow import ComplexWindow
