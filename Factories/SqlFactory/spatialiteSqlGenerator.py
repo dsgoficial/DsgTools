@@ -182,3 +182,7 @@ class SpatialiteSqlGenerator(SqlGenerator):
     def getGeomColumnDict(self):
         sql = """select f_geometry_column, f_table_name from geometry_columns"""
         return sql
+    
+    def insertFrame(self,scale,mi,inom,frame,srid,geoSrid):
+        sql = """INSERT INTO public_aux_moldura_a (mi,inom,escala,GEOMETRY) VALUES ('{0}','{1}','{2}',ST_Transform(SetSRID(ST_Multi('{3}'),{4}), {5}))""".format(mi,inom,scale,frame,geoSrid,srid)
+        return sql

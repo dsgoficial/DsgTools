@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
+import os, binascii
 from uuid import uuid4
 
 from osgeo import ogr, osr
@@ -36,6 +36,7 @@ from PyQt4.QtCore import QSettings, SIGNAL, pyqtSignal, QObject
 
 #Qgis imports
 import qgis.core 
+from qgis.core import QgsCoordinateReferenceSystem 
 
 class DbSignals(QObject):
         updateLog = pyqtSignal(str)
@@ -49,6 +50,7 @@ class AbstractDb(QObject):
         self.signals = DbSignals()
         self.slotConnected = False
         self.versionFolderDict = dict({'2.1.3':'edgv_213','FTer_2a_Ed':'edgv_FTer_2a_Ed'})
+        self.utmGrid = UtmGrid()
 
     def __del__(self):
         if self.db.isOpen():
@@ -542,40 +544,31 @@ class AbstractDb(QObject):
             ret[code_name] = code
         return ret
     
-    def createFrame(self, type, scale, param, crs, utmGrid):
-        if type == 'mapIndex':
+    def createFrame(self, type, scale, param):
+        if type == 'mi':
             mi = str(param)
             if scale == '250k':
-                inom = utmGrid.getINomenFromMIR(str(param))
+                inom = self.utmGrid.getINomenFromMIR(str(param))
             else:
-                inom = utmGrid.getINomenFromMI(str(param))
+                inom = self.utmGrid.getINomenFromMI(str(param))
         elif type == 'inom':
             inom = str(param)
             if scale == '250k':
-                mi = utmGrid.getMIR(inom)
+                mi = self.utmGrid.getMIR(inom)
             else:
-                mi = utmGrid.getMI(inom)
-        frame = self.createFrameFromInom(inom, utmGrid, crs)
-        self.insertFrame(scale,mi,inom,frame)
+                mi = self.utmGrid.getMI(inom)
+        frame = self.createFrameFromInom(inom)
+        self.insertFrame(scale,mi,inom,binascii.hexlify(frame.asWkb()))
     
-    def createFrameFromInom(self, inom, utmGrid, crs):
-        frame = utmGrid.getQgsPolygonFrame(inom)
-        reprojected = self.reprojectFrame(frame, crs)
-        return reprojected
-    
-    def reprojectFrame(self, poly, crs):
-        crsSrc = QgsCoordinateReferenceSystem(crs.geographicCRSAuthId())
-        coordinateTransformer = QgsCoordinateTransform(crsSrc, crs)
-        polyline = poly.asMultiPolygon()[0][0]
-        newPolyline = []
-        for point in polyline:
-            newPolyline.append(coordinateTransformer.transform(point))
-        qgsPolygon = QgsGeometry.fromMultiPolygon([[newPolyline]])
-        return qgsPolygon
+    def createFrameFromInom(self, inom):
+        frame = self.utmGrid.getQgsPolygonFrame(inom)
+        return frame
     
     def insertFrame(self,scale,mi,inom,frame):
         self.checkAndOpenDb()
-        sql = self.gen.insertFrame(scale,mi,inom,frame)
+        srid = self.findEPSG()
+        geoSrid = QgsCoordinateReferenceSystem(int(srid)).geographicCRSAuthId().split(':')[-1]
+        sql = self.gen.insertFrame(scale,mi,inom,frame,srid,geoSrid)
         self.db.transaction()
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
