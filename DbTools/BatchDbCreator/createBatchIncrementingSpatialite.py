@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2016-02-25
+        begin                : 2016-08-25
         git sha              : $Format:%H$
         copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba@dsg.eb.mil.br
@@ -29,6 +29,7 @@ from PyQt4.QtGui import QMessageBox, QFileDialog, QApplication, QCursor
 from fileinput import filename
 from DsgTools.Utils.utils import Utils
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.DbTools.SpatialiteTool.spatialiteCreator import SpatialiteCreator
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'createBatchIncrementingSpatialite.ui'))
@@ -55,19 +56,20 @@ class CreateBatchIncrementingSpatialite(QtGui.QWizardPage, FORM_CLASS):
         parameterDict['driverName'] = 'QSQLITE'
         parameterDict['output'] = self.outputDirSelector.fileNameList[0]
         parameterDict['outputList'] = self.getOutputDbNameList()
-        parameterDict['crs'] = self.mQgsProjectionSelectionWidget.crs()
+        parameterDict['crs'] = self.databaseParameterWidget.mQgsProjectionSelectionWidget.crs()
+        parameterDict['version'] = self.databaseParameterWidget.getVersion()
         return parameterDict
     
     def getOutputDbNameList(self):
         prefix = None
         sufix = None
-        dbBaseName = self.dbNameLineEdit.text()
+        dbBaseName = self.databaseParameterWidget.dbNameLineEdit.text()
         outputPath = self.outputDirSelector.fileNameList[0]
         outputDbNameList = []
-        if self.prefixLineEdit.text() <> '':
-            prefix = self.prefixLineEdit.text()
-        if self.sufixLineEdit.text() <> '':
-            sufix = self.sufixLineEdit.text()
+        if self.databaseParameterWidget.prefixLineEdit.text() <> '':
+            prefix = self.databaseParameterWidget.prefixLineEdit.text()
+        if self.databaseParameterWidget.sufixLineEdit.text() <> '':
+            sufix = self.databaseParameterWidget.sufixLineEdit.text()
         for i in range(self.spinBox.value()):
             attrNameList = []
             if prefix:
@@ -82,47 +84,21 @@ class CreateBatchIncrementingSpatialite(QtGui.QWizardPage, FORM_CLASS):
 
     def validatePage(self):
         #insert validation messages
-        if self.dbNameLineEdit.text() == '':
-            return False
-        if self.outputDirSelector.fileNameList == []:
-            return False
-        if self.mQgsProjectionSelectionWidget.crs().authid() == '':
+        validated = self.databaseParameterWidget.validate()
+        if not validated:
             return False
         parameterDict = self.getParameters()
         self.loadDatabases(parameterDict)
         return True
     
     def loadDatabases(self,parameterDict):
+        creator = SpatialiteCreator(parameterDict['version'])
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         for dbName in parameterDict['outputList']:
             try:
-                self.createDatabase(dbName,int(parameterDict['crs'].authid().split(':')[-1]))
+                creator.createDatabase(dbName,int(parameterDict['crs'].authid().split(':')[-1]))
             except Exception as e:
                 QApplication.restoreOverrideCursor()
                 raise e
         QApplication.restoreOverrideCursor()
     
-    def getTemplateLocation(self):
-        currentPath = os.path.dirname(__file__)
-        if self.versionComboBox.currentText() == '2.1.3':
-            edgvPath = os.path.join(currentPath, '..', 'SpatialiteTool','template', '213', 'seed_edgv213.sqlite')
-        elif self.versionComboBox.currentText() == 'FTer_2a_Ed':
-            edgvPath = os.path.join(currentPath, '..', 'SpatialiteTool', 'template', 'FTer_2a_Ed', 'seed_edgvfter_2a_ed.sqlite')
-        return edgvPath
-    
-    def createDatabase(self,destino,srid):
-        f = open(self.getTemplateLocation(),'rb')
-        g = open(destino,'wb')
-        x = f.readline()
-        while x:
-            g.write(x)
-            x = f.readline()
-
-        g.close()
-
-        con = sqlite3.connect(destino)
-        cursor = con.cursor()
-        srid_sql = (srid,)
-        cursor.execute("UPDATE geometry_columns SET srid=?",srid_sql)
-        con.commit()
-        con.close()
