@@ -1004,5 +1004,5 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def checkTemplate(self):
-        sql = """select datname from pg_database where datistemplate = 't'"""
+        sql = """select datname from pg_database"""
         return sql
