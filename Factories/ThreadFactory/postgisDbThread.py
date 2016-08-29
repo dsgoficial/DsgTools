@@ -29,6 +29,7 @@ import os, codecs
 
 from DsgTools.Factories.ThreadFactory.genericThread import GenericThread
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 
 class PostgisDbMessages(QObject):
     def __init__(self, thread):
@@ -61,12 +62,14 @@ class PostgisDbThread(GenericThread):
         self.factory = SqlGeneratorFactory()
         #setting the sql generator
         self.gen = self.factory.createSqlGenerator(False)
-
         self.messenger = PostgisDbMessages(self)
+        self.dbFactory = DbFactory()
 
-    def setParameters(self, db, version, epsg, stopped):
-        self.db = db
+    def setParameters(self, abstractDb, dbName, version, epsg, stopped):
+        self.abstractDb = abstractDb #database = postgis
+        self.dbName = dbName
         self.version = version
+        self.db = None
         self.epsg = epsg
         self.stopped = stopped
 
@@ -74,6 +77,18 @@ class PostgisDbThread(GenericThread):
         # Processing ending
         (ret, msg) = self.createDatabaseStructure()
         self.signals.processingFinished.emit(ret, msg, self.getId())
+
+    def connectToTemplate(self):
+        database = self.abstractDb.getTemplateName(self.version)
+        host = self.abstractDb.db.hostName()
+        port = self.abstractDb.db.port()
+        user = self.abstractDb.db.userName()
+        password = self.abstractDb.db.password()
+        template = self.dbFactory.createDbFactory('QPSQL')
+        template.connectDatabaseWithParameters(host, port, database, user, password)
+        template.checkAndOpenDb()
+        self.db = template.db
+        
 
     def createDatabaseStructure(self):
         currentPath = os.path.dirname(__file__)
@@ -89,48 +104,72 @@ class PostgisDbThread(GenericThread):
         return self.loadDatabaseStructure(edgvPath)
 
     def loadDatabaseStructure(self, edgvPath):
-        file = codecs.open(edgvPath, encoding='utf-8', mode="r")
-        sql = file.read()
-        sql = sql.replace('[epsg]', str(self.epsg))
-        file.close()
-        commands = sql.split('#')
-
+        commands = []
+        hasTemplate = self.abstractDb.checkTemplate(self.version)
+        if not hasTemplate:
+            file = codecs.open(edgvPath, encoding='utf-8', mode="r")
+            sql = file.read()
+            sql = sql.replace('[epsg]', str(self.epsg))
+            file.close()
+            commands = sql.split('#')
         # Progress bar steps calculated
-        self.signals.rangeCalculated.emit(len(commands), self.getId())
-
-        self.db.transaction()
-        query = QSqlQuery(self.db)
-
-        for command in commands:
-            if not self.stopped[0]:
-                if not query.exec_(command):
-                    QgsMessageLog.logMessage(self.messenger.getProblemMessage(command, query), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.signals.rangeCalculated.emit(len(commands)+4, self.getId())
+        
+        if not hasTemplate:
+            try:
+                self.abstractDb.createTemplateDatabase(self.version)
+                self.signals.stepProcessed.emit(self.getId())
+                self.connectToTemplate()
+                self.signals.stepProcessed.emit(self.getId())
+            except Exception as e:
+                return (0, self.messenger.getProblemFeedbackMessage()+'\n'+str(e.args[0]))
+            self.db.open()
+            self.db.transaction()
+            query = QSqlQuery(self.db)
+    
+            for command in commands:
+                if not self.stopped[0]:
+                    if not query.exec_(command):
+                        QgsMessageLog.logMessage(self.messenger.getProblemMessage(command, query), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        self.db.rollback()
+                        self.db.close()
+                        self.dropDatabase(self.db)
+                        return (0, self.messenger.getProblemFeedbackMessage())
+    
+                    # Updating progress
+                    self.signals.stepProcessed.emit(self.getId())
+                else:
                     self.db.rollback()
                     self.db.close()
-                    self.dropDatabase(self.db)
-                    return (0, self.messenger.getProblemFeedbackMessage())
-
-                # Updating progress
-                self.signals.stepProcessed.emit(self.getId())
-            else:
-                self.db.rollback()
-                self.db.close()
-                self.dropDatabase(self.db)                
-                QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
-                return (-1, self.messenger.getUserCanceledFeedbackMessage())
-
-        self.db.commit()
-        if self.version == '2.1.3':
-            sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'cb\',\'complexos\',\'dominios\';' % self.db.databaseName()
-        elif self.version == 'FTer_2a_Ed':
-            sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'pe\',\'ge\',\'complexos\',\'dominios\';' % self.db.databaseName()
-        
-        if not query.exec_(sql):
-            QgsMessageLog.logMessage(self.messenger.getProblemMessage(command, query), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            return (0, self.messenger.getProblemFeedbackMessage())
-        #this commit was missing, so alter database statement was not commited.
-        self.db.commit()
-        self.db.close()
+                    self.dropDatabase(self.db)                
+                    QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
+                    return (-1, self.messenger.getUserCanceledFeedbackMessage())
+    
+            self.db.commit()
+            if self.version == '2.1.3':
+                sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'cb\',\'complexos\',\'dominios\';' % self.db.databaseName()
+            elif self.version == 'FTer_2a_Ed':
+                sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'pe\',\'ge\',\'complexos\',\'dominios\';' % self.db.databaseName()
+            
+            if not query.exec_(sql):
+                QgsMessageLog.logMessage(self.messenger.getProblemMessage(command, query), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return (0, self.messenger.getProblemFeedbackMessage())
+            #this commit was missing, so alter database statement was not commited.
+            self.db.commit()
+            self.db.close()
+            self.abstractDb.setDbAsTemplate(self.version)
+        #creates from template
+        if not self.stopped[0]:
+            self.abstractDb.createDbFromTemplate(self.dbName,self.version)
+            self.signals.stepProcessed.emit(self.getId())
+            #5. alter spatial structure
+            createdDb = self.dbFactory.createDbFactory('QPSQL')
+            createdDb.connectDatabaseWithParameters(self.abstractDb.db.hostName(), self.abstractDb.db.port(), self.dbName, self.abstractDb.db.userName(), self.abstractDb.db.password())
+            createdDb.updateDbSRID(self.epsg)
+            self.signals.stepProcessed.emit(self.getId())
+        else:
+            QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
+            return (-1, self.messenger.getUserCanceledFeedbackMessage())
         QgsMessageLog.logMessage(self.messenger.getSuccessFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
         return (1, self.messenger.getSuccessFeedbackMessage())
 

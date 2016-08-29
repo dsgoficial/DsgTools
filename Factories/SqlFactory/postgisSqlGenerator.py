@@ -71,8 +71,11 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "id in (SELECT id FROM "+layer_name+")"
         return sql
 
-    def getCreateDatabase(self, name):
-        sql = "CREATE DATABASE "+name
+    def getCreateDatabase(self, name, dropIfExists = False):
+        sql = ''
+        if dropIfExists:
+            sql+= """DROP DATABASE IF EXISTS "{0}";""".format(name)
+        sql += """CREATE DATABASE "{0}";""".format(name)
         return sql
 
     def insertFrameIntoTable(self, wkt):
@@ -965,4 +968,41 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def insertFrame(self,scale,mi,inom,frame,srid,geoSrid):
         sql = """INSERT INTO public.aux_moldura_a (mi,inom,escala,geom) VALUES ('{0}','{1}','{2}',ST_Transform(ST_SetSRID(ST_Multi('{3}'),{4}), {5}))""".format(mi,inom,scale,frame,geoSrid,srid)
+        return sql
+    
+    def createFromTemplate(self,dbName, version):
+        if version == '2.1.3':
+            sql = """CREATE DATABASE "{0}" with template = template_213;""".format(dbName)
+        elif version == 'FTer_2a_Ed':
+            sql = """CREATE DATABASE "{0}" with template = template_fter_2a_ed;""".format(dbName)
+        return sql
+    
+    def updateDbSRID(self, srid):
+        sql = """select UpdateGeometrySRID(f_table_catalog, f_table_schema, f_table_name, f_geometry_column,{0}) from geometry_columns where f_table_name in 
+
+            (select pgcl2.n as tb from pg_class as pgcl
+                left join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
+                left join pg_namespace as pgnsp on pgcl.relnamespace = pgnsp.oid
+                left join pg_inherits as pginh on pginh.inhparent = pgcl.oid
+                join (select pgcl.oid, pgmsp.nspname as sc, pgcl.relname as n from pg_class as pgcl
+                            join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
+                            left join pg_namespace pgmsp on pgcl.relnamespace = pgmsp.oid) 
+                as pgcl2 on pgcl2.oid = pginh.inhrelid
+                where pgnsp.nspname in ('ge','pe', 'cb', 'public') and pgatt.attname IS NULL and pgcl.relkind = 'r'
+            union 
+            select distinct p.relname as tb from pg_class as p
+                left join pg_inherits as inh  on inh.inhrelid = p.oid 
+                left join geometry_columns as gc on gc.f_table_name = p.relname
+                where (inh.inhrelid IS NULL) and 
+                gc.f_table_schema in ('cb', 'pe', 'ge', 'public')
+            
+            order by tb)""".format(srid)
+        return sql
+    
+    def setDbAsTemplate(self, dbName):
+        sql = """UPDATE pg_database set datistemplate = 't' and datallowconn = 'f' where datname = '{0}';""".format(dbName)
+        return sql
+    
+    def checkTemplate(self):
+        sql = """select datname from pg_database where datistemplate = 't'"""
         return sql

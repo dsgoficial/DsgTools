@@ -1822,3 +1822,69 @@ class PostgisDb(AbstractDb):
             for d in aux['array_agg']:
                 geomStructDict[tableName][d['f1']] = yesNoDict[d['f2']]
         return geomStructDict
+    
+    def createDbFromTemplate(self,dbName,version):
+        #check if created, if created prompt if drop is needed
+        self.checkAndOpenDb()
+        sql = self.gen.createFromTemplate(dbName,version)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            self.db.close()
+            raise Exception(self.tr('Problem creating from template: ') + query.lastError().text())
+        self.db.close()
+    
+    def updateDbSRID(self, srid):
+        self.checkAndOpenDb()
+        self.db.transaction()
+        sridSql = self.gen.updateDbSRID(srid)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sridSql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem setting srid: ') + query.lastError().text())
+        self.db.commit()
+        self.db.close()
+    
+    def checkTemplate(self, version):
+        self.checkAndOpenDb()
+        dbName = self.getTemplateName(version)
+        sql = self.gen.checkTemplate()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem setting as template: ")+query.lastError().text())
+        while query.next():
+            if query.value(0) == dbName:
+                return True
+        return False
+    
+    def createTemplateDatabase(self, version):
+        self.checkAndOpenDb()
+        dbName = self.getTemplateName(version)
+        try:
+            self.dropDatabase(dbName)
+        except:
+            pass
+        sql = self.gen.getCreateDatabase(dbName)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr("Problem creating database: ")+query.lastError().text())
+        self.db.close()
+    
+    def getTemplateName(self, version):
+        if version == '2.1.3':
+            return 'template_213'
+        elif version == 'FTer_2a_Ed':
+            return 'template_fter_2a_ed'
+    
+    def setDbAsTemplate(self, version):
+        self.checkAndOpenDb()
+        dbName = self.getTemplateName(version)
+        sql = self.gen.setDbAsTemplate(dbName)
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr("Problem setting database as template: ")+query.lastError().text())
+        self.db.commit()
+        self.db.close()

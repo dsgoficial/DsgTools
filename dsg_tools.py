@@ -806,9 +806,9 @@ class DsgTools:
         dlg = PostgisDBTool(self.iface)
         result = dlg.exec_()
         if result == 1:
-            (db, version, epsg) = dlg.getParameters()
+            (dbName, abstractDb , version, epsg) = dlg.getParameters()
             #creating the separate process
-            self.processManager.createPostgisDatabaseProcess(db, version, epsg)
+            self.processManager.createPostgisDatabaseProcess(dbName,abstractDb, version, epsg)
 
     def loadByCategory(self):
         try:
