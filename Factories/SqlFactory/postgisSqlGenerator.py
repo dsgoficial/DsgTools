@@ -970,11 +970,8 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """INSERT INTO public.aux_moldura_a (mi,inom,escala,geom) VALUES ('{0}','{1}','{2}',ST_Transform(ST_SetSRID(ST_Multi('{3}'),{4}), {5}))""".format(mi,inom,scale,frame,geoSrid,srid)
         return sql
     
-    def createFromTemplate(self,dbName, version):
-        if version == '2.1.3':
-            sql = """CREATE DATABASE "{0}" with template = template_213;""".format(dbName)
-        elif version == 'FTer_2a_Ed':
-            sql = """CREATE DATABASE "{0}" with template = template_fter_2a_ed;""".format(dbName)
+    def createFromTemplate(self,dbName, version, templateName):
+        sql = """CREATE DATABASE "{0}" with template = "{1}";""".format(dbName,templateName)
         return sql
     
     def updateDbSRID(self, srid):
