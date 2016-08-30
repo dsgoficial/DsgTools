@@ -28,8 +28,10 @@ from DsgTools.Factories.DbCreatorFactory.DbCreator import DbCreator
 
 class SpatialiteDbCreator(DbCreator):
     
-    def __init__(self, version):
+    def __init__(self, createParam, version):
         super(self.__class__,self).__init__(version)
+        if isinstance(createParam, str):
+            self.outputDir = createParam
         self.edgvPath = self.getTemplateLocation(self.version)
     
     def getTemplateLocation(self, version):
@@ -40,7 +42,8 @@ class SpatialiteDbCreator(DbCreator):
             edgvPath = os.path.join(currentPath, 'template', 'FTer_2a_Ed', 'seed_edgvfter_2a_ed.sqlite')
         return edgvPath
     
-    def createDb(self,destination,srid, instantiateNewDb = False):
+    def createDb(self, dbName, srid, paramDict = dict()):
+        destination = os.path.join(self.outputDir,dbName+'.sqlite')
         f = open(self.edgvPath,'rb')
         g = open(destination,'wb')
         x = f.readline()
