@@ -21,9 +21,6 @@
  ***************************************************************************/
 """
 
-import os, sqlite3
-from os.path import expanduser
-
 from DsgTools.Factories.DbCreatorFactory.DbCreator import DbCreator
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 
@@ -53,7 +50,6 @@ class PostgisDbCreator(DbCreator):
             templateName = self.abstractDb.getTemplateName(self.version)
             templateDb = self.instantiateNewDb(templateName)
             templateDb.setStructureFromSql(self.version, 4674)
-            
     
     def createDb(self, dbName, srid, paramDict = dict()):
         '''
@@ -62,8 +58,6 @@ class PostgisDbCreator(DbCreator):
         paramDict = {'templateDb': database to be used as template. Default is edgv}
         '''
         #0. if 'templateDb' in paramDict.keys: use createFromTemplate then end createDb
-        
-        
         if 'templateDb' in paramDict.keys():
             self.abstractDb.createDbFromTemplate(dbName, self.version, templateName = paramDict['templateDb'])
             return self.instantiateNewDb(dbName)

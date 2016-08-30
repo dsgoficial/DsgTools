@@ -35,7 +35,6 @@ class DbCreator(QObject):
         super(self.__class__,self).__init__()
         self.version = version
         self.dbFactory = DbFactory()
-        self.log = ''
         self.scaleMIDict = {1:'100k',2:'50k',3:'25k',4:'10k',5:'5k',6:'2k',7:'1k'}
     
     def getType(self):

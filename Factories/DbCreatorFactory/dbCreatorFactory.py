@@ -29,7 +29,7 @@ from DsgTools.Factories.DbCreatorFactory.spatialiteDbCreator import SpatialiteDb
 from DsgTools.Factories.DbCreatorFactory.postgisDbCreator import PostgisDbCreator
 
 class DbCreatorFactory:
-    def createDbCreatorFactory(self,driverName):
+    def createDbCreatorFactory(self, driverName, createParam, version):
         #TODO Treat none return
         if not ('QPSQL' in QSqlDatabase.drivers()): #Driver wasn't loaded
             QgsMessageLog.logMessage('QT PSQL driver not installed!', 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
@@ -39,8 +39,8 @@ class DbCreatorFactory:
             return None        
         
         if driverName == "QSQLITE":
-            return SpatialiteDbCreator()
+            return SpatialiteDbCreator(createParam, version)
         if driverName == "QPSQL":
-            return PostgisDbCreator()
+            return PostgisDbCreator(createParam, version)
         else:
             return None
