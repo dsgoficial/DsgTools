@@ -29,10 +29,8 @@ from PyQt4.QtGui import QMessageBox, QFileDialog, QWizard
 from fileinput import filename
 from DsgTools.Utils.utils import Utils
 
-from DsgTools.DbTools.BatchDbCreator.createBatchPostgisFromCsv import CreateBatchPostgisFromCsv
-from DsgTools.DbTools.BatchDbCreator.createBatchSpatialiteFromCsv import CreateBatchSpatialiteFromCsv
-from DsgTools.DbTools.BatchDbCreator.createBatchIncrementingSpatialite import CreateBatchIncrementingSpatialite
-from DsgTools.DbTools.BatchDbCreator.teste3 import Teste3 
+from DsgTools.DbTools.BatchDbCreator.createBatchFromCsv import CreateBatchFromCsv
+from DsgTools.DbTools.BatchDbCreator.createBatchIncrementing import CreateBatchIncrementing
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'batchDbCreator.ui'))
@@ -48,31 +46,23 @@ class BatchDbCreator(QtGui.QWizard, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.sequenceDict = {'CreateBatchPostgisFromCsv':1, 'CreateBatchSpatialiteFromCsv':2, 'CreateBatchIncrementingSpatialite':3}
+        self.sequenceDict = {'CreateBatchFromCsv':1, 'CreateBatchIncrementing':2, 'CreateBatchBasedOnList':3}
         
-        self.setPage(self.sequenceDict['CreateBatchPostgisFromCsv'],CreateBatchPostgisFromCsv())
-        self.setPage(self.sequenceDict['CreateBatchSpatialiteFromCsv'],CreateBatchSpatialiteFromCsv())
-        self.setPage(self.sequenceDict['CreateBatchIncrementingSpatialite'],CreateBatchIncrementingSpatialite())
+        self.setPage(self.sequenceDict['CreateBatchFromCsv'],CreateBatchFromCsv())
+        self.setPage(self.sequenceDict['CreateBatchIncrementing'],CreateBatchIncrementing())
     
     def nextId(self):
         if self.currentId() == 0:
-            if self.driverNameComboBox.currentIndex() == 0:
                 if self.csvRadioButton.isChecked():
-                    return self.sequenceDict['CreateBatchPostgisFromCsv']
-                else:
-                    return self.currentId()
-            elif self.driverNameComboBox.currentIndex() == 1:
-                if self.csvRadioButton.isChecked():
-                    return self.sequenceDict['CreateBatchSpatialiteFromCsv']
+                    return self.sequenceDict['CreateBatchFromCsv']
                 elif self.patternRadioButton.isChecked():
-                    return self.sequenceDict['CreateBatchIncrementingSpatialite']
+                    return self.sequenceDict['CreateBatchIncrementing']
                 else:
                     return self.currentId()
-            else:
-                return self.currentId()
-        elif self.currentId() == self.sequenceDict['CreateBatchPostgisFromCsv']:
+
+        elif self.currentId() == self.sequenceDict['CreateBatchFromCsv']:
             return -1
-        elif self.currentId() == self.sequenceDict['CreateBatchSpatialiteFromCsv']:
+        elif self.currentId() == self.sequenceDict['CreateBatchIncrementing']:
             return -1
         else:
             return -1

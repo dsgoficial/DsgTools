@@ -5,10 +5,10 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2015-10-21
+        begin                : 2016-08-30
         git sha              : $Format:%H$
-        copyright            : (C) 2015 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba@dsg.eb.mil.br
+        copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -41,6 +41,10 @@ class DbCreator(QObject):
         #Abstract method.
         return None
     
+    def createDb(self, dbName, srid, paramDict  = dict()):
+        #Abstract method.
+        pass
+
     def buildDatabaseName(self, dbBaseName, prefix = None, sufix = None):
         attrNameList = []
         if prefix:
@@ -56,10 +60,6 @@ class DbCreator(QObject):
             dbBaseName = dbInitialBaseName+str(i)
             dbNameList.append(self.buildDatabaseName(dbBaseName, prefix, sufix))
         return dbNameList
-    
-    def createDb(self, dbName, srid, paramDict  = dict()):
-        #Abstract method.
-        pass
     
     def batchCreateDb(self, dbNameList, srid, paramDict  = dict()):
         outputDbDict = dict()

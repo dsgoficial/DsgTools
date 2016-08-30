@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>TabDbSelector</class>
- <widget class="QWidget" name="TabDbSelector">
+ <class>tabDbSelectorWidget_2</class>
+ <widget class="QWidget" name="tabDbSelectorWidget_2">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>359</width>
-    <height>152</height>
+    <width>399</width>
+    <height>77</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,13 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
-    <widget class="QTabWidget" name="dbTabWidget">
+    <widget class="QTabWidget" name="tabDbSelectorWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -25,7 +31,14 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0">
-        <widget class="ExploreServerWidget" name="serverWidget" native="true"/>
+        <widget class="ExploreServerWidget" name="serverWidget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -35,7 +48,14 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0">
-        <widget class="SelectFileWidget" name="outputDirSelector" native="true"/>
+        <widget class="SelectFileWidget" name="outputDirSelector" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

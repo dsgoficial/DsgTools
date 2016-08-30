@@ -34,7 +34,6 @@ from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.ServerTools.createView import CreateView
 from DsgTools.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
 from DsgTools.ServerTools.selectStyles import SelectStyles
-from psycopg2.tests.testconfig import dbname
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

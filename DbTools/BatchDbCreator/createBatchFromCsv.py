@@ -30,9 +30,9 @@ from fileinput import filename
 from DsgTools.Utils.utils import Utils
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'createBatchSpatialiteFromCsv.ui'))
+    os.path.dirname(__file__), 'createBatchFromCsv.ui'))
 
-class CreateBatchSpatialiteFromCsv(QtGui.QWizardPage, FORM_CLASS):
+class CreateBatchFromCsv(QtGui.QWizardPage, FORM_CLASS):
     coverageChanged = pyqtSignal()
     def __init__(self, parent=None):
         '''Constructor.'''
@@ -43,10 +43,6 @@ class CreateBatchSpatialiteFromCsv(QtGui.QWizardPage, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.outputDirSelector.setCaption(self.tr('Select the output dir'))
-        self.outputDirSelector.setFilter(self.tr('Comma Separated Values File (*.csv)'))
-        self.outputDirSelector.setType('dir')
-        self.outputDirSelector.setTitle(self.tr('Output Directory'))
         self.customFileSelector.setCaption(self.tr('Select a Comma Separated Values File'))
         self.customFileSelector.setFilter(self.tr('Comma Separated Values File (*.csv)'))
         self.customFileSelector.setType('single')

@@ -26,56 +26,24 @@
   </property>
   <widget class="QWizardPage" name="wizardPage1">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Select database type</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="driverNameComboBox">
-        <item>
-         <property name="text">
-          <string>PostGIS</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Spatialite</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-     </layout>
+    <item row="2" column="0">
+     <widget class="QRadioButton" name="patternRadioButton">
+      <property name="text">
+       <string>Create databases based on an auto incrementing pattern</string>
+      </property>
+     </widget>
     </item>
-    <item row="1" column="0">
+    <item row="0" column="0">
      <widget class="QRadioButton" name="csvRadioButton">
       <property name="text">
        <string>Create databases from csv file list</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="0">
+    <item row="1" column="0">
      <widget class="QRadioButton" name="miListRadioButton">
       <property name="text">
        <string>Create databases based on an map index list</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QRadioButton" name="userRadioButton">
-      <property name="text">
-       <string>Create databases from list inserted by user</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QRadioButton" name="patternRadioButton">
-      <property name="text">
-       <string>Create databases based on an auto incrementing pattern</string>
       </property>
      </widget>
     </item>

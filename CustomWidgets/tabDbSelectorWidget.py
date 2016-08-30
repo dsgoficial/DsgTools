@@ -5,10 +5,10 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2016-07-16
+        begin                : 2016-08-30
         git sha              : $Format:%H$
         copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba@dsg.eb.mil.br
+        email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -28,9 +28,9 @@ from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'tabDbSelector.ui'))
+    os.path.dirname(__file__), 'tabDbSelectorWidget.ui'))
 
-class TabDbSelector(QtGui.QWidget, FORM_CLASS):
+class TabDbSelectorWidget(QtGui.QWidget, FORM_CLASS):
     selectionChanged = pyqtSignal(list,str)
 
     def __init__(self, parent = None):
@@ -43,4 +43,9 @@ class TabDbSelector(QtGui.QWidget, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.serverWidget.populateServersCombo()
+        self.outputDirSelector.setType('dir')
     
+    @pyqtSlot(int)
+    def on_dbTabWidget_currentChanged(self):
+        self.serverWidget.clearAll()
+        self.outputDirSelector.resetAll()

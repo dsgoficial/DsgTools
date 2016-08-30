@@ -5,10 +5,10 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2016-08-26
+        begin                : 2016-08-30
         git sha              : $Format:%H$
         copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba@dsg.eb.mil.br
+        email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -70,4 +70,3 @@ class PostgisDbCreator(DbCreator):
             newDb = self.instantiateNewDb(dbName)
             newDb.updateDbSRID(srid)
             return newDb
-
