@@ -109,7 +109,7 @@ class PostgisDbThread(GenericThread):
         if not hasTemplate:
             file = codecs.open(edgvPath, encoding='utf-8', mode="r")
             sql = file.read()
-            sql = sql.replace('[epsg]', str(self.epsg))
+            sql = sql.replace('[epsg]', '4674')
             file.close()
             commands = sql.split('#')
         # Progress bar steps calculated

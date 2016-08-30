@@ -24,11 +24,13 @@
 import os, sqlite3
 from os.path import expanduser
 
-class SpatialiteCreator:
+from DsgTools.Factories.DbCreatorFactory.DbCreator import DbCreator
+
+class SpatialiteDbCreator(DbCreator):
     
     def __init__(self, version):
-        self.version = version
-        self.edgvPath = self.getTemplateLocation(version)
+        super(self.__class__,self).__init__(version)
+        self.edgvPath = self.getTemplateLocation(self.version)
     
     def getTemplateLocation(self, version):
         currentPath = os.path.dirname(__file__)
@@ -38,7 +40,7 @@ class SpatialiteCreator:
             edgvPath = os.path.join(currentPath, 'template', 'FTer_2a_Ed', 'seed_edgvfter_2a_ed.sqlite')
         return edgvPath
     
-    def createDatabase(self,destination,srid):
+    def createDb(self,destination,srid, instantiateNewDb = False):
         f = open(self.edgvPath,'rb')
         g = open(destination,'wb')
         x = f.readline()

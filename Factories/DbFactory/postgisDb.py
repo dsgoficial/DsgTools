@@ -1860,12 +1860,20 @@ class PostgisDb(AbstractDb):
         return False
     
     def createTemplateDatabase(self, version):
+        '''
+        version: edgv version
+        creates an empty database with the name of a template
+        '''
         self.checkAndOpenDb()
         dbName = self.getTemplateName(version)
         try:
             self.dropDatabase(dbName)
         except:
             pass
+        self.createDatabase(dbName)
+    
+    def createDatabase(self, dbName):
+        self.checkAndOpenDb()
         sql = self.gen.getCreateDatabase(dbName)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
@@ -1882,11 +1890,53 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         dbName = self.getTemplateName(version)
         sql = self.gen.setDbAsTemplate(dbName)
-        self.db.transaction()
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             self.db.rollback()
             self.db.close()
             raise Exception(self.tr("Problem setting database as template: ")+query.lastError().text())
+        self.db.close()
+    
+    def getCreationSqlPath(self, version):
+        currentPath = os.path.dirname(__file__)
+        currentPath = os.path.join(currentPath, '..', '..', 'DbTools', 'PostGISTool')
+        edgvPath = ''
+        if version == '2.1.3':
+            edgvPath = os.path.join(currentPath, 'sqls', '213', 'edgv213.sql')
+        elif version == 'FTer_2a_Ed':
+            edgvPath = os.path.join(currentPath, 'sqls', 'FTer_2a_Ed', 'edgvFter_2a_Ed.sql')
+        return edgvPath
+    
+    def setStructureFromSql(self, version, epsg):
+        self.checkAndOpenDb()
+        edgvPath = self.getCreationSqlPath(version)
+        file = codecs.open(edgvPath, encoding='utf-8', mode="r")
+        sql = file.read()
+        sql = sql.replace('[epsg]', str(epsg))
+        file.close()
+        commands = sql.split('#')
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        for command in commands:
+            if not query.exec_(command):
+                self.db.rollback()
+                self.db.close()
+                raise Exception(self.tr('Error on database creation! ')+query.lastError().text()+ self.tr(' Db will be dropped.'))
+        self.db.commit()
+        self.alterSearchPath(version)
+        self.setDbAsTemplate(version)
+    
+    def alterSearchPath(self, version):
+        self.checkAndOpenDb()
+        dbName = self.db.databaseName()
+        sql = self.gen.alterSearchPath(dbName, version)
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr("Problem altering search path: ")+query.lastError().text())
         self.db.commit()
         self.db.close()
+
+        

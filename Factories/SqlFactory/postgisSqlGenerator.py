@@ -997,9 +997,17 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def setDbAsTemplate(self, dbName):
-        sql = """UPDATE pg_database set datistemplate = 't' and datallowconn = 'f' where datname = '{0}';""".format(dbName)
+        sql = """UPDATE pg_database set datistemplate = 't' where datname = '{0}';
+        UPDATE pg_database set datallowconn = 'f' where datname = '{0}';""".format(dbName)
         return sql
     
     def checkTemplate(self):
         sql = """select datname from pg_database"""
+        return sql
+    
+    def alterSearchPath(self, dbName, version):
+        if version == '2.1.3':
+            sql = 'ALTER DATABASE "{0}" SET search_path = "$user", public, topology,\'cb\',\'complexos\',\'dominios\';'.format(dbName)
+        elif version == 'FTer_2a_Ed':
+            sql = 'ALTER DATABASE "{0}" SET search_path = "$user", public, topology,\'pe\',\'ge\',\'complexos\',\'dominios\';'.format(dbName)
         return sql
