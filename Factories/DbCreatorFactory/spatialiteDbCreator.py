@@ -24,15 +24,18 @@
 import os, sqlite3
 from os.path import expanduser
 
-from DsgTools.Factories.DbCreatorFactory.DbCreator import DbCreator
+from DsgTools.Factories.DbCreatorFactory.dbCreator import DbCreator
 
 class SpatialiteDbCreator(DbCreator):
     
     def __init__(self, createParam, version):
-        super(self.__class__,self).__init__(version)
-        if isinstance(createParam, str):
-            self.outputDir = createParam
+        super(self.__class__,self).__init__(createParam, version)
         self.edgvPath = self.getTemplateLocation(self.version)
+    
+    def instantiateNewDb(self, dbPath):
+        newDb = self.dbFactory.createDbFactory('QSQLITE')
+        newDb.connectDatabase(dbPath)
+        return newDb
     
     def getTemplateLocation(self, version):
         currentPath = os.path.dirname(__file__)
@@ -51,8 +54,10 @@ class SpatialiteDbCreator(DbCreator):
             g.write(x)
             x = f.readline()
         g.close()
+        #TODO: put defineSrid into AbstractDb
         self.defineSrid(destination, srid)
-        
+        newDb = self.instantiateNewDb(destination)
+        return newDb
     
     def defineSrid(self, destination, srid):
         con = sqlite3.connect(destination)

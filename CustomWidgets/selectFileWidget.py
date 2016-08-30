@@ -69,7 +69,7 @@ class SelectFileWidget(QtGui.QWidget, FORM_CLASS):
         self.filesSelected.emit()
     
     def resetAll(self):
-        self.lineedit.clear()
+        self.lineEdit.clear()
     
     def setTitle(self,text):
         self.label.setText(text)

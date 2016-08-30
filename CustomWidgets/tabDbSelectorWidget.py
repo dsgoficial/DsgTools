@@ -27,6 +27,7 @@ from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
 
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'tabDbSelectorWidget.ui'))
 
@@ -46,6 +47,34 @@ class TabDbSelectorWidget(QtGui.QWidget, FORM_CLASS):
         self.outputDirSelector.setType('dir')
     
     @pyqtSlot(int)
-    def on_dbTabWidget_currentChanged(self):
+    def on_tabWidget_currentChanged(self):
         self.serverWidget.clearAll()
         self.outputDirSelector.resetAll()
+
+    def validate(self):
+        if not self.getFactoryCreationParam():
+            return False
+        if self.tabWidget.currentIndex() == 0:
+            if self.serverWidget.currentIndex() == 0:
+                return False
+            else:
+                return True
+        elif self.tabWidget.currentIndex() == 1:
+            if self.outputDirSelector.fileNameList == []:
+                return False
+            else:
+                return True
+    
+    def getFactoryCreationParam(self):
+        if self.tabWidget.currentIndex() == 0 and self.serverWidget.currentIndex() > 0:
+            return self.serverWidget.abstractDb 
+        elif self.tabWidget.currentIndex() == 1 and self.outputDirSelector.fileNameList <> []:
+            return self.outputDirSelector.fileNameList[0]
+        else:
+            return None
+    
+    def getType(self):
+        if self.tabWidget.currentIndex() == 0:
+            return 'QPSQL'
+        elif self.tabWidget.currentIndex() == 1:
+            return 'QSQLITE'

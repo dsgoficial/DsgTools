@@ -21,15 +21,12 @@
  ***************************************************************************/
 """
 
-from DsgTools.Factories.DbCreatorFactory.DbCreator import DbCreator
-from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.Factories.DbCreatorFactory.dbCreator import DbCreator
 
 class PostgisDbCreator(DbCreator):
     
     def __init__(self, createParam, version):
-        super(self.__class__,self).__init__(version)
-        if isinstance(createParam, AbstractDb):
-            self.abstractDb = createParam
+        super(self.__class__,self).__init__(createParam, version)
     
     def instantiateNewDb(self, dbName):
         host = self.abstractDb.db.hostName()

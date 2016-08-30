@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>tabDbSelectorWidget_2</class>
- <widget class="QWidget" name="tabDbSelectorWidget_2">
+ <class>TabDbSelectorWidget</class>
+ <widget class="QWidget" name="TabDbSelectorWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
-    <widget class="QTabWidget" name="tabDbSelectorWidget">
+    <widget class="QTabWidget" name="tabWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>

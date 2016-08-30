@@ -27,14 +27,18 @@ from PyQt4.QtCore import QSettings, SIGNAL, pyqtSignal, QObject
 
 #DsgTools imports
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-
+from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 
 
 class DbCreator(QObject):
-    def __init__(self, version):
-        super(self.__class__,self).__init__()
+    def __init__(self, createParam, version):
+        super(DbCreator,self).__init__()
         self.version = version
         self.dbFactory = DbFactory()
+        if isinstance(createParam, unicode):
+            self.outputDir = createParam
+        if isinstance(createParam, AbstractDb):
+            self.abstractDb = createParam
         self.scaleMIDict = {1:'100k',2:'50k',3:'25k',4:'10k',5:'5k',6:'2k',7:'1k'}
     
     def getType(self):
@@ -57,7 +61,7 @@ class DbCreator(QObject):
     def buildAutoIncrementingDbNameList(self, dbInitialBaseName, numberOfDatabases, prefix = None, sufix = None):
         dbNameList = []
         for i in range(numberOfDatabases):
-            dbBaseName = dbInitialBaseName+str(i)
+            dbBaseName = dbInitialBaseName+str(i+1)
             dbNameList.append(self.buildDatabaseName(dbBaseName, prefix, sufix))
         return dbNameList
     

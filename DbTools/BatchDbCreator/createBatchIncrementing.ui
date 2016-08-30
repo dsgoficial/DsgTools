@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" colspan="2">
-    <widget class="TabDbSelectorWidget" name="widget" native="true"/>
+    <widget class="TabDbSelectorWidget" name="tabDbSelectorWidget" native="true"/>
    </item>
    <item row="1" column="0" colspan="2">
     <widget class="DatabaseParameterWidget" name="databaseParameterWidget" native="true"/>
@@ -52,7 +52,7 @@
   <customwidget>
    <class>TabDbSelectorWidget</class>
    <extends>QWidget</extends>
-   <header>DgsTools.CustomWidgets.tabDbSelectorWidget.h</header>
+   <header>DsgTools.CustomWidgets.tabDbSelectorWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

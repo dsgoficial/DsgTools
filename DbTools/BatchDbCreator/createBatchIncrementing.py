@@ -29,6 +29,8 @@ from PyQt4.QtGui import QMessageBox, QFileDialog, QApplication, QCursor
 from fileinput import filename
 from DsgTools.Utils.utils import Utils
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.CustomWidgets.tabDbSelectorWidget import TabDbSelectorWidget
+from DsgTools.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactory
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'createBatchIncrementing.ui'))
@@ -48,52 +50,38 @@ class CreateBatchIncrementing(QtGui.QWizardPage, FORM_CLASS):
     def getParameters(self):
         #Get outputDir, outputList, refSys
         parameterDict = dict()
-        parameterDict['driverName'] = 'QSQLITE'
-        parameterDict['output'] = self.outputDirSelector.fileNameList[0]
-        parameterDict['outputList'] = self.getOutputDbNameList()
-        parameterDict['crs'] = self.databaseParameterWidget.mQgsProjectionSelectionWidget.crs()
+        parameterDict['prefix'] = None
+        parameterDict['sufix'] = None
+        parameterDict['srid'] = self.databaseParameterWidget.mQgsProjectionSelectionWidget.crs()
         parameterDict['version'] = self.databaseParameterWidget.getVersion()
-        return parameterDict
-    
-    def getOutputDbNameList(self):
-        prefix = None
-        sufix = None
-        dbBaseName = self.databaseParameterWidget.dbNameLineEdit.text()
-        outputPath = self.outputDirSelector.fileNameList[0]
-        outputDbNameList = []
         if self.databaseParameterWidget.prefixLineEdit.text() <> '':
-            prefix = self.databaseParameterWidget.prefixLineEdit.text()
+            parameterDict['prefix'] = self.databaseParameterWidget.prefixLineEdit.text()
         if self.databaseParameterWidget.sufixLineEdit.text() <> '':
-            sufix = self.databaseParameterWidget.sufixLineEdit.text()
-        for i in range(self.spinBox.value()):
-            attrNameList = []
-            if prefix:
-                attrNameList.append(prefix)
-            attrNameList.append(dbBaseName+str(i+1))
-            if sufix:
-                attrNameList.append(sufix)
-            dbName = '_'.join(attrNameList)
-            fullPath = os.path.join(outputPath,dbName+'.sqlite')
-            outputDbNameList.append(fullPath)
-        return outputDbNameList
+            parameterDict['sufix'] = self.databaseParameterWidget.sufixLineEdit.text()
+        parameterDict['dbBaseName'] = self.databaseParameterWidget.dbNameLineEdit.text()
+        parameterDict['driverName'] = self.tabDbSelectorWidget.getType()
+        parameterDict['factoryParam'] = self.tabDbSelectorWidget.getFactoryCreationParam()
+        parameterDict['numberOfDatabases'] = self.spinBox.value()
+        return parameterDict
 
     def validatePage(self):
         #insert validation messages
-        validated = self.databaseParameterWidget.validate()
+        validatedDbParams = self.databaseParameterWidget.validate()
+        if not validatedDbParams:
+            return False
+        validated = self.tabDbSelectorWidget.validate()
         if not validated:
             return False
         parameterDict = self.getParameters()
-        self.loadDatabases(parameterDict)
+        self.createDatabases(parameterDict)
         return True
     
-    def loadDatabases(self,parameterDict):
-        creator = SpatialiteCreator(parameterDict['version'])
+    def createDatabases(self, parameterDict):
+        dbCreator = DbCreatorFactory().createDbCreatorFactory(parameterDict['driverName'], parameterDict['factoryParam'], parameterDict['version'])
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        for dbName in parameterDict['outputList']:
-            try:
-                creator.createDatabase(dbName,int(parameterDict['crs'].authid().split(':')[-1]))
-            except Exception as e:
-                QApplication.restoreOverrideCursor()
-                raise e
+        (dbList, errorDict)=dbCreator.createDbWithAutoIncrementingName(parameterDict['dbBaseName'], parameterDict['srid'], parameterDict['numberOfDatabases'], prefix = parameterDict['prefix'], sufix = parameterDict['sufix'])
         QApplication.restoreOverrideCursor()
+        if len(errorDict.keys())> 0:
+            raise Exception(errorDict)
+
     
