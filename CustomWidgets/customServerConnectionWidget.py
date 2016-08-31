@@ -163,7 +163,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         dbList = []
         try:
             if self.serverWidget.abstractDb:
-                dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer()
+                dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer(parentWidget = self)
             else:
                 self.clearPostgisTab()
                 return

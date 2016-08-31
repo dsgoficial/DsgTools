@@ -29,6 +29,7 @@ from osgeo import ogr
 from uuid import uuid4
 import codecs, os, json, binascii
 import psycopg2
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class PostgisDb(AbstractDb):
     
@@ -558,7 +559,7 @@ class PostgisDb(AbstractDb):
     def getFrameLayerName(self):
         return 'public.aux_moldura_a'
     
-    def getEDGVDbsFromServer(self):
+    def getEDGVDbsFromServer(self, parentWidget = None):
         #Can only be used in postgres database.
         self.checkAndOpenDb()
         query = QSqlQuery(self.gen.getDatabasesFromServer(),self.db)
@@ -571,6 +572,9 @@ class PostgisDb(AbstractDb):
             dbList.append(query.value(0))
         
         edvgDbList = []
+        if parentWidget:
+            progress = ProgressWidget(1,len(dbList),self.tr('Reading selected databases... '), parent = parentWidget)
+            progress.initBar()
         for database in dbList:
             db = None
             db = QSqlDatabase("QPSQL")
@@ -588,6 +592,8 @@ class PostgisDb(AbstractDb):
                     version = query2.value(0)
                     if version:
                         edvgDbList.append((database,version))
+            if parentWidget:
+                progress.step()
         return edvgDbList
     
     def getDbsFromServer(self):

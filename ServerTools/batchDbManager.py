@@ -73,7 +73,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     def populateListWithDatabasesFromServer(self):
         dbList = []
         try:
-            dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer()
+            dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer(parentWidget = self)
         except Exception as e:
             QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
 

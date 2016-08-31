@@ -34,6 +34,7 @@ from PyQt4.QtGui import QMessageBox
 from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'exploreServerWidget.ui'))
@@ -75,6 +76,8 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
             except Exception as e:
                 QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
         if canLoad:
+            progress = ProgressWidget(1,len(dbList),self.tr('Loading databases from server... '), parent = self)
+            progress.initBar()
             gen = self.factory.createSqlGenerator(False)
             edvgDbList = []
             for database in dbList:
@@ -88,6 +91,7 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
                         version = query.value(0)
                         if version:
                             edvgDbList.append((database, version))
+                progress.step()
             return edvgDbList
     
     #TODO

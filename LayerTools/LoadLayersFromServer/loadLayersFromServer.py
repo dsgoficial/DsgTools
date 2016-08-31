@@ -78,6 +78,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         errorDict = dict()
         if type == 'added':
             progress = ProgressWidget(1,len(dbList),self.tr('Reading selected databases... '), parent = self)
+            progress.initBar()
             for dbName in dbList:
                 try:
                     QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))

@@ -225,7 +225,7 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         try:
             if self.serverWidget.abstractDb:
-                dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer()
+                dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer(parentWidget = self)
                 self.comboBoxPostgis.clear()
                 self.comboBoxPostgis.addItem(self.tr('Select Database'))
                 for db, version in dbList:
