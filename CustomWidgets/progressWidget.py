@@ -32,14 +32,19 @@ class ProgressWidget(QgsMessageBar):
         self.min = min
         self.max = max
         sizePolicy = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
-        self.setMinimumSize(766,40)
+        if parent:
+            self.setMinimumSize(parent.width(),40)
+        else:
+            self.setMinimumSize(766,40)
         self.setSizePolicy(sizePolicy)
         self.progressBar = QProgressBar()
         self.progressBar.setMinimum(min)
         self.progressBar.setMaximum(max)
         self.msgBarItem = QgsMessageBarItem(self.tr("INFO: "), message, self.progressBar, level=QgsMessageBar.INFO)
         self.pushWidget(self.msgBarItem)
-
+    
+    def initBar(self):
+        self.progressBar.setValue(0)
     
     def step(self):
         value = self.progressBar.value() + 1

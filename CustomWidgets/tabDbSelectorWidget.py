@@ -55,7 +55,7 @@ class TabDbSelectorWidget(QtGui.QWidget, FORM_CLASS):
         if not self.getFactoryCreationParam():
             return False
         if self.tabWidget.currentIndex() == 0:
-            if self.serverWidget.currentIndex() == 0:
+            if self.serverWidget.serversCombo.currentIndex() == 0:
                 return False
             else:
                 return True
@@ -66,7 +66,7 @@ class TabDbSelectorWidget(QtGui.QWidget, FORM_CLASS):
                 return True
     
     def getFactoryCreationParam(self):
-        if self.tabWidget.currentIndex() == 0 and self.serverWidget.currentIndex() > 0:
+        if self.tabWidget.currentIndex() == 0 and self.serverWidget.serversCombo.currentIndex() > 0:
             return self.serverWidget.abstractDb 
         elif self.tabWidget.currentIndex() == 1 and self.outputDirSelector.fileNameList <> []:
             return self.outputDirSelector.fileNameList[0]

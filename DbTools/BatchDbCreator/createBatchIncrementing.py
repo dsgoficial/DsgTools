@@ -52,7 +52,7 @@ class CreateBatchIncrementing(QtGui.QWizardPage, FORM_CLASS):
         parameterDict = dict()
         parameterDict['prefix'] = None
         parameterDict['sufix'] = None
-        parameterDict['srid'] = self.databaseParameterWidget.mQgsProjectionSelectionWidget.crs()
+        parameterDict['srid'] = self.databaseParameterWidget.mQgsProjectionSelectionWidget.crs().authid().split(':')[-1]
         parameterDict['version'] = self.databaseParameterWidget.getVersion()
         if self.databaseParameterWidget.prefixLineEdit.text() <> '':
             parameterDict['prefix'] = self.databaseParameterWidget.prefixLineEdit.text()
@@ -77,7 +77,7 @@ class CreateBatchIncrementing(QtGui.QWizardPage, FORM_CLASS):
         return True
     
     def createDatabases(self, parameterDict):
-        dbCreator = DbCreatorFactory().createDbCreatorFactory(parameterDict['driverName'], parameterDict['factoryParam'], parameterDict['version'])
+        dbCreator = DbCreatorFactory().createDbCreatorFactory(parameterDict['driverName'], parameterDict['factoryParam'], parameterDict['version'], parentWidget = self)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         (dbList, errorDict)=dbCreator.createDbWithAutoIncrementingName(parameterDict['dbBaseName'], parameterDict['srid'], parameterDict['numberOfDatabases'], prefix = parameterDict['prefix'], sufix = parameterDict['sufix'])
         QApplication.restoreOverrideCursor()

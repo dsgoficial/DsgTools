@@ -22,11 +22,13 @@
 """
 
 from DsgTools.Factories.DbCreatorFactory.dbCreator import DbCreator
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class PostgisDbCreator(DbCreator):
     
-    def __init__(self, createParam, version):
+    def __init__(self, createParam, version, parentWidget = None):
         super(self.__class__,self).__init__(createParam, version)
+        self.parentWidget = parentWidget
     
     def instantiateNewDb(self, dbName):
         host = self.abstractDb.db.hostName()

@@ -98,15 +98,15 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getDatabasesFromServer(self):
-        sql = "SELECT datname FROM pg_database where datname <> \'postgres\' and datname <> \'template\' and datname <> \'template0\' and datname <> \'template_postgis\'"
+        sql = "SELECT datname FROM pg_database where datname <> \'postgres\' and datname <> \'template\' and datname <> \'template0\' and datname <> \'template_postgis\' and datistemplate = 'f'"
         return sql
     
     def dropDatabase(self, name):
-        sql = "DROP DATABASE "+name
+        sql = """DROP DATABASE "{0}" """.format(name)
         return sql
     
     def createRole(self, roleName, mydict):
-        sql = "CREATE ROLE "+roleName+" with NOLOGIN REPLICATION;\n"
+        sql = """CREATE ROLE "{0}" with NOLOGIN REPLICATION;\n""".format(roleName)
         for db in mydict.keys():
             for schema in mydict[db].keys():
                 for cat in mydict[db][schema].keys():
@@ -114,26 +114,26 @@ class PostGISSqlGenerator(SqlGenerator):
                         read = mydict[db][schema][cat][table]["read"]
                         write = mydict[db][schema][cat][table]["write"]
                         if write == '2':
-                            sql+='GRANT ALL ON '+table+' TO '+roleName+';\n'
+                            sql+="""GRANT ALL ON "{0}" TO "{1}";\n""".format(table,roleName)
                         elif read == '2':
-                            sql+='GRANT SELECT ON '+table+' TO '+roleName+';\n'
-                sql += 'GRANT ALL ON SCHEMA '+schema+' TO '+roleName+';\n'
-                sql += 'REVOKE CREATE ON SCHEMA '+schema+' FROM '+roleName+';\n'
-                sql += 'GRANT USAGE ON SCHEMA '+schema+' TO '+roleName+';\n'
-                sql += 'GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA '+schema+' TO '+roleName+';\n'
-                sql += 'GRANT USAGE ON ALL SEQUENCES IN SCHEMA '+schema+' TO '+roleName+';\n'
+                            sql+="""GRANT SELECT ON "{0}" TO "{1}";\n""".format(table,roleName)
+                sql += """GRANT ALL ON SCHEMA "{0}" TO "{1}";\n""".format(schema,roleName)
+                sql += """REVOKE CREATE ON SCHEMA "{0}" FROM "{1}";\n""".format(schema,roleName)
+                sql += """GRANT USAGE ON SCHEMA "{0}" TO "{1}";\n""".format(schema,roleName)
+                sql += """GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA "{0}" TO "{1}";\n""".format(schema,roleName)
+                sql += """GRANT USAGE ON ALL SEQUENCES IN SCHEMA "{0}" TO "{1}";\n""".format(schema,roleName)
         
-        sql += 'GRANT SELECT ON db_metadata TO '+roleName+';\n'
-        sql += 'GRANT ALL ON ALL TABLES IN SCHEMA information_schema TO '+roleName+';\n'
-        sql += 'GRANT ALL ON ALL TABLES IN SCHEMA pg_catalog TO '+roleName+';\n'
-        sql += 'GRANT ALL ON SCHEMA information_schema TO '+roleName+';\n'
-        sql += 'GRANT ALL ON SCHEMA pg_catalog TO '+roleName+';\n'
-        sql += 'REVOKE CREATE ON SCHEMA information_schema FROM '+roleName+';\n'
-        sql += 'REVOKE CREATE ON SCHEMA pg_catalog FROM '+roleName+';\n'
-        sql += 'GRANT USAGE ON SCHEMA information_schema TO '+roleName+';\n'
-        sql += 'GRANT USAGE ON SCHEMA pg_catalog TO '+roleName+';\n'
-        sql += 'GRANT USAGE ON ALL SEQUENCES IN SCHEMA information_schema TO '+roleName+';\n'
-        sql += 'GRANT USAGE ON ALL SEQUENCES IN SCHEMA pg_catalog TO '+roleName
+        sql += """GRANT SELECT ON db_metadata TO "{0}";\n""".format(roleName)
+        sql += """GRANT ALL ON ALL TABLES IN SCHEMA information_schema TO "{0}";\n""".format(roleName)
+        sql += """GRANT ALL ON ALL TABLES IN SCHEMA pg_catalog TO "{0}";\n""".format(roleName)
+        sql += """GRANT ALL ON SCHEMA information_schema TO "{0}";\n""".format(roleName)
+        sql += """GRANT ALL ON SCHEMA pg_catalog TO "{0}";\n""".format(roleName)
+        sql += """REVOKE CREATE ON SCHEMA information_schema FROM "{0}";\n""".format(roleName)
+        sql += """REVOKE CREATE ON SCHEMA pg_catalog FROM "{0}";\n""".format(roleName)
+        sql += """GRANT USAGE ON SCHEMA information_schema TO "{0}";\n""".format(roleName)
+        sql += """GRANT USAGE ON SCHEMA pg_catalog TO "{0}";\n""".format(roleName)
+        sql += """GRANT USAGE ON ALL SEQUENCES IN SCHEMA information_schema TO '+roleName+';\n""".format(roleName)
+        sql += """GRANT USAGE ON ALL SEQUENCES IN SCHEMA pg_catalog TO "{0}" """.format(roleName)
         return sql
 
     def dropRole(self, role):

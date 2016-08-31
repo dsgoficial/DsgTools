@@ -28,9 +28,10 @@ from DsgTools.Factories.DbCreatorFactory.dbCreator import DbCreator
 
 class SpatialiteDbCreator(DbCreator):
     
-    def __init__(self, createParam, version):
+    def __init__(self, createParam, version, parentWidget = None):
         super(self.__class__,self).__init__(createParam, version)
         self.edgvPath = self.getTemplateLocation(self.version)
+        self.parentWidget = parentWidget
     
     def instantiateNewDb(self, dbPath):
         newDb = self.dbFactory.createDbFactory('QSQLITE')
@@ -40,9 +41,9 @@ class SpatialiteDbCreator(DbCreator):
     def getTemplateLocation(self, version):
         currentPath = os.path.dirname(__file__)
         if version == '2.1.3':
-            edgvPath = os.path.join(currentPath,'template', '213', 'seed_edgv213.sqlite')
+            edgvPath = os.path.join(currentPath,'..','..','DbTools','SpatialiteTool','template', '213', 'seed_edgv213.sqlite')
         elif version == 'FTer_2a_Ed':
-            edgvPath = os.path.join(currentPath, 'template', 'FTer_2a_Ed', 'seed_edgvfter_2a_ed.sqlite')
+            edgvPath = os.path.join(currentPath,'..','..','DbTools','SpatialiteTool', 'template', 'FTer_2a_Ed', 'seed_edgvfter_2a_ed.sqlite')
         return edgvPath
     
     def createDb(self, dbName, srid, paramDict = dict()):
@@ -54,6 +55,7 @@ class SpatialiteDbCreator(DbCreator):
             g.write(x)
             x = f.readline()
         g.close()
+        f.close()
         #TODO: put defineSrid into AbstractDb
         self.defineSrid(destination, srid)
         newDb = self.instantiateNewDb(destination)

@@ -28,13 +28,14 @@ from PyQt4.QtCore import QSettings, SIGNAL, pyqtSignal, QObject
 #DsgTools imports
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
-
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class DbCreator(QObject):
-    def __init__(self, createParam, version):
+    def __init__(self, createParam, version, parentWidget = None):
         super(DbCreator,self).__init__()
         self.version = version
         self.dbFactory = DbFactory()
+        self.parentWidget = parentWidget
         if isinstance(createParam, unicode):
             self.outputDir = createParam
         if isinstance(createParam, AbstractDb):
@@ -69,10 +70,13 @@ class DbCreator(QObject):
         outputDbDict = dict()
         errorDict = dict()
         templateDb = None
+        if self.parentWidget:
+            progress = ProgressWidget(1,len(dbNameList),self.tr('Creating databases... '),parent = self.parentWidget)
+            progress.initBar()
         for dbName in dbNameList:
             try:
                 if not templateDb: 
-                    newDb = self.createDb(dbName, srid, paramDict)
+                    newDb = self.createDb(dbName, srid)
                     templateDb = dbName
                 else:
                     paramDict['templateDb'] = templateDb
@@ -83,6 +87,8 @@ class DbCreator(QObject):
                     errorDict[dbName] = str(e.args[0])
                 else:
                     errorDict[dbName] += '\n' + str(e.args[0])
+            if self.parentWidget:
+                progress.step()
         return outputDbDict, errorDict
     
     def createDbWithAutoIncrementingName(self, dbInitialBaseName, srid, numberOfDatabases, prefix = None, sufix = None, paramDict = dict()):
