@@ -24,7 +24,7 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 from PyQt4.QtGui import QFileDialog
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from osgeo import ogr
+from osgeo import ogr, osr
 from qgis.core import QgsCoordinateReferenceSystem 
 
 class SpatialiteDb(AbstractDb):
@@ -410,18 +410,30 @@ class SpatialiteDb(AbstractDb):
             else:
                 mi = self.utmGrid.getMI(inom)
         frame = self.createFrameFromInom(inom)
-        self.insertFrame(scale,mi,inom,frame.exportToWkt())
+        self.insertFrame(scale,mi,inom,frame.asWkb())
     
     def insertFrame(self,scale,mi,inom,frame):
         #TODO: use sqlite3 or ogr
         self.checkAndOpenDb()
         srid = self.findEPSG()
         geoSrid = QgsCoordinateReferenceSystem(int(srid)).geographicCRSAuthId().split(':')[-1]
-        sql = self.gen.insertFrame(scale,mi,inom,frame,srid,geoSrid)
-        self.db.transaction()
-        query = QSqlQuery(self.db)
-        if not query.exec_(sql):
-            self.db.rollback()
-            self.db.close()
-            raise Exception(self.tr('Problem inserting frame: ') + query.lastError().text())
-        self.db.commit()
+        ogr.UseExceptions()
+        outputDS = self.buildOgrDatabase()
+        outputLayer=outputDS.GetLayerByName('public_aux_moldura_a')
+        newFeat=ogr.Feature(outputLayer.GetLayerDefn())
+        auxGeom = ogr.CreateGeometryFromWkb(frame)
+        #set geographic srid from frame
+        geoSrs = ogr.osr.SpatialReference()
+        geoSrs.ImportFromEPSG(int(geoSrid))
+        auxGeom.AssignSpatialReference(geoSrs)
+        #reproject geom
+        outSpatialRef = outputLayer.GetSpatialRef()
+        coordTrans = osr.CoordinateTransformation(geoSrs, outSpatialRef)
+        auxGeom.Transform(coordTrans)
+        newFeat.SetGeometry(auxGeom)
+        newFeat.SetField('mi',mi)
+        newFeat.SetField('inom',inom)
+        newFeat.SetField('escala',scale)
+        out=outputLayer.CreateFeature(newFeat)
+        outputDS.Destroy()
+        
