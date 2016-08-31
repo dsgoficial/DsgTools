@@ -95,26 +95,40 @@ class DbCreator(QObject):
         dbNameList = self.buildAutoIncrementingDbNameList(dbInitialBaseName, numberOfDatabases, prefix, sufix)
         return self.batchCreateDb(dbNameList, srid, paramDict)
     
-    def createDbFromMIList(self, miList, prefix = None, sufix = None, paramDict = dict(), createFrame = False):
+    def createDbFromMIList(self, miList, srid, prefix = None, sufix = None, createFrame = False,  paramDict = dict()):
         outputDbDict = dict()
         errorDict = dict()
         templateDb = None
+        if self.parentWidget:
+            progress = ProgressWidget(1,2*len(miList),self.tr('Creating databases... '),parent = self.parentWidget)
+            progress.initBar()
         for mi in miList:
             dbName = self.buildDatabaseName(mi, prefix, sufix)
             try:
                 if not templateDb: 
-                    newDb = self.createDb(dbName, srid, paramDict)
+                    newDb = self.createDb(dbName, srid)
                     templateDb = dbName
                 else:
                     paramDict['templateDb'] = templateDb
                     newDb = self.createDb(dbName, srid, paramDict)
-                if createFrame:
-                    scale = self.scaleMIDict[len(mi.split('-'))]
-                    newDb.createFrame('mi',scale,mi)
                 outputDbDict[mi] = newDb
             except Exception as e:
                 if dbName not in errorDict.keys():
                     errorDict[dbName] = str(e.args[0])
                 else:
                     errorDict[dbName] += '\n' + str(e.args[0])
+            if self.parentWidget:
+                progress.step()
+        if createFrame:
+            for key in outputDbDict.keys():
+                try:           
+                    scale = self.scaleMIDict[len(mi.split('-'))]
+                    outputDbDict[key].createFrame('mi',scale,key)
+                except Exception as e:
+                    if dbName not in errorDict.keys():
+                        errorDict[dbName] = str(e.args[0])
+                    else:
+                        errorDict[dbName] += '\n' + str(e.args[0])
+                if self.parentWidget:
+                    progress.step()
         return outputDbDict, errorDict

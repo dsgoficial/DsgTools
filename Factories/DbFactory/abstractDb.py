@@ -544,22 +544,6 @@ class AbstractDb(QObject):
             ret[code_name] = code
         return ret
     
-    def createFrame(self, type, scale, param):
-        if type == 'mi':
-            mi = str(param)
-            if scale == '250k':
-                inom = self.utmGrid.getINomenFromMIR(str(param))
-            else:
-                inom = self.utmGrid.getINomenFromMI(str(param))
-        elif type == 'inom':
-            inom = str(param)
-            if scale == '250k':
-                mi = self.utmGrid.getMIR(inom)
-            else:
-                mi = self.utmGrid.getMI(inom)
-        frame = self.createFrameFromInom(inom)
-        self.insertFrame(scale,mi,inom,binascii.hexlify(frame.asWkb()))
-    
     def createFrameFromInom(self, inom):
         frame = self.utmGrid.getQgsPolygonFrame(inom)
         return frame
@@ -576,3 +560,4 @@ class AbstractDb(QObject):
             self.db.close()
             raise Exception(self.tr('Problem inserting frame: ') + query.lastError().text())
         self.db.commit()
+        self.db.close()

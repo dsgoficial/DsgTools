@@ -184,5 +184,5 @@ class SpatialiteSqlGenerator(SqlGenerator):
         return sql
     
     def insertFrame(self,scale,mi,inom,frame,srid,geoSrid):
-        sql = """INSERT INTO public_aux_moldura_a (mi,inom,escala,GEOMETRY) VALUES ('{0}','{1}','{2}',ST_Transform(SetSRID(ST_Multi('{3}'),{4}), {5}))""".format(mi,inom,scale,frame,geoSrid,srid)
+        sql = """INSERT INTO public_aux_moldura_a (mi,inom,escala,GEOMETRY) VALUES ('{0}','{1}','{2}',Transform(ST_GeomFromText('{3}',{4}), {5}))""".format(mi,inom,scale,frame,geoSrid,srid)
         return sql

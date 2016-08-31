@@ -25,6 +25,7 @@ from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 from PyQt4.QtGui import QFileDialog
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from osgeo import ogr
+from qgis.core import QgsCoordinateReferenceSystem 
 
 class SpatialiteDb(AbstractDb):
 
@@ -394,3 +395,33 @@ class SpatialiteDb(AbstractDb):
                 geomDict[geomColumn] = []
             geomDict[geomColumn].append(lyrName)
         return geomDict
+
+    def createFrame(self, type, scale, param):
+        if type == 'mi':
+            mi = str(param)
+            if scale == '250k':
+                inom = self.utmGrid.getINomenFromMIR(str(param))
+            else:
+                inom = self.utmGrid.getINomenFromMI(str(param))
+        elif type == 'inom':
+            inom = str(param)
+            if scale == '250k':
+                mi = self.utmGrid.getMIR(inom)
+            else:
+                mi = self.utmGrid.getMI(inom)
+        frame = self.createFrameFromInom(inom)
+        self.insertFrame(scale,mi,inom,frame.exportToWkt())
+    
+    def insertFrame(self,scale,mi,inom,frame):
+        #TODO: use sqlite3 or ogr
+        self.checkAndOpenDb()
+        srid = self.findEPSG()
+        geoSrid = QgsCoordinateReferenceSystem(int(srid)).geographicCRSAuthId().split(':')[-1]
+        sql = self.gen.insertFrame(scale,mi,inom,frame,srid,geoSrid)
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem inserting frame: ') + query.lastError().text())
+        self.db.commit()

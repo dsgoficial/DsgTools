@@ -26,7 +26,6 @@ import json
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, Qt
 from PyQt4.QtGui import QMessageBox, QFileDialog, QApplication, QCursor
-from fileinput import filename
 from DsgTools.Utils.utils import Utils
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 from DsgTools.CustomWidgets.tabDbSelectorWidget import TabDbSelectorWidget
