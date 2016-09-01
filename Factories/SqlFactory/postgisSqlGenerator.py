@@ -1002,7 +1002,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def checkTemplate(self):
-        sql = """select datname from pg_database"""
+        sql = """select datname from pg_database where datistemplate = 't'"""
         return sql
     
     def alterSearchPath(self, dbName, version):
