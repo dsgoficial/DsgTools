@@ -84,7 +84,10 @@ class DbCreator(QObject):
                 outputDbDict[dbName] = newDb
             except Exception as e:
                 if dbName not in errorDict.keys():
-                    errorDict[dbName] = str(e.args[0])
+                    try:
+                        errorDict[dbName] = str(e.args[0])
+                    except:
+                        errorDict[dbName] = e
                 else:
                     errorDict[dbName] += '\n' + str(e.args[0])
             if self.parentWidget:
