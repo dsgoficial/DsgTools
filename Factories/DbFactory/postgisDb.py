@@ -1310,6 +1310,17 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem dropping temp table: ') + query.lastError().text())
         self.db.commit()
         self.db.close()
+    
+    def createStyleTable(self):
+        self.db.transaction()
+        createSql = self.gen.createStyleTable()
+        query = QSqlQuery(self.db)
+        if not query.exec_(createSql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem creating style table: ') + query.lastError().text())
+        self.db.commit()
+        self.db.close()
 
     def checkAndCreateStyleTable(self):
         self.checkAndOpenDb()
@@ -1931,6 +1942,7 @@ class PostgisDb(AbstractDb):
         self.db.commit()
         self.alterSearchPath(version)
         self.setDbAsTemplate(version)
+        self.createStyleTable()
     
     def alterSearchPath(self, version):
         self.checkAndOpenDb()

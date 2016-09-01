@@ -132,7 +132,7 @@ class PostGISSqlGenerator(SqlGenerator):
         sql += """REVOKE CREATE ON SCHEMA pg_catalog FROM "{0}";\n""".format(roleName)
         sql += """GRANT USAGE ON SCHEMA information_schema TO "{0}";\n""".format(roleName)
         sql += """GRANT USAGE ON SCHEMA pg_catalog TO "{0}";\n""".format(roleName)
-        sql += """GRANT USAGE ON ALL SEQUENCES IN SCHEMA information_schema TO '+roleName+';\n""".format(roleName)
+        sql += """GRANT USAGE ON ALL SEQUENCES IN SCHEMA information_schema TO "{0}";\n""".format(roleName)
         sql += """GRANT USAGE ON ALL SEQUENCES IN SCHEMA pg_catalog TO "{0}" """.format(roleName)
         return sql
 
