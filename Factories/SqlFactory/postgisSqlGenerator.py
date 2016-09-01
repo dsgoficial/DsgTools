@@ -975,7 +975,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def updateDbSRID(self, srid):
-        sql = """select UpdateGeometrySRID(f_table_catalog, f_table_schema, f_table_name, f_geometry_column,{0}) from geometry_columns where f_table_name in 
+        sql = """select UpdateGeometrySRID(f_table_catalog::varchar, f_table_schema::varchar, f_table_name::varchar, f_geometry_column::varchar,{0}) from geometry_columns where f_table_name in 
 
             (select pgcl2.n as tb from pg_class as pgcl
                 left join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
