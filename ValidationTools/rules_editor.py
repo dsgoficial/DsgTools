@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
+import os, codecs
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
@@ -110,7 +110,7 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
         Reads the rule file
         '''
         try:
-            with open(self.rulesFile, 'r') as f:
+            with codecs.open(self.rulesFile, 'r', encoding='utf8') as f:
                 rules = [line.rstrip('\n') for line in f]
         except Exception as e:
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem reading file! \n'))
@@ -167,7 +167,7 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
         Saves the rule list created
         '''
         try:
-            with open(self.rulesFile, 'w') as outfile:
+            with codecs.open(self.rulesFile, 'w', encoding='utf8') as outfile:
                 for line in self.makeRulesList():
                     outfile.write(line + '\n')
         except Exception as e:
