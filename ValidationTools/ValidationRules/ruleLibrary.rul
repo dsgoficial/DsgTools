@@ -1,2 +1,1 @@
-pe.hid_massa_dagua_a,0_deve (ser),3_tocar,pe.hid_limite_massa_dagua_l,1..*
-ge.cb_area_abast_agua_a,1_não deve (ser),0_igual,ge.cb_area_abast_agua_a,1..1
+ge.cb_area_abast_agua_a,0_deve (ser),2_intersectar,ge.cb_area_abast_agua_a,1..*

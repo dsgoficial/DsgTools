@@ -252,6 +252,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         Changes the current tab in the validation tool box
         '''
         if self.validationTabWidget.currentIndex() == 1 and self.configWindow.widget.abstractDb <> None:
+            self.configWindow.widget.abstractDb.checkAndOpenDb()
             self.projectModel = QSqlTableModel(None,self.configWindow.widget.abstractDb.db)
             self.projectModel.setTable('validation.aux_flags_validacao')
             self.projectModel.select()
