@@ -239,7 +239,6 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             procReturn = 0
             QApplication.restoreOverrideCursor()
         QApplication.restoreOverrideCursor()
-        self.populateProcessList()
         if procReturn == 0:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Process error. Check log for details.'))
         else:
