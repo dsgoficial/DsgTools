@@ -239,6 +239,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             procReturn = 0
             QApplication.restoreOverrideCursor()
         QApplication.restoreOverrideCursor()
+        self.populateProcessList()
         if procReturn == 0:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Process error. Check log for details.'))
         else:
@@ -251,7 +252,6 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         Changes the current tab in the validation tool box
         '''
         if self.validationTabWidget.currentIndex() == 1 and self.configWindow.widget.abstractDb <> None:
-            self.configWindow.widget.abstractDb.checkAndOpenDb()
             self.projectModel = QSqlTableModel(None,self.configWindow.widget.abstractDb.db)
             self.projectModel.setTable('validation.aux_flags_validacao')
             self.projectModel.select()

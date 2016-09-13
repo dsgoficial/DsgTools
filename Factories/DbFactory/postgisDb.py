@@ -133,7 +133,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getEDGVVersion()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr("Problem getting database version: ")+query.lastError().text())
         version = '-1'
         while query.next():
@@ -149,7 +148,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr("Problem listing geom classes: ")+query.lastError().text())
         while query.next():
             tableSchema = query.value(0)
@@ -170,7 +168,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr("Problem listing complex classes: ")+query.lastError().text())
         while query.next():
             tableSchema = query.value(0)
@@ -238,7 +235,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getStructure(self.getDatabaseVersion())        
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr("Problem getting database structure: ")+query.lastError().text())
         while query.next():
             className = str(query.value(0))+'.'+str(query.value(1))
@@ -281,7 +277,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getNotNullFields(schemaList)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr("Problem executing query: ")+query.lastError().text())
         notNullDict = dict()
         while query.next():
@@ -310,7 +305,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.validateWithDomain(schemaList)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr("Problem executing query: ")+query.lastError().text())
 
         classDict = dict()
@@ -382,7 +376,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getLinkColumn(complexClass, aggregatedClass)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr("Problem obtaining link column: ")+query.lastError().text())
         column_name = ''
         while query.next():
@@ -401,7 +394,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getComplexLinks(complex)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr("Problem loading associated features: ")+query.lastError().text())
 
         while query.next():
@@ -416,7 +408,6 @@ class PostgisDb(AbstractDb):
             sql = self.gen.getComplexData(complex_schema, complex)
             complexQuery = QSqlQuery(sql, self.db)
             if not complexQuery.isActive():
-                self.db.close()
                 raise Exception(self.tr("Problem loading associated features: ")+complexQuery.lastError().text())
 
             while complexQuery.next():
@@ -432,7 +423,6 @@ class PostgisDb(AbstractDb):
                 sql = self.gen.getAssociatedFeaturesData(aggregated_schema, aggregated_class, column_name, complex_uuid)
                 associatedQuery = QSqlQuery(sql, self.db)
                 if not associatedQuery.isActive():
-                    self.db.close()
                     raise Exception(self.tr("Problem loading associated features: ")+associatedQuery.lastError().text())
 
                 while associatedQuery.next():
@@ -449,7 +439,6 @@ class PostgisDb(AbstractDb):
         #getting all complex tables
         query = QSqlQuery(self.gen.getComplexTablesFromDatabase(), self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr("Problem executing query: ")+query.lastError().text())
 
         while query.next():
@@ -467,7 +456,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.disassociateComplexFromComplex(aggregated_class, link_column, id)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
-            self.db.close()
             raise Exception(self.tr('Problem disassociating complex from complex: ') + '\n' + query.lastError().text())
     
     def getUsers(self):
@@ -480,7 +468,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getUsers()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr("Problem getting users: ")+query.lastError().text())
 
         while query.next():
@@ -501,7 +488,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getUserRelatedRoles(username)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr("Problem getting user roles: ")+query.lastError().text())
 
         while query.next():
@@ -526,7 +512,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getRoles()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr("Problem getting roles: ")+query.lastError().text())
 
         while query.next():
@@ -593,7 +578,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
 
         if not query.exec_(sql):
-            self.db.close()
             raise Exception(self.tr('Problem altering user\'s password: ') +user+'\n'+query.lastError().text())
 
     def createUser(self, user, password, isSuperUser):
@@ -608,7 +592,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
 
         if not query.exec_(sql):
-            self.db.close()
             raise Exception(self.tr('Problem creating user: ') +user+'\n'+query.lastError().text())
 
     def removeUser(self, user):
@@ -621,7 +604,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
 
         if not query.exec_(sql):
-            self.db.close()
             raise Exception(self.tr('Problem removing user: ') +user+'\n'+query.lastError().text())
 
     def grantRole(self, user, role):
@@ -635,7 +617,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
 
         if not query.exec_(sql):
-            self.db.close()
             raise Exception(self.tr('Problem granting profile: ') +role+'\n'+query.lastError().text())
 
     def revokeRole(self, user, role):
@@ -649,7 +630,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
 
         if not query.exec_(sql):
-            self.db.close()
             raise Exception(self.tr('Problem revoking profile: ') +role+'\n'+query.lastError().text())
 
     def getTablesFromDatabase(self):
@@ -662,7 +642,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getTablesFromDatabase()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr("Problem getting tables from database: ")+query.lastError().text())
 
         while query.next():
@@ -683,7 +662,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getRolePrivileges(role, dbname)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr("Problem getting role privileges: ")+query.lastError().text())
         
         while query.next():
@@ -736,7 +714,6 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         query = QSqlQuery(self.gen.getDatabasesFromServer(),self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr("Problem getting EDGV databases: ")+query.lastError().text())
 
         dbList = []
@@ -772,7 +749,6 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         query = QSqlQuery(self.gen.getDatabasesFromServer(),self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr("Problem getting databases: ")+query.lastError().text())
         dbList = []
         
@@ -791,7 +767,6 @@ class PostgisDb(AbstractDb):
             value = query.value(0)
             return value
         else:
-            self.db.close()
             raise Exception(self.tr("Problem checking user: ")+query.lastError().text())
         return False
     
@@ -805,8 +780,7 @@ class PostgisDb(AbstractDb):
             sql = self.gen.dropDatabase(candidateName)
             query = QSqlQuery(self.db)
             if not query.exec_(sql):
-                self.db.close()
-                raise Exception(self.tr('Problem dropping database: ') + query.lastError().text())
+                    raise Exception(self.tr('Problem dropping database: ') + query.lastError().text())
     
     def createResolvedDomainViews(self, createViewClause, fromClause):
         '''
@@ -828,11 +802,9 @@ class PostgisDb(AbstractDb):
                 for command in commands:
                     if not query.exec_(command):
                         self.db.rollback()
-                        self.db.close()
                         raise Exception(self.tr('Problem creating views: ') + query.lastError().text())
                 self.db.commit()
-                self.db.close()
-
+                
     def getSqlViewFile(self):
         '''
         Gets the sql view file
@@ -859,8 +831,7 @@ class PostgisDb(AbstractDb):
             sql = self.gen.getInvalidGeom(tableSchema, tableName)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
-                self.db.close()
-                raise Exception(self.tr("Problem getting invalid geometries: ")+query.lastError().text())
+                    raise Exception(self.tr("Problem getting invalid geometries: ")+query.lastError().text())
             while query.next():
                 featId = query.value(0)
                 reason = query.value(1)
@@ -887,11 +858,9 @@ class PostgisDb(AbstractDb):
                 sql = self.gen.insertFlagIntoDb(record[0], str(record[1]), record[2], record[3], srid, processName, dimension)
                 if not query.exec_(sql):
                     self.db.rollback()
-                    self.db.close()
                     raise Exception(self.tr('Problem inserting flags: ') + query.lastError().text())
                 self.db.commit()
-                self.db.close()
-            return len(flagTupleList)
+                return len(flagTupleList)
         else:
             return 0
     
@@ -908,11 +877,9 @@ class PostgisDb(AbstractDb):
         for inner in sqlList:
             if not query.exec_(inner):
                 self.db.rollback()
-                self.db.close()
                 raise Exception(self.tr('Problem deleting flags: ') + query.lastError().text())
         self.db.commit()
-        self.db.close()
-    
+            
     def checkAndCreateValidationStructure(self):
         '''
         Checks if the validation structure is already created, if not it should be created now
@@ -921,7 +888,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.checkValidationStructure()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr('Problem creating structure: ')+query.lastError().text())
         created = True
         while query.next():
@@ -935,11 +901,9 @@ class PostgisDb(AbstractDb):
             for sql2 in sqlList:
                 if not query2.exec_(sql2):
                     self.db.rollback()
-                    self.db.close()
                     raise Exception(self.tr('Problem creating structure: ') + query.lastError().text())
             self.db.commit()
-            self.db.close()
-    
+                
     def getValidationStatus(self, processName):
         '''
         Gets the validation status for a specific process
@@ -949,7 +913,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.validationStatus(processName)
         query = QSqlQuery(sql,self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr('Problem acquiring status: ') + query.lastError().text()) 
         ret = None
         while query.next():
@@ -965,7 +928,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.validationStatusText(processName)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr('Problem acquiring status: ') + query.lastError().text()) 
         ret = None
         while query.next():
@@ -981,7 +943,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.setValidationStatusQuery(processName, log, status)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
-            self.db.close()
             raise Exception(self.tr('Problem setting status: ') + query.lastError().text())
     
     def getRunningProc(self):
@@ -992,7 +953,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getRunningProc()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr('Problem getting running process: ') + query.lastError().text()) 
         while query.next():
             processName = query.value(0)
@@ -1022,7 +982,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.testSpatialRule(class_a, necessity, predicate_function, class_b, min_card, max_card)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr('Problem testing spatial rule: ') + query.lastError().text()) 
         ret = []
         while query.next():
@@ -1041,7 +1000,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getDimension(geom)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr('Problem getting dimension: ') + query.lastError().text()) 
         dimension = 0
         while query.next():
@@ -1059,8 +1017,7 @@ class PostgisDb(AbstractDb):
             sql= self.gen.getMulti(cl)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
-                self.db.close()
-                raise Exception(self.tr('Problem exploding geometries: ') + query.lastError().text())
+                    raise Exception(self.tr('Problem exploding geometries: ') + query.lastError().text())
             idList = []
             while query.next():
                 idList.append(query.value(0))
@@ -1108,8 +1065,7 @@ class PostgisDb(AbstractDb):
                 sql = self.gen.getDuplicatedGeom(tableSchema, tableName)
                 query = QSqlQuery(sql, self.db)
                 if not query.isActive():
-                    self.db.close()
-                    raise Exception(self.tr('Problem getting duplicated geometries: ') + query.lastError().text())
+                            raise Exception(self.tr('Problem getting duplicated geometries: ') + query.lastError().text())
                 while query.next():
                     duplicatedDict = self.utils.buildNestedDict(duplicatedDict, [cl,query.value(0)], query.value(2))
         return duplicatedDict
@@ -1127,7 +1083,6 @@ class PostgisDb(AbstractDb):
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
                 self.db.rollback()
-                self.db.close()
                 raise Exception(self.tr('Problem getting small areas: ') + query.lastError().text())
             while query.next():
                 smallAreasDict = self.utils.buildNestedDict(smallAreasDict, [cl,query.value(0)], query.value(1))
@@ -1145,8 +1100,7 @@ class PostgisDb(AbstractDb):
             sql = self.gen.getSmallLines(tableSchema, tableName, tol)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
-                self.db.close()
-                raise Exception(self.tr('Problem getting small lines: ') + query.lastError().text())
+                    raise Exception(self.tr('Problem getting small lines: ') + query.lastError().text())
             while query.next():
                 smallLinesDict = self.utils.buildNestedDict(smallLinesDict, [cl,query.value(0)], query.value(1))
         return smallLinesDict
@@ -1167,7 +1121,6 @@ class PostgisDb(AbstractDb):
             query = QSqlQuery(self.db)
             if not query.exec_(sql2):
                 self.db.rollback()
-                self.db.close()
                 raise Exception(self.tr('Problem preparing auxiliary structure: ') + query.lastError().text())
 
         epsg = self.findEPSG()
@@ -1175,14 +1128,12 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql,self.db)
         if not query.isActive():
             self.db.rollback()
-            self.db.close()
             raise Exception(self.tr('Problem getting vertex near edges: ') + query.lastError().text())
         while query.next():
             id = query.value(0)
             geom = query.value(1)
             result.append((id,geom))
         self.db.commit()
-        self.db.close()
         return result
 
     def removeFeatures(self, cl, idList):
@@ -1198,10 +1149,8 @@ class PostgisDb(AbstractDb):
         self.db.transaction()
         if not query.exec_(sql):
             self.db.rollback()
-            self.db.close()
             raise Exception(self.tr('Problem deleting features from ')+cl+': '+ query.lastError().text())
         self.db.commit()
-        self.db.close()
         return len(idList)
 
     def getNotSimpleRecords(self, classesWithGeom):
@@ -1216,8 +1165,7 @@ class PostgisDb(AbstractDb):
             sql = self.gen.getNotSimple(tableSchema, tableName)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
-                self.db.close()
-                raise Exception(self.tr('Problem getting not simple geometries: ') + query.lastError().text())
+                    raise Exception(self.tr('Problem getting not simple geometries: ') + query.lastError().text())
             while query.next():
                 notSimpleDict = self.utils.buildNestedDict(notSimpleDict, [cl,query.value(0)], query.value(1))
         return notSimpleDict
@@ -1234,7 +1182,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getOutofBoundsAngles(tableSchema, tableName, tol)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr('Problem getting not out of bounds angles: ') + query.lastError().text())
         while query.next():
             id = query.value(0)
@@ -1252,7 +1199,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getFlagsByProcess(processName)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr('Problem getting flags dict: ') + query.lastError().text())
         while query.next():
             cl = query.value(0)
@@ -1274,10 +1220,8 @@ class PostgisDb(AbstractDb):
         self.db.transaction()
         if not query.exec_(sql):
             self.db.rollback()
-            self.db.close()
             raise Exception(self.tr('Problem forcing validity of features from ')+cl+': '+ query.lastError().text())
         self.db.commit()
-        self.db.close()        
         return len(idList)
     
     def getTableExtent(self, tableSchema, tableName):
@@ -1290,7 +1234,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getTableExtent(tableSchema, tableName)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr('Problem getting table extent: ') + query.lastError().text())
         
         extent = None
@@ -1310,7 +1253,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getOrphanGeomTablesWithElements()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr('Problem getting orphan tables: ') + query.lastError().text())
         result = []
         while query.next():
@@ -1325,7 +1267,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getOrphanGeomTablesWithElements()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr('Problem getting orphan tables: ') + query.lastError().text())
         result = []
         while query.next():
@@ -1333,8 +1274,7 @@ class PostgisDb(AbstractDb):
             sql2 = self.gen.getOrphanTableElementCount(orphanCandidate)
             query2 = QSqlQuery(sql2, self.db)
             if not query2.isActive():
-                self.db.close()
-                raise Exception(self.tr('Problem counting orphan table: ') + query2.lastError().text())
+                    raise Exception(self.tr('Problem counting orphan table: ') + query2.lastError().text())
             while query2.next():
                 if query2.value(0):
                     result.append(query.value(0))
@@ -1355,17 +1295,14 @@ class PostgisDb(AbstractDb):
         for sql in sqls:
             if not query.exec_(sql):
                 self.db.rollback()
-                self.db.close()
                 raise Exception(self.tr('Problem updating geometries: ') + query.lastError().text())
 
         sqlDel = self.gen.deleteFeaturesNotIn(tableSchema, tableName, tuplas.keys())
         query2 = QSqlQuery(self.db)
         if not query2.exec_(sqlDel):
             self.db.rollback()
-            self.db.close()
             raise Exception(self.tr('Problem deleting geometries: ') + query.lastError().text())            
         self.db.commit()
-        self.db.close()    
     
     def checkCentroidAuxStruct(self):
         '''
@@ -1375,7 +1312,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.checkCentroidAuxStruct()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr('Problem checking structure: ')+query.lastError().text())
         while query.next():
             if query.value(0) == None:
@@ -1398,11 +1334,9 @@ class PostgisDb(AbstractDb):
             for sql2 in sqlList:
                 if not query.exec_(sql2):
                     self.db.rollback()
-                    self.db.close()
                     raise Exception(self.tr('Problem creating centroid structure: ') + query.lastError().text())
         self.db.commit()
-        self.db.close()
-    
+            
     def checkAndCreateCentroidAuxStruct(self, earthCoverageClasses):
         '''
         Checks the centroid structure. If not already created, it creates the centroid structure
@@ -1419,7 +1353,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getEarthCoverageDict()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr('Problem getting earth coverage tables: ') + query.lastError().text())
         result = []
         while query.next():
@@ -1434,7 +1367,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getEarthCoverageDict()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr('Problem getting earth coverage structure: ') + query.lastError().text())
         while query.next():
             return query.value(0)
@@ -1450,11 +1382,9 @@ class PostgisDb(AbstractDb):
         self.db.transaction()
         if not query.exec_(sql):
             self.db.rollback()
-            self.db.close()
             raise Exception(self.tr('Problem setting earth coverage structure: ') + query.lastError().text())
         self.db.commit()
-        self.db.close()
-
+        
     def dropCentroids(self, classList):
         '''
         Drops the centroid structure
@@ -1467,11 +1397,9 @@ class PostgisDb(AbstractDb):
             sql = self.gen.dropCentroid(cl)
             if not query.exec_(sql):
                 self.db.rollback()
-                self.db.close()
                 raise Exception(self.tr('Problem dropping centroids: ') + query.lastError().text())
         self.db.commit()
-        self.db.close()
-    
+            
     def rollbackEarthCoverage(self, classList):
         '''
         Rolls back the centroid structure
@@ -1492,7 +1420,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         centroidList = []
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr('Problem getting earth coverage structure: ') + query.lastError().text())
         while query.next():
             centroidList.append(query.value(0))
@@ -1508,7 +1435,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getWhoAmI(cl, id)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.close()
             raise Exception(self.tr('Problem getting class name: ') + query.lastError().text())
         while query.next():
             return query.value(0)
@@ -1526,11 +1452,9 @@ class PostgisDb(AbstractDb):
             sql = self.gen.snapToGrid(cl, tol)
             if not query.exec_(sql):
                 self.db.rollback()
-                self.db.close()
                 raise Exception(self.tr('Problem snapping to grid: ') + query.lastError().text())
         self.db.commit()
-        self.db.close()
-
+        
     def snapLinesToFrame(self, classList, tol):
         '''
         Snaps lines to frame. This means the lines are prolonged to the frame according to the specified tolerance
@@ -1545,11 +1469,9 @@ class PostgisDb(AbstractDb):
             for sql in sqls.split('#'):
                 if not query.exec_(sql):
                     self.db.rollback()
-                    self.db.close()
                     raise Exception(self.tr('Problem snapping to frame: ') + query.lastError().text())
         self.db.commit()
-        self.db.close()
-    
+            
     def densifyFrame(self, classList):
         '''
         Densifies the frame creating new vertexes where the lines were snapped
@@ -1562,11 +1484,9 @@ class PostgisDb(AbstractDb):
             sql = self.gen.densifyFrame(cl)
             if not query.exec_(sql):
                 self.db.rollback()
-                self.db.close()
                 raise Exception(self.tr('Problem densifying frame: ') + query.lastError().text())
         self.db.commit()
-        self.db.close()
-        
+                
     def recursiveSnap(self, classList, tol):
         '''
         Executes a recursive snap within the class
@@ -1579,17 +1499,14 @@ class PostgisDb(AbstractDb):
         sql = self.gen.makeRecursiveSnapFunction()
         if not query.exec_(sql):
             self.db.rollback()
-            self.db.close()
             raise Exception(self.tr('Problem creating recursive snap function: ') + query.lastError().text())
         for cl in classList:
             sql = self.gen.executeRecursiveSnap(cl, tol)
             if not query.exec_(sql):
                 self.db.rollback()
-                self.db.close()
                 raise Exception(self.tr('Problem snapping class: ') + query.lastError().text())
         self.db.commit()
-        self.db.close()
-
+        
     def removeFeatureFlags(self, layer, featureId, processName):
         '''
         Removes flags for a specific layer, feature id and process name
@@ -1603,10 +1520,8 @@ class PostgisDb(AbstractDb):
         sql = self.gen.deleteFeatureFlagsFromDb(layer, str(featureId), processName)
         if not query.exec_(sql):
             self.db.rollback()
-            self.db.close()
             raise Exception(self.tr('Problem deleting flag: ') + query.lastError().text())
         self.db.commit()
-        self.db.close()
         
     def removeEmptyGeometries(self, layer):
         '''
@@ -1619,7 +1534,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.removeEmptyGeomtriesFromDb(layer)
         if not query.exec_(sql):
             self.db.rollback()
-            self.db.close()
             raise Exception(self.tr('Problem removing empty geometries: ') + query.lastError().text())
         self.db.commit()
-        self.db.close()
+        
