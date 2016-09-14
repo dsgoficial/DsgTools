@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2016-02-18
+        begin                : 2016-09-14
         git sha              : $Format:%H$
         copyright            : (C) 2016 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
         email                : luiz.claudio@dsg.eb.mil.br
@@ -24,24 +24,18 @@ from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeo
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 import processing, binascii
 
-class CleanGeometriesProcess(ValidationProcess):
+class SnapGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb, codelist):
-        '''
-        Constructor
-        '''
         super(self.__class__,self).__init__(postgisDb, codelist)
         self.parameters = {'Snap': 1.0, 'MinArea':0.001}
         
-    def preProcess(self):
+    def postProcess(self):
         '''
-        Gets the process that should be execute before this one
+        Gets the process that should be execute after this one
         '''
-        return 'SnapGeometriesProcess'
+        return 'ForceValidityGeometriesProcess'
 
     def runProcessinAlg(self, cl):
-        '''
-        Runs the actual process
-        '''
         alg = 'grass7:v.clean.advanced'
         
         #creating vector layer
@@ -55,16 +49,15 @@ class CleanGeometriesProcess(ValidationProcess):
         QgsMapLayerRegistry.instance().addMapLayer(input)
         
         #setting tools
-        tools = 'break,rmsa,rmdangle'
-        threshold = -1
+        tools = 'snap'
+        threshold = self.parameters['Snap']
+        minArea = self.parameters['MinArea']
+        snap = -1
 
         #getting table extent (bounding box)
         tableSchema, tableName = self.abstractDb.getTableSchema(cl)        
         (xmin, xmax, ymin, ymax) = self.abstractDb.getTableExtent(tableSchema, tableName)
         extent = '{0},{1},{2},{3}'.format(xmin, xmax, ymin, ymax)
-        
-        snap = self.parameters['Snap']
-        minArea = self.parameters['MinArea']
         
         ret = processing.runalg(alg, input, tools, threshold, extent, snap, minArea, None, None)
 
@@ -79,11 +72,6 @@ class CleanGeometriesProcess(ValidationProcess):
         return self.getProcessingErrors(errorLayer)
 
     def updateOriginalLayer(self, pgInputLyr, grassOutputLyr):
-        '''
-        Updates the original layer using the grass output layer
-        pgInputLyr: postgis input layer
-        grassOutputLyr: grass output layer
-        '''
         grassIdList = []
         deleteList = []
         provider = pgInputLyr.dataProvider()
@@ -124,19 +112,13 @@ class CleanGeometriesProcess(ValidationProcess):
         pgInputLyr.commitChanges()
     
     def getProcessingErrors(self, layer):
-        '''
-        Gets processing errors
-        layer: error layer output made by grass
-        '''
         recordList = []
         for feature in layer.getFeatures():
             recordList.append((feature['id'], binascii.hexlify(feature.geometry().asWkb())))
         return recordList
         
     def execute(self):
-        '''
-        Reimplementation of the execute method from the parent class
-        '''
+        #abstract method. MUST be reimplemented.
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
@@ -155,11 +137,11 @@ class CleanGeometriesProcess(ValidationProcess):
                             recordList.append((cl,tupple[0],'Cleaning error.',tupple[1]))
                             self.addClassesToBeDisplayedList(cl) 
                         numberOfProblems = self.addFlag(recordList)
-                        self.setStatus('%s feature(s) of class '+cl+' with cleaning errors. Check flags.\n' % numberOfProblems, 4) #Finished with flags
-                        QgsMessageLog.logMessage('%s feature(s) of class '+cl+' with cleaning errors. Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        self.setStatus('%s feature(s) of class '+cl+' with snapping errors. Check flags.\n' % numberOfProblems, 4) #Finished with flags
+                        QgsMessageLog.logMessage('%s feature(s) of class '+cl+' with snapping errors. Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     else:
-                        self.setStatus('There are no cleaning errors on '+cl+'.\n', 1) #Finished
-                        QgsMessageLog.logMessage('There are no cleaning errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        self.setStatus('There are no snapping errors on '+cl+'.\n', 1) #Finished
+                        QgsMessageLog.logMessage('There are no snapping errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
