@@ -780,7 +780,7 @@ class PostgisDb(AbstractDb):
             sql = self.gen.dropDatabase(candidateName)
             query = QSqlQuery(self.db)
             if not query.exec_(sql):
-                    raise Exception(self.tr('Problem dropping database: ') + query.lastError().text())
+                raise Exception(self.tr('Problem dropping database: ') + query.lastError().text())
     
     def createResolvedDomainViews(self, createViewClause, fromClause):
         '''
@@ -831,7 +831,7 @@ class PostgisDb(AbstractDb):
             sql = self.gen.getInvalidGeom(tableSchema, tableName)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
-                    raise Exception(self.tr("Problem getting invalid geometries: ")+query.lastError().text())
+                raise Exception(self.tr("Problem getting invalid geometries: ")+query.lastError().text())
             while query.next():
                 featId = query.value(0)
                 reason = query.value(1)
@@ -859,8 +859,8 @@ class PostgisDb(AbstractDb):
                 if not query.exec_(sql):
                     self.db.rollback()
                     raise Exception(self.tr('Problem inserting flags: ') + query.lastError().text())
-                self.db.commit()
-                return len(flagTupleList)
+            self.db.commit()
+            return len(flagTupleList)
         else:
             return 0
     
@@ -1017,7 +1017,7 @@ class PostgisDb(AbstractDb):
             sql= self.gen.getMulti(cl)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
-                    raise Exception(self.tr('Problem exploding geometries: ') + query.lastError().text())
+                raise Exception(self.tr('Problem exploding geometries: ') + query.lastError().text())
             idList = []
             while query.next():
                 idList.append(query.value(0))
@@ -1065,7 +1065,7 @@ class PostgisDb(AbstractDb):
                 sql = self.gen.getDuplicatedGeom(tableSchema, tableName)
                 query = QSqlQuery(sql, self.db)
                 if not query.isActive():
-                            raise Exception(self.tr('Problem getting duplicated geometries: ') + query.lastError().text())
+                    raise Exception(self.tr('Problem getting duplicated geometries: ') + query.lastError().text())
                 while query.next():
                     duplicatedDict = self.utils.buildNestedDict(duplicatedDict, [cl,query.value(0)], query.value(2))
         return duplicatedDict
@@ -1100,7 +1100,7 @@ class PostgisDb(AbstractDb):
             sql = self.gen.getSmallLines(tableSchema, tableName, tol)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
-                    raise Exception(self.tr('Problem getting small lines: ') + query.lastError().text())
+                raise Exception(self.tr('Problem getting small lines: ') + query.lastError().text())
             while query.next():
                 smallLinesDict = self.utils.buildNestedDict(smallLinesDict, [cl,query.value(0)], query.value(1))
         return smallLinesDict
@@ -1165,7 +1165,7 @@ class PostgisDb(AbstractDb):
             sql = self.gen.getNotSimple(tableSchema, tableName)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
-                    raise Exception(self.tr('Problem getting not simple geometries: ') + query.lastError().text())
+                raise Exception(self.tr('Problem getting not simple geometries: ') + query.lastError().text())
             while query.next():
                 notSimpleDict = self.utils.buildNestedDict(notSimpleDict, [cl,query.value(0)], query.value(1))
         return notSimpleDict
@@ -1203,7 +1203,9 @@ class PostgisDb(AbstractDb):
         while query.next():
             cl = query.value(0)
             id = query.value(1)
-            flagsDict = self.utils.buildNestedDict(flagsDict, [cl], [str(id)])
+            if cl not in flagsDict.keys():
+                flagsDict[cl] = []
+            flagsDict[cl].append(str(id))
         return flagsDict
     
     def forceValidity(self, cl, idList):
@@ -1274,7 +1276,7 @@ class PostgisDb(AbstractDb):
             sql2 = self.gen.getOrphanTableElementCount(orphanCandidate)
             query2 = QSqlQuery(sql2, self.db)
             if not query2.isActive():
-                    raise Exception(self.tr('Problem counting orphan table: ') + query2.lastError().text())
+                raise Exception(self.tr('Problem counting orphan table: ') + query2.lastError().text())
             while query2.next():
                 if query2.value(0):
                     result.append(query.value(0))

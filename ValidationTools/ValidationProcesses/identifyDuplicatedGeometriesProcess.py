@@ -51,7 +51,7 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
                 for tuple in dupGeomRecordList:
                     self.addClassesToBeDisplayedList(tuple[0])        
                 self.setStatus('%s features are duplicated. Check flags.\n' % numberOfDupGeom, 4) #Finished with flags
-                QgsMessageLog.logMessage('%s features are invalid. Check flags.\n' % numberOfDupGeom, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage('%s features are duplicated. Check flags.\n' % numberOfDupGeom, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return
             else:
                 self.setStatus('There are no duplicated geometries.\n', 1) #Finished
