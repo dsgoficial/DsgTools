@@ -1473,9 +1473,10 @@ class PostgisDb(AbstractDb):
     
     def runSqlFromFile(self, sqlFilePath):
         self.checkAndOpenDb()
-        file = open(sqlFilePath,'r')
+        file = codecs.open(sqlFilePath, encoding='utf-8', mode='r')
+        #file = open(sqlFilePath,'r')
         sql = file.read()
-        sql = sql.replace('\xef\xbb\xbf','')
+        #sql = sql.replace('\xef\xbb\xbf','')
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             self.db.rollback()
