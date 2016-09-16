@@ -102,19 +102,19 @@ class SnapGeometriesProcess(ValidationProcess):
                     addList.append(newFeat)
             pgInputLyr.addFeatures(addList,True)
             pgInputLyr.commitChanges()
-        for feat in pgInputLyr.getFeatures():
-            if feat['id'] not in grassIdList:
-                deleteList.append(feat['id'])
-        pgInputLyr.startEditing()
-        caps = provider.capabilities()
-        if caps & QgsVectorDataProvider.DeleteFeatures:
-            provider.deleteFeatures(deleteList)
-        pgInputLyr.commitChanges()
+#         for feat in pgInputLyr.getFeatures():
+#             if feat['id'] not in grassIdList:
+#                 deleteList.append(feat['id'])
+#         pgInputLyr.startEditing()
+#         caps = provider.capabilities()
+#         if caps & QgsVectorDataProvider.DeleteFeatures:
+#             provider.deleteFeatures(deleteList)
+#         pgInputLyr.commitChanges()
     
     def getProcessingErrors(self, layer):
         recordList = []
         for feature in layer.getFeatures():
-            recordList.append((feature['id'], binascii.hexlify(feature.geometry().asWkb())))
+            recordList.append((feature.id(), binascii.hexlify(feature.geometry().asWkb())))
         return recordList
         
     def execute(self):
@@ -130,15 +130,16 @@ class SnapGeometriesProcess(ValidationProcess):
                 return
             for cl in classesWithGeom:
                 if cl[-1]  in ['a']:
+                    print cl
                     result = self.runProcessinAlg(cl)
                     if len(result) > 0:
                         recordList = []
                         for tupple in result:
-                            recordList.append((cl,tupple[0],'Cleaning error.',tupple[1]))
+                            recordList.append((cl,tupple[0],'Snapping error.',tupple[1]))
                             self.addClassesToBeDisplayedList(cl) 
                         numberOfProblems = self.addFlag(recordList)
-                        self.setStatus('%s feature(s) of class '+cl+' with snapping errors. Check flags.\n' % numberOfProblems, 4) #Finished with flags
-                        QgsMessageLog.logMessage('%s feature(s) of class '+cl+' with snapping errors. Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        self.setStatus('{} feature(s) of class '+cl+' with snapping errors. Check flags.\n' .format(numberOfProblems), 4) #Finished with flags
+                        QgsMessageLog.logMessage('{} feature(s) of class '+cl+' with snapping errors. Check flags.\n' .format(numberOfProblems), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     else:
                         self.setStatus('There are no snapping errors on '+cl+'.\n', 1) #Finished
                         QgsMessageLog.logMessage('There are no snapping errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)

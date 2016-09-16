@@ -292,11 +292,11 @@ class AbstractDb(QObject):
         #for feat in inputLayer:
         while feat:
             inputId = feat.GetFID()
-            newFeat=ogr.Feature(outputLayer.GetLayerDefn())
-            newFeat.SetFromWithMap(feat,True,layerPanMap)
-            if newFeat.geometry().GetGeometryCount() > 1:
+            if feat.geometry().GetGeometryCount() > 1:
                 #Deaggregator
-                for geom in newFeat.geometry():
+                for geom in feat.geometry():
+                    newFeat=ogr.Feature(outputLayer.GetLayerDefn())
+                    newFeat.SetFromWithMap(feat,True,layerPanMap)
                     auxGeom = ogr.Geometry(newFeat.geometry().GetGeometryType())
                     auxGeom.AssignSpatialReference(newFeat.geometry().GetSpatialReference())
                     auxGeom.AddGeometry(geom)
@@ -309,6 +309,8 @@ class AbstractDb(QObject):
                     else:
                         count += 1
             else:
+                newFeat=ogr.Feature(outputLayer.GetLayerDefn())
+                newFeat.SetFromWithMap(feat,True,layerPanMap)
                 if coordTrans <> None:
                     geom = feat.GetGeometryRef()
                     geom.Transform(coordTrans)
