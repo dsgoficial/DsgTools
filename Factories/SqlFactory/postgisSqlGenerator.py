@@ -44,7 +44,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getSrid(self):
-        sql = "SELECT srid from geometry_columns WHERE f_table_schema <> \'tiger\' and f_table_schema <> \'topology\'"
+        sql = "SELECT DISTINCT srid from geometry_columns WHERE f_table_schema <> \'tiger\' and f_table_schema <> \'topology\' LIMIT 1"
         return sql
 
     def getTablesFromDatabase(self):

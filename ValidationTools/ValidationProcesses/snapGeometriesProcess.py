@@ -79,8 +79,8 @@ class SnapGeometriesProcess(ValidationProcess):
             id = feature['id']
             if id not in grassIdList:
                 grassIdList.append(id)
+        pgInputLyr.startEditing()
         for id in grassIdList:
-            pgInputLyr.startEditing()
             grassFeats = []
             addList = []
             for gf in grassOutputLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%id))):
@@ -101,7 +101,7 @@ class SnapGeometriesProcess(ValidationProcess):
                     newFeat.setAttribute(idx,provider.defaultValue(idx))
                     addList.append(newFeat)
             pgInputLyr.addFeatures(addList,True)
-            pgInputLyr.commitChanges()
+        pgInputLyr.commitChanges()
 #         for feat in pgInputLyr.getFeatures():
 #             if feat['id'] not in grassIdList:
 #                 deleteList.append(feat['id'])
@@ -129,7 +129,7 @@ class SnapGeometriesProcess(ValidationProcess):
                 QgsMessageLog.logMessage('Empty database!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
                 return
             for cl in classesWithGeom:
-                if cl[-1]  in ['a']:
+                if cl[-1]  in ['a', 'l']:
                     print cl
                     result = self.runProcessinAlg(cl)
                     if len(result) > 0:
