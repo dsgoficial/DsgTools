@@ -337,5 +337,5 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_manageUsersPushButton_clicked(self):
-        dlg = ManageServerUsers()
+        dlg = ManageServerUsers(self.serverWidget.abstractDb)
         dlg.exec_()

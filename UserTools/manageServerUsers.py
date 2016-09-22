@@ -42,6 +42,28 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class ManageServerUsers(QtGui.QDialog, FORM_CLASS):
     
-    def __init__(self, parent = None):
+    def __init__(self, abstractDb, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
+        self.setupUi(self)
+        self.abstractDb = abstractDb
+        self.userTypeDict = {True:self.tr('Super User'), False:self.tr('User')}
+        self.populateUsers()
+    
+    def populateUsers(self):
+        rootNode = self.serverUserTable.invisibleRootItem()
+        if not self.abstractDb:
+            return
+        ret = []
+        try:
+            ret = self.abstractDb.getUsersFromServer()
+        except Exception as e:
+            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+        for user, type in ret:
+            userNameItem = self.createItem(rootNode, user, 0)
+            userNameItem.setText(1,self.userTypeDict[type])
+    
+    def createItem(self, parent, text, column):
+        item = QtGui.QTreeWidgetItem(parent)
+        item.setText(column, text)
+        return item

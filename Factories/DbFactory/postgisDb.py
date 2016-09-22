@@ -1973,4 +1973,14 @@ class PostgisDb(AbstractDb):
                 mi = self.utmGrid.getMI(inom)
         frame = self.createFrameFromInom(inom)
         self.insertFrame(scale,mi,inom,binascii.hexlify(frame.asWkb()))
-        
+    
+    def getUsersFromServer(self):
+        self.checkAndOpenDb()
+        ret = []
+        sql = self.gen.getUsersFromServer()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting users: ")+query.lastError().text())
+        while query.next():
+            ret.append((query.value(0), query.value(1)))
+        return ret

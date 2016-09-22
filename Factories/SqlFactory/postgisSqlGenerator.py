@@ -1011,3 +1011,7 @@ class PostGISSqlGenerator(SqlGenerator):
         elif version == 'FTer_2a_Ed':
             sql = 'ALTER DATABASE "{0}" SET search_path = "$user", public, topology,\'pe\',\'ge\',\'complexos\',\'dominios\';'.format(dbName)
         return sql
+    
+    def getUsersFromServer(self):
+        sql = """SELECT usename, usesuper FROM pg_user WHERE usename <> 'postgres' order by usename"""
+        return sql
