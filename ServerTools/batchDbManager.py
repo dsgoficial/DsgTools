@@ -37,6 +37,7 @@ from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactor
 from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.UserTools.permission_properties import PermissionProperties
+from DsgTools.UserTools.manageServerUsers import ManageServerUsers
 from DsgTools.ServerTools.createView import CreateView
 from DsgTools.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
 from DsgTools.ServerTools.selectStyles import SelectStyles
@@ -333,3 +334,8 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
             except Exception as e:
                 exceptionDict[dbName] =  str(e.args[0])
         return successList, exceptionDict
+    
+    @pyqtSlot(bool)
+    def on_manageUsersPushButton_clicked(self):
+        dlg = ManageServerUsers()
+        dlg.exec_()

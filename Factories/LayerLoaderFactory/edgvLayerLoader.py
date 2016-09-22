@@ -142,17 +142,18 @@ class EDGVLayerLoader(QObject):
         qmlPath = self.abstractDb.getQmlDir()
         qmlDict = self.utils.parseMultiQml(qmlPath, layerList)
         for lyr in layerList:
-            for attr in qmlDict[lyr].keys():
-                domain = qmlDict[lyr][attr]
-                domLyr = self.checkLoaded(domain, loadedLayers)
-                if not domLyr:
-                    domLyr = self.loadDomain(domain, domainGroup)
-                    loadedLayers.append(domLyr)
-                domLyrName = domLyr.name()
-                if lyr not in domLayerDict.keys():
-                    domLayerDict[lyr] = dict()
-                if attr not in domLayerDict[lyr].keys():
-                    domLayerDict[lyr][attr] = domLyr
+            if lyr in qmlDict.keys():
+                for attr in qmlDict[lyr].keys():
+                    domain = qmlDict[lyr][attr]
+                    domLyr = self.checkLoaded(domain, loadedLayers)
+                    if not domLyr:
+                        domLyr = self.loadDomain(domain, domainGroup)
+                        loadedLayers.append(domLyr)
+                    domLyrName = domLyr.name()
+                    if lyr not in domLayerDict.keys():
+                        domLayerDict[lyr] = dict()
+                    if attr not in domLayerDict[lyr].keys():
+                        domLayerDict[lyr][attr] = domLyr
         return domLayerDict
 
     def logError(self):

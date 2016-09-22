@@ -118,11 +118,14 @@ class Utils:
         '''
         refDict = dict()
         for lyr in lyrList:
-            qml = os.path.join(qmlPath,lyr+'.qml')
-            doc = parse(qml)
-            refDict[lyr] = dict()
-            for node in doc.getElementsByTagName('edittype'):
-                if node.getAttribute('widgetv2type') == 'ValueRelation':
-                    attrName = node.getAttribute('name')
-                    refDict[lyr][attrName] = node.getElementsByTagName('widgetv2config')[0].getAttribute('Layer')
+            try:
+                qml = os.path.join(qmlPath,lyr+'.qml')
+                doc = parse(qml)
+                refDict[lyr] = dict()
+                for node in doc.getElementsByTagName('edittype'):
+                    if node.getAttribute('widgetv2type') == 'ValueRelation':
+                        attrName = node.getAttribute('name')
+                        refDict[lyr][attrName] = node.getElementsByTagName('widgetv2config')[0].getAttribute('Layer')
+            except:
+                pass
         return refDict
