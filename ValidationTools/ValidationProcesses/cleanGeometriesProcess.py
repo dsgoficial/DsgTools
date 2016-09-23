@@ -45,7 +45,7 @@ class CleanGeometriesProcess(ValidationProcess):
         alg = 'grass7:v.clean.advanced'
         
         #creating vector layer
-        input = QgsVectorLayer(self.abstractDb.getURI(cl, False).uri(), cl, "postgres")
+        input = QgsVectorLayer(self.abstractDb.getURI(cl, True).uri(), cl, "postgres")
         crs = input.crs()
         epsg = self.abstractDb.findEPSG()
         crs.createFromId(epsg)
@@ -84,44 +84,30 @@ class CleanGeometriesProcess(ValidationProcess):
         pgInputLyr: postgis input layer
         grassOutputLyr: grass output layer
         '''
-        grassIdList = []
-        deleteList = []
         provider = pgInputLyr.dataProvider()
-        for feature in grassOutputLyr.getFeatures():
-            id = feature['id']
-            if id not in grassIdList:
-                grassIdList.append(id)
         pgInputLyr.startEditing()
-        for id in grassIdList:
+        addList = []
+        for feature in pgInputLyr.getFeatures():
+            id = feature['id']
             grassFeats = []
-            addList = []
             for gf in grassOutputLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%id))):
                 grassFeats.append(gf)
-            feat = pgInputLyr.getFeatures(QgsFeatureRequest(id)).next()
             for i in range(len(grassFeats)):
                 if i == 0:
                     newGeom = grassFeats[i].geometry()
                     newGeom.convertToMultiType()
-                    feat.setGeometry(newGeom)
-                    pgInputLyr.updateFeature(feat)
+                    feature.setGeometry(newGeom)
+                    pgInputLyr.updateFeature(feature)
                 else:
-                    newFeat = QgsFeature(feat)
+                    newFeat = QgsFeature(feature)
                     newGeom = grassFeats[i].geometry()
                     newGeom.convertToMultiType()
                     newFeat.setGeometry(newGeom)
                     idx = newFeat.fieldNameIndex('id')
-                    newFeat.setAttribute(idx,provider.defaultValue(idx))
+                    newFeat.setAttribute(idx,provider.defaultValue(idx))                    
                     addList.append(newFeat)
-            pgInputLyr.addFeatures(addList,True)
+        pgInputLyr.addFeatures(addList,True)
         pgInputLyr.commitChanges()
-#         for feat in pgInputLyr.getFeatures():
-#             if feat['id'] not in grassIdList:
-#                 deleteList.append(feat['id'])
-#         pgInputLyr.startEditing()
-#         caps = provider.capabilities()
-#         if caps & QgsVectorDataProvider.DeleteFeatures:
-#             provider.deleteFeatures(deleteList)
-#         pgInputLyr.commitChanges()
     
     def getProcessingErrors(self, layer):
         '''
@@ -141,7 +127,7 @@ class CleanGeometriesProcess(ValidationProcess):
         try:
             self.setStatus('Running', 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            classesWithGeom = self.abstractDb.getOrphanGeomTablesWithElements()
+            classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
             if classesWithGeom.__len__() == 0:
                 self.setStatus('Empty database!\n', 1) #Finished
                 QgsMessageLog.logMessage('Empty database!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
