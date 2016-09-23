@@ -1017,5 +1017,5 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def reasignAndDropUser(self, user):
-        sql = """DROP OWNED BY {0}; DROP USER {0};""".format(user)
+        sql = """REASSIGN OWNED BY {0} to postgres; DROP USER {0};""".format(user)
         return sql
