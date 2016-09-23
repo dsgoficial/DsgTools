@@ -1015,3 +1015,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def getUsersFromServer(self):
         sql = """SELECT usename, usesuper FROM pg_user WHERE usename <> 'postgres' order by usename"""
         return sql
+    
+    def reasignAndDropUser(self, user):
+        sql = """DROP OWNED BY {0}; DROP USER {0};""".format(user)
+        return sql

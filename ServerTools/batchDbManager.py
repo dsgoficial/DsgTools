@@ -337,5 +337,9 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_manageUsersPushButton_clicked(self):
-        dlg = ManageServerUsers(self.serverWidget.abstractDb)
-        dlg.exec_()
+        try:
+            dlg = ManageServerUsers(self.serverWidget.abstractDb)
+            dlg.exec_()
+        except:
+            QMessageBox.warning(self, self.tr('Error!'), self.tr('Select a server!'))
+            
