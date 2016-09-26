@@ -32,12 +32,6 @@ class CleanGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, codelist)
         self.parameters = {'Snap': 1.0, 'MinArea':0.001}
         
-    def preProcess(self):
-        '''
-        Gets the process that should be execute before this one
-        '''
-        return 'SnapGeometriesProcess'
-
     def runProcessinAlg(self, cl):
         '''
         Runs the actual process

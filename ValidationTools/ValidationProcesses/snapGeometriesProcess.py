@@ -29,11 +29,11 @@ class SnapGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, codelist)
         self.parameters = {'Snap': 1.0, 'MinArea':0.001}
         
-#     def postProcess(self):
-#         '''
-#         Gets the process that should be execute after this one
-#         '''
-#         return 'ForceValidityGeometriesProcess'
+    def postProcess(self):
+        '''
+        Gets the process that should be execute after this one
+        '''
+        return 'ForceValidityGeometriesProcess'
 
     def runProcessinAlg(self, cl):
         alg = 'grass7:v.clean.advanced'
