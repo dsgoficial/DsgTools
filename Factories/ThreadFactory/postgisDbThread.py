@@ -55,7 +55,8 @@ class PostgisDbMessages(QObject):
 
 class PostgisDbThread(GenericThread):
     def __init__(self):
-        """Constructor.
+        """
+        Constructor.
         """
         super(PostgisDbThread, self).__init__()
 
@@ -66,14 +67,20 @@ class PostgisDbThread(GenericThread):
         self.dbFactory = DbFactory()
 
     def setParameters(self, abstractDb, dbName, version, epsg, stopped):
+        '''
+        Sets thread parameters
+        '''
         self.abstractDb = abstractDb #database = postgis
         self.dbName = dbName
+        self.db = None  
         self.version = version
-        self.db = None
         self.epsg = epsg
         self.stopped = stopped
 
     def run(self):
+        '''
+        Runs the process
+        '''
         # Processing ending
         (ret, msg) = self.createDatabaseStructure()
         self.signals.processingFinished.emit(ret, msg, self.getId())
@@ -91,6 +98,9 @@ class PostgisDbThread(GenericThread):
         
 
     def createDatabaseStructure(self):
+        '''
+        Creates database structure according to the selected edgv version
+        '''
         currentPath = os.path.dirname(__file__)
         currentPath = os.path.join(currentPath, '..', '..', 'DbTools', 'PostGISTool')
         if self.version == '2.1.3':
@@ -104,6 +114,10 @@ class PostgisDbThread(GenericThread):
         return self.loadDatabaseStructure(edgvPath)
 
     def loadDatabaseStructure(self, edgvPath):
+        '''
+        Loads the database structure
+        edgvPath: path to the databse sql
+        '''
         commands = []
         hasTemplate = self.abstractDb.checkTemplate(self.version)
         if not hasTemplate:
@@ -174,6 +188,10 @@ class PostgisDbThread(GenericThread):
         return (1, self.messenger.getSuccessFeedbackMessage())
 
     def dropDatabase(self,db):
+        '''
+        Drops the created database case a problem occurs during database creation
+        db: QSqlDatabase to be dropped
+        '''
         host = db.hostName()
         port = db.port()
         user = db.userName()

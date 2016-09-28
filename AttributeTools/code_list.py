@@ -53,10 +53,14 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         
     @pyqtSlot()
     def setState(self):
+        '''
+        Sets the code list viewer initial state
+        '''
         self.comboBox.clear()
         self.currLayer = self.iface.activeLayer()
         if not self.currLayer:
             return
+        
         try:
             if QgsMapLayer is not None:
                 if self.currLayer.type() != QgsMapLayer.VectorLayer:
@@ -72,6 +76,9 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
             pass
         
     def getCodeListDict(self, field):
+        '''
+        Gets the code list dictionary
+        '''
         fieldIndex = self.currLayer.fieldNameIndex(field)
         if fieldIndex == -1:
             return dict(), list()
@@ -80,6 +87,9 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         return valueDict, keys
     
     def makeValueRelationDict(self, valueDict):
+        '''
+        Gets the value relation dictionary. This is necessary for multi valued attributes.
+        '''
         ret = dict()
 
         codes = valueDict['FilterExpression'].replace('code in (', '').replace(')','').split(',')
@@ -122,9 +132,15 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         
     @pyqtSlot(int)
     def on_comboBox_currentIndexChanged(self):
+        '''
+        Slot that updates the code lists when the current active layers changes.
+        '''
         self.loadCodeList()        
         
     def loadCodeList(self):
+        '''
+        Loads the current code lists viewer for the active layer
+        '''
         self.tableWidget.clear()
         self.tableWidget.setColumnCount(2)
         self.tableWidget.setHorizontalHeaderLabels([self.tr('Value'), self.tr('Code')])

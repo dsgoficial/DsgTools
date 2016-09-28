@@ -57,6 +57,9 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
         self.serverWidget.abstractDbLoaded.connect(self.populateListWithDatabasesFromServer)
     
     def storeConnection(self, server, database):
+        '''
+        Stores database connection in the QSettings
+        '''
         (host, port, user, password) = self.getServerConfiguration(server)
         connection = server+'_'+database
         settings = QSettings()
@@ -72,6 +75,9 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
         return False
 
     def getServerConfiguration(self, name):
+        '''
+        Gets server configuration from QSetting by its name
+        '''
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers/'+name)
         host = settings.value('host')
@@ -82,6 +88,11 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
         return (host, port, user, password)
 
     def storeConnectionConfiguration(self, server, database):
+        '''
+        Stores connection configuration in thw QSettings
+        server: server name
+        database: database name
+        '''
         name = self.connectionEdit.text()
         
         (host, port, user, password) = self.getServerConfiguration(server)
@@ -96,6 +107,9 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
             settings.endGroup()
     
     def populateListWithDatabasesFromServer(self):
+        '''
+        Populates databases from server
+        '''
         self.serverListWidget.clear()
 
         dbList = []
@@ -112,6 +126,9 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
             
     @pyqtSlot(bool)
     def on_createConnectionPushButton_clicked(self):
+        '''
+        Creates a connection with the selected databases
+        '''
         items = self.serverListWidget.selectedItems()
         existentConnections = []
         newConnections = []
@@ -136,6 +153,9 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
             
     @pyqtSlot(bool)
     def on_selectAllPushButton_clicked(self):
+        '''
+        Select all databases on server to create connection
+        '''
         count = self.serverListWidget.count()
         for row in range(count):
             item = self.serverListWidget.item(row)
@@ -143,6 +163,9 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_removeMissingPushButton_clicked(self):
+        '''
+        Remove missing databases from QSetttings
+        '''
         servers = self.serverWidget.getServers()
         settings = QSettings()
         settings.beginGroup('PostgreSQL/connections')
@@ -168,6 +191,9 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
         QMessageBox.warning(self, self.tr("Warning!"), msg)
     
     def removeConnections(self,candidate,removedConn):
+        '''
+        Remove a specific connection from QSettings
+        '''
         candidateSettings = QSettings()
         candidateSettings.beginGroup('PostgreSQL/connections/'+candidate)
         candidateSettings.remove('')

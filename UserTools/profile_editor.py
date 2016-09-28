@@ -36,7 +36,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class ProfileEditor(QtGui.QDialog, FORM_CLASS):
     def __init__(self, parent = None):
-        """Constructor."""
+        """
+        Constructor
+        """
         super(ProfileEditor, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -51,6 +53,9 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         self.setInitialState()
         
     def getProfiles(self, profileName = None):
+        '''
+        Get profile files and insert them in the combo box
+        '''
         ret = []
         for root, dirs, files in os.walk(self.folder):
             for file in files:
@@ -69,6 +74,9 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         self.setInitialState()
 
     def setInitialState(self):
+        '''
+        Gets the current selected profile in the combo box and builds the tree widget by reading the file
+        '''
         self.treeWidget.clear()
         self.treeWidget.setSortingEnabled(False)
         if self.jsonCombo.count() == 0 or self.jsonCombo.currentIndex() == 0:
@@ -80,6 +88,9 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         self.treeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
         
     def createItem(self, parent, text):
+        '''
+        Creates tree widget items
+        '''
         item = QtGui.QTreeWidgetItem(parent)
         item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsTristate | QtCore.Qt.ItemIsUserCheckable)
         item.setCheckState(1, QtCore.Qt.Unchecked)
@@ -88,6 +99,9 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         return item
     
     def makeProfileDict(self):
+        '''
+        Makes a dictionary out of the tree widget items
+        '''
         profileDict = dict()
         
         #invisible root item
@@ -113,6 +127,9 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         return profileDict
     
     def readJsonFile(self, filename):
+        '''
+        Reads the profile file, gets a dictionary of it and builds the tree widget
+        '''
         try:
             file = open(filename, 'r')
             data = file.read()
@@ -131,6 +148,9 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         self.createChildrenItems(dbItem, permissions)
                                         
     def createChildrenItems(self, parent, mydict):
+        '''
+        Creates children item in the tree widget
+        '''
         #permissions
         lista = ['read', 'write']
         for key in mydict.keys():
@@ -142,12 +162,18 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
                 self.createChildrenItems(item, mydict[key])
                 
     def setItemCheckState(self, item, mydict, key):
+        '''
+        Sets the item check state
+        '''
         if key == 'read':
             item.setCheckState(1, int(mydict[key]))
         elif key == 'write':
             item.setCheckState(2, int(mydict[key]))
     
     def getItemCheckState(self, item):
+        '''
+        Gets the item check state for READ and WRITE columns
+        '''
         ret = dict()
         ret['read'] = str(item.checkState(1))
         ret['write'] = str(item.checkState(2))
@@ -155,16 +181,25 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot(int)
     def on_jsonCombo_currentIndexChanged(self):
+        '''
+        Slot to update the initial state
+        '''
         self.setInitialState()
     
     @pyqtSlot(bool)
     def on_createButton_clicked(self):
+        '''
+        Slot that opens the create profile dialog
+        '''
         dlg = CreateProfile()
         dlg.profileCreated.connect(self.getProfiles)
         dlg.exec_()
             
     @pyqtSlot(bool)
     def on_clearButton_clicked(self):
+        '''
+        Clears the tree widget
+        '''
         #invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
         #database item
@@ -175,6 +210,9 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_saveButton_clicked(self):
+        '''
+        Saves the profile file
+        '''
         if self.jsonCombo.currentIndex() == 0:
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select a profile model!'))
             return
@@ -194,6 +232,9 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_closeButton_clicked(self):
+        '''
+        Closes the dialog
+        '''
         self.close()
     
     @pyqtSlot(bool)

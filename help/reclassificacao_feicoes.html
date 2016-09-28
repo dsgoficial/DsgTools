@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+  	
+	<title>Ferramentas de Reclassificacao de Feições</title>
+    
+    <link rel="stylesheet" href="css/bootstrap.css">
+	<link rel="stylesheet" href="everydayimstyling.css" />
+</head>
+
+<body>
+	
+    <h2>
+    	Ferramenta de Reclassificação de Feições - Criando uma configuração de reclassificação
+    </h2>
+    
+	<p align="justify">
+        A ferramenta de reclassificação de feições permite que feições de uma camada sejam reclassificadas (movidas) para uma camada EDGV de acordo
+        com atributos já pré-estabelecidos pelo usuário. Esta ferramenta é muito útil durante a etapa de reambulação, onde o operador pode, de maneira
+        automatizada, reclassificar feições desconhecidas com apenas um clique de um botão. Para acessar a ferramenta o usuário deve clicar no
+        botão <kbd>Ferramenta de Reclassificação de Feições</kbd> diretamente na barra de ferramentas pelo menu
+        <kbd>Ferrametas DSG-Ferramentas de Produção-Ferramenta de Reclassificação de Feições</kbd>. Também é possível acessar a ferramenta pelo ícone apresentado na figura abaixo.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/reclassificacao_feicoes_1.png' name='figuras1' width=180 height=50 alt='Erro ao mostrar a imagem'>
+    </p>
+    
+	<p align="justify">
+        Clicando no ícone da figura, a janela Caixa de Ferramentas de Reclassificação aparecerá e o usuário poderá selecionar o banco que utilizará clicando em
+        Conexão do Banco de Dados, onde ocorre a seleção do tipo banco do trabalho, se SpatiaLite ou PostGIS.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/reclassificacao_feicoes_2.png' name='figuras1' width=412 height=649 alt='Erro ao mostrar a imagem'>
+    </p>
+    
+	<p align="justify">
+        Abaixo pode-se ver um exemplo de conexão com um banco EDGV FTer.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/reclassificacao_feicoes_3.png' name='figuras1' width=434 height=252 alt='Erro ao mostrar a imagem'>
+    </p>
+    
+	<p align="justify">
+        Selecionado o banco de dados, clica-se em <kbd>Ajustar</kbd> para ir para a janela de configuração
+        da ferramenta, conforme é mostrado na figura abaixo.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/reclassificacao_feicoes_4.png' name='figuras1' width=433 height=35 alt='Erro ao mostrar a imagem'>
+    </p>
+    
+	<p align="justify">
+        A janela de configuração da abaixo é onde o usuário define ou carrega uma configuração já realizada anteriormente.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/reclassificacao_feicoes_5.png' name='figuras1' width=851 height=580 alt='Erro ao mostrar a imagem'>
+    </p>
+
+	<p align="justify">
+        A janela de configuração é dividida em partes, quais sejam:
+        <ul>
+        	<li>
+            	<b>1 - Carregar arquivo:</b> Carrega um arquivo de configuração de reclassificação já existente
+            </li>
+        	<li>
+            	<b>2 - Versão da EDGV:</b> Permite selecionar o versão do banco de dados usada na configuração de reclassificação
+            </li>
+            <li>
+            	<b>3 - Filtro:</b> Utilização de um filtro para rápida localização de uma feição na EDGV
+            </li>
+            <li>
+            	<b>4 - Classes da EDGV:</b> Classes da EDGV selecionada
+            </li>
+            <li>
+            	<b>5 - Atributos da classe:</b> Onde o usuário ajusta e define os valores dos atributos usados na reclassificação.
+                <kbd>Atributos marcados em vermelho são atributos obrigatórios</kbd>
+            </li>
+            <li>
+            	<b>6 - Nome do botão:</b> Nome do botão de reclassificação para os ajustes efetuados
+            </li>
+            <li>
+            	<b>7 - Configuração de reclassificação:</b> Estrutura de botões criada pelo usuário.
+            </li>
+            <li>
+            	<b>8 - Tamanho do botão:</b> Seleciona o tamanho do botão que aparecerá na próxima janela, visa identificar melhor cada botão.
+            </li>
+            <li>
+            	<b>9 - Criar botões agrupados por categoria:</b> Permite que o usuário crie os botões agrupados por categorias para melhorar a organização dos mesmos.
+            </li>
+        </ul>
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/reclassificacao_feicoes_6.png' name='figuras1' width=851 height=580 alt='Erro ao mostrar a imagem'>
+    </p>
+
+	<p align="justify">
+        Para iniciar uma nova configuração o usuário deve inicialmente escolher uma versão da EDGV para trabalhar. Isso pode ser feito
+        clicando-se em <kbd>Versão da EDGV</kbd>. No caso vamos usar a versão FTer da EDGV. Agora é possível selecionar as classes que se quer definir
+        na configuração de reclassificação, para tanto, podemos usar o <kbd>Filtro</kbd> e buscar, por exemplo, a classe trecho rodoviário para que possamos
+        criar botões para reclassificar rodovias federais (botão com nome BR) e rodovias estaduais (botão com nome RJ). Na figura abaixo vemos o caso da
+        criação do botão BR. Após definir os valores dos atributos, basta ao usuário clicar no botão <kbd>Adicionar/Atualizar</kbd> logo abaixo dos atributos
+        para chegar ao resultado da imagem abaixo.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/reclassificacao_feicoes_7.png' name='figuras1' width=943 height=644 alt='Erro ao mostrar a imagem'>
+    </p>
+
+	<p align="justify">
+        Seguindo em frente, podemos fazer o mesmo para rodovias estaduais para o Estado do Rio de Janeiro. Chegando ao resultado mostrado abaixo.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/reclassificacao_feicoes_8.png' name='figuras1' width=943 height=644 alt='Erro ao mostrar a imagem'>
+    </p>
+
+	<p align="justify">
+        Finalizando a criação da configuração de reclassificação, resta ao usuário salvar um arquivo para que possa ser utilizado posteriormente.
+        Clicando-se em <kbd>OK</kbd> no canto inferior direito da janela é possível salvar o arquivo de configuração feito.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/reclassificacao_feicoes_9.png' name='figuras1' width=417 height=156 alt='Erro ao mostrar a imagem'>
+    </p>
+
+	<p align="justify">
+        Escolha o nome do arquivo de configuração e o local onde deseja salvar e confirme.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/reclassificacao_feicoes_10.png' name='figuras1' width=421 height=189 alt='Erro ao mostrar a imagem'>
+    </p>
+
+	<p align="justify">
+        Espere a confirmação como se pode ver na figura abaixo.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/reclassificacao_feicoes_11.png' name='figuras1' width=419 height=157 alt='Erro ao mostrar a imagem'>
+    </p>
+
+	<p align="justify">
+        Agora é possível ver os botões de reclassificação que foram definidos prontos para serem usados na figura abaixo.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/reclassificacao_feicoes_12.png' name='figuras1' width=300 height=646 alt='Erro ao mostrar a imagem'>
+    </p>
+
+    <h2>
+    	Ferramenta de Reclassificação de Feições - Usando os botões criados
+    </h2>
+
+	<p align="justify">
+        Vamos agora usar a configuração de reclassificação que criamos. Vamos supor que já tenhamos uma camada no QGIS de rodovias desconhecidas
+        como se pode ver na figura abaixo.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/reclassificacao_feicoes_13.png' name='figuras1' width=900 height=516 alt='Erro ao mostrar a imagem'>
+    </p>
+
+	<p align="justify">
+        Usando como base os dados do OpenStreetMap, foi possível descobrir que a BR-116 e a RJ-145 são as rodovias presentes na camada.
+        Sendo assim, para reclassificar a BR-116, devemos inicialmente selecionar sua feição, como se pode ver na figura abaixo.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/reclassificacao_feicoes_14.png' name='figuras1' width=900 height=407 alt='Erro ao mostrar a imagem'>
+    </p>
+
+	<p align="justify">
+        Ao se clicar no botão BR a classe correspondente da EDGV será automaticamente carregada no QGIS mostrando a feição já reclassificada
+        como se pode ver na figura abaixo.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/reclassificacao_feicoes_15.png' name='figuras1' width=900 height=407 alt='Erro ao mostrar a imagem'>
+    </p>
+
+	<p align="justify">
+        Repetindo o processo para a RJ-145 chega-se ao resultado visto na figura abaixo.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/reclassificacao_feicoes_16.png' name='figuras1' width=900 height=407 alt='Erro ao mostrar a imagem'>
+    </p>
+
+	<p align="justify">
+        Finalizando, é possível ver a tabela de atributos das feições reclassificadas como se pode ver na figura abaixo.
+    </p>
+
+    <p align=center>
+        <img src='dsg_tools/reclassificacao_feicoes_17.png' name='figuras1' width=900 height=216 alt='Erro ao mostrar a imagem'>
+    </p>
+
+</body>
+</html>

@@ -40,7 +40,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class LoadByClass(QtGui.QDialog, FORM_CLASS):
     def __init__(self, codeList, parent=None):
-        """Constructor."""
+        """
+        Constructor
+        """
         super(LoadByClass, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -73,6 +75,9 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
         self.layerFactory = LayerFactory()
 
     def restoreInitialState(self):
+        '''
+        Restores the dialog initial state
+        '''
         self.selectedClasses = []
 
         tam = self.classesListWidget.__len__()
@@ -82,6 +87,9 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
         self.selectAllCheck.setCheckState(0)
 
     def listClassesFromDatabase(self):
+        '''
+        List all classes from database
+        '''
         self.classes = []
         self.classesListWidget.clear()
         self.dbVersion = self.widget.getDBVersion()
@@ -102,19 +110,32 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
         self.classesListWidget.sortItems()
 
     def on_filterEdit_textChanged(self, text):
+        '''
+        Filters shown classes
+        text: text used to filter classes
+        '''
         classes = [edgvClass for edgvClass in self.classes if text in edgvClass]
         self.classesListWidget.clear()
         self.classesListWidget.addItems(classes)
         self.classesListWidget.sortItems()
 
     def cancel(self):
+        '''
+        Cancels the process
+        '''
         self.restoreInitialState()
         self.close()
         
     def pushMessage(self, msg):
+        '''
+        Pushes a message into message bar
+        '''
         self.bar.pushMessage("", msg, level=QgsMessageBar.CRITICAL)
 
     def selectAll(self):
+        '''
+        Select all classes to be loaded
+        '''
         if self.selectAllCheck.isChecked():
             tam = self.classesListWidget.__len__()
             for i in range(tam+1):
@@ -128,6 +149,9 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
                 self.classesListWidget.setItemSelected(item,0)
 
     def getSelectedItems(self):
+        '''
+        Gets the selected classes
+        '''
         lista = self.classesListWidget.selectedItems()
         self.selectedClasses = []
         tam = len(lista)
@@ -136,11 +160,17 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
         self.selectedClasses.sort()
 
     def okSelected(self):
+        '''
+        Loads the selected layers
+        '''
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         self.loadLayers()
         QApplication.restoreOverrideCursor()
 
     def loadLayers(self):
+        '''
+        Actual method that load layers
+        '''
         self.getSelectedItems()
         if len(self.selectedClasses)>0:
             try:

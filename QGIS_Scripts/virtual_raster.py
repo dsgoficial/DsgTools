@@ -33,6 +33,11 @@ import shutil, stat
 
 #script methods
 def createReprojectedLayer(layer, crs):
+    '''
+    Creates a reprojected layer
+    layer: layer used
+    crs: crs used
+    '''
     temp = QgsVectorLayer('%s?crs=%s'% ('Multipolygon', crs.authid()), 'temp', 'memory')
     if not layer.isValid():
         raise GeoAlgorithmExecutionException('Problema ao criar camada reprojetada!')
@@ -56,6 +61,11 @@ def createReprojectedLayer(layer, crs):
     return temp
 
 def reprojectLayer(fromLayer, toLayer):
+    '''
+    Reprojects all features from fromLayer crs to toLayer crs
+    fromLayer: origin layer
+    toLayer: destination layer
+    '''
     ret = []
     coordinateTransformer = QgsCoordinateTransform(fromLayer.crs(), toLayer.crs())
     for feat in fromLayer.getFeatures():
@@ -65,10 +75,16 @@ def reprojectLayer(fromLayer, toLayer):
     return ret
 
 def populateIndex(idx, layer):
+    '''
+    Populates the layer index
+    '''
     for feat in layer.getFeatures():
         idx.insertFeature(feat)
         
 def getCandidates(idx, layer, bbox):
+    '''
+    Gets candidates to be processed using the index to speedup the process
+    '''
     ids = idx.intersects(bbox)
     candidates = []
     for id in ids:
@@ -76,6 +92,9 @@ def getCandidates(idx, layer, bbox):
     return candidates
     
 def makeVrtDict(candidates, camada):
+    '''
+    Makes a VRT dictionary
+    '''
     vrt = dict()
     for candidate in candidates:
         map_index = candidate['map_index']
@@ -86,6 +105,9 @@ def makeVrtDict(candidates, camada):
     return vrt            
             
 def createVrt(vrt):
+    '''
+    Creates a VRT file
+    '''
     count = 0
     size = len(vrt.keys())
     p = 0
@@ -114,6 +136,12 @@ def createVrt(vrt):
         processing.runalg('gdalogr:buildvirtualraster', rasterList, 0, False, False, vrtfilename)
         
 def copyFileSet(parent, folder, filename):
+    '''
+    Copy files to the destination folder
+    parent: parent folder
+    folder: folder within parent
+    filename: file name
+    '''
     path = os.path.dirname(filename)
     basename = os.path.basename(filename)
     texto = 'Copiando %s e arquivos relacionados...' % basename

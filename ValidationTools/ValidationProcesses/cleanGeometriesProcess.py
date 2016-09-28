@@ -26,14 +26,20 @@ import processing, binascii
 
 class CleanGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb, codelist):
+        '''
+        Constructor
+        '''
         super(self.__class__,self).__init__(postgisDb, codelist)
         self.parameters = {'Snap': 1.0, 'MinArea':0.001}
         
     def runProcessinAlg(self, cl):
+        '''
+        Runs the actual process
+        '''
         alg = 'grass7:v.clean.advanced'
         
         #creating vector layer
-        input = QgsVectorLayer(self.abstractDb.getURI(cl, False).uri(), cl, "postgres")
+        input = QgsVectorLayer(self.abstractDb.getURI(cl, True).uri(), cl, "postgres")
         crs = input.crs()
         epsg = self.abstractDb.findEPSG()
         crs.createFromId(epsg)
@@ -67,64 +73,61 @@ class CleanGeometriesProcess(ValidationProcess):
         return self.getProcessingErrors(errorLayer)
 
     def updateOriginalLayer(self, pgInputLyr, grassOutputLyr):
-        grassIdList = []
-        deleteList = []
+        '''
+        Updates the original layer using the grass output layer
+        pgInputLyr: postgis input layer
+        grassOutputLyr: grass output layer
+        '''
         provider = pgInputLyr.dataProvider()
-        for feature in grassOutputLyr.getFeatures():
+        pgInputLyr.startEditing()
+        addList = []
+        for feature in pgInputLyr.getFeatures():
             id = feature['id']
-            if id not in grassIdList:
-                grassIdList.append(id)
-        for id in grassIdList:
-            pgInputLyr.startEditing()
             grassFeats = []
-            addList = []
             for gf in grassOutputLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%id))):
                 grassFeats.append(gf)
-            feat = pgInputLyr.getFeatures(QgsFeatureRequest(id)).next()
             for i in range(len(grassFeats)):
                 if i == 0:
                     newGeom = grassFeats[i].geometry()
                     newGeom.convertToMultiType()
-                    feat.setGeometry(newGeom)
-                    pgInputLyr.updateFeature(feat)
+                    feature.setGeometry(newGeom)
+                    pgInputLyr.updateFeature(feature)
                 else:
-                    newFeat = QgsFeature(feat)
+                    newFeat = QgsFeature(feature)
                     newGeom = grassFeats[i].geometry()
                     newGeom.convertToMultiType()
                     newFeat.setGeometry(newGeom)
                     idx = newFeat.fieldNameIndex('id')
-                    newFeat.setAttribute(idx,provider.defaultValue(idx))
+                    newFeat.setAttribute(idx,provider.defaultValue(idx))                    
                     addList.append(newFeat)
-            pgInputLyr.addFeatures(addList,True)
-            pgInputLyr.commitChanges()
-        for feat in pgInputLyr.getFeatures():
-            if feat['id'] not in grassIdList:
-                deleteList.append(feat['id'])
-        pgInputLyr.startEditing()
-        caps = provider.capabilities()
-        if caps & QgsVectorDataProvider.DeleteFeatures:
-            provider.deleteFeatures(deleteList)
+        pgInputLyr.addFeatures(addList,True)
         pgInputLyr.commitChanges()
     
     def getProcessingErrors(self, layer):
+        '''
+        Gets processing errors
+        layer: error layer output made by grass
+        '''
         recordList = []
         for feature in layer.getFeatures():
-            recordList.append((feature['id'], binascii.hexlify(feature.geometry().asWkb())))
+            recordList.append((feature.id(), binascii.hexlify(feature.geometry().asWkb())))
         return recordList
         
     def execute(self):
-        #abstract method. MUST be reimplemented.
+        '''
+        Reimplementation of the execute method from the parent class
+        '''
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            classesWithGeom = self.abstractDb.getOrphanGeomTablesWithElements()
+            classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
             if classesWithGeom.__len__() == 0:
                 self.setStatus('Empty database!\n', 1) #Finished
                 QgsMessageLog.logMessage('Empty database!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
                 return
             for cl in classesWithGeom:
-                if cl[-1]  in ['a']:
+                if cl[-1] in ['a', 'l']:
                     result = self.runProcessinAlg(cl)
                     if len(result) > 0:
                         recordList = []
@@ -132,8 +135,8 @@ class CleanGeometriesProcess(ValidationProcess):
                             recordList.append((cl,tupple[0],'Cleaning error.',tupple[1]))
                             self.addClassesToBeDisplayedList(cl) 
                         numberOfProblems = self.addFlag(recordList)
-                        self.setStatus('%s feature(s) of class '+cl+' with cleaning errors. Check flags.\n' % numberOfProblems, 4) #Finished with flags
-                        QgsMessageLog.logMessage('%s feature(s) of class '+cl+' with cleaning errors. Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        self.setStatus('{} feature(s) of class '+cl+' with cleaning errors. Check flags.\n'.format(numberOfProblems), 4) #Finished with flags
+                        QgsMessageLog.logMessage('{} feature(s) of class '+cl+' with cleaning errors. Check flags.\n'.format(numberOfProblems), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     else:
                         self.setStatus('There are no cleaning errors on '+cl+'.\n', 1) #Finished
                         QgsMessageLog.logMessage('There are no cleaning errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)

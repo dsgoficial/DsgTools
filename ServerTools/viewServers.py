@@ -51,11 +51,17 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         self.initGui()
     
     def initGui(self):
+        '''
+        Initiates the dialog
+        '''
         header = self.tableWidget.horizontalHeader()
         header.setResizeMode(QHeaderView.Stretch)
         self.populateTable()
         
     def populateTable(self):
+        '''
+        Populates the servers table
+        '''
         currentConnections = self.getServers()
         self.tableWidget.setRowCount(len(currentConnections))
         for i, connection in enumerate(currentConnections):
@@ -71,10 +77,16 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_closeButton_clicked(self):
+        '''
+        Closes the dialog
+        '''
         self.done(0)
         
     @pyqtSlot(bool)
     def on_addButton_clicked(self):
+        '''
+        Adds a new server
+        '''
         dlg = ServerConfigurator(self)
         result = dlg.exec_()
         if result:
@@ -82,6 +94,9 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
             
     @pyqtSlot(bool)
     def on_editButton_clicked(self):
+        '''
+        Edits an existing server
+        '''
         selectedItem = self.returnSelectedName()
         if not selectedItem:
             return
@@ -93,6 +108,9 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_removeButton_clicked(self):
+        '''
+        Removes an existing server
+        '''
         selectedItem = self.returnSelectedName()
         if not selectedItem:
             return
@@ -102,6 +120,9 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_testButton_clicked(self):
+        '''
+        Tests server connection
+        '''
         selectedItem = self.returnSelectedName()
         if not selectedItem:
             return
@@ -118,6 +139,9 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
             QMessageBox.warning(self, self.tr('Info!'), self.tr('Connection was not successful. Check log for details.'))
         
     def getServers(self):
+        '''
+        Gets all server from QSettings
+        '''
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers')
         currentConnections = settings.childGroups()
@@ -125,6 +149,10 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         return currentConnections
     
     def getServerConfiguration(self, name):
+        '''
+        Gets server configuration
+        name: server name 
+        '''
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers/'+name)
         host = settings.value('host')
@@ -136,12 +164,18 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         return (host, port, user, password)
     
     def removeServerConfiguration(self, name):
+        '''
+        Removes a server from QSettings
+        '''
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers/'+name)
         settings.remove('')
         settings.endGroup()
         
     def testServer(self, name):
+        '''
+        Tests if the server is online
+        '''
         abstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
         if not abstractDb:
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
@@ -157,6 +191,9 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         return True
     
     def returnSelectedName(self):
+        '''
+        Gets the selected server name 
+        '''
         if len(self.tableWidget.selectedItems()) == 0:
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select one server.'))
             return

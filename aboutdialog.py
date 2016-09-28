@@ -26,7 +26,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class AboutDialog(QtGui.QDialog, FORM_CLASS):
     def __init__(self, parent = None):
-        """Constructor."""
+        """
+        Constructor
+        """
         super(AboutDialog, self).__init__(parent)
         self.setupUi(self)
 

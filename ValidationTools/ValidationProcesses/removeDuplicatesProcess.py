@@ -25,14 +25,27 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 
 class RemoveDuplicatesProcess(ValidationProcess):
     def __init__(self, postgisDb, codelist):
+        '''
+        Constructor
+        '''
         super(self.__class__,self).__init__(postgisDb, codelist)
-    
-    def dependsOn(self):
-        #Abstract method. Should be reimplemented if necessary.
-        return ['IdentifyDuplicatedGeometriesProcess']
+
+    def preProcess(self):
+        '''
+        Gets the process that should be execute before this one
+        '''
+        return 'IdentifyDuplicatedGeometriesProcess'
+
+    def postProcess(self):
+        '''
+        Gets the process that should be execute before this one
+        '''
+        return 'IdentifyDuplicatedGeometriesProcess'
 
     def execute(self):
-        #abstract method. MUST be reimplemented.
+        '''
+        Reimplementation of the execute method from the parent class
+        '''
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
@@ -40,7 +53,7 @@ class RemoveDuplicatesProcess(ValidationProcess):
             numberOfProblems = 0
             for cl in flagsDict.keys():
                 numberOfProblems += self.abstractDb.removeFeatures(cl,flagsDict[cl])
-            self.setStatus('%s features were removed.\n' % numberOfProblems, 1) #Finished with flags
+            self.setStatus('%s features were removed.\n' % numberOfProblems, 1)
             QgsMessageLog.logMessage('%s features were removed.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:

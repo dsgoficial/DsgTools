@@ -37,7 +37,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class InventoryTools(QDialog, FORM_CLASS):
     def __init__(self, iface):
-        """Constructor."""
+        """
+        Constructor
+        """
         super(InventoryTools, self).__init__()
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -61,7 +63,9 @@ class InventoryTools(QDialog, FORM_CLASS):
         item.setText(0,'tif')
         
     def depth(self, item):
-        #calculates the depth of the item
+        '''
+        Calculates the depth of the item
+        '''
         depth = 0
         while item is not None:
             item = item.parent()
@@ -69,6 +73,10 @@ class InventoryTools(QDialog, FORM_CLASS):
         return depth
     
     def createMenu(self, position):
+        '''
+        Creates the popup menu that allows extension insertion and removal
+        position: mouse click position
+        '''
         menu = QMenu()
         
         item = self.treeWidget.itemAt(position)
@@ -82,16 +90,25 @@ class InventoryTools(QDialog, FORM_CLASS):
         menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
         
     def insertExtension(self):
+        '''
+        Inserts a new extension to be analyzed
+        '''
         text = QInputDialog.getText(self, self.tr('Type the extension'), self.tr('File extension'), mode=QLineEdit.Normal)
         item = QTreeWidgetItem(self.treeWidget.invisibleRootItem())
         item.setText(0,text[0])
        
     def removeExtension(self):
+        '''
+        Removes a extension from the list
+        '''
         item = self.treeWidget.selectedItems()[0]
         index = self.treeWidget.indexOfTopLevelItem(item)
         self.treeWidget.takeTopLevelItem(index)
 
     def getParameters(self):
+        '''
+        Gets process parameters
+        '''
         formatsList = []
         root = self.treeWidget.invisibleRootItem()
         for i in range(root.childCount()):
@@ -104,16 +121,25 @@ class InventoryTools(QDialog, FORM_CLASS):
        
     @pyqtSlot(bool)
     def on_parentFolderButton_clicked(self):
+        '''
+        Opens the dialog to select the folder
+        '''
         folder = QFileDialog.getExistingDirectory(self, self.tr('Select Directory'))
         self.parentFolderEdit.setText(folder)
 
     @pyqtSlot(bool)
     def on_copyFilesButton_clicked(self):
+        '''
+        Opens the dialog to define the copy destination folder
+        '''
         folder = QFileDialog.getExistingDirectory(self, self.tr('Select Directory'))
         self.destinationFolderEdit.setText(folder)
 
     @pyqtSlot(bool)
     def on_outputFileButton_clicked(self):
+        '''
+        Inventory output file selection
+        '''
         if self.onlyGeoCheckBox.isChecked():
             fileName = QFileDialog.getSaveFileName(parent=self, caption=self.tr('Save Output File'), filter='Shapefile (*.shp)')
         else:
@@ -122,6 +148,9 @@ class InventoryTools(QDialog, FORM_CLASS):
         
     @pyqtSlot(int)
     def on_copyFilesCheckBox_stateChanged(self, state):
+        '''
+        Slot to update the dialog when copy files definition changes
+        '''
         if self.copyFilesCheckBox.isChecked():
             self.frame_3.setEnabled(True)
         else:
@@ -129,10 +158,16 @@ class InventoryTools(QDialog, FORM_CLASS):
      
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
+        '''
+        Closes the dialog
+        '''
         self.done(0)
 
     @pyqtSlot(bool)
     def on_okButton_clicked(self):
+        '''
+        Runs the process
+        '''
         parentFolder = self.parentFolderEdit.text()
         outputFile = self.outputFileEdit.text()
 

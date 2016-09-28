@@ -25,10 +25,15 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 
 class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb, codelist):
+        '''
+        Constructor
+        '''
         super(self.__class__,self).__init__(postgisDb, codelist)
 
     def execute(self):
-        #abstract method. MUST be reimplemented.
+        '''
+        Reimplementation of the execute method from the parent class
+        '''
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
@@ -46,7 +51,7 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
                 for tuple in dupGeomRecordList:
                     self.addClassesToBeDisplayedList(tuple[0])        
                 self.setStatus('%s features are duplicated. Check flags.\n' % numberOfDupGeom, 4) #Finished with flags
-                QgsMessageLog.logMessage('%s features are invalid. Check flags.\n' % numberOfDupGeom, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage('%s features are duplicated. Check flags.\n' % numberOfDupGeom, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return
             else:
                 self.setStatus('There are no duplicated geometries.\n', 1) #Finished

@@ -42,7 +42,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
     def __init__(self, parent = None):
-        """Constructor."""
+        """
+        Constructor
+        """
         super(ManageUserProfiles, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -61,6 +63,9 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         self.assignedProfiles.customContextMenuRequested.connect(self.createMenuAssigned)
 
     def createMenuInstalled(self, position):
+        '''
+        Creates a pop up menu to show permission properties
+        '''
         menu = QMenu()
         
         item = self.installedProfiles.itemAt(position)
@@ -71,6 +76,9 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         menu.exec_(self.installedProfiles.viewport().mapToGlobal(position))
         
     def showInstalledProperties(self):
+        '''
+        Shows the installed permission's properties dialog
+        '''
         listedItems = self.installedProfiles.selectedItems()
         permission = listedItems[0].text()
         dbname = self.widget.abstractDb.getDatabaseName()
@@ -85,6 +93,9 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         dlg.exec_()
         
     def createMenuAssigned(self, position):
+        '''
+        Creates a pop up menu to show properties of a permission assigned to a user
+        '''
         menu = QMenu()
 
         item = self.assignedProfiles.itemAt(position)
@@ -95,6 +106,9 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         menu.exec_(self.assignedProfiles.viewport().mapToGlobal(position))
 
     def showAssignedProperties(self):
+        '''
+        Shows the assigned properties dialog
+        '''
         listedItems = self.assignedProfiles.selectedItems()
         permission = listedItems[0].text()
         dbname = self.widget.abstractDb.getDatabaseName()
@@ -109,6 +123,9 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         dlg.exec_()
 
     def populateUsers(self):
+        '''
+        Populates postgresql users list
+        '''
         self.comboBox.clear()
         
         if not self.widget.abstractDb:
@@ -124,6 +141,10 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         self.comboBox.addItems(ret)
                 
     def getProfiles(self, username):
+        '''
+        Gets the installed and assigned profiles related to a user
+        user: user name
+        '''
         self.installedProfiles.clear()
         self.assignedProfiles.clear()
 
@@ -144,12 +165,18 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_installProfile_clicked(self):
+        '''
+        Slot to install profile
+        '''
         dlg = AssignProfiles(self.widget.serverWidget.serversCombo.currentIndex(),self.widget.comboBoxPostgis.currentIndex())
         dlg.exec_()
         self.getProfiles(self.comboBox.currentText())        
 
     @pyqtSlot(bool)
     def on_createUserButton_clicked(self):
+        '''
+        Slot to open create user dialog
+        '''
         if not self.widget.abstractDb:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
             return
@@ -159,6 +186,9 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)    
     def on_removeUserButton_clicked(self):
+        '''
+        Slot to remove user
+        '''
         user = self.comboBox.currentText()
         if not self.widget.abstractDb:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
@@ -180,6 +210,9 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_alterPasswordButton_clicked(self):
+        '''
+        Slot to alter user password
+        '''
         user = self.comboBox.currentText()
         if not self.widget.abstractDb:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
@@ -192,9 +225,16 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(int)
     def on_comboBox_currentIndexChanged(self):
+        '''
+        Slot to update assigned and installed profiles
+        '''
         self.getProfiles(self.comboBox.currentText())
         
     def saveUserState(self):
+        '''
+        Saves the user state.
+        The assigned and installed profiles are updated for the current selected user
+        '''
         if self.comboBox.currentIndex() == 0:
             return
 
@@ -240,10 +280,16 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_closeButton_clicked(self):
+        '''
+        Closes the dialog
+        '''
         self.close()
         
     @pyqtSlot(bool)
     def on_insertAllButton_clicked(self):
+        '''
+        Slot to assign all profiles
+        '''
         tam = self.installedProfiles.__len__()
         if tam == 0:
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('No profiles installed! Install at least one and try again.'))
@@ -258,6 +304,9 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_removeAllButton_clicked(self):
+        '''
+        Slot to remove all assigned profiles
+        '''
         tam = self.assignedProfiles.__len__()
         if tam == 0:
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('No profiles assigned! Assign at least one and try again.'))
@@ -272,6 +321,9 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_insertButton_clicked(self):
+        '''
+        Slot to assign a profile
+        '''
         listedItems = self.installedProfiles.selectedItems()
         if len(listedItems) == 0:
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select a profile first!'))
@@ -286,6 +338,9 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_removeButton_clicked(self):
+        '''
+        Slot to remove a assigned profile
+        '''
         listedItems = self.assignedProfiles.selectedItems()
         if len(listedItems) == 0:
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select a profile first!'))

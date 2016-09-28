@@ -29,39 +29,47 @@ from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class SpatialRuleProcess(ValidationProcess):
-    predicates = {'equal':'ST_Equals',
-                  'disjoint':'ST_Disjoint',
-                  'intersect':'ST_Intersects',
-                  'touch':'ST_Touches',
-                  'cross':'ST_Crosses',
-                  'within':'ST_Within',
-                  'overlap':'ST_Overlaps',
-                  'contain':'ST_Contains',
-                  'cover':'ST_Covers',
-                  'covered by':'ST_CoveredBy'}
+    #this relates the predicate with the PostGIS ST functions
+    predicates = {0:'ST_Equals',
+                  1:'ST_Disjoint',
+                  2:'ST_Intersects',
+                  3:'ST_Touches',
+                  4:'ST_Crosses',
+                  5:'ST_Within',
+                  6:'ST_Overlaps',
+                  7:'ST_Contains',
+                  8:'ST_Covers',
+                  9:'ST_CoveredBy'}
     
-    necessity = {'must (be)':'\'f\'',
-                 'must not (be)':'\'t\''}
+    #we must check is this is violated to raise flags, hence the opposite idea
+    necessity = {0:'\'f\'',
+                 1:'\'t\''}
     
     def __init__(self, postgisDb, codelist):
+        '''
+        Constructor
+        '''
         super(self.__class__,self).__init__(postgisDb, codelist)
         
         self.rulesFile = os.path.join(os.path.dirname(__file__), '..', 'ValidationRules', 'ruleLibrary.rul')
         
     def getRules(self):
+        '''
+        Get a list of tuples (rules) using the configuration file
+        '''
         try:
             with open(self.rulesFile, 'r') as f:
                 rules = [line.rstrip('\n') for line in f]
         except Exception as e:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem reading file! \n'))
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem reading file!'))
             return
         
         ret = list()
         for line in rules:
             split = line.split(',')
             layer1 = split[0]    
-            necessity = self.necessity[split[1]]
-            predicate = self.predicates[split[2]]
+            necessity = self.necessity[int(split[1].split('_')[0])]
+            predicate = self.predicates[int(split[2].split('_')[0])]
             layer2 = split[3]
             cardinality = split[4]
             min_card = cardinality.split('..')[0]
@@ -72,7 +80,9 @@ class SpatialRuleProcess(ValidationProcess):
         return ret
 
     def execute(self):
-        #abstract method. MUST be reimplemented.
+        '''
+        Reimplementation of the execute method from the parent class
+        '''
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
@@ -92,7 +102,7 @@ class SpatialRuleProcess(ValidationProcess):
                     QgsMessageLog.logMessage('All features are valid.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)   
             return 1             
         except Exception as e:
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
             return 0
 

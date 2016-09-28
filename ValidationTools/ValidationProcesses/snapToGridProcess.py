@@ -25,11 +25,16 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 
 class SnapToGridProcess(ValidationProcess):
     def __init__(self, postgisDb, codelist, iface):
+        '''
+        Constructor
+        '''
         super(self.__class__,self).__init__(postgisDb, codelist, iface  )
         self.parameters = {'Snap': 0.001}
 
     def execute(self):
-        #abstract method. MUST be reimplemented.
+        '''
+        Reimplementation of the execute method from the parent class
+        '''
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!

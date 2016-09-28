@@ -64,6 +64,9 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.closeDatabase()
 
     def closeDatabase(self):
+        '''
+        Closes the current database
+        '''
         if self.abstractDb:
             del self.abstractDb
             self.abstractDb = None
@@ -89,6 +92,9 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
       
 
     def setInitialState(self):
+        '''
+        Sets the initial state
+        '''
         self.filename = ''
         self.dbLoaded = False
         self.epsg = 0
@@ -111,6 +117,9 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
 
     @pyqtSlot(int)
     def on_comboBoxPostgis_currentIndexChanged(self):
+        '''
+        Updates database information when the combo box changes
+        '''
         if self.comboBoxPostgis.currentIndex() > 0:
             self.postGISCrsEdit.setText('')
             self.postGISCrsEdit.setReadOnly(True)
@@ -121,12 +130,18 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_pushButtonOpenFile_clicked(self):  
+        '''
+        Loads a spatialite database
+        '''
         self.loadDatabase()
         if self.isDBConnected():
             self.connectionChanged.emit()
         
     @pyqtSlot(int)
     def on_tabWidget_currentChanged(self):
+        '''
+        Changes the tab to work with spatialite or postgis databases
+        '''
         self.filename = ''
         self.comboBoxPostgis.clear()
         self.dbLoaded = False
@@ -152,6 +167,9 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
             self.isSpatialite = False
 
     def loadDatabase(self):
+        '''
+        Loads the selected database
+        '''
         self.closeDatabase()
         try:
             if self.isSpatialite:
@@ -183,6 +201,9 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
             QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)   
 
     def setCRS(self):
+        '''
+        Sets the CRS information
+        '''
         try:
             self.epsg = self.abstractDb.findEPSG()
             if self.epsg == -1:
@@ -201,9 +222,15 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
 
         
     def isDBConnected(self):
+        '''
+        Checks if the database is already loaded
+        '''
         return self.dbLoaded
         
     def getDBVersion(self):
+        '''
+        Gets the database version
+        '''
         ret = ''
         try:
             ret = self.abstractDb.getDatabaseVersion()
@@ -213,6 +240,9 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         return ret
     
     def getQmlPath(self):
+        '''
+        Gets the QML path
+        '''
         ret = ''
         try:
             ret = self.abstractDb.getQmlDir()

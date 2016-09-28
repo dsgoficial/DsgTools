@@ -40,11 +40,17 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class CustomTableModel(QSqlTableModel):
     def __init__(self, domainDict, parent=None, db=QSqlDatabase):
+        '''
+        Constructor
+        '''
         QSqlTableModel.__init__(self, parent=parent, db=db)
         self.dict = domainDict
         self.db = db
 
     def makeValueRelationDict(self, table, codes):
+        '''
+        Makes the value relation dictionary. It is necessary for multi valued attributes
+        '''
         ret = dict()
 
         in_clause = '(%s)' % ",".join(map(str, codes))
@@ -62,11 +68,20 @@ class CustomTableModel(QSqlTableModel):
         return ret
 
     def flags(self, index):
+        '''
+        Gets index flags
+        '''
         if index.column() == 0:
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable
         return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
     def data(self, index, role):
+        '''
+        Custom reimplementation of the method data.
+        It is necessary to work with value map and value relation.
+        index: column index
+        role: role used to get the data
+        '''
         dbdata = QSqlTableModel.data(self, index, role)
         column = self.headerData(index.column(), Qt.Horizontal)
         if self.dict.has_key(column):
@@ -90,6 +105,13 @@ class CustomTableModel(QSqlTableModel):
         return dbdata
 
     def setData(self, index, value, role=Qt.EditRole):
+        '''
+        Custom reimplementation of the method setData.
+        It is necessary to work with value map and value relation.
+        index: column index to be set
+        value: value to be set
+        role: role used
+        '''
         column = self.headerData(index.column(), Qt.Horizontal)
         newValue = value
         if self.dict.has_key(column):
@@ -110,11 +132,17 @@ class CustomTableModel(QSqlTableModel):
 
 class ComboBoxDelegate(QStyledItemDelegate):
     def __init__(self, parent, itemsDict, column):
+        '''
+        Constructor
+        '''
         QItemDelegate.__init__(self, parent)
         self.itemsDict = itemsDict
         self.column = column
 
     def createEditor(self, parent, option, index):
+        '''
+        Creates a custom editor to edit value map data
+        '''
         # special combobox for field type
         if index.column() == self.column:
             cbo = QComboBox(parent)
@@ -124,7 +152,9 @@ class ComboBoxDelegate(QStyledItemDelegate):
         return QItemDelegate.createEditor(self, parent, option, index)
 
     def setEditorData(self, editor, index):
-        """ load data from model to editor """
+        """
+        load data from model to editor
+        """
         m = index.model()
         try:
             if index.column() == self.column:
@@ -137,7 +167,9 @@ class ComboBoxDelegate(QStyledItemDelegate):
             pass
 
     def setModelData(self, editor, model, index):
-        """ save data from editor back to model """
+        """
+        save data from editor back to model
+        """
         if index.column() == self.column:
             model.setData(index, editor.currentText())
         else:
@@ -146,11 +178,17 @@ class ComboBoxDelegate(QStyledItemDelegate):
 
 class ListWidgetDelegate(QStyledItemDelegate):
     def __init__(self, parent, itemsDict, column):
+        '''
+        Constructor
+        '''
         QItemDelegate.__init__(self, parent)
         self.itemsDict = itemsDict
         self.column = column
 
     def createEditor(self, parent, option, index):
+        '''
+        Creates a custom editor to edit value relation data
+        '''
         # special combobox for field type
         if index.column() == self.column:
             list = QListWidget(parent)
@@ -162,7 +200,9 @@ class ListWidgetDelegate(QStyledItemDelegate):
         return QItemDelegate.createEditor(self, parent, option, index)
 
     def setEditorData(self, editor, index):
-        """ load data from model to editor """
+        """
+        load data from model to editor
+        """
         m = index.model()
         try:
             if index.column() == self.column:
@@ -178,7 +218,9 @@ class ListWidgetDelegate(QStyledItemDelegate):
             pass
 
     def setModelData(self, editor, model, index):
-        """ save data from editor back to model """
+        """
+        save data from editor back to model
+        """
         if index.column() == self.column:
             checkedItems = []
             for i in range(editor.count()):
@@ -192,7 +234,8 @@ class ListWidgetDelegate(QStyledItemDelegate):
 
 class ManageComplexDialog(QDialog, FORM_CLASS):
     def __init__(self, iface, abstractDb, table):
-        """Constructor.
+        """
+        Constructor.
         """
         QDialog.__init__( self )
         self.setupUi( self )
@@ -236,6 +279,10 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         self.updateTableView()
 
     def generateDelegates(self):
+        '''
+        Generates the custom delegates.
+        It can be a combo box delegate or a list widget delegate
+        '''
         for key in self.domainDict:
             if isinstance(self.domainDict[key], dict):
                 #self.domainDict[key] in this case is a dict
@@ -245,11 +292,17 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
                 self.generateList(key, self.domainDict[key])
 
     def generateCombo(self, column, domainValues):
+        '''
+        Generates a combo box delegate
+        '''
         #creating the delegate
         combo = ComboBoxDelegate(self, domainValues, self.projectModel.fieldIndex(column))
         self.tableView.setItemDelegateForColumn(self.projectModel.fieldIndex(column), combo)
 
     def generateList(self, column, tupla):
+        '''
+        Generates a lit widget delegate
+        '''
         #making a dict in the same way used for the Combobox delegate
         valueRelation = self.makeValueRelationDict(tupla[0], tupla[1])
         #creating the delagate
@@ -257,6 +310,9 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         self.tableView.setItemDelegateForColumn(self.projectModel.fieldIndex(column), list)
 
     def makeValueRelationDict(self, table, codes):
+        '''
+        Makes the value relation dictionary
+        '''
         #query to obtain the dict with code names and related codes
         ret = dict()
 
@@ -275,6 +331,9 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         return ret
 
     def updateTableView(self):
+        '''
+        Updates the table view
+        '''
         #setting the model in the view
         self.projectModel = CustomTableModel(self.domainDict, None, self.db)
         #adjusting the table
@@ -304,11 +363,17 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         self.tableView.show()
 
     def addComplex(self):
+        '''
+        Adds a new complex to the table
+        '''
         record = self.projectModel.record()
         adjustedRecord = self.adjustRecord(record)
         self.projectModel.insertRecord(self.projectModel.rowCount(), adjustedRecord)
 
     def adjustRecord(self,record):
+        '''
+        Updates a existing record
+        '''
         #insert a new record with an already determined uuid value
         record.setValue("id",str(uuid4()))
         record.setValue("nome", self.tr("edit this field"))
@@ -319,6 +384,9 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         return record
 
     def removeComplex(self):
+        '''
+        Removes a complex from the complex table
+        '''
         #getting the selected rows
         selectionModel = self.tableView.selectionModel()
         selectedRows = selectionModel.selectedRows()
@@ -331,9 +399,15 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
             self.projectModel.removeRow(row.row())
 
     def cancel(self):
+        '''
+        Closes the dialog
+        '''
         self.done(0)
 
     def checkComplexNameField(self):
+        '''
+        Checks the complex name field before recording it.
+        '''
         count = self.projectModel.rowCount()
         for i in range(count):
             record = self.projectModel.record(i)
@@ -343,6 +417,9 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         return True
 
     def updateTable(self):
+        '''
+        Updates the complex table
+        '''
         #checking if the name field is filled
         #Now the database checks the field "nome", therefore the method checkComplexNameField() is no longer needed
 

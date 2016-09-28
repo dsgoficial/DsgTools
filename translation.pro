@@ -5,6 +5,8 @@
  					ComplexTools/manageComplex.py \
 					ConversionTools/convert_database.py \
 					CustomWidgets/connectionWidget.py \
+					CustomWidgets/customSelector.py \
+					CustomWidgets/earthCoverageWidget.py \
 					CustomWidgets/exploreServerWidget.py \
  					DbTools/PostGISTool/postgisDBTool.py \
  					DbTools/SpatialiteTool/cria_spatialite_dialog.py \
@@ -36,7 +38,9 @@
  					ProductionTools/acquisition_tools.py \
  					QmlTools/qml_creator.py \
  					QmlTools/qmlParser.py \
+					ServerTools/createView.py \
 					ServerTools/exploreDb.py \
+					ServerTools/manageDBAuxiliarStructure.py \
  					ServerTools/serverConfigurator.py \
 					ServerTools/serverDBExplorer.py \
  					ServerTools/viewServers.py \
@@ -52,6 +56,36 @@
 					VectorTools/calc_contour.py \
 					VectorTools/contour_tool.py \
 					VectorTools/dsg_line_tool.py \
+					ProductionTools/acquisition_tools.py \
+					ProductionTools/field_setup.py \
+					ProductionTools/field_toolbox.py \
+					ValidationTools/ValidationProcesses/cleanGeometriesProcess.py \
+					ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py \
+					ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py \
+					ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py \
+					ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py \
+					ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py \
+					ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py \
+					ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py \
+					ValidationTools/ValidationProcesses/identifySmallAreasProcess.py \
+					ValidationTools/ValidationProcesses/identifySmallLinesProcess.py \
+					ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py \
+					ValidationTools/ValidationProcesses/recursiveSnapProcess.py \
+					ValidationTools/ValidationProcesses/removeDuplicatesProcess.py \
+					ValidationTools/ValidationProcesses/removeSmallAreasProcess.py \
+					ValidationTools/ValidationProcesses/removeSmallLinesProcess.py \
+					ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py \
+					ValidationTools/ValidationProcesses/snapToGridProcess.py \
+					ValidationTools/ValidationProcesses/spatialRuleEnforcer.py \
+					ValidationTools/ValidationProcesses/spatialRuleProcess.py \
+					ValidationTools/ValidationProcesses/validationProcess.py \
+					ValidationTools/processParametersDialog.py \
+					ValidationTools/rules_editor.py \
+					ValidationTools/setupEarthCoverage.py \
+					ValidationTools/validation_config.py \
+					ValidationTools/validation_history.py \
+					ValidationTools/validation_toolbox.py \
+					ValidationTools/validationManager.py \
  					aboutdialog.py \
  					dsg_tools.py \
 
@@ -61,6 +95,8 @@
  					ComplexTools/ui_manageComplex.ui \
 					ConversionTools/convert_database.ui \
 					CustomWidgets/connectionWidget.ui \
+					CustomWidgets/customSelector.ui \
+					CustomWidgets/earthCoverageWidget.ui \
 					CustomWidgets/exploreServerWidget.ui \
  					DbTools/PostGISTool/ui_postgisDBTool.ui \
  					DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui \							
@@ -69,7 +105,9 @@
  					LayerTools/load_by_category_dialog.ui \
  					LayerTools/load_by_class_base.ui \
  					LayerTools/ui_create_inom_dialog_base.ui \
+					ServerTools/createView.ui \
 					ServerTools/exploreDb.ui \
+					ServerTools/manageDBAuxiliarStructure.ui \
  					ServerTools/ui_serverConfigurator.ui \
 					ServerTools/ui_serverDBExplorer.ui \
  					ServerTools/ui_viewServers.ui \
@@ -82,6 +120,15 @@
 					UserTools/profile_editor.ui \
 					UserTools/user_profiles.ui \
 					VectorTools/calc_contour.ui \
+					ProductionTools/field_setup.ui \
+					ProductionTools/field_toolbox.ui \
+					ValidationTools/rules_editor.ui \
+					ValidationTools/setupEarthCoverage.ui \
+					ValidationTools/setupEarthCoverage_backup.ui \
+					ValidationTools/validation_config.ui \
+					ValidationTools/validation_history.ui \
+					ValidationTools/validation_toolbox.ui \
+					ValidationTools/workspace_editor.ui \
  					ui_about.ui \
 
  TRANSLATIONS    = i18n/DsgTools_pt.ts

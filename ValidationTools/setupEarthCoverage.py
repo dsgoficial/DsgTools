@@ -35,7 +35,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
     coverageChanged = pyqtSignal()
     def __init__(self, abstractDb, areas, lines, oldCoverage, parent=None):
-        '''Constructor.'''
+        '''
+        Constructor
+        '''
         super(self.__class__, self).__init__()
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -54,14 +56,20 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         self.linesCustomSelector.selectionChanged.connect(self.populateDelimiters)
         self.button(QtGui.QWizard.FinishButton).clicked.connect(self.writeIntoDb)
 
-        #TODO: insert attribute filter for delimiter
     def setupFromFile(self):
+        '''
+        Opens a earth coverage file
+        '''
         if QMessageBox.question(self, self.tr('Question'), self.tr('Do you want to open an earth coverage file?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
             return
         filename = QFileDialog.getOpenFileName(self, self.tr('Open Earth Coverage Setup configuration'), '', self.tr('Earth Coverage Files (*.json)'))
         return filename
 
     def setupWizard(self, oldCoverage):
+        '''
+        Prepares the wizard
+        oldCoverage: old configuration
+        '''
         if oldCoverage:
             self.abstractDb.dropCentroids(oldCoverage.keys())
         filename = self.setupFromFile()
@@ -94,6 +102,9 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
             self.linesCustomSelector.setFromList(self.lines)
 
     def checkDelimiters(self, setupDict):
+        '''
+        Check delimiters
+        '''
         for i in range(self.treeWidget.invisibleRootItem().childCount()):
             areaItem = self.treeWidget.invisibleRootItem().child(i)
             for j in range(self.treeWidget.invisibleRootItem().child(i).childCount()):
@@ -103,12 +114,18 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
                         delimiterItem.setCheckState(1,Qt.Unchecked)
 
     def loadJson(self, filename):
+        '''
+        Loads a json file
+        '''
         filename = QFileDialog.getOpenFileName(self, self.tr('Open Field Setup configuration'), self.folder, self.tr('Field Setup Files (*.json)'))
         if not filename:
             return
         return self.readJsonFile(filename)
 
     def populateClasses(self):
+        '''
+        Populates area classes
+        '''
         self.treeWidget.clear()
         selectedAreaClasses = []
         for i in range(self.areasCustomSelector.toList.__len__()):
@@ -121,6 +138,9 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         self.linesCustomSelector.selectionChanged.emit()
 
     def populateDelimiters(self):
+        '''
+        Populates line classes (area delimiters)
+        '''
         delimiterList = []
         for i in range(self.linesCustomSelector.toList.__len__()):
             delimiterList.append(self.linesCustomSelector.toList.item(i).text())
@@ -133,6 +153,9 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
             self.treeWidget.invisibleRootItem().child(i).setExpanded(True)
 
     def getEarthCoverageDictFromTree(self):
+        '''
+        Gets earth coverage configuration from the tree widget
+        '''
         invRootItem = self.treeWidget.invisibleRootItem()
         earthCoverageDict = dict()
         for i in range(invRootItem.childCount()):
@@ -143,8 +166,10 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
                     earthCoverageDict[childClass.text(0)].append(childClass.child(j).text(1))
         return earthCoverageDict
 
-    #TODO: Ask output dir
     def writeIntoDb(self):
+        '''
+        Writes the configuration in the database
+        '''
         try:
             earthDict = self.getEarthCoverageDictFromTree()
             self.abstractDb.setEarthCoverageDict(json.dumps(earthDict))

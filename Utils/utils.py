@@ -25,7 +25,10 @@ import os
 from xml.dom.minidom import parse, parseString
 
 class Utils:
-    def mergeDict(self,dictionary1, dictionary2):
+    def mergeDict(self, dictionary1, dictionary2):
+        '''
+        Merges two dictionaries
+        '''
         output = dict()
         if type(dictionary1) <> dict or type(dictionary2) <> dict:
             return dictionary2
@@ -63,7 +66,10 @@ class Utils:
                 output[item] = value
         return output
     
-    def buildOneNestedDict(self,inputDict,keyList,value):
+    def buildOneNestedDict(self, inputDict, keyList, value):
+        '''
+        Builds a nested dictionary for a specific key
+        '''
         if len(keyList) == 1:
             if keyList[0] not in inputDict.keys():
                 inputDict[keyList[0]] = dict()
@@ -79,17 +85,23 @@ class Utils:
             if keyList[0] not in inputDict.keys():
                 if len(inputDict.values()) == 0:
                     inputDict[keyList[0]] = dict()
-            inputDict[keyList[0]] = self.buildOneNestedDict(inputDict[keyList[0]],keyList[1::],value)
+            inputDict[keyList[0]] = self.buildOneNestedDict(inputDict[keyList[0]], keyList[1::], value)
             return inputDict
     
-    def buildNestedDict(self,inputDict,keyList,value):
+    def buildNestedDict(self, inputDict, keyList, value):
+        '''
+        Builds a nested dict
+        '''
         if len(inputDict.keys())>0:
-            tempDict = self.buildOneNestedDict(dict(),keyList,value)
+            tempDict = self.buildOneNestedDict(dict(), keyList, value)
             return self.mergeDict(inputDict, tempDict)
         else:
-            return self.buildOneNestedDict(inputDict,keyList,value)
+            return self.buildOneNestedDict(inputDict, keyList, value)
     
     def readJsonFile(self, filename):
+        '''
+        Reads a json file and makes a dictionary
+        '''
         try:
             file = open(filename, 'r')
             data = file.read()

@@ -8,9 +8,9 @@
 
 [general]
 name=DSG Tools
-qgisMinimumVersion=2.6
+qgisMinimumVersion=2.14
 description=Brazilian Army Cartographic Production Tools
-version=2.0
+version=2.1
 author=Brazilian Army - Geographic Service Bureau
 email=suporte.dsgtools@dsg.eb.mil.br
 about=
@@ -31,6 +31,7 @@ about=
 	-EDGV code list viewer to aid attributes queries using our EDGV databases.
 	-Drop EDGV databases
 	-Remove missing databases from qsettings
+	-Tool to reclassify features (move them to another layer) with predefined attributes
 	Requirements for LINUX (Ubuntu/Debian):
 	Install the following packages as follows:
 	sudo apt-get install python-qt4-sql
@@ -65,6 +66,7 @@ changelog=
 	2.0rc09 - Bug fixes and adjustments for EDGV FTer_2a_Ed
 	2.0rc10 - Bug fixes and adjustments for EDGV FTer_2a_Ed
 	2.0 - Bug fixes and adjustments for EDGV FTer_2a_Ed
+	2.1 - New Tool to reclassify features (move them to another layer) with predefined attributes
 
 # Tags are comma separated with spaces allowed
 tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script

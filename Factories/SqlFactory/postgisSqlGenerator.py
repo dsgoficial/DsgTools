@@ -44,7 +44,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getSrid(self):
-        sql = "SELECT srid from geometry_columns WHERE f_table_schema <> \'tiger\' and f_table_schema <> \'topology\'"
+        sql = "SELECT DISTINCT srid from geometry_columns WHERE f_table_schema <> \'tiger\' and f_table_schema <> \'topology\' LIMIT 1"
         return sql
 
     def getTablesFromDatabase(self):
@@ -627,6 +627,26 @@ class PostGISSqlGenerator(SqlGenerator):
             
             order by tb
             """
+    def getOrphanGeomTablesWithElements(self):
+        sql = """
+        select pgcl2.sc || '.' || pgcl2.n as tb from pg_class as pgcl
+            left join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
+            left join pg_namespace as pgnsp on pgcl.relnamespace = pgnsp.oid
+            left join pg_inherits as pginh on pginh.inhparent = pgcl.oid
+            join (select pgcl.oid, pgmsp.nspname as sc, pgcl.relname as n from pg_class as pgcl
+                        join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
+                        left join pg_namespace pgmsp on pgcl.relnamespace = pgmsp.oid) 
+            as pgcl2 on pgcl2.oid = pginh.inhrelid
+            where pgnsp.nspname in ('ge','pe', 'cb', 'public') and pgatt.attname IS NULL and pgcl.relkind = 'r'
+        union 
+        select distinct gc.f_table_schema || '.' || p.relname as tb from pg_class as p
+            left join pg_inherits as inh  on inh.inhrelid = p.oid 
+            left join geometry_columns as gc on gc.f_table_name = p.relname
+            where (inh.inhrelid IS NULL) and 
+            gc.f_table_schema in ('cb', 'pe', 'ge', 'public')
+        
+        order by tb
+        """
         return sql
     
     def updateOriginalTable(self, tableSchema, tableName, result, epsg):
@@ -770,7 +790,7 @@ class PostGISSqlGenerator(SqlGenerator):
                     (
                         select st_snap(a.geom, st_collect(b.geom), '||snap||') as geom, a.id as id 
                         from '||tabela||' a, '||tabela||' b 
-                        where a.id != b.id and a.id = '||id||' 
+                        where a.id != b.id and st_isempty(a.geom) = FALSE and a.id = '||id||'
                         group by a.id, a.geom
                     ) as res 
                 where res.id = classe.id';
@@ -1018,4 +1038,12 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def reasignAndDropUser(self, user):
         sql = """REASSIGN OWNED BY {0} to postgres; DROP USER {0};""".format(user)
+        return sql
+
+    def deleteFeatureFlagsFromDb(self, layer, feat_id, processName):
+        sql = "DELETE FROM validation.aux_flags_validacao WHERE process_name = '{0}' AND layer = '{1}' AND feat_id = {2}".format(processName, layer, feat_id)
+        return sql
+    
+    def removeEmptyGeomtriesFromDb(self, layer):
+        sql = "DELETE FROM {0} WHERE st_isempty(geom) = TRUE".format(layer)
         return sql
