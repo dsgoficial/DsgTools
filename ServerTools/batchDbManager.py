@@ -38,9 +38,11 @@ from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.UserTools.permission_properties import PermissionProperties
 from DsgTools.UserTools.manageServerUsers import ManageServerUsers
+from DsgTools.UserTools.profile_editor import ProfileEditor
 from DsgTools.ServerTools.createView import CreateView
 from DsgTools.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
 from DsgTools.ServerTools.selectStyles import SelectStyles
+from DsgTools.UserTools.PermissionManagerWizard.permissionWizard import PermissionWizard
 
 
 
@@ -342,4 +344,20 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
             dlg.exec_()
         except:
             QMessageBox.warning(self, self.tr('Error!'), self.tr('Select a server!'))
-            
+    
+    @pyqtSlot(bool)
+    def on_manageProfilesPushButton_clicked(self):
+        try:
+            dlg = ProfileEditor()
+            dlg.exec_()
+        except:
+            pass
+    
+    @pyqtSlot(bool)
+    def on_managePermissionsPushButton_clicked(self):
+        dbsDict = self.instantiateAbstractDbs()
+        try:
+            dlg = PermissionWizard(self.serverWidget.abstractDb, dbsDict, parent = self)
+            dlg.exec_()
+        except:
+            pass
