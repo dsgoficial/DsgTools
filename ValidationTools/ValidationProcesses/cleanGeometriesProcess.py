@@ -72,16 +72,6 @@ class CleanGeometriesProcess(ValidationProcess):
         QgsMapLayerRegistry.instance().removeMapLayer(input.id())
         return self.getProcessingErrors(errorLayer)
 
-    def getProcessingErrors(self, layer):
-        '''
-        Gets processing errors
-        layer: error layer output made by grass
-        '''
-        recordList = []
-        for feature in layer.getFeatures():
-            recordList.append((feature.id(), binascii.hexlify(feature.geometry().asWkb())))
-        return recordList
-        
     def execute(self):
         '''
         Reimplementation of the execute method from the parent class
@@ -90,25 +80,28 @@ class CleanGeometriesProcess(ValidationProcess):
         try:
             self.setStatus('Running', 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
-            if classesWithGeom.__len__() == 0:
-                self.setStatus('Empty database!\n', 1) #Finished
-                QgsMessageLog.logMessage('Empty database!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
+            lyrs = self.inputData()
+            if lyrs.__len__() == 0:
+                self.setStatus('No layers loaded!\n', 1) #Finished
+                QgsMessageLog.logMessage('No layers loaded!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return
-            for cl in classesWithGeom:
-                if cl[-1] in ['a', 'l']:
-                    result = self.runProcessinAlg(cl)
+            for lyr in lyrs:
+                featureMap = self.mapInputLayer(lyr)
+                tableName = self.getTableNameFromLayer(lyr)
+                self.prepareWorkingStructure(tableName, featureMap)
+                if tableName[-1] in ['a', 'l']:
+                    result = self.runProcessinAlg(tableName+'_temp')
                     if len(result) > 0:
                         recordList = []
                         for tupple in result:
-                            recordList.append((cl,tupple[0],'Cleaning error.',tupple[1]))
-                            self.addClassesToBeDisplayedList(cl) 
+                            recordList.append((cl, tupple[0],'Cleaning error.', tupple[1]))
+                            self.addClassesToBeDisplayedList(tableName)
                         numberOfProblems = self.addFlag(recordList)
-                        self.setStatus('{} feature(s) of class '+cl+' with cleaning errors. Check flags.\n'.format(numberOfProblems), 4) #Finished with flags
-                        QgsMessageLog.logMessage('{} feature(s) of class '+cl+' with cleaning errors. Check flags.\n'.format(numberOfProblems), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        self.setStatus('{} feature(s) of class '+tableName+' with cleaning errors. Check flags.\n'.format(numberOfProblems), 4) #Finished with flags
+                        QgsMessageLog.logMessage('{} feature(s) of class '+tableName+' with cleaning errors. Check flags.\n'.format(numberOfProblems), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     else:
-                        self.setStatus('There are no cleaning errors on '+cl+'.\n', 1) #Finished
-                        QgsMessageLog.logMessage('There are no cleaning errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        self.setStatus('There are no cleaning errors on '+tableName+'.\n', 1) #Finished
+                        QgsMessageLog.logMessage('There are no cleaning errors on '+tableName+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

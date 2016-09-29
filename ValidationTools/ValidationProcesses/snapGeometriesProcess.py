@@ -63,7 +63,7 @@ class SnapGeometriesProcess(ValidationProcess):
 
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
-        self.updateOriginalLayer(input, outputLayer)
+        self.outputVectorLayerData(input, outputLayer)
           
         #getting error flags
         errorLayer = processing.getObject(ret['error'])
@@ -71,58 +71,23 @@ class SnapGeometriesProcess(ValidationProcess):
         QgsMapLayerRegistry.instance().removeMapLayer(input.id())
         return self.getProcessingErrors(errorLayer)
 
-    def updateOriginalLayer(self, pgInputLyr, grassOutputLyr):
-        '''
-        Updates the original layer using the grass output layer
-        pgInputLyr: postgis input layer
-        grassOutputLyr: grass output layer
-        '''
-        provider = pgInputLyr.dataProvider()
-        pgInputLyr.startEditing()
-        addList = []
-        for feature in pgInputLyr.getFeatures():
-            id = feature['id']
-            grassFeats = []
-            for gf in grassOutputLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%id))):
-                grassFeats.append(gf)
-            for i in range(len(grassFeats)):
-                if i == 0:
-                    newGeom = grassFeats[i].geometry()
-                    newGeom.convertToMultiType()
-                    feature.setGeometry(newGeom)
-                    pgInputLyr.updateFeature(feature)
-                else:
-                    newFeat = QgsFeature(feature)
-                    newGeom = grassFeats[i].geometry()
-                    newGeom.convertToMultiType()
-                    newFeat.setGeometry(newGeom)
-                    idx = newFeat.fieldNameIndex('id')
-                    newFeat.setAttribute(idx,provider.defaultValue(idx))                    
-                    addList.append(newFeat)
-        pgInputLyr.addFeatures(addList,True)
-        pgInputLyr.commitChanges()
-    
-    def getProcessingErrors(self, layer):
-        recordList = []
-        for feature in layer.getFeatures():
-            recordList.append((feature.id(), binascii.hexlify(feature.geometry().asWkb())))
-        return recordList
-        
     def execute(self):
         #abstract method. MUST be reimplemented.
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
-            if classesWithGeom.__len__() == 0:
-                self.setStatus('Empty database!\n', 1) #Finished
-                QgsMessageLog.logMessage('Empty database!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
+            lyrs = self.inputData()
+            if lyrs.__len__() == 0:
+                self.setStatus('No layers loaded!\n', 1) #Finished
+                QgsMessageLog.logMessage('No layers loaded!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return
-            for cl in classesWithGeom:
-                if cl[-1]  in ['a', 'l']:
-                    print cl
-                    result = self.runProcessinAlg(cl)
+            for lyr in lyrs:
+                featureMap = self.mapInputLayer(lyr)
+                tableName = self.getTableNameFromLayer(lyr)
+                self.prepareWorkingStructure(tableName, featureMap)
+                if tableName[-1] in ['a', 'l']:
+                    result = self.runProcessinAlg(tableName+'_temp')
                     if len(result) > 0:
                         recordList = []
                         for tupple in result:

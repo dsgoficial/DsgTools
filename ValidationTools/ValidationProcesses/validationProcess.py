@@ -361,3 +361,13 @@ class ValidationProcess(QObject):
                     newFeat.setAttribute(idx, provider.defaultValue(idx))
                     addList.append(newFeat)
         outputLayer.addFeatures(addList, True)
+
+    def getProcessingErrors(self, layer):
+        '''
+        Gets processing errors
+        layer: error layer output made by grass
+        '''
+        recordList = []
+        for feature in layer.getFeatures():
+            recordList.append((feature.id(), binascii.hexlify(feature.geometry().asWkb())))
+        return recordList
