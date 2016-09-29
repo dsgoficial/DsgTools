@@ -42,17 +42,17 @@ class SnapToGridProcess(ValidationProcess):
             for lyr in lyrs:
                 featureMap = self.mapInputLayer(lyr)
                 tableName = self.getTableNameFromLayer(lyr)
-                self.prepareWorkingStructure(tableName,featureMap)
+                self.prepareWorkingStructure(tableName, featureMap)
                 tol = self.parameters['Snap']
                 srid = self.abstractDb.findEPSG()
-                result = self.abstractDb.snapToGrid(tableName+'_temp', tol, srid) #list only classes with elements.
+                result = self.abstractDb.snapToGrid(tableName+'_temp', tol, srid)
                 self.abstractDb.db.close()
                 self.abstractDb.dropTempTable(tableName)
                 dataDict = dict()
                 dataDict['UPDATE'] = dict()
                 for key in result.keys():
                     dataDict['UPDATE'][key] = result[key]
-                self.outputData('postgis', tableName, dataDict)
+                self.outputPostgisData(tableName, dataDict)
             self.setStatus('All features snapped succesfully.\n', 1) #Finished
             QgsMessageLog.logMessage('All features snapped succesfully.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1

@@ -21,16 +21,14 @@
  ***************************************************************************/
 """
 # Qt imports
-from qgis.core import QgsMessageLog
 from PyQt4.QtGui import QMessageBox
 from PyQt4.Qt import QObject
 
 #QGIS imports
-from qgis.core import QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceURI, QgsFeatureRequest
+from qgis.core import QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceURI, QgsFeatureRequest, QgsMessageLog, QgsExpression
 
 # DSGTools imports
 from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
-
 
 class ValidationProcess(QObject):
     def __init__(self, postgisDb, codelist, iface):
@@ -187,8 +185,15 @@ class ValidationProcess(QObject):
         return name
 
     def mapInputLayer(self, inputLyr):
+        '''
+        Gets the layer features considering the edit buffer in the case
+        the layer is already in edition mode
+        '''
+        #return dict
         featureMap = dict()
+        #getting edit buffer
         editBuffer = inputLyr.editBuffer()
+        #black list for removed features
         blackList = []
         if editBuffer:
             blackList = editBuffer.deletedFeatureIds()
@@ -197,7 +202,7 @@ class ValidationProcess(QObject):
             for featid in changedMap.keys():
                 newFeat = inputLyr.getFeatures(QgsFeatureRequest(featid)).next()
                 newFeat.setGeometry(changedMap[featid])
-                featureMap[featid]= newFeat
+                featureMap[featid] = newFeat
             #2 - old
             for feat in inputLyr.getFeatures():
                 featid = feat.id()
@@ -211,10 +216,14 @@ class ValidationProcess(QObject):
             for feat in inputLyr.getFeatures():
                 featid = feat.id()
                 if featid not in featureMap.keys() and featid not in blackList:
-                    featureMap[featid] = feat            
+                    featureMap[featid] = feat
         return featureMap
     
     def prepareWorkingStructure(self, tableName, layer):
+        '''
+        Creates a temp table where all features plus the edit buffer features from a layer
+        will be inserted
+        '''
         try:
             self.abstractDb.createAndPopulateTempTableFromMap(tableName, layer)
         except Exception as e:
@@ -226,66 +235,84 @@ class ValidationProcess(QObject):
         type: postgis or qgsvectorlayer
         inputClass: name of the class
         dataDict: dict with the keys update, delete or insert. for each type, there is a proper data, ie:
-            postgis: tuple of (id,geom)
-            qgsvectorlayer: layer with geometry 
+            postgis: dict like this:
+                    {'UPDATE': {'id,geom': [[id value as int, geom value in wkb]]}}
+            qgsvectorlayer: layer with geometry
         '''
         edgvLayer = self.layerFactory.makeLayer(self.abstractDb, self.codeList, inputClass)
         dbName = edgvLayer.prepareLoad()
         epsg = self.abstractDb.findEPSG()
         crs = QgsCoordinateReferenceSystem(epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
-        outputLayer = edgvLayer.load(crs, dbName, uniqueLoad = True)
+        outputLayer = edgvLayer.load(crs, dbName, uniqueLoad=True)
         if type == 'postgis':
-            ret = self.outputPostgisData(outputLayer, inputClass, dataDict)
+            ret = self.outputPostgisData(outputLayer, dataDict)
         else:
-            ret = self.outputVectorData(outputLayer, inputClass,dataDict)
+            ret = self.outputVectorData(outputLayer, dataDict)
         
-    def outputPostgisData(self, outputLayer, inputClass, dataDict):
+    def outputPostgisData(self, outputLayer, dataDict):
         '''
+        Deals with postgis outputs.
         outputLayer: edgv layer previously loaded;
-        inputClass: name of the class;
-        dataDict: dict with the keys update, delete or insert. for each type, there is a key of names of the fields and values with a list of tupples.
+        dataDict: dict with the keys update, delete or insert. For each type
+                    there is a key of names of the fields and values with a list of lists.
         '''
         outputLayer.startEditing()
         for type in dataDict.keys():
             if type == 'INSERT':
-                self.insertFeaturesFromPostgis(outputLayer, type, dataDict)
+                self.insertFeaturesFromPostgis(outputLayer, dataDict[type])
             elif type == 'UPDATE':
-                self.updateFeaturesFromPostgis(outputLayer, type, dataDict)
+                self.updateFeaturesFromPostgis(outputLayer, dataDict[type])
             elif type == 'DELETE':
-                self.deleteFeaturesFromPostgis(outputLayer, type, dataDict)
+                self.deleteFeaturesFromPostgis(outputLayer, dataDict[type])
 
-    def insertFeaturesFromPostgis(self, outputLayer, type, dataDict):
-        for attributes in dataDict[type].keys():
+    def makeFieldDict(self, outputLayer, attrList):
+        '''
+        Build the field dict where the name of an attribute points to its index
+        '''
+        #dict where the name of an attribute points to its index
+        fieldDict = dict()
+        for attr in attrList:
+            fieldDict[attr] = outputLayer.fieldNameIndex(attr)
+        return fieldDict
+
+    def insertFeaturesFromPostgis(self, outputLayer, dataDict):
+        '''
+        Inserts features marked as new into the output layer
+        outputLayer: edgv layer previously loaded;
+        dataDict: Dict where there is a key of names of the fields and values with a list of lists.
+        '''
+        for attributes in dataDict.keys():
             attrList = attributes.split(',')
-            fieldDict = dict()
-            for attr in attrList:
-                fieldDict[attr] = outputLayer.fieldNameIndex(attr)
+            #dict where the name of an attribute points to its index
+            fieldDict = self.makeFieldDict(outputLayer, attrList)
+            #features to be inserted
             featList = []
-            for tuple in dataDict[type][attributes]:
+            for tuple in dataDict[attributes]:
+                #creating new feature
                 newFeat = QgsFeature(outputLayer.pendingFields())
-                insertDict = dict()
                 for i in range(len(attrList)):
-                    if attrList[i] == 'id':
-                        pass
-                    elif attrList[i] == 'geom':
+                    if attrList[i] == 'geom':
                         wkbGeom = tuple[i]
                         geom = QgsGeometry()
                         geom.fromWkb(wkbGeom)
                         newFeat.setGeometry(geom)
                     else:
-                        newFeat.setAttribute(fieldDict[attrList[i]],tuple[i])
+                        #everything else
+                        newFeat.setAttribute(fieldDict[attrList[i]], tuple[i])
                 featList.append(newFeat)
             outputLayer.addFeatures(featList)
 
-    def updateFeaturesFromPostgis(self, outputLayer, type, dataDict):
-        for attributes in dataDict[type].keys():
+    def updateFeaturesFromPostgis(self, outputLayer, dataDict):
+        '''
+        Updates features from the output layer
+        outputLayer: edgv layer previously loaded;
+        dataDict: Dict where there is a key of names of the fields and values with a list of lists.
+        '''
+        for attributes in dataDict.keys():
             attrList = attributes.split(',')
-            fieldDict = dict()
-            for attr in attrList:
-                fieldDict[attr] = outputLayer.fieldNameIndex(attr)
-            featList = []
-            for tuple in dataDict[type][attributes]:
-                insertDict = dict()
+            #dict where the name of an attribute points to its index
+            fieldDict = self.makeFieldDict(outputLayer, attrList)
+            for tuple in dataDict[attributes]:
                 for i in range(len(attrList)):
                     if attrList[i] == 'id':
                         id = tuple[i]
@@ -293,49 +320,44 @@ class ValidationProcess(QObject):
                         wkbGeom = tuple[i]
                         geom = QgsGeometry()
                         geom.fromWkb(wkbGeom)
-                for i in range(len(attrList)):
-                    if attrList[i] not in ['id', 'geom']:
-                        outputLayer.changeAttributeValue(int(id), fieldDict[attrList[i]], tuple[i])
-                    elif attrList[i] == 'geom':
                         outputLayer.changeGeometry(int(id), geom)
-    
-    def deleteFeaturesFromPostgis(self, outputLayer, type, dataDict):
-        for attributes in dataDict[type].keys():
-            attrList = attributes.split(',')
-            fieldDict = dict()
-            for attr in attrList:
-                fieldDict[attr] = outputLayer.fieldNameIndex(attr)
-            featList = []
-            for tuple in dataDict[type][attributes]:
+                    else:
+                        outputLayer.changeAttributeValue(int(id), fieldDict[attrList[i]], tuple[i])
+
+    def deleteFeaturesFromPostgis(self, outputLayer, dataDict):
+        '''
+        Deletes features from output layer
+        '''
+        for attributes in dataDict.keys():
+            for tuple in dataDict[attributes]:
                 outputLayer.deleteFeature(tuple[0])
     
-    def outputVectorData(self, outputLayer, inputClass, dataDict):
+    def outputVectorLayerData(self, outputLayer, vectorLayer):
         '''
-        outputLayer: edgv layer previously loaded;
-        inputClass: name of the class;
-        dataDict: dict with the keys UPDATE, DELETE or INSERT. For each type, there is a list of features to be output.
+        Updates the original layer using the grass output layer
+        pgInputLyr: postgis input layer
+        grassOutputLyr: grass output layer
         '''
+        provider = outputLayer.dataProvider()
         outputLayer.startEditing()
-        for type in dataDict.keys():
-            if type == 'INSERT':
-                self.insertFeatures(outputLayer, type, dataDict)
-            elif type == 'UPDATE':
-                self.updateFeatures(outputLayer, type, dataDict)
-            elif type == 'DELETE':
-                self.deleteFeatures(outputLayer, type, dataDict)
-
-    def insertFeatures(self, outputLayer, type, dataDict):
-        #TODO
-        featureList = dataDict[type]
-        pass
-
-    def updateFeatures(self, outputLayer, type, dataDict):
-        #TODO
-        featureList = dataDict[type]
-        pass
-
-    def deleteFeatures(self, outputLayer, type, dataDict):
-        #TODO
-        featureList = dataDict[type]
-        pass
-    
+        addList = []
+        for feature in outputLayer.getFeatures():
+            id = feature['id']
+            grassFeats = []
+            for gf in vectorLayer.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%id))):
+                grassFeats.append(gf)
+            for i in range(len(grassFeats)):
+                if i == 0:
+                    newGeom = grassFeats[i].geometry()
+                    newGeom.convertToMultiType()
+                    feature.setGeometry(newGeom)
+                    outputLayer.updateFeature(feature)
+                else:
+                    newFeat = QgsFeature(feature)
+                    newGeom = grassFeats[i].geometry()
+                    newGeom.convertToMultiType()
+                    newFeat.setGeometry(newGeom)
+                    idx = newFeat.fieldNameIndex('id')
+                    newFeat.setAttribute(idx, provider.defaultValue(idx))
+                    addList.append(newFeat)
+        outputLayer.addFeatures(addList, True)

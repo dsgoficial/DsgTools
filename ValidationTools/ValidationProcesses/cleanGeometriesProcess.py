@@ -64,45 +64,14 @@ class CleanGeometriesProcess(ValidationProcess):
 
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
-        self.updateOriginalLayer(input, outputLayer)
-          
+        self.outputVectorLayerData(input, outputLayer)
+
         #getting error flags
         errorLayer = processing.getObject(ret['error'])
         #removing from registry
         QgsMapLayerRegistry.instance().removeMapLayer(input.id())
         return self.getProcessingErrors(errorLayer)
 
-    def updateOriginalLayer(self, pgInputLyr, grassOutputLyr):
-        '''
-        Updates the original layer using the grass output layer
-        pgInputLyr: postgis input layer
-        grassOutputLyr: grass output layer
-        '''
-        provider = pgInputLyr.dataProvider()
-        pgInputLyr.startEditing()
-        addList = []
-        for feature in pgInputLyr.getFeatures():
-            id = feature['id']
-            grassFeats = []
-            for gf in grassOutputLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%id))):
-                grassFeats.append(gf)
-            for i in range(len(grassFeats)):
-                if i == 0:
-                    newGeom = grassFeats[i].geometry()
-                    newGeom.convertToMultiType()
-                    feature.setGeometry(newGeom)
-                    pgInputLyr.updateFeature(feature)
-                else:
-                    newFeat = QgsFeature(feature)
-                    newGeom = grassFeats[i].geometry()
-                    newGeom.convertToMultiType()
-                    newFeat.setGeometry(newGeom)
-                    idx = newFeat.fieldNameIndex('id')
-                    newFeat.setAttribute(idx,provider.defaultValue(idx))                    
-                    addList.append(newFeat)
-        pgInputLyr.addFeatures(addList,True)
-        pgInputLyr.commitChanges()
-    
     def getProcessingErrors(self, layer):
         '''
         Gets processing errors
