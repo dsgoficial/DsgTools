@@ -34,7 +34,7 @@ from PyQt4.QtGui import QApplication, QCursor
 import qgis as qgis
 
 #DsgTools imports
-from DsgTools.Factories.LayerLoaderFactory.edgvLayerLoader import EDGVLayerLoader
+from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'loadAuxStruct.ui'))
@@ -67,10 +67,6 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
 
         QtCore.QObject.connect(self.widget, QtCore.SIGNAL(("problemOccurred()")), self.pushMessage)
         self.widget.dbChanged.connect(self.widgetConv.setDatabase)
-
-        
-        self.codeList = codeList
-        self.layerFactory = LayerFactory()
 
     @pyqtSlot(bool)
     def on_pushButtonCancel_clicked(self):
