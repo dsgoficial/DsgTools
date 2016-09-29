@@ -498,6 +498,7 @@ class SpatialiteDb(AbstractDb):
                 mi = self.utmGrid.getMI(inom)
         frame = self.createFrameFromInom(inom)
         self.insertFrame(scale,mi,inom,frame.asWkb())
+        return frame
     
     def insertFrame(self,scale,mi,inom,frame):
         #TODO: use sqlite3 or ogr

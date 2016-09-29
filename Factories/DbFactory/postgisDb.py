@@ -2279,9 +2279,10 @@ class PostgisDb(AbstractDb):
             if scale == '250k':
                 mi = self.utmGrid.getMIR(inom)
             else:
-                mi = self.utmGrid.getMI(inom)
+                mi = self.utmGrid.getMIfromInom(inom)
         frame = self.createFrameFromInom(inom)
         self.insertFrame(scale,mi,inom,binascii.hexlify(frame.asWkb()))
+        return frame
     
     def getUsersFromServer(self):
         self.checkAndOpenDb()

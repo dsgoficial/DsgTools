@@ -12,7 +12,6 @@
         mod history          : 2014-12-17 by Leonardo Lourenço - Computing Engineer @ Brazilian Army
         mod history          : 2014-12-17 by Maurício de Paulo - Cartographic Engineer @ Brazilian Army
  ***************************************************************************/
-
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -338,4 +337,3 @@ if (__name__=="__main__"):
     #print test.getQgsPolygonFrame(inomen).exportToWkt()
     inom = 'SA-23-Y-C-IV-4'
     print test.getMIfromInom(inom)
-    

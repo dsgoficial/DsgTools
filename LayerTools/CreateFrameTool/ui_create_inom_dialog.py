@@ -65,9 +65,21 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         #frame = self.map_index.getQgsPolygonFrame(self.inomLineEdit.text())
         #reprojected = self.reprojectFrame(frame)
         layer = self.loadFrameLayer()
-        self.widget.abstractDb.createFrameFromInom()
+        inom = self.inomLineEdit.text()
+        scale = self.scaleCombo.currentText()
+        frame = self.widget.abstractDb.createFrame('inom', scale,inom)
+        self.zoomToLayer(layer,frame)
         #self.insertFrameIntoLayer(reprojected)
         self.done(1)
+    
+    def zoomToLayer(self, layer, frame):
+        bbox = frame.boundingBox()
+        for feature in layer.getFeatures():
+            bbox.combineExtentWith(feature.geometry().boundingBox())
+
+        bbox = self.iface.mapCanvas().mapSettings().layerToMapCoordinates(layer, bbox)
+        self.iface.mapCanvas().setExtent(bbox)
+        self.iface.mapCanvas().refresh()
     
     def loadFrameLayer(self):
         loader = LayerLoaderFactory().makeLoader(self.iface,self.widget.abstractDb)        
@@ -267,6 +279,16 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(int)
     def on_scaleCombo_currentIndexChanged(self):
         self.setMask()
+        if self.scaleCombo.currentText() == '1000k':
+            self.miRadioButton.setEnabled(False)
+            self.miLineEdit.setEnabled(False)
+            self.mirRadioButton.setEnabled(True)
+            self.mirLineEdit.setEnabled(True)
+        else:
+            self.miRadioButton.setEnabled(True)
+            self.miLineEdit.setEnabled(True)
+            self.mirRadioButton.setEnabled(False)
+            self.mirLineEdit.setEnabled(False)
 
     @pyqtSlot(bool)
     def on_mirRadioButton_toggled(self, toggled):

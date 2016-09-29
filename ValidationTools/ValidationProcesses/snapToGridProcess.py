@@ -24,11 +24,11 @@ from qgis.core import QgsMessageLog, QgsVectorLayer
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class SnapToGridProcess(ValidationProcess):
-    def __init__(self, postgisDb, codelist, iface):
+    def __init__(self, postgisDb, iface):
         '''
         Constructor
         '''
-        super(self.__class__,self).__init__(postgisDb, codelist, iface  )
+        super(self.__class__,self).__init__(postgisDb, iface)
         self.parameters = {'Snap': 0.001}
 
     def execute(self):

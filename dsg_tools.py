@@ -814,7 +814,7 @@ class DsgTools:
         if self.militaryDock:
             self.iface.removeDockWidget(self.militaryDock)
         else:
-            self.militaryDock = MilitarySimbologyDock(self.iface, self.codeList)
+            self.militaryDock = MilitarySimbologyDock(self.iface)
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.militaryDock)
             
     def installModelsAndScripts(self):
@@ -864,19 +864,6 @@ class DsgTools:
             #creating the separate process
             self.processManager.createPostgisDatabaseProcess(dbName,abstractDb, version, epsg)
 
-    def loadByCategory(self):
-        '''
-        Shows the load by category dialog
-        '''
-        try:
-            self.layerButton.setDefaultAction(self.toolbar.sender())
-        except:
-            pass
-        dlg = LoadByCategory(self.codeList, self.iface)
-        dlg.show()
-        result = dlg.exec_()
-        if result:
-            pass
 
     def loadAuxStruct(self):
         '''
@@ -911,7 +898,7 @@ class DsgTools:
             self.layerButton.setDefaultAction(self.toolbar.sender())
         except:
             pass
-        dlg = CreateInomDialog(self.iface,self.codeList)
+        dlg = CreateInomDialog(self.iface)
         dlg.show()
         result = dlg.exec_()
         if result:

@@ -174,7 +174,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.databaseLineEdit.setText(database)
             self.scale = self.configWindow.scaleComboBox.currentText()
             self.tolerance = self.configWindow.toleranceLineEdit.text()
-            self.validationManager = ValidationManager(self.configWindow.widget.abstractDb, self.codeList)
+            self.validationManager = ValidationManager(self.configWindow.widget.abstractDb)
             self.populateProcessList()
             self.databaseLineEdit.setText(database)
         except Exception as e:
@@ -263,7 +263,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         Toggles the spatial rule enforcer
         '''
         if checked:
-            self.ruleEnforcer = SpatialRuleEnforcer(self.validationManager.postgisDb,self.validationManager.codelist, self.iface)
+            self.ruleEnforcer = SpatialRuleEnforcer(self.validationManager.postgisDb, self.iface)
             self.ruleEnforcer.connectEditingSignals()
         else:
             self.ruleEnforcer.disconnectEditingSignals()
@@ -287,7 +287,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         Toggles the spatial rule enforcer
         '''
         if checked:
-            self.ruleEnforcer = SpatialRuleEnforcer(self.validationManager.postgisDb,self.validationManager.codelist, self.iface)
+            self.ruleEnforcer = SpatialRuleEnforcer(self.validationManager.postgisDb, self.iface)
             self.ruleEnforcer.connectEditingSignals()
         else:
             self.ruleEnforcer.disconnectEditingSignals()
