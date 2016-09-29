@@ -28,7 +28,7 @@ from PyQt4.Qt import QObject
 from qgis.core import QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceURI, QgsFeatureRequest, QgsMessageLog, QgsExpression
 
 # DSGTools imports
-from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
+from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 
 class ValidationProcess(QObject):
     def __init__(self, postgisDb, codelist, iface):
@@ -43,7 +43,7 @@ class ValidationProcess(QObject):
         self.parameters = None
         self.codeList = codelist
         self.iface = iface
-        self.layerFactory = LayerFactory() 
+        self.layerLoader = LayerLoaderFactory().makeLoader(self.iface, self.abstractDb)
         
     def setParameters(self, params):
         '''
@@ -239,11 +239,7 @@ class ValidationProcess(QObject):
                     {'UPDATE': {'id,geom': [[id value as int, geom value in wkb]]}}
             qgsvectorlayer: layer with geometry
         '''
-        edgvLayer = self.layerFactory.makeLayer(self.abstractDb, self.codeList, inputClass)
-        dbName = edgvLayer.prepareLoad()
-        epsg = self.abstractDb.findEPSG()
-        crs = QgsCoordinateReferenceSystem(epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
-        outputLayer = edgvLayer.load(crs, dbName, uniqueLoad=True)
+        outputLayer = self.layerLoader.load([inputClass],uniqueLoad=True)[inputClass]
         if type == 'postgis':
             ret = self.outputPostgisData(outputLayer, dataDict)
         else:

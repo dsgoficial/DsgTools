@@ -800,7 +800,7 @@ class DsgTools:
         if self.validationToolbox:
             self.iface.removeDockWidget(self.validationToolbox)
         else:
-            self.validationToolbox = ValidationToolbox(self.iface,self.codeList)
+            self.validationToolbox = ValidationToolbox(self.iface)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.validationToolbox)
 
     def showComplexDock(self):
@@ -886,7 +886,7 @@ class DsgTools:
             self.layerButton.setDefaultAction(self.toolbar.sender())
         except:
             pass
-        dlg = LoadAuxStruct(self.codeList)
+        dlg = LoadAuxStruct(self.iface)
         dlg.show()
         result = dlg.exec_()
         if result:

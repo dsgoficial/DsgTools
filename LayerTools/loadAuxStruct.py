@@ -34,13 +34,13 @@ from PyQt4.QtGui import QApplication, QCursor
 import qgis as qgis
 
 #DsgTools imports
-from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
+from DsgTools.Factories.LayerLoaderFactory.edgvLayerLoader import EDGVLayerLoader
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'loadAuxStruct.ui'))
 
 class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, codeList, parent=None):
+    def __init__(self, iface, parent=None):
         """
         Constructor
         """
@@ -51,7 +51,8 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-
+        self.iface = iface
+        self.layerFactory = LayerLoaderFactory()
         self.selectedClasses = []
         self.widget.tabWidget.setTabEnabled(0,True)
         self.widget.tabWidget.setTabEnabled(1,False)
@@ -114,20 +115,8 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
             auxCentroids = self.widget.abstractDb.getEarthCoverageCentroids()
             auxClasses = auxClasses + auxCentroids
             auxClasses.sort(reverse=True)
-            auxClasses = ['public.aux_moldura_a']+auxClasses
-            for lyr in auxClasses:
-                if lyr <> 'public.aux_moldura_a':
-                    layer = lyr[:-1]+lyr[-1].replace('a','c')
-                else:
-                    layer = lyr
-                dbName = self.widget.abstractDb.getDatabaseName()
-                groupList =  qgis.utils.iface.legendInterface().groups()
-                edgvLayer = self.layerFactory.makeLayer(self.widget.abstractDb, self.codeList, layer)
-                if dbName in groupList:
-                    edgvLayer.load(self.widget.crs,groupList.index(dbName))
-                else:
-                    self.parentTreeNode = qgis.utils.iface.legendInterface().addGroup(self.widget.abstractDb.getDatabaseName(), -1)
-                    edgvLayer.load(self.widget.crs,self.parentTreeNode)
+            auxClasses = ['aux_moldura_a']+auxClasses
+            factory = self.layerFactory.makeLoader(self.iface, auxClasses)
             
         except Exception as e:
                 QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

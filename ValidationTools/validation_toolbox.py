@@ -39,7 +39,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'validation_toolbox.ui'))
 
 #DsgTools imports
-from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
+from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 from DsgTools.ValidationTools.validation_config import ValidationConfig
 from DsgTools.ValidationTools.validationManager import ValidationManager
 from DsgTools.ValidationTools.validation_history import ValidationHistory
@@ -48,7 +48,7 @@ from DsgTools.ValidationTools.ValidationProcesses.spatialRuleEnforcer import Spa
 from DsgTools.ValidationTools.attributeRulesEditor import AttributeRulesEditor
 
 class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
-    def __init__(self, iface, codeList):
+    def __init__(self, iface):
         """
         Constructor
         """
@@ -59,11 +59,9 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.layerFactory = LayerFactory()
         self.edgvLayer = None
         self.flagLyr = None
         self.iface = iface
-        self.codeList = codeList
         self.databaseLineEdit.setReadOnly(True)
         self.configWindow = ValidationConfig()
         self.configWindow.widget.connectionChanged.connect(self.updateDbLineEdit)
@@ -131,20 +129,8 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         Loads the flag layer. It checks if the flag layer is already loaded, case not, it loads the flag layer into the TOC
         layer: layer name
         '''
-        if not self.checkFlagsLoaded(layer):
-            dbName = self.configWindow.widget.abstractDb.getDatabaseName()
-            edgvLayer = self.layerFactory.makeLayer(self.configWindow.widget.abstractDb, self.codeList, 'validation.'+layer)
-            groupList =  qgis.utils.iface.legendInterface().groups()
-            if dbName in groupList:
-                return  edgvLayer.load(self.configWindow.widget.crs,groupList.index(dbName))
-            else:
-                parentTreeNode = qgis.utils.iface.legendInterface().addGroup(self.configWindow.widget.abstractDb.getDatabaseName(), -1)
-                return  edgvLayer.load(self.configWindow.widget.crs,parentTreeNode)
-        else:
-            loadedLayers = self.iface.mapCanvas().layers()
-            for lyr in loadedLayers:
-                if lyr.name() == layer:
-                    return lyr
+        self.layerLoader = LayerLoaderFactory().makeLoader(self.iface,self.configWindow.widget.abstractDb)
+        self.layerLoader.load([layer], uniqueLoad = True)
     
     def checkFlagsLoaded(self, layer):
         '''
