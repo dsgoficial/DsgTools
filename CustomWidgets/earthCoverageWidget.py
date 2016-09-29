@@ -80,7 +80,8 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
                     areas.append(cl)
                 if cl[-1] == 'l':
                     lines.append(cl)
-            lines.append('public.aux_linha_l')
+            if 'aux_linha_l' not in lines:        
+                lines.append('aux_linha_l')
             oldCoverage = None
             data = self.abstractDb.getEarthCoverageDict()
             if data:

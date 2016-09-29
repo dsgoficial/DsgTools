@@ -38,7 +38,7 @@ from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoader
 import qgis as qgis
 
 class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, iface, codeList, parent=None):
+    def __init__(self, iface, parent=None):
         """Constructor."""
         super(CreateInomDialog, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -52,7 +52,6 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         self.disableAll()
         self.setValidCharacters()
         self.setMask()
-        self.codeList = codeList
 
     @pyqtSlot()
     def on_okButton_clicked(self):
@@ -63,14 +62,20 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         if not self.validateMI():
             QMessageBox.warning(self, self.tr("Warning!"), self.tr('Map name index not valid!'))
             return
-        frame = self.map_index.getQgsPolygonFrame(self.inomLineEdit.text())
-        reprojected = self.reprojectFrame(frame)
-        self.insertFrameIntoLayer(reprojected)
+        #frame = self.map_index.getQgsPolygonFrame(self.inomLineEdit.text())
+        #reprojected = self.reprojectFrame(frame)
+        layer = self.loadFrameLayer()
+        self.widget.abstractDb.createFrameFromInom()
+        #self.insertFrameIntoLayer(reprojected)
         self.done(1)
-
-    def insertFrameIntoLayer(self,reprojected):
+    
+    def loadFrameLayer(self):
         loader = LayerLoaderFactory().makeLoader(self.iface,self.widget.abstractDb)        
         layer = loader.load(['aux_moldura_a'], uniqueLoad=True)['aux_moldura_a']
+        return layer
+
+    def insertFrameIntoLayer(self,reprojected):
+        layer = self.loadFrameLayer()
         if not layer:
             return
 
@@ -114,6 +119,12 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot()
     def on_cancelButton_clicked(self):
         self.done(0)
+    
+    @pyqtSlot(str)
+    def on_inomLineEdit_textEdited(self,s):
+        if (s!=''):
+            mi = self.map_index.getMIfromInom(str(s))
+            self.miLineEdit.setText(mi)
 
     @pyqtSlot(str)
     def on_miLineEdit_textChanged(self,s):

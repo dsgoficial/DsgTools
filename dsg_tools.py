@@ -891,20 +891,6 @@ class DsgTools:
         result = dlg.exec_()
         if result:
             pass
-
-    def loadByClass(self):
-        '''
-        Shows the load by class dialog
-        '''
-        try:
-            self.layerButton.setDefaultAction(self.toolbar.sender())
-        except:
-            pass
-        dlg = LoadByClass(self.codeList)
-        dlg.show()
-        result = dlg.exec_()
-        if result:
-            pass
     
     def loadLayersFromServer(self):
         try:

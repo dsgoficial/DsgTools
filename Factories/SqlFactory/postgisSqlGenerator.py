@@ -589,7 +589,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def getOrphanGeomTablesWithElements(self,loading = False):
         if not loading:
             sql = """
-            select pgcl2.sc || '.' || pgcl2.n as tb from pg_class as pgcl
+            select pgcl2.n as tb from pg_class as pgcl
                 left join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
                 left join pg_namespace as pgnsp on pgcl.relnamespace = pgnsp.oid
                 left join pg_inherits as pginh on pginh.inhparent = pgcl.oid
@@ -599,7 +599,7 @@ class PostGISSqlGenerator(SqlGenerator):
                 as pgcl2 on pgcl2.oid = pginh.inhrelid
                 where pgnsp.nspname in ('ge','pe', 'cb') and pgatt.attname IS NULL and pgcl.relkind = 'r'
             union 
-            select distinct gc.f_table_schema || '.' || p.relname as tb from pg_class as p
+            select distinct p.relname as tb from pg_class as p
                 left join pg_inherits as inh  on inh.inhrelid = p.oid 
                 left join geometry_columns as gc on gc.f_table_name = p.relname
                 where (inh.inhrelid IS NULL) and 
@@ -609,7 +609,7 @@ class PostGISSqlGenerator(SqlGenerator):
             """
         else:
             sql = """
-            select pgcl2.sc || '.' || pgcl2.n as tb from pg_class as pgcl
+            select pgcl2.n as tb from pg_class as pgcl
                 left join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
                 left join pg_namespace as pgnsp on pgcl.relnamespace = pgnsp.oid
                 left join pg_inherits as pginh on pginh.inhparent = pgcl.oid
@@ -619,7 +619,7 @@ class PostGISSqlGenerator(SqlGenerator):
                 as pgcl2 on pgcl2.oid = pginh.inhrelid
                 where pgnsp.nspname in ('ge','pe', 'cb', 'public') and pgatt.attname IS NULL and pgcl.relkind = 'r'
             union 
-            select distinct gc.f_table_schema || '.' || p.relname as tb from pg_class as p
+            select distinct p.relname as tb from pg_class as p
                 left join pg_inherits as inh  on inh.inhrelid = p.oid 
                 left join geometry_columns as gc on gc.f_table_name = p.relname
                 where (inh.inhrelid IS NULL) and 
@@ -627,6 +627,7 @@ class PostGISSqlGenerator(SqlGenerator):
             
             order by tb
             """
+        return sql
     
     def updateOriginalTable(self, tableSchema, tableName, result, epsg):
         sqls = []

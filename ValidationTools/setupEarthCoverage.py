@@ -127,10 +127,7 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         Populates area classes
         '''
         self.treeWidget.clear()
-        selectedAreaClasses = []
-        for i in range(self.areasCustomSelector.toList.__len__()):
-            selectedAreaClasses.append(self.areasCustomSelector.toList.item(i).text())
-        selectedAreaClasses.sort()
+        selectedAreaClasses = self.areasCustomSelector.toLs
         for i in range(len(selectedAreaClasses)):
             treeItem = QtGui.QTreeWidgetItem()
             treeItem.setText(0,selectedAreaClasses[i])
