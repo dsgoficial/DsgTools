@@ -1491,7 +1491,7 @@ class PostgisDb(AbstractDb):
         while query.next():
             return query.value(0)
     
-    def snapToGrid(self, classList, tol):
+    def snapToGrid(self, classList, tol, srid):
         '''
         Snaps tables to grid (i.e executes ST_SnapToGrid)
         classList: classes to be altered
@@ -1501,7 +1501,7 @@ class PostgisDb(AbstractDb):
         self.db.transaction()
         query = QSqlQuery(self.db)
         for cl in classList:
-            sql = self.gen.snapToGrid(cl, tol)
+            sql = self.gen.snapToGrid(cl, tol, srid)
             if not query.exec_(sql):
                 self.db.rollback()
                 raise Exception(self.tr('Problem snapping to grid: ') + query.lastError().text())
