@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, QgsVectorLayer
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class SnapToGridProcess(ValidationProcess):
@@ -40,23 +40,32 @@ class SnapToGridProcess(ValidationProcess):
             self.setStatus('Running', 3) #now I'm running!
             lyrs = self.inputData()
             for lyr in lyrs:
+                #getting feature map including the edit buffer
                 featureMap = self.mapInputLayer(lyr)
+                #getting table name with schema
                 tableName = self.getTableNameFromLayer(lyr)
+                #setting temp table name
+                processTableName = tableName+'_temp'
+                #creating temp table
                 self.prepareWorkingStructure(tableName, featureMap)
+                #getting parameters
                 tol = self.parameters['Snap']
                 srid = self.abstractDb.findEPSG()
-                result = self.abstractDb.snapToGrid(tableName+'_temp', tol, srid)
-                self.abstractDb.db.close()
+                #running the process in the temp table
+                self.abstractDb.snapToGrid([processTableName], tol, srid)
+                #getting the output as a QgsVectorLayer
+                outputLayer = QgsVectorLayer(self.abstractDb.getURI(processTableName, True).uri(), processTableName, "postgres")
+                #updating the original layer (lyr)
+                self.updateOriginalLayer(lyr, outputLayer)
+                #dropping the temp table as we don't need it anymore
                 self.abstractDb.dropTempTable(tableName)
-                dataDict = dict()
-                dataDict['UPDATE'] = dict()
-                for key in result.keys():
-                    dataDict['UPDATE'][key] = result[key]
-                self.outputPostgisData(tableName, dataDict)
+            #setting status
             self.setStatus('All features snapped succesfully.\n', 1) #Finished
             QgsMessageLog.logMessage('All features snapped succesfully.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            #returning success
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
+            #returning error
             return 0

@@ -752,7 +752,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def snapToGrid(self, cl, precision, srid):
-        sql = 'select id, ST_AsBinary(ST_SetSRID(ST_SnapToGrid(geom,{1}),{2})) as geom from {0}'.format(cl, precision, srid)
+        sql = 'update {0} set geom = ST_SetSRID(ST_SnapToGrid(geom,{1}),{2}))'.format(cl, precision, srid)
         return sql
     
     def makeRecursiveSnapFunction(self):

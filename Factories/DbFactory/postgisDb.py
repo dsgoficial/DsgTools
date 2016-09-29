@@ -1490,7 +1490,6 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem getting class name: ') + query.lastError().text())
         while query.next():
             return query.value(0)
-
     
     def snapToGrid(self, classList, tol):
         '''
@@ -1524,8 +1523,6 @@ class PostgisDb(AbstractDb):
                     self.db.rollback()
                     raise Exception(self.tr('Problem snapping to frame: ') + query.lastError().text())
         self.db.commit()
-        
-    
             
     def densifyFrame(self, classList):
         '''
@@ -1581,13 +1578,6 @@ class PostgisDb(AbstractDb):
             result[key].append(newElement)
         self.db.commit()
         
-        return result
-
-    def snapToGrid(self, cl, tol, srid):
-        sql = self.gen.snapToGrid(cl, tol, srid)
-        errorMsg = self.tr('Problem snapping to grid: ')
-        params = ['id','geom']
-        result = self.runQuery(sql, errorMsg, params)
         return result
 
     def createAndPopulateTempTableFromMap(self, tableName, featureMap):

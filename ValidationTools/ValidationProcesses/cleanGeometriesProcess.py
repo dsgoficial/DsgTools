@@ -64,7 +64,7 @@ class CleanGeometriesProcess(ValidationProcess):
 
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
-        self.outputVectorLayerData(input, outputLayer)
+        self.updateOriginalLayer(input, outputLayer)
 
         #getting error flags
         errorLayer = processing.getObject(ret['error'])
@@ -86,22 +86,28 @@ class CleanGeometriesProcess(ValidationProcess):
                 QgsMessageLog.logMessage('No layers loaded!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return
             for lyr in lyrs:
+                cl = lyr.name()
+                #getting feature map including the edit buffer
                 featureMap = self.mapInputLayer(lyr)
+                #getting table name with schema
                 tableName = self.getTableNameFromLayer(lyr)
+                #setting temp table name
+                processTableName = tableName+'_temp'
+                #creating temp table
                 self.prepareWorkingStructure(tableName, featureMap)
                 if tableName[-1] in ['a', 'l']:
-                    result = self.runProcessinAlg(tableName+'_temp')
+                    result = self.runProcessinAlg(processTableName)
                     if len(result) > 0:
                         recordList = []
                         for tupple in result:
-                            recordList.append((cl, tupple[0],'Cleaning error.', tupple[1]))
-                            self.addClassesToBeDisplayedList(tableName)
+                            recordList.append((cl, tupple[0], 'Cleaning error.', tupple[1]))
+                            self.addClassesToBeDisplayedList(cl)
                         numberOfProblems = self.addFlag(recordList)
-                        self.setStatus('{} feature(s) of class '+tableName+' with cleaning errors. Check flags.\n'.format(numberOfProblems), 4) #Finished with flags
-                        QgsMessageLog.logMessage('{} feature(s) of class '+tableName+' with cleaning errors. Check flags.\n'.format(numberOfProblems), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        self.setStatus('{} feature(s) of class '+cl+' with cleaning errors. Check flags.\n'.format(numberOfProblems), 4) #Finished with flags
+                        QgsMessageLog.logMessage('{} feature(s) of class '+cl+' with cleaning errors. Check flags.\n'.format(numberOfProblems), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     else:
-                        self.setStatus('There are no cleaning errors on '+tableName+'.\n', 1) #Finished
-                        QgsMessageLog.logMessage('There are no cleaning errors on '+tableName+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        self.setStatus('There are no cleaning errors on '+cl+'.\n', 1) #Finished
+                        QgsMessageLog.logMessage('There are no cleaning errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
