@@ -32,14 +32,14 @@ class CleanGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.parameters = {'Snap': 1.0, 'MinArea':0.001}
         
-    def runProcessinAlg(self, cl):
+    def runProcessinAlg(self, layer, tempTableName):
         '''
         Runs the actual process
         '''
         alg = 'grass7:v.clean.advanced'
         
         #creating vector layer
-        input = QgsVectorLayer(self.abstractDb.getURI(cl, True).uri(), cl, "postgres")
+        input = QgsVectorLayer(self.abstractDb.getURI(tempTableName, True).uri(), tempTableName, "postgres")
         crs = input.crs()
         epsg = self.abstractDb.findEPSG()
         crs.createFromId(epsg)
@@ -53,7 +53,7 @@ class CleanGeometriesProcess(ValidationProcess):
         threshold = -1
 
         #getting table extent (bounding box)
-        tableSchema, tableName = self.abstractDb.getTableSchema(cl)        
+        tableSchema, tableName = self.abstractDb.getTableSchema(tempTableName)        
         (xmin, xmax, ymin, ymax) = self.abstractDb.getTableExtent(tableSchema, tableName)
         extent = '{0},{1},{2},{3}'.format(xmin, xmax, ymin, ymax)
         
@@ -64,7 +64,7 @@ class CleanGeometriesProcess(ValidationProcess):
 
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
-        self.updateOriginalLayer(input, outputLayer)
+        self.updateOriginalLayer(layer, outputLayer)
 
         #getting error flags
         errorLayer = processing.getObject(ret['error'])
@@ -96,7 +96,7 @@ class CleanGeometriesProcess(ValidationProcess):
                 #creating temp table
                 self.prepareWorkingStructure(tableName, featureMap)
                 if tableName[-1] in ['a', 'l']:
-                    result = self.runProcessinAlg(processTableName)
+                    result = self.runProcessinAlg(lyr, processTableName)
                     if len(result) > 0:
                         recordList = []
                         for tupple in result:
