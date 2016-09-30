@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 from DsgTools.Factories.SqlFactory.sqlGenerator import SqlGenerator
+import PyQt4
 
 class PostGISSqlGenerator(SqlGenerator):
     def getComplexLinks(self, complex):
@@ -802,8 +803,12 @@ class PostGISSqlGenerator(SqlGenerator):
         columnTupleString += ',geom'
         valueTupple = []
         for value in values:
-            if isinstance(value, str):
+            # surrouding texts with '' to make the sql
+            if isinstance(value, str) or isinstance(value, unicode):
                 valueTupple.append("'{0}'".format(value))
+            elif isinstance(value, PyQt4.QtCore.QDate):
+                value = 'NULL'
+                valueTupple.append(value)
             else:
                 valueTupple.append(value)
         valueTupple.append("ST_SetSRID(ST_Multi('{0}'),{1})".format(geometry,str(srid)))

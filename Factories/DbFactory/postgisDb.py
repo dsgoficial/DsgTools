@@ -24,7 +24,7 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 from PyQt4.QtCore import QSettings
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceURI, QgsFeature, QgsVectorLayer
+from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceURI, QgsFeature, QgsVectorLayer, QgsField
 from osgeo import ogr
 from uuid import uuid4
 import codecs, os, json, binascii
@@ -1595,8 +1595,10 @@ class PostgisDb(AbstractDb):
         attributes = None
         for feat in featureMap.values():
             if not attributes:
-                attributes = [field.name() for field in feat.fields()]
-            values = feat.attributes()
+                # getting only provider fields (we ignore expression fields - type = 6)
+                attributes = [field.name() for field in feat.fields() if field.type() != 6]
+                # getting only the needed attribute values
+                values = [feat.attribute(fieldname) for fieldname in attributes]
             geometry = binascii.hexlify(feat.geometry().asWkb())
             insertSql = self.gen.populateTempTable(tableName, attributes, values, geometry, srid)
             if not query.exec_(insertSql):
