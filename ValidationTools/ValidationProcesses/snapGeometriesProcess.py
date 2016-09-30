@@ -29,17 +29,17 @@ class SnapGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.parameters = {'Snap': 1.0, 'MinArea':0.001}
         
-    def postProcess(self):
-        '''
-        Gets the process that should be execute after this one
-        '''
-        return 'ForceValidityGeometriesProcess'
+#     def postProcess(self):
+#         '''
+#         Gets the process that should be execute after this one
+#         '''
+#         return 'ForceValidityGeometriesProcess'
 
-    def runProcessinAlg(self, cl):
+    def runProcessinAlg(self, layer, tempTableName):
         alg = 'grass7:v.clean.advanced'
         
         #creating vector layer
-        input = QgsVectorLayer(self.abstractDb.getURI(cl, True).uri(), cl, "postgres")
+        input = QgsVectorLayer(self.abstractDb.getURI(tempTableName, True).uri(), tempTableName, "postgres")
         crs = input.crs()
         epsg = self.abstractDb.findEPSG()
         crs.createFromId(epsg)
@@ -55,7 +55,7 @@ class SnapGeometriesProcess(ValidationProcess):
         snap = -1
 
         #getting table extent (bounding box)
-        tableSchema, tableName = self.abstractDb.getTableSchema(cl)        
+        tableSchema, tableName = self.abstractDb.getTableSchema(tempTableName)        
         (xmin, xmax, ymin, ymax) = self.abstractDb.getTableExtent(tableSchema, tableName)
         extent = '{0},{1},{2},{3}'.format(xmin, xmax, ymin, ymax)
         
@@ -63,7 +63,7 @@ class SnapGeometriesProcess(ValidationProcess):
 
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
-        self.updateOriginalLayer(input, outputLayer)
+        self.updateOriginalLayer(layer, outputLayer)
           
         #getting error flags
         errorLayer = processing.getObject(ret['error'])
@@ -83,19 +83,25 @@ class SnapGeometriesProcess(ValidationProcess):
                 QgsMessageLog.logMessage('No layers loaded!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return
             for lyr in lyrs:
+                cl = lyr.name()
+                #getting feature map including the edit buffer
                 featureMap = self.mapInputLayer(lyr)
+                #getting table name with schema
                 tableName = self.getTableNameFromLayer(lyr)
+                #setting temp table name
+                processTableName = tableName+'_temp'
+                #creating temp table
                 self.prepareWorkingStructure(tableName, featureMap)
                 if tableName[-1] in ['a', 'l']:
-                    result = self.runProcessinAlg(tableName+'_temp')
+                    result = self.runProcessinAlg(lyr, processTableName)
                     if len(result) > 0:
                         recordList = []
                         for tupple in result:
                             recordList.append((cl,tupple[0],'Snapping error.',tupple[1]))
                             self.addClassesToBeDisplayedList(cl) 
                         numberOfProblems = self.addFlag(recordList)
-                        self.setStatus('{} feature(s) of class '+cl+' with snapping errors. Check flags.\n' .format(numberOfProblems), 4) #Finished with flags
-                        QgsMessageLog.logMessage('{} feature(s) of class '+cl+' with snapping errors. Check flags.\n' .format(numberOfProblems), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        self.setStatus('{0} feature(s) of class {1} with snapping errors. Check flags.\n' .format(numberOfProblems, cl), 4) #Finished with flags
+                        QgsMessageLog.logMessage('{0} feature(s) of class {1} with snapping errors. Check flags.\n' .format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     else:
                         self.setStatus('There are no snapping errors on '+cl+'.\n', 1) #Finished
                         QgsMessageLog.logMessage('There are no snapping errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
