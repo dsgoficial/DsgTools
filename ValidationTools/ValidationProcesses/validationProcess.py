@@ -26,7 +26,7 @@ from PyQt4.QtGui import QMessageBox
 from PyQt4.Qt import QObject
 
 #QGIS imports
-from qgis.core import QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceURI, QgsFeatureRequest, QgsMessageLog, QgsExpression
+from qgis.core import QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceURI, QgsFeatureRequest, QgsMessageLog, QgsExpression
 
 # DSGTools imports
 from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
@@ -281,3 +281,32 @@ class ValidationProcess(QObject):
         for feature in layer.getFeatures():
             recordList.append((feature.id(), binascii.hexlify(feature.geometry().asWkb())))
         return recordList
+    
+    def prepareExecution(self, cl):
+        '''
+        Prepare the process to be executed
+        cl: table name
+        '''
+        #creating vector layer
+        schema, layer_name = self.abstractDb.getTableSchema(cl)
+        lyr = self.layerLoader.load([layer_name],uniqueLoad=True)[layer_name]
+        #getting feature map including the edit buffer
+        featureMap = self.mapInputLayer(lyr)
+        #getting table name with schema
+        tableName = self.getTableNameFromLayer(lyr)
+        #setting temp table name
+        processTableName = tableName+'_temp'
+        #creating temp table
+        self.prepareWorkingStructure(tableName, featureMap)
+        return processTableName, lyr
+    
+    def postProcessSteps(self, processTableName, lyr):
+        '''
+        Execute the final steps after the actual process
+        '''
+        #getting the output as a QgsVectorLayer
+        outputLayer = QgsVectorLayer(self.abstractDb.getURI(processTableName, True).uri(), processTableName, "postgres")
+        #updating the original layer (lyr)
+        self.updateOriginalLayer(lyr, outputLayer)
+        #dropping the temp table as we don't need it anymore
+        self.abstractDb.dropTempTable(processTableName)

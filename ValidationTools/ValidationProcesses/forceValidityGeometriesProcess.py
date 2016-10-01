@@ -52,25 +52,12 @@ class ForceValidityGeometriesProcess(ValidationProcess):
             flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyInvalidGeometriesProcess')
             numberOfProblems = 0
             for cl in flagsDict.keys():
-                #creating vector layer
-                schema, layer_name = self.abstractDb.getTableSchema(cl)
-                lyr = self.layerLoader.load([layer_name],uniqueLoad=True)[layer_name]
-                #getting feature map including the edit buffer
-                featureMap = self.mapInputLayer(lyr)
-                #getting table name with schema
-                tableName = self.getTableNameFromLayer(lyr)
-                #setting temp table name
-                processTableName = tableName+'_temp'
-                #creating temp table
-                self.prepareWorkingStructure(tableName, featureMap)
+                # preparation
+                processTableName, lyr = self.prepareExecution(cl)
                 #running the process in the temp table
                 numberOfProblems += self.abstractDb.forceValidity(processTableName, flagsDict[cl])
-                #getting the output as a QgsVectorLayer
-                outputLayer = QgsVectorLayer(self.abstractDb.getURI(processTableName, True).uri(), processTableName, "postgres")
-                #updating the original layer (lyr)
-                self.updateOriginalLayer(lyr, outputLayer)
-                #dropping the temp table as we don't need it anymore
-                self.abstractDb.dropTempTable(processTableName)
+                # finalization
+                self.postProcessSteps(processTableName, lyr)
             self.setStatus('{} features were changed.\n'.format(numberOfProblems), 1) #Finished with flags
             QgsMessageLog.logMessage('{} features were changed.\n'.format(numberOfProblems), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
