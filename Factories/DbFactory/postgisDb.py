@@ -1558,7 +1558,6 @@ class PostgisDb(AbstractDb):
                 self.db.rollback()
                 raise Exception(self.tr('Problem snapping class: ') + query.lastError().text())
         self.db.commit()
-        
     
     def runQuery(self, sql, errorMsg, params):
         self.checkAndOpenDb()

@@ -35,14 +35,16 @@ class RecursiveSnapProcess(ValidationProcess):
         '''
         Reimplementation of the execute method from the parent class
         '''
-        QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr('Process.\n'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
-            classesWithGeom = self.abstractDb.getOrphanGeomTablesWithElements()
-            tol = self.parameters['Snap']
-            self.abstractDb.recursiveSnap(classesWithGeom, tol)
-            self.setStatus('All features snapped succesfully.\n', 1) #Finished
-            QgsMessageLog.logMessage('All features snapped succesfully.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            lyrs = self.inputData()
+            for lyr in lyrs:
+                classesWithGeom = self.abstractDb.getOrphanGeomTablesWithElements()
+                tol = self.parameters['Snap']
+                self.abstractDb.recursiveSnap(classesWithGeom, tol)
+                self.setStatus('All features from {} snapped succesfully.\n'.format(cl), 1) #Finished
+                QgsMessageLog.logMessage('All features from {} snapped succesfully.\n'.format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

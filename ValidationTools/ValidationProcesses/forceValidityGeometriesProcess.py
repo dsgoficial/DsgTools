@@ -53,7 +53,8 @@ class ForceValidityGeometriesProcess(ValidationProcess):
             numberOfProblems = 0
             for cl in flagsDict.keys():
                 #creating vector layer
-                lyr = QgsVectorLayer(self.abstractDb.getURI(cl, True).uri(), cl, "postgres")
+                schema, layer_name = self.abstractDb.getTableSchema(cl)
+                lyr = self.layerLoader.load([layer_name],uniqueLoad=True)[layer_name]
                 #getting feature map including the edit buffer
                 featureMap = self.mapInputLayer(lyr)
                 #getting table name with schema
