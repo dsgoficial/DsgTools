@@ -80,22 +80,12 @@ class CleanGeometriesProcess(ValidationProcess):
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            lyrs = self.inputData()
-            if lyrs.__len__() == 0:
-                self.setStatus(self.tr('No layers loaded!\n'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('No layers loaded!\n'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                return
-            for lyr in lyrs:
-                cl = lyr.name()
-                #getting feature map including the edit buffer
-                featureMap = self.mapInputLayer(lyr)
-                #getting table name with schema
-                tableName = self.getTableNameFromLayer(lyr)
-                #setting temp table name
-                processTableName = tableName+'_temp'
-                #creating temp table
-                self.prepareWorkingStructure(tableName, featureMap)
-                if tableName[-1] in ['a', 'l']:
+            classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase()
+            for cl in classesWithElem:
+                if cl[-1] in ['a', 'l']:
+                    # preparation
+                    processTableName, lyr = self.prepareExecution(cl)
+                    #running the process in the temp table
                     result = self.runProcessinAlg(lyr, processTableName)
                     self.abstractDb.dropTempTable(processTableName)
                     if len(result) > 0:
