@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, QgsVectorLayer
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class ForceValidityGeometriesProcess(ValidationProcess):
@@ -46,17 +46,34 @@ class ForceValidityGeometriesProcess(ValidationProcess):
         '''
         Reimplementation of the execute method from the parent class
         '''
-        QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr('Process.\n'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyInvalidGeometriesProcess')
             numberOfProblems = 0
             for cl in flagsDict.keys():
-                numberOfProblems += self.abstractDb.forceValidity(cl,flagsDict[cl])
-            self.setStatus('%s features were changed.\n' % numberOfProblems, 1) #Finished with flags
-            QgsMessageLog.logMessage('%s features were changed.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            return
+                #creating vector layer
+                lyr = QgsVectorLayer(self.abstractDb.getURI(cl, True).uri(), cl, "postgres")
+                #getting feature map including the edit buffer
+                featureMap = self.mapInputLayer(lyr)
+                #getting table name with schema
+                tableName = self.getTableNameFromLayer(lyr)
+                #setting temp table name
+                processTableName = tableName+'_temp'
+                #creating temp table
+                self.prepareWorkingStructure(tableName, featureMap)
+                #running the process in the temp table
+                numberOfProblems += self.abstractDb.forceValidity(processTableName, flagsDict[cl])
+                #getting the output as a QgsVectorLayer
+                outputLayer = QgsVectorLayer(self.abstractDb.getURI(processTableName, True).uri(), processTableName, "postgres")
+                #updating the original layer (lyr)
+                self.updateOriginalLayer(lyr, outputLayer)
+                #dropping the temp table as we don't need it anymore
+                self.abstractDb.dropTempTable(processTableName)
+            self.setStatus('{} features were changed.\n'.format(numberOfProblems), 1) #Finished with flags
+            QgsMessageLog.logMessage('{} features were changed.\n'.format(numberOfProblems), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
-            return
+            return 0

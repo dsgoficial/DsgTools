@@ -39,7 +39,7 @@ class ValidationProcess(QObject):
         super(ValidationProcess, self).__init__()
         self.abstractDb = postgisDb
         if self.getStatus() == None:
-            self.setStatus('Instantianting process', 0)
+            self.setStatus(self.tr('Instantianting process'), 0)
         self.classesToBeDisplayedAfterProcess = []
         self.parameters = None
         self.iface = iface
@@ -166,7 +166,7 @@ class ValidationProcess(QObject):
         Sets the finished with error status (status number 2)
         Clears the classes to be displayed
         '''
-        self.setStatus('Process finished with errors.', 2) #Failed status
+        self.setStatus(self.tr('Process finished with errors.'), 2) #Failed status
         self.clearClassesToBeDisplayedAfterProcess()
     
     def inputData(self):

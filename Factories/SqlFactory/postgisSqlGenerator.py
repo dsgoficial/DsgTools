@@ -795,7 +795,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def dropTempTable(self, tableName):
-        sql = 'DROP TABLE IF EXISTS {0}_temp'.format(tableName)
+        sql = 'DROP TABLE IF EXISTS {0}'.format(tableName)
         return sql
     
     def populateTempTable(self, tableName, attributes, values, geometry, srid):

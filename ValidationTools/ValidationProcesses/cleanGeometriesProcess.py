@@ -78,12 +78,12 @@ class CleanGeometriesProcess(ValidationProcess):
         '''
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             lyrs = self.inputData()
             if lyrs.__len__() == 0:
-                self.setStatus('No layers loaded!\n', 1) #Finished
-                QgsMessageLog.logMessage('No layers loaded!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus(self.tr('No layers loaded!\n'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('No layers loaded!\n'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return
             for lyr in lyrs:
                 cl = lyr.name()
@@ -97,10 +97,11 @@ class CleanGeometriesProcess(ValidationProcess):
                 self.prepareWorkingStructure(tableName, featureMap)
                 if tableName[-1] in ['a', 'l']:
                     result = self.runProcessinAlg(lyr, processTableName)
+                    self.abstractDb.dropTempTable(processTableName)
                     if len(result) > 0:
                         recordList = []
                         for tupple in result:
-                            recordList.append((cl, tupple[0], 'Cleaning error.', tupple[1]))
+                            recordList.append((cl, tupple[0], self.tr('Cleaning error.'), tupple[1]))
                             self.addClassesToBeDisplayedList(cl)
                         numberOfProblems = self.addFlag(recordList)
                         self.setStatus('{0} feature(s) of class {1} with cleaning errors. Check flags.\n'.format(numberOfProblems, cl), 4) #Finished with flags

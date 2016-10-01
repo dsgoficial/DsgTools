@@ -58,7 +58,7 @@ class SnapToGridProcess(ValidationProcess):
                 #updating the original layer (lyr)
                 self.updateOriginalLayer(lyr, outputLayer)
                 #dropping the temp table as we don't need it anymore
-                self.abstractDb.dropTempTable(tableName)
+                self.abstractDb.dropTempTable(processTableName)
             #setting status
             self.setStatus('All features snapped succesfully.\n', 1) #Finished
             QgsMessageLog.logMessage('All features snapped succesfully.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
