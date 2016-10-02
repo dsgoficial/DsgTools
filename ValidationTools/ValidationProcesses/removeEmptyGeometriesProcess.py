@@ -38,8 +38,16 @@ class RemoveEmptyGeometriesProcess(ValidationProcess):
         try:
             self.setStatus('Running', 3) #now I'm running!
             classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
+            if len(classesWithElem) == 0:
+                self.setStatus('Empty database.\n', 1) #Finished
+                QgsMessageLog.logMessage('Empty database.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 1
             for cl in classesWithGeom:
-                self.abstractDb.removeEmptyGeometries(cl)
+                # preparation
+                processTableName, lyr = self.prepareExecution(cl)
+                self.abstractDb.removeEmptyGeometries(processTableName)
+                # finalization
+                self.postProcessSteps(processTableName, lyr)
             self.setStatus('Process executed successfully!', 1) #Finished
             QgsMessageLog.logMessage('Process executed successfully!', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1

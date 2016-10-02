@@ -38,11 +38,20 @@ class RecursiveSnapProcess(ValidationProcess):
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr('Process.\n'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
-            lyrs = self.inputData()
-            for lyr in lyrs:
-                classesWithGeom = self.abstractDb.getOrphanGeomTablesWithElements()
+            classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase()
+            if len(classesWithElem) == 0:
+                self.setStatus('Empty database.\n', 1) #Finished
+                QgsMessageLog.logMessage('Empty database.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 1
+            for cl in classesWithElem:
+                # preparation
+                processTableName, lyr = self.prepareExecution(cl)
+                #getting parameters
                 tol = self.parameters['Snap']
-                self.abstractDb.recursiveSnap(classesWithGeom, tol)
+                self.abstractDb.recursiveSnap([processTableName], tol)
+                # finalization
+                self.postProcessSteps(processTableName, lyr)
+                #setting status
                 self.setStatus('All features from {} snapped succesfully.\n'.format(cl), 1) #Finished
                 QgsMessageLog.logMessage('All features from {} snapped succesfully.\n'.format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1

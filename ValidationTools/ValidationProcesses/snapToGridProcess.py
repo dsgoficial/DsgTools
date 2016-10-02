@@ -38,30 +38,24 @@ class SnapToGridProcess(ValidationProcess):
         QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
-            lyrs = self.inputData()
-            for lyr in lyrs:
-                #getting feature map including the edit buffer
-                featureMap = self.mapInputLayer(lyr)
-                #getting table name with schema
-                tableName = self.getTableNameFromLayer(lyr)
-                #setting temp table name
-                processTableName = tableName+'_temp'
-                #creating temp table
-                self.prepareWorkingStructure(tableName, featureMap)
-                #getting parameters
-                tol = self.parameters['Snap']
-                srid = self.abstractDb.findEPSG()
+            classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase()
+            if len(classesWithElem) == 0:
+                self.setStatus('Empty database.\n', 1) #Finished
+                QgsMessageLog.logMessage('Empty database.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 1
+            #getting parameters
+            tol = self.parameters['Snap']
+            srid = self.abstractDb.findEPSG()
+            for cl in classesWithElem:
+                # preparation
+                processTableName, lyr = self.prepareExecution(cl)
                 #running the process in the temp table
                 self.abstractDb.snapToGrid([processTableName], tol, srid)
-                #getting the output as a QgsVectorLayer
-                outputLayer = QgsVectorLayer(self.abstractDb.getURI(processTableName, True).uri(), processTableName, "postgres")
-                #updating the original layer (lyr)
-                self.updateOriginalLayer(lyr, outputLayer)
-                #dropping the temp table as we don't need it anymore
-                self.abstractDb.dropTempTable(processTableName)
-            #setting status
-            self.setStatus('All features snapped succesfully.\n', 1) #Finished
-            QgsMessageLog.logMessage('All features snapped succesfully.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                # finalization
+                self.postProcessSteps(processTableName, lyr)
+                #setting status
+                self.setStatus('All features from {} snapped succesfully.\n'.format(cl), 1) #Finished
+                QgsMessageLog.logMessage('All features from {} snapped succesfully.\n'.format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             #returning success
             return 1
         except Exception as e:

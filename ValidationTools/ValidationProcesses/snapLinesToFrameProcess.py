@@ -45,13 +45,23 @@ class SnapLinesToFrameProcess(ValidationProcess):
         try:
             self.setStatus('Running', 3) #now I'm running!
             classesWithGeom = self.abstractDb.getOrphanGeomTablesWithElements()
+            if len(classesWithElem) == 0:
+                self.setStatus('Empty database.\n', 1) #Finished
+                QgsMessageLog.logMessage('Empty database.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 1
             lines = []
             for cl in classesWithGeom:
                 if cl[-1] == 'l':
                     lines.append(cl)
             tol = self.parameters['Snap']
-            self.abstractDb.snapLinesToFrame(lines, tol)
-            self.abstractDb.densifyFrame(lines)
+            for cl in lines:
+                # preparation
+                processTableName, lyr = self.prepareExecution(cl)
+                #running the process in the temp table
+                self.abstractDb.snapLinesToFrame([processTableName], tol)
+                self.abstractDb.densifyFrame([processTableName])
+                # finalization
+                self.postProcessSteps(processTableName, lyr)
             self.setStatus('All features snapped succesfully.\n', 1) #Finished
             QgsMessageLog.logMessage('All features snapped succesfully.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1

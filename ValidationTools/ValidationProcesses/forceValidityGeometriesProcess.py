@@ -50,16 +50,19 @@ class ForceValidityGeometriesProcess(ValidationProcess):
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyInvalidGeometriesProcess')
-            numberOfProblems = 0
+            if len(flagsDict.keys()) == 0:
+                self.setStatus('There are no invalid geometries.\n', 1) #Finished
+                QgsMessageLog.logMessage('There are no invalid geometries.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 1
             for cl in flagsDict.keys():
                 # preparation
                 processTableName, lyr = self.prepareExecution(cl)
                 #running the process in the temp table
-                numberOfProblems += self.abstractDb.forceValidity(processTableName, flagsDict[cl])
+                numberOfProblems = self.abstractDb.forceValidity(processTableName, flagsDict[cl])
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
-            self.setStatus('{} features were changed.\n'.format(numberOfProblems), 1) #Finished with flags
-            QgsMessageLog.logMessage('{} features were changed.\n'.format(numberOfProblems), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus('{0} features from {1} were changed.\n'.format(numberOfProblems, cl), 1) #Finished
+                QgsMessageLog.logMessage('{0} features from {1} were changed.\n'.format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

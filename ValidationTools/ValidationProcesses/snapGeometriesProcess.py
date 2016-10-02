@@ -29,11 +29,11 @@ class SnapGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.parameters = {'Snap': 1.0, 'MinArea':0.001}
         
-#     def postProcess(self):
-#         '''
-#         Gets the process that should be execute after this one
-#         '''
-#         return 'ForceValidityGeometriesProcess'
+    def postProcess(self):
+        '''
+        Gets the process that should be execute after this one
+        '''
+        return 'ForceValidityGeometriesProcess'
 
     def runProcessinAlg(self, layer, tempTableName):
         alg = 'grass7:v.clean.advanced'
@@ -77,23 +77,18 @@ class SnapGeometriesProcess(ValidationProcess):
         try:
             self.setStatus('Running', 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            lyrs = self.inputData()
-            if lyrs.__len__() == 0:
-                self.setStatus('No layers loaded!\n', 1) #Finished
-                QgsMessageLog.logMessage('No layers loaded!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                return
-            for lyr in lyrs:
-                cl = lyr.name()
-                #getting feature map including the edit buffer
-                featureMap = self.mapInputLayer(lyr)
-                #getting table name with schema
-                tableName = self.getTableNameFromLayer(lyr)
-                #setting temp table name
-                processTableName = tableName+'_temp'
-                #creating temp table
-                self.prepareWorkingStructure(tableName, featureMap)
-                if tableName[-1] in ['a', 'l']:
+            classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase()
+            if len(classesWithElem) == 0:
+                self.setStatus('Empty database.\n', 1) #Finished
+                QgsMessageLog.logMessage('Empty database.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 1
+            for cl in classesWithElem:
+                if cl[-1] in ['a', 'l']:
+                    # preparation
+                    processTableName, lyr = self.prepareExecution(cl)
+                    #running the process in the temp table
                     result = self.runProcessinAlg(lyr, processTableName)
+                    self.abstractDb.dropTempTable(processTableName)
                     if len(result) > 0:
                         recordList = []
                         for tupple in result:
@@ -103,8 +98,8 @@ class SnapGeometriesProcess(ValidationProcess):
                         self.setStatus('{0} feature(s) of class {1} with snapping errors. Check flags.\n' .format(numberOfProblems, cl), 4) #Finished with flags
                         QgsMessageLog.logMessage('{0} feature(s) of class {1} with snapping errors. Check flags.\n' .format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     else:
-                        self.setStatus('There are no snapping errors on '+cl+'.\n', 1) #Finished
-                        QgsMessageLog.logMessage('There are no snapping errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        self.setStatus('There are no snapping errors on {}.\n'.format(cl), 1) #Finished
+                        QgsMessageLog.logMessage('There are no snapping errors on {}.\n'.format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

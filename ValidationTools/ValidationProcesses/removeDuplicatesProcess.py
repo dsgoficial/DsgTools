@@ -50,11 +50,21 @@ class RemoveDuplicatesProcess(ValidationProcess):
         try:
             self.setStatus('Running', 3) #now I'm running!
             flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyDuplicatedGeometriesProcess')
+            if len(flagsDict.keys()) == 0:
+                self.setStatus('There are no duplicated geometries.\n', 1) #Finished
+                QgsMessageLog.logMessage('There are no duplicated geometries.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 1
             numberOfProblems = 0
             for cl in flagsDict.keys():
-                numberOfProblems += self.abstractDb.removeFeatures(cl,flagsDict[cl])
-            self.setStatus('%s features were removed.\n' % numberOfProblems, 1)
-            QgsMessageLog.logMessage('%s features were removed.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                # preparation
+                processTableName, lyr = self.prepareExecution(cl)
+                #running the process in the temp table
+                problems = self.abstractDb.removeFeatures(processTableName,flagsDict[cl])
+                numberOfProblems += problems
+                # finalization
+                self.postProcessSteps(processTableName, lyr)
+                QgsMessageLog.logMessage('{0} duplicated features from {1} were removed.\n'.format(problems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            self.setStatus('{0} duplicated features were removed.\n'.format(numberOfProblems), 1)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

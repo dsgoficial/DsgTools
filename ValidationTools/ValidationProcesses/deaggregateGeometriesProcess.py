@@ -39,9 +39,14 @@ class DeaggregateGeometriesProcess(ValidationProcess):
             self.setStatus('Running', 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName())
             explodeIdDict = self.abstractDb.getExplodeCandidates() #list only classes with elements.
+            if len(explodeIdDict.keys()) == 0:
+                self.setStatus('There are no multi parted geometries.\n', 1) #Finished
+                QgsMessageLog.logMessage('There are no multi parted geometries.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 1
             for cl in explodeIdDict.keys():
-                uri = self.abstractDb.getURI(cl)
-                layer = QgsVectorLayer(uri.uri(), cl, 'postgres')
+                #creating vector layer
+                schema, layer_name = self.abstractDb.getTableSchema(cl)
+                layer = self.layerLoader.load([layer_name],uniqueLoad=True)[layer_name]
                 provider = layer.dataProvider()
                 if not layer.isValid():
                     QgsMessageLog.logMessage("Layer %s failed to load!" % cl)

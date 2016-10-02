@@ -40,6 +40,10 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
             self.setStatus('Running', 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
+            if len(classesWithElem) == 0:
+                self.setStatus('Empty database.\n', 1) #Finished
+                QgsMessageLog.logMessage('Empty database.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 1
             tol = self.parameters['Angle']
             for cl in classesWithGeom:
                 tableSchema, tableName = self.abstractDb.getTableSchema(cl)
@@ -51,8 +55,8 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
                             recordList.append((tableSchema+'.'+tableName,tupple[0],'Angle out of bound.',tupple[1]))
                             self.addClassesToBeDisplayedList(tupple[0]) 
                         numberOfProblems = self.addFlag(recordList)
-                        self.setStatus('%s feature(s) have out of bounds angle(s). Check flags.\n' % numberOfProblems, 4) #Finished with flags
-                        QgsMessageLog.logMessage('%s feature(s) have out of bounds angle(s). Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        self.setStatus('{0} features from {1} have out of bounds angle(s). Check flags.\n'.format(numberOfProblems, cl), 4) #Finished with flags
+                        QgsMessageLog.logMessage('{0} features from {1} have out of bounds angle(s). Check flags.\n'.format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     else:
                         self.setStatus('There are no out of bounds angles.\n', 1) #Finished
                         QgsMessageLog.logMessage('There are no out of bounds angles.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
