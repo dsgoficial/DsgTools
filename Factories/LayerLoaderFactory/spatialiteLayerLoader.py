@@ -142,14 +142,23 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
     def getStyleFromDb(self, edgvVersion, className):
         return None
 
-    def filterLayerList(self, layerList, useInheritance, onlyWithElements):
+    def filterLayerList(self, layerList, useInheritance, onlyWithElements, geomFilterList):
         filterList = []
         if onlyWithElements:
-            lyrsWithElements = self.abstractDb.getLayersWithElementsV2(layerList, useInheritance = False)
+            semifinalList = self.abstractDb.getLayersWithElementsV2(layerList, useInheritance = False)
         else:
-            lyrsWithElements = layerList
-
-        return lyrsWithElements
+            semifinalList = layerList
+        if len(geomFilterList) > 0:
+            finalList = []
+            for key in self.correspondenceDict:
+                if self.correspondenceDict[key] in geomFilterList:
+                    if key in self.geomTypeDict:
+                        for lyr in semifinalList:
+                            if lyr in self.geomTypeDict[key] and  lyr not in finalList:
+                                finalList.append(lyr)
+        else:
+            finalList = semifinalList
+        return finalList
     
     def setMulti(self, vlayer, domLayerDict):
         #sweep vlayer to find v2

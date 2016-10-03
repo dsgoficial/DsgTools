@@ -63,19 +63,29 @@ class PostGISLayerLoader(EDGVLayerLoader):
     def buildUri(self):
         self.uri.setConnection(str(self.host),str(self.port), str(self.database), str(self.user), str(self.password))
     
-    def filterLayerList(self, layerList, useInheritance, onlyWithElements):
+    def filterLayerList(self, layerList, useInheritance, onlyWithElements, geomFilterList):
         filterList = []
         if onlyWithElements:
             lyrsWithElements = self.abstractDb.getLayersWithElementsV2(layerList, useInheritance = useInheritance)
         else:
             lyrsWithElements = layerList
         if useInheritance:
-            finalList = self.abstractDb.getLayersFilterByInheritance(lyrsWithElements)
+            semifinalList = self.abstractDb.getLayersFilterByInheritance(lyrsWithElements)
         else:
-            finalList = lyrsWithElements
+            semifinalList = lyrsWithElements
+        if len(geomFilterList) > 0:
+            finalList = []
+            for key in self.correspondenceDict:
+                if self.correspondenceDict[key] in geomFilterList:
+                    if key in self.geomTypeDict:
+                        for lyr in semifinalList:
+                            if lyr in self.geomTypeDict[key] and  lyr not in finalList:
+                                finalList.append(lyr)
+        else:
+            finalList = semifinalList
         return finalList
 
-    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilter = dict()):
+    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = []):
         '''
         1. Get loaded layers
         2. Filter layers;
@@ -88,7 +98,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         loadedLayers = self.iface.legendInterface().layers()
         loadedGroups = self.iface.legendInterface().groups()
         #4. Filter Layers:
-        filteredLayerList = self.filterLayerList(layerList, useInheritance, onlyWithElements)
+        filteredLayerList = self.filterLayerList(layerList, useInheritance, onlyWithElements, geomFilterList)
         #2. Load Domains
         #do this only if EDGV Version = FTer
         edgvVersion = self.abstractDb.getDatabaseVersion()
