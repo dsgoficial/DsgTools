@@ -2332,4 +2332,11 @@ class PostgisDb(AbstractDb):
             self.db.rollback()
             raise Exception(self.tr('Problem removing empty geometries: ') + query.lastError().text())
         self.db.commit()
-        
+    
+    def getParamsFromConectedDb(self):
+        self.checkAndOpenDb()
+        host = self.db.hostName()
+        port = self.db.port()
+        user = self.db.userName()
+        password = self.db.password()
+        return (host, port, user, password)

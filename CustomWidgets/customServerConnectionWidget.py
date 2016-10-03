@@ -77,10 +77,10 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         #TODO: build selectedDbsDict and emit dbDictChanged()
         #1- Iterate over dbList and check if all layers on dbList are on dict. If not, add it.
         if type == 'added':
-            (host, port, user, password) = self.serverWidget.getServerParameters()
+            (host, port, user, password) = self.serverWidget.abstractDb.getParamsFromConectedDb()
             for dbName in dbList:
                 if dbName not in self.selectedDbsDict.keys():
-                    if host and port and user and password:
+                    if host and port and user:
                         localDb = self.dbFactory.createDbFactory('QPSQL')
                         localDb.connectDatabaseWithParameters(host, port, dbName, user, password)
                         self.selectedDbsDict[dbName] = localDb
