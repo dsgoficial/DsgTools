@@ -46,13 +46,13 @@ class RemoveDuplicatesProcess(ValidationProcess):
         '''
         Reimplementation of the execute method from the parent class
         '''
-        QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
             flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyDuplicatedGeometriesProcess')
             if len(flagsDict.keys()) == 0:
-                self.setStatus('There are no duplicated geometries.\n', 1) #Finished
-                QgsMessageLog.logMessage('There are no duplicated geometries.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus(self.tr('There are no duplicated geometries.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('There are no duplicated geometries.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             numberOfProblems = 0
             for cl in flagsDict.keys():
@@ -63,8 +63,8 @@ class RemoveDuplicatesProcess(ValidationProcess):
                 numberOfProblems += problems
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
-                QgsMessageLog.logMessage('{0} duplicated features from {1} were removed.\n'.format(problems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            self.setStatus('{0} duplicated features were removed.\n'.format(numberOfProblems), 1)
+                QgsMessageLog.logMessage('{0} duplicated features from {1} were removed.'.format(problems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            self.setStatus('{0} duplicated features were removed.'.format(numberOfProblems), 1)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

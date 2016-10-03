@@ -34,7 +34,7 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
         '''
         Reimplementation of the execute method from the parent class
         '''
-        QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
@@ -50,11 +50,11 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
                 numberOfDupGeom = self.addFlag(dupGeomRecordList)
                 for tuple in dupGeomRecordList:
                     self.addClassesToBeDisplayedList(tuple[0])        
-                self.setStatus('%s features are duplicated. Check flags.\n' % numberOfDupGeom, 4) #Finished with flags
-                QgsMessageLog.logMessage('%s features are duplicated. Check flags.\n' % numberOfDupGeom, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus('{} features are duplicated. Check flags.'.format(numberOfDupGeom), 4) #Finished with flags
+                QgsMessageLog.logMessage('{} features are duplicated. Check flags.'.format(numberOfDupGeom), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
-                self.setStatus('There are no duplicated geometries.\n', 1) #Finished
-                QgsMessageLog.logMessage('There are no duplicated geometries.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus('There are no duplicated geometries.', 1) #Finished
+                QgsMessageLog.logMessage('There are no duplicated geometries.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

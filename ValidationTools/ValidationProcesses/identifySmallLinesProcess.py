@@ -35,7 +35,7 @@ class IdentifySmallLinesProcess(ValidationProcess):
         '''
         Reimplementation of the execute method from the parent class
         '''
-        QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
@@ -55,11 +55,11 @@ class IdentifySmallLinesProcess(ValidationProcess):
                 numberOfProblems = self.addFlag(recordList)
                 for tuple in recordList:
                     self.addClassesToBeDisplayedList(tuple[0])        
-                self.setStatus('%s features have small length. Check flags.\n' % numberOfProblems, 4) #Finished with flags
-                QgsMessageLog.logMessage('%s features have small length. Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus('%s features have small length. Check flags.' % numberOfProblems, 4) #Finished with flags
+                QgsMessageLog.logMessage('%s features have small length. Check flags.' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
-                self.setStatus('There are no small lines.\n', 1) #Finished
-                QgsMessageLog.logMessage('There are no small lines.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus('There are no small lines.', 1) #Finished
+                QgsMessageLog.logMessage('There are no small lines.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

@@ -35,25 +35,25 @@ class RecursiveSnapProcess(ValidationProcess):
         '''
         Reimplementation of the execute method from the parent class
         '''
-        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr('Process.\n'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase()
             if len(classesWithElem) == 0:
-                self.setStatus('Empty database.\n', 1) #Finished
-                QgsMessageLog.logMessage('Empty database.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus(self.tr('Empty database.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
+            #getting parameters
+            tol = self.parameters['Snap']
             for cl in classesWithElem:
                 # preparation
                 processTableName, lyr = self.prepareExecution(cl)
-                #getting parameters
-                tol = self.parameters['Snap']
                 self.abstractDb.recursiveSnap([processTableName], tol)
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
-                #setting status
-                self.setStatus('All features from {} snapped succesfully.\n'.format(cl), 1) #Finished
-                QgsMessageLog.logMessage('All features from {} snapped succesfully.\n'.format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage('All features from {} snapped successfully.'.format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            #setting status
+            self.setStatus('All features from snapped successfully.', 1) #Finished
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

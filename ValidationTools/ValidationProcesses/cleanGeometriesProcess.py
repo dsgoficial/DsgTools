@@ -76,15 +76,16 @@ class CleanGeometriesProcess(ValidationProcess):
         '''
         Reimplementation of the execute method from the parent class
         '''
-        QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase()
             if len(classesWithElem) == 0:
-                self.setStatus('Empty database.\n', 1) #Finished
-                QgsMessageLog.logMessage('Empty database.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus('Empty database.', 1) #Finished
+                QgsMessageLog.logMessage('Empty database.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
+            error = False
             for cl in classesWithElem:
                 if cl[-1] in ['a', 'l']:
                     # preparation
@@ -93,16 +94,19 @@ class CleanGeometriesProcess(ValidationProcess):
                     result = self.runProcessinAlg(lyr, processTableName)
                     self.abstractDb.dropTempTable(processTableName)
                     if len(result) > 0:
+                        error = True
                         recordList = []
                         for tupple in result:
                             recordList.append((cl, tupple[0], self.tr('Cleaning error.'), tupple[1]))
                             self.addClassesToBeDisplayedList(cl)
                         numberOfProblems = self.addFlag(recordList)
-                        self.setStatus('{0} feature(s) from {1} with cleaning errors. Check flags.\n'.format(numberOfProblems, cl), 4) #Finished with flags
                         QgsMessageLog.logMessage('{0} feature(s) from {1} with cleaning errors. Check flags.\n'.format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     else:
-                        self.setStatus('There are no cleaning errors on '+cl+'.\n', 1) #Finished
                         QgsMessageLog.logMessage('There are no cleaning errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            if error:
+                self.setStatus('There are cleaning errors. Check log.', 4) #Finished with errors
+            else:
+                self.setStatus('There are no cleaning errors.', 1) #Finished
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

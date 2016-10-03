@@ -34,14 +34,14 @@ class DeaggregateGeometriesProcess(ValidationProcess):
         '''
         Reimplementation of the execute method from the parent class
         '''
-        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr('Process.\n'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr('Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName())
             explodeIdDict = self.abstractDb.getExplodeCandidates() #list only classes with elements.
             if len(explodeIdDict.keys()) == 0:
-                self.setStatus('There are no multi parted geometries.\n', 1) #Finished
-                QgsMessageLog.logMessage('There are no multi parted geometries.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus('There are no multi parted geometries.', 1) #Finished
+                QgsMessageLog.logMessage('There are no multi parted geometries.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             for cl in explodeIdDict.keys():
                 #creating vector layer
@@ -67,8 +67,8 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                     feat.setGeometry(parts[0])
                     layer.updateFeature(feat)
                     layer.addFeatures(addList,True)
-            self.setStatus(self.tr('All geometries are now single parted.\n'), 1) #Finished
-            QgsMessageLog.logMessage(self.tr('All features are valid.\n'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            self.setStatus(self.tr('All geometries are now single parted.'), 1) #Finished
+            QgsMessageLog.logMessage(self.tr('All geometries are now single parted.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

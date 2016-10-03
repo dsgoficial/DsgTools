@@ -1598,6 +1598,7 @@ class PostgisDb(AbstractDb):
                 attributes = [field.name() for field in feat.fields() if field.type() != 6]
                 # getting only the needed attribute values
                 values = [feat.attribute(fieldname) for fieldname in attributes]
+                values[0] = feat.id()
             geometry = binascii.hexlify(feat.geometry().asWkb())
             insertSql = self.gen.populateTempTable(tableName, attributes, values, geometry, srid)
             if not query.exec_(insertSql):
@@ -1609,8 +1610,7 @@ class PostgisDb(AbstractDb):
             self.db.rollback()
             
             raise Exception(self.tr('Problem creating spatial index on temp table: ') + query.lastError().text())
-        self.db.commit()
-        
+        self.db.commit()        
         
     def dropTempTable(self, tableName):
         self.checkAndOpenDb()
@@ -1622,7 +1622,6 @@ class PostgisDb(AbstractDb):
             
             raise Exception(self.tr('Problem dropping temp table: ') + query.lastError().text())
         self.db.commit()
-        
     
     def createStyleTable(self):
         self.db.transaction()
@@ -1633,7 +1632,6 @@ class PostgisDb(AbstractDb):
             
             raise Exception(self.tr('Problem creating style table: ') + query.lastError().text())
         self.db.commit()
-        
 
     def checkAndCreateStyleTable(self):
         self.checkAndOpenDb()
@@ -2164,7 +2162,6 @@ class PostgisDb(AbstractDb):
         if not query.exec_(sql):
             
             raise Exception(self.tr('Problem creating from template: ') + query.lastError().text())
-        
     
     def updateDbSRID(self, srid):
         self.checkAndOpenDb()
@@ -2176,7 +2173,6 @@ class PostgisDb(AbstractDb):
             
             raise Exception(self.tr('Problem setting srid: ') + query.lastError().text())
         self.db.commit()
-        
     
     def checkTemplate(self, version):
         self.checkAndOpenDb()

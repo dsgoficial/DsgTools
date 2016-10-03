@@ -242,7 +242,7 @@ class ValidationProcess(QObject):
         idsToRemove = []
         #making the changes and inserts
         for feature in pgInputLayer.getFeatures():
-            id = feature['id']
+            id = feature.id()
             outFeats = []
             #getting the output features with the specific id
             for gf in qgisOutputVector.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%id))):

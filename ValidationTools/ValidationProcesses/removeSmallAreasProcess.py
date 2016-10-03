@@ -46,13 +46,13 @@ class RemoveSmallAreasProcess(ValidationProcess):
         '''
         Reimplementation of the execute method from the parent class
         '''
-        QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus('Running', 3) #now I'm running!
             flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifySmallAreasProcess')
             if len(flagsDict.keys()) == 0:
-                self.setStatus('There are no small areas.\n', 1) #Finished
-                QgsMessageLog.logMessage('There are no small areas.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus('There are no small areas.', 1) #Finished
+                QgsMessageLog.logMessage('There are no small areas.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             numberOfProblems = 0
             for cl in flagsDict.keys():
@@ -63,8 +63,8 @@ class RemoveSmallAreasProcess(ValidationProcess):
                 numberOfProblems += problems
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
-                QgsMessageLog.logMessage('{0} features from {1} were removed.\n'.format(problems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            self.setStatus('{} features were removed.\n'.format(numberOfProblems), 1) #Finished with flags
+                QgsMessageLog.logMessage('{0} features from {1} were removed.'.format(problems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            self.setStatus('{} features were removed.'.format(numberOfProblems), 1) #Finished with flags
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
