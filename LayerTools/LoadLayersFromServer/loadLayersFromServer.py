@@ -61,6 +61,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         self.customServerConnectionWidget.resetAll.connect(self.resetInterface)
         self.customServerConnectionWidget.styleChanged.connect(self.populateStyleCombo)
         self.lyrDict = dict()
+        self.changePrimitiveCheckboxState(False)
     
     def resetInterface(self):
         self.layersCustomSelector.clearAll()
@@ -68,6 +69,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         #TODO: refresh optional parameters
         self.checkBoxOnlyWithElements.setCheckState(0)
         self.onlyParentsCheckBox.setCheckState(0)
+        self.changePrimitiveCheckboxState(False)
         pass
     
     @pyqtSlot()
@@ -113,7 +115,8 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
     
     
     @pyqtSlot(bool)
-    def on_showCategoriesRadioButton_toggled(self):
+    def on_showCategoriesRadioButton_toggled(self, enabled):
+        self.changePrimitiveCheckboxState(enabled)
         if self.lyrDict <> dict():
             cats = []
             for lyr in self.lyrDict.keys():
@@ -191,3 +194,17 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                 self.styleComboBox.addItem(styleList[i])
         else:
             self.styleComboBox.addItem(self.tr('No available styles'))
+    
+    def changePrimitiveCheckboxState(self, enabled):
+        self.checkBoxPoint.setEnabled(enabled)
+        self.checkBoxLine.setEnabled(enabled)
+        self.checkBoxPolygon.setEnabled(enabled)
+        self.checkBoxAll.setEnabled(enabled)
+    
+    @pyqtSlot(bool)
+    def on_checkBoxAll_toggled(self, toggled):
+        self.checkBoxPoint.setChecked(toggled)
+        self.checkBoxLine.setChecked(toggled)
+        self.checkBoxPolygon.setChecked(toggled)
+            
+    

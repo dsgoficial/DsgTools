@@ -75,7 +75,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             finalList = lyrsWithElements
         return finalList
 
-    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False):
+    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilter = dict()):
         '''
         1. Get loaded layers
         2. Filter layers;

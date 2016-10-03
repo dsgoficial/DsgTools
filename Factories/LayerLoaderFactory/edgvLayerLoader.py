@@ -50,6 +50,7 @@ class EDGVLayerLoader(QObject):
         self.logErrorDict = dict()
         self.errorLog = ''
         self.geomDict = self.abstractDb.getGeomDict()
+        self.geomTypeDict = self.abstractDb.getGeomTypeDict()
         self.correspondenceDict = {'POINT':self.tr('Point'), 'MULTIPOINT':self.tr('Point'), 'LINESTRING':self.tr('Line'),'MULTILINESTRING':self.tr('Line'), 'POLYGON':self.tr('Area'), 'MULTIPOLYGON':self.tr('Area')}
         
     def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False):
@@ -82,9 +83,9 @@ class EDGVLayerLoader(QObject):
 
     def createMeasureColumn(self, layer):
         if layer.geometryType() == QGis.Polygon:
-            layer.addExpressionField('$area', QgsField('area_otf', QVariant.Double))
+            layer.addExpressionField('$area', QgsField(self.tr('area_otf'), QVariant.Double))
         elif layer.geometryType() == QGis.Line:
-            layer.addExpressionField('$length', QgsField('comprimento_otf', QVariant.Double))
+            layer.addExpressionField('$length', QgsField(self.tr('lenght_otf'), QVariant.Double))
         return layer
     
     def getDatabaseGroup(self, groupList):
@@ -95,29 +96,19 @@ class EDGVLayerLoader(QObject):
             return self.iface.legendInterface().addGroup(dbName, True, -1)
 
     def getLyrDict(self, lyrList):
-        #redo
         lyrDict = dict()
-        lyrList.sort()
-        for lyr in lyrList:
-            cat = lyr.split('_')[0]
-            if lyr[-1] == 'p':
-                if self.tr('Point') not in lyrDict.keys():
-                    lyrDict[self.tr('Point')] = dict()
-                if cat not in lyrDict[self.tr('Point')].keys():
-                    lyrDict[self.tr('Point')][cat] = []
-                lyrDict[self.tr('Point')][cat].append(lyr)
-            if lyr[-1] == 'l':
-                if self.tr('Line') not in lyrDict.keys():
-                    lyrDict[self.tr('Line')] = dict()
-                if cat not in lyrDict[self.tr('Line')].keys():
-                    lyrDict[self.tr('Line')][cat] = []
-                lyrDict[self.tr('Line')][cat].append(lyr)
-            if lyr[-1] == 'a':
-                if self.tr('Area') not in lyrDict.keys():
-                    lyrDict[self.tr('Area')] = dict()
-                if cat not in lyrDict[self.tr('Area')].keys():
-                    lyrDict[self.tr('Area')][cat] = []
-                lyrDict[self.tr('Area')][cat].append(lyr)
+        for type in self.geomTypeDict.keys():
+            if self.correspondenceDict[type] not in lyrDict.keys():
+                lyrDict[self.correspondenceDict[type]] = dict()
+            for lyr in self.geomTypeDict[type]:
+                if lyr in lyrList:
+                    cat = lyr.split('_')[0]
+                    if cat not in lyrDict[self.correspondenceDict[type]].keys():
+                        lyrDict[self.correspondenceDict[type]][cat] = []
+                    lyrDict[self.correspondenceDict[type]][cat].append(lyr)
+        for type in lyrDict.keys():
+            if lyrDict[type] == dict():
+                lyrDict.pop(type)
         return lyrDict
 
     def prepareGroups(self, groupList, parent, lyrDict):
