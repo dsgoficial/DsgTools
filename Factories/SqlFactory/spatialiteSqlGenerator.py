@@ -186,3 +186,7 @@ class SpatialiteSqlGenerator(SqlGenerator):
     def insertFrame(self,scale,mi,inom,frame,srid,geoSrid):
         sql = """INSERT INTO public_aux_moldura_a (mi,inom,escala,GEOMETRY) VALUES ('{0}','{1}','{2}',Transform(ST_GeomFromText('{3}',{4}), {5}))""".format(mi,inom,scale,frame,geoSrid,srid)
         return sql
+    
+    def getElementCountFromLayerV2(self, schema, table, useInheritance):
+        layer = '_'.join([schema, table])
+        return self.getElementCountFromLayer(layer)

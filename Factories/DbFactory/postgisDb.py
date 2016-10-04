@@ -2160,8 +2160,9 @@ class PostgisDb(AbstractDb):
         sql = self.gen.createFromTemplate(dbName,version,templateName)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
-            
             raise Exception(self.tr('Problem creating from template: ') + query.lastError().text())
+        #this close is to allow creation from template
+        self.db.close()
     
     def updateDbSRID(self, srid):
         self.checkAndOpenDb()
@@ -2173,6 +2174,8 @@ class PostgisDb(AbstractDb):
             
             raise Exception(self.tr('Problem setting srid: ') + query.lastError().text())
         self.db.commit()
+        #this close is to allow creation from template
+        self.db.close()
     
     def checkTemplate(self, version):
         self.checkAndOpenDb()
@@ -2251,6 +2254,8 @@ class PostgisDb(AbstractDb):
         self.alterSearchPath(version)
         self.setDbAsTemplate(version)
         self.createStyleTable()
+        #this close is to allow creation from template
+        self.db.close()
     
     def alterSearchPath(self, version):
         self.checkAndOpenDb()

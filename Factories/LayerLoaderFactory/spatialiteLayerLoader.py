@@ -62,7 +62,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
                     return ll
         return loaded
 
-    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False):
+    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = []):
         '''
         1. Get loaded layers
         2. Filter layers;
@@ -75,7 +75,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         loadedLayers = self.iface.legendInterface().layers()
         loadedGroups = self.iface.legendInterface().groups()
         #4. Filter Layers:
-        filteredLayerList = self.filterLayerList(layerList, False, onlyWithElements)
+        filteredLayerList = self.filterLayerList(layerList, False, onlyWithElements, geomFilterList)
         #2. Load Domains
         #do this only if EDGV Version = FTer
         edgvVersion = self.abstractDb.getDatabaseVersion()

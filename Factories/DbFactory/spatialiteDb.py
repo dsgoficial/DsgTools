@@ -524,4 +524,7 @@ class SpatialiteDb(AbstractDb):
         newFeat.SetField('escala',scale)
         out=outputLayer.CreateFeature(newFeat)
         outputDS.Destroy()
+    
+    def getTableSchemaFromDb(self, table):
+        return table.split('_')[0]
         
