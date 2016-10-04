@@ -111,13 +111,15 @@ class PostGISSqlGenerator(SqlGenerator):
         for db in mydict.keys():
             for schema in mydict[db].keys():
                 for cat in mydict[db][schema].keys():
-                    for table in mydict[db][schema][cat].keys():
-                        read = mydict[db][schema][cat][table]["read"]
-                        write = mydict[db][schema][cat][table]["write"]
+                    for tableWithSchema in mydict[db][schema][cat].keys():
+                        tableList = tableWithSchema.split('.')
+                        table = '''"{0}"."{1}"'''.format(tableList[0],tableList[1])
+                        read = mydict[db][schema][cat][tableWithSchema]["read"]
+                        write = mydict[db][schema][cat][tableWithSchema]["write"]
                         if write == '2':
-                            sql+="""GRANT ALL ON "{0}" TO "{1}";\n""".format(table,roleName)
+                            sql+="""GRANT ALL ON {0} TO "{1}";\n""".format(table,roleName)
                         elif read == '2':
-                            sql+="""GRANT SELECT ON "{0}" TO "{1}";\n""".format(table,roleName)
+                            sql+="""GRANT SELECT ON {0} TO "{1}";\n""".format(table,roleName)
                 sql += """GRANT ALL ON SCHEMA "{0}" TO "{1}";\n""".format(schema,roleName)
                 sql += """REVOKE CREATE ON SCHEMA "{0}" FROM "{1}";\n""".format(schema,roleName)
                 sql += """GRANT USAGE ON SCHEMA "{0}" TO "{1}";\n""".format(schema,roleName)
