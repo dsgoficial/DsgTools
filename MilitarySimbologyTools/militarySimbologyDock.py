@@ -28,22 +28,54 @@ from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem
 from qgis.gui import QgsMessageBar
 import qgis as qgis
 
 #DsgTools imports
+from militarySimbology import MilitarySymbology
+from createSqlite import CreateSqlite
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'militarySimbologyDock.ui'))
 
-class MilitarySimbologyDock(QtGui.QDockWidget, FORM_CLASS):
-    def __init__(self, iface, codeList, parent = None):
+class MilitarySimbologyDock(QtGui.QDockWidget, MilitarySymbology, FORM_CLASS):
+    
+    def __init__(self, iface, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
+        self.iface = iface
+        self.sqlitePath = False
         self.setupUi(self)
+        self.widget.lineEdit.textChanged.connect(self.setCurrentSqlite)            
+        
+    def setCurrentSqlite(self, pathSqliteDB):
+        self.sqlitePath =  pathSqliteDB
+          
+    @pyqtSlot(bool)
+    def on_createSqliteButton_clicked(self):
+        CreateSqlite()
+    
+    @pyqtSlot(bool)
+    def on_loadAlliedButton_clicked(self):
+        if self.sqlitePath:
+            stylePath = os.path.join(os.path.dirname(__file__), 'templates', 'templateStyleAllied.qml')
+            MilitarySymbology(self.iface, self.sqlitePath, stylePath, 'Aliado')
+        else:
+            self.message()
+       
+    @pyqtSlot(bool)
+    def on_loadEnemyButton_clicked(self):
+        if self.sqlitePath:
+            stylePath = os.path.join(os.path.dirname(__file__), 'templates', 'templateStyleEnemy.qml')
+            MilitarySymbology(self.iface, self.sqlitePath, stylePath, 'Inimigo')
+        else:
+            self.message()
+            
+    def message(self):
+        self.iface.messageBar().pushMessage(self.tr('warning'), self.tr('Select a SQLite database'), 
+                                            level=QgsMessageBar.INFO, duration=3)
+      
+            
+            
+    
+    

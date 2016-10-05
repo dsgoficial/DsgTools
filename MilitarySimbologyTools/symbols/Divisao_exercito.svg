@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="60px" height="60px" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 60 60">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str0 {stroke:#1F1A17;stroke-width:0.9}
+    .fil0 {fill:none}
+   ]]>
+  </style>
+ </defs>
+ <g id="Camada_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g id="_125939456">
+   <line id="_124718560" class="fil0 str0" x1="32.113" y1="0.147638" x2="37.8874" y2= "8.2122" />
+   <line id="_124989976" class="fil0 str0" x1="37.8862" y1="0.147638" x2="32.1118" y2= "8.2122" />
+  </g>
+  <g id="_124717936">
+   <line id="_125936736" class="fil0 str0" x1="22.1138" y1="0.147638" x2="27.8882" y2= "8.2122" />
+   <line id="_124599312" class="fil0 str0" x1="27.887" y1="0.147638" x2="22.1126" y2= "8.2122" />
+  </g>
+ </g>
+</svg>

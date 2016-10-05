@@ -7,32 +7,32 @@
     <x>0</x>
     <y>0</y>
     <width>251</width>
-    <height>144</height>
+    <height>152</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>DockWidget</string>
+   <string/>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="createSqliteButton">
       <property name="text">
-       <string>Create Database</string>
+       <string>Criar Banco de Dados</string>
       </property>
      </widget>
     </item>
     <item row="4" column="0">
-     <widget class="QPushButton" name="pushButton_3">
+     <widget class="QPushButton" name="loadEnemyButton">
       <property name="text">
-       <string>Load Enemy</string>
+       <string>Carregar Inimigo</string>
       </property>
      </widget>
     </item>
     <item row="3" column="0">
-     <widget class="QPushButton" name="pushButton_2">
+     <widget class="QPushButton" name="loadAlliedButton">
       <property name="text">
-       <string>Load Allied</string>
+       <string>Carregar Aliado</string>
       </property>
      </widget>
     </item>
