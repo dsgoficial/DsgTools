@@ -1,25 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-/***************************************************************************
-militarySymbology
-                                 A QGIS plugin
-Builds a temp rubberband with a given size and shape.
-                             -------------------
-        begin                : 2016-10-05
-        git sha              : $Format:%H$
-        copyright            : (C) 2016 by  Jossan Costa - Surveying Technician @ Brazilian Army
-        email                : jossan.costa@eb.mil.br
- ***************************************************************************/
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
-"""
 # Qt imports
 from PyQt4 import uic, QtGui
 
@@ -55,10 +35,10 @@ class CreateSqlite(CriaSpatialiteDialog):
     
     def definePastaDestino(self):
         fd = QtGui.QFileDialog()
-        filepath = fd.getExistingDirectory()
-        if filepath <> "":
+        self.filepath = fd.getExistingDirectory()
+        if self.filepath <> "":
             self.carregado = True
-            self.pastaDestinoCriaSpatialiteLineEdit.setText(filepath)
-            self.pathSqlite = filepath
+            self.pastaDestinoCriaSpatialiteLineEdit.setText(self.filepath)
+            self.pathSqlite = self.filepath
             
         
