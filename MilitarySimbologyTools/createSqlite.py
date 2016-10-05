@@ -35,10 +35,10 @@ class CreateSqlite(CriaSpatialiteDialog):
     
     def definePastaDestino(self):
         fd = QtGui.QFileDialog()
-        self.filepath = fd.getExistingDirectory()
-        if self.filepath <> "":
+        filepath = fd.getExistingDirectory()
+        if filepath <> "":
             self.carregado = True
-            self.pastaDestinoCriaSpatialiteLineEdit.setText(self.filepath)
-            self.pathSqlite = self.filepath
+            self.pastaDestinoCriaSpatialiteLineEdit.setText(filepath)
+            self.pathSqlite = filepath
             
         
