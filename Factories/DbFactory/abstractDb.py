@@ -318,6 +318,8 @@ class AbstractDb(QObject):
         feat=inputLayer.GetNextFeature()
         #for feat in inputLayer:
         while feat:
+            if not feat.geometry():
+                continue
             inputId = feat.GetFID()
             if feat.geometry().GetGeometryCount() > 1:
                 #Deaggregator
@@ -439,6 +441,7 @@ class AbstractDb(QObject):
         4. nullAttribute: excluir do mapeamento aquele atributo caso ele seja não nulo
         5. classNotFoundInOutput: pular classe na conversão e mostrar no warning
         6. attributeNotFoundInOutput: pular atributo e mostrar no warning para todas as feicoes
+        7. nullGeometry: excluir a feicao do mapeamento
         '''
         inputLayer.ResetReading()
         fieldCount = inputLayer.GetLayerDefn().GetFieldCount()
@@ -454,6 +457,8 @@ class AbstractDb(QObject):
         outputOgrLyrDict = self.getOgrLayerIndexDict(outputLayer)
         if inputLayerName not in invalidated['classNotFoundInOutput']:
             while feat:
+                if not feat.geometry():
+                    continue
                 nullLine = True
                 #Case 1: nullLine
                 for i in range(fieldCount):
