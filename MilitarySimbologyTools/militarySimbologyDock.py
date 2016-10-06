@@ -47,14 +47,17 @@ class MilitarySimbologyDock(QtGui.QDockWidget, MilitarySymbology, FORM_CLASS):
         self.sqlitePath = False
         self.setupUi(self)
         self.widget.lineEdit.textChanged.connect(self.setCurrentSqlite)            
-        
+    
+    """defino o Sqlite em Uso"""    
     def setCurrentSqlite(self, pathSqliteDB):
         self.sqlitePath =  pathSqliteDB
-          
+      
+    """Chamo a classe para Criar o Sqlite"""      
     @pyqtSlot(bool)
     def on_createSqliteButton_clicked(self):
         CreateSqlite()
     
+    """Chamo a classe para carregar a feições passando a path do estilo, a path do Sqlite e o tipo da feição"""
     @pyqtSlot(bool)
     def on_loadAlliedButton_clicked(self):
         if self.sqlitePath:
@@ -63,6 +66,7 @@ class MilitarySimbologyDock(QtGui.QDockWidget, MilitarySymbology, FORM_CLASS):
         else:
             self.message()
        
+    """Chamo a classe para carregar a feições passando a path do estilo, a path do Sqlite e o tipo da feição"""
     @pyqtSlot(bool)
     def on_loadEnemyButton_clicked(self):
         if self.sqlitePath:
@@ -70,7 +74,8 @@ class MilitarySimbologyDock(QtGui.QDockWidget, MilitarySymbology, FORM_CLASS):
             MilitarySymbology(self.iface, self.sqlitePath, stylePath, 'Inimigo')
         else:
             self.message()
-            
+     
+    """messagem para avisar o usuário caso tente carregar uma feição sem ter definido o Banco Sqlite"""       
     def message(self):
         self.iface.messageBar().pushMessage(self.tr('warning'), self.tr('Select a SQLite database'), 
                                             level=QgsMessageBar.INFO, duration=3)

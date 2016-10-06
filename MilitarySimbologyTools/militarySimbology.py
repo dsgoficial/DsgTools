@@ -1,5 +1,27 @@
 # -*- coding: utf-8 -*-
 
+"""
+/***************************************************************************
+militarySymbology
+                                 A QGIS plugin
+Builds a temp rubberband with a given size and shape.
+                             -------------------
+        begin                : 2016-10-05
+        git sha              : $Format:%H$
+        copyright            : (C) 2016 by  Jossan Costa - Surveying Technician @ Brazilian Army
+        email                : jossan.costa@eb.mil.br
+ ***************************************************************************/
+ 
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+"""
+
 # Qt imports
 from PyQt4.QtSql import QSqlDatabase
 # QGIS imports
@@ -8,7 +30,8 @@ from qgis.core import QgsDataSourceURI, QgsMapLayerRegistry, QgsVectorLayer, Qgs
 import re
 import os
 
-class MilitarySymbology:        
+class MilitarySymbology:
+    """construtor"""        
     def __init__(self, iface, sqlitePathDB, stylePath, nameLayer):
         self.iface = iface
         self.stylePath = stylePath
@@ -18,6 +41,7 @@ class MilitarySymbology:
         listOfConf = self.loadTables(uri, listOfTables)
         self.loadLayer(listOfConf, uri, nameLayer)
 
+    """listo todas as tabelas de mapa de valores no Sqlite e as guardo em uma lista"""
     def readTablesSqlite(self, uri):
         db = QSqlDatabase.addDatabase("QSQLITE");
         db.setDatabaseName(uri.database())
@@ -30,6 +54,8 @@ class MilitarySymbology:
                 listOfTables.append(m.string)
         return listOfTables
     
+    """defino as configurações para cada campo do formulário de acordo com suas 
+        respectivas tabelas de mapa de valores"""
     def setConfStyleForm(self, tableId):
         conf = dict()
         #conf[u'FilterExpression'] = u'code in (0,1,2,3)'
@@ -42,6 +68,7 @@ class MilitarySymbology:
         conf[u'Key'] = u'code'
         return conf        
     
+    """Carrego as tabelas de mapa de valores para o Qgis em seu grupo"""
     def loadTables(self, uri, listOfTables):
         listOfConfToFields = []
         root = QgsProject.instance().layerTreeRoot()
@@ -65,7 +92,7 @@ class MilitarySymbology:
                 listOfConfToFields.append(conf)
             return list(reversed(listOfConfToFields))
         
-        
+    """Carrego as camadas"""   
     def loadLayer(self, listOfConf, uri, nameLayer):
         root = QgsProject.instance().layerTreeRoot()
         mygroup = root.findGroup(u"Mapa_de_valores")
@@ -80,7 +107,8 @@ class MilitarySymbology:
         QgsMapLayerRegistry.instance().addMapLayer(layer, False)
         parentGroup.insertChildNode(groupIndex, QgsLayerTreeLayer(layer))
         self.loadStyle(layer, listOfConf)
-            
+     
+    """Defino o estilo para a camada carregada"""       
     def loadStyle(self, layer, listOfConf):
         with open( self.stylePath, 'r') as template_style:
             style = template_style.read().replace('\n', '')
@@ -90,7 +118,7 @@ class MilitarySymbology:
         for index in range(len(listOfConf)) : 
             layer.setEditorWidgetV2Config(i, listOfConf[index] )
             i+=1
-
+    """Defino a variável {path} no modelo de estilo (.qml) para apontar pro .SVG de acordo com sistema"""
     def setPathStyle(self, style):
         currentPath = os.path.join(os.path.dirname(__file__), 'symbols')+os.sep
         styleReady = style.replace('{path}', currentPath)
