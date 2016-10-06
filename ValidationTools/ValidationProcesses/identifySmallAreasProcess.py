@@ -29,7 +29,7 @@ class IdentifySmallAreasProcess(ValidationProcess):
         Constructor
         '''
         super(self.__class__,self).__init__(postgisDb, iface)
-        self.processAlias = self.tr('Identify Small Areas Process')
+        self.processAlias = self.tr('Identify Small Areas')
         self.parameters = {'Area': 125.0}
 
     def execute(self):

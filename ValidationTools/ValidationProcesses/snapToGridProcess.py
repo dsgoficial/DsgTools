@@ -29,7 +29,7 @@ class SnapToGridProcess(ValidationProcess):
         Constructor
         '''
         super(self.__class__,self).__init__(postgisDb, iface)
-        self.processAlias = self.tr('Snap to Grid Process')
+        self.processAlias = self.tr('Snap to Grid')
         self.parameters = {'Snap': 0.001}
 
     def execute(self):

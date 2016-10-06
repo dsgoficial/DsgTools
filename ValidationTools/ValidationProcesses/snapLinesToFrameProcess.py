@@ -29,7 +29,7 @@ class SnapLinesToFrameProcess(ValidationProcess):
         Constructor
         '''
         super(self.__class__,self).__init__(postgisDb, iface)
-        self.processAlias = self.tr('Snap Lines to Frame Process')
+        self.processAlias = self.tr('Snap Lines to Frame')
         self.parameters = {'Snap': 5.0}
 
     def postProcess(self):

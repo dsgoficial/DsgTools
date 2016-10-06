@@ -27,7 +27,7 @@ import processing, binascii
 class SnapGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface):
         super(self.__class__,self).__init__(postgisDb, iface)
-        self.processAlias = self.tr('Snap Geometries Process')
+        self.processAlias = self.tr('Snap Geometries')
         self.parameters = {'Snap': 1.0, 'MinArea':0.001}
         
     def postProcess(self):

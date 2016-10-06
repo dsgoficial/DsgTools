@@ -29,7 +29,7 @@ class RemoveSmallLinesProcess(ValidationProcess):
         Constructor
         '''
         super(self.__class__,self).__init__(postgisDb, iface)
-        self.processAlias = self.tr('Remove Small Lines Process')
+        self.processAlias = self.tr('Remove Small Lines')
     
     def preProcess(self):
         '''

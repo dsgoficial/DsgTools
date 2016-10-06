@@ -29,7 +29,7 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
         Constructor
         '''
         super(self.__class__,self).__init__(postgisDb, iface)
-        self.processAlias = self.tr('Identify Vertex Near Edge Process')
+        self.processAlias = self.tr('Identify Vertex Near Edge')
         self.parameters = {'Tolerance': 1.0}
 
     def execute(self):
