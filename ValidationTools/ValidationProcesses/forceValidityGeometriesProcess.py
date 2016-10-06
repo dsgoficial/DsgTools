@@ -29,7 +29,7 @@ class ForceValidityGeometriesProcess(ValidationProcess):
         Constructor
         '''
         super(self.__class__,self).__init__(postgisDb, iface)
-        self.processAlias = self.tr('Force Validity Geometries')
+        self.processAlias = self.tr('Force Geometries Validity')
         
     def preProcess(self):
         '''

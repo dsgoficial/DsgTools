@@ -30,7 +30,7 @@ class CleanGeometriesProcess(ValidationProcess):
         Constructor
         '''
         super(self.__class__,self).__init__(postgisDb, iface)
-        self.processAlias = self.tr('Clean Geometries Process')
+        self.processAlias = self.tr('Clean Geometries')
         self.parameters = {'Snap': 1.0, 'MinArea':0.001}
         
     def runProcessinAlg(self, layer, tempTableName):
