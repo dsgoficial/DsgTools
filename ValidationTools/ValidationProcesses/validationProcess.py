@@ -44,6 +44,7 @@ class ValidationProcess(QObject):
         self.parameters = None
         self.iface = iface
         self.layerLoader = LayerLoaderFactory().makeLoader(self.iface, self.abstractDb)
+        self.processAlias = self.tr('Validation Process')
         
     def setParameters(self, params):
         '''

@@ -189,8 +189,9 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.processTreeWidget.clear()
         self.edgvLayer = None
         self.flagLyr = None
+        self.processDict = dict()
         rootItem = self.processTreeWidget.invisibleRootItem()
-        procList = self.validationManager.processList
+        procList = self.validationManager.processDict.keys()
         for i in range(len(procList)):
             item = QtGui.QTreeWidgetItem(rootItem)
             item.setText(0, str(i+1))
@@ -198,7 +199,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             
             status = None
             try:
-                status = self.configWindow.widget.abstractDb.getValidationStatusText(procList[i])
+                status = self.configWindow.widget.abstractDb.getValidationStatusText(self.validationManager.processDict[procList[i]])
             except Exception as e:
                 QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
                 QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

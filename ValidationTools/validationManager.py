@@ -36,6 +36,7 @@ class ValidationManager(QObject):
         self.processList = []
         self.postgisDb = postgisDb
         self.iface = iface
+        self.processDict = dict()
         try:
             #creating validation structure
             self.postgisDb.checkAndCreateValidationStructure()
@@ -44,7 +45,7 @@ class ValidationManager(QObject):
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            self.processList = []
+            
 
     def setAvailableProcesses(self):
         '''
@@ -63,13 +64,14 @@ class ValidationManager(QObject):
                 chars[0] = chars[0].upper()
                 processClass = ''.join(chars)
                 self.processList.append(processClass)
+                self.processDict[self.instantiateProcessByName(processClass).processAlias] = processClass 
             
     def instantiateProcessByName(self, processName):
         '''
         This method instantiate a process by its name.
         The import is made dynamically using the __import__ function.
         The class to be import is obtained using the getattr function.
-        The class instance is made using: klass(self.postgisDb)
+        The class instance is made using: klass(self.postgisDb, self.iface)
         '''
         currProc = None
         for processClass in self.processList:
@@ -87,12 +89,13 @@ class ValidationManager(QObject):
                 currProc = klass(self.postgisDb, self.iface)
                 return currProc
 
-    def executeProcess(self, processName):
+    def executeProcess(self, process):
         '''
         Executes a process by its name
         processName: process name
         '''
         #checking for running processes
+        processName = self.processDict[process]
         runningProc = None
         try:
             runningProc = self.postgisDb.getRunningProc()

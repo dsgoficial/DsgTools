@@ -29,6 +29,7 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
         Constructor
         '''
         super(self.__class__,self).__init__(postgisDb, iface)
+        self.processAlias = self.tr('Identify Out Of Bounds Angles Process')
         self.parameters = {'Angle': 10.0}
 
     def execute(self):
