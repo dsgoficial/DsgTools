@@ -1598,7 +1598,6 @@ class PostgisDb(AbstractDb):
                 attributes = [field.name() for field in feat.fields() if field.type() != 6]
                 # getting only the needed attribute values
                 values = [feat.attribute(fieldname) for fieldname in attributes]
-                values[0] = feat.id()
             geometry = binascii.hexlify(feat.geometry().asWkb())
             insertSql = self.gen.populateTempTable(tableName, attributes, values, geometry, srid)
             if not query.exec_(insertSql):
