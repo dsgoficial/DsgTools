@@ -110,12 +110,12 @@
           </column>
           <column>
            <property name="text">
-            <string>Processo</string>
+            <string>Process</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>Situação</string>
+            <string>Status</string>
            </property>
           </column>
          </widget>
