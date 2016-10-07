@@ -48,39 +48,42 @@ class MilitarySimbologyDock(QtGui.QDockWidget, MilitarySymbology, FORM_CLASS):
         self.setupUi(self)
         self.widget.lineEdit.textChanged.connect(self.setCurrentSqlite)            
     
-    """defino o Sqlite em Uso"""    
     def setCurrentSqlite(self, pathSqliteDB):
+        """
+        defino o Sqlite em Uso
+        """
         self.sqlitePath =  pathSqliteDB
       
-    """Chamo a classe para Criar o Sqlite"""      
     @pyqtSlot(bool)
     def on_createSqliteButton_clicked(self):
+        """
+        Chamo a classe para Criar o Sqlite
+        """
         CreateSqlite()
     
-    """Chamo a classe para carregar a feições passando a path do estilo, a path do Sqlite e o tipo da feição"""
     @pyqtSlot(bool)
     def on_loadAlliedButton_clicked(self):
+        """Chamo a classe para carregar a feições passando a path do estilo, a path do Sqlite e o tipo da feição
+        """
         if self.sqlitePath:
             stylePath = os.path.join(os.path.dirname(__file__), 'templates', 'templateStyleAllied.qml')
             MilitarySymbology(self.iface, self.sqlitePath, stylePath, 'Aliado')
         else:
             self.message()
        
-    """Chamo a classe para carregar a feições passando a path do estilo, a path do Sqlite e o tipo da feição"""
     @pyqtSlot(bool)
     def on_loadEnemyButton_clicked(self):
+        """
+        Chamo a classe para carregar a feições passando a path do estilo, a path do Sqlite e o tipo da feição
+        """
         if self.sqlitePath:
             stylePath = os.path.join(os.path.dirname(__file__), 'templates', 'templateStyleEnemy.qml')
             MilitarySymbology(self.iface, self.sqlitePath, stylePath, 'Inimigo')
         else:
             self.message()
      
-    """messagem para avisar o usuário caso tente carregar uma feição sem ter definido o Banco Sqlite"""       
     def message(self):
-        self.iface.messageBar().pushMessage(self.tr('warning'), self.tr('Select a SQLite database'), 
+        """messagem para avisar o usuário caso tente carregar uma feição sem ter definido o Banco Sqlite
+        """
+        self.iface.messageBar().pushMessage(self.tr('warning'), self.tr('Select a SQLite database'),
                                             level=QgsMessageBar.INFO, duration=3)
-      
-            
-            
-    
-    
