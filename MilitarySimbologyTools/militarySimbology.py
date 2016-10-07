@@ -116,9 +116,9 @@ class MilitarySymbology:
         self.loadStyle(layer, listOfConf)
      
     def loadStyle(self, layer, listOfConf):
-    """
-    Defino o estilo para a camada carregada
-    """
+        """
+        Defino o estilo para a camada carregada
+        """
         with open( self.stylePath, 'r') as template_style:
             style = template_style.read().replace('\n', '')
         styleReady = unicode(self.setPathStyle(style), 'utf-8')    
