@@ -38,12 +38,12 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
         '''
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
             if len(classesWithElem) == 0:
-                self.setStatus('Empty database.', 1) #Finished
-                QgsMessageLog.logMessage('Empty database.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus(self.tr('Empty database.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             tol = self.parameters['Angle']
             error = False
@@ -58,13 +58,13 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
                             recordList.append((tableSchema+'.'+tableName,tupple[0],'Angle out of bound.',tupple[1]))
                             self.addClassesToBeDisplayedList(tupple[0]) 
                         numberOfProblems = self.addFlag(recordList)
-                        QgsMessageLog.logMessage('{0} features from {1} have out of bounds angle(s). Check flags.'.format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        QgsMessageLog.logMessage(self.tr('{0} features from {1} have out of bounds angle(s). Check flags.').format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     else:
-                        QgsMessageLog.logMessage('There are no out of bounds angles on {0}.'.format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        QgsMessageLog.logMessage(self.tr('There are no out of bounds angles on {0}.').format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             if error:
-                self.setStatus('There are features with angles out of bounds. Check log.', 4) #Finished with errors
+                self.setStatus(self.tr('There are features with angles out of bounds. Check log.'), 4) #Finished with errors
             else:
-                self.setStatus('There are no features with angles out of bounds.', 1) #Finished
+                self.setStatus(self.tr('There are no features with angles out of bounds.'), 1) #Finished
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

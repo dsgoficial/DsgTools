@@ -70,12 +70,12 @@ class SnapGeometriesProcess(ValidationProcess):
         #abstract method. MUST be reimplemented.
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase()
             if len(classesWithElem) == 0:
-                self.setStatus('Empty database.', 1) #Finished
-                QgsMessageLog.logMessage('Empty database.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus(self.tr('Empty database.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             error = False
             for cl in classesWithElem:
@@ -89,16 +89,16 @@ class SnapGeometriesProcess(ValidationProcess):
                         error = True
                         recordList = []
                         for tupple in result:
-                            recordList.append((cl,tupple[0],'Snapping error.',tupple[1]))
+                            recordList.append((cl,tupple[0],self.tr('Snapping error.'),tupple[1]))
                             self.addClassesToBeDisplayedList(cl) 
                         numberOfProblems = self.addFlag(recordList)
-                        QgsMessageLog.logMessage('{0} feature(s) of class {1} with snapping errors. Check flags.' .format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        QgsMessageLog.logMessage(self.tr('{0} feature(s) of class {1} with snapping errors. Check flags.').format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     else:
-                        QgsMessageLog.logMessage('There are no snapping errors on {}.'.format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        QgsMessageLog.logMessage(self.tr('There are no snapping errors on {}.').format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             if error:
-                self.setStatus('There are snapping errors. Check log.', 4) #Finished with errors
+                self.setStatus(self.tr('There are snapping errors. Check log.'), 4) #Finished with errors
             else:
-                self.setStatus('There are no snapping errors.', 1) #Finished
+                self.setStatus(self.tr('There are no snapping errors.'), 1) #Finished
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

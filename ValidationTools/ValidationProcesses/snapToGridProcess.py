@@ -38,11 +38,11 @@ class SnapToGridProcess(ValidationProcess):
         '''
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase()
             if len(classesWithElem) == 0:
-                self.setStatus('Empty database.', 1) #Finished
-                QgsMessageLog.logMessage('Empty database.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus(self.tr('Empty database.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             #getting parameters
             tol = self.parameters['Snap']
@@ -55,10 +55,9 @@ class SnapToGridProcess(ValidationProcess):
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
                 #setting status
-                self.setStatus('All features from {} snapped successfully.'.format(cl), 1) #Finished
-                QgsMessageLog.logMessage('All features from {} snapped successfully.'.format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('All features from {} snapped successfully.').format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             #returning success
-            self.setStatus('All features from snapped successfully.'.format(cl), 1) #Finished
+            self.setStatus(self.tr('All features snapped successfully.').format(cl), 1) #Finished
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

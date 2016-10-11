@@ -30,7 +30,7 @@ class IdentifySmallLinesProcess(ValidationProcess):
         '''
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Identify Small Lines')
-        self.parameters = {'Length': 5.0}
+        self.parameters = {self.tr('Length'): 5.0}
 
     def execute(self):
         '''
@@ -38,14 +38,14 @@ class IdentifySmallLinesProcess(ValidationProcess):
         '''
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
             lines = []
             for c in classesWithGeom:
                 if c[-1] == 'l':
                     lines.append(c)
-            tol = self.parameters['Length']
+            tol = self.parameters[self.tr('Length')]
             result = self.abstractDb.getSmallLinesRecords(lines, tol) #list only classes with elements.
             if len(result.keys()) > 0:
                 recordList = []
@@ -55,12 +55,14 @@ class IdentifySmallLinesProcess(ValidationProcess):
                         recordList.append((tableSchema+'.'+tableName,id,'Small Length.',result[cl][id]))
                 numberOfProblems = self.addFlag(recordList)
                 for tuple in recordList:
-                    self.addClassesToBeDisplayedList(tuple[0])        
-                self.setStatus('%s features have small length. Check flags.' % numberOfProblems, 4) #Finished with flags
-                QgsMessageLog.logMessage('%s features have small length. Check flags.' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    self.addClassesToBeDisplayedList(tuple[0])    
+                msg = self.tr('{0} features have small length. Check flags.').format(numberOfProblems)
+                self.setStatus(msg, 4) #Finished with flags
+                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
-                self.setStatus('There are no small lines.', 1) #Finished
-                QgsMessageLog.logMessage('There are no small lines.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                msg = self.tr('There are no small lines.')
+                self.setStatus(msg, 1) #Finished
+                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

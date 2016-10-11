@@ -38,7 +38,7 @@ class IdentifySmallAreasProcess(ValidationProcess):
         '''
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
             areas = []
@@ -55,12 +55,14 @@ class IdentifySmallAreasProcess(ValidationProcess):
                         recordList.append((tableSchema+'.'+tableName,id,'Small Area.',result[cl][id]))
                 numberOfProblems = self.addFlag(recordList)
                 for tuple in recordList:
-                    self.addClassesToBeDisplayedList(tuple[0])        
-                self.setStatus('%s features have small areas. Check flags.' % numberOfProblems, 4) #Finished with flags
-                QgsMessageLog.logMessage('%s features have small areas. Check flags.' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    self.addClassesToBeDisplayedList(tuple[0])   
+                msg = self.tr('{0} features have small areas. Check flags.').format(numberOfProblems) 
+                self.setStatus(msg, 4) #Finished with flags
+                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
-                self.setStatus('There are no small areas.', 1) #Finished
-                QgsMessageLog.logMessage('There are no small areas.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                msg = self.tr('There are no small areas.')
+                self.setStatus(msg, 1) #Finished
+                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

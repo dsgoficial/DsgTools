@@ -37,7 +37,7 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
         '''
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
             result = self.abstractDb.getNotSimpleRecords(classesWithGeom) #list only classes with elements.
@@ -49,12 +49,14 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
                         recordList.append((tableSchema+'.'+tableName,id,'Not simple geometry.',result[cl][id]))
                 numberOfProblems = self.addFlag(recordList)
                 for tuple in recordList:
-                    self.addClassesToBeDisplayedList(tuple[0])        
-                self.setStatus('{} features are not simple. Check flags.'.format(numberOfProblems), 4) #Finished with flags
-                QgsMessageLog.logMessage('{} features are not simple. Check flags.'.format(numberOfProblems), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    self.addClassesToBeDisplayedList(tuple[0])
+                msg = self.tr('{} features are not simple. Check flags.').format(numberOfProblems)        
+                self.setStatus(msg, 4) #Finished with flags
+                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
-                self.setStatus(self.tr('All features are simple.\n'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('All features are simple.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                msg = self.tr('All features are simple.')
+                self.setStatus(msg, 1) #Finished
+                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

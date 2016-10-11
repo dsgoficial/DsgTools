@@ -37,7 +37,7 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
         '''
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
             duplicated = self.abstractDb.getDuplicatedGeomRecords(classesWithGeom) #list only classes with elements.
@@ -50,12 +50,14 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
                             dupGeomRecordList.append((tableSchema+'.'+tableName,id,'Duplicated Geometry',duplicated[cl][id]))
                 numberOfDupGeom = self.addFlag(dupGeomRecordList)
                 for tuple in dupGeomRecordList:
-                    self.addClassesToBeDisplayedList(tuple[0])        
-                self.setStatus('{} features are duplicated. Check flags.'.format(numberOfDupGeom), 4) #Finished with flags
-                QgsMessageLog.logMessage('{} features are duplicated. Check flags.'.format(numberOfDupGeom), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    self.addClassesToBeDisplayedList(tuple[0])
+                msg =  self.tr('{} features are duplicated. Check flags.').format(numberOfDupGeom)     
+                self.setStatus(msg, 4) #Finished with flags
+                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
-                self.setStatus('There are no duplicated geometries.', 1) #Finished
-                QgsMessageLog.logMessage('There are no duplicated geometries.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                msg = self.tr('There are no duplicated geometries.')
+                self.setStatus(msg, 1) #Finished
+                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

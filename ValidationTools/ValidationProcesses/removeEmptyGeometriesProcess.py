@@ -37,11 +37,11 @@ class RemoveEmptyGeometriesProcess(ValidationProcess):
         '''
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
             if len(classesWithElem) == 0:
-                self.setStatus('Empty database.', 1) #Finished
-                QgsMessageLog.logMessage('Empty database.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus(self.tr('Empty database.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             for cl in classesWithGeom:
                 # preparation
@@ -49,8 +49,9 @@ class RemoveEmptyGeometriesProcess(ValidationProcess):
                 self.abstractDb.removeEmptyGeometries(processTableName)
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
-            self.setStatus('Process executed successfully!', 1) #Finished
-            QgsMessageLog.logMessage('Process executed successfully!', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            msg = self.tr('Process executed successfully!')
+            self.setStatus(msg, 1) #Finished
+            QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

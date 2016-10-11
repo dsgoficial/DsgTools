@@ -83,8 +83,8 @@ class CleanGeometriesProcess(ValidationProcess):
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase()
             if len(classesWithElem) == 0:
-                self.setStatus('Empty database.', 1) #Finished
-                QgsMessageLog.logMessage('Empty database.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus(self.tr('Empty database.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             error = False
             for cl in classesWithElem:
@@ -101,13 +101,13 @@ class CleanGeometriesProcess(ValidationProcess):
                             recordList.append((cl, tupple[0], self.tr('Cleaning error.'), tupple[1]))
                             self.addClassesToBeDisplayedList(cl)
                         numberOfProblems = self.addFlag(recordList)
-                        QgsMessageLog.logMessage('{0} feature(s) from {1} with cleaning errors. Check flags.\n'.format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        QgsMessageLog.logMessage(self.tr('{0} feature(s) from {1} with cleaning errors. Check flags.').format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     else:
-                        QgsMessageLog.logMessage('There are no cleaning errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        QgsMessageLog.logMessage(self.tr('There are no cleaning errors on {0}.').format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             if error:
-                self.setStatus('There are cleaning errors. Check log.', 4) #Finished with errors
+                self.setStatus(self.tr('There are cleaning errors. Check log.'), 4) #Finished with errors
             else:
-                self.setStatus('There are no cleaning errors.', 1) #Finished
+                self.setStatus(self.tr('There are no cleaning errors.'), 1) #Finished
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

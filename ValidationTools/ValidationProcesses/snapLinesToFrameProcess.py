@@ -38,11 +38,11 @@ class SnapLinesToFrameProcess(ValidationProcess):
         '''
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             classesWithGeom = self.abstractDb.getOrphanGeomTablesWithElements()
             if len(classesWithElem) == 0:
-                self.setStatus('Empty database.', 1) #Finished
-                QgsMessageLog.logMessage('Empty database.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus(self.tr('Empty database.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             lines = []
             for cl in classesWithGeom:
@@ -57,8 +57,9 @@ class SnapLinesToFrameProcess(ValidationProcess):
                 self.abstractDb.densifyFrame([processTableName])
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
-            self.setStatus('All features snapped succesfully.', 1) #Finished
-            QgsMessageLog.logMessage('All features snapped succesfully.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            msg = self.tr('All features snapped succesfully.')
+            self.setStatus(msg, 1) #Finished
+            QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
