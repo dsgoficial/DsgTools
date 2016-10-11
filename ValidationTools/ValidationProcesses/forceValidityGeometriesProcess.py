@@ -35,13 +35,13 @@ class ForceValidityGeometriesProcess(ValidationProcess):
         '''
         Gets the process that should be execute before this one
         '''
-        return 'IdentifyInvalidGeometriesProcess'
+        return self.tr('Identify Invalid Geometries')
         
     def postProcess(self):
         '''
         Gets the process that should be execute after this one
         '''
-        return 'DeaggregateGeometriesProcess'
+        return self.tr('Deaggregate Geometries')
 
     def execute(self):
         '''

@@ -30,12 +30,6 @@ class SnapGeometriesProcess(ValidationProcess):
         self.processAlias = self.tr('Snap Geometries')
         self.parameters = {'Snap': 1.0, 'MinArea':0.001}
         
-    def postProcess(self):
-        '''
-        Gets the process that should be execute after this one
-        '''
-        return 'ForceValidityGeometriesProcess'
-
     def runProcessinAlg(self, layer, tempTableName):
         alg = 'grass7:v.clean.advanced'
         

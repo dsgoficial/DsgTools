@@ -189,7 +189,6 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.processTreeWidget.clear()
         self.edgvLayer = None
         self.flagLyr = None
-        self.processDict = dict()
         rootItem = self.processTreeWidget.invisibleRootItem()
         procList = self.validationManager.processDict.keys()
         for i in range(len(procList)):

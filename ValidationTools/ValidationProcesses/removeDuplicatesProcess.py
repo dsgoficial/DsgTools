@@ -35,14 +35,8 @@ class RemoveDuplicatesProcess(ValidationProcess):
         '''
         Gets the process that should be execute before this one
         '''
-        return 'IdentifyDuplicatedGeometriesProcess'
-
-    def postProcess(self):
-        '''
-        Gets the process that should be execute before this one
-        '''
-        return 'IdentifyDuplicatedGeometriesProcess'
-
+        return self.tr('Identify Duplicated Geometries')
+ 
     def execute(self):
         '''
         Reimplementation of the execute method from the parent class

@@ -32,12 +32,6 @@ class SnapLinesToFrameProcess(ValidationProcess):
         self.processAlias = self.tr('Snap Lines to Frame')
         self.parameters = {'Snap': 5.0}
 
-    def postProcess(self):
-        '''
-        Gets the process that should be execute after this one
-        '''
-        return 'SnapToGridProcess'
-
     def execute(self):
         '''
         Reimplementation of the execute method from the parent class

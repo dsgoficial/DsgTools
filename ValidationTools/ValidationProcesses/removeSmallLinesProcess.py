@@ -35,13 +35,7 @@ class RemoveSmallLinesProcess(ValidationProcess):
         '''
         Gets the process that should be execute before this one
         '''
-        return 'IdentifySmallLinesProcess'
-
-    def postProcess(self):
-        '''
-        Gets the process that should be execute after this one
-        '''
-        return 'IdentifySmallLinesProcess'
+        return self.tr('Identify Small Lines')
 
     def execute(self):
         '''

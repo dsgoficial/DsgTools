@@ -40,14 +40,8 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         '''
         Gets the process that should be execute before this one
         '''
-        return 'SnapLinesToFrameProcess'
+        return self.tr('Snap Lines to Frame')
         
-    def postProcess(self):
-        '''
-        Gets the process that should be execute after this one
-        '''
-        return None
-
     def cleanCentroidsAreas(self, coverageClassList):
         '''
         Cleans all the previously created areas
