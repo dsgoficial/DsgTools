@@ -1,64 +1,176 @@
- SOURCES         =	AttributeTools/attributes_viewer.py \
+ SOURCES         =	__init__.py \
+					aboutdialog.py \
+					AttributeTools/__init__.py \
+					AttributeTools/attributes_viewer.py \
 					AttributeTools/code_list.py \
+					BDGExTools/__init__.py \
 					BDGExTools/BDGExTools.py \
+					ComplexTools/__init__.py \
 					ComplexTools/complexWindow.py \
- 					ComplexTools/manageComplex.py \
+					ComplexTools/manageComplex.py \
+					ConversionTools/__init__.py \
 					ConversionTools/convert_database.py \
+					CustomWidgets/__init__.py \
+					CustomWidgets/AttributeValidityWidgets/__init__.py \
+					CustomWidgets/AttributeValidityWidgets/attributeConditionWidget.py \
+					CustomWidgets/AttributeValidityWidgets/listManagerWidget.py \
+					CustomWidgets/AttributeValidityWidgets/newAttributeRuleBuilderWidget.py \
 					CustomWidgets/connectionWidget.py \
+					CustomWidgets/CustomDbManagementWidgets/__init__.py \
+					CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py \
+					CustomWidgets/CustomDbManagementWidgets/newClassWidget.py \
 					CustomWidgets/customSelector.py \
+					CustomWidgets/customServerConnectionWidget.py \
+					CustomWidgets/databaseParameterWidget.py \
 					CustomWidgets/earthCoverageWidget.py \
 					CustomWidgets/exploreServerWidget.py \
- 					DbTools/PostGISTool/postgisDBTool.py \
- 					DbTools/SpatialiteTool/cria_spatialite_dialog.py \
+					CustomWidgets/progressWidget.py \
+					CustomWidgets/selectFileWidget.py \
+					CustomWidgets/tabDbSelectorWidget.py \
+					DbTools/__init__.py \
+					DbTools/BatchDbCreator/__init__.py \
+					DbTools/BatchDbCreator/batchDbCreator.py \
+					DbTools/BatchDbCreator/createBatchFromCsv.py \
+					DbTools/BatchDbCreator/createBatchIncrementing.py \
+					DbTools/PostGISTool/__init__.py \
+					DbTools/PostGISTool/postgisDBTool.py \
+					DbTools/SpatialiteTool/__init__.py \
+					DbTools/SpatialiteTool/cria_spatialite_dialog.py \
+					dsg_tools.py \
+					Factories/__init__.py \
+					Factories/DbCreatorFactory/__init__.py \
+					Factories/DbCreatorFactory/dbCreator.py \
+					Factories/DbCreatorFactory/dbCreatorFactory.py \
+					Factories/DbCreatorFactory/postgisDbCreator.py \
+					Factories/DbCreatorFactory/spatialiteDbCreator.py \
+					Factories/DbCustomizationFactory/__init__.py \
+					Factories/DbCustomizationFactory/attributeCustomization.py \
+					Factories/DbCustomizationFactory/classCustomization.py \
+					Factories/DbCustomizationFactory/codeNameCustomization.py \
+					Factories/DbCustomizationFactory/dbCustomization.py \
+					Factories/DbCustomizationFactory/dbCustomizationFactory.py \
+					Factories/DbCustomizationFactory/defaultCustomization.py \
+					Factories/DbCustomizationFactory/domainCustomization.py \
+					Factories/DbCustomizationFactory/nullityCustomization.py \
+					Factories/DbFactory/__init__.py \
 					Factories/DbFactory/abstractDb.py \
 					Factories/DbFactory/dbFactory.py \
 					Factories/DbFactory/postgisDb.py \
 					Factories/DbFactory/spatialiteDb.py \
-					Factories/LayerFactory/edgv_layer.py \
-					Factories/LayerFactory/layerFactory.py \
-					Factories/LayerFactory/postgis_layer.py \
-					Factories/LayerFactory/spatialite_layer.py \
+					Factories/LayerLoaderFactory/__init__.py \
+					Factories/LayerLoaderFactory/edgvLayerLoader.py \
+					Factories/LayerLoaderFactory/layerLoaderFactory.py \
+					Factories/LayerLoaderFactory/postgisLayerLoader.py \
+					Factories/LayerLoaderFactory/spatialiteLayerLoader.py \
+					Factories/SqlFactory/__init__.py \
 					Factories/SqlFactory/postgisSqlGenerator.py \
 					Factories/SqlFactory/spatialiteSqlGenerator.py \
 					Factories/SqlFactory/sqlGenerator.py \
 					Factories/SqlFactory/sqlGeneratorFactory.py \
- 					Factories/ThreadFactory/dpiThread.py \
- 					Factories/ThreadFactory/genericThread.py \
- 					Factories/ThreadFactory/inventoryThread.py \
- 					Factories/ThreadFactory/postgisDbThread.py \
- 					Factories/ThreadFactory/threadFactory.py \
- 					ImageTools/processingTools.py \
- 					ImageTools/raster_processing.py \
+					Factories/ThreadFactory/__init__.py \
+					Factories/ThreadFactory/dpiThread.py \
+					Factories/ThreadFactory/genericThread.py \
+					Factories/ThreadFactory/inventoryThread.py \
+					Factories/ThreadFactory/postgisDbThread.py \
+					Factories/ThreadFactory/threadFactory.py \
+					ImageTools/__init__.py \
+					ImageTools/processingTools.py \
+					ImageTools/raster_processing.py \
+					InventoryTools/__init__.py \
 					InventoryTools/inventoryTools.py \
- 					LayerTools/load_by_category.py \
- 					LayerTools/load_by_class.py \
- 					LayerTools/map_index.py \
- 					LayerTools/ui_create_inom_dialog.py \
- 					ProcessingTools/processManager.py \
- 					ProductionTools/acquisition_tools.py \
- 					QmlTools/qml_creator.py \
- 					QmlTools/qmlParser.py \
+					LayerTools/__init__.py \
+					LayerTools/create_features_test.py \
+					LayerTools/CreateFrameTool/__init__.py \
+					LayerTools/CreateFrameTool/map_index.py \
+					LayerTools/CreateFrameTool/ui_create_inom_dialog.py \
+					LayerTools/load_by_class.py \
+					LayerTools/loadAuxStruct.py \
+					LayerTools/LoadLayersFromServer/__init__.py \
+					LayerTools/LoadLayersFromServer/loadLayersFromServer.py \
+					MilitarySimbologyTools/__init__.py \
+					MilitarySimbologyTools/createSqlite.py \
+					MilitarySimbologyTools/militarySimbology.py \
+					MilitarySimbologyTools/militarySimbologyDock.py \
+					plugin_upload.py \
+					PostgisCustomization/__init__.py \
+					PostgisCustomization/createDatabaseCustomization.py \
+					PostgisCustomization/CustomJSONValidator/__init__.py \
+					PostgisCustomization/CustomJSONValidator/customJSONValidator.py \
+					PostgisCustomization/dbCustomizer.py \
+					ProcessingTools/__init__.py \
+					ProcessingTools/processManager.py \
+					ProductionTools/__init__.py \
+					ProductionTools/ContourTool/__init__.py \
+					ProductionTools/ContourTool/calc_contour.py \
+					ProductionTools/ContourTool/contour_tool.py \
+					ProductionTools/ContourTool/dsg_line_tool.py \
+					ProductionTools/FieldToolBox/__init__.py \
+					ProductionTools/FieldToolBox/acquisition_tools.py \
+					ProductionTools/FieldToolBox/field_setup.py \
+					ProductionTools/FieldToolBox/field_toolbox.py \
+					ProductionTools/FieldToolBox/FieldSetupConfigs/__init__.py \
+					ProductionTools/InspectFeatures/__init__.py \
+					ProductionTools/InspectFeatures/inspectFeatures.py \
+					ProductionTools/MinimumAreaTool/__init__.py \
+					ProductionTools/MinimumAreaTool/minimumAreaTool.py \
+					ProductionTools/MinimumAreaTool/shapeTool.py \
+					QGIS_Scripts/edgv_checker.py \
+					QGIS_Scripts/HSV_fusion.py \
+					QGIS_Scripts/Sigef.py \
+					QGIS_Scripts/virtual_raster.py \
+					QGIS_Scripts/virtual_raster_inloco.py \
+					QmlTools/__init__.py \
+					QmlTools/qml_creator.py \
+					QmlTools/qmlParser.py \
+					resources.py \
+					resources_rc.py \
+					ServerTools/__init__.py \
+					ServerTools/batchDbManager.py \
 					ServerTools/createView.py \
 					ServerTools/exploreDb.py \
 					ServerTools/manageDBAuxiliarStructure.py \
- 					ServerTools/serverConfigurator.py \
+					ServerTools/selectStyles.py \
+					ServerTools/serverConfigurator.py \
 					ServerTools/serverDBExplorer.py \
- 					ServerTools/viewServers.py \
+					ServerTools/viewServers.py \
+					Styles/__init__.py \
+					Styles/edgv_213/__init__.py \
+					Styles/edgv_FTer_2a_Ed/__init__.py \
+					test/__init__.py \
+					test/qgis_interface.py \
+					test/test_dsg_tools_dialog.py \
+					test/test_init.py \
+					test/test_qgis_environment.py \
+					test/test_resources.py \
+					test/test_translations.py \
+					test/utilities.py \
+					ToolboxTools/__init__.py \
 					ToolboxTools/models_and_scripts_installer.py \
+					UserTools/__init__.py \
 					UserTools/alter_user_password.py \
 					UserTools/assign_profiles.py \
 					UserTools/create_profile.py \
 					UserTools/create_user.py \
+					UserTools/manageServerUsers.py \
 					UserTools/permission_properties.py \
+					UserTools/PermissionManagerWizard/__init__.py \
+					UserTools/PermissionManagerWizard/permissionWizard.py \
+					UserTools/PermissionManagerWizard/permissionWizardProfile.py \
 					UserTools/profile_editor.py \
+					UserTools/profiles/__init__.py \
 					UserTools/user_profiles.py \
+					Utils/__init__.py \
 					Utils/utils.py \
-					VectorTools/calc_contour.py \
-					VectorTools/contour_tool.py \
-					VectorTools/dsg_line_tool.py \
-					ProductionTools/acquisition_tools.py \
-					ProductionTools/field_setup.py \
-					ProductionTools/field_toolbox.py \
+					ValidationTools/__init__.py \
+					ValidationTools/attributeRulesEditor.py \
+					ValidationTools/processParametersDialog.py \
+					ValidationTools/rules_editor.py \
+					ValidationTools/setupEarthCoverage.py \
+					ValidationTools/validation_config.py \
+					ValidationTools/validation_history.py \
+					ValidationTools/validation_toolbox.py \
+					ValidationTools/validationManager.py \
+					ValidationTools/ValidationProcesses/__init__.py \
 					ValidationTools/ValidationProcesses/cleanGeometriesProcess.py \
 					ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py \
 					ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py \
@@ -72,56 +184,77 @@
 					ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py \
 					ValidationTools/ValidationProcesses/recursiveSnapProcess.py \
 					ValidationTools/ValidationProcesses/removeDuplicatesProcess.py \
+					ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py \
 					ValidationTools/ValidationProcesses/removeSmallAreasProcess.py \
 					ValidationTools/ValidationProcesses/removeSmallLinesProcess.py \
+					ValidationTools/ValidationProcesses/snapGeometriesProcess.py \
 					ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py \
 					ValidationTools/ValidationProcesses/snapToGridProcess.py \
 					ValidationTools/ValidationProcesses/spatialRuleEnforcer.py \
 					ValidationTools/ValidationProcesses/spatialRuleProcess.py \
 					ValidationTools/ValidationProcesses/validationProcess.py \
-					ValidationTools/processParametersDialog.py \
-					ValidationTools/rules_editor.py \
-					ValidationTools/setupEarthCoverage.py \
-					ValidationTools/validation_config.py \
-					ValidationTools/validation_history.py \
-					ValidationTools/validation_toolbox.py \
-					ValidationTools/validationManager.py \
- 					aboutdialog.py \
- 					dsg_tools.py \
+					ValidationTools/ValidationRules/__init__.py \
+
 
  FORMS         =	AttributeTools/attributes_viewer.ui \
 					AttributeTools/code_list.ui \
 					ComplexTools/complexWindow_base.ui \
- 					ComplexTools/ui_manageComplex.ui \
+					ComplexTools/ui_manageComplex.ui \
 					ConversionTools/convert_database.ui \
+					CustomWidgets/AttributeValidityWidgets/attributeConditionWidget.ui \
+					CustomWidgets/AttributeValidityWidgets/listManagerWidget.ui \
+					CustomWidgets/AttributeValidityWidgets/newAttributeRuleBuilderWidget.ui \
 					CustomWidgets/connectionWidget.ui \
+					CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.ui \
+					CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.ui \
+					CustomWidgets/CustomDbManagementWidgets/newClassWidget.ui \
 					CustomWidgets/customSelector.ui \
+					CustomWidgets/customServerConnectionWidget.ui \
+					CustomWidgets/databaseParameterWidget.ui \
 					CustomWidgets/earthCoverageWidget.ui \
 					CustomWidgets/exploreServerWidget.ui \
- 					DbTools/PostGISTool/ui_postgisDBTool.ui \
- 					DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui \							
- 					ImageTools/ui_processingTools.ui \
+					CustomWidgets/selectFileWidget.ui \
+					CustomWidgets/tabDbSelectorWidget.ui \
+					DbTools/BatchDbCreator/batchDbCreator.ui \
+					DbTools/BatchDbCreator/createBatchFromCsv.ui \
+					DbTools/BatchDbCreator/createBatchIncrementing.ui \
+					DbTools/PostGISTool/ui_postgisDBTool.ui \
+					DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui \
+					ImageTools/ui_processingTools.ui \
 					InventoryTools/ui_inventoryTools.ui \
- 					LayerTools/load_by_category_dialog.ui \
- 					LayerTools/load_by_class_base.ui \
- 					LayerTools/ui_create_inom_dialog_base.ui \
+					LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui \
+					LayerTools/load_by_category_dialog.ui \
+					LayerTools/load_by_class_base.ui \
+					LayerTools/loadAuxStruct.ui \
+					LayerTools/LoadLayersFromServer/loadLayersFromServer.ui \
+					MilitarySimbologyTools/militarySimbologyDock.ui \
+					PostgisCustomization/createDatabaseCustomization.ui \
+					ProductionTools/ContourTool/calc_contour.ui \
+					ProductionTools/FieldToolBox/field_setup.ui \
+					ProductionTools/FieldToolBox/field_toolbox.ui \
+					ProductionTools/InspectFeatures/inspectFeatures.ui \
+					ProductionTools/MinimumAreaTool/minimumAreaTool.ui \
+					ServerTools/batchDbManager.ui \
 					ServerTools/createView.ui \
 					ServerTools/exploreDb.ui \
 					ServerTools/manageDBAuxiliarStructure.ui \
- 					ServerTools/ui_serverConfigurator.ui \
+					ServerTools/selectStyles.ui \
+					ServerTools/ui_serverConfigurator.ui \
 					ServerTools/ui_serverDBExplorer.ui \
- 					ServerTools/ui_viewServers.ui \
+					ServerTools/ui_viewServers.ui \
 					ToolboxTools/models_and_scripts_installer.ui \
+					ui_about.ui \
 					UserTools/alter_user_password.ui \
 					UserTools/assign_profiles.ui \
 					UserTools/create_profile.ui \
 					UserTools/create_user.ui \
+					UserTools/manageServerUsers.ui \
 					UserTools/permission_properties.ui \
+					UserTools/PermissionManagerWizard/permissionWizard.ui \
+					UserTools/PermissionManagerWizard/permissionWizardProfile.ui \
 					UserTools/profile_editor.ui \
 					UserTools/user_profiles.ui \
-					VectorTools/calc_contour.ui \
-					ProductionTools/field_setup.ui \
-					ProductionTools/field_toolbox.ui \
+					ValidationTools/attributeRulesEditor.ui \
 					ValidationTools/rules_editor.ui \
 					ValidationTools/setupEarthCoverage.ui \
 					ValidationTools/setupEarthCoverage_backup.ui \
@@ -129,7 +262,6 @@
 					ValidationTools/validation_history.ui \
 					ValidationTools/validation_toolbox.ui \
 					ValidationTools/workspace_editor.ui \
- 					ui_about.ui \
 
  TRANSLATIONS    = i18n/DsgTools_pt.ts
 
