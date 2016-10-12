@@ -3824,7 +3824,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="57"/>
         <source>All features are simple.</source>
-        <translation type="unfinished"></translation>
+        <translation>Todas as feições são simples.</translation>
     </message>
 </context>
 <context>
@@ -3832,47 +3832,47 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="32"/>
         <source>Identify Out Of Bounds Angles</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar ângulos fora de limites</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="39"/>
         <source>Starting </source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="39"/>
         <source> Process.</source>
-        <translation type="unfinished"></translation>
+        <translation> Processo.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="41"/>
         <source>Running</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="46"/>
         <source>Empty database.</source>
-        <translation type="unfinished"></translation>
+        <translation>Banco de dados vazio</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="61"/>
         <source>{0} features from {1} have out of bounds angle(s). Check flags.</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} feições de {1} tem ângulo(s) fora de limites. Verifique as flags.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="63"/>
         <source>There are no out of bounds angles on {0}.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não há ângulos fora de limites em {0}.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="65"/>
         <source>There are features with angles out of bounds. Check log.</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="67"/>
         <source>There are no features with angles out of bounds.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não há feições com ângulos fora de limites.</translation>
     </message>
 </context>
 <context>
@@ -3880,32 +3880,32 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="32"/>
         <source>Identify Small Areas</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar áreas pequenas</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="39"/>
         <source>Starting </source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando </translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="39"/>
         <source> Process.</source>
-        <translation type="unfinished"></translation>
+        <translation> Processo.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="41"/>
         <source>Running</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="59"/>
         <source>{0} features have small areas. Check flags.</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} feições tem áreas pequenas. Verifique as flags.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="63"/>
         <source>There are no small areas.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não há áreas pequenas.</translation>
     </message>
 </context>
 <context>
@@ -3913,37 +3913,37 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="32"/>
         <source>Identify Small Lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar linhas pequenas</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="48"/>
         <source>Length</source>
-        <translation type="unfinished"></translation>
+        <translation>Comprimento</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="39"/>
         <source>Starting </source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="39"/>
         <source> Process.</source>
-        <translation type="unfinished"></translation>
+        <translation> Processo.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="41"/>
         <source>Running</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="59"/>
         <source>{0} features have small length. Check flags.</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} feições tem comprimentos pequenos. Verifique as flags.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="63"/>
         <source>There are no small lines.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não há linhas pequenas.</translation>
     </message>
 </context>
 <context>
@@ -3951,57 +3951,57 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="32"/>
         <source>Identify Vertex Near Edge</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar vértices próximos à arestas</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="48"/>
         <source>Tolerance</source>
-        <translation type="unfinished"></translation>
+        <translation>Tolerância</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="39"/>
         <source>Starting </source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando </translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="39"/>
         <source> Process.</source>
-        <translation type="unfinished"></translation>
+        <translation> Processo.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="41"/>
         <source>Running</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="46"/>
         <source>Empty database.</source>
-        <translation type="unfinished"></translation>
+        <translation>Banco de dados vazio.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="58"/>
         <source>Vertex near edge.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vértice próximo à aresta</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="61"/>
         <source>{0} features from {1} have vertex(es) near edge(s). Check flags.</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} feiçoões de {1} possuem vértice(s) próximo à arestas. Verifique as flags.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="63"/>
         <source>There are no vertexes near edges on {}.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não há vértices próximo à arestas em {}.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="65"/>
         <source>There are vertexes near edges. Check log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Há vértices próximo à arestas. Verifique o log.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="67"/>
         <source>There are no vertexes near edges.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não há vértices próximo à arestas.</translation>
     </message>
 </context>
 <context>
@@ -4009,12 +4009,12 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="ProductionTools/InspectFeatures/inspectFeatures.py" line="150"/>
         <source>ERROR:</source>
-        <translation type="unfinished"></translation>
+        <translation>ERRO:</translation>
     </message>
     <message>
         <location filename="ProductionTools/InspectFeatures/inspectFeatures.py" line="150"/>
         <source>&lt;font color=red&gt;There are no features in the current layer:&lt;br&gt;&lt;/font&gt;&lt;font color=blue&gt;Add features and try again!&lt;/font&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;font color=red&gt;Não há feições na camada corrente:&lt;br&gt;&lt;/font&gt;&lt;font color=blue&gt;Adicione feições e tente de novo!&lt;/font&gt;</translation>
     </message>
 </context>
 <context>
@@ -4103,17 +4103,17 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="CustomWidgets/AttributeValidityWidgets/listManagerWidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished">Formulário</translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <location filename="CustomWidgets/AttributeValidityWidgets/listManagerWidget.ui" line="38"/>
         <source>Add Rule</source>
-        <translation type="unfinished"></translation>
+        <translation>Adicionar regra</translation>
     </message>
     <message>
         <location filename="CustomWidgets/AttributeValidityWidgets/listManagerWidget.ui" line="49"/>
         <source>Remove Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover selecionado</translation>
     </message>
 </context>
 <context>
@@ -4121,27 +4121,27 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="LayerTools/loadAuxStruct.ui" line="33"/>
         <source>Load Auxiliar Structure</source>
-        <translation type="unfinished">Carregar Estrutura Auxiliar</translation>
+        <translation>Carregar Estrutura Auxiliar</translation>
     </message>
     <message>
         <location filename="LayerTools/loadAuxStruct.ui" line="62"/>
         <source>Ok</source>
-        <translation type="unfinished">Ok</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="LayerTools/loadAuxStruct.ui" line="82"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancelar</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="LayerTools/loadAuxStruct.py" line="119"/>
         <source>Error!</source>
-        <translation type="unfinished">Erro!</translation>
+        <translation>Erro!</translation>
     </message>
     <message>
         <location filename="LayerTools/loadAuxStruct.py" line="119"/>
         <source>Could not load auxiliary classes! Check log for details!</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível carregar classes auxiliares! Verifique o log para detalhes!</translation>
     </message>
 </context>
 <context>
@@ -4329,17 +4329,17 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="LayerTools/load_by_category_dialog.ui" line="180"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opções</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_category_dialog.ui" line="219"/>
         <source>Load only parent classes</source>
-        <translation type="unfinished"></translation>
+        <translation>Carregar somente classes pai</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_category_dialog.ui" line="234"/>
         <source>Set Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustar estilo</translation>
     </message>
 </context>
 <context>
@@ -4457,27 +4457,27 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="LayerTools/load_by_class_base.ui" line="96"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opções</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_class_base.ui" line="136"/>
         <source>List only parent layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Listar somente classes pai</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_class_base.ui" line="151"/>
         <source>Set Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustar estilo</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_class.py" line="203"/>
         <source>Select Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar estilo</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_class.py" line="207"/>
         <source>No available styles</source>
-        <translation type="unfinished"></translation>
+        <translation>Sem estilos disponíveis</translation>
     </message>
 </context>
 <context>
@@ -4485,54 +4485,56 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="57"/>
         <source>Select Databases</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar bancos de dados</translation>
     </message>
     <message>
         <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="58"/>
         <source>Selected Spatialites</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar Spatialites</translation>
     </message>
     <message>
         <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="59"/>
         <source>Select layers to be loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar camadas para serem carregadas</translation>
     </message>
     <message>
         <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="82"/>
         <source>Reading selected databases... </source>
-        <translation type="unfinished"></translation>
+        <translation>Lendo bancos de dados selecionados... </translation>
     </message>
     <message>
         <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="156"/>
         <source>Loading layers from selected databases... </source>
-        <translation type="unfinished"></translation>
+        <translation>Carregando camadas dos bancos de dados selecionados... </translation>
     </message>
     <message>
         <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="181"/>
         <source>
 Databases with error:</source>
-        <translation type="unfinished"></translation>
+        <translation>
+Bancos de dados com erros:</translation>
     </message>
     <message>
         <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="183"/>
         <source>
 Error messages for each database were output in qgis log.</source>
-        <translation type="unfinished"></translation>
+        <translation>
+Mensagens de erro para cada banco de dados foram registradas no log do qgis.</translation>
     </message>
     <message>
         <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="185"/>
         <source>Error for database </source>
-        <translation type="unfinished"></translation>
+        <translation>Erro para o banco de dados </translation>
     </message>
     <message>
         <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="193"/>
         <source>Select Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar estilo</translation>
     </message>
     <message>
         <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="197"/>
         <source>No available styles</source>
-        <translation type="unfinished"></translation>
+        <translation>Sem estilos disponíveis</translation>
     </message>
 </context>
 <context>
@@ -4636,105 +4638,106 @@ Error messages for each database were output in qgis log.</source>
     <message>
         <location filename="UserTools/manageServerUsers.ui" line="14"/>
         <source>Manage Server Users</source>
-        <translation type="unfinished"></translation>
+        <translation>Gerenciar usuários de servidor</translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.ui" line="20"/>
         <source>Create User</source>
-        <translation type="unfinished">Criar Usuário</translation>
+        <translation>Criar Usuário</translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.ui" line="27"/>
         <source>Alter Password</source>
-        <translation type="unfinished">Alterar Senha</translation>
+        <translation>Alterar Senha</translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.ui" line="34"/>
         <source>Remove User</source>
-        <translation type="unfinished">Remover Usuário</translation>
+        <translation>Remover Usuário</translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.ui" line="41"/>
         <source>Close</source>
-        <translation type="unfinished">Fechar</translation>
+        <translation>Fechar</translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.ui" line="58"/>
         <source>User Name</source>
-        <translation type="unfinished">Nome do Usuário</translation>
+        <translation>Nome do Usuário</translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.ui" line="63"/>
         <source>User Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo de usuário</translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.py" line="50"/>
         <source>Super User</source>
-        <translation type="unfinished"></translation>
+        <translation>Super usuário</translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.py" line="50"/>
         <source>User</source>
-        <translation type="unfinished">Usuário</translation>
+        <translation>Usuário</translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.py" line="113"/>
         <source>Critical!</source>
-        <translation type="unfinished">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.py" line="110"/>
         <source>First select a database!</source>
-        <translation type="unfinished">Selecione um banco de dados antes!</translation>
+        <translation>Selecione um banco de dados antes!</translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.py" line="113"/>
         <source>First select a user to remove!</source>
-        <translation type="unfinished">Primeiro selecione um usuário para remover!</translation>
+        <translation>Primeiro selecione um usuário para remover!</translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.py" line="91"/>
         <source>Question</source>
-        <translation type="unfinished">Questão</translation>
+        <translation>Questão</translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.py" line="91"/>
         <source>Do you really want to remove users: </source>
-        <translation type="unfinished"></translation>
+        <translation>Você realmente deseja remover os usuários: </translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.py" line="101"/>
         <source>Drop user(s) operation complete!
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Operação remover usuário(s) completa!</translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.py" line="125"/>
         <source>
 Successful users: </source>
-        <translation type="unfinished"></translation>
+        <translation>Usuários com sucesso: </translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.py" line="128"/>
         <source>Operation Complete!</source>
-        <translation type="unfinished"></translation>
+        <translation>Operação completa!</translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.py" line="135"/>
         <source>Users with error:</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuários com erro:</translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.py" line="137"/>
         <source>
 Error messages for each user were output in qgis log.</source>
-        <translation type="unfinished"></translation>
+        <translation>
+Mensagens de erro para cada usuário foram registradas no log do qgis.</translation>
     </message>
     <message>
         <location filename="UserTools/manageServerUsers.py" line="139"/>
         <source>Error for user </source>
-        <translation type="unfinished"></translation>
+        <translation>Erro para o usuário </translation>
     </message>
 </context>
 <context>
@@ -4820,12 +4823,12 @@ Error messages for each user were output in qgis log.</source>
     <message>
         <location filename="MilitarySimbologyTools/militarySimbologyDock.py" line="88"/>
         <source>warning</source>
-        <translation type="unfinished"></translation>
+        <translation>atenção</translation>
     </message>
     <message>
         <location filename="MilitarySimbologyTools/militarySimbologyDock.py" line="88"/>
         <source>Select a SQLite database</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione um banco de dados SQLite</translation>
     </message>
 </context>
 <context>
@@ -4833,42 +4836,42 @@ Error messages for each user were output in qgis log.</source>
     <message>
         <location filename="ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="127"/>
         <source>value</source>
-        <translation type="unfinished"></translation>
+        <translation>valor</translation>
     </message>
     <message>
         <location filename="ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="128"/>
         <source>type</source>
-        <translation type="unfinished"></translation>
+        <translation>tipo</translation>
     </message>
     <message>
         <location filename="ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="124"/>
         <source>area</source>
-        <translation type="unfinished"></translation>
+        <translation>área</translation>
     </message>
     <message>
         <location filename="ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="71"/>
         <source>distance</source>
-        <translation type="unfinished"></translation>
+        <translation>distância</translation>
     </message>
     <message>
         <location filename="ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="113"/>
         <source>Critical!</source>
-        <translation type="unfinished">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
     <message>
         <location filename="ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="113"/>
         <source>This tool does not work with angular unit reference system!</source>
-        <translation type="unfinished"></translation>
+        <translation>Esta ferramenta não trabalha com sistemas de referência angulares!</translation>
     </message>
     <message>
         <location filename="ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="117"/>
         <source>Error!</source>
-        <translation type="unfinished">Erro!</translation>
+        <translation>Erro!</translation>
     </message>
     <message>
         <location filename="ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="117"/>
         <source>&lt;font color=red&gt;Shape value not defined :&lt;/font&gt;&lt;br&gt;&lt;font color=blue&gt;Define all values to activate tool!&lt;/font&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;font color=red&gt;Valor de forma não definido :&lt;/font&gt;&lt;br&gt;&lt;font color=blue&gt;Defina todos os valores para ativar a ferramenta!&lt;/font&gt;</translation>
     </message>
 </context>
 <context>
@@ -4884,12 +4887,12 @@ Error messages for each user were output in qgis log.</source>
     <message>
         <location filename="UserTools/PermissionManagerWizard/permissionWizard.ui" line="19"/>
         <source>Batch database creation</source>
-        <translation type="unfinished"></translation>
+        <translation>Criação de bancos de dados em lote</translation>
     </message>
     <message>
         <location filename="UserTools/PermissionManagerWizard/permissionWizard.py" line="49"/>
         <source>Select users to be managed</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione usuários para serem gerenciados</translation>
     </message>
 </context>
 <context>
@@ -4897,12 +4900,12 @@ Error messages for each user were output in qgis log.</source>
     <message>
         <location filename="UserTools/PermissionManagerWizard/permissionWizardProfile.ui" line="14"/>
         <source>WizardPage</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="UserTools/PermissionManagerWizard/permissionWizardProfile.py" line="46"/>
         <source>Select profiles to be installed</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione perfis para serem instalados</translation>
     </message>
 </context>
 <context>
@@ -4923,12 +4926,12 @@ Error messages for each user were output in qgis log.</source>
     <message>
         <location filename="Factories/LayerLoaderFactory/postgisLayerLoader.py" line="107"/>
         <source>Domains</source>
-        <translation type="unfinished"></translation>
+        <translation>Domínios</translation>
     </message>
     <message>
         <location filename="Factories/LayerLoaderFactory/postgisLayerLoader.py" line="132"/>
         <source>Error for layer </source>
-        <translation type="unfinished"></translation>
+        <translation>Erro para a camada </translation>
     </message>
 </context>
 <context>
@@ -5289,152 +5292,152 @@ Error messages for each user were output in qgis log.</source>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="733"/>
         <source>Reading selected databases... </source>
-        <translation type="unfinished"></translation>
+        <translation>Lendo bancos de dados selecionados... </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="1595"/>
         <source>Problem creating temp table: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema criando tabela temporária: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="1608"/>
         <source>Problem populating temp table: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema populando tabela temporária: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="1613"/>
         <source>Problem creating spatial index on temp table: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema criando índice espacial na tabela temporária: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="1624"/>
         <source>Problem dropping temp table: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema ao apagar a tabela temporária: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="1654"/>
         <source>Problem creating style table: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema criando tabela de estilos: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="1644"/>
         <source>Problem getting style table: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema obtendo tabela de estilos: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="1773"/>
         <source>Problem getting styles from db: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema obtendo estilos do db: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="1722"/>
         <source>Problem importing style</source>
-        <translation type="unfinished"></translation>
+        <translation>Problema importanto estilo</translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="1731"/>
         <source>Style </source>
-        <translation type="unfinished"></translation>
+        <translation>Estilo </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="1731"/>
         <source> does not match the version of database </source>
-        <translation type="unfinished"></translation>
+        <translation> não combina com a versão do banco de dados </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="1748"/>
         <source>Problem importing style </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema importando estilos </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="1796"/>
         <source>Problem running sql </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema ao rodar sql </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="2043"/>
         <source>Problem getting geom schemas from db: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema obtendo esquemas geométricos do db: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="1854"/>
         <source>Problem getting geom tables from db: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema obtendo tabelas geométricas do db: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="1996"/>
         <source>EDGV Version not recognized!</source>
-        <translation type="unfinished"></translation>
+        <translation>Versão de EDGV não reconhecida!</translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="2056"/>
         <source>Problem getting geom types from db: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema obtendo tipos geométricos do db: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="2071"/>
         <source>Problem getting geom column dict: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema obtendo dicionário de colunas geométricas: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="2098"/>
         <source>Problem getting not null dict: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema obtendo dicionário de não nulos: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="2115"/>
         <source>Problem getting domain dict from table </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema obtendo dicionário de domínios da tabela </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="2127"/>
         <source>Problem getting layer column dict from table </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema obtendo dicionário de colunas da tabela </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="2147"/>
         <source>Problem getting geom struct dict: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema obtendo dicionário de estruturas geométricas: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="2166"/>
         <source>Problem creating from template: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema criando a partir de template: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="2178"/>
         <source>Problem setting srid: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema ajustando srid: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="2189"/>
         <source>Problem setting as template: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema ajustando template: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="2213"/>
         <source>Problem creating database: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema criando banco de dados: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="2228"/>
         <source>Problem setting database as template: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema ajustando banco como template: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="2256"/>
         <source>Error on database creation! </source>
-        <translation type="unfinished"></translation>
+        <translation>Erro na criação de banco de dados! </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="2256"/>
         <source> Db will be dropped.</source>
-        <translation type="unfinished"></translation>
+        <translation>Db será apagado.</translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="2273"/>
         <source>Problem altering search path: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema alterando search path: </translation>
     </message>
 </context>
 <context>
@@ -5569,18 +5572,18 @@ Error messages for each user were output in qgis log.</source>
     <message>
         <location filename="UserTools/profile_editor.py" line="244"/>
         <source>Question</source>
-        <translation type="unfinished">Questão</translation>
+        <translation>Questão</translation>
     </message>
     <message>
         <location filename="UserTools/profile_editor.py" line="244"/>
         <source>Do you really want to remove profile </source>
-        <translation type="unfinished"></translation>
+        <translation>Você realmente deseja remover o perfil </translation>
     </message>
     <message>
         <location filename="UserTools/profile_editor.py" line="249"/>
         <source>Problem deleting profile! 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema deletando perfil! </translation>
     </message>
 </context>
 <context>
@@ -5588,7 +5591,7 @@ Error messages for each user were output in qgis log.</source>
     <message>
         <location filename="CustomWidgets/progressWidget.py" line="43"/>
         <source>INFO: </source>
-        <translation type="unfinished"></translation>
+        <translation>INFO: </translation>
     </message>
 </context>
 <context>
@@ -5609,37 +5612,37 @@ Error messages for each user were output in qgis log.</source>
     <message>
         <location filename="ValidationTools/ValidationProcesses/recursiveSnapProcess.py" line="32"/>
         <source>Recursive Snap</source>
-        <translation type="unfinished"></translation>
+        <translation>Snap recursivo</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/recursiveSnapProcess.py" line="39"/>
         <source>Starting </source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando </translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/recursiveSnapProcess.py" line="39"/>
         <source> Process.</source>
-        <translation type="unfinished"></translation>
+        <translation> Processo.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/recursiveSnapProcess.py" line="41"/>
         <source>Running</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/recursiveSnapProcess.py" line="45"/>
         <source>Empty database.</source>
-        <translation type="unfinished"></translation>
+        <translation>Banco de dados vazio.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/recursiveSnapProcess.py" line="55"/>
         <source>All features from {} snapped successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Todas as feições de {} foram coladas com sucesso.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/recursiveSnapProcess.py" line="57"/>
         <source>All features from snapped successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Todas as feições foram coladas com sucesso.</translation>
     </message>
 </context>
 <context>
@@ -5647,42 +5650,42 @@ Error messages for each user were output in qgis log.</source>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="32"/>
         <source>Remove Duplicated Elements</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover feições duplicadas</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="38"/>
         <source>Identify Duplicated Geometries</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar geometrias duplicadas</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="44"/>
         <source>Starting </source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando </translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="44"/>
         <source> Process.</source>
-        <translation type="unfinished"></translation>
+        <translation> Processo.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="46"/>
         <source>Running</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="50"/>
         <source>There are no duplicated geometries.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não há geometrias duplicadas</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="61"/>
         <source>{0} duplicated features from {1} were removed.</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} feiç˜ões duplicadas de {1} foram removidas.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="62"/>
         <source>{0} duplicated features were removed.</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} feições duplicadas foram removidas.</translation>
     </message>
 </context>
 <context>
@@ -5690,32 +5693,32 @@ Error messages for each user were output in qgis log.</source>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="32"/>
         <source>Remove Empty Geometries</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover geometrias vazias</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="38"/>
         <source>Starting </source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="38"/>
         <source> Process.</source>
-        <translation type="unfinished"></translation>
+        <translation> Processo.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="40"/>
         <source>Running</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="44"/>
         <source>Empty database.</source>
-        <translation type="unfinished"></translation>
+        <translation>Banco de dados vazio</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="52"/>
         <source>Process executed successfully!</source>
-        <translation type="unfinished"></translation>
+        <translation>Processo executado com sucesso!</translation>
     </message>
 </context>
 <context>
@@ -5746,42 +5749,42 @@ Error messages for each user were output in qgis log.</source>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="32"/>
         <source>Remove Small Polygons</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover pequenos polígonos</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="38"/>
         <source>Identify Small Areas</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar áreas pequenas</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="44"/>
         <source>Starting </source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="44"/>
         <source> Process.</source>
-        <translation type="unfinished"></translation>
+        <translation> Processo.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="46"/>
         <source>Running</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="50"/>
         <source>There are no small areas.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não há áreas pequenas</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="61"/>
         <source>{0} features from {1} were removed.</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} feições de {1} foram removidas.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="62"/>
         <source>{} features were removed.</source>
-        <translation type="unfinished"></translation>
+        <translation>{} feições foram removidas.</translation>
     </message>
 </context>
 <context>
@@ -5789,42 +5792,42 @@ Error messages for each user were output in qgis log.</source>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="32"/>
         <source>Remove Small Lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover linhas pequenas</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="38"/>
         <source>Identify Small Lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar linhas pequenas</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="44"/>
         <source>Starting </source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="44"/>
         <source> Process.</source>
-        <translation type="unfinished"></translation>
+        <translation> Processo.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="46"/>
         <source>Running</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="50"/>
         <source>There are no small areas.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não há áreas pequenas.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="61"/>
         <source>{0} features from {1}were changed.</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} feições de {1} foram modificados.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="62"/>
         <source>{} features were removed.</source>
-        <translation type="unfinished"></translation>
+        <translation>{} feições foram removidas.</translation>
     </message>
 </context>
 <context>
@@ -5862,17 +5865,17 @@ Error messages for each user were output in qgis log.</source>
     <message>
         <location filename="ServerTools/selectStyles.py" line="59"/>
         <source>Select Styles</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione estilos</translation>
     </message>
     <message>
         <location filename="ServerTools/selectStyles.py" line="65"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Atenção</translation>
     </message>
     <message>
         <location filename="ServerTools/selectStyles.py" line="65"/>
         <source>Select at least one style!</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione pelo menos um estilo!</translation>
     </message>
 </context>
 <context>
@@ -6107,22 +6110,22 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="ProductionTools/MinimumAreaTool/shapeTool.py" line="53"/>
         <source>area</source>
-        <translation type="unfinished"></translation>
+        <translation>area</translation>
     </message>
     <message>
         <location filename="ProductionTools/MinimumAreaTool/shapeTool.py" line="83"/>
         <source>Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>Círculo</translation>
     </message>
     <message>
         <location filename="ProductionTools/MinimumAreaTool/shapeTool.py" line="85"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadrado</translation>
     </message>
     <message>
         <location filename="ProductionTools/MinimumAreaTool/shapeTool.py" line="95"/>
         <source>distance</source>
-        <translation type="unfinished"></translation>
+        <translation>distância</translation>
     </message>
 </context>
 <context>
@@ -6130,52 +6133,52 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="30"/>
         <source>Snap Geometries</source>
-        <translation type="unfinished"></translation>
+        <translation>Colar geometrias</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="71"/>
         <source>Starting </source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando </translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="71"/>
         <source> Process.</source>
-        <translation type="unfinished"></translation>
+        <translation> Processo.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="73"/>
         <source>Running</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="78"/>
         <source>Empty database.</source>
-        <translation type="unfinished"></translation>
+        <translation>Banco de dados vazio.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="92"/>
         <source>Snapping error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro de snap.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="95"/>
         <source>{0} feature(s) of class {1} with snapping errors. Check flags.</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} feiçõe(s) da classe {1} com erros de snap. Verifique as flags.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="97"/>
         <source>There are no snapping errors on {}.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não há erros de snap em {}.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="99"/>
         <source>There are snapping errors. Check log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Há erros de snap. Verifique o log.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="101"/>
         <source>There are no snapping errors.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não há erros de snap.</translation>
     </message>
 </context>
 <context>
@@ -6183,32 +6186,32 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="32"/>
         <source>Snap Lines to Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Colar linhas na moldura</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="39"/>
         <source>Starting </source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando </translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="39"/>
         <source> Process.</source>
-        <translation type="unfinished"></translation>
+        <translation> Processo.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="41"/>
         <source>Running</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="45"/>
         <source>Empty database.</source>
-        <translation type="unfinished"></translation>
+        <translation>Banco de dados vazio.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="60"/>
         <source>All features snapped succesfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Todas as feições foram coladas com sucesso.</translation>
     </message>
 </context>
 <context>
@@ -6216,37 +6219,37 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapToGridProcess.py" line="32"/>
         <source>Snap to Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>Colar na grade</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapToGridProcess.py" line="39"/>
         <source>Starting </source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando </translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapToGridProcess.py" line="39"/>
         <source> Process.</source>
-        <translation type="unfinished"></translation>
+        <translation> Processo.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapToGridProcess.py" line="41"/>
         <source>Running</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapToGridProcess.py" line="45"/>
         <source>Empty database.</source>
-        <translation type="unfinished"></translation>
+        <translation>Banco de dados vazio</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapToGridProcess.py" line="58"/>
         <source>All features from {} snapped successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Todas as feições de {} foram coladas com sucesso.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapToGridProcess.py" line="60"/>
         <source>All features snapped successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Todas as feições foram coladas com sucesso.</translation>
     </message>
 </context>
 <context>
@@ -6295,7 +6298,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="55"/>
         <source>Spatial Rule Enforcer</source>
-        <translation type="unfinished"></translation>
+        <translation>Reforçador de regras espaciais</translation>
     </message>
 </context>
 <context>
@@ -6319,32 +6322,32 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="55"/>
         <source>Spatial Rule Checker</source>
-        <translation type="unfinished"></translation>
+        <translation>Verificador de regras espaciais</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="87"/>
         <source>Starting </source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando </translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="87"/>
         <source> Process.</source>
-        <translation type="unfinished"></translation>
+        <translation> Processo.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="89"/>
         <source>Running</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="99"/>
         <source>{} features are invalid. Check flags.</source>
-        <translation type="unfinished"></translation>
+        <translation>{} feições são inválidas. Verifique as flags.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="103"/>
         <source>All features are valid.</source>
-        <translation type="unfinished"></translation>
+        <translation>Todas as feições são válidas.</translation>
     </message>
 </context>
 <context>
@@ -6407,17 +6410,17 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="Factories/DbFactory/spatialiteDb.py" line="425"/>
         <source>Problem getting geom types from db: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema obtendo tipos geométricos do db: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/spatialiteDb.py" line="447"/>
         <source>Problem getting geom tables from db: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema obtendo tabelas geométricas do db: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/spatialiteDb.py" line="476"/>
         <source>Problem getting geom column dict: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema obtendo dicionário de colunas geométricas: </translation>
     </message>
 </context>
 <context>
@@ -6438,12 +6441,12 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="Factories/LayerLoaderFactory/spatialiteLayerLoader.py" line="84"/>
         <source>Domains</source>
-        <translation type="unfinished"></translation>
+        <translation>Dom;inios</translation>
     </message>
     <message>
         <location filename="Factories/LayerLoaderFactory/spatialiteLayerLoader.py" line="103"/>
         <source>Error for layer </source>
-        <translation type="unfinished"></translation>
+        <translation>Erro para camada </translation>
     </message>
 </context>
 <context>
@@ -6451,7 +6454,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="ServerTools/selectStyles.ui" line="14"/>
         <source>Select Available Styles</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione Estilos disponíveis</translation>
     </message>
 </context>
 <context>
@@ -6459,17 +6462,17 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="CustomWidgets/tabDbSelectorWidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished">Formulário</translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <location filename="CustomWidgets/tabDbSelectorWidget.ui" line="30"/>
         <source>PostGIS</source>
-        <translation type="unfinished">PostGIS</translation>
+        <translation>PostGIS</translation>
     </message>
     <message>
         <location filename="CustomWidgets/tabDbSelectorWidget.ui" line="47"/>
         <source>Spatialite</source>
-        <translation type="unfinished">Spatialite</translation>
+        <translation>Spatialite</translation>
     </message>
 </context>
 <context>
