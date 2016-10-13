@@ -1793,7 +1793,10 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem running sql ')+ sqlFilePath +':' + query.lastError().text())
         self.db.commit()
     
-    def getStructureDict(self):
+    def getStructureDict2(self):
+        '''
+        Don't know the purpose of this method
+        '''
         self.checkAndOpenDb()
         
         if self.getDatabaseVersion() == '2.1.3':
