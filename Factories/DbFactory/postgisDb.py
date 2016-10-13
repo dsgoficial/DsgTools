@@ -1751,7 +1751,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             self.db.rollback()
-            
             raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
         while query.next():
             return query.value(0)
