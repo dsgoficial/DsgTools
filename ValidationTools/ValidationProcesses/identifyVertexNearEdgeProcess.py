@@ -41,7 +41,7 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
-            if len(classesWithElem) == 0:
+            if len(classesWithGeom) == 0:
                 self.setStatus(self.tr('Empty database.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1

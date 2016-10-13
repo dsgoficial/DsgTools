@@ -130,7 +130,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         layer: layer name
         '''
         self.layerLoader = LayerLoaderFactory().makeLoader(self.iface,self.configWindow.widget.abstractDb)
-        self.layerLoader.load([layer], uniqueLoad = True)
+        return self.layerLoader.load([layer], uniqueLoad = True)[layer]
     
     def checkFlagsLoaded(self, layer):
         '''

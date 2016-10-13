@@ -98,6 +98,9 @@ class EDGVLayerLoader(QObject):
     def getLyrDict(self, lyrList):
         lyrDict = dict()
         for type in self.geomTypeDict.keys():
+            # some tables are only registered as GEOMETRY and should not be considered
+            if type == 'GEOMETRY':
+                continue
             if self.correspondenceDict[type] not in lyrDict.keys():
                 lyrDict[self.correspondenceDict[type]] = dict()
             for lyr in self.geomTypeDict[type]:
