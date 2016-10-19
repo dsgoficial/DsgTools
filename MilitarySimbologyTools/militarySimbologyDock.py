@@ -29,10 +29,11 @@ from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
 # QGIS imports
 from qgis.gui import QgsMessageBar
+from qgis.core import QgsMapLayerRegistry
 import qgis as qgis
 
 #DsgTools imports
-from militarySimbology import MilitarySymbology
+from militarySimbology import MilitarySymbology, SettingPathProject
 from createSqlite import CreateSqlite
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -81,6 +82,20 @@ class MilitarySimbologyDock(QtGui.QDockWidget, MilitarySymbology, FORM_CLASS):
             MilitarySymbology(self.iface, self.sqlitePath, stylePath, 'Inimigo')
         else:
             self.message()
+            
+    @pyqtSlot(bool)
+    def on_locateStyleButton_clicked(self):
+        """
+        Redefine a path do estilo da feição quando se carrega as feições pelo projeto Qgis
+        """
+        layers = QgsMapLayerRegistry.instance().mapLayers()
+        for layer in layers:
+            if (layer[:-17] == 'Aliado'):
+                stylePath = os.path.join(os.path.dirname(__file__), 'templates', 'templateStyleAllied.qml')
+                SettingPathProject(layers[layer], stylePath, self.iface)
+            elif (layer[:-17] == 'Inimigo'):
+                stylePath = os.path.join(os.path.dirname(__file__), 'templates', 'templateStyleEnemy.qml')
+                SettingPathProject(layers[layer], stylePath, self.iface)
      
     def message(self):
         """messagem para avisar o usuário caso tente carregar uma feição sem ter definido o Banco Sqlite

@@ -59,43 +59,42 @@ class MilitarySymbology:
     def setConfStyleForm(self, tableId):
         """defino as configurações para cada campo do formulário de acordo com suas
             respectivas tabelas de mapa de valores
-        """
+        """        
         conf = dict()
         #conf[u'FilterExpression'] = u'code in (0,1,2,3)'
         conf[u'Layer'] = tableId
         conf[u'UseCompleter'] = False
-        conf[u'AllowMulti'] =  True
+        conf[u'AllowMulti'] =  False
         conf[u'AllowNull'] = True
         conf[u'OrderByValue'] =  False
         conf[u'Value'] = u'code_name'
         conf[u'Key'] = u'code'
         return conf        
     
-    def loadTables(self, uri, listOfTables):
+    def loadTables(self, uri=None, listOfTables=None):
         """
         Carrego as tabelas de mapa de valores para o Qgis em seu grupo
         """
         listOfConfToFields = []
         root = QgsProject.instance().layerTreeRoot()
-        if not root.findGroup(u"Mapa_de_valores"):
-            legend = self.iface.legendInterface()
-            groupMapvalue = legend.addGroup (u"Mapa_de_valores", True)
-            
+        if (not root.findGroup(u"Mapa_de_valores")) and (uri != None) and (listOfTables != None):
+            groupMapvalue = root.addGroup (u"Mapa_de_valores")            
             for table in listOfTables:
                 uri.setDataSource('', table,'','','id')
                 table = QgsVectorLayer(uri.uri(), table[9:], 'spatialite')
-                QgsMapLayerRegistry.instance().addMapLayer(table)
-                tableId = self.iface.activeLayer().id()
-                legend.moveLayer(legend.layers()[0], groupMapvalue)
+                tablef = QgsMapLayerRegistry.instance().addMapLayer(table, False)
+                groupMapvalue.addLayer(tablef)
+                tableId = tablef.id()
                 conf = self.setConfStyleForm(tableId)
                 listOfConfToFields.append(conf)
             return listOfConfToFields
         else:
             group = root.findGroup(u"Mapa_de_valores")
             for table in group.children():
+                print table.layerName()
                 conf = self.setConfStyleForm(table.layerId())
                 listOfConfToFields.append(conf)
-            return list(reversed(listOfConfToFields))
+            return list(listOfConfToFields)
         
     def loadLayer(self, listOfConf, uri, nameLayer):
         """
@@ -114,7 +113,7 @@ class MilitarySymbology:
         QgsMapLayerRegistry.instance().addMapLayer(layer, False)
         parentGroup.insertChildNode(groupIndex, QgsLayerTreeLayer(layer))
         self.loadStyle(layer, listOfConf)
-     
+    
     def loadStyle(self, layer, listOfConf):
         """
         Defino o estilo para a camada carregada
@@ -123,10 +122,12 @@ class MilitarySymbology:
             style = template_style.read().replace('\n', '')
         styleReady = unicode(self.setPathStyle(style), 'utf-8')    
         layer.applyNamedStyle(styleReady)
-        i = 2
-        for index in range(len(listOfConf)) : 
-            layer.setEditorWidgetV2Config(i, listOfConf[index] )
+        print listOfConf
+        i = 0
+        for index in [2,3,4,5,6,7,8,13] : 
+            layer.setEditorWidgetV2Config(index, listOfConf[i])
             i+=1
+            
 
     def setPathStyle(self, style):
         """
@@ -135,3 +136,14 @@ class MilitarySymbology:
         currentPath = os.path.join(os.path.dirname(__file__), 'symbols')+os.sep
         styleReady = style.replace('{path}', currentPath)
         return styleReady
+
+
+class SettingPathProject(MilitarySymbology):
+    def __init__(self, layer, style, iface):
+        self.iface = iface
+        self.stylePath = style
+        listOfConfToFields = self.loadTables()
+        self.loadStyle(layer, listOfConfToFields)
+        self.iface.mapCanvas().refresh()
+        
+        

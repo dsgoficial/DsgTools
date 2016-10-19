@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>251</width>
-    <height>152</height>
+    <height>185</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,6 +38,13 @@
     </item>
     <item row="2" column="0">
      <widget class="SelectFileWidget" name="widget" native="true"/>
+    </item>
+    <item row="5" column="0">
+     <widget class="QPushButton" name="locateStyleButton">
+      <property name="text">
+       <string>Localizar Estilos</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

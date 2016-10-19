@@ -8,25 +8,25 @@
       <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
     </edittype>
     <edittype widgetv2type="ValueRelation" name="Símbolos Básicos">
-      <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="code" Layer="simbolos_basicos20161005141350478" Value="code_name" labelOnTop="1" AllowMulti="1"/>
+      <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="code" Layer="simbolos_basicos20161019124624131" Value="code_name" labelOnTop="0" AllowMulti="0"/>
     </edittype>
     <edittype widgetv2type="ValueRelation" name="Comando Combinado, Forças Armadas e Forças Auxiliares">
-      <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="code" Layer="simbolos_de_identificacao_a20161005141350565" Value="code_name" labelOnTop="1" AllowMulti="1"/>
+      <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="code" Layer="simbolos_de_identificacao_a20161019124624229" Value="code_name" labelOnTop="0" AllowMulti="0"/>
     </edittype>
     <edittype widgetv2type="ValueRelation" name="Armas e Material Bélico">
-      <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="code" Layer="simbolos_de_identificacao_b20161005141350585" Value="code_name" labelOnTop="1" AllowMulti="1"/>
+      <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="code" Layer="simbolos_de_identificacao_b20161019124624238" Value="code_name" labelOnTop="0" AllowMulti="0"/>
     </edittype>
     <edittype widgetv2type="ValueRelation" name="Serviços">
-      <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="code" Layer="simbolos_de_identificacao_c20161005141350603" Value="code_name" labelOnTop="1" AllowMulti="1"/>
+      <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="code" Layer="simbolos_de_identificacao_c20161019124624246" Value="code_name" labelOnTop="0" AllowMulti="0"/>
     </edittype>
     <edittype widgetv2type="ValueRelation" name="Especialidade">
-      <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="code" Layer="simbolos_de_identificacao_d20161005141350620" Value="code_name" labelOnTop="1" AllowMulti="1"/>
+      <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="code" Layer="simbolos_de_identificacao_d20161019124624254" Value="code_name" labelOnTop="0" AllowMulti="0"/>
     </edittype>
     <edittype widgetv2type="ValueRelation" name="Atividades">
-      <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="code" Layer="simbolos_de_identificacao_e20161005141350637" Value="code_name" labelOnTop="1" AllowMulti="1"/>
+      <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="code" Layer="simbolos_de_identificacao_e20161019124624261" Value="code_name" labelOnTop="0" AllowMulti="0"/>
     </edittype>
     <edittype widgetv2type="ValueRelation" name="Escalões">
-      <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="code" Layer="simbolos_de_identificacao_de_escaloes20161005141350654" Value="code_name" labelOnTop="1" AllowMulti="1"/>
+      <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="code" Layer="simbolos_de_identificacao_de_escaloes20161019124624269" Value="code_name" labelOnTop="0" AllowMulti="0"/>
     </edittype>
     <edittype widgetv2type="TextEdit" name="Rotação">
       <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
@@ -40,556 +40,571 @@
     <edittype widgetv2type="TextEdit" name="Outras informações necessárias para complementar a representação">
       <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
     </edittype>
+    <edittype widgetv2type="ValueRelation" name="Posto / Graduação Comandante">
+      <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="code" Layer="posto_graduacao20161019124624276" Value="code_name" labelOnTop="0" AllowMulti="0"/>
+    </edittype>
+    <edittype widgetv2type="TextEdit" name="Nome de Guerra Cmte">
+      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
+    </edittype>
+    <edittype widgetv2type="TextEdit" name="Efetivo Total">
+      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
+    </edittype>
+    <edittype widgetv2type="TextEdit" name="Baixados">
+      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
+    </edittype>
+    <edittype widgetv2type="TextEdit" name="Efetivo Pronto">
+      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
+    </edittype>
   </edittypes>
   <renderer-v2 forceraster="0" symbollevels="0" type="RuleRenderer" enableorderby="0">
     <rules key="{91605a3f-0841-44c5-9c69-a75182dd1bf5}">
-      <rule filter=" &quot;Símbolos Básicos&quot; = '{0}'" key="{347a0731-8225-4c3c-a0a1-c604797754f2}" symbol="0" label="Retângulo">
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{0}'" key="{c646336b-7bb3-4b1a-8280-8b8f14e8ef87}" symbol="1" label="Letra T"/>
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{1}'" key="{57d19078-c5cf-489c-93cf-9f391d9322c9}" symbol="2" label="Ferro"/>
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{2}'" key="{32273349-6201-46ea-b771-7ad606a15c7f}" symbol="3" label="Hélice"/>
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{3}'" key="{3ed6d0dc-c54b-40e8-ac11-951259760f1c}" symbol="4" label="Polícia Militar"/>
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{4}'" key="{cf3cd5b3-6adb-436d-9d83-67950469e1c1}" symbol="5" label="Comando Combinado"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot; = '{0}'" key="{1f3f91e4-e173-49bb-a265-d32bca45fb5d}" symbol="6" label="Infantaria"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{1}'" key="{96c2178f-3f8f-4446-9fd5-c35329d1fd5d}" symbol="7" label="Cavalaria"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{2}'" key="{5b26bd3f-09fd-465e-b45e-60cd4b7c30d9}" symbol="8" label="Artilharia"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{3}'" key="{4b9c2920-edef-42e3-adf0-9bbea370a2b1}" symbol="9" label="Engenharia"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{4}'" key="{53f317ef-9b1d-43fa-80a5-2e5f780b7bf0}" symbol="10" label="Comunicações"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{5}'" key="{5ed5abc2-0a6d-485e-9761-75091929609c}" symbol="11" label="Material Bélico"/>
-        <rule filter=" &quot;Serviços&quot; = '{0}'" key="{692c1d59-5437-4f54-a76e-72319def3fd2}" symbol="12" label="Ajudância Geral"/>
-        <rule filter=" &quot;Serviços&quot; = '{1}'" key="{f14b71b9-ba63-4eb2-957b-98cdee6596c8}" symbol="13" label="Apoio ao Desembarque"/>
-        <rule filter=" &quot;Serviços&quot; = '{2}'" key="{2a4c5fea-652b-4c3e-897c-3da9a39802aa}" symbol="14" label="Armamento e Munição"/>
-        <rule filter=" &quot;Serviços&quot; = '{3}'" key="{7aa91b20-e4d3-4109-aa9c-b6d2af4c2391}" symbol="15" label="Especial"/>
-        <rule filter=" &quot;Serviços&quot; = '{4}'" key="{fb534d0a-d01a-42b7-a7d7-3f4567db5696}" symbol="16" label="Finanças"/>
-        <rule filter=" &quot;Serviços&quot; = '{5}'" key="{143f2d74-e668-437a-872c-988d8c01a0b7}" symbol="17" label="Intendência"/>
-        <rule filter=" &quot;Serviços&quot; = '{6}'" key="{478f1a42-60e8-4b16-a7db-3956883f6a23}" symbol="18" label="Justiça Militar"/>
-        <rule filter=" &quot;Serviços&quot; = '{7}'" key="{486f6b0e-8d80-4b77-97fa-38c9ebbbc477}" symbol="19" label="Motomecanização"/>
-        <rule filter=" &quot;Serviços&quot; = '{8}'" key="{fdfaf5c8-de6c-41e9-9a85-be30b89375ba}" symbol="20" label="Polícia da Aeronáutica"/>
-        <rule filter=" &quot;Serviços&quot; = '{9}'" key="{d3fea392-7651-41b6-99b4-89648602ef40}" symbol="21" label="Polícia do Exército"/>
-        <rule filter=" &quot;Serviços&quot; = '{10}'" key="{2eba636a-1afd-41ed-8bc6-0c14bb1994a7}" symbol="22" label="Postal"/>
-        <rule filter=" &quot;Serviços&quot; = '{11}'" key="{000c07df-a3dd-4f26-8f23-270d1b9a53da}" symbol="23" label="Saúde"/>
-        <rule filter=" &quot;Serviços&quot; = '{12}'" key="{ea207705-569a-4faa-bbc8-ed78d29bb248}" symbol="24" label="Serviço Militar, Tiro-de-Guerra"/>
-        <rule filter=" &quot;Serviços&quot; = '{13}'" key="{2d2239d2-4f37-49b4-b607-ddfa2312bae1}" symbol="25" label="Serviço de Polícia de Fuzileiros Navais"/>
-        <rule filter=" &quot;Serviços&quot; = '{14}'" key="{9c57f355-2741-4ec8-b63e-7f0d69f3f391}" symbol="26" label="Transporte"/>
-        <rule filter=" &quot;Serviços&quot; = '{15}'" key="{c2609ed8-9d3e-4b51-b62d-ccca8fe3adfd}" symbol="27" label="Veterinária"/>
-        <rule filter=" &quot;Especialidade&quot; = '{1}'" key="{01737cca-ecac-498b-bf82-62720949e6ee}" symbol="28" label="Aeronaval"/>
-        <rule filter=" &quot;Especialidade&quot; = '{2}'" key="{526f8921-8300-42b8-b8bc-1de14bb518a5}" symbol="29" label="Aeroterrestre"/>
-        <rule filter=" &quot;Especialidade&quot; = '{3}'" key="{bd31a95c-4566-49c6-b41c-e38b6a5e1012}" symbol="30" label="Aeromóvel"/>
-        <rule filter=" &quot;Especialidade&quot; = '{4}'" key="{6d7855c5-2e12-4552-9e03-faa6b08e90ef}" symbol="31" label="Vetinária"/>
-        <rule filter=" &quot;Especialidade&quot; = '{5}'" key="{28a9f3ba-e709-4549-9fa7-638bf423cbe8}" symbol="32" label="Anfíbio"/>
-        <rule filter=" &quot;Especialidade&quot; = '{6}'" key="{8ab5cd71-8ca6-483a-b127-49aeb4ad9349}" symbol="33" label="Artilharia Antiaérea"/>
-        <rule filter=" &quot;Especialidade&quot; = '{10}'" key="{22104bd2-8485-437e-864d-e725d75f398d}" symbol="34" label="Artilharia autopropulsada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{9}'" key="{a988a3d3-2628-49c1-8b47-4fd4f096de51}" symbol="35" label="Artilharia autopropulsada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{8}'" key="{a1b84e25-b8f0-473b-9864-eeedcbceed0e}" symbol="36" label="Artilharia Antiaérea de Autodefesa"/>
-        <rule filter=" &quot;Especialidade&quot; = '{7}'" key="{61f270ab-4187-4428-8179-822f0c9def7f}" symbol="37" label="Artilharia Antiaérea Autopropulsada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{11}'" key="{87ce07d4-225e-484e-a18e-de3bbafbb5bf}" symbol="38" label="Aviação do Exército"/>
-        <rule filter=" &quot;Especialidade&quot; = '{12}'" key="{0ba578b4-e704-4402-a91c-5202749f4725}" symbol="39" label="Caçador"/>
-        <rule filter=" &quot;Especialidade&quot; = '{13}'" key="{20d9aba4-a17b-4547-a6eb-b862c7ff2e4d}" symbol="40" label="Cão-de-guerra"/>
-        <rule filter=" &quot;Especialidade&quot; = '{14}'" key="{270d3fe7-40de-42a6-80c0-c416a418a9f4}" symbol="41" label="Cavalaria Blindada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{15}'" key="{378b285c-76d3-4be8-b41d-1f366acc3d17}" symbol="42" label="Cavalaria Mecanizada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{20}'" key="{eb6cb6da-6396-40b1-8c55-e7e9b75adc87}" symbol="43" label="Enegenharia de grande unidade blindada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{23}'" key="{beb9e875-c2a8-4920-8d75-b5b438d78ae6}" symbol="44" label="Fronteira"/>
-        <rule filter=" &quot;Especialidade&quot; = '{27}'" key="{b8b52556-eb61-4ac3-bc29-a3c56ce91d9e}" symbol="45" label="Infantaria blindada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{31}'" key="{d096b7f7-c1b9-4e96-812a-ec399c292898}" symbol="46" label="Pára-quedista"/>
-        <rule filter=" &quot;Especialidade&quot; = '{32}'" key="{1f73c7d6-a8e9-461d-b52a-e3be04b39acc}" symbol="47" label="Aeroterrestre de Salvamento e Resgate"/>
-        <rule filter=" &quot;Atividades&quot;  = '{2}'" key="{9fc427af-67d8-4a49-bc60-c9baddf7be63}" symbol="48" label="Assistência ao Pessoal"/>
-        <rule filter=" &quot;Atividades&quot;  = '{1}'" key="{f3faa357-e585-4b38-beed-20ff2bb62bc1}" symbol="49" label="Administração"/>
-        <rule filter=" &quot;Especialidade&quot; = '{36}'" key="{cb16b0d7-1543-45bc-9b78-7b1da5b41982}" symbol="50" label="Selva"/>
-        <rule filter=" &quot;Atividades&quot; = '{3}'" key="{42550f1c-d5c1-4eee-b794-f26858d22f7f}" symbol="51" label="Assuntos Civis"/>
-        <rule filter=" &quot;Atividades&quot; ='{4}'" key="{4929494f-aa5b-4a54-80af-db9d4aa35b0b}" symbol="52" label="Banho"/>
-        <rule filter=" &quot;Atividades&quot; ='{9}'" key="{51ef973f-ccce-45a5-b461-f6d71a4f2150}" symbol="53" label="Classe IV"/>
-        <rule filter=" &quot;Atividades&quot; ='{22}'" key="{00ccdd3d-eeb4-4d2b-bf62-656e512cff5b}" symbol="54" label="Logística"/>
-        <rule filter=" &quot;Atividades&quot; ='{27}'" key="{48bfe117-ee98-497d-ad12-890f354fda2f}" symbol="55" label="Manutenção e salvamento"/>
-        <rule filter=" &quot;Atividades&quot; ='{26}'" key="{f5369c7a-e7be-455e-b021-f8a75418044d}" symbol="56" label="Reconpletamento"/>
-        <rule filter=" &quot;Atividades&quot; ='{25}'" key="{74f68c08-3d94-4c2a-9af1-a2f708b2c6f7}" symbol="57" label="Prisoneiro de Guerra"/>
-        <rule filter=" &quot;Atividades&quot; ='{24}'" key="{ba0d1a8a-91fa-4c42-b5e4-99887e0a8854}" symbol="58" label="Mão-de-obra"/>
-        <rule filter=" &quot;Atividades&quot; ='{23}'" key="{fe536ce3-c066-45ef-908a-aecf760e69d7}" symbol="59" label="Manuteção"/>
-        <rule filter=" &quot;Atividades&quot; ='{21}'" key="{a4d5e2a5-f0ef-4981-b4c8-c168d4badadd}" symbol="60" label="Lavanderia"/>
-        <rule filter=" &quot;Atividades&quot; ='{20}'" key="{67a63d05-259f-46c7-861d-5a80781d7e78}" symbol="61" label="Descontaminação"/>
-        <rule filter=" &quot;Atividades&quot; ='{19}'" key="{6a018f97-694c-4f53-9df0-a1e892df5343}" symbol="62" label="Depósito"/>
-        <rule filter=" &quot;Atividades&quot; ='{18}'" key="{e786388c-4701-4a57-bc66-5698c5fd378b}" symbol="63" label="Comando e Controle"/>
-        <rule filter=" &quot;Atividades&quot; ='{17}'" key="{d352a160-7be3-48bd-9d22-ac22b2e94c50}" symbol="64" label="Contra Incêndio"/>
-        <rule filter=" &quot;Atividades&quot; ='{16}'" key="{fd4f6354-4e3c-4b2d-a50c-996d1a6325f3}" symbol="65" label="Construção"/>
-        <rule filter=" &quot;Atividades&quot; ='{15}'" key="{2e68d9b5-a6d2-4f18-a1bd-f8a87072d028}" symbol="66" label="Classe X"/>
-        <rule filter=" &quot;Atividades&quot; ='{14}'" key="{6547832c-7a41-4c8f-b3d5-057025bee05e}" symbol="67" label="Classe IX"/>
-        <rule filter=" &quot;Atividades&quot; ='{13}'" key="{7e5c5390-d3b9-4c81-bfbf-456ffab731c2}" symbol="68" label="Classe VIII"/>
-        <rule filter=" &quot;Atividades&quot; ='{12}'" key="{33c1f65e-d432-4720-9369-660e123d2020}" symbol="69" label="Classe VII"/>
-        <rule filter=" &quot;Atividades&quot; ='{11}'" key="{8d9349d6-a6d4-4709-867d-9fd929c5cd41}" symbol="70" label="Classe VI"/>
-        <rule filter=" &quot;Atividades&quot; ='{10}'" key="{f50ee455-7e74-4a15-9103-839d5e81fcfd}" symbol="71" label="Classe V"/>
-        <rule filter=" &quot;Atividades&quot; ='{8}'" key="{e08e5dd1-c045-45e4-b820-d997abb9f9ad}" symbol="72" label="Classe III"/>
-        <rule filter=" &quot;Atividades&quot; ='{7}'" key="{7adcf2d6-57ab-4964-89f9-29f192202f34}" symbol="73" label="Classe II"/>
-        <rule filter=" &quot;Atividades&quot; ='{6}'" key="{735848b6-7d7b-4ec1-b789-c54b829b8054}" symbol="74" label="Classe I"/>
-        <rule filter=" &quot;Atividades&quot; ='{5}'" key="{2e7ec999-4818-4988-8f7c-ee548d2c8259}" symbol="75" label="Civis"/>
-        <rule filter=" &quot;Especialidade&quot; = '{35}'" key="{a063c480-f88f-4ff5-9160-e5a839ed91d7}" symbol="76" label="Salvamente e Resgate"/>
-        <rule filter=" &quot;Especialidade&quot; = '{34}'" key="{e1ff6639-0dab-4a9a-bdb2-bd7702582e51}" symbol="77" label="Reconhecimento"/>
-        <rule filter=" &quot;Especialidade&quot; = '{33}'" key="{44fb2ebe-a6c3-4da5-944b-93d2d358771e}" symbol="78" label="Operações Especiais"/>
-        <rule filter=" &quot;Especialidade&quot; = '{30}'" key="{6c82830c-d2be-4b2a-bff1-5c515c064703}" symbol="79" label="Operações Psicológicas"/>
-        <rule filter=" &quot;Especialidade&quot; = '{29}'" key="{f78cf19b-ed9b-4390-98c1-d7060894b3f8}" symbol="80" label="Montanha"/>
-        <rule filter=" &quot;Especialidade&quot; = '{28}'" key="{8d46d0e8-00cb-4939-80df-a7a870177109}" symbol="81" label="Infantaria da Aeronáutica"/>
-        <rule filter=" &quot;Especialidade&quot; = '{26}'" key="{7e72a8d9-c578-44dc-9741-19dacc3643f0}" symbol="82" label="Helitransporte"/>
-        <rule filter=" &quot;Especialidade&quot; = '{24}'" key="{cbee33d1-3cf9-40ef-b843-ff0ee0ec7fc5}" symbol="83" label="Guerra Eletrônica (especialidade de comunicações)"/>
-        <rule filter="&quot;Especialidade&quot; ='{25}'" key="{49e8d4d9-c903-42f8-8304-0728523eef45}" symbol="84" label="Guerrilha"/>
-        <rule filter=" &quot;Especialidade&quot; = '{22}'" key="{73a5520d-a424-4c5e-9b85-f701004d6011}" symbol="85" label="Forças Especiais"/>
-        <rule filter=" &quot;Especialidade&quot; = '{21}'" key="{5201fb2b-4795-4693-a5d8-fa9c8efcdb48}" symbol="86" label="Fluvial"/>
-        <rule filter=" &quot;Especialidade&quot; = '{19}'" key="{0ec2cb41-7b56-4656-8e5b-09128a0264d7}" symbol="87" label="Elemento Logístico Blindado"/>
-        <rule filter=" &quot;Especialidade&quot; = '{18}'" key="{6d34d154-8b51-4e56-84a9-81b47734e112}" symbol="88" label="Defesa Química"/>
-        <rule filter=" &quot;Especialidade&quot; = '{17}'" key="{6b844412-94ec-43e8-b9cb-743e31248860}" symbol="89" label="Elemento de Comunicações"/>
-        <rule filter=" &quot;Especialidade&quot; = '{16}'" key="{1c141eed-8a27-474b-9b43-4c347ae4229a}" symbol="90" label="Colonização"/>
-        <rule filter=" &quot;Atividades&quot; ='{28}'" key="{4e1b1b6c-aad4-4222-9273-66609d282d04}" symbol="91" label="Recreação"/>
-        <rule filter=" &quot;Atividades&quot; ='{29}'" key="{722f8622-2d4b-4941-97dc-9b520a1ecc1e}" symbol="92" label="Remoção de Granadas e Bombas"/>
-        <rule filter=" &quot;Atividades&quot; ='{30}'" key="{ff02ea3e-bf68-4f2b-8cb1-5640303da8b1}" symbol="93" label="Suprimento"/>
-        <rule filter=" &quot;Atividades&quot; ='{31}'" key="{72c9975b-e023-4615-aaef-2092acd9891a}" symbol="94" label="Suprimento de artigos reembolsáveis"/>
-        <rule filter=" &quot;Atividades&quot; ='{35}'" key="{dafe39db-da98-4054-8204-6a1439f14797}" symbol="95" label="Cemitério"/>
-        <rule filter=" &quot;Atividades&quot; ='{34}'" key="{c033762f-c150-42fd-a347-04f3bd0493ca}" symbol="96" label="Água potável"/>
-        <rule filter=" &quot;Atividades&quot; ='{33}'" key="{b949e52d-0ea9-41bf-be76-52dc1d208293}" symbol="97" label="Suprimento de outras classes"/>
-        <rule filter=" &quot;Escalões&quot; = '{1}'" key="{aa295c33-082c-434f-bb9e-e749ae7318fb}" symbol="98" label="Esquadra"/>
-        <rule filter=" &quot;Escalões&quot; = '{4}'" key="{4b1e8933-46c2-442b-9404-4547ef2770c9}" symbol="99" label="Companhia"/>
-        <rule filter=" &quot;Escalões&quot; = '{3}'" key="{94bd3a02-230b-417c-8918-0bb36720e30b}" symbol="100" label="Pelotão"/>
-        <rule filter=" &quot;Escalões&quot; = '{2}'" key="{dda0aadb-b83b-4939-bee0-7cba42a8aaa6}" symbol="101" label="Grupo de Combate ou correspondente"/>
-        <rule filter=" &quot;Atividades&quot; ='{50}'" key="{250f8310-84af-4300-82a9-52639d7e3565}" symbol="102" label="Trânsito"/>
-        <rule filter=" &quot;Atividades&quot; ='{49}'" key="{4a67d255-320a-48e2-b92a-f51d8fe06cec}" symbol="103" label="Suprimento e Transporte"/>
-        <rule filter=" &quot;Atividades&quot; ='{48}'" key="{d64f917c-401f-4911-b2e6-c2a7fb024f95}" symbol="104" label="Sepultamento"/>
-        <rule filter=" &quot;Atividades&quot; ='{47}'" key="{aff7db42-4466-4ba5-92d5-fa4f1cd31272}" symbol="105" label="Salvados"/>
-        <rule filter=" &quot;Atividades&quot; ='{46}'" key="{f22874f5-6e32-42d9-a853-e8ccf371064f}" symbol="106" label="Reunião de Extraviados"/>
-        <rule filter=" &quot;Atividades&quot; ='{45}'" key="{7f474bd4-4b7f-46ec-9d5e-fef8e8e95e66}" symbol="107" label="Repouso"/>
-        <rule filter=" &quot;Atividades&quot; ='{44}'" key="{bde518da-5b1a-44d8-961d-4f4d4dbd665f}" symbol="108" label="Prisão, Instalação de Confinamento"/>
-        <rule filter=" &quot;Atividades&quot; ='{43}'" key="{29e059b8-4ff6-4012-8bd3-2e9ecd8261f3}" symbol="109" label="Evacuação"/>
-        <rule filter=" &quot;Atividades&quot; ='{42}'" key="{301b071e-3444-45a1-b8b3-11acd470dfc9}" symbol="110" label="Hospital ou Centro de Saúde"/>
-        <rule filter=" &quot;Atividades&quot; ='{41}'" key="{178685a5-bf3a-4b6f-a70f-e5d5d289aee0}" symbol="111" label="Hospital de Veterinária"/>
-        <rule filter=" &quot;Atividades&quot; ='{40}'" key="{f877cf21-5222-4c12-a1ad-4d0f9229505f}" symbol="112" label="Estado Maior"/>
-        <rule filter=" &quot;Atividades&quot; ='{39}'" key="{bbe491a5-1539-4541-a1ab-460baf4ee455}" symbol="113" label="Embarque e Desembarque"/>
-        <rule filter=" &quot;Atividades&quot; ='{38}'" key="{7f12f6d1-df59-40f1-a377-7e11160cbe88}" symbol="114" label="Extraviados"/>
-        <rule filter=" &quot;Atividades&quot; ='{37}'" key="{ac4d2aa1-7550-4af7-b99a-ec8e654fc44a}" symbol="115" label="Controle de Munição"/>
-        <rule filter=" &quot;Atividades&quot; ='{36}'" key="{42c92540-1d67-48ec-922b-2aa4bbb5604f}" symbol="116" label="Coleta de Mortos"/>
-        <rule filter=" &quot;Atividades&quot; ='{32}'" key="{c1a72018-8c10-4d5f-af98-798933f60866}" symbol="117" label="Suprimento de Material Bélica"/>
-        <rule filter=" &quot;Escalões&quot; = '{5}'" key="{6a0715ed-6387-4f05-aea4-9a9de5eb523f}" symbol="118" label="Batalhão"/>
-        <rule filter=" &quot;Escalões&quot; = '{6}'" key="{b4c0cc89-1ad1-4569-88cc-d0c20f994303}" symbol="119" label="Grupamento"/>
-        <rule filter=" &quot;Escalões&quot; = '{7}'" key="{57ba74da-506b-4ffc-a813-6eb7ced95e6c}" symbol="120" label="Força-tarefa"/>
-        <rule filter=" &quot;Escalões&quot; = '{8}'" key="{8c278f9f-93d0-4906-94bd-205d3858f112}" symbol="121" label="Força-tarefa de valor batalhão"/>
-        <rule filter=" &quot;Escalões&quot; = '{9}'" key="{600a7356-6d71-4963-a7db-e4f0f571d640}" symbol="122" label="Força-tarefa de valor regimento"/>
-        <rule filter=" &quot;Escalões&quot; = '{10}'" key="{d40f4935-1e67-4d8f-960c-6aa7976a7c35}" symbol="123" label="Brigada"/>
-        <rule filter=" &quot;Escalões&quot; = '{11}'" key="{99e7b86e-ef16-449d-9902-8b3523f78ff7}" symbol="124" label="Divisão"/>
-        <rule filter=" &quot;Escalões&quot; = '{12}'" key="{7d1a28ba-a1bf-4545-9964-6a6e194fa52f}" symbol="125" label="Esquadra"/>
-        <rule filter=" &quot;Escalões&quot; = '{13}'" key="{910646be-ec02-4640-b697-03649d266d03}" symbol="126" label="Força-tarefa oficial-general do primeiro posto"/>
-        <rule filter=" &quot;Escalões&quot; = '{22}'" key="{8e5441e5-2ba6-461f-831f-8dd4982544e0}" symbol="127" label="Comando Logístico"/>
-        <rule filter=" &quot;Escalões&quot; = '{21}'" key="{883042cd-e9de-48c5-a96a-5ac579c1a821}" symbol="128" label="Região Militar"/>
-        <rule filter=" &quot;Escalões&quot; = '{20}'" key="{c44d576c-1ca7-469d-8cd3-3006521d3324}" symbol="129" label="Comando logística"/>
-        <rule filter=" &quot;Escalões&quot; = '{19}'" key="{355bef36-c7fd-474a-a0b2-fbd0f194490b}" symbol="130" label="Base Logística "/>
-        <rule filter=" &quot;Escalões&quot; = '{18}'" key="{3db44e57-0112-4f31-98c9-651e53711d95}" symbol="131" label="Teatro de Operações"/>
-        <rule filter=" &quot;Escalões&quot; = '{17}'" key="{09fb34c4-4205-4ee9-8236-afb97189014c}" symbol="132" label="Comando Combinado"/>
-        <rule filter=" &quot;Escalões&quot; = '{16}'" key="{700e2e56-1605-4366-8fde-19ecd3dd3815}" symbol="133" label="Forças componentes de comando combinado"/>
-        <rule filter=" &quot;Escalões&quot; = '{15}'" key="{30d27bef-04b0-4543-83c3-c7cd5cf64db9}" symbol="134" label="Força-tarefa combinado oficial-general do último posto"/>
-        <rule filter=" &quot;Escalões&quot; = '{14}'" key="{d6bd71cd-01be-4d26-9bbc-34faaec84ac0}" symbol="135" label="Força-tarefa oficial-general do posto intermediário"/>
+      <rule filter=" &quot;Símbolos Básicos&quot; = '0'" key="{347a0731-8225-4c3c-a0a1-c604797754f2}" symbol="0" label="Retângulo">
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '0'" key="{c646336b-7bb3-4b1a-8280-8b8f14e8ef87}" symbol="1" label="Letra T"/>
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '1'" key="{57d19078-c5cf-489c-93cf-9f391d9322c9}" symbol="2" label="Ferro"/>
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '2'" key="{32273349-6201-46ea-b771-7ad606a15c7f}" symbol="3" label="Hélice"/>
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '3'" key="{3ed6d0dc-c54b-40e8-ac11-951259760f1c}" symbol="4" label="Polícia Militar"/>
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '4'" key="{cf3cd5b3-6adb-436d-9d83-67950469e1c1}" symbol="5" label="Comando Combinado"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot; = '0'" key="{1f3f91e4-e173-49bb-a265-d32bca45fb5d}" symbol="6" label="Infantaria"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '1'" key="{96c2178f-3f8f-4446-9fd5-c35329d1fd5d}" symbol="7" label="Cavalaria"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '2'" key="{5b26bd3f-09fd-465e-b45e-60cd4b7c30d9}" symbol="8" label="Artilharia"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '3'" key="{4b9c2920-edef-42e3-adf0-9bbea370a2b1}" symbol="9" label="Engenharia"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '4'" key="{53f317ef-9b1d-43fa-80a5-2e5f780b7bf0}" symbol="10" label="Comunicações"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '5'" key="{5ed5abc2-0a6d-485e-9761-75091929609c}" symbol="11" label="Material Bélico"/>
+        <rule filter=" &quot;Serviços&quot; = '0'" key="{692c1d59-5437-4f54-a76e-72319def3fd2}" symbol="12" label="Ajudância Geral"/>
+        <rule filter=" &quot;Serviços&quot; = '1'" key="{f14b71b9-ba63-4eb2-957b-98cdee6596c8}" symbol="13" label="Apoio ao Desembarque"/>
+        <rule filter=" &quot;Serviços&quot; = '2'" key="{2a4c5fea-652b-4c3e-897c-3da9a39802aa}" symbol="14" label="Armamento e Munição"/>
+        <rule filter=" &quot;Serviços&quot; = '3'" key="{7aa91b20-e4d3-4109-aa9c-b6d2af4c2391}" symbol="15" label="Especial"/>
+        <rule filter=" &quot;Serviços&quot; = '4'" key="{fb534d0a-d01a-42b7-a7d7-3f4567db5696}" symbol="16" label="Finanças"/>
+        <rule filter=" &quot;Serviços&quot; = '5'" key="{143f2d74-e668-437a-872c-988d8c01a0b7}" symbol="17" label="Intendência"/>
+        <rule filter=" &quot;Serviços&quot; = '6'" key="{478f1a42-60e8-4b16-a7db-3956883f6a23}" symbol="18" label="Justiça Militar"/>
+        <rule filter=" &quot;Serviços&quot; = '7'" key="{486f6b0e-8d80-4b77-97fa-38c9ebbbc477}" symbol="19" label="Motomecanização"/>
+        <rule filter=" &quot;Serviços&quot; = '8'" key="{fdfaf5c8-de6c-41e9-9a85-be30b89375ba}" symbol="20" label="Polícia da Aeronáutica"/>
+        <rule filter=" &quot;Serviços&quot; = '9'" key="{d3fea392-7651-41b6-99b4-89648602ef40}" symbol="21" label="Polícia do Exército"/>
+        <rule filter=" &quot;Serviços&quot; = '10'" key="{2eba636a-1afd-41ed-8bc6-0c14bb1994a7}" symbol="22" label="Postal"/>
+        <rule filter=" &quot;Serviços&quot; = '11'" key="{000c07df-a3dd-4f26-8f23-270d1b9a53da}" symbol="23" label="Saúde"/>
+        <rule filter=" &quot;Serviços&quot; = '12'" key="{ea207705-569a-4faa-bbc8-ed78d29bb248}" symbol="24" label="Serviço Militar, Tiro-de-Guerra"/>
+        <rule filter=" &quot;Serviços&quot; = '13'" key="{2d2239d2-4f37-49b4-b607-ddfa2312bae1}" symbol="25" label="Serviço de Polícia de Fuzileiros Navais"/>
+        <rule filter=" &quot;Serviços&quot; = '14'" key="{9c57f355-2741-4ec8-b63e-7f0d69f3f391}" symbol="26" label="Transporte"/>
+        <rule filter=" &quot;Serviços&quot; = '15'" key="{c2609ed8-9d3e-4b51-b62d-ccca8fe3adfd}" symbol="27" label="Veterinária"/>
+        <rule filter=" &quot;Especialidade&quot; = '0'" key="{01737cca-ecac-498b-bf82-62720949e6ee}" symbol="28" label="Aeronaval"/>
+        <rule filter=" &quot;Especialidade&quot; = '1'" key="{526f8921-8300-42b8-b8bc-1de14bb518a5}" symbol="29" label="Aeroterrestre"/>
+        <rule filter=" &quot;Especialidade&quot; = '2'" key="{bd31a95c-4566-49c6-b41c-e38b6a5e1012}" symbol="30" label="Aeromóvel"/>
+        <rule filter=" &quot;Especialidade&quot; = '3'" key="{6d7855c5-2e12-4552-9e03-faa6b08e90ef}" symbol="31" label="Vetinária"/>
+        <rule filter=" &quot;Especialidade&quot; = '4'" key="{28a9f3ba-e709-4549-9fa7-638bf423cbe8}" symbol="32" label="Anfíbio"/>
+        <rule filter=" &quot;Especialidade&quot; = '5'" key="{8ab5cd71-8ca6-483a-b127-49aeb4ad9349}" symbol="33" label="Artilharia Antiaérea"/>
+        <rule filter=" &quot;Especialidade&quot; = '9'" key="{22104bd2-8485-437e-864d-e725d75f398d}" symbol="34" label="Artilharia autopropulsada"/>
+        <rule filter=" &quot;Especialidade&quot; = '8'" key="{a988a3d3-2628-49c1-8b47-4fd4f096de51}" symbol="35" label="Artilharia autopropulsada"/>
+        <rule filter=" &quot;Especialidade&quot; = '7'" key="{a1b84e25-b8f0-473b-9864-eeedcbceed0e}" symbol="36" label="Artilharia Antiaérea de Autodefesa"/>
+        <rule filter=" &quot;Especialidade&quot; = '6'" key="{61f270ab-4187-4428-8179-822f0c9def7f}" symbol="37" label="Artilharia Antiaérea Autopropulsada"/>
+        <rule filter=" &quot;Especialidade&quot; = '10'" key="{87ce07d4-225e-484e-a18e-de3bbafbb5bf}" symbol="38" label="Aviação do Exército"/>
+        <rule filter=" &quot;Especialidade&quot; = '11'" key="{0ba578b4-e704-4402-a91c-5202749f4725}" symbol="39" label="Caçador"/>
+        <rule filter=" &quot;Especialidade&quot; = '12'" key="{20d9aba4-a17b-4547-a6eb-b862c7ff2e4d}" symbol="40" label="Cão-de-guerra"/>
+        <rule filter=" &quot;Especialidade&quot; = '13'" key="{270d3fe7-40de-42a6-80c0-c416a418a9f4}" symbol="41" label="Cavalaria Blindada"/>
+        <rule filter=" &quot;Especialidade&quot; = '14'" key="{378b285c-76d3-4be8-b41d-1f366acc3d17}" symbol="42" label="Cavalaria Mecanizada"/>
+        <rule filter=" &quot;Especialidade&quot; = '19'" key="{eb6cb6da-6396-40b1-8c55-e7e9b75adc87}" symbol="43" label="Enegenharia de grande unidade blindada"/>
+        <rule filter=" &quot;Especialidade&quot; = '22'" key="{beb9e875-c2a8-4920-8d75-b5b438d78ae6}" symbol="44" label="Fronteira"/>
+        <rule filter=" &quot;Especialidade&quot; = '26'" key="{b8b52556-eb61-4ac3-bc29-a3c56ce91d9e}" symbol="45" label="Infantaria blindada"/>
+        <rule filter=" &quot;Especialidade&quot; = '30'" key="{d096b7f7-c1b9-4e96-812a-ec399c292898}" symbol="46" label="Pára-quedista"/>
+        <rule filter=" &quot;Especialidade&quot; = '31'" key="{1f73c7d6-a8e9-461d-b52a-e3be04b39acc}" symbol="47" label="Aeroterrestre de Salvamento e Resgate"/>
+        <rule filter=" &quot;Atividades&quot;  = '1'" key="{9fc427af-67d8-4a49-bc60-c9baddf7be63}" symbol="48" label="Assistência ao Pessoal"/>
+        <rule filter=" &quot;Atividades&quot;  = '0'" key="{f3faa357-e585-4b38-beed-20ff2bb62bc1}" symbol="49" label="Administração"/>
+        <rule filter=" &quot;Especialidade&quot; = '35'" key="{cb16b0d7-1543-45bc-9b78-7b1da5b41982}" symbol="50" label="Selva"/>
+        <rule filter=" &quot;Atividades&quot; = '2'" key="{42550f1c-d5c1-4eee-b794-f26858d22f7f}" symbol="51" label="Assuntos Civis"/>
+        <rule filter=" &quot;Atividades&quot; ='3'" key="{4929494f-aa5b-4a54-80af-db9d4aa35b0b}" symbol="52" label="Banho"/>
+        <rule filter=" &quot;Atividades&quot; ='8'" key="{51ef973f-ccce-45a5-b461-f6d71a4f2150}" symbol="53" label="Classe IV"/>
+        <rule filter=" &quot;Atividades&quot; ='21'" key="{00ccdd3d-eeb4-4d2b-bf62-656e512cff5b}" symbol="54" label="Logística"/>
+        <rule filter=" &quot;Atividades&quot; ='26'" key="{48bfe117-ee98-497d-ad12-890f354fda2f}" symbol="55" label="Manutenção e salvamento"/>
+        <rule filter=" &quot;Atividades&quot; ='25'" key="{f5369c7a-e7be-455e-b021-f8a75418044d}" symbol="56" label="Reconpletamento"/>
+        <rule filter=" &quot;Atividades&quot; ='24'" key="{74f68c08-3d94-4c2a-9af1-a2f708b2c6f7}" symbol="57" label="Prisoneiro de Guerra"/>
+        <rule filter=" &quot;Atividades&quot; ='23'" key="{ba0d1a8a-91fa-4c42-b5e4-99887e0a8854}" symbol="58" label="Mão-de-obra"/>
+        <rule filter=" &quot;Atividades&quot; ='22'" key="{fe536ce3-c066-45ef-908a-aecf760e69d7}" symbol="59" label="Manuteção"/>
+        <rule filter=" &quot;Atividades&quot; ='20'" key="{a4d5e2a5-f0ef-4981-b4c8-c168d4badadd}" symbol="60" label="Lavanderia"/>
+        <rule filter=" &quot;Atividades&quot; ='19'" key="{67a63d05-259f-46c7-861d-5a80781d7e78}" symbol="61" label="Descontaminação"/>
+        <rule filter=" &quot;Atividades&quot; ='18'" key="{6a018f97-694c-4f53-9df0-a1e892df5343}" symbol="62" label="Depósito"/>
+        <rule filter=" &quot;Atividades&quot; ='17'" key="{e786388c-4701-4a57-bc66-5698c5fd378b}" symbol="63" label="Comando e Controle"/>
+        <rule filter=" &quot;Atividades&quot; ='16'" key="{d352a160-7be3-48bd-9d22-ac22b2e94c50}" symbol="64" label="Contra Incêndio"/>
+        <rule filter=" &quot;Atividades&quot; ='15'" key="{fd4f6354-4e3c-4b2d-a50c-996d1a6325f3}" symbol="65" label="Construção"/>
+        <rule filter=" &quot;Atividades&quot; ='14'" key="{2e68d9b5-a6d2-4f18-a1bd-f8a87072d028}" symbol="66" label="Classe X"/>
+        <rule filter=" &quot;Atividades&quot; ='13'" key="{6547832c-7a41-4c8f-b3d5-057025bee05e}" symbol="67" label="Classe IX"/>
+        <rule filter=" &quot;Atividades&quot; ='12'" key="{7e5c5390-d3b9-4c81-bfbf-456ffab731c2}" symbol="68" label="Classe VIII"/>
+        <rule filter=" &quot;Atividades&quot; ='11'" key="{33c1f65e-d432-4720-9369-660e123d2020}" symbol="69" label="Classe VII"/>
+        <rule filter=" &quot;Atividades&quot; ='10'" key="{8d9349d6-a6d4-4709-867d-9fd929c5cd41}" symbol="70" label="Classe VI"/>
+        <rule filter=" &quot;Atividades&quot; ='9'" key="{f50ee455-7e74-4a15-9103-839d5e81fcfd}" symbol="71" label="Classe V"/>
+        <rule filter=" &quot;Atividades&quot; ='7'" key="{e08e5dd1-c045-45e4-b820-d997abb9f9ad}" symbol="72" label="Classe III"/>
+        <rule filter=" &quot;Atividades&quot; ='6'" key="{7adcf2d6-57ab-4964-89f9-29f192202f34}" symbol="73" label="Classe II"/>
+        <rule filter=" &quot;Atividades&quot; ='5'" key="{735848b6-7d7b-4ec1-b789-c54b829b8054}" symbol="74" label="Classe I"/>
+        <rule filter=" &quot;Atividades&quot; ='4'" key="{2e7ec999-4818-4988-8f7c-ee548d2c8259}" symbol="75" label="Civis"/>
+        <rule filter=" &quot;Especialidade&quot; = '34'" key="{a063c480-f88f-4ff5-9160-e5a839ed91d7}" symbol="76" label="Salvamente e Resgate"/>
+        <rule filter=" &quot;Especialidade&quot; = '33'" key="{e1ff6639-0dab-4a9a-bdb2-bd7702582e51}" symbol="77" label="Reconhecimento"/>
+        <rule filter=" &quot;Especialidade&quot; = '32'" key="{44fb2ebe-a6c3-4da5-944b-93d2d358771e}" symbol="78" label="Operações Especiais"/>
+        <rule filter=" &quot;Especialidade&quot; = '29'" key="{6c82830c-d2be-4b2a-bff1-5c515c064703}" symbol="79" label="Operações Psicológicas"/>
+        <rule filter=" &quot;Especialidade&quot; = '28'" key="{f78cf19b-ed9b-4390-98c1-d7060894b3f8}" symbol="80" label="Montanha"/>
+        <rule filter=" &quot;Especialidade&quot; = '27'" key="{8d46d0e8-00cb-4939-80df-a7a870177109}" symbol="81" label="Infantaria da Aeronáutica"/>
+        <rule filter=" &quot;Especialidade&quot; = '25'" key="{7e72a8d9-c578-44dc-9741-19dacc3643f0}" symbol="82" label="Helitransporte"/>
+        <rule filter=" &quot;Especialidade&quot; = '23'" key="{cbee33d1-3cf9-40ef-b843-ff0ee0ec7fc5}" symbol="83" label="Guerra Eletrônica (especialidade de comunicações)"/>
+        <rule filter="&quot;Especialidade&quot; ='24'" key="{49e8d4d9-c903-42f8-8304-0728523eef45}" symbol="84" label="Guerrilha"/>
+        <rule filter=" &quot;Especialidade&quot; = '21'" key="{73a5520d-a424-4c5e-9b85-f701004d6011}" symbol="85" label="Forças Especiais"/>
+        <rule filter=" &quot;Especialidade&quot; = '20'" key="{5201fb2b-4795-4693-a5d8-fa9c8efcdb48}" symbol="86" label="Fluvial"/>
+        <rule filter=" &quot;Especialidade&quot; = '18'" key="{0ec2cb41-7b56-4656-8e5b-09128a0264d7}" symbol="87" label="Elemento Logístico Blindado"/>
+        <rule filter=" &quot;Especialidade&quot; = '17'" key="{6d34d154-8b51-4e56-84a9-81b47734e112}" symbol="88" label="Defesa Química"/>
+        <rule filter=" &quot;Especialidade&quot; = '16'" key="{6b844412-94ec-43e8-b9cb-743e31248860}" symbol="89" label="Elemento de Comunicações"/>
+        <rule filter=" &quot;Especialidade&quot; = '15'" key="{1c141eed-8a27-474b-9b43-4c347ae4229a}" symbol="90" label="Colonização"/>
+        <rule filter=" &quot;Atividades&quot; ='27'" key="{4e1b1b6c-aad4-4222-9273-66609d282d04}" symbol="91" label="Recreação"/>
+        <rule filter=" &quot;Atividades&quot; ='28'" key="{722f8622-2d4b-4941-97dc-9b520a1ecc1e}" symbol="92" label="Remoção de Granadas e Bombas"/>
+        <rule filter=" &quot;Atividades&quot; ='29'" key="{ff02ea3e-bf68-4f2b-8cb1-5640303da8b1}" symbol="93" label="Suprimento"/>
+        <rule filter=" &quot;Atividades&quot; ='30'" key="{72c9975b-e023-4615-aaef-2092acd9891a}" symbol="94" label="Suprimento de artigos reembolsáveis"/>
+        <rule filter=" &quot;Atividades&quot; ='34'" key="{dafe39db-da98-4054-8204-6a1439f14797}" symbol="95" label="Cemitério"/>
+        <rule filter=" &quot;Atividades&quot; ='33'" key="{c033762f-c150-42fd-a347-04f3bd0493ca}" symbol="96" label="Água potável"/>
+        <rule filter=" &quot;Atividades&quot; ='32'" key="{b949e52d-0ea9-41bf-be76-52dc1d208293}" symbol="97" label="Suprimento de outras classes"/>
+        <rule filter=" &quot;Escalões&quot; = '0'" key="{aa295c33-082c-434f-bb9e-e749ae7318fb}" symbol="98" label="Esquadra"/>
+        <rule filter=" &quot;Escalões&quot; = '3'" key="{4b1e8933-46c2-442b-9404-4547ef2770c9}" symbol="99" label="Companhia"/>
+        <rule filter=" &quot;Escalões&quot; = '2'" key="{94bd3a02-230b-417c-8918-0bb36720e30b}" symbol="100" label="Pelotão"/>
+        <rule filter=" &quot;Escalões&quot; = '1'" key="{dda0aadb-b83b-4939-bee0-7cba42a8aaa6}" symbol="101" label="Grupo de Combate ou correspondente"/>
+        <rule filter=" &quot;Atividades&quot; ='49'" key="{250f8310-84af-4300-82a9-52639d7e3565}" symbol="102" label="Trânsito"/>
+        <rule filter=" &quot;Atividades&quot; ='48'" key="{4a67d255-320a-48e2-b92a-f51d8fe06cec}" symbol="103" label="Suprimento e Transporte"/>
+        <rule filter=" &quot;Atividades&quot; ='47'" key="{d64f917c-401f-4911-b2e6-c2a7fb024f95}" symbol="104" label="Sepultamento"/>
+        <rule filter=" &quot;Atividades&quot; ='46'" key="{aff7db42-4466-4ba5-92d5-fa4f1cd31272}" symbol="105" label="Salvados"/>
+        <rule filter=" &quot;Atividades&quot; ='45'" key="{f22874f5-6e32-42d9-a853-e8ccf371064f}" symbol="106" label="Reunião de Extraviados"/>
+        <rule filter=" &quot;Atividades&quot; ='44'" key="{7f474bd4-4b7f-46ec-9d5e-fef8e8e95e66}" symbol="107" label="Repouso"/>
+        <rule filter=" &quot;Atividades&quot; ='43'" key="{bde518da-5b1a-44d8-961d-4f4d4dbd665f}" symbol="108" label="Prisão, Instalação de Confinamento"/>
+        <rule filter=" &quot;Atividades&quot; ='42'" key="{29e059b8-4ff6-4012-8bd3-2e9ecd8261f3}" symbol="109" label="Evacuação"/>
+        <rule filter=" &quot;Atividades&quot; ='41'" key="{301b071e-3444-45a1-b8b3-11acd470dfc9}" symbol="110" label="Hospital ou Centro de Saúde"/>
+        <rule filter=" &quot;Atividades&quot; ='40'" key="{178685a5-bf3a-4b6f-a70f-e5d5d289aee0}" symbol="111" label="Hospital de Veterinária"/>
+        <rule filter=" &quot;Atividades&quot; ='39'" key="{f877cf21-5222-4c12-a1ad-4d0f9229505f}" symbol="112" label="Estado Maior"/>
+        <rule filter=" &quot;Atividades&quot; ='38'" key="{bbe491a5-1539-4541-a1ab-460baf4ee455}" symbol="113" label="Embarque e Desembarque"/>
+        <rule filter=" &quot;Atividades&quot; ='37'" key="{7f12f6d1-df59-40f1-a377-7e11160cbe88}" symbol="114" label="Extraviados"/>
+        <rule filter=" &quot;Atividades&quot; ='36'" key="{ac4d2aa1-7550-4af7-b99a-ec8e654fc44a}" symbol="115" label="Controle de Munição"/>
+        <rule filter=" &quot;Atividades&quot; ='35'" key="{42c92540-1d67-48ec-922b-2aa4bbb5604f}" symbol="116" label="Coleta de Mortos"/>
+        <rule filter=" &quot;Atividades&quot; ='31'" key="{c1a72018-8c10-4d5f-af98-798933f60866}" symbol="117" label="Suprimento de Material Bélica"/>
+        <rule filter=" &quot;Escalões&quot; = '4'" key="{6a0715ed-6387-4f05-aea4-9a9de5eb523f}" symbol="118" label="Batalhão"/>
+        <rule filter=" &quot;Escalões&quot; = '5'" key="{b4c0cc89-1ad1-4569-88cc-d0c20f994303}" symbol="119" label="Grupamento"/>
+        <rule filter=" &quot;Escalões&quot; = '6'" key="{57ba74da-506b-4ffc-a813-6eb7ced95e6c}" symbol="120" label="Força-tarefa"/>
+        <rule filter=" &quot;Escalões&quot; = '7'" key="{8c278f9f-93d0-4906-94bd-205d3858f112}" symbol="121" label="Força-tarefa de valor batalhão"/>
+        <rule filter=" &quot;Escalões&quot; = '8'" key="{600a7356-6d71-4963-a7db-e4f0f571d640}" symbol="122" label="Força-tarefa de valor regimento"/>
+        <rule filter=" &quot;Escalões&quot; = '9'" key="{d40f4935-1e67-4d8f-960c-6aa7976a7c35}" symbol="123" label="Brigada"/>
+        <rule filter=" &quot;Escalões&quot; = '10'" key="{99e7b86e-ef16-449d-9902-8b3523f78ff7}" symbol="124" label="Divisão"/>
+        <rule filter=" &quot;Escalões&quot; = '11'" key="{7d1a28ba-a1bf-4545-9964-6a6e194fa52f}" symbol="125" label="Esquadra"/>
+        <rule filter=" &quot;Escalões&quot; = '12'" key="{910646be-ec02-4640-b697-03649d266d03}" symbol="126" label="Força-tarefa oficial-general do primeiro posto"/>
+        <rule filter=" &quot;Escalões&quot; = '21'" key="{8e5441e5-2ba6-461f-831f-8dd4982544e0}" symbol="127" label="Comando Logístico"/>
+        <rule filter=" &quot;Escalões&quot; = '20'" key="{883042cd-e9de-48c5-a96a-5ac579c1a821}" symbol="128" label="Região Militar"/>
+        <rule filter=" &quot;Escalões&quot; = '19'" key="{c44d576c-1ca7-469d-8cd3-3006521d3324}" symbol="129" label="Comando logística"/>
+        <rule filter=" &quot;Escalões&quot; = '18'" key="{355bef36-c7fd-474a-a0b2-fbd0f194490b}" symbol="130" label="Base Logística "/>
+        <rule filter=" &quot;Escalões&quot; = '17'" key="{3db44e57-0112-4f31-98c9-651e53711d95}" symbol="131" label="Teatro de Operações"/>
+        <rule filter=" &quot;Escalões&quot; = '16'" key="{09fb34c4-4205-4ee9-8236-afb97189014c}" symbol="132" label="Comando Combinado"/>
+        <rule filter=" &quot;Escalões&quot; = '15'" key="{700e2e56-1605-4366-8fde-19ecd3dd3815}" symbol="133" label="Forças componentes de comando combinado"/>
+        <rule filter=" &quot;Escalões&quot; = '14'" key="{30d27bef-04b0-4543-83c3-c7cd5cf64db9}" symbol="134" label="Força-tarefa combinado oficial-general do último posto"/>
+        <rule filter=" &quot;Escalões&quot; = '13'" key="{d6bd71cd-01be-4d26-9bbc-34faaec84ac0}" symbol="135" label="Força-tarefa oficial-general do posto intermediário"/>
       </rule>
-      <rule filter=" &quot;Símbolos Básicos&quot; = '{3}'" key="{47b25b80-4a43-4806-9e2a-a124788221a5}" symbol="136" label="Círculo">
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{0}'" key="{c3185e2f-3281-44fe-826a-6dae0f8c7928}" symbol="137" label="Letra T"/>
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{1}'" key="{3d2a9a69-5378-4a03-88e7-d8b74cf246f0}" symbol="138" label="Ferro"/>
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{2}'" key="{2c6ec749-9791-4621-8072-3627583c42b6}" symbol="139" label="Hélice"/>
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{3}'" key="{64d03281-dd17-4608-b6c6-b2fc4ecccb71}" symbol="140" label="Polícia Militar"/>
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{4}'" key="{ce4506d1-da88-4aab-878a-88cd32bf9ed7}" symbol="141" label="Comando Combinado"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot; = '{0}'" key="{e4b48af4-05c9-4ad8-98c4-4031d7c852a7}" symbol="142" label="Infantaria"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{1}'" key="{6dd8a108-9aba-4396-8f37-b95531ebe010}" symbol="143" label="Cavalaria"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{2}'" key="{8c4bc84c-d0a0-4c2f-9387-bc9c7db682e2}" symbol="144" label="Artilharia"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{3}'" key="{f8aebc5d-86f0-4d89-9c06-0f8a50f6d787}" symbol="145" label="Engenharia"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{4}'" key="{70545cf4-42c6-42f9-acd2-03dfd05aa6fc}" symbol="146" label="Comunicações"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{5}'" key="{d2bc21eb-52c1-466e-8ee0-847935ade347}" symbol="147" label="Material Bélico"/>
-        <rule filter=" &quot;Serviços&quot; = '{0}'" key="{f1b65680-8e0a-4c07-b5c0-e4db8c37da83}" symbol="148" label="Ajudância Geral"/>
-        <rule filter=" &quot;Serviços&quot; = '{1}'" key="{bfdaacbd-df21-4680-aa19-a12c0f14c0ee}" symbol="149" label="Apoio ao Desembarque"/>
-        <rule filter=" &quot;Serviços&quot; = '{2}'" key="{782d6e52-c114-454d-a65a-bb1f0886c151}" symbol="150" label="Armamento e Munição"/>
-        <rule filter=" &quot;Serviços&quot; = '{3}'" key="{96df0129-16f8-4514-9917-87ccf63e75f2}" symbol="151" label="Especial"/>
-        <rule filter=" &quot;Serviços&quot; = '{4}'" key="{522e6338-2a24-4280-a94e-f604af73cf44}" symbol="152" label="Finanças"/>
-        <rule filter=" &quot;Serviços&quot; = '{5}'" key="{06115a63-ae91-46a2-9565-d02f66464883}" symbol="153" label="Intendência"/>
-        <rule filter=" &quot;Serviços&quot; = '{6}'" key="{082fa9e0-3f90-41f1-b27a-1857f8589625}" symbol="154" label="Justiça Militar"/>
-        <rule filter=" &quot;Serviços&quot; = '{7}'" key="{7ba7ba49-d080-4c49-bf2e-23644b1a563d}" symbol="155" label="Motomecanização"/>
-        <rule filter=" &quot;Serviços&quot; = '{8}'" key="{2c4408e1-b44a-4d96-a0f1-f3c61e3f9402}" symbol="156" label="Polícia da Aeronáutica"/>
-        <rule filter=" &quot;Serviços&quot; = '{9}'" key="{1f07d2dc-e692-4206-8714-acb57867b23a}" symbol="157" label="Polícia do Exército"/>
-        <rule filter=" &quot;Serviços&quot; = '{10}'" key="{e77a7395-db2e-4c22-8e8e-c91f21ffe673}" symbol="158" label="Postal"/>
-        <rule filter=" &quot;Serviços&quot; = '{11}'" key="{29115563-2612-40f4-81ba-7ee97e94ab82}" symbol="159" label="Saúde"/>
-        <rule filter=" &quot;Serviços&quot; = '{12}'" key="{9ecdc9ba-205c-495c-8a7a-fe96776050ef}" symbol="160" label="Serviço Militar, Tiro-de-Guerra"/>
-        <rule filter=" &quot;Serviços&quot; = '{13}'" key="{d57d2b54-f4c0-440c-9379-2a8715469d02}" symbol="161" label="Serviço de Polícia de Fuzileiros Navais"/>
-        <rule filter=" &quot;Serviços&quot; = '{14}'" key="{dc0851ab-aa4a-4a9d-9cfc-36ccb55c1f86}" symbol="162" label="Transporte"/>
-        <rule filter=" &quot;Serviços&quot; = '{15}'" key="{2da3ff4e-97c8-4f9f-b37b-d835b651d69c}" symbol="163" label="Veterinária"/>
-        <rule filter=" &quot;Especialidade&quot; = '{1}'" key="{b90594dd-372f-443c-a3b2-6cdb705d5bc5}" symbol="164" label="Aeronaval"/>
-        <rule filter=" &quot;Especialidade&quot; = '{2}'" key="{2dd25e47-93ff-4075-ab85-6931f7a3aeb4}" symbol="165" label="Aeroterrestre"/>
-        <rule filter=" &quot;Especialidade&quot; = '{3}'" key="{c6e01470-633a-49f5-8643-6073f768fada}" symbol="166" label="Aeromóvel"/>
-        <rule filter=" &quot;Especialidade&quot; = '{4}'" key="{d12dd8ee-3866-4e84-a5a1-aa9688509322}" symbol="167" label="Vetinária"/>
-        <rule filter=" &quot;Especialidade&quot; = '{5}'" key="{952e10a7-2660-4cbb-ba79-b56ac7081756}" symbol="168" label="Anfíbio"/>
-        <rule filter=" &quot;Especialidade&quot; = '{6}'" key="{58af8a91-6b2c-48f5-ad0b-3be144967f67}" symbol="169" label="Artilharia Antiaérea"/>
-        <rule filter=" &quot;Especialidade&quot; = '{10}'" key="{8448fe90-4c96-45b2-9ed0-248de35a2557}" symbol="170" label="Artilharia autopropulsada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{9}'" key="{facd09bf-9051-4a71-85e4-e41a6f07ae71}" symbol="171" label="Artilharia autopropulsada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{8}'" key="{b1d925ee-1f84-4248-ac2c-bdc27985dd15}" symbol="172" label="Artilharia Antiaérea de Autodefesa"/>
-        <rule filter=" &quot;Especialidade&quot; = '{7}'" key="{71b42dea-c93f-481a-9aca-bb2317478d76}" symbol="173" label="Artilharia Antiaérea Autopropulsada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{11}'" key="{189a1471-70ce-4e20-a757-d9680606a7c3}" symbol="174" label="Aviação do Exército"/>
-        <rule filter=" &quot;Especialidade&quot; = '{12}'" key="{2509efe3-c451-461d-ae12-1a779d0592cd}" symbol="175" label="Caçador"/>
-        <rule filter=" &quot;Especialidade&quot; = '{13}'" key="{f4bbe6e7-55dc-45d6-bc3c-c33e74b729a6}" symbol="176" label="Cão-de-guerra"/>
-        <rule filter=" &quot;Especialidade&quot; = '{14}'" key="{1e5cd21b-51c0-4a0f-8d62-690cc8173a22}" symbol="177" label="Cavalaria Blindada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{15}'" key="{a41500e1-f7fb-44d3-a471-30fce59c477d}" symbol="178" label="Cavalaria Mecanizada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{20}'" key="{b1908993-479a-4ece-85e3-3775ad2e8c5c}" symbol="179" label="Enegenharia de grande unidade blindada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{23}'" key="{14d20899-f654-4988-b6b9-06916b17cbd5}" symbol="180" label="Fronteira"/>
-        <rule filter=" &quot;Especialidade&quot; = '{27}'" key="{b9d692f0-5469-4324-a871-32219f5ce36b}" symbol="181" label="Infantaria blindada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{31}'" key="{266079c8-7f1a-4495-a8fd-e19687027554}" symbol="182" label="Pára-quedista"/>
-        <rule filter=" &quot;Especialidade&quot; = '{32}'" key="{b26c034e-6f0a-4b5b-ad41-4f93595bd2c3}" symbol="183" label="Aeroterrestre de Salvamento e Resgate"/>
-        <rule filter=" &quot;Atividades&quot;  = '{2}'" key="{2895517b-a5c8-4374-bb94-30bafe496b62}" symbol="184" label="Assistência ao Pessoal"/>
-        <rule filter=" &quot;Atividades&quot;  = '{1}'" key="{5d950a64-ee0c-4332-b0a3-b72d661f86fe}" symbol="185" label="Administração"/>
-        <rule filter=" &quot;Especialidade&quot; = '{36}'" key="{c7a41214-c6c6-408b-b619-75f260479715}" symbol="186" label="Selva"/>
-        <rule filter=" &quot;Atividades&quot; = '{3}'" key="{c0d74546-b731-4fce-9fed-6627b1adc588}" symbol="187" label="Assuntos Civis"/>
-        <rule filter=" &quot;Atividades&quot; ='{4}'" key="{8bd4e4c0-4940-4c4e-a581-7e1f7f03efe6}" symbol="188" label="Banho"/>
-        <rule filter=" &quot;Atividades&quot; ='{9}'" key="{000449b1-18db-407c-8dee-a3b6d6511eee}" symbol="189" label="Classe IV"/>
-        <rule filter=" &quot;Atividades&quot; ='{22}'" key="{997828ca-d32a-48a9-81fc-b255c967a252}" symbol="190" label="Logística"/>
-        <rule filter=" &quot;Atividades&quot; ='{27}'" key="{59a84953-647b-45c7-9b59-50076fd011a4}" symbol="191" label="Manutenção e salvamento"/>
-        <rule filter=" &quot;Atividades&quot; ='{26}'" key="{38821275-1586-44fa-9d6f-f4dfffd056b4}" symbol="192" label="Reconpletamento"/>
-        <rule filter=" &quot;Atividades&quot; ='{25}'" key="{021127a6-e2fe-463b-bc5c-edbe3ebda11e}" symbol="193" label="Prisoneiro de Guerra"/>
-        <rule filter=" &quot;Atividades&quot; ='{24}'" key="{8e2b27de-b07e-4b8d-9ba7-828fd0447d2b}" symbol="194" label="Mão-de-obra"/>
-        <rule filter=" &quot;Atividades&quot; ='{23}'" key="{bb992045-21d3-4345-a4e3-155a6b5ff494}" symbol="195" label="Manuteção"/>
-        <rule filter=" &quot;Atividades&quot; ='{21}'" key="{1486d602-7017-4a19-9387-c8b09b1cdc91}" symbol="196" label="Lavanderia"/>
-        <rule filter=" &quot;Atividades&quot; ='{20}'" key="{156b1745-7677-4e96-8820-b0419188740b}" symbol="197" label="Descontaminação"/>
-        <rule filter=" &quot;Atividades&quot; ='{19}'" key="{2e2823e7-f109-4a50-88b4-0e66320a2bab}" symbol="198" label="Depósito"/>
-        <rule filter=" &quot;Atividades&quot; ='{18}'" key="{cbde4603-3474-4442-8c46-bfd7fb92e5b6}" symbol="199" label="Comando e Controle"/>
-        <rule filter=" &quot;Atividades&quot; ='{17}'" key="{1f84d345-3097-4117-bf01-8b5641773fef}" symbol="200" label="Contra Incêndio"/>
-        <rule filter=" &quot;Atividades&quot; ='{16}'" key="{f1c276b7-891e-4198-a703-6ac6f6cbf44c}" symbol="201" label="Construção"/>
-        <rule filter=" &quot;Atividades&quot; ='{15}'" key="{76665355-89dc-4d8d-97d1-50a7ddb9b2ff}" symbol="202" label="Classe X"/>
-        <rule filter=" &quot;Atividades&quot; ='{14}'" key="{5912373a-97f4-4afb-89d2-b619c79a45f4}" symbol="203" label="Classe IX"/>
-        <rule filter=" &quot;Atividades&quot; ='{13}'" key="{69919fcd-8b07-4728-9a76-8e574871c05e}" symbol="204" label="Classe VIII"/>
-        <rule filter=" &quot;Atividades&quot; ='{12}'" key="{24012967-fc75-40fa-96ac-cc8396635196}" symbol="205" label="Classe VII"/>
-        <rule filter=" &quot;Atividades&quot; ='{11}'" key="{8a64d807-044c-4c23-a5da-34f4710a3ac8}" symbol="206" label="Classe VI"/>
-        <rule filter=" &quot;Atividades&quot; ='{10}'" key="{be36c334-dcd6-4098-83e1-4a235a2d4b33}" symbol="207" label="Classe V"/>
-        <rule filter=" &quot;Atividades&quot; ='{8}'" key="{202debe3-496b-4d86-a649-cdceeb64d7b4}" symbol="208" label="Classe III"/>
-        <rule filter=" &quot;Atividades&quot; ='{7}'" key="{1112eab3-0c47-4e1d-b82b-80dd94d91c28}" symbol="209" label="Classe II"/>
-        <rule filter=" &quot;Atividades&quot; ='{6}'" key="{9b4265e6-4749-4afd-8729-b7d316250aa2}" symbol="210" label="Classe I"/>
-        <rule filter=" &quot;Atividades&quot; ='{5}'" key="{89f5ed98-e706-4fcb-b8e8-bcc7494570f2}" symbol="211" label="Civis"/>
-        <rule filter=" &quot;Especialidade&quot; = '{35}'" key="{3be70a8a-ae16-4ee4-bdc5-4285eece5cea}" symbol="212" label="Salvamente e Resgate"/>
-        <rule filter=" &quot;Especialidade&quot; = '{34}'" key="{44d73650-d12c-4a89-99e2-10825b6240c4}" symbol="213" label="Reconhecimento"/>
-        <rule filter=" &quot;Especialidade&quot; = '{33}'" key="{a48c917f-598e-492b-a531-36f4ae26b626}" symbol="214" label="Operações Especiais"/>
-        <rule filter=" &quot;Especialidade&quot; = '{30}'" key="{18bdfe76-486f-4940-8a57-93d5553102cd}" symbol="215" label="Operações Psicológicas"/>
-        <rule filter=" &quot;Especialidade&quot; = '{29}'" key="{0c6ff614-7ead-4231-9b63-e092b71028f1}" symbol="216" label="Montanha"/>
-        <rule filter=" &quot;Especialidade&quot; = '{28}'" key="{d24fa3a9-1093-47d7-9c37-2ba6075db384}" symbol="217" label="Infantaria da Aeronáutica"/>
-        <rule filter=" &quot;Especialidade&quot; = '{26}'" key="{9ec4bb84-02c9-4af4-9748-b887a7368913}" symbol="218" label="Helitransporte"/>
-        <rule filter=" &quot;Especialidade&quot; = '{24}'" key="{23a32874-3138-4aff-9456-cf40eecbdf2f}" symbol="219" label="Guerra Eletrônica (especialidade de comunicações)"/>
-        <rule filter="&quot;Especialidade&quot; ='{25}'" key="{ba38c52d-59b0-49ab-afe7-79b955802c1d}" symbol="220" label="Guerrilha"/>
-        <rule filter=" &quot;Especialidade&quot; = '{22}'" key="{e8819c16-b423-4175-8236-b6fc11d5dcbe}" symbol="221" label="Forças Especiais"/>
-        <rule filter=" &quot;Especialidade&quot; = '{21}'" key="{1b4e6287-a5b9-479a-8769-44b1345c8931}" symbol="222" label="Fluvial"/>
-        <rule filter=" &quot;Especialidade&quot; = '{19}'" key="{9af4cf10-3a52-4331-934b-71ae56ad8fc6}" symbol="223" label="Elemento Logístico Blindado"/>
-        <rule filter=" &quot;Especialidade&quot; = '{18}'" key="{b5b4ae42-cbff-43f1-8f24-cd06d00057de}" symbol="224" label="Defesa Química"/>
-        <rule filter=" &quot;Especialidade&quot; = '{17}'" key="{3b2b9011-8689-4981-b43f-e837c5bd3f3f}" symbol="225" label="Elemento de Comunicações"/>
-        <rule filter=" &quot;Especialidade&quot; = '{16}'" key="{a24792be-956c-4aa0-a361-853824c457c1}" symbol="226" label="Colonização"/>
-        <rule filter=" &quot;Atividades&quot; ='{28}'" key="{16cb2fd7-cfba-4a5f-a58f-132fe6181435}" symbol="227" label="Recreação"/>
-        <rule filter=" &quot;Atividades&quot; ='{29}'" key="{773a5fc0-eda1-4b05-a9af-6e8b1230243a}" symbol="228" label="Remoção de Granadas e Bombas"/>
-        <rule filter=" &quot;Atividades&quot; ='{30}'" key="{747ec553-b2a6-4f52-af4f-4af89ddcfd77}" symbol="229" label="Suprimento"/>
-        <rule filter=" &quot;Atividades&quot; ='{31}'" key="{e196d9f2-4a6c-4984-9137-68592a94e7bd}" symbol="230" label="Suprimento de artigos reembolsáveis"/>
-        <rule filter=" &quot;Atividades&quot; ='{35}'" key="{346fcee5-9f30-4007-abe1-96e46a49a56e}" symbol="231" label="Cemitério"/>
-        <rule filter=" &quot;Atividades&quot; ='{34}'" key="{fe8c3edf-969f-4238-b41d-c267ee130c0a}" symbol="232" label="Água potável"/>
-        <rule filter=" &quot;Atividades&quot; ='{33}'" key="{4c175e1c-d0db-4df6-acab-54feccaa907c}" symbol="233" label="Suprimento de outras classes"/>
-        <rule filter=" &quot;Escalões&quot; = '{1}'" key="{17cfb204-a1b6-41c3-a5e3-af3312e3f5b6}" symbol="234" label="Esquadra"/>
-        <rule filter=" &quot;Escalões&quot; = '{4}'" key="{ae5c53ad-28a8-4032-9cf8-3e4b5ac80352}" symbol="235" label="Companhia"/>
-        <rule filter=" &quot;Escalões&quot; = '{3}'" key="{1f7126a8-bcda-4cc0-ae9a-8a0acb14d66a}" symbol="236" label="Pelotão"/>
-        <rule filter=" &quot;Escalões&quot; = '{2}'" key="{1f87a80a-a16f-4e76-8962-00b5e683d0ec}" symbol="237" label="Grupo de Combate ou correspondente"/>
-        <rule filter=" &quot;Atividades&quot; ='{50}'" key="{1fdd2255-57a6-48ad-9ae6-bc20d34878b1}" symbol="238" label="Trânsito"/>
-        <rule filter=" &quot;Atividades&quot; ='{49}'" key="{2943d942-39ed-4475-bb86-8ed75d05084a}" symbol="239" label="Suprimento e Transporte"/>
-        <rule filter=" &quot;Atividades&quot; ='{48}'" key="{74fd0d48-8a6e-4a2f-8450-ef73862096cb}" symbol="240" label="Sepultamento"/>
-        <rule filter=" &quot;Atividades&quot; ='{47}'" key="{b7f76f8d-4cb4-408a-bc76-c9f7e14a11b0}" symbol="241" label="Salvados"/>
-        <rule filter=" &quot;Atividades&quot; ='{46}'" key="{1fe16d3f-4780-4217-9185-22ed5ae61c1a}" symbol="242" label="Reunião de Extraviados"/>
-        <rule filter=" &quot;Atividades&quot; ='{45}'" key="{58370ba6-55b6-4756-9ee8-e730fc72aa4d}" symbol="243" label="Repouso"/>
-        <rule filter=" &quot;Atividades&quot; ='{44}'" key="{6ebe16cd-53cb-4e8b-a89d-2f89360b4261}" symbol="244" label="Prisão, Instalação de Confinamento"/>
-        <rule filter=" &quot;Atividades&quot; ='{43}'" key="{6811ae66-d62d-4083-b6f4-9eb09e5439ec}" symbol="245" label="Evacuação"/>
-        <rule filter=" &quot;Atividades&quot; ='{42}'" key="{986286e4-3c3c-4b19-b7b7-403f6764f69c}" symbol="246" label="Hospital ou Centro de Saúde"/>
-        <rule filter=" &quot;Atividades&quot; ='{41}'" key="{20d94c91-1399-4a80-87e5-5ced85c2e0bb}" symbol="247" label="Hospital de Veterinária"/>
-        <rule filter=" &quot;Atividades&quot; ='{40}'" key="{a1858b9f-de40-4e95-b5f9-00f9e476380d}" symbol="248" label="Estado Maior"/>
-        <rule filter=" &quot;Atividades&quot; ='{39}'" key="{eb001737-8640-416b-97ac-ad5cd0685705}" symbol="249" label="Embarque e Desembarque"/>
-        <rule filter=" &quot;Atividades&quot; ='{38}'" key="{6a1642ed-d957-481d-97c8-0103d62c1382}" symbol="250" label="Extraviados"/>
-        <rule filter=" &quot;Atividades&quot; ='{37}'" key="{0d16c559-a184-4a10-ae26-211670a5b63b}" symbol="251" label="Controle de Munição"/>
-        <rule filter=" &quot;Atividades&quot; ='{36}'" key="{15f66a9c-027f-4261-8ad8-557c7f3d34ee}" symbol="252" label="Coleta de Mortos"/>
-        <rule filter=" &quot;Atividades&quot; ='{32}'" key="{5aca8443-3a43-40a5-b2fc-a089976f7698}" symbol="253" label="Suprimento de Material Bélica"/>
-        <rule filter=" &quot;Escalões&quot; = '{5}'" key="{7e56c2c3-12b9-4b55-89e3-bc0e8f103350}" symbol="254" label="Batalhão"/>
-        <rule filter=" &quot;Escalões&quot; = '{6}'" key="{653ecc0a-e74f-40f8-bb9e-7e2fd20fc00b}" symbol="255" label="Grupamento"/>
-        <rule filter=" &quot;Escalões&quot; = '{7}'" key="{7a9ba0dc-fc22-4c6a-9702-6ed8ac16a8ee}" symbol="256" label="Força-tarefa"/>
-        <rule filter=" &quot;Escalões&quot; = '{8}'" key="{11befd82-bb99-4f66-a42c-d9f4af17339a}" symbol="257" label="Força-tarefa de valor batalhão"/>
-        <rule filter=" &quot;Escalões&quot; = '{9}'" key="{d7d1582f-513d-4dc4-a671-9b4d69c27cba}" symbol="258" label="Força-tarefa de valor regimento"/>
-        <rule filter=" &quot;Escalões&quot; = '{10}'" key="{5c37a3b0-28cb-43b4-b212-0c2fee1d8863}" symbol="259" label="Brigada"/>
-        <rule filter=" &quot;Escalões&quot; = '{11}'" key="{7ea7a707-9c5f-4ee9-942a-a720c251f89c}" symbol="260" label="Divisão"/>
-        <rule filter=" &quot;Escalões&quot; = '{12}'" key="{282c5c8e-9009-4f4b-8f60-0b5ab184df62}" symbol="261" label="Esquadra"/>
-        <rule filter=" &quot;Escalões&quot; = '{13}'" key="{2cfd46ce-84d8-4bed-bbc1-53aebf92137e}" symbol="262" label="Força-tarefa oficial-general do primeiro posto"/>
-        <rule filter=" &quot;Escalões&quot; = '{22}'" key="{85effa68-00fa-442e-91e4-c4f21ea7c3c9}" symbol="263" label="Comando Logístico"/>
-        <rule filter=" &quot;Escalões&quot; = '{21}'" key="{187d9918-9a35-4ef9-a2ad-c2eae2bcf56e}" symbol="264" label="Região Militar"/>
-        <rule filter=" &quot;Escalões&quot; = '{20}'" key="{72a89d3e-fc1b-4d7c-a374-c6bd33e08e53}" symbol="265" label="Comando logística"/>
-        <rule filter=" &quot;Escalões&quot; = '{19}'" key="{58a78fad-f95d-452e-a9f9-ba4b4ebdf5ea}" symbol="266" label="Base Logística "/>
-        <rule filter=" &quot;Escalões&quot; = '{18}'" key="{b4e7be0e-bc4a-4a8c-aead-c230445f10fa}" symbol="267" label="Teatro de Operações"/>
-        <rule filter=" &quot;Escalões&quot; = '{17}'" key="{b5cec538-ecdb-44ea-b143-c3f10f4764a2}" symbol="268" label="Comando Combinado"/>
-        <rule filter=" &quot;Escalões&quot; = '{16}'" key="{0906fbcb-1e62-49fa-ba2e-0cbdd1114ed9}" symbol="269" label="Forças componentes de comando combinado"/>
-        <rule filter=" &quot;Escalões&quot; = '{15}'" key="{1224b797-5fdc-4547-83bf-401e86178c22}" symbol="270" label="Força-tarefa combinado oficial-general do último posto"/>
-        <rule filter=" &quot;Escalões&quot; = '{14}'" key="{1ab59773-1d39-4eac-92cd-ee4debe647c6}" symbol="271" label="Força-tarefa oficial-general do posto intermediário"/>
+      <rule filter=" &quot;Símbolos Básicos&quot; = '3'" key="{47b25b80-4a43-4806-9e2a-a124788221a5}" symbol="136" label="Círculo">
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '0'" key="{c3185e2f-3281-44fe-826a-6dae0f8c7928}" symbol="137" label="Letra T"/>
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '1'" key="{3d2a9a69-5378-4a03-88e7-d8b74cf246f0}" symbol="138" label="Ferro"/>
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '2'" key="{2c6ec749-9791-4621-8072-3627583c42b6}" symbol="139" label="Hélice"/>
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '3'" key="{64d03281-dd17-4608-b6c6-b2fc4ecccb71}" symbol="140" label="Polícia Militar"/>
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '4'" key="{ce4506d1-da88-4aab-878a-88cd32bf9ed7}" symbol="141" label="Comando Combinado"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot; = '0'" key="{e4b48af4-05c9-4ad8-98c4-4031d7c852a7}" symbol="142" label="Infantaria"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '1'" key="{6dd8a108-9aba-4396-8f37-b95531ebe010}" symbol="143" label="Cavalaria"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '2'" key="{8c4bc84c-d0a0-4c2f-9387-bc9c7db682e2}" symbol="144" label="Artilharia"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '3'" key="{f8aebc5d-86f0-4d89-9c06-0f8a50f6d787}" symbol="145" label="Engenharia"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '4'" key="{70545cf4-42c6-42f9-acd2-03dfd05aa6fc}" symbol="146" label="Comunicações"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '5'" key="{d2bc21eb-52c1-466e-8ee0-847935ade347}" symbol="147" label="Material Bélico"/>
+        <rule filter=" &quot;Serviços&quot; = '0'" key="{f1b65680-8e0a-4c07-b5c0-e4db8c37da83}" symbol="148" label="Ajudância Geral"/>
+        <rule filter=" &quot;Serviços&quot; = '1'" key="{bfdaacbd-df21-4680-aa19-a12c0f14c0ee}" symbol="149" label="Apoio ao Desembarque"/>
+        <rule filter=" &quot;Serviços&quot; = '2'" key="{782d6e52-c114-454d-a65a-bb1f0886c151}" symbol="150" label="Armamento e Munição"/>
+        <rule filter=" &quot;Serviços&quot; = '3'" key="{96df0129-16f8-4514-9917-87ccf63e75f2}" symbol="151" label="Especial"/>
+        <rule filter=" &quot;Serviços&quot; = '4'" key="{522e6338-2a24-4280-a94e-f604af73cf44}" symbol="152" label="Finanças"/>
+        <rule filter=" &quot;Serviços&quot; = '5'" key="{06115a63-ae91-46a2-9565-d02f66464883}" symbol="153" label="Intendência"/>
+        <rule filter=" &quot;Serviços&quot; = '6'" key="{082fa9e0-3f90-41f1-b27a-1857f8589625}" symbol="154" label="Justiça Militar"/>
+        <rule filter=" &quot;Serviços&quot; = '7'" key="{7ba7ba49-d080-4c49-bf2e-23644b1a563d}" symbol="155" label="Motomecanização"/>
+        <rule filter=" &quot;Serviços&quot; = '8'" key="{2c4408e1-b44a-4d96-a0f1-f3c61e3f9402}" symbol="156" label="Polícia da Aeronáutica"/>
+        <rule filter=" &quot;Serviços&quot; = '9'" key="{1f07d2dc-e692-4206-8714-acb57867b23a}" symbol="157" label="Polícia do Exército"/>
+        <rule filter=" &quot;Serviços&quot; = '10'" key="{e77a7395-db2e-4c22-8e8e-c91f21ffe673}" symbol="158" label="Postal"/>
+        <rule filter=" &quot;Serviços&quot; = '11'" key="{29115563-2612-40f4-81ba-7ee97e94ab82}" symbol="159" label="Saúde"/>
+        <rule filter=" &quot;Serviços&quot; = '12'" key="{9ecdc9ba-205c-495c-8a7a-fe96776050ef}" symbol="160" label="Serviço Militar, Tiro-de-Guerra"/>
+        <rule filter=" &quot;Serviços&quot; = '13'" key="{d57d2b54-f4c0-440c-9379-2a8715469d02}" symbol="161" label="Serviço de Polícia de Fuzileiros Navais"/>
+        <rule filter=" &quot;Serviços&quot; = '14'" key="{dc0851ab-aa4a-4a9d-9cfc-36ccb55c1f86}" symbol="162" label="Transporte"/>
+        <rule filter=" &quot;Serviços&quot; = '15'" key="{2da3ff4e-97c8-4f9f-b37b-d835b651d69c}" symbol="163" label="Veterinária"/>
+        <rule filter=" &quot;Especialidade&quot; = '0'" key="{b90594dd-372f-443c-a3b2-6cdb705d5bc5}" symbol="164" label="Aeronaval"/>
+        <rule filter=" &quot;Especialidade&quot; = '1'" key="{2dd25e47-93ff-4075-ab85-6931f7a3aeb4}" symbol="165" label="Aeroterrestre"/>
+        <rule filter=" &quot;Especialidade&quot; = '2'" key="{c6e01470-633a-49f5-8643-6073f768fada}" symbol="166" label="Aeromóvel"/>
+        <rule filter=" &quot;Especialidade&quot; = '3'" key="{d12dd8ee-3866-4e84-a5a1-aa9688509322}" symbol="167" label="Vetinária"/>
+        <rule filter=" &quot;Especialidade&quot; = '4'" key="{952e10a7-2660-4cbb-ba79-b56ac7081756}" symbol="168" label="Anfíbio"/>
+        <rule filter=" &quot;Especialidade&quot; = '5'" key="{58af8a91-6b2c-48f5-ad0b-3be144967f67}" symbol="169" label="Artilharia Antiaérea"/>
+        <rule filter=" &quot;Especialidade&quot; = '9'" key="{8448fe90-4c96-45b2-9ed0-248de35a2557}" symbol="170" label="Artilharia autopropulsada"/>
+        <rule filter=" &quot;Especialidade&quot; = '8'" key="{facd09bf-9051-4a71-85e4-e41a6f07ae71}" symbol="171" label="Artilharia autopropulsada"/>
+        <rule filter=" &quot;Especialidade&quot; = '7'" key="{b1d925ee-1f84-4248-ac2c-bdc27985dd15}" symbol="172" label="Artilharia Antiaérea de Autodefesa"/>
+        <rule filter=" &quot;Especialidade&quot; = '6'" key="{71b42dea-c93f-481a-9aca-bb2317478d76}" symbol="173" label="Artilharia Antiaérea Autopropulsada"/>
+        <rule filter=" &quot;Especialidade&quot; = '10'" key="{189a1471-70ce-4e20-a757-d9680606a7c3}" symbol="174" label="Aviação do Exército"/>
+        <rule filter=" &quot;Especialidade&quot; = '11'" key="{2509efe3-c451-461d-ae12-1a779d0592cd}" symbol="175" label="Caçador"/>
+        <rule filter=" &quot;Especialidade&quot; = '12'" key="{f4bbe6e7-55dc-45d6-bc3c-c33e74b729a6}" symbol="176" label="Cão-de-guerra"/>
+        <rule filter=" &quot;Especialidade&quot; = '13'" key="{1e5cd21b-51c0-4a0f-8d62-690cc8173a22}" symbol="177" label="Cavalaria Blindada"/>
+        <rule filter=" &quot;Especialidade&quot; = '14'" key="{a41500e1-f7fb-44d3-a471-30fce59c477d}" symbol="178" label="Cavalaria Mecanizada"/>
+        <rule filter=" &quot;Especialidade&quot; = '19'" key="{b1908993-479a-4ece-85e3-3775ad2e8c5c}" symbol="179" label="Enegenharia de grande unidade blindada"/>
+        <rule filter=" &quot;Especialidade&quot; = '22'" key="{14d20899-f654-4988-b6b9-06916b17cbd5}" symbol="180" label="Fronteira"/>
+        <rule filter=" &quot;Especialidade&quot; = '26'" key="{b9d692f0-5469-4324-a871-32219f5ce36b}" symbol="181" label="Infantaria blindada"/>
+        <rule filter=" &quot;Especialidade&quot; = '30'" key="{266079c8-7f1a-4495-a8fd-e19687027554}" symbol="182" label="Pára-quedista"/>
+        <rule filter=" &quot;Especialidade&quot; = '31'" key="{b26c034e-6f0a-4b5b-ad41-4f93595bd2c3}" symbol="183" label="Aeroterrestre de Salvamento e Resgate"/>
+        <rule filter=" &quot;Atividades&quot;  = '1'" key="{2895517b-a5c8-4374-bb94-30bafe496b62}" symbol="184" label="Assistência ao Pessoal"/>
+        <rule filter=" &quot;Atividades&quot;  = '0'" key="{5d950a64-ee0c-4332-b0a3-b72d661f86fe}" symbol="185" label="Administração"/>
+        <rule filter=" &quot;Especialidade&quot; = '35'" key="{c7a41214-c6c6-408b-b619-75f260479715}" symbol="186" label="Selva"/>
+        <rule filter=" &quot;Atividades&quot; = '2'" key="{c0d74546-b731-4fce-9fed-6627b1adc588}" symbol="187" label="Assuntos Civis"/>
+        <rule filter=" &quot;Atividades&quot; ='3'" key="{8bd4e4c0-4940-4c4e-a581-7e1f7f03efe6}" symbol="188" label="Banho"/>
+        <rule filter=" &quot;Atividades&quot; ='8'" key="{000449b1-18db-407c-8dee-a3b6d6511eee}" symbol="189" label="Classe IV"/>
+        <rule filter=" &quot;Atividades&quot; ='21'" key="{997828ca-d32a-48a9-81fc-b255c967a252}" symbol="190" label="Logística"/>
+        <rule filter=" &quot;Atividades&quot; ='26'" key="{59a84953-647b-45c7-9b59-50076fd011a4}" symbol="191" label="Manutenção e salvamento"/>
+        <rule filter=" &quot;Atividades&quot; ='25'" key="{38821275-1586-44fa-9d6f-f4dfffd056b4}" symbol="192" label="Reconpletamento"/>
+        <rule filter=" &quot;Atividades&quot; ='24'" key="{021127a6-e2fe-463b-bc5c-edbe3ebda11e}" symbol="193" label="Prisoneiro de Guerra"/>
+        <rule filter=" &quot;Atividades&quot; ='23'" key="{8e2b27de-b07e-4b8d-9ba7-828fd0447d2b}" symbol="194" label="Mão-de-obra"/>
+        <rule filter=" &quot;Atividades&quot; ='22'" key="{bb992045-21d3-4345-a4e3-155a6b5ff494}" symbol="195" label="Manuteção"/>
+        <rule filter=" &quot;Atividades&quot; ='20'" key="{1486d602-7017-4a19-9387-c8b09b1cdc91}" symbol="196" label="Lavanderia"/>
+        <rule filter=" &quot;Atividades&quot; ='19'" key="{156b1745-7677-4e96-8820-b0419188740b}" symbol="197" label="Descontaminação"/>
+        <rule filter=" &quot;Atividades&quot; ='18'" key="{2e2823e7-f109-4a50-88b4-0e66320a2bab}" symbol="198" label="Depósito"/>
+        <rule filter=" &quot;Atividades&quot; ='17'" key="{cbde4603-3474-4442-8c46-bfd7fb92e5b6}" symbol="199" label="Comando e Controle"/>
+        <rule filter=" &quot;Atividades&quot; ='16'" key="{1f84d345-3097-4117-bf01-8b5641773fef}" symbol="200" label="Contra Incêndio"/>
+        <rule filter=" &quot;Atividades&quot; ='15'" key="{f1c276b7-891e-4198-a703-6ac6f6cbf44c}" symbol="201" label="Construção"/>
+        <rule filter=" &quot;Atividades&quot; ='14'" key="{76665355-89dc-4d8d-97d1-50a7ddb9b2ff}" symbol="202" label="Classe X"/>
+        <rule filter=" &quot;Atividades&quot; ='13'" key="{5912373a-97f4-4afb-89d2-b619c79a45f4}" symbol="203" label="Classe IX"/>
+        <rule filter=" &quot;Atividades&quot; ='12'" key="{69919fcd-8b07-4728-9a76-8e574871c05e}" symbol="204" label="Classe VIII"/>
+        <rule filter=" &quot;Atividades&quot; ='11'" key="{24012967-fc75-40fa-96ac-cc8396635196}" symbol="205" label="Classe VII"/>
+        <rule filter=" &quot;Atividades&quot; ='10'" key="{8a64d807-044c-4c23-a5da-34f4710a3ac8}" symbol="206" label="Classe VI"/>
+        <rule filter=" &quot;Atividades&quot; ='9'" key="{be36c334-dcd6-4098-83e1-4a235a2d4b33}" symbol="207" label="Classe V"/>
+        <rule filter=" &quot;Atividades&quot; ='7'" key="{202debe3-496b-4d86-a649-cdceeb64d7b4}" symbol="208" label="Classe III"/>
+        <rule filter=" &quot;Atividades&quot; ='6'" key="{1112eab3-0c47-4e1d-b82b-80dd94d91c28}" symbol="209" label="Classe II"/>
+        <rule filter=" &quot;Atividades&quot; ='5'" key="{9b4265e6-4749-4afd-8729-b7d316250aa2}" symbol="210" label="Classe I"/>
+        <rule filter=" &quot;Atividades&quot; ='4'" key="{89f5ed98-e706-4fcb-b8e8-bcc7494570f2}" symbol="211" label="Civis"/>
+        <rule filter=" &quot;Especialidade&quot; = '34'" key="{3be70a8a-ae16-4ee4-bdc5-4285eece5cea}" symbol="212" label="Salvamente e Resgate"/>
+        <rule filter=" &quot;Especialidade&quot; = '33'" key="{44d73650-d12c-4a89-99e2-10825b6240c4}" symbol="213" label="Reconhecimento"/>
+        <rule filter=" &quot;Especialidade&quot; = '32'" key="{a48c917f-598e-492b-a531-36f4ae26b626}" symbol="214" label="Operações Especiais"/>
+        <rule filter=" &quot;Especialidade&quot; = '29'" key="{18bdfe76-486f-4940-8a57-93d5553102cd}" symbol="215" label="Operações Psicológicas"/>
+        <rule filter=" &quot;Especialidade&quot; = '28'" key="{0c6ff614-7ead-4231-9b63-e092b71028f1}" symbol="216" label="Montanha"/>
+        <rule filter=" &quot;Especialidade&quot; = '27'" key="{d24fa3a9-1093-47d7-9c37-2ba6075db384}" symbol="217" label="Infantaria da Aeronáutica"/>
+        <rule filter=" &quot;Especialidade&quot; = '25'" key="{9ec4bb84-02c9-4af4-9748-b887a7368913}" symbol="218" label="Helitransporte"/>
+        <rule filter=" &quot;Especialidade&quot; = '23'" key="{23a32874-3138-4aff-9456-cf40eecbdf2f}" symbol="219" label="Guerra Eletrônica (especialidade de comunicações)"/>
+        <rule filter="&quot;Especialidade&quot; ='24'" key="{ba38c52d-59b0-49ab-afe7-79b955802c1d}" symbol="220" label="Guerrilha"/>
+        <rule filter=" &quot;Especialidade&quot; = '21'" key="{e8819c16-b423-4175-8236-b6fc11d5dcbe}" symbol="221" label="Forças Especiais"/>
+        <rule filter=" &quot;Especialidade&quot; = '20'" key="{1b4e6287-a5b9-479a-8769-44b1345c8931}" symbol="222" label="Fluvial"/>
+        <rule filter=" &quot;Especialidade&quot; = '18'" key="{9af4cf10-3a52-4331-934b-71ae56ad8fc6}" symbol="223" label="Elemento Logístico Blindado"/>
+        <rule filter=" &quot;Especialidade&quot; = '17'" key="{b5b4ae42-cbff-43f1-8f24-cd06d00057de}" symbol="224" label="Defesa Química"/>
+        <rule filter=" &quot;Especialidade&quot; = '16'" key="{3b2b9011-8689-4981-b43f-e837c5bd3f3f}" symbol="225" label="Elemento de Comunicações"/>
+        <rule filter=" &quot;Especialidade&quot; = '15'" key="{a24792be-956c-4aa0-a361-853824c457c1}" symbol="226" label="Colonização"/>
+        <rule filter=" &quot;Atividades&quot; ='27'" key="{16cb2fd7-cfba-4a5f-a58f-132fe6181435}" symbol="227" label="Recreação"/>
+        <rule filter=" &quot;Atividades&quot; ='28'" key="{773a5fc0-eda1-4b05-a9af-6e8b1230243a}" symbol="228" label="Remoção de Granadas e Bombas"/>
+        <rule filter=" &quot;Atividades&quot; ='29'" key="{747ec553-b2a6-4f52-af4f-4af89ddcfd77}" symbol="229" label="Suprimento"/>
+        <rule filter=" &quot;Atividades&quot; ='30'" key="{e196d9f2-4a6c-4984-9137-68592a94e7bd}" symbol="230" label="Suprimento de artigos reembolsáveis"/>
+        <rule filter=" &quot;Atividades&quot; ='34'" key="{346fcee5-9f30-4007-abe1-96e46a49a56e}" symbol="231" label="Cemitério"/>
+        <rule filter=" &quot;Atividades&quot; ='33'" key="{fe8c3edf-969f-4238-b41d-c267ee130c0a}" symbol="232" label="Água potável"/>
+        <rule filter=" &quot;Atividades&quot; ='32'" key="{4c175e1c-d0db-4df6-acab-54feccaa907c}" symbol="233" label="Suprimento de outras classes"/>
+        <rule filter=" &quot;Escalões&quot; = '0'" key="{17cfb204-a1b6-41c3-a5e3-af3312e3f5b6}" symbol="234" label="Esquadra"/>
+        <rule filter=" &quot;Escalões&quot; = '3'" key="{ae5c53ad-28a8-4032-9cf8-3e4b5ac80352}" symbol="235" label="Companhia"/>
+        <rule filter=" &quot;Escalões&quot; = '2'" key="{1f7126a8-bcda-4cc0-ae9a-8a0acb14d66a}" symbol="236" label="Pelotão"/>
+        <rule filter=" &quot;Escalões&quot; = '1'" key="{1f87a80a-a16f-4e76-8962-00b5e683d0ec}" symbol="237" label="Grupo de Combate ou correspondente"/>
+        <rule filter=" &quot;Atividades&quot; ='49'" key="{1fdd2255-57a6-48ad-9ae6-bc20d34878b1}" symbol="238" label="Trânsito"/>
+        <rule filter=" &quot;Atividades&quot; ='48'" key="{2943d942-39ed-4475-bb86-8ed75d05084a}" symbol="239" label="Suprimento e Transporte"/>
+        <rule filter=" &quot;Atividades&quot; ='47'" key="{74fd0d48-8a6e-4a2f-8450-ef73862096cb}" symbol="240" label="Sepultamento"/>
+        <rule filter=" &quot;Atividades&quot; ='46'" key="{b7f76f8d-4cb4-408a-bc76-c9f7e14a11b0}" symbol="241" label="Salvados"/>
+        <rule filter=" &quot;Atividades&quot; ='45'" key="{1fe16d3f-4780-4217-9185-22ed5ae61c1a}" symbol="242" label="Reunião de Extraviados"/>
+        <rule filter=" &quot;Atividades&quot; ='44'" key="{58370ba6-55b6-4756-9ee8-e730fc72aa4d}" symbol="243" label="Repouso"/>
+        <rule filter=" &quot;Atividades&quot; ='43'" key="{6ebe16cd-53cb-4e8b-a89d-2f89360b4261}" symbol="244" label="Prisão, Instalação de Confinamento"/>
+        <rule filter=" &quot;Atividades&quot; ='42'" key="{6811ae66-d62d-4083-b6f4-9eb09e5439ec}" symbol="245" label="Evacuação"/>
+        <rule filter=" &quot;Atividades&quot; ='41'" key="{986286e4-3c3c-4b19-b7b7-403f6764f69c}" symbol="246" label="Hospital ou Centro de Saúde"/>
+        <rule filter=" &quot;Atividades&quot; ='40'" key="{20d94c91-1399-4a80-87e5-5ced85c2e0bb}" symbol="247" label="Hospital de Veterinária"/>
+        <rule filter=" &quot;Atividades&quot; ='39'" key="{a1858b9f-de40-4e95-b5f9-00f9e476380d}" symbol="248" label="Estado Maior"/>
+        <rule filter=" &quot;Atividades&quot; ='38'" key="{eb001737-8640-416b-97ac-ad5cd0685705}" symbol="249" label="Embarque e Desembarque"/>
+        <rule filter=" &quot;Atividades&quot; ='37'" key="{6a1642ed-d957-481d-97c8-0103d62c1382}" symbol="250" label="Extraviados"/>
+        <rule filter=" &quot;Atividades&quot; ='36'" key="{0d16c559-a184-4a10-ae26-211670a5b63b}" symbol="251" label="Controle de Munição"/>
+        <rule filter=" &quot;Atividades&quot; ='35'" key="{15f66a9c-027f-4261-8ad8-557c7f3d34ee}" symbol="252" label="Coleta de Mortos"/>
+        <rule filter=" &quot;Atividades&quot; ='31'" key="{5aca8443-3a43-40a5-b2fc-a089976f7698}" symbol="253" label="Suprimento de Material Bélica"/>
+        <rule filter=" &quot;Escalões&quot; = '4'" key="{7e56c2c3-12b9-4b55-89e3-bc0e8f103350}" symbol="254" label="Batalhão"/>
+        <rule filter=" &quot;Escalões&quot; = '5'" key="{653ecc0a-e74f-40f8-bb9e-7e2fd20fc00b}" symbol="255" label="Grupamento"/>
+        <rule filter=" &quot;Escalões&quot; = '6'" key="{7a9ba0dc-fc22-4c6a-9702-6ed8ac16a8ee}" symbol="256" label="Força-tarefa"/>
+        <rule filter=" &quot;Escalões&quot; = '7'" key="{11befd82-bb99-4f66-a42c-d9f4af17339a}" symbol="257" label="Força-tarefa de valor batalhão"/>
+        <rule filter=" &quot;Escalões&quot; = '8'" key="{d7d1582f-513d-4dc4-a671-9b4d69c27cba}" symbol="258" label="Força-tarefa de valor regimento"/>
+        <rule filter=" &quot;Escalões&quot; = '9'" key="{5c37a3b0-28cb-43b4-b212-0c2fee1d8863}" symbol="259" label="Brigada"/>
+        <rule filter=" &quot;Escalões&quot; = '10'" key="{7ea7a707-9c5f-4ee9-942a-a720c251f89c}" symbol="260" label="Divisão"/>
+        <rule filter=" &quot;Escalões&quot; = '11'" key="{282c5c8e-9009-4f4b-8f60-0b5ab184df62}" symbol="261" label="Esquadra"/>
+        <rule filter=" &quot;Escalões&quot; = '12'" key="{2cfd46ce-84d8-4bed-bbc1-53aebf92137e}" symbol="262" label="Força-tarefa oficial-general do primeiro posto"/>
+        <rule filter=" &quot;Escalões&quot; = '21'" key="{85effa68-00fa-442e-91e4-c4f21ea7c3c9}" symbol="263" label="Comando Logístico"/>
+        <rule filter=" &quot;Escalões&quot; = '20'" key="{187d9918-9a35-4ef9-a2ad-c2eae2bcf56e}" symbol="264" label="Região Militar"/>
+        <rule filter=" &quot;Escalões&quot; = '19'" key="{72a89d3e-fc1b-4d7c-a374-c6bd33e08e53}" symbol="265" label="Comando logística"/>
+        <rule filter=" &quot;Escalões&quot; = '18'" key="{58a78fad-f95d-452e-a9f9-ba4b4ebdf5ea}" symbol="266" label="Base Logística "/>
+        <rule filter=" &quot;Escalões&quot; = '17'" key="{b4e7be0e-bc4a-4a8c-aead-c230445f10fa}" symbol="267" label="Teatro de Operações"/>
+        <rule filter=" &quot;Escalões&quot; = '16'" key="{b5cec538-ecdb-44ea-b143-c3f10f4764a2}" symbol="268" label="Comando Combinado"/>
+        <rule filter=" &quot;Escalões&quot; = '15'" key="{0906fbcb-1e62-49fa-ba2e-0cbdd1114ed9}" symbol="269" label="Forças componentes de comando combinado"/>
+        <rule filter=" &quot;Escalões&quot; = '14'" key="{1224b797-5fdc-4547-83bf-401e86178c22}" symbol="270" label="Força-tarefa combinado oficial-general do último posto"/>
+        <rule filter=" &quot;Escalões&quot; = '13'" key="{1ab59773-1d39-4eac-92cd-ee4debe647c6}" symbol="271" label="Força-tarefa oficial-general do posto intermediário"/>
       </rule>
-      <rule filter=" &quot;Símbolos Básicos&quot; = '{2}'" key="{48cae67a-88b8-4fef-b15a-c18c2772d544}" symbol="272" label="Triângulo">
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{0}'" key="{3f1a3947-6fa0-4c38-b30c-3d554cb039d1}" symbol="273" label="Letra T"/>
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{1}'" key="{9f416bea-83e2-4bf8-99a9-d0afaf96e1b9}" symbol="274" label="Ferro"/>
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{2}'" key="{08b7d61d-3a7e-407b-8204-ae34e3020740}" symbol="275" label="Hélice"/>
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{3}'" key="{4fec56d8-6135-4375-b3be-79bf15fef676}" symbol="276" label="Polícia Militar"/>
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{4}'" key="{466571f8-2618-4980-89ee-7f7fae3bce9f}" symbol="277" label="Comando Combinado"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot; = '{0}'" key="{b7c47fab-6545-4655-85a1-f6757f9c3dac}" symbol="278" label="Infantaria"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{1}'" key="{90c07471-cf5f-48c5-8dda-530e61d4aa7e}" symbol="279" label="Cavalaria"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{2}'" key="{869bbbc5-032c-4b33-8951-e8f062008359}" symbol="280" label="Artilharia"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{3}'" key="{9e99ce33-91d5-4719-9a7f-83cf3629416d}" symbol="281" label="Engenharia"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{4}'" key="{7adab09d-f325-446e-962d-d8f5994ed6f2}" symbol="282" label="Comunicações"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{5}'" key="{a72aef17-7bf4-4a9a-aa3a-9e542544b850}" symbol="283" label="Material Bélico"/>
-        <rule filter=" &quot;Serviços&quot; = '{0}'" key="{4e3bf9a1-a596-4548-bec7-535af4b92182}" symbol="284" label="Ajudância Geral"/>
-        <rule filter=" &quot;Serviços&quot; = '{1}'" key="{ec994975-f5fa-470a-a2a1-9ae684b1f55d}" symbol="285" label="Apoio ao Desembarque"/>
-        <rule filter=" &quot;Serviços&quot; = '{2}'" key="{d5ee25b4-c158-4cb0-8fd6-852d52399936}" symbol="286" label="Armamento e Munição"/>
-        <rule filter=" &quot;Serviços&quot; = '{3}'" key="{76ba25cf-f633-49a7-bd7b-4b61b50e8c3d}" symbol="287" label="Especial"/>
-        <rule filter=" &quot;Serviços&quot; = '{4}'" key="{915e6463-38c2-438c-b24a-aa66d5b3a55a}" symbol="288" label="Finanças"/>
-        <rule filter=" &quot;Serviços&quot; = '{5}'" key="{302042ba-afba-49a5-b8be-1173e0eb7ec3}" symbol="289" label="Intendência"/>
-        <rule filter=" &quot;Serviços&quot; = '{6}'" key="{c775716e-1d9c-42ad-ba00-c36b9163bc2f}" symbol="290" label="Justiça Militar"/>
-        <rule filter=" &quot;Serviços&quot; = '{7}'" key="{237fc529-4e96-4ec2-8718-7e2f1286bd25}" symbol="291" label="Motomecanização"/>
-        <rule filter=" &quot;Serviços&quot; = '{8}'" key="{1ac14b3b-f18e-481d-95af-18df94ae3649}" symbol="292" label="Polícia da Aeronáutica"/>
-        <rule filter=" &quot;Serviços&quot; = '{9}'" key="{3daad001-5368-4c33-84be-dc9e5bfc66e7}" symbol="293" label="Polícia do Exército"/>
-        <rule filter=" &quot;Serviços&quot; = '{10}'" key="{e810dabd-0cc6-434c-89e7-d9c62623b451}" symbol="294" label="Postal"/>
-        <rule filter=" &quot;Serviços&quot; = '{11}'" key="{2e89eb87-9598-4a89-bea0-ef46943aa5d2}" symbol="295" label="Saúde"/>
-        <rule filter=" &quot;Serviços&quot; = '{12}'" key="{47ca04a6-75bc-4216-b042-5c3d8ce1aaf0}" symbol="296" label="Serviço Militar, Tiro-de-Guerra"/>
-        <rule filter=" &quot;Serviços&quot; = '{13}'" key="{7006d2d1-9e00-4102-acfa-a58b7b1cb4e6}" symbol="297" label="Serviço de Polícia de Fuzileiros Navais"/>
-        <rule filter=" &quot;Serviços&quot; = '{14}'" key="{acd27e6c-3b04-4691-93e0-b0523d3ac683}" symbol="298" label="Transporte"/>
-        <rule filter=" &quot;Serviços&quot; = '{15}'" key="{6916dc1c-3574-4f94-93b2-dbbc93f7d1c7}" symbol="299" label="Veterinária"/>
-        <rule filter=" &quot;Especialidade&quot; = '{1}'" key="{6e03f083-35e8-4ded-9876-363518ee322d}" symbol="300" label="Aeronaval"/>
-        <rule filter=" &quot;Especialidade&quot; = '{2}'" key="{2657f3aa-d5b9-4ae4-88f6-494dae20291c}" symbol="301" label="Aeroterrestre"/>
-        <rule filter=" &quot;Especialidade&quot; = '{3}'" key="{60ad4389-8b10-403e-ad39-a5a87433d75c}" symbol="302" label="Aeromóvel"/>
-        <rule filter=" &quot;Especialidade&quot; = '{4}'" key="{8ab558dc-5b5f-4998-8eff-6c8ca6f4226e}" symbol="303" label="Vetinária"/>
-        <rule filter=" &quot;Especialidade&quot; = '{5}'" key="{a05b74f4-291a-407e-b006-96d2d2219bf6}" symbol="304" label="Anfíbio"/>
-        <rule filter=" &quot;Especialidade&quot; = '{6}'" key="{92aeec6d-64bb-4eb7-a972-1566770377af}" symbol="305" label="Artilharia Antiaérea"/>
-        <rule filter=" &quot;Especialidade&quot; = '{10}'" key="{e6d896a8-942a-497a-91e4-d9cb7173deb2}" symbol="306" label="Artilharia autopropulsada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{9}'" key="{626d8de0-2360-40d9-b31a-dfb9f237b1d2}" symbol="307" label="Artilharia autopropulsada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{8}'" key="{3c9fbf9f-507a-4ed3-82fd-6e3436bcaf47}" symbol="308" label="Artilharia Antiaérea de Autodefesa"/>
-        <rule filter=" &quot;Especialidade&quot; = '{7}'" key="{d7ecae18-fe89-416b-bb3c-3a915507f257}" symbol="309" label="Artilharia Antiaérea Autopropulsada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{11}'" key="{756b5590-ed60-42df-acad-a6cd9aa59019}" symbol="310" label="Aviação do Exército"/>
-        <rule filter=" &quot;Especialidade&quot; = '{12}'" key="{19f629cc-6e08-44e1-8b24-9049598e3203}" symbol="311" label="Caçador"/>
-        <rule filter=" &quot;Especialidade&quot; = '{13}'" key="{eba5e6ea-e467-4b36-b08f-e7cc12ce7d19}" symbol="312" label="Cão-de-guerra"/>
-        <rule filter=" &quot;Especialidade&quot; = '{14}'" key="{97c1394a-a597-4844-bf5c-2b6db42c59be}" symbol="313" label="Cavalaria Blindada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{15}'" key="{a45d8ba5-6d1d-4921-9587-b47d73559c51}" symbol="314" label="Cavalaria Mecanizada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{20}'" key="{02837018-3a75-4c91-b0f0-8548fff91b79}" symbol="315" label="Enegenharia de grande unidade blindada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{23}'" key="{d1485cce-5b8b-4978-8140-26eab4c8a5b0}" symbol="316" label="Fronteira"/>
-        <rule filter=" &quot;Especialidade&quot; = '{27}'" key="{8a20eac3-6184-4c1e-b0e1-30e1a944918c}" symbol="317" label="Infantaria blindada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{31}'" key="{d8bc64d6-3704-4969-a530-2846cee41971}" symbol="318" label="Pára-quedista"/>
-        <rule filter=" &quot;Especialidade&quot; = '{32}'" key="{8b7c4d4f-d58e-46c3-b85d-330ebbb7e356}" symbol="319" label="Aeroterrestre de Salvamento e Resgate"/>
-        <rule filter=" &quot;Atividades&quot;  = '{2}'" key="{dfc0f886-6680-47f8-932f-c1a90b5b92c1}" symbol="320" label="Assistência ao Pessoal"/>
-        <rule filter=" &quot;Atividades&quot;  = '{1}'" key="{febda860-ff41-4baf-a708-e06933bcc7c3}" symbol="321" label="Administração"/>
-        <rule filter=" &quot;Especialidade&quot; = '{36}'" key="{b87473bd-92af-4cf8-919d-feb6c81be096}" symbol="322" label="Selva"/>
-        <rule filter=" &quot;Atividades&quot; = '{3}'" key="{3e324416-4860-4b02-ba81-5f874989d803}" symbol="323" label="Assuntos Civis"/>
-        <rule filter=" &quot;Atividades&quot; ='{4}'" key="{753adcb5-d5ed-4915-95ee-ed0e2ebb4f11}" symbol="324" label="Banho"/>
-        <rule filter=" &quot;Atividades&quot; ='{9}'" key="{d2f6b40e-7d64-47fb-bf37-20ed410b4193}" symbol="325" label="Classe IV"/>
-        <rule filter=" &quot;Atividades&quot; ='{22}'" key="{23a609f6-f43f-4d6f-b82a-f2e6b7336c5b}" symbol="326" label="Logística"/>
-        <rule filter=" &quot;Atividades&quot; ='{27}'" key="{292038a2-98b9-44aa-b50d-7cff8e0d8ad2}" symbol="327" label="Manutenção e salvamento"/>
-        <rule filter=" &quot;Atividades&quot; ='{26}'" key="{7e24e9d3-4017-4a73-ab29-2f374fe68ba0}" symbol="328" label="Reconpletamento"/>
-        <rule filter=" &quot;Atividades&quot; ='{25}'" key="{9ecdaf41-9214-4ae8-ab7b-673bbc5d36e4}" symbol="329" label="Prisoneiro de Guerra"/>
-        <rule filter=" &quot;Atividades&quot; ='{24}'" key="{58167b92-227b-45af-8044-74da52dca0e8}" symbol="330" label="Mão-de-obra"/>
-        <rule filter=" &quot;Atividades&quot; ='{23}'" key="{769fab57-88ef-4a6e-9d88-1005f7d3c2db}" symbol="331" label="Manuteção"/>
-        <rule filter=" &quot;Atividades&quot; ='{21}'" key="{3f1c1ccf-2e4b-46e7-a948-4eba3cef3a34}" symbol="332" label="Lavanderia"/>
-        <rule filter=" &quot;Atividades&quot; ='{20}'" key="{a10c7f49-e3d9-4518-9ba0-fb49188b67f7}" symbol="333" label="Descontaminação"/>
-        <rule filter=" &quot;Atividades&quot; ='{19}'" key="{59f77ff4-54a0-4f6a-9a09-8a9df6c873de}" symbol="334" label="Depósito"/>
-        <rule filter=" &quot;Atividades&quot; ='{18}'" key="{74635723-4b98-4586-811e-74f062bbdb29}" symbol="335" label="Comando e Controle"/>
-        <rule filter=" &quot;Atividades&quot; ='{17}'" key="{2ad104f9-23bc-430c-a914-6ee55b538178}" symbol="336" label="Contra Incêndio"/>
-        <rule filter=" &quot;Atividades&quot; ='{16}'" key="{e1f9638a-a8c9-49bc-96f5-cf49aba5f594}" symbol="337" label="Construção"/>
-        <rule filter=" &quot;Atividades&quot; ='{15}'" key="{0004926d-2e7b-46b1-bbde-98011e5f0af4}" symbol="338" label="Classe X"/>
-        <rule filter=" &quot;Atividades&quot; ='{14}'" key="{22aacf2f-ad74-4657-9198-6e2a399bccb0}" symbol="339" label="Classe IX"/>
-        <rule filter=" &quot;Atividades&quot; ='{13}'" key="{16fc2377-9a7b-41f9-b881-722cd4830bfa}" symbol="340" label="Classe VIII"/>
-        <rule filter=" &quot;Atividades&quot; ='{12}'" key="{349bc83b-58c1-4e91-b7e4-8d873a4b187d}" symbol="341" label="Classe VII"/>
-        <rule filter=" &quot;Atividades&quot; ='{11}'" key="{d029c2fc-2c6f-4db4-849c-dcab621e8dc3}" symbol="342" label="Classe VI"/>
-        <rule filter=" &quot;Atividades&quot; ='{10}'" key="{6fa1b16f-9b39-445e-bb46-a8d5aecc184f}" symbol="343" label="Classe V"/>
-        <rule filter=" &quot;Atividades&quot; ='{8}'" key="{dca78d25-5e77-46da-a74f-d37c8e6cb031}" symbol="344" label="Classe III"/>
-        <rule filter=" &quot;Atividades&quot; ='{7}'" key="{eaa4dc9d-3efa-453a-99ae-7c1986169f00}" symbol="345" label="Classe II"/>
-        <rule filter=" &quot;Atividades&quot; ='{6}'" key="{3afb21eb-a5d2-46eb-b7cb-5c3aea678def}" symbol="346" label="Classe I"/>
-        <rule filter=" &quot;Atividades&quot; ='{5}'" key="{ce40e8eb-ea72-4e46-9c1f-880b1efd27e7}" symbol="347" label="Civis"/>
-        <rule filter=" &quot;Especialidade&quot; = '{35}'" key="{f42fc7da-9930-448b-b70a-4c85271182c2}" symbol="348" label="Salvamente e Resgate"/>
-        <rule filter=" &quot;Especialidade&quot; = '{34}'" key="{877ca961-8d07-4ceb-b267-95480ddfcb0e}" symbol="349" label="Reconhecimento"/>
-        <rule filter=" &quot;Especialidade&quot; = '{33}'" key="{90a707cf-6c24-4425-ad8e-8c7864ec14bc}" symbol="350" label="Operações Especiais"/>
-        <rule filter=" &quot;Especialidade&quot; = '{30}'" key="{9f1e1732-e333-4871-a526-01f0a28d4ff6}" symbol="351" label="Operações Psicológicas"/>
-        <rule filter=" &quot;Especialidade&quot; = '{29}'" key="{bf5cb401-530d-4b52-b1a6-afd1c0f0a735}" symbol="352" label="Montanha"/>
-        <rule filter=" &quot;Especialidade&quot; = '{28}'" key="{6620087c-15ee-4f39-bc49-d069171ab348}" symbol="353" label="Infantaria da Aeronáutica"/>
-        <rule filter=" &quot;Especialidade&quot; = '{26}'" key="{0af994e8-f46f-4216-80aa-ba0b9c4b5f41}" symbol="354" label="Helitransporte"/>
-        <rule filter=" &quot;Especialidade&quot; = '{24}'" key="{1aaa8104-f50e-474d-be1d-45f12dd3a8d3}" symbol="355" label="Guerra Eletrônica (especialidade de comunicações)"/>
-        <rule filter="&quot;Especialidade&quot; ='{25}'" key="{a8a81982-3ddd-40f4-b7b1-55899140f5d5}" symbol="356" label="Guerrilha"/>
-        <rule filter=" &quot;Especialidade&quot; = '{22}'" key="{ac846529-31f3-4149-8b10-e6f708760760}" symbol="357" label="Forças Especiais"/>
-        <rule filter=" &quot;Especialidade&quot; = '{21}'" key="{f4d812cd-e033-4bfa-bd45-d95dbd6cc9c4}" symbol="358" label="Fluvial"/>
-        <rule filter=" &quot;Especialidade&quot; = '{19}'" key="{811a12df-4e26-448a-b0bc-195462effa42}" symbol="359" label="Elemento Logístico Blindado"/>
-        <rule filter=" &quot;Especialidade&quot; = '{18}'" key="{94fb50ec-a5bb-46d0-b6c4-b01ce4caf217}" symbol="360" label="Defesa Química"/>
-        <rule filter=" &quot;Especialidade&quot; = '{17}'" key="{c97db056-551c-4c66-b00c-e28e4fcb259d}" symbol="361" label="Elemento de Comunicações"/>
-        <rule filter=" &quot;Especialidade&quot; = '{16}'" key="{7e580c53-0fab-45b4-8ac6-678b9dfff9e7}" symbol="362" label="Colonização"/>
-        <rule filter=" &quot;Atividades&quot; ='{28}'" key="{2a141059-c033-4997-a327-2d4cf801cc35}" symbol="363" label="Recreação"/>
-        <rule filter=" &quot;Atividades&quot; ='{29}'" key="{bad04fb6-3764-45bd-a99b-35ace29f95b2}" symbol="364" label="Remoção de Granadas e Bombas"/>
-        <rule filter=" &quot;Atividades&quot; ='{30}'" key="{d43554dd-fafd-4311-a635-91b4bc091ef7}" symbol="365" label="Suprimento"/>
-        <rule filter=" &quot;Atividades&quot; ='{31}'" key="{b1abcf3a-c415-4906-a9d2-e1c6688267df}" symbol="366" label="Suprimento de artigos reembolsáveis"/>
-        <rule filter=" &quot;Atividades&quot; ='{35}'" key="{5ea2392c-6343-4186-b7fa-be2f411f52d7}" symbol="367" label="Cemitério"/>
-        <rule filter=" &quot;Atividades&quot; ='{34}'" key="{69b137ae-ae04-4a33-bf32-70d499615c2b}" symbol="368" label="Água potável"/>
-        <rule filter=" &quot;Atividades&quot; ='{33}'" key="{d5fdf892-6ef1-4d0e-b805-ce656b8e6268}" symbol="369" label="Suprimento de outras classes"/>
-        <rule filter=" &quot;Escalões&quot; = '{1}'" key="{3edde903-3518-4a0b-b723-b73a6250934b}" symbol="370" label="Esquadra"/>
-        <rule filter=" &quot;Escalões&quot; = '{4}'" key="{73d6d0af-1b60-423c-9b0c-021691862400}" symbol="371" label="Companhia"/>
-        <rule filter=" &quot;Escalões&quot; = '{3}'" key="{1b4f631e-2314-42bf-ade2-7d47f4546e60}" symbol="372" label="Pelotão"/>
-        <rule filter=" &quot;Escalões&quot; = '{2}'" key="{3addaf9e-038f-4c89-b356-621fa6a4c03e}" symbol="373" label="Grupo de Combate ou correspondente"/>
-        <rule filter=" &quot;Atividades&quot; ='{50}'" key="{853ff2f5-9d95-4e7d-b931-fb022dac8095}" symbol="374" label="Trânsito"/>
-        <rule filter=" &quot;Atividades&quot; ='{49}'" key="{a4c0d545-dca5-44a9-8481-47a56aff2dd1}" symbol="375" label="Suprimento e Transporte"/>
-        <rule filter=" &quot;Atividades&quot; ='{48}'" key="{c6e4fc3b-25bd-45ec-86e8-a27c68d430e8}" symbol="376" label="Sepultamento"/>
-        <rule filter=" &quot;Atividades&quot; ='{47}'" key="{392113d5-4f70-47e1-bcb2-aa95c2e2e236}" symbol="377" label="Salvados"/>
-        <rule filter=" &quot;Atividades&quot; ='{46}'" key="{fba40408-5465-4737-bcbc-c1deec86e5c0}" symbol="378" label="Reunião de Extraviados"/>
-        <rule filter=" &quot;Atividades&quot; ='{45}'" key="{9b50867f-d63e-4756-b767-d878f19a378e}" symbol="379" label="Repouso"/>
-        <rule filter=" &quot;Atividades&quot; ='{44}'" key="{3a9d299d-c556-47a9-80d2-92bf453d89fb}" symbol="380" label="Prisão, Instalação de Confinamento"/>
-        <rule filter=" &quot;Atividades&quot; ='{43}'" key="{af5510ab-6e12-45dc-8c7b-3ceb0d412290}" symbol="381" label="Evacuação"/>
-        <rule filter=" &quot;Atividades&quot; ='{42}'" key="{c5eaf860-b62b-4549-95c1-54cbfc542b87}" symbol="382" label="Hospital ou Centro de Saúde"/>
-        <rule filter=" &quot;Atividades&quot; ='{41}'" key="{8ed029a6-722c-4b52-8004-79f853ef56af}" symbol="383" label="Hospital de Veterinária"/>
-        <rule filter=" &quot;Atividades&quot; ='{40}'" key="{c272c641-aa63-4a50-924e-080ed8a716ad}" symbol="384" label="Estado Maior"/>
-        <rule filter=" &quot;Atividades&quot; ='{39}'" key="{68f9908a-ea8e-4bb0-9eda-8d45c09fbb8c}" symbol="385" label="Embarque e Desembarque"/>
-        <rule filter=" &quot;Atividades&quot; ='{38}'" key="{3bb980d4-82f6-4c82-855d-293e025c7845}" symbol="386" label="Extraviados"/>
-        <rule filter=" &quot;Atividades&quot; ='{37}'" key="{3e232641-bdcc-4953-8455-8beac2fd8a2e}" symbol="387" label="Controle de Munição"/>
-        <rule filter=" &quot;Atividades&quot; ='{36}'" key="{bd36e297-5888-4622-aba8-d8f9b9ccb3f4}" symbol="388" label="Coleta de Mortos"/>
-        <rule filter=" &quot;Atividades&quot; ='{32}'" key="{66fa18bc-e718-4852-9e04-223980fc2444}" symbol="389" label="Suprimento de Material Bélica"/>
-        <rule filter=" &quot;Escalões&quot; = '{5}'" key="{1e78541b-3edc-407f-b512-fa53b1b445c4}" symbol="390" label="Batalhão"/>
-        <rule filter=" &quot;Escalões&quot; = '{6}'" key="{eaa38672-7637-40e7-abf6-1e70aee20153}" symbol="391" label="Grupamento"/>
-        <rule filter=" &quot;Escalões&quot; = '{7}'" key="{4a5b67fe-a2ad-4119-816c-d3920bb5c462}" symbol="392" label="Força-tarefa"/>
-        <rule filter=" &quot;Escalões&quot; = '{8}'" key="{dfde94ac-aecc-4d05-9b53-76689bf94645}" symbol="393" label="Força-tarefa de valor batalhão"/>
-        <rule filter=" &quot;Escalões&quot; = '{9}'" key="{9d596cd8-3cfe-48ac-8e44-893c7022c42b}" symbol="394" label="Força-tarefa de valor regimento"/>
-        <rule filter=" &quot;Escalões&quot; = '{10}'" key="{5d43ad9b-b8dc-46b5-810e-7cde0bcc0830}" symbol="395" label="Brigada"/>
-        <rule filter=" &quot;Escalões&quot; = '{11}'" key="{5252fd5b-76ec-48fb-8d5b-c786d81ae314}" symbol="396" label="Divisão"/>
-        <rule filter=" &quot;Escalões&quot; = '{12}'" key="{3d0f2231-dd98-4c8d-9329-28c3fa3fdf27}" symbol="397" label="Esquadra"/>
-        <rule filter=" &quot;Escalões&quot; = '{13}'" key="{fd1b3f3b-02ea-4fae-b2fd-cd8eb910aab6}" symbol="398" label="Força-tarefa oficial-general do primeiro posto"/>
-        <rule filter=" &quot;Escalões&quot; = '{22}'" key="{ebb4a00d-c7c6-4dbd-a026-52d25194e7e0}" symbol="399" label="Comando Logístico"/>
-        <rule filter=" &quot;Escalões&quot; = '{21}'" key="{a5e14465-9a14-445c-968b-b6991070a9f7}" symbol="400" label="Região Militar"/>
-        <rule filter=" &quot;Escalões&quot; = '{20}'" key="{13632f28-8302-49dc-9f58-2b06872d1303}" symbol="401" label="Comando logística"/>
-        <rule filter=" &quot;Escalões&quot; = '{19}'" key="{1a8484ed-53a9-4e9e-8d51-5eb22f2939e9}" symbol="402" label="Base Logística "/>
-        <rule filter=" &quot;Escalões&quot; = '{18}'" key="{b888abb5-31ff-4103-a7eb-d481d2db2b69}" symbol="403" label="Teatro de Operações"/>
-        <rule filter=" &quot;Escalões&quot; = '{17}'" key="{8ab710ee-a0b6-42df-a421-4752412ae715}" symbol="404" label="Comando Combinado"/>
-        <rule filter=" &quot;Escalões&quot; = '{16}'" key="{21b239a0-ca7e-475f-b20d-6703a8f3ec07}" symbol="405" label="Forças componentes de comando combinado"/>
-        <rule filter=" &quot;Escalões&quot; = '{15}'" key="{af19cb28-1d51-4451-8955-dc42e5adb381}" symbol="406" label="Força-tarefa combinado oficial-general do último posto"/>
-        <rule filter=" &quot;Escalões&quot; = '{14}'" key="{433b7c18-65e8-4855-ac4a-9d1cfaab3b3d}" symbol="407" label="Força-tarefa oficial-general do posto intermediário"/>
+      <rule filter=" &quot;Símbolos Básicos&quot; = '2'" key="{48cae67a-88b8-4fef-b15a-c18c2772d544}" symbol="272" label="Triângulo">
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '0'" key="{3f1a3947-6fa0-4c38-b30c-3d554cb039d1}" symbol="273" label="Letra T"/>
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '1'" key="{9f416bea-83e2-4bf8-99a9-d0afaf96e1b9}" symbol="274" label="Ferro"/>
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '2'" key="{08b7d61d-3a7e-407b-8204-ae34e3020740}" symbol="275" label="Hélice"/>
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '3'" key="{4fec56d8-6135-4375-b3be-79bf15fef676}" symbol="276" label="Polícia Militar"/>
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '4'" key="{466571f8-2618-4980-89ee-7f7fae3bce9f}" symbol="277" label="Comando Combinado"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot; = '0'" key="{b7c47fab-6545-4655-85a1-f6757f9c3dac}" symbol="278" label="Infantaria"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '1'" key="{90c07471-cf5f-48c5-8dda-530e61d4aa7e}" symbol="279" label="Cavalaria"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '2'" key="{869bbbc5-032c-4b33-8951-e8f062008359}" symbol="280" label="Artilharia"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '3'" key="{9e99ce33-91d5-4719-9a7f-83cf3629416d}" symbol="281" label="Engenharia"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '4'" key="{7adab09d-f325-446e-962d-d8f5994ed6f2}" symbol="282" label="Comunicações"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '5'" key="{a72aef17-7bf4-4a9a-aa3a-9e542544b850}" symbol="283" label="Material Bélico"/>
+        <rule filter=" &quot;Serviços&quot; = '0'" key="{4e3bf9a1-a596-4548-bec7-535af4b92182}" symbol="284" label="Ajudância Geral"/>
+        <rule filter=" &quot;Serviços&quot; = '1'" key="{ec994975-f5fa-470a-a2a1-9ae684b1f55d}" symbol="285" label="Apoio ao Desembarque"/>
+        <rule filter=" &quot;Serviços&quot; = '2'" key="{d5ee25b4-c158-4cb0-8fd6-852d52399936}" symbol="286" label="Armamento e Munição"/>
+        <rule filter=" &quot;Serviços&quot; = '3'" key="{76ba25cf-f633-49a7-bd7b-4b61b50e8c3d}" symbol="287" label="Especial"/>
+        <rule filter=" &quot;Serviços&quot; = '4'" key="{915e6463-38c2-438c-b24a-aa66d5b3a55a}" symbol="288" label="Finanças"/>
+        <rule filter=" &quot;Serviços&quot; = '5'" key="{302042ba-afba-49a5-b8be-1173e0eb7ec3}" symbol="289" label="Intendência"/>
+        <rule filter=" &quot;Serviços&quot; = '6'" key="{c775716e-1d9c-42ad-ba00-c36b9163bc2f}" symbol="290" label="Justiça Militar"/>
+        <rule filter=" &quot;Serviços&quot; = '7'" key="{237fc529-4e96-4ec2-8718-7e2f1286bd25}" symbol="291" label="Motomecanização"/>
+        <rule filter=" &quot;Serviços&quot; = '8'" key="{1ac14b3b-f18e-481d-95af-18df94ae3649}" symbol="292" label="Polícia da Aeronáutica"/>
+        <rule filter=" &quot;Serviços&quot; = '9'" key="{3daad001-5368-4c33-84be-dc9e5bfc66e7}" symbol="293" label="Polícia do Exército"/>
+        <rule filter=" &quot;Serviços&quot; = '10'" key="{e810dabd-0cc6-434c-89e7-d9c62623b451}" symbol="294" label="Postal"/>
+        <rule filter=" &quot;Serviços&quot; = '11'" key="{2e89eb87-9598-4a89-bea0-ef46943aa5d2}" symbol="295" label="Saúde"/>
+        <rule filter=" &quot;Serviços&quot; = '12'" key="{47ca04a6-75bc-4216-b042-5c3d8ce1aaf0}" symbol="296" label="Serviço Militar, Tiro-de-Guerra"/>
+        <rule filter=" &quot;Serviços&quot; = '13'" key="{7006d2d1-9e00-4102-acfa-a58b7b1cb4e6}" symbol="297" label="Serviço de Polícia de Fuzileiros Navais"/>
+        <rule filter=" &quot;Serviços&quot; = '14'" key="{acd27e6c-3b04-4691-93e0-b0523d3ac683}" symbol="298" label="Transporte"/>
+        <rule filter=" &quot;Serviços&quot; = '15'" key="{6916dc1c-3574-4f94-93b2-dbbc93f7d1c7}" symbol="299" label="Veterinária"/>
+        <rule filter=" &quot;Especialidade&quot; = '0'" key="{6e03f083-35e8-4ded-9876-363518ee322d}" symbol="300" label="Aeronaval"/>
+        <rule filter=" &quot;Especialidade&quot; = '1'" key="{2657f3aa-d5b9-4ae4-88f6-494dae20291c}" symbol="301" label="Aeroterrestre"/>
+        <rule filter=" &quot;Especialidade&quot; = '2'" key="{60ad4389-8b10-403e-ad39-a5a87433d75c}" symbol="302" label="Aeromóvel"/>
+        <rule filter=" &quot;Especialidade&quot; = '3'" key="{8ab558dc-5b5f-4998-8eff-6c8ca6f4226e}" symbol="303" label="Vetinária"/>
+        <rule filter=" &quot;Especialidade&quot; = '4'" key="{a05b74f4-291a-407e-b006-96d2d2219bf6}" symbol="304" label="Anfíbio"/>
+        <rule filter=" &quot;Especialidade&quot; = '5'" key="{92aeec6d-64bb-4eb7-a972-1566770377af}" symbol="305" label="Artilharia Antiaérea"/>
+        <rule filter=" &quot;Especialidade&quot; = '9'" key="{e6d896a8-942a-497a-91e4-d9cb7173deb2}" symbol="306" label="Artilharia autopropulsada"/>
+        <rule filter=" &quot;Especialidade&quot; = '8'" key="{626d8de0-2360-40d9-b31a-dfb9f237b1d2}" symbol="307" label="Artilharia autopropulsada"/>
+        <rule filter=" &quot;Especialidade&quot; = '7'" key="{3c9fbf9f-507a-4ed3-82fd-6e3436bcaf47}" symbol="308" label="Artilharia Antiaérea de Autodefesa"/>
+        <rule filter=" &quot;Especialidade&quot; = '6'" key="{d7ecae18-fe89-416b-bb3c-3a915507f257}" symbol="309" label="Artilharia Antiaérea Autopropulsada"/>
+        <rule filter=" &quot;Especialidade&quot; = '10'" key="{756b5590-ed60-42df-acad-a6cd9aa59019}" symbol="310" label="Aviação do Exército"/>
+        <rule filter=" &quot;Especialidade&quot; = '11'" key="{19f629cc-6e08-44e1-8b24-9049598e3203}" symbol="311" label="Caçador"/>
+        <rule filter=" &quot;Especialidade&quot; = '12'" key="{eba5e6ea-e467-4b36-b08f-e7cc12ce7d19}" symbol="312" label="Cão-de-guerra"/>
+        <rule filter=" &quot;Especialidade&quot; = '13'" key="{97c1394a-a597-4844-bf5c-2b6db42c59be}" symbol="313" label="Cavalaria Blindada"/>
+        <rule filter=" &quot;Especialidade&quot; = '14'" key="{a45d8ba5-6d1d-4921-9587-b47d73559c51}" symbol="314" label="Cavalaria Mecanizada"/>
+        <rule filter=" &quot;Especialidade&quot; = '19'" key="{02837018-3a75-4c91-b0f0-8548fff91b79}" symbol="315" label="Enegenharia de grande unidade blindada"/>
+        <rule filter=" &quot;Especialidade&quot; = '22'" key="{d1485cce-5b8b-4978-8140-26eab4c8a5b0}" symbol="316" label="Fronteira"/>
+        <rule filter=" &quot;Especialidade&quot; = '26'" key="{8a20eac3-6184-4c1e-b0e1-30e1a944918c}" symbol="317" label="Infantaria blindada"/>
+        <rule filter=" &quot;Especialidade&quot; = '30'" key="{d8bc64d6-3704-4969-a530-2846cee41971}" symbol="318" label="Pára-quedista"/>
+        <rule filter=" &quot;Especialidade&quot; = '31'" key="{8b7c4d4f-d58e-46c3-b85d-330ebbb7e356}" symbol="319" label="Aeroterrestre de Salvamento e Resgate"/>
+        <rule filter=" &quot;Atividades&quot;  = '1'" key="{dfc0f886-6680-47f8-932f-c1a90b5b92c1}" symbol="320" label="Assistência ao Pessoal"/>
+        <rule filter=" &quot;Atividades&quot;  = '0'" key="{febda860-ff41-4baf-a708-e06933bcc7c3}" symbol="321" label="Administração"/>
+        <rule filter=" &quot;Especialidade&quot; = '35'" key="{b87473bd-92af-4cf8-919d-feb6c81be096}" symbol="322" label="Selva"/>
+        <rule filter=" &quot;Atividades&quot; = '2'" key="{3e324416-4860-4b02-ba81-5f874989d803}" symbol="323" label="Assuntos Civis"/>
+        <rule filter=" &quot;Atividades&quot; ='3'" key="{753adcb5-d5ed-4915-95ee-ed0e2ebb4f11}" symbol="324" label="Banho"/>
+        <rule filter=" &quot;Atividades&quot; ='8'" key="{d2f6b40e-7d64-47fb-bf37-20ed410b4193}" symbol="325" label="Classe IV"/>
+        <rule filter=" &quot;Atividades&quot; ='21'" key="{23a609f6-f43f-4d6f-b82a-f2e6b7336c5b}" symbol="326" label="Logística"/>
+        <rule filter=" &quot;Atividades&quot; ='26'" key="{292038a2-98b9-44aa-b50d-7cff8e0d8ad2}" symbol="327" label="Manutenção e salvamento"/>
+        <rule filter=" &quot;Atividades&quot; ='25'" key="{7e24e9d3-4017-4a73-ab29-2f374fe68ba0}" symbol="328" label="Reconpletamento"/>
+        <rule filter=" &quot;Atividades&quot; ='24'" key="{9ecdaf41-9214-4ae8-ab7b-673bbc5d36e4}" symbol="329" label="Prisoneiro de Guerra"/>
+        <rule filter=" &quot;Atividades&quot; ='23'" key="{58167b92-227b-45af-8044-74da52dca0e8}" symbol="330" label="Mão-de-obra"/>
+        <rule filter=" &quot;Atividades&quot; ='22'" key="{769fab57-88ef-4a6e-9d88-1005f7d3c2db}" symbol="331" label="Manuteção"/>
+        <rule filter=" &quot;Atividades&quot; ='20'" key="{3f1c1ccf-2e4b-46e7-a948-4eba3cef3a34}" symbol="332" label="Lavanderia"/>
+        <rule filter=" &quot;Atividades&quot; ='19'" key="{a10c7f49-e3d9-4518-9ba0-fb49188b67f7}" symbol="333" label="Descontaminação"/>
+        <rule filter=" &quot;Atividades&quot; ='18'" key="{59f77ff4-54a0-4f6a-9a09-8a9df6c873de}" symbol="334" label="Depósito"/>
+        <rule filter=" &quot;Atividades&quot; ='17'" key="{74635723-4b98-4586-811e-74f062bbdb29}" symbol="335" label="Comando e Controle"/>
+        <rule filter=" &quot;Atividades&quot; ='16'" key="{2ad104f9-23bc-430c-a914-6ee55b538178}" symbol="336" label="Contra Incêndio"/>
+        <rule filter=" &quot;Atividades&quot; ='15'" key="{e1f9638a-a8c9-49bc-96f5-cf49aba5f594}" symbol="337" label="Construção"/>
+        <rule filter=" &quot;Atividades&quot; ='14'" key="{0004926d-2e7b-46b1-bbde-98011e5f0af4}" symbol="338" label="Classe X"/>
+        <rule filter=" &quot;Atividades&quot; ='13'" key="{22aacf2f-ad74-4657-9198-6e2a399bccb0}" symbol="339" label="Classe IX"/>
+        <rule filter=" &quot;Atividades&quot; ='12'" key="{16fc2377-9a7b-41f9-b881-722cd4830bfa}" symbol="340" label="Classe VIII"/>
+        <rule filter=" &quot;Atividades&quot; ='11'" key="{349bc83b-58c1-4e91-b7e4-8d873a4b187d}" symbol="341" label="Classe VII"/>
+        <rule filter=" &quot;Atividades&quot; ='10'" key="{d029c2fc-2c6f-4db4-849c-dcab621e8dc3}" symbol="342" label="Classe VI"/>
+        <rule filter=" &quot;Atividades&quot; ='9'" key="{6fa1b16f-9b39-445e-bb46-a8d5aecc184f}" symbol="343" label="Classe V"/>
+        <rule filter=" &quot;Atividades&quot; ='7'" key="{dca78d25-5e77-46da-a74f-d37c8e6cb031}" symbol="344" label="Classe III"/>
+        <rule filter=" &quot;Atividades&quot; ='6'" key="{eaa4dc9d-3efa-453a-99ae-7c1986169f00}" symbol="345" label="Classe II"/>
+        <rule filter=" &quot;Atividades&quot; ='5'" key="{3afb21eb-a5d2-46eb-b7cb-5c3aea678def}" symbol="346" label="Classe I"/>
+        <rule filter=" &quot;Atividades&quot; ='4'" key="{ce40e8eb-ea72-4e46-9c1f-880b1efd27e7}" symbol="347" label="Civis"/>
+        <rule filter=" &quot;Especialidade&quot; = '34'" key="{f42fc7da-9930-448b-b70a-4c85271182c2}" symbol="348" label="Salvamente e Resgate"/>
+        <rule filter=" &quot;Especialidade&quot; = '33'" key="{877ca961-8d07-4ceb-b267-95480ddfcb0e}" symbol="349" label="Reconhecimento"/>
+        <rule filter=" &quot;Especialidade&quot; = '32'" key="{90a707cf-6c24-4425-ad8e-8c7864ec14bc}" symbol="350" label="Operações Especiais"/>
+        <rule filter=" &quot;Especialidade&quot; = '29'" key="{9f1e1732-e333-4871-a526-01f0a28d4ff6}" symbol="351" label="Operações Psicológicas"/>
+        <rule filter=" &quot;Especialidade&quot; = '28'" key="{bf5cb401-530d-4b52-b1a6-afd1c0f0a735}" symbol="352" label="Montanha"/>
+        <rule filter=" &quot;Especialidade&quot; = '27'" key="{6620087c-15ee-4f39-bc49-d069171ab348}" symbol="353" label="Infantaria da Aeronáutica"/>
+        <rule filter=" &quot;Especialidade&quot; = '25'" key="{0af994e8-f46f-4216-80aa-ba0b9c4b5f41}" symbol="354" label="Helitransporte"/>
+        <rule filter=" &quot;Especialidade&quot; = '23'" key="{1aaa8104-f50e-474d-be1d-45f12dd3a8d3}" symbol="355" label="Guerra Eletrônica (especialidade de comunicações)"/>
+        <rule filter="&quot;Especialidade&quot; ='24'" key="{a8a81982-3ddd-40f4-b7b1-55899140f5d5}" symbol="356" label="Guerrilha"/>
+        <rule filter=" &quot;Especialidade&quot; = '21'" key="{ac846529-31f3-4149-8b10-e6f708760760}" symbol="357" label="Forças Especiais"/>
+        <rule filter=" &quot;Especialidade&quot; = '20'" key="{f4d812cd-e033-4bfa-bd45-d95dbd6cc9c4}" symbol="358" label="Fluvial"/>
+        <rule filter=" &quot;Especialidade&quot; = '18'" key="{811a12df-4e26-448a-b0bc-195462effa42}" symbol="359" label="Elemento Logístico Blindado"/>
+        <rule filter=" &quot;Especialidade&quot; = '17'" key="{94fb50ec-a5bb-46d0-b6c4-b01ce4caf217}" symbol="360" label="Defesa Química"/>
+        <rule filter=" &quot;Especialidade&quot; = '16'" key="{c97db056-551c-4c66-b00c-e28e4fcb259d}" symbol="361" label="Elemento de Comunicações"/>
+        <rule filter=" &quot;Especialidade&quot; = '15'" key="{7e580c53-0fab-45b4-8ac6-678b9dfff9e7}" symbol="362" label="Colonização"/>
+        <rule filter=" &quot;Atividades&quot; ='27'" key="{2a141059-c033-4997-a327-2d4cf801cc35}" symbol="363" label="Recreação"/>
+        <rule filter=" &quot;Atividades&quot; ='28'" key="{bad04fb6-3764-45bd-a99b-35ace29f95b2}" symbol="364" label="Remoção de Granadas e Bombas"/>
+        <rule filter=" &quot;Atividades&quot; ='29'" key="{d43554dd-fafd-4311-a635-91b4bc091ef7}" symbol="365" label="Suprimento"/>
+        <rule filter=" &quot;Atividades&quot; ='30'" key="{b1abcf3a-c415-4906-a9d2-e1c6688267df}" symbol="366" label="Suprimento de artigos reembolsáveis"/>
+        <rule filter=" &quot;Atividades&quot; ='34'" key="{5ea2392c-6343-4186-b7fa-be2f411f52d7}" symbol="367" label="Cemitério"/>
+        <rule filter=" &quot;Atividades&quot; ='33'" key="{69b137ae-ae04-4a33-bf32-70d499615c2b}" symbol="368" label="Água potável"/>
+        <rule filter=" &quot;Atividades&quot; ='32'" key="{d5fdf892-6ef1-4d0e-b805-ce656b8e6268}" symbol="369" label="Suprimento de outras classes"/>
+        <rule filter=" &quot;Escalões&quot; = '0'" key="{3edde903-3518-4a0b-b723-b73a6250934b}" symbol="370" label="Esquadra"/>
+        <rule filter=" &quot;Escalões&quot; = '3'" key="{73d6d0af-1b60-423c-9b0c-021691862400}" symbol="371" label="Companhia"/>
+        <rule filter=" &quot;Escalões&quot; = '2'" key="{1b4f631e-2314-42bf-ade2-7d47f4546e60}" symbol="372" label="Pelotão"/>
+        <rule filter=" &quot;Escalões&quot; = '1'" key="{3addaf9e-038f-4c89-b356-621fa6a4c03e}" symbol="373" label="Grupo de Combate ou correspondente"/>
+        <rule filter=" &quot;Atividades&quot; ='49'" key="{853ff2f5-9d95-4e7d-b931-fb022dac8095}" symbol="374" label="Trânsito"/>
+        <rule filter=" &quot;Atividades&quot; ='48'" key="{a4c0d545-dca5-44a9-8481-47a56aff2dd1}" symbol="375" label="Suprimento e Transporte"/>
+        <rule filter=" &quot;Atividades&quot; ='47'" key="{c6e4fc3b-25bd-45ec-86e8-a27c68d430e8}" symbol="376" label="Sepultamento"/>
+        <rule filter=" &quot;Atividades&quot; ='46'" key="{392113d5-4f70-47e1-bcb2-aa95c2e2e236}" symbol="377" label="Salvados"/>
+        <rule filter=" &quot;Atividades&quot; ='45'" key="{fba40408-5465-4737-bcbc-c1deec86e5c0}" symbol="378" label="Reunião de Extraviados"/>
+        <rule filter=" &quot;Atividades&quot; ='44'" key="{9b50867f-d63e-4756-b767-d878f19a378e}" symbol="379" label="Repouso"/>
+        <rule filter=" &quot;Atividades&quot; ='43'" key="{3a9d299d-c556-47a9-80d2-92bf453d89fb}" symbol="380" label="Prisão, Instalação de Confinamento"/>
+        <rule filter=" &quot;Atividades&quot; ='42'" key="{af5510ab-6e12-45dc-8c7b-3ceb0d412290}" symbol="381" label="Evacuação"/>
+        <rule filter=" &quot;Atividades&quot; ='41'" key="{c5eaf860-b62b-4549-95c1-54cbfc542b87}" symbol="382" label="Hospital ou Centro de Saúde"/>
+        <rule filter=" &quot;Atividades&quot; ='40'" key="{8ed029a6-722c-4b52-8004-79f853ef56af}" symbol="383" label="Hospital de Veterinária"/>
+        <rule filter=" &quot;Atividades&quot; ='39'" key="{c272c641-aa63-4a50-924e-080ed8a716ad}" symbol="384" label="Estado Maior"/>
+        <rule filter=" &quot;Atividades&quot; ='38'" key="{68f9908a-ea8e-4bb0-9eda-8d45c09fbb8c}" symbol="385" label="Embarque e Desembarque"/>
+        <rule filter=" &quot;Atividades&quot; ='37'" key="{3bb980d4-82f6-4c82-855d-293e025c7845}" symbol="386" label="Extraviados"/>
+        <rule filter=" &quot;Atividades&quot; ='36'" key="{3e232641-bdcc-4953-8455-8beac2fd8a2e}" symbol="387" label="Controle de Munição"/>
+        <rule filter=" &quot;Atividades&quot; ='35'" key="{bd36e297-5888-4622-aba8-d8f9b9ccb3f4}" symbol="388" label="Coleta de Mortos"/>
+        <rule filter=" &quot;Atividades&quot; ='31'" key="{66fa18bc-e718-4852-9e04-223980fc2444}" symbol="389" label="Suprimento de Material Bélica"/>
+        <rule filter=" &quot;Escalões&quot; = '4'" key="{1e78541b-3edc-407f-b512-fa53b1b445c4}" symbol="390" label="Batalhão"/>
+        <rule filter=" &quot;Escalões&quot; = '5'" key="{eaa38672-7637-40e7-abf6-1e70aee20153}" symbol="391" label="Grupamento"/>
+        <rule filter=" &quot;Escalões&quot; = '6'" key="{4a5b67fe-a2ad-4119-816c-d3920bb5c462}" symbol="392" label="Força-tarefa"/>
+        <rule filter=" &quot;Escalões&quot; = '7'" key="{dfde94ac-aecc-4d05-9b53-76689bf94645}" symbol="393" label="Força-tarefa de valor batalhão"/>
+        <rule filter=" &quot;Escalões&quot; = '8'" key="{9d596cd8-3cfe-48ac-8e44-893c7022c42b}" symbol="394" label="Força-tarefa de valor regimento"/>
+        <rule filter=" &quot;Escalões&quot; = '9'" key="{5d43ad9b-b8dc-46b5-810e-7cde0bcc0830}" symbol="395" label="Brigada"/>
+        <rule filter=" &quot;Escalões&quot; = '10'" key="{5252fd5b-76ec-48fb-8d5b-c786d81ae314}" symbol="396" label="Divisão"/>
+        <rule filter=" &quot;Escalões&quot; = '11'" key="{3d0f2231-dd98-4c8d-9329-28c3fa3fdf27}" symbol="397" label="Esquadra"/>
+        <rule filter=" &quot;Escalões&quot; = '12'" key="{fd1b3f3b-02ea-4fae-b2fd-cd8eb910aab6}" symbol="398" label="Força-tarefa oficial-general do primeiro posto"/>
+        <rule filter=" &quot;Escalões&quot; = '21'" key="{ebb4a00d-c7c6-4dbd-a026-52d25194e7e0}" symbol="399" label="Comando Logístico"/>
+        <rule filter=" &quot;Escalões&quot; = '20'" key="{a5e14465-9a14-445c-968b-b6991070a9f7}" symbol="400" label="Região Militar"/>
+        <rule filter=" &quot;Escalões&quot; = '19'" key="{13632f28-8302-49dc-9f58-2b06872d1303}" symbol="401" label="Comando logística"/>
+        <rule filter=" &quot;Escalões&quot; = '18'" key="{1a8484ed-53a9-4e9e-8d51-5eb22f2939e9}" symbol="402" label="Base Logística "/>
+        <rule filter=" &quot;Escalões&quot; = '17'" key="{b888abb5-31ff-4103-a7eb-d481d2db2b69}" symbol="403" label="Teatro de Operações"/>
+        <rule filter=" &quot;Escalões&quot; = '16'" key="{8ab710ee-a0b6-42df-a421-4752412ae715}" symbol="404" label="Comando Combinado"/>
+        <rule filter=" &quot;Escalões&quot; = '15'" key="{21b239a0-ca7e-475f-b20d-6703a8f3ec07}" symbol="405" label="Forças componentes de comando combinado"/>
+        <rule filter=" &quot;Escalões&quot; = '14'" key="{af19cb28-1d51-4451-8955-dc42e5adb381}" symbol="406" label="Força-tarefa combinado oficial-general do último posto"/>
+        <rule filter=" &quot;Escalões&quot; = '13'" key="{433b7c18-65e8-4855-ac4a-9d1cfaab3b3d}" symbol="407" label="Força-tarefa oficial-general do posto intermediário"/>
       </rule>
-      <rule filter=" &quot;Símbolos Básicos&quot; = '{1}'" key="{fdfe7cfa-045a-437b-a985-e48ed0bd8ab1}" symbol="408" label="Bandeira">
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{0}'" key="{3f1a3947-6fa0-4c38-b30c-3d554cb039d1}" symbol="409" label="Letra T"/>
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{1}'" key="{9f416bea-83e2-4bf8-99a9-d0afaf96e1b9}" symbol="410" label="Ferro"/>
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{2}'" key="{08b7d61d-3a7e-407b-8204-ae34e3020740}" symbol="411" label="Hélice"/>
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{3}'" key="{4fec56d8-6135-4375-b3be-79bf15fef676}" symbol="412" label="Polícia Militar"/>
-        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '{4}'" key="{466571f8-2618-4980-89ee-7f7fae3bce9f}" symbol="413" label="Comando Combinado"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot; = '{0}'" key="{b7c47fab-6545-4655-85a1-f6757f9c3dac}" symbol="414" label="Infantaria"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{1}'" key="{90c07471-cf5f-48c5-8dda-530e61d4aa7e}" symbol="415" label="Cavalaria"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{2}'" key="{869bbbc5-032c-4b33-8951-e8f062008359}" symbol="416" label="Artilharia"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{3}'" key="{9e99ce33-91d5-4719-9a7f-83cf3629416d}" symbol="417" label="Engenharia"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{4}'" key="{7adab09d-f325-446e-962d-d8f5994ed6f2}" symbol="418" label="Comunicações"/>
-        <rule filter=" &quot;Armas e Material Bélico&quot;  = '{5}'" key="{a72aef17-7bf4-4a9a-aa3a-9e542544b850}" symbol="419" label="Material Bélico"/>
-        <rule filter=" &quot;Serviços&quot; = '{0}'" key="{4e3bf9a1-a596-4548-bec7-535af4b92182}" symbol="420" label="Ajudância Geral"/>
-        <rule filter=" &quot;Serviços&quot; = '{1}'" key="{ec994975-f5fa-470a-a2a1-9ae684b1f55d}" symbol="421" label="Apoio ao Desembarque"/>
-        <rule filter=" &quot;Serviços&quot; = '{2}'" key="{d5ee25b4-c158-4cb0-8fd6-852d52399936}" symbol="422" label="Armamento e Munição"/>
-        <rule filter=" &quot;Serviços&quot; = '{3}'" key="{76ba25cf-f633-49a7-bd7b-4b61b50e8c3d}" symbol="423" label="Especial"/>
-        <rule filter=" &quot;Serviços&quot; = '{4}'" key="{915e6463-38c2-438c-b24a-aa66d5b3a55a}" symbol="424" label="Finanças"/>
-        <rule filter=" &quot;Serviços&quot; = '{5}'" key="{302042ba-afba-49a5-b8be-1173e0eb7ec3}" symbol="425" label="Intendência"/>
-        <rule filter=" &quot;Serviços&quot; = '{6}'" key="{c775716e-1d9c-42ad-ba00-c36b9163bc2f}" symbol="426" label="Justiça Militar"/>
-        <rule filter=" &quot;Serviços&quot; = '{7}'" key="{237fc529-4e96-4ec2-8718-7e2f1286bd25}" symbol="427" label="Motomecanização"/>
-        <rule filter=" &quot;Serviços&quot; = '{8}'" key="{1ac14b3b-f18e-481d-95af-18df94ae3649}" symbol="428" label="Polícia da Aeronáutica"/>
-        <rule filter=" &quot;Serviços&quot; = '{9}'" key="{3daad001-5368-4c33-84be-dc9e5bfc66e7}" symbol="429" label="Polícia do Exército"/>
-        <rule filter=" &quot;Serviços&quot; = '{10}'" key="{e810dabd-0cc6-434c-89e7-d9c62623b451}" symbol="430" label="Postal"/>
-        <rule filter=" &quot;Serviços&quot; = '{11}'" key="{2e89eb87-9598-4a89-bea0-ef46943aa5d2}" symbol="431" label="Saúde"/>
-        <rule filter=" &quot;Serviços&quot; = '{12}'" key="{47ca04a6-75bc-4216-b042-5c3d8ce1aaf0}" symbol="432" label="Serviço Militar, Tiro-de-Guerra"/>
-        <rule filter=" &quot;Serviços&quot; = '{13}'" key="{7006d2d1-9e00-4102-acfa-a58b7b1cb4e6}" symbol="433" label="Serviço de Polícia de Fuzileiros Navais"/>
-        <rule filter=" &quot;Serviços&quot; = '{14}'" key="{acd27e6c-3b04-4691-93e0-b0523d3ac683}" symbol="434" label="Transporte"/>
-        <rule filter=" &quot;Serviços&quot; = '{15}'" key="{6916dc1c-3574-4f94-93b2-dbbc93f7d1c7}" symbol="435" label="Veterinária"/>
-        <rule filter=" &quot;Especialidade&quot; = '{1}'" key="{6e03f083-35e8-4ded-9876-363518ee322d}" symbol="436" label="Aeronaval"/>
-        <rule filter=" &quot;Especialidade&quot; = '{2}'" key="{2657f3aa-d5b9-4ae4-88f6-494dae20291c}" symbol="437" label="Aeroterrestre"/>
-        <rule filter=" &quot;Especialidade&quot; = '{3}'" key="{60ad4389-8b10-403e-ad39-a5a87433d75c}" symbol="438" label="Aeromóvel"/>
-        <rule filter=" &quot;Especialidade&quot; = '{4}'" key="{8ab558dc-5b5f-4998-8eff-6c8ca6f4226e}" symbol="439" label="Vetinária"/>
-        <rule filter=" &quot;Especialidade&quot; = '{5}'" key="{a05b74f4-291a-407e-b006-96d2d2219bf6}" symbol="440" label="Anfíbio"/>
-        <rule filter=" &quot;Especialidade&quot; = '{6}'" key="{92aeec6d-64bb-4eb7-a972-1566770377af}" symbol="441" label="Artilharia Antiaérea"/>
-        <rule filter=" &quot;Especialidade&quot; = '{10}'" key="{e6d896a8-942a-497a-91e4-d9cb7173deb2}" symbol="442" label="Artilharia autopropulsada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{9}'" key="{626d8de0-2360-40d9-b31a-dfb9f237b1d2}" symbol="443" label="Artilharia autopropulsada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{8}'" key="{3c9fbf9f-507a-4ed3-82fd-6e3436bcaf47}" symbol="444" label="Artilharia Antiaérea de Autodefesa"/>
-        <rule filter=" &quot;Especialidade&quot; = '{7}'" key="{d7ecae18-fe89-416b-bb3c-3a915507f257}" symbol="445" label="Artilharia Antiaérea Autopropulsada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{11}'" key="{756b5590-ed60-42df-acad-a6cd9aa59019}" symbol="446" label="Aviação do Exército"/>
-        <rule filter=" &quot;Especialidade&quot; = '{12}'" key="{19f629cc-6e08-44e1-8b24-9049598e3203}" symbol="447" label="Caçador"/>
-        <rule filter=" &quot;Especialidade&quot; = '{13}'" key="{eba5e6ea-e467-4b36-b08f-e7cc12ce7d19}" symbol="448" label="Cão-de-guerra"/>
-        <rule filter=" &quot;Especialidade&quot; = '{14}'" key="{97c1394a-a597-4844-bf5c-2b6db42c59be}" symbol="449" label="Cavalaria Blindada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{15}'" key="{ccdbd435-f0d4-4fb7-a134-aed863a9f33b}" symbol="450" label="Cavalaria Mecanizada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{20}'" key="{02837018-3a75-4c91-b0f0-8548fff91b79}" symbol="451" label="Enegenharia de grande unidade blindada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{23}'" key="{d1485cce-5b8b-4978-8140-26eab4c8a5b0}" symbol="452" label="Fronteira"/>
-        <rule filter=" &quot;Especialidade&quot; = '{27}'" key="{8a20eac3-6184-4c1e-b0e1-30e1a944918c}" symbol="453" label="Infantaria blindada"/>
-        <rule filter=" &quot;Especialidade&quot; = '{31}'" key="{d8bc64d6-3704-4969-a530-2846cee41971}" symbol="454" label="Pára-quedista"/>
-        <rule filter=" &quot;Especialidade&quot; = '{32}'" key="{8b7c4d4f-d58e-46c3-b85d-330ebbb7e356}" symbol="455" label="Aeroterrestre de Salvamento e Resgate"/>
-        <rule filter=" &quot;Atividades&quot;  = '{2}'" key="{dfc0f886-6680-47f8-932f-c1a90b5b92c1}" symbol="456" label="Assistência ao Pessoal"/>
-        <rule filter=" &quot;Atividades&quot;  = '{1}'" key="{febda860-ff41-4baf-a708-e06933bcc7c3}" symbol="457" label="Administração"/>
-        <rule filter=" &quot;Especialidade&quot; = '{36}'" key="{b87473bd-92af-4cf8-919d-feb6c81be096}" symbol="458" label="Selva"/>
-        <rule filter=" &quot;Atividades&quot; = '{3}'" key="{3e324416-4860-4b02-ba81-5f874989d803}" symbol="459" label="Assuntos Civis"/>
-        <rule filter=" &quot;Atividades&quot; ='{4}'" key="{753adcb5-d5ed-4915-95ee-ed0e2ebb4f11}" symbol="460" label="Banho"/>
-        <rule filter=" &quot;Atividades&quot; ='{9}'" key="{d2f6b40e-7d64-47fb-bf37-20ed410b4193}" symbol="461" label="Classe IV"/>
-        <rule filter=" &quot;Atividades&quot; ='{22}'" key="{23a609f6-f43f-4d6f-b82a-f2e6b7336c5b}" symbol="462" label="Logística"/>
-        <rule filter=" &quot;Atividades&quot; ='{27}'" key="{292038a2-98b9-44aa-b50d-7cff8e0d8ad2}" symbol="463" label="Manutenção e salvamento"/>
-        <rule filter=" &quot;Atividades&quot; ='{26}'" key="{7e24e9d3-4017-4a73-ab29-2f374fe68ba0}" symbol="464" label="Reconpletamento"/>
-        <rule filter=" &quot;Atividades&quot; ='{25}'" key="{9ecdaf41-9214-4ae8-ab7b-673bbc5d36e4}" symbol="465" label="Prisoneiro de Guerra"/>
-        <rule filter=" &quot;Atividades&quot; ='{24}'" key="{58167b92-227b-45af-8044-74da52dca0e8}" symbol="466" label="Mão-de-obra"/>
-        <rule filter=" &quot;Atividades&quot; ='{23}'" key="{769fab57-88ef-4a6e-9d88-1005f7d3c2db}" symbol="467" label="Manuteção"/>
-        <rule filter=" &quot;Atividades&quot; ='{21}'" key="{3f1c1ccf-2e4b-46e7-a948-4eba3cef3a34}" symbol="468" label="Lavanderia"/>
-        <rule filter=" &quot;Atividades&quot; ='{20}'" key="{a10c7f49-e3d9-4518-9ba0-fb49188b67f7}" symbol="469" label="Descontaminação"/>
-        <rule filter=" &quot;Atividades&quot; ='{19}'" key="{59f77ff4-54a0-4f6a-9a09-8a9df6c873de}" symbol="470" label="Depósito"/>
-        <rule filter=" &quot;Atividades&quot; ='{18}'" key="{74635723-4b98-4586-811e-74f062bbdb29}" symbol="471" label="Comando e Controle"/>
-        <rule filter=" &quot;Atividades&quot; ='{17}'" key="{2ad104f9-23bc-430c-a914-6ee55b538178}" symbol="472" label="Contra Incêndio"/>
-        <rule filter=" &quot;Atividades&quot; ='{16}'" key="{e1f9638a-a8c9-49bc-96f5-cf49aba5f594}" symbol="473" label="Construção"/>
-        <rule filter=" &quot;Atividades&quot; ='{15}'" key="{0004926d-2e7b-46b1-bbde-98011e5f0af4}" symbol="474" label="Classe X"/>
-        <rule filter=" &quot;Atividades&quot; ='{14}'" key="{22aacf2f-ad74-4657-9198-6e2a399bccb0}" symbol="475" label="Classe IX"/>
-        <rule filter=" &quot;Atividades&quot; ='{13}'" key="{16fc2377-9a7b-41f9-b881-722cd4830bfa}" symbol="476" label="Classe VIII"/>
-        <rule filter=" &quot;Atividades&quot; ='{12}'" key="{349bc83b-58c1-4e91-b7e4-8d873a4b187d}" symbol="477" label="Classe VII"/>
-        <rule filter=" &quot;Atividades&quot; ='{11}'" key="{d029c2fc-2c6f-4db4-849c-dcab621e8dc3}" symbol="478" label="Classe VI"/>
-        <rule filter=" &quot;Atividades&quot; ='{10}'" key="{6fa1b16f-9b39-445e-bb46-a8d5aecc184f}" symbol="479" label="Classe V"/>
-        <rule filter=" &quot;Atividades&quot; ='{8}'" key="{dca78d25-5e77-46da-a74f-d37c8e6cb031}" symbol="480" label="Classe III"/>
-        <rule filter=" &quot;Atividades&quot; ='{7}'" key="{eaa4dc9d-3efa-453a-99ae-7c1986169f00}" symbol="481" label="Classe II"/>
-        <rule filter=" &quot;Atividades&quot; ='{6}'" key="{3afb21eb-a5d2-46eb-b7cb-5c3aea678def}" symbol="482" label="Classe I"/>
-        <rule filter=" &quot;Atividades&quot; ='{5}'" key="{ce40e8eb-ea72-4e46-9c1f-880b1efd27e7}" symbol="483" label="Civis"/>
-        <rule filter=" &quot;Especialidade&quot; = '{35}'" key="{f42fc7da-9930-448b-b70a-4c85271182c2}" symbol="484" label="Salvamente e Resgate"/>
-        <rule filter=" &quot;Especialidade&quot; = '{34}'" key="{877ca961-8d07-4ceb-b267-95480ddfcb0e}" symbol="485" label="Reconhecimento"/>
-        <rule filter=" &quot;Especialidade&quot; = '{33}'" key="{90a707cf-6c24-4425-ad8e-8c7864ec14bc}" symbol="486" label="Operações Especiais"/>
-        <rule filter=" &quot;Especialidade&quot; = '{30}'" key="{9f1e1732-e333-4871-a526-01f0a28d4ff6}" symbol="487" label="Operações Psicológicas"/>
-        <rule filter=" &quot;Especialidade&quot; = '{29}'" key="{bf5cb401-530d-4b52-b1a6-afd1c0f0a735}" symbol="488" label="Montanha"/>
-        <rule filter=" &quot;Especialidade&quot; = '{28}'" key="{6620087c-15ee-4f39-bc49-d069171ab348}" symbol="489" label="Infantaria da Aeronáutica"/>
-        <rule filter=" &quot;Especialidade&quot; = '{26}'" key="{0af994e8-f46f-4216-80aa-ba0b9c4b5f41}" symbol="490" label="Helitransporte"/>
-        <rule filter=" &quot;Especialidade&quot; = '{24}'" key="{1aaa8104-f50e-474d-be1d-45f12dd3a8d3}" symbol="491" label="Guerra Eletrônica (especialidade de comunicações)"/>
-        <rule filter="&quot;Especialidade&quot; ='{25}'" key="{a8a81982-3ddd-40f4-b7b1-55899140f5d5}" symbol="492" label="Guerrilha"/>
-        <rule filter=" &quot;Especialidade&quot; = '{22}'" key="{ac846529-31f3-4149-8b10-e6f708760760}" symbol="493" label="Forças Especiais"/>
-        <rule filter=" &quot;Especialidade&quot; = '{21}'" key="{f4d812cd-e033-4bfa-bd45-d95dbd6cc9c4}" symbol="494" label="Fluvial"/>
-        <rule filter=" &quot;Especialidade&quot; = '{19}'" key="{811a12df-4e26-448a-b0bc-195462effa42}" symbol="495" label="Elemento Logístico Blindado"/>
-        <rule filter=" &quot;Especialidade&quot; = '{18}'" key="{94fb50ec-a5bb-46d0-b6c4-b01ce4caf217}" symbol="496" label="Defesa Química"/>
-        <rule filter=" &quot;Especialidade&quot; = '{17}'" key="{c97db056-551c-4c66-b00c-e28e4fcb259d}" symbol="497" label="Elemento de Comunicações"/>
-        <rule filter=" &quot;Especialidade&quot; = '{16}'" key="{7e580c53-0fab-45b4-8ac6-678b9dfff9e7}" symbol="498" label="Colonização"/>
-        <rule filter=" &quot;Atividades&quot; ='{28}'" key="{2a141059-c033-4997-a327-2d4cf801cc35}" symbol="499" label="Recreação"/>
-        <rule filter=" &quot;Atividades&quot; ='{29}'" key="{bad04fb6-3764-45bd-a99b-35ace29f95b2}" symbol="500" label="Remoção de Granadas e Bombas"/>
-        <rule filter=" &quot;Atividades&quot; ='{30}'" key="{d43554dd-fafd-4311-a635-91b4bc091ef7}" symbol="501" label="Suprimento"/>
-        <rule filter=" &quot;Atividades&quot; ='{31}'" key="{b1abcf3a-c415-4906-a9d2-e1c6688267df}" symbol="502" label="Suprimento de artigos reembolsáveis"/>
-        <rule filter=" &quot;Atividades&quot; ='{35}'" key="{5ea2392c-6343-4186-b7fa-be2f411f52d7}" symbol="503" label="Cemitério"/>
-        <rule filter=" &quot;Atividades&quot; ='{34}'" key="{69b137ae-ae04-4a33-bf32-70d499615c2b}" symbol="504" label="Água potável"/>
-        <rule filter=" &quot;Atividades&quot; ='{33}'" key="{d5fdf892-6ef1-4d0e-b805-ce656b8e6268}" symbol="505" label="Suprimento de outras classes"/>
-        <rule filter=" &quot;Escalões&quot; = '{1}'" key="{3edde903-3518-4a0b-b723-b73a6250934b}" symbol="506" label="Esquadra"/>
-        <rule filter=" &quot;Escalões&quot; = '{4}'" key="{73d6d0af-1b60-423c-9b0c-021691862400}" symbol="507" label="Companhia"/>
-        <rule filter=" &quot;Escalões&quot; = '{3}'" key="{1b4f631e-2314-42bf-ade2-7d47f4546e60}" symbol="508" label="Pelotão"/>
-        <rule filter=" &quot;Escalões&quot; = '{2}'" key="{3addaf9e-038f-4c89-b356-621fa6a4c03e}" symbol="509" label="Grupo de Combate ou correspondente"/>
-        <rule filter=" &quot;Atividades&quot; ='{50}'" key="{853ff2f5-9d95-4e7d-b931-fb022dac8095}" symbol="510" label="Trânsito"/>
-        <rule filter=" &quot;Atividades&quot; ='{49}'" key="{a4c0d545-dca5-44a9-8481-47a56aff2dd1}" symbol="511" label="Suprimento e Transporte"/>
-        <rule filter=" &quot;Atividades&quot; ='{48}'" key="{c6e4fc3b-25bd-45ec-86e8-a27c68d430e8}" symbol="512" label="Sepultamento"/>
-        <rule filter=" &quot;Atividades&quot; ='{47}'" key="{392113d5-4f70-47e1-bcb2-aa95c2e2e236}" symbol="513" label="Salvados"/>
-        <rule filter=" &quot;Atividades&quot; ='{46}'" key="{fba40408-5465-4737-bcbc-c1deec86e5c0}" symbol="514" label="Reunião de Extraviados"/>
-        <rule filter=" &quot;Atividades&quot; ='{45}'" key="{9b50867f-d63e-4756-b767-d878f19a378e}" symbol="515" label="Repouso"/>
-        <rule filter=" &quot;Atividades&quot; ='{44}'" key="{3a9d299d-c556-47a9-80d2-92bf453d89fb}" symbol="516" label="Prisão, Instalação de Confinamento"/>
-        <rule filter=" &quot;Atividades&quot; ='{43}'" key="{af5510ab-6e12-45dc-8c7b-3ceb0d412290}" symbol="517" label="Evacuação"/>
-        <rule filter=" &quot;Atividades&quot; ='{42}'" key="{c5eaf860-b62b-4549-95c1-54cbfc542b87}" symbol="518" label="Hospital ou Centro de Saúde"/>
-        <rule filter=" &quot;Atividades&quot; ='{41}'" key="{8ed029a6-722c-4b52-8004-79f853ef56af}" symbol="519" label="Hospital de Veterinária"/>
-        <rule filter=" &quot;Atividades&quot; ='{40}'" key="{c272c641-aa63-4a50-924e-080ed8a716ad}" symbol="520" label="Estado Maior"/>
-        <rule filter=" &quot;Atividades&quot; ='{39}'" key="{68f9908a-ea8e-4bb0-9eda-8d45c09fbb8c}" symbol="521" label="Embarque e Desembarque"/>
-        <rule filter=" &quot;Atividades&quot; ='{38}'" key="{3bb980d4-82f6-4c82-855d-293e025c7845}" symbol="522" label="Extraviados"/>
-        <rule filter=" &quot;Atividades&quot; ='{37}'" key="{3e232641-bdcc-4953-8455-8beac2fd8a2e}" symbol="523" label="Controle de Munição"/>
-        <rule filter=" &quot;Atividades&quot; ='{36}'" key="{bd36e297-5888-4622-aba8-d8f9b9ccb3f4}" symbol="524" label="Coleta de Mortos"/>
-        <rule filter=" &quot;Atividades&quot; ='{32}'" key="{66fa18bc-e718-4852-9e04-223980fc2444}" symbol="525" label="Suprimento de Material Bélica"/>
-        <rule filter=" &quot;Escalões&quot; = '{5}'" key="{1e78541b-3edc-407f-b512-fa53b1b445c4}" symbol="526" label="Batalhão"/>
-        <rule filter=" &quot;Escalões&quot; = '{6}'" key="{eaa38672-7637-40e7-abf6-1e70aee20153}" symbol="527" label="Grupamento"/>
-        <rule filter=" &quot;Escalões&quot; = '{7}'" key="{4a5b67fe-a2ad-4119-816c-d3920bb5c462}" symbol="528" label="Força-tarefa"/>
-        <rule filter=" &quot;Escalões&quot; = '{8}'" key="{dfde94ac-aecc-4d05-9b53-76689bf94645}" symbol="529" label="Força-tarefa de valor batalhão"/>
-        <rule filter=" &quot;Escalões&quot; = '{9}'" key="{9d596cd8-3cfe-48ac-8e44-893c7022c42b}" symbol="530" label="Força-tarefa de valor regimento"/>
-        <rule filter=" &quot;Escalões&quot; = '{10}'" key="{5d43ad9b-b8dc-46b5-810e-7cde0bcc0830}" symbol="531" label="Brigada"/>
-        <rule filter=" &quot;Escalões&quot; = '{11}'" key="{5252fd5b-76ec-48fb-8d5b-c786d81ae314}" symbol="532" label="Divisão"/>
-        <rule filter=" &quot;Escalões&quot; = '{12}'" key="{3d0f2231-dd98-4c8d-9329-28c3fa3fdf27}" symbol="533" label="Esquadra"/>
-        <rule filter=" &quot;Escalões&quot; = '{13}'" key="{fd1b3f3b-02ea-4fae-b2fd-cd8eb910aab6}" symbol="534" label="Força-tarefa oficial-general do primeiro posto"/>
-        <rule filter=" &quot;Escalões&quot; = '{22}'" key="{ebb4a00d-c7c6-4dbd-a026-52d25194e7e0}" symbol="535" label="Comando Logístico"/>
-        <rule filter=" &quot;Escalões&quot; = '{21}'" key="{a5e14465-9a14-445c-968b-b6991070a9f7}" symbol="536" label="Região Militar"/>
-        <rule filter=" &quot;Escalões&quot; = '{20}'" key="{13632f28-8302-49dc-9f58-2b06872d1303}" symbol="537" label="Comando logística"/>
-        <rule filter=" &quot;Escalões&quot; = '{19}'" key="{1a8484ed-53a9-4e9e-8d51-5eb22f2939e9}" symbol="538" label="Base Logística "/>
-        <rule filter=" &quot;Escalões&quot; = '{18}'" key="{b888abb5-31ff-4103-a7eb-d481d2db2b69}" symbol="539" label="Teatro de Operações"/>
-        <rule filter=" &quot;Escalões&quot; = '{17}'" key="{8ab710ee-a0b6-42df-a421-4752412ae715}" symbol="540" label="Comando Combinado"/>
-        <rule filter=" &quot;Escalões&quot; = '{16}'" key="{21b239a0-ca7e-475f-b20d-6703a8f3ec07}" symbol="541" label="Forças componentes de comando combinado"/>
-        <rule filter=" &quot;Escalões&quot; = '{15}'" key="{af19cb28-1d51-4451-8955-dc42e5adb381}" symbol="542" label="Força-tarefa combinado oficial-general do último posto"/>
-        <rule filter=" &quot;Escalões&quot; = '{14}'" key="{433b7c18-65e8-4855-ac4a-9d1cfaab3b3d}" symbol="543" label="Força-tarefa oficial-general do posto intermediário"/>
+      <rule filter=" &quot;Símbolos Básicos&quot; = '1'" key="{fdfe7cfa-045a-437b-a985-e48ed0bd8ab1}" symbol="408" label="Bandeira">
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '0'" key="{8d4422a1-da01-42d1-a527-70a9dc2d5445}" symbol="409" label="Letra T"/>
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '1'" key="{c02b0269-eeda-4596-8e5f-2a70f52fbd9d}" symbol="410" label="Ferro"/>
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '2'" key="{31d1425d-6f1c-498f-bc0e-5f6364f2bf77}" symbol="411" label="Hélice"/>
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '3'" key="{7812cc72-9604-45cf-9f6c-19292fe53efe}" symbol="412" label="Polícia Militar"/>
+        <rule filter=" &quot;Comando Combinado, Forças Armadas e Forças Auxiliares&quot; = '4'" key="{b3cbf3b0-a6e1-479e-b7b1-7f7307cd6e15}" symbol="413" label="Comando Combinado"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot; = '0'" key="{836d57b2-c5ab-4ef9-a7d1-7ef1f59b26a6}" symbol="414" label="Infantaria"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '1'" key="{bc724500-fb0d-4bad-a344-0c2fe6a41089}" symbol="415" label="Cavalaria"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '2'" key="{5c91d476-0474-47e0-8e6a-fe81348f7df7}" symbol="416" label="Artilharia"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '3'" key="{2c9eb3a3-f7db-4ab4-a16c-91c96b2818c9}" symbol="417" label="Engenharia"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '4'" key="{7b02b423-ce06-43d4-8e96-d311a1de9878}" symbol="418" label="Comunicações"/>
+        <rule filter=" &quot;Armas e Material Bélico&quot;  = '5'" key="{3b260d8b-82df-436d-8c19-20a79dcffe29}" symbol="419" label="Material Bélico"/>
+        <rule filter=" &quot;Serviços&quot; = '0'" key="{74c52db1-595f-44c7-a887-90118523ffca}" symbol="420" label="Ajudância Geral"/>
+        <rule filter=" &quot;Serviços&quot; = '1'" key="{f00e65e2-1273-4ce2-9caa-cfa76dd2db2d}" symbol="421" label="Apoio ao Desembarque"/>
+        <rule filter=" &quot;Serviços&quot; = '2'" key="{5da4a987-af10-4951-a1e0-4a8e7beb24a0}" symbol="422" label="Armamento e Munição"/>
+        <rule filter=" &quot;Serviços&quot; = '3'" key="{cdf8f00a-16ee-40e5-a077-2f560bf59675}" symbol="423" label="Especial"/>
+        <rule filter=" &quot;Serviços&quot; = '4'" key="{9e2b83d8-c46f-4467-a2c8-b554f5f94ebf}" symbol="424" label="Finanças"/>
+        <rule filter=" &quot;Serviços&quot; = '5'" key="{1f6e8c78-9a22-47d8-ac49-fa957f895654}" symbol="425" label="Intendência"/>
+        <rule filter=" &quot;Serviços&quot; = '6'" key="{2fd1f770-fb4f-4978-a514-dcee2e85b0cb}" symbol="426" label="Justiça Militar"/>
+        <rule filter=" &quot;Serviços&quot; = '7'" key="{295c3b5c-2d12-4550-8e2a-05b62ed62ebe}" symbol="427" label="Motomecanização"/>
+        <rule filter=" &quot;Serviços&quot; = '8'" key="{34af579f-e8fc-4723-a912-c9f93908ee76}" symbol="428" label="Polícia da Aeronáutica"/>
+        <rule filter=" &quot;Serviços&quot; = '9'" key="{17595103-55a3-494c-b628-2223395ebb7d}" symbol="429" label="Polícia do Exército"/>
+        <rule filter=" &quot;Serviços&quot; = '10'" key="{1f81e8a3-5fb1-4be0-82ac-09ff988a3f59}" symbol="430" label="Postal"/>
+        <rule filter=" &quot;Serviços&quot; = '11'" key="{12699c04-951d-4a22-90ee-1db6eef9d45c}" symbol="431" label="Saúde"/>
+        <rule filter=" &quot;Serviços&quot; = '12'" key="{a6047fe5-aa4a-4d26-aff2-d59926748611}" symbol="432" label="Serviço Militar, Tiro-de-Guerra"/>
+        <rule filter=" &quot;Serviços&quot; = '13'" key="{ff788068-0d58-4291-a6d2-ce53f683238e}" symbol="433" label="Serviço de Polícia de Fuzileiros Navais"/>
+        <rule filter=" &quot;Serviços&quot; = '14'" key="{fafba297-a838-4d77-a112-292014520617}" symbol="434" label="Transporte"/>
+        <rule filter=" &quot;Serviços&quot; = '15'" key="{6e4cf27e-3433-409e-80ec-6040bc856b4f}" symbol="435" label="Veterinária"/>
+        <rule filter=" &quot;Especialidade&quot; = '0'" key="{9f359bcd-324f-41ea-b41b-0e08b974d02b}" symbol="436" label="Aeronaval"/>
+        <rule filter=" &quot;Especialidade&quot; = '1'" key="{a857e991-ac46-4f3c-87b3-f6aebb5e7056}" symbol="437" label="Aeroterrestre"/>
+        <rule filter=" &quot;Especialidade&quot; = '2'" key="{fc9b36ae-88ea-4b03-984d-5479b85c6cfb}" symbol="438" label="Aeromóvel"/>
+        <rule filter=" &quot;Especialidade&quot; = '3'" key="{8508b54f-2152-4738-a1d4-43610ddfc3b8}" symbol="439" label="Vetinária"/>
+        <rule filter=" &quot;Especialidade&quot; = '4'" key="{f14c5dac-c6e3-4952-80c9-cdde1f0a8d5b}" symbol="440" label="Anfíbio"/>
+        <rule filter=" &quot;Especialidade&quot; = '5'" key="{9580930a-0cd4-4f0a-9a42-fc0a6d5094b4}" symbol="441" label="Artilharia Antiaérea"/>
+        <rule filter=" &quot;Especialidade&quot; = '9'" key="{7dbf547d-4b72-45a9-bcd4-508b4c0feab6}" symbol="442" label="Artilharia autopropulsada"/>
+        <rule filter=" &quot;Especialidade&quot; = '8'" key="{e28ac06d-f963-49f8-9994-13fae6bc9289}" symbol="443" label="Artilharia autopropulsada"/>
+        <rule filter=" &quot;Especialidade&quot; = '7'" key="{d2e03038-c92a-4df1-a584-51f7c944e6d7}" symbol="444" label="Artilharia Antiaérea de Autodefesa"/>
+        <rule filter=" &quot;Especialidade&quot; = '6'" key="{26163979-74c0-48ec-8cd0-3a80d978383c}" symbol="445" label="Artilharia Antiaérea Autopropulsada"/>
+        <rule filter=" &quot;Especialidade&quot; = '10'" key="{5fcaf680-ea95-4cfd-9d44-efa2a7f470c5}" symbol="446" label="Aviação do Exército"/>
+        <rule filter=" &quot;Especialidade&quot; = '11'" key="{083ee593-e1cc-44f0-826e-6235c987fecc}" symbol="447" label="Caçador"/>
+        <rule filter=" &quot;Especialidade&quot; = '12'" key="{97c66a2b-babf-4ac1-9b2e-f2c34fee7cd9}" symbol="448" label="Cão-de-guerra"/>
+        <rule filter=" &quot;Especialidade&quot; = '13'" key="{d97bb034-24b1-400f-b00b-03d3219d0708}" symbol="449" label="Cavalaria Blindada"/>
+        <rule filter=" &quot;Especialidade&quot; = '14'" key="{54ea3656-0c89-4966-854f-cf10f6e87188}" symbol="450" label="Cavalaria Mecanizada"/>
+        <rule filter=" &quot;Especialidade&quot; = '19'" key="{6019992d-b4be-41dc-80e2-1e5f4b137ae5}" symbol="451" label="Enegenharia de grande unidade blindada"/>
+        <rule filter=" &quot;Especialidade&quot; = '22'" key="{96b9237c-9744-413a-9707-0f901dd56877}" symbol="452" label="Fronteira"/>
+        <rule filter=" &quot;Especialidade&quot; = '26'" key="{a1a013c3-e89f-44ce-ab8a-709cb0e4d6a3}" symbol="453" label="Infantaria blindada"/>
+        <rule filter=" &quot;Especialidade&quot; = '30'" key="{b16e185c-e555-4135-af78-31971c11607d}" symbol="454" label="Pára-quedista"/>
+        <rule filter=" &quot;Especialidade&quot; = '31'" key="{62e7cc5a-90c1-4990-a231-42921d7377cf}" symbol="455" label="Aeroterrestre de Salvamento e Resgate"/>
+        <rule filter=" &quot;Atividades&quot;  = '1'" key="{f82d7c21-66c1-4ccb-86be-a1b20e52cbd2}" symbol="456" label="Assistência ao Pessoal"/>
+        <rule filter=" &quot;Atividades&quot;  = '0'" key="{553a34dc-3108-4a7e-9286-8b788a576dae}" symbol="457" label="Administração"/>
+        <rule filter=" &quot;Especialidade&quot; = '35'" key="{9e5f688d-ddd1-40fa-9c6a-882975565f51}" symbol="458" label="Selva"/>
+        <rule filter=" &quot;Atividades&quot; = '2'" key="{3dd7dc68-881f-4bed-a696-d55284a18df8}" symbol="459" label="Assuntos Civis"/>
+        <rule filter=" &quot;Atividades&quot; ='3'" key="{d9ee3c93-c8a7-492c-b02a-af96488ee9fd}" symbol="460" label="Banho"/>
+        <rule filter=" &quot;Atividades&quot; ='8'" key="{0cd494ab-385e-47b2-a802-cd348c952c22}" symbol="461" label="Classe IV"/>
+        <rule filter=" &quot;Atividades&quot; ='21'" key="{5ff2ee97-f18e-485d-b5af-8908b2bc1d2e}" symbol="462" label="Logística"/>
+        <rule filter=" &quot;Atividades&quot; ='26'" key="{f7099a47-ef73-4c07-9d1c-194ac81e3655}" symbol="463" label="Manutenção e salvamento"/>
+        <rule filter=" &quot;Atividades&quot; ='25'" key="{7d9f2884-5e31-44d5-a298-2c9a8525369f}" symbol="464" label="Reconpletamento"/>
+        <rule filter=" &quot;Atividades&quot; ='24'" key="{17ec2c69-448e-4d6a-8881-da01f52db2b3}" symbol="465" label="Prisoneiro de Guerra"/>
+        <rule filter=" &quot;Atividades&quot; ='23'" key="{7eb236e5-4929-42aa-a480-d25942cc1db3}" symbol="466" label="Mão-de-obra"/>
+        <rule filter=" &quot;Atividades&quot; ='22'" key="{4d6fe816-3fcc-48f8-99bd-e9c0d998f4e9}" symbol="467" label="Manuteção"/>
+        <rule filter=" &quot;Atividades&quot; ='20'" key="{46acf58d-5f79-4a73-a9b3-1b1ba1191e35}" symbol="468" label="Lavanderia"/>
+        <rule filter=" &quot;Atividades&quot; ='19'" key="{f148c2da-106b-473b-9c16-5defbbd3883c}" symbol="469" label="Descontaminação"/>
+        <rule filter=" &quot;Atividades&quot; ='18'" key="{cfb7ea1e-58e7-4320-a6e5-5a59c18e0f8c}" symbol="470" label="Depósito"/>
+        <rule filter=" &quot;Atividades&quot; ='17'" key="{09d97791-f85a-4953-9165-d0448feb65d8}" symbol="471" label="Comando e Controle"/>
+        <rule filter=" &quot;Atividades&quot; ='16'" key="{46385a1c-0f3e-4224-95b5-85a78e874ec9}" symbol="472" label="Contra Incêndio"/>
+        <rule filter=" &quot;Atividades&quot; ='15'" key="{cad114aa-6202-44b4-b1a9-39f257a7f6a8}" symbol="473" label="Construção"/>
+        <rule filter=" &quot;Atividades&quot; ='14'" key="{5567bab1-90dd-41b7-91a4-c540731b180c}" symbol="474" label="Classe X"/>
+        <rule filter=" &quot;Atividades&quot; ='13'" key="{8c5ca53c-a650-4c12-b931-3e8277f048a7}" symbol="475" label="Classe IX"/>
+        <rule filter=" &quot;Atividades&quot; ='12'" key="{7f0cef6f-67e1-4e25-8102-d014d2f0f7d4}" symbol="476" label="Classe VIII"/>
+        <rule filter=" &quot;Atividades&quot; ='11'" key="{2977be5c-6829-4dab-8da6-85a02b3fe9d5}" symbol="477" label="Classe VII"/>
+        <rule filter=" &quot;Atividades&quot; ='10'" key="{0e4155bf-9bbe-4317-a56c-a2553ce4b6b7}" symbol="478" label="Classe VI"/>
+        <rule filter=" &quot;Atividades&quot; ='9'" key="{334e0984-5f8c-48d9-a3aa-8c30cc0608f7}" symbol="479" label="Classe V"/>
+        <rule filter=" &quot;Atividades&quot; ='7'" key="{6e7151f0-f5b3-44bf-a186-39eeae667a6d}" symbol="480" label="Classe III"/>
+        <rule filter=" &quot;Atividades&quot; ='6'" key="{d362acd9-00bb-4991-a809-578aa6598d33}" symbol="481" label="Classe II"/>
+        <rule filter=" &quot;Atividades&quot; ='5'" key="{73a6fced-b954-4eb7-bf84-f979d4a34ccf}" symbol="482" label="Classe I"/>
+        <rule filter=" &quot;Atividades&quot; ='4'" key="{329eeb93-e6b3-4e3d-bf52-f57363878bf3}" symbol="483" label="Civis"/>
+        <rule filter=" &quot;Especialidade&quot; = '34'" key="{c24c3742-cc3b-4c19-a76d-c313e08d0f6b}" symbol="484" label="Salvamente e Resgate"/>
+        <rule filter=" &quot;Especialidade&quot; = '33'" key="{2ed57a60-9852-4081-84e1-1feb320881ec}" symbol="485" label="Reconhecimento"/>
+        <rule filter=" &quot;Especialidade&quot; = '32'" key="{298a3a6d-95c9-4391-beac-96771b3404a4}" symbol="486" label="Operações Especiais"/>
+        <rule filter=" &quot;Especialidade&quot; = '29'" key="{e511f928-d42f-4ad0-b3dd-d54fdcc23bba}" symbol="487" label="Operações Psicológicas"/>
+        <rule filter=" &quot;Especialidade&quot; = '28'" key="{d7ee08d7-2308-4835-b064-6f06b4ef7d29}" symbol="488" label="Montanha"/>
+        <rule filter=" &quot;Especialidade&quot; = '27'" key="{a06da0d2-9782-4dd9-aac3-dbd220e3315e}" symbol="489" label="Infantaria da Aeronáutica"/>
+        <rule filter=" &quot;Especialidade&quot; = '25'" key="{4f5ebe0d-ef7a-426e-a0db-8342c20edf48}" symbol="490" label="Helitransporte"/>
+        <rule filter=" &quot;Especialidade&quot; = '23'" key="{b84f401f-d14b-4a93-8b85-7943d8260613}" symbol="491" label="Guerra Eletrônica (especialidade de comunicações)"/>
+        <rule filter="&quot;Especialidade&quot; ='24'" key="{5557cbb2-1553-4cff-a73f-e5efdd779fcb}" symbol="492" label="Guerrilha"/>
+        <rule filter=" &quot;Especialidade&quot; = '21'" key="{6b6c3309-cddb-49a3-9ba0-6d7790ded6cc}" symbol="493" label="Forças Especiais"/>
+        <rule filter=" &quot;Especialidade&quot; = '20'" key="{3b98b405-043a-4aa4-b582-2928abf3daa1}" symbol="494" label="Fluvial"/>
+        <rule filter=" &quot;Especialidade&quot; = '18'" key="{f1c6bf88-971f-4fa3-bfca-c43081ff8e3f}" symbol="495" label="Elemento Logístico Blindado"/>
+        <rule filter=" &quot;Especialidade&quot; = '17'" key="{47109ec3-0c4a-49af-8475-537826e6380c}" symbol="496" label="Defesa Química"/>
+        <rule filter=" &quot;Especialidade&quot; = '16'" key="{3da24b95-fd3d-4696-b263-09e2eb67a866}" symbol="497" label="Elemento de Comunicações"/>
+        <rule filter=" &quot;Especialidade&quot; = '15'" key="{18a82a1f-6169-48e2-8107-b7ec05baee4b}" symbol="498" label="Colonização"/>
+        <rule filter=" &quot;Atividades&quot; ='27'" key="{47e7bccd-3400-4261-b09d-c599861300c7}" symbol="499" label="Recreação"/>
+        <rule filter=" &quot;Atividades&quot; ='28'" key="{3cd339c7-4c00-4405-9078-d460ffb8b348}" symbol="500" label="Remoção de Granadas e Bombas"/>
+        <rule filter=" &quot;Atividades&quot; ='29'" key="{3ee1c716-b2b3-499c-9939-7f85dcac6abc}" symbol="501" label="Suprimento"/>
+        <rule filter=" &quot;Atividades&quot; ='30'" key="{8fa73155-7b4a-4faa-95dd-554a4d7d831e}" symbol="502" label="Suprimento de artigos reembolsáveis"/>
+        <rule filter=" &quot;Atividades&quot; ='34'" key="{8a8df641-2aec-4904-b3dd-a669a3f97084}" symbol="503" label="Cemitério"/>
+        <rule filter=" &quot;Atividades&quot; ='33'" key="{13b3d3e4-0a13-4207-bef4-3484653f97c3}" symbol="504" label="Água potável"/>
+        <rule filter=" &quot;Atividades&quot; ='32'" key="{8bd2b563-e3d0-4a89-a7b7-859c15a77025}" symbol="505" label="Suprimento de outras classes"/>
+        <rule filter=" &quot;Escalões&quot; = '0'" key="{33b453b8-a4a0-42d4-b503-71be6c3879bc}" symbol="506" label="Esquadra"/>
+        <rule filter=" &quot;Escalões&quot; = '3'" key="{b3efbfef-78b2-4d1b-8979-fd374ab6ee55}" symbol="507" label="Companhia"/>
+        <rule filter=" &quot;Escalões&quot; = '2'" key="{4563fbf5-fcfb-44c7-a9b0-fff36866ebb0}" symbol="508" label="Pelotão"/>
+        <rule filter=" &quot;Escalões&quot; = '1'" key="{bb5bdf72-2056-4cfe-8397-00b79e730376}" symbol="509" label="Grupo de Combate ou correspondente"/>
+        <rule filter=" &quot;Atividades&quot; ='49'" key="{2adb15b4-6ca3-4694-864b-a0e6a4784ba5}" symbol="510" label="Trânsito"/>
+        <rule filter=" &quot;Atividades&quot; ='48'" key="{41d99f1a-9384-4dc1-9ea1-481c66dbbcfc}" symbol="511" label="Suprimento e Transporte"/>
+        <rule filter=" &quot;Atividades&quot; ='47'" key="{2251f3f1-8838-43cf-b207-8adea5120079}" symbol="512" label="Sepultamento"/>
+        <rule filter=" &quot;Atividades&quot; ='46'" key="{c909de6a-7994-4b87-afed-3a755f742aed}" symbol="513" label="Salvados"/>
+        <rule filter=" &quot;Atividades&quot; ='45'" key="{ca0b2ba2-82d5-49ac-b17c-3286471b5e94}" symbol="514" label="Reunião de Extraviados"/>
+        <rule filter=" &quot;Atividades&quot; ='44'" key="{523aa872-ca19-4054-a5c6-b55556d0d76a}" symbol="515" label="Repouso"/>
+        <rule filter=" &quot;Atividades&quot; ='43'" key="{e9ac5767-2432-4e10-8847-bd66aceb8eef}" symbol="516" label="Prisão, Instalação de Confinamento"/>
+        <rule filter=" &quot;Atividades&quot; ='42'" key="{2e9d4810-2aab-4e6f-b385-121150d4da81}" symbol="517" label="Evacuação"/>
+        <rule filter=" &quot;Atividades&quot; ='41'" key="{3c693943-bb72-4318-baee-02b3ef428a3d}" symbol="518" label="Hospital ou Centro de Saúde"/>
+        <rule filter=" &quot;Atividades&quot; ='40'" key="{ebbb0eb7-6e0a-46e3-bed2-4263260b399b}" symbol="519" label="Hospital de Veterinária"/>
+        <rule filter=" &quot;Atividades&quot; ='39'" key="{e740a930-5b4e-4e8b-b3c0-a1456835504b}" symbol="520" label="Estado Maior"/>
+        <rule filter=" &quot;Atividades&quot; ='38'" key="{71c6dc19-29df-49f7-9ade-f7fd5a673128}" symbol="521" label="Embarque e Desembarque"/>
+        <rule filter=" &quot;Atividades&quot; ='37'" key="{d392a795-a8f6-473c-b58d-c76687139cf1}" symbol="522" label="Extraviados"/>
+        <rule filter=" &quot;Atividades&quot; ='36'" key="{aa355306-e6d5-4622-bdc4-93a845ccdaf1}" symbol="523" label="Controle de Munição"/>
+        <rule filter=" &quot;Atividades&quot; ='35'" key="{abf7c2e4-a889-4c27-b945-b60fb1506ac9}" symbol="524" label="Coleta de Mortos"/>
+        <rule filter=" &quot;Atividades&quot; ='31'" key="{30ac5a8c-d690-4919-9594-16f382173ce7}" symbol="525" label="Suprimento de Material Bélica"/>
+        <rule filter=" &quot;Escalões&quot; = '4'" key="{9c2f90c9-42db-447e-a929-cafe3eb9858c}" symbol="526" label="Batalhão"/>
+        <rule filter=" &quot;Escalões&quot; = '5'" key="{c8cf9e98-9cbf-49fd-a5f1-6bba50e58f29}" symbol="527" label="Grupamento"/>
+        <rule filter=" &quot;Escalões&quot; = '6'" key="{ca5eb484-1c63-4457-bee6-b2502acae2ab}" symbol="528" label="Força-tarefa"/>
+        <rule filter=" &quot;Escalões&quot; = '7'" key="{76c36cb3-1695-458f-9168-310574e97456}" symbol="529" label="Força-tarefa de valor batalhão"/>
+        <rule filter=" &quot;Escalões&quot; = '8'" key="{514e12e2-cb97-4d7e-b240-69e89448bdac}" symbol="530" label="Força-tarefa de valor regimento"/>
+        <rule filter=" &quot;Escalões&quot; = '9'" key="{cba5f7e2-d711-4b0f-91d5-53f746fafa48}" symbol="531" label="Brigada"/>
+        <rule filter=" &quot;Escalões&quot; = '10'" key="{599cc96b-82a0-457e-bc04-9f6d69852148}" symbol="532" label="Divisão"/>
+        <rule filter=" &quot;Escalões&quot; = '11'" key="{ae9a16c0-f6ec-434e-9d16-2881ae1f7f3d}" symbol="533" label="Esquadra"/>
+        <rule filter=" &quot;Escalões&quot; = '12'" key="{83526f66-589e-4245-9743-a06f9f5485e1}" symbol="534" label="Força-tarefa oficial-general do primeiro posto"/>
+        <rule filter=" &quot;Escalões&quot; = '21'" key="{ee3f945b-fa31-405a-9ae8-93de93bd55be}" symbol="535" label="Comando Logístico"/>
+        <rule filter=" &quot;Escalões&quot; = '20'" key="{70727d5c-3be7-4815-81b6-45e2bc776243}" symbol="536" label="Região Militar"/>
+        <rule filter=" &quot;Escalões&quot; = '19'" key="{c8756e24-adff-425d-9bdd-4f01f9666e0f}" symbol="537" label="Comando logística"/>
+        <rule filter=" &quot;Escalões&quot; = '18'" key="{1ccb3a7f-c8b3-4836-8f31-eaf2e4b53e08}" symbol="538" label="Base Logística "/>
+        <rule filter=" &quot;Escalões&quot; = '17'" key="{7adb30aa-84d9-453d-82d2-0eb112a4ed24}" symbol="539" label="Teatro de Operações"/>
+        <rule filter=" &quot;Escalões&quot; = '16'" key="{87eca128-4699-4ee4-8372-964df4393016}" symbol="540" label="Comando Combinado"/>
+        <rule filter=" &quot;Escalões&quot; = '15'" key="{69ef097d-3a36-4f1b-8a65-a01f7b320b81}" symbol="541" label="Forças componentes de comando combinado"/>
+        <rule filter=" &quot;Escalões&quot; = '14'" key="{0c3fefd7-c12e-4783-9c68-a52d895b4d30}" symbol="542" label="Força-tarefa combinado oficial-general do último posto"/>
+        <rule filter=" &quot;Escalões&quot; = '13'" key="{082aeae4-58be-4703-ba65-099aa5679999}" symbol="543" label="Força-tarefa oficial-general do posto intermediário"/>
       </rule>
     </rules>
     <symbols>
@@ -41483,7 +41498,7 @@
           <rendering fontMinPixelSize="3" scaleMax="10000000" fontMaxPixelSize="10000" scaleMin="1" upsidedownLabels="2" limitNumLabels="0" obstacle="1" obstacleFactor="1" scaleVisibility="0" fontLimitPixelSize="0" mergeLines="0" obstacleType="0" labelPerPart="0" zIndex="0" maxNumLabels="2000" displayAll="0" minFeatureSize="0"/>
           <data-defined>
             <Rotation expr="-&quot;Rotação&quot;" field="" active="true" useExpr="true"/>
-            <OffsetXY expr="case&#xa;when  &quot;Rotação&quot; is null then concat( (-14 -length(  &quot;Designação&quot; ))* cos(radians( 0)), ',', (-14 - length(  &quot;Designação&quot; ))* sin(radians( 0)))&#xa;else  concat( (-14 -length(  &quot;Designação&quot; ))* cos(radians( &quot;Rotação&quot; )), ',', (-14 -length(  &quot;Designação&quot; ))* sin(radians( &quot;Rotação&quot; )))&#xa;end" field="" active="true" useExpr="true"/>
+            <OffsetXY expr="case&#xa;when  &quot;Rotação&quot; is null then concat( (-14 -(length(  &quot;Designação&quot; )*0.3))* cos(radians( 0)), ',', (-14 - (length(  &quot;Designação&quot; )*0.3))* sin(radians( 0)))&#xa;else  concat( (-14 -(length(  &quot;Designação&quot; )*0.3))* cos(radians( &quot;Rotação&quot; )), ',', (-14 -(length(  &quot;Designação&quot; )*0.3))* sin(radians( &quot;Rotação&quot; )))&#xa;end" field="" active="true" useExpr="true"/>
           </data-defined>
         </settings>
       </rule>
@@ -41498,7 +41513,7 @@
           <rendering fontMinPixelSize="3" scaleMax="10000000" fontMaxPixelSize="10000" scaleMin="1" upsidedownLabels="2" limitNumLabels="0" obstacle="0" obstacleFactor="1" scaleVisibility="0" fontLimitPixelSize="0" mergeLines="0" obstacleType="0" labelPerPart="0" zIndex="0" maxNumLabels="2000" displayAll="0" minFeatureSize="0"/>
           <data-defined>
             <Rotation expr="-&quot;Rotação&quot;" field="" active="true" useExpr="true"/>
-            <OffsetXY expr="case&#xa;when   &quot;Símbolos Básicos&quot;  in ('{3}') then &#xa;case&#xa;when  &quot;Rotação&quot;  is null then concat( -10* sin(radians(0)), ',', 10* cos(radians(0)))&#xa;else concat( (-10 - length( &quot;Outras informações necessárias para complementar a representação&quot; ))* sin(radians( &quot;Rotação&quot; )), ',', (10 + length( &quot;Outras informações necessárias para complementar a representação&quot; ))* cos(radians( &quot;Rotação&quot; )))&#xa;end&#xa;else&#xa;case&#xa;when  &quot;Rotação&quot;  is null then concat( -8* sin(radians(0)), ',', 8* cos(radians(0)))&#xa;else concat( -8* sin(radians( &quot;Rotação&quot; )), ',', 8* cos(radians( &quot;Rotação&quot; )))&#xa;end&#xa;end" field="" active="true" useExpr="true"/>
+            <OffsetXY expr="case&#xa;when   &quot;Símbolos Básicos&quot;  in ('3') then &#xa;case&#xa;when  &quot;Rotação&quot;  is null then concat( -10* sin(radians(0)), ',', 10* cos(radians(0)))&#xa;else concat( (-10 - length( &quot;Outras informações necessárias para complementar a representação&quot; ))* sin(radians( &quot;Rotação&quot; )), ',', (10 + length( &quot;Outras informações necessárias para complementar a representação&quot; ))* cos(radians( &quot;Rotação&quot; )))&#xa;end&#xa;else&#xa;case&#xa;when  &quot;Rotação&quot;  is null then concat( -8* sin(radians(0)), ',', 8* cos(radians(0)))&#xa;else concat( -8* sin(radians( &quot;Rotação&quot; )), ',', 8* cos(radians( &quot;Rotação&quot; )))&#xa;end&#xa;end" field="" active="true" useExpr="true"/>
           </data-defined>
         </settings>
       </rule>
@@ -41513,7 +41528,7 @@
           <rendering fontMinPixelSize="3" scaleMax="10000000" fontMaxPixelSize="10000" scaleMin="1" upsidedownLabels="2" limitNumLabels="0" obstacle="1" obstacleFactor="1" scaleVisibility="0" fontLimitPixelSize="0" mergeLines="0" obstacleType="0" labelPerPart="0" zIndex="0" maxNumLabels="2000" displayAll="0" minFeatureSize="0"/>
           <data-defined>
             <Rotation expr="- &quot;Rotação&quot;" field="" active="true" useExpr="true"/>
-            <OffsetXY expr="case&#xa;when  &quot;Rotação&quot;  is null then concat( (14 +  length(&quot;Subordinação&quot; ))* cos(radians(0)), ',', (14 +  length(&quot;Subordinação&quot; ))* sin(radians(0)))&#xa;else   concat( (14 +  length(&quot;Subordinação&quot; ))* cos(radians( &quot;Rotação&quot; )), ',', (14 +  length(&quot;Subordinação&quot; ))* sin(radians( &quot;Rotação&quot; )))&#xa;end" field="" active="true" useExpr="true"/>
+            <OffsetXY expr="case&#xa;when  &quot;Rotação&quot;  is null then concat( (14 +  (length(&quot;Subordinação&quot; )*0.3))* cos(radians(0)), ',', (14 + (length(&quot;Subordinação&quot; )*0.3))* sin(radians(0)))&#xa;else   concat( (14 + (length(&quot;Subordinação&quot; )*0.3))* cos(radians( &quot;Rotação&quot; )), ',', (14 +(length(&quot;Subordinação&quot; )*0.3))* sin(radians( &quot;Rotação&quot; )))&#xa;end" field="" active="true" useExpr="true"/>
           </data-defined>
         </settings>
       </rule>
@@ -41720,6 +41735,13 @@
       <attributeEditorField index="10" name="Designação"/>
       <attributeEditorField index="11" name="Subordinação"/>
       <attributeEditorField index="12" name="Outras informações necessárias para complementar a representação"/>
+    </attributeEditorContainer>
+    <attributeEditorContainer name="5 - Outras Informações">
+      <attributeEditorField index="13" name="Posto / Graduação Comandante"/>
+      <attributeEditorField index="14" name="Nome de Guerra Cmte"/>
+      <attributeEditorField index="15" name="Efetivo Total"/>
+      <attributeEditorField index="16" name="Baixados"/>
+      <attributeEditorField index="17" name="Efetivo Pronto"/>
     </attributeEditorContainer>
   </attributeEditorForm>
   <widgets/>
