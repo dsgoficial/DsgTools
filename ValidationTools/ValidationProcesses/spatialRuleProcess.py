@@ -86,7 +86,7 @@ class SpatialRuleProcess(ValidationProcess):
         '''
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName())
             
             rules = self.getRules()
@@ -95,12 +95,14 @@ class SpatialRuleProcess(ValidationProcess):
                 if len(invalidGeomRecordList) > 0:
                     numberOfInvGeom = self.addFlag(invalidGeomRecordList)
                     for tuple in invalidGeomRecordList:
-                        self.addClassesToBeDisplayedList(tuple[0])        
-                    self.setStatus('{} features are invalid. Check flags.'.format(numberOfInvGeom), 4) #Finished with flags
-                    QgsMessageLog.logMessage('{} features are invalid. Check flags.'.format(numberOfInvGeom), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        self.addClassesToBeDisplayedList(tuple[0])
+                    msg = self.tr('{} features are invalid. Check flags.').format(numberOfInvGeom)
+                    self.setStatus(msg, 4) #Finished with flags
+                    QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 else:
-                    self.setStatus('All features are valid.', 1) #Finished
-                    QgsMessageLog.logMessage('All features are valid.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)   
+                    msg = self.tr('All features are valid.')
+                    self.setStatus(msg, 1) #Finished
+                    QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)   
             return 1             
         except Exception as e:
             QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)

@@ -35,21 +35,15 @@ class RemoveDuplicatesProcess(ValidationProcess):
         '''
         Gets the process that should be execute before this one
         '''
-        return 'IdentifyDuplicatedGeometriesProcess'
-
-    def postProcess(self):
-        '''
-        Gets the process that should be execute before this one
-        '''
-        return 'IdentifyDuplicatedGeometriesProcess'
-
+        return self.tr('Identify Duplicated Geometries')
+ 
     def execute(self):
         '''
         Reimplementation of the execute method from the parent class
         '''
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyDuplicatedGeometriesProcess')
             if len(flagsDict.keys()) == 0:
                 self.setStatus(self.tr('There are no duplicated geometries.'), 1) #Finished
@@ -64,8 +58,8 @@ class RemoveDuplicatesProcess(ValidationProcess):
                 numberOfProblems += problems
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
-                QgsMessageLog.logMessage('{0} duplicated features from {1} were removed.'.format(problems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            self.setStatus('{0} duplicated features were removed.'.format(numberOfProblems), 1)
+                QgsMessageLog.logMessage(self.tr('{0} duplicated features from {1} were removed.').format(problems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            self.setStatus(self.tr('{0} duplicated features were removed.').format(numberOfProblems), 1)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

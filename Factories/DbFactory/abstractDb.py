@@ -111,8 +111,8 @@ class AbstractDb(QObject):
         self.checkAndOpenDb()
         lyrWithElemList = []
         for lyr in layerList:
-            schema=self.getTableSchemaFromDb(lyr)
-            sql = self.gen.getElementCountFromLayerV2(schema,lyr, useInheritance)
+            schema = self.getTableSchemaFromDb(lyr)
+            sql = self.gen.getElementCountFromLayerV2(schema, lyr, useInheritance)
             query = QSqlQuery(sql,self.db)
             query.next()
             if query.value(0) > 0:

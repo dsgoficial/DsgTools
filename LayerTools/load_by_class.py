@@ -25,6 +25,7 @@ import os
 
 #Qgis imports
 from qgis.gui import QgsMessageBar
+from qgis.core import QgsMessageLog
 
 #PyQt imports
 from PyQt4 import QtGui, QtCore, uic

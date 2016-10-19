@@ -130,7 +130,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         layer: layer name
         '''
         self.layerLoader = LayerLoaderFactory().makeLoader(self.iface,self.configWindow.widget.abstractDb)
-        self.layerLoader.load([layer], uniqueLoad = True)
+        return self.layerLoader.load([layer], uniqueLoad = True)[layer]
     
     def checkFlagsLoaded(self, layer):
         '''
@@ -189,7 +189,6 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.processTreeWidget.clear()
         self.edgvLayer = None
         self.flagLyr = None
-        self.processDict = dict()
         rootItem = self.processTreeWidget.invisibleRootItem()
         procList = self.validationManager.processDict.keys()
         for i in range(len(procList)):

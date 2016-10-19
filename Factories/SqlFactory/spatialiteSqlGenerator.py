@@ -190,3 +190,8 @@ class SpatialiteSqlGenerator(SqlGenerator):
     def getElementCountFromLayerV2(self, schema, table, useInheritance):
         layer = '_'.join([schema, table])
         return self.getElementCountFromLayer(layer)
+    
+    def getFullTablesName(self, name):
+        sql = "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE '%{}%' ORDER BY name".format(name)
+        return sql
+    

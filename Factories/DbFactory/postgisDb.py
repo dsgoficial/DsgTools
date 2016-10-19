@@ -1596,8 +1596,8 @@ class PostgisDb(AbstractDb):
             if not attributes:
                 # getting only provider fields (we ignore expression fields - type = 6)
                 attributes = [field.name() for field in feat.fields() if field.type() != 6]
-                # getting only the needed attribute values
-                values = [feat.attribute(fieldname) for fieldname in attributes]
+            # getting only the needed attribute values
+            values = [feat.attribute(fieldname) for fieldname in attributes]
             geometry = binascii.hexlify(feat.geometry().asWkb())
             insertSql = self.gen.populateTempTable(tableName, attributes, values, geometry, srid)
             if not query.exec_(insertSql):
@@ -1751,7 +1751,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             self.db.rollback()
-            
             raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
         while query.next():
             return query.value(0)
@@ -1794,7 +1793,10 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem running sql ')+ sqlFilePath +':' + query.lastError().text())
         self.db.commit()
     
-    def getStructureDict(self):
+    def getStructureDict2(self):
+        '''
+        Don't know the purpose of this method
+        '''
         self.checkAndOpenDb()
         
         if self.getDatabaseVersion() == '2.1.3':

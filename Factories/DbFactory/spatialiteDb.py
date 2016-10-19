@@ -526,5 +526,11 @@ class SpatialiteDb(AbstractDb):
         outputDS.Destroy()
     
     def getTableSchemaFromDb(self, table):
-        return table.split('_')[0]
+        self.checkAndOpenDb()
+        sql = self.gen.getFullTablesName(table)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting full table name: ")+query.lastError().text())
+        while query.next():
+            return query.value(0).split('_')[0]
         

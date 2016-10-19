@@ -910,25 +910,24 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """select distinct case 
             when split_part(conrelid::regclass::text,'.',2) = '' then split_part(conrelid::regclass::text,'.',1)
             else split_part(conrelid::regclass::text,'.',2)
-        end as cl, pg_get_constraintdef(oid) FROM 
- pg_constraint WHERE contype = 'f' and case 
+            end as cl, pg_get_constraintdef(oid) FROM 
+            pg_constraint WHERE contype = 'f' and case 
             when split_part(conrelid::regclass::text,'.',2) = '' then split_part(conrelid::regclass::text,'.',1)
             else split_part(conrelid::regclass::text,'.',2)
         end in (select f_table_name from public.geometry_columns where f_table_schema <> 'views')
-"""
+        """
         return sql
     
     def getGeomTableConstraints(self):
         sql = """select distinct case 
             when split_part(conrelid::regclass::text,'.',2) = '' then split_part(conrelid::regclass::text,'.',1)
             else split_part(conrelid::regclass::text,'.',2)
-        end as cl, pg_get_constraintdef(oid) FROM 
- pg_constraint WHERE contype = 'c' and case 
+            end as cl, pg_get_constraintdef(oid) FROM 
+             pg_constraint WHERE contype = 'c' and case 
             when split_part(conrelid::regclass::text,'.',2) = '' then split_part(conrelid::regclass::text,'.',1)
             else split_part(conrelid::regclass::text,'.',2)
         end in (select f_table_name from public.geometry_columns where f_table_schema <> 'views')
-
-"""
+        """
         return sql
     
     def getMultiColumns(self, schemaList):
@@ -942,11 +941,11 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getGeomByPrimitive(self):
-        sql = """select row_to_json(a) from (select type as geomtype, array_agg(f_table_name) as classlist from public.geometry_columns where f_table_schema not in ('views','topology','validation') group by type) as a"""
+        sql = """select row_to_json(a) from (select type as geomtype, array_agg(f_table_name) as classlist from public.geometry_columns where f_table_schema not in ('views','topology') group by type) as a"""
         return sql
     
     def getGeomColumnDict(self):
-        sql = """select row_to_json(row(f_table_name, f_geometry_column)) from public.geometry_columns where f_table_schema not in ('views','topology','validation')"""
+        sql = """select row_to_json(row(f_table_name, f_geometry_column)) from public.geometry_columns where f_table_schema not in ('views','topology')"""
         return sql
     
     def getNotNullDict(self):

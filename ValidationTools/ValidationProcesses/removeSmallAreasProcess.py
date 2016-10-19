@@ -35,13 +35,7 @@ class RemoveSmallAreasProcess(ValidationProcess):
         '''
         Gets the process that should be execute before this one
         '''
-        return 'IdentifySmallAreasProcess'
-
-    def postProcess(self):
-        '''
-        Gets the process that should be execute after this one
-        '''
-        return 'IdentifySmallAreasProcess'
+        return self.tr('Identify Small Areas')
 
     def execute(self):
         '''
@@ -49,11 +43,11 @@ class RemoveSmallAreasProcess(ValidationProcess):
         '''
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifySmallAreasProcess')
             if len(flagsDict.keys()) == 0:
-                self.setStatus('There are no small areas.', 1) #Finished
-                QgsMessageLog.logMessage('There are no small areas.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus(self.tr('There are no small areas.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('There are no small areas.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             numberOfProblems = 0
             for cl in flagsDict.keys():
@@ -64,8 +58,8 @@ class RemoveSmallAreasProcess(ValidationProcess):
                 numberOfProblems += problems
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
-                QgsMessageLog.logMessage('{0} features from {1} were removed.'.format(problems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            self.setStatus('{} features were removed.'.format(numberOfProblems), 1) #Finished with flags
+                QgsMessageLog.logMessage(self.tr('{0} features from {1} were removed.').format(problems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            self.setStatus(self.tr('{} features were removed.').format(numberOfProblems), 1) #Finished with flags
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

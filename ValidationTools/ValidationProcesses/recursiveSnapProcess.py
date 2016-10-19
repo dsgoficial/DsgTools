@@ -52,9 +52,9 @@ class RecursiveSnapProcess(ValidationProcess):
                 self.abstractDb.recursiveSnap([processTableName], tol)
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
-                QgsMessageLog.logMessage('All features from {} snapped successfully.'.format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('All features from {} snapped successfully.').format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             #setting status
-            self.setStatus('All features from snapped successfully.', 1) #Finished
+            self.setStatus(self.tr('All features from snapped successfully.'), 1) #Finished
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
