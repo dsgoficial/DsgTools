@@ -22,12 +22,15 @@
 """
 
 from qgis.core import QgsFeatureRequest, QgsGeometry, QGis, QgsSpatialIndex, QgsCoordinateTransform
+from DsgTools.VectorTools.contour_value import ContourValue
+
 
 class ContourTool():
     def updateReference(self, referenceLayer):
         '''
         Updates the reference layer and updates the spatial index
         '''
+        self.first_value = None
         self.reference = referenceLayer
         self.populateIndex()
 
@@ -102,6 +105,9 @@ class ContourTool():
             coordinateTransformer = QgsCoordinateTransform(canvasCrs, destCrs)
             geom.transform(coordinateTransformer)
     
+    def setFirstValue(self, value):
+        self.first_value = value
+
     def assignValues(self, attribute, pace, geom, canvasCrs):
         '''
         Assigns attribute values to all features that intersect geom.
@@ -117,13 +123,22 @@ class ContourTool():
 
         #the first feature must have the initial value already assigned
         first_feature = ordered[0][1]
+        #getting the filed index that must be updated
+        fieldIndex = self.reference.fieldNameIndex(attribute)
         #getting the initial value
         first_value = first_feature.attribute(attribute)
         if not first_value:
-            return -3
-
-        #getting the filed index that must be updated
-        fieldIndex = self.reference.fieldNameIndex(attribute)
+            first_value_dlg = ContourValue(self)
+            retorno = first_value_dlg.exec_()
+            if self.first_value:
+                id = first_feature.id()
+                first_value = self.first_value
+                if not self.reference.changeAttributeValue(id, fieldIndex, self.first_value):
+                    return 0
+            else:
+                return -3
+            self.first_value = None
+                
 
         self.reference.startEditing()
         for i in range(1, len(ordered)):
