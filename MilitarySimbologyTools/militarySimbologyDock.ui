@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DockWidget</class>
- <widget class="QDockWidget" name="DockWidget">
+ <class>militarySimbology</class>
+ <widget class="QDockWidget" name="militarySimbology">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -13,26 +13,26 @@
   <property name="windowTitle">
    <string/>
   </property>
-  <widget class="QWidget" name="dockWidgetContents">
+  <widget class="QWidget" name="militarySimbology_2">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <widget class="QPushButton" name="createSqliteButton">
       <property name="text">
-       <string>Criar Banco de Dados</string>
+       <string>Create database</string>
       </property>
      </widget>
     </item>
     <item row="4" column="0">
      <widget class="QPushButton" name="loadEnemyButton">
       <property name="text">
-       <string>Carregar Inimigo</string>
+       <string>Load enemies</string>
       </property>
      </widget>
     </item>
     <item row="3" column="0">
      <widget class="QPushButton" name="loadAlliedButton">
       <property name="text">
-       <string>Carregar Aliado</string>
+       <string>Load allies</string>
       </property>
      </widget>
     </item>
@@ -42,7 +42,7 @@
     <item row="5" column="0">
      <widget class="QPushButton" name="locateStyleButton">
       <property name="text">
-       <string>Localizar Estilos</string>
+       <string>Locate styles</string>
       </property>
      </widget>
     </item>
