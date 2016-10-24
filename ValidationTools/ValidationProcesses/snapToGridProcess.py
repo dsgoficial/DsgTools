@@ -60,7 +60,7 @@ class SnapToGridProcess(ValidationProcess):
             self.setStatus(self.tr('All features snapped successfully.').format(cl), 1) #Finished
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
             #returning error
             return 0

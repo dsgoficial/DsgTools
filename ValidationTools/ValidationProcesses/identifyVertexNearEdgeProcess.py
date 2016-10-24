@@ -67,6 +67,6 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
                 self.setStatus(self.tr('There are no vertexes near edges.'), 1) #Finished
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
             return 0
