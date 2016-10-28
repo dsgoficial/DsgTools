@@ -45,9 +45,9 @@ class SnapGeometriesProcess(ValidationProcess):
         
         #setting tools
         tools = 'snap'
-        threshold = self.parameters['Snap']
+        threshold = -1
         minArea = self.parameters['MinArea']
-        snap = -1
+        snap = self.parameters['Snap']
 
         #getting table extent (bounding box)
         tableSchema, tableName = self.abstractDb.getTableSchema(tempTableName)        

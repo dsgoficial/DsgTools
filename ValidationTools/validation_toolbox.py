@@ -78,8 +78,8 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         item = self.tableView.indexAt(position)
         if item:
             menu.addAction(self.tr('Zoom to flag'), self.zoomToFlag)
-            menu.addAction(self.tr('Set Visited'), self.setFlagVisited)
-            menu.addAction(self.tr('Set Unvisited'), self.setFlagUnvisited)
+#             menu.addAction(self.tr('Set Visited'), self.setFlagVisited)
+#             menu.addAction(self.tr('Set Unvisited'), self.setFlagUnvisited)
         menu.exec_(self.tableView.viewport().mapToGlobal(position))
     
     @pyqtSlot()
@@ -190,7 +190,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.edgvLayer = None
         self.flagLyr = None
         rootItem = self.processTreeWidget.invisibleRootItem()
-        procList = self.validationManager.processDict.keys()
+        procList = sorted(self.validationManager.processDict)
         for i in range(len(procList)):
             item = QtGui.QTreeWidgetItem(rootItem)
             item.setText(0, str(i+1))
