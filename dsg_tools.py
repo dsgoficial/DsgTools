@@ -625,7 +625,7 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/icons/category.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Load Layers From Server'),
+            text=self.tr('Load Layers'),
             callback=self.loadLayersFromServer,
             parent=layers,
             add_to_menu=False,

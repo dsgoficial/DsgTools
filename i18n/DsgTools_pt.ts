@@ -473,47 +473,47 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Mostrar categorias</translation>
     </message>
     <message>
-        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="122"/>
+        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="127"/>
         <source>Only load layers of primitive (optional)</source>
         <translation>Somente carregar camada da primitiva (opcional)</translation>
     </message>
     <message>
-        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="130"/>
+        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="138"/>
         <source>Point</source>
         <translation>Ponto</translation>
     </message>
     <message>
-        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="137"/>
+        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="148"/>
         <source>Line</source>
         <translation>Linha</translation>
     </message>
     <message>
-        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="144"/>
+        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="158"/>
         <source>Polygon</source>
         <translation>Polígono</translation>
     </message>
     <message>
-        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="151"/>
+        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="168"/>
         <source>Select All</source>
         <translation>Selecionar Todos</translation>
     </message>
     <message>
-        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="181"/>
+        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="201"/>
         <source>Options</source>
         <translation>Opções</translation>
     </message>
     <message>
-        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="201"/>
+        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="221"/>
         <source>Only layers with Elements</source>
         <translation>Apenas Camadas com Elementos</translation>
     </message>
     <message>
-        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="216"/>
+        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="236"/>
         <source>Set Style</source>
         <translation>Ajustar estilo</translation>
     </message>
     <message>
-        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="253"/>
+        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="273"/>
         <source>Load only parent classes</source>
         <translation>Carregar somente camadas pai</translation>
     </message>
@@ -3105,12 +3105,17 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="dsg_tools.py" line="626"/>
         <source>Load Layers From Server</source>
-        <translation>Carregar camadas de servidor</translation>
+        <translation type="obsolete">Carregar camadas de servidor</translation>
     </message>
     <message>
         <location filename="dsg_tools.py" line="550"/>
         <source>Feature reclassification tool</source>
         <translation>Ferramenta de reclassificação de feições</translation>
+    </message>
+    <message>
+        <location filename="dsg_tools.py" line="626"/>
+        <source>Load Layers</source>
+        <translation>Carregar Camadas</translation>
     </message>
 </context>
 <context>
@@ -3273,42 +3278,42 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>ExploreServerWidget</name>
     <message>
-        <location filename="CustomWidgets/exploreServerWidget.py" line="145"/>
+        <location filename="CustomWidgets/exploreServerWidget.py" line="146"/>
         <source>Select Server</source>
         <translation>Selecione um Servidor</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/exploreServerWidget.py" line="159"/>
+        <location filename="CustomWidgets/exploreServerWidget.py" line="160"/>
         <source>Critical</source>
         <translation>Crítico</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/exploreServerWidget.py" line="159"/>
+        <location filename="CustomWidgets/exploreServerWidget.py" line="160"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/exploreServerWidget.py" line="123"/>
+        <location filename="CustomWidgets/exploreServerWidget.py" line="124"/>
         <source>Problem executing query: </source>
         <translation>Problema executando a query: </translation>
     </message>
     <message>
-        <location filename="CustomWidgets/exploreServerWidget.py" line="167"/>
+        <location filename="CustomWidgets/exploreServerWidget.py" line="168"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/exploreServerWidget.py" line="167"/>
+        <location filename="CustomWidgets/exploreServerWidget.py" line="168"/>
         <source>Connection refused. Connect with a super user to inspect server.</source>
         <translation>Conexão recusada. Conecte com um super usuário para inspecionar o servidor.</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/exploreServerWidget.py" line="171"/>
+        <location filename="CustomWidgets/exploreServerWidget.py" line="172"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/exploreServerWidget.py" line="88"/>
+        <location filename="CustomWidgets/exploreServerWidget.py" line="89"/>
         <source>Loading databases from server... </source>
         <translation>Carregando bancos de dados de servidor... </translation>
     </message>
@@ -4493,36 +4498,36 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Lendo bancos de dados selecionados... </translation>
     </message>
     <message>
-        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="156"/>
+        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="165"/>
         <source>Loading layers from selected databases... </source>
         <translation>Carregando camadas dos bancos de dados selecionados... </translation>
     </message>
     <message>
-        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="181"/>
+        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="190"/>
         <source>
 Databases with error:</source>
         <translation>
 Bancos de dados com erros:</translation>
     </message>
     <message>
-        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="183"/>
+        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="192"/>
         <source>
 Error messages for each database were output in qgis log.</source>
         <translation>
 Mensagens de erro para cada banco de dados foram registradas no log do qgis.</translation>
     </message>
     <message>
-        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="185"/>
+        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="194"/>
         <source>Error for database </source>
         <translation>Erro para o banco de dados </translation>
     </message>
     <message>
-        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="193"/>
+        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="202"/>
         <source>Select Style</source>
         <translation>Selecionar estilo</translation>
     </message>
     <message>
-        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="197"/>
+        <location filename="LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="206"/>
         <source>No available styles</source>
         <translation>Sem estilos disponíveis</translation>
     </message>
@@ -6637,30 +6642,30 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="ValidationTools/validation_toolbox.ui" line="62"/>
         <source>Workspace</source>
-        <translation>Área de Trabalho</translation>
+        <translation type="obsolete">Área de Trabalho</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.ui" line="70"/>
         <source>Select a workspace</source>
-        <translation>Selecione uma área de trabalho</translation>
+        <translation type="obsolete">Selecione uma área de trabalho</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.ui" line="75"/>
         <source>Default</source>
-        <translation>Padrão</translation>
+        <translation type="obsolete">Padrão</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.ui" line="80"/>
         <source>Create new workspace...</source>
-        <translation>Criar uma nova área de trabalho...</translation>
+        <translation type="obsolete">Criar uma nova área de trabalho...</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.ui" line="88"/>
         <source>Edit</source>
-        <translation>Editar</translation>
+        <translation type="obsolete">Editar</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validation_toolbox.ui" line="108"/>
+        <location filename="ValidationTools/validation_toolbox.ui" line="75"/>
         <source>#</source>
         <translation>#</translation>
     </message>
@@ -6675,17 +6680,17 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation type="obsolete">Situação</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validation_toolbox.ui" line="127"/>
+        <location filename="ValidationTools/validation_toolbox.ui" line="94"/>
         <source>Flags</source>
         <translation>Flags</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validation_toolbox.ui" line="155"/>
+        <location filename="ValidationTools/validation_toolbox.ui" line="122"/>
         <source>Show suggestions</source>
         <translation>Mostrar sugestões</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validation_toolbox.ui" line="163"/>
+        <location filename="ValidationTools/validation_toolbox.ui" line="130"/>
         <source>Rules</source>
         <translation>Regras</translation>
     </message>
@@ -6695,7 +6700,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation type="obsolete">Mostrar Editor de Regras</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validation_toolbox.ui" line="190"/>
+        <location filename="ValidationTools/validation_toolbox.ui" line="157"/>
         <source>Start/Stop Spatial Rule Enforcer</source>
         <translation>Iniciar/Parar Reforçador de Regras Espaciais</translation>
     </message>
@@ -6707,12 +6712,12 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="ValidationTools/validation_toolbox.py" line="81"/>
         <source>Set Visited</source>
-        <translation>Marcar Visitado</translation>
+        <translation type="obsolete">Marcar Visitado</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.py" line="82"/>
         <source>Set Unvisited</source>
-        <translation>Marcar não visitado</translation>
+        <translation type="obsolete">Marcar não visitado</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.py" line="282"/>
@@ -6746,22 +6751,22 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation>Banco de Dados não carregado ou um problema ocorreu.</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validation_toolbox.ui" line="113"/>
+        <location filename="ValidationTools/validation_toolbox.ui" line="80"/>
         <source>Process</source>
         <translation>Processo</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validation_toolbox.ui" line="118"/>
+        <location filename="ValidationTools/validation_toolbox.ui" line="85"/>
         <source>Status</source>
         <translation>Estado</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validation_toolbox.ui" line="169"/>
+        <location filename="ValidationTools/validation_toolbox.ui" line="136"/>
         <source>Show Spatial Rules Editor</source>
         <translation>Mostrar editor de regras espaciais</translation>
     </message>
     <message>
-        <location filename="ValidationTools/validation_toolbox.ui" line="183"/>
+        <location filename="ValidationTools/validation_toolbox.ui" line="150"/>
         <source>Show Attribute Rules Editor</source>
         <translation>Mostrar editor de regras de atributos</translation>
     </message>
