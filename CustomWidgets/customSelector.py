@@ -105,7 +105,8 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
             added.append(item.text())
         self.toList.sortItems()
         #emits added items
-        self.selectionChanged.emit(added,'added')
+        if len(added) > 0:
+            self.selectionChanged.emit(added,'added')
         
     @pyqtSlot(bool)
     def on_pushButtonSelectAll_clicked(self):
@@ -119,7 +120,8 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
             self.fromLs.remove(item.text())
         self.toList.sortItems()
         #emits added items
-        self.selectionChanged.emit(added,'added')
+        if len(added) > 0:
+            self.selectionChanged.emit(added,'added')
 
     @pyqtSlot(bool)
     def on_pushButtonDeselectOne_clicked(self):
@@ -133,7 +135,8 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
             self.fromList.addItem(item)
         self.fromList.sortItems()
         #emits removed items
-        self.selectionChanged.emit(removed,'removed')
+        if len(removed) > 0:
+            self.selectionChanged.emit(removed,'removed')
 
     @pyqtSlot(bool)
     def on_pushButtonDeselectAll_clicked(self):
@@ -147,7 +150,8 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
             removed.append(item.text())
         self.fromList.sortItems()
         #emits removed items
-        self.selectionChanged.emit(removed,'removed')
+        if len(removed) > 0:
+            self.selectionChanged.emit(removed,'removed')
     
     def on_filterLineEdit_textChanged(self, text):
         classes = [edgvClass for edgvClass in self.fromLs if text in edgvClass]

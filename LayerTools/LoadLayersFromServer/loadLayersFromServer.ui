@@ -118,8 +118,16 @@
          <height>120</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
        <property name="title">
         <string>Only load layers of primitive (optional)</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignJustify|Qt::AlignVCenter</set>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">
@@ -129,12 +137,18 @@
             <property name="text">
              <string>Point</string>
             </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>
            <widget class="QCheckBox" name="checkBoxLine">
             <property name="text">
              <string>Line</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -143,12 +157,18 @@
             <property name="text">
              <string>Polygon</string>
             </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>
            <widget class="QCheckBox" name="checkBoxAll">
             <property name="text">
              <string>Select All</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

@@ -174,8 +174,8 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         for (dbname, dbversion) in dbList:
             if dbversion in self.dbDict.keys():
                 self.dbDict[dbversion].append(dbname)
-        if len(self.dbDict['2.1.3']) == 0:
-            self.postgisEdgvComboFilter.setCurrentIndex(1)
+#         if len(self.dbDict['2.1.3']) == 0:
+#             self.postgisEdgvComboFilter.setCurrentIndex(1)
         comboText = self.postgisEdgvComboFilter.currentText()
         self.postgisCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]]) 
     
@@ -198,10 +198,9 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         dbList.sort()
         for (dbname, dbversion) in dbList:
             if dbversion in self.dbDict.keys():
-                self.dbDict[dbversion].append(dbname)
-        
-        if len(self.dbDict['2.1.3']) == 0:
-            self.spatialiteEdgvComboFilter.setCurrentIndex(1)
+                self.dbDict[dbversion].append(dbname)        
+#         if len(self.dbDict['2.1.3']) == 0:
+#             self.spatialiteEdgvComboFilter.setCurrentIndex(1)
         comboText = self.spatialiteEdgvComboFilter.currentText()
         self.spatialiteCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]]) 
     

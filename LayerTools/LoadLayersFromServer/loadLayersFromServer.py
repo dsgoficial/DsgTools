@@ -140,6 +140,15 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                     selectedClasses.append(lyr)
         else:
             selectedClasses = self.layersCustomSelector.toLs
+        #1.1- filtering primitives
+        primitives = []
+        if self.checkBoxPoint.isChecked():
+            primitives.append('p')
+        if self.checkBoxLine.isChecked():
+            primitives.append('l')
+        if self.checkBoxPolygon.isChecked():
+            primitives.append('a')
+        selectedClasses = [layer for layer in selectedClasses if layer[-1] in primitives]
         #2- get parameters
         withElements = self.checkBoxOnlyWithElements.isChecked()
         selectedStyle = None
@@ -206,5 +215,3 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         self.checkBoxPoint.setChecked(toggled)
         self.checkBoxLine.setChecked(toggled)
         self.checkBoxPolygon.setChecked(toggled)
-            
-    

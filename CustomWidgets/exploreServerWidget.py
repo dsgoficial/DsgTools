@@ -53,6 +53,7 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.superNeeded = False
         self.dbFactory = DbFactory()
+        self.abstractDb = None
 
     def getServers(self):
         '''
