@@ -46,11 +46,17 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
     
     def clearAll(self):
+        '''
+        Clears everything to return to the initial state
+        '''
         self.fromList.clear()
         self.toList.clear()
         self.filterLineEdit.clear()        
     
     def setInitialState(self, fromList, unique = False):
+        '''
+        Sets the initial state
+        '''
         self.fromLs = []
         self.toLs = []
         self.fromList.clear()
@@ -58,6 +64,9 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         self.setFromList(fromList, unique)
     
     def setFromList(self, fromList, unique = False):
+        '''
+        Setting the "from" items (QListWidget and python list)
+        '''
         if unique:
             uniqueList = []
             for i in fromList:
@@ -73,6 +82,9 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
             self.fromList.sortItems()
     
     def addItems(self, addList, unique = False):
+        '''
+        Adding "from" items (QListWidget and python list)
+        '''
         toAddList = []
         for i in addList:
             if unique:
@@ -87,15 +99,24 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
             self.fromLs.sort()
 
     def setToList(self, toList):
+        '''
+        Setting the "to" items (QListWidget and python list)
+        '''
         self.toLs = toList
         self.toList.addItems(toList)
         self.toList.sortItems()
     
     def setTitle(self,title):
+        '''
+        Setting the title
+        '''
         self.groupBox.setTitle(title)
 
     @pyqtSlot(bool)
     def on_pushButtonSelectOne_clicked(self):
+        '''
+        Adds the selected items to the "to" list
+        '''
         listedItems = self.fromList.selectedItems()
         added = []
         for i in listedItems:
@@ -111,6 +132,9 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_pushButtonSelectAll_clicked(self):
+        '''
+        Adds all items to the "to" list
+        '''
         tam = self.fromList.__len__()
         added = []
         for i in range(tam+1,1,-1):
@@ -126,6 +150,9 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_pushButtonDeselectOne_clicked(self):
+        '''
+        Removes the selected items from the "to" list
+        '''
         listedItems = self.toList.selectedItems()
         removed = []
         for i in listedItems:
@@ -141,6 +168,9 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_pushButtonDeselectAll_clicked(self):
+        '''
+        Removes all items from the "to" list
+        '''
         tam = self.toList.__len__()
         removed = []
         for i in range(tam+1,1,-1):
@@ -155,9 +185,11 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
             self.selectionChanged.emit(removed,'removed')
     
     def on_filterLineEdit_textChanged(self, text):
+        '''
+        Filters the items to make it easier to spot and select them
+        '''
         classes = [edgvClass for edgvClass in self.fromLs if text in edgvClass]
         filteredClasses = [i for i in classes if i not in self.toLs]
         self.fromList.clear()
         self.fromList.addItems(classes)
         self.fromList.sortItems()
-
