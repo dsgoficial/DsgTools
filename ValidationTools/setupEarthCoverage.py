@@ -52,9 +52,8 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         self.areasCustomSelector.setTitle(self.tr('Areas'))
         self.linesCustomSelector.setTitle(self.tr('Lines'))
         self.setupWizard(oldCoverage)
-        self.areasCustomSelector.selectionChanged.connect(self.populateClasses)
-        self.linesCustomSelector.selectionChanged.connect(self.populateDelimiters)
         self.button(QtGui.QWizard.FinishButton).clicked.connect(self.writeIntoDb)
+        self.button(QtGui.QWizard.NextButton).clicked.connect(self.buildTree)
 
     def setupFromFile(self):
         '''
@@ -82,20 +81,12 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
                 for line in lines:
                     if line not in linesToList:
                         linesToList.append(line)
-            areasFromList = []
-            linesFromList = []
-            for area in self.areas:
-                if area not in areasToList:
-                    areasFromList.append(area)
-            for line in self.lines:
-                if line not in linesToList:
-                    linesFromList.append(line)
+            areasFromList = [area for area in self.areas if area not in areasToList]
+            linesFromList = [line for line in self.lines if line not in linesToList]
             self.areasCustomSelector.setToList(areasToList)
             self.areasCustomSelector.setFromList(areasFromList)
             self.linesCustomSelector.setToList(linesToList)
-            self.linesCustomSelector.setFromList(linesToList)  
-            self.populateClasses()   
-            self.populateDelimiters()      
+            self.linesCustomSelector.setFromList(linesFromList)  
             self.checkDelimiters(setupDict)
         else:
             self.areasCustomSelector.setFromList(self.areas)
@@ -132,7 +123,6 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
             treeItem = QtGui.QTreeWidgetItem()
             treeItem.setText(0,selectedAreaClasses[i])
             self.treeWidget.insertTopLevelItem(0,treeItem)
-        self.linesCustomSelector.selectionChanged.emit()
 
     def populateDelimiters(self):
         '''
@@ -186,3 +176,11 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
             self.abstractDb.rollbackEarthCoverage(earthDict.keys())
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving into database! \n')+e.args[0])
             return
+
+    def buildTree(self):
+        '''
+        Builds the earth coverage tree using the selected areas and lines
+        '''
+        self.populateClasses()
+        self.populateDelimiters()
+        

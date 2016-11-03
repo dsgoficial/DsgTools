@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>412</width>
+    <height>148</height>
    </rect>
   </property>
   <property name="font">
@@ -26,7 +26,7 @@
   </property>
   <widget class="QWizardPage" name="wizardPage1">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="2" column="0">
+    <item row="1" column="0">
      <widget class="QRadioButton" name="patternRadioButton">
       <property name="text">
        <string>Create databases based on an auto incrementing pattern</string>
@@ -37,13 +37,6 @@
      <widget class="QRadioButton" name="csvRadioButton">
       <property name="text">
        <string>Create databases from csv file list</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QRadioButton" name="miListRadioButton">
-      <property name="text">
-       <string>Create databases based on an map index list</string>
       </property>
      </widget>
     </item>

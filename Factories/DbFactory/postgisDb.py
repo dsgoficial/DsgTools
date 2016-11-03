@@ -1370,8 +1370,10 @@ class PostgisDb(AbstractDb):
         srid = self.findEPSG()
         self.db.transaction()
         for cl in earthCoverageClasses:
-            table_schema, table_name = self.getTableSchema(cl)
-            sqltext = self.gen.createCentroidColumn(table_schema, table_name, srid)
+            # getting table schema
+            tableSchema = self.getTableSchemaFromDb(cl)
+            # making the query using table schema and table name
+            sqltext = self.gen.createCentroidColumn(tableSchema, cl, srid)
             sqlList = sqltext.split('#')
             query = QSqlQuery(self.db)
             for sql2 in sqlList:
@@ -1379,7 +1381,6 @@ class PostgisDb(AbstractDb):
                     self.db.rollback()
                     raise Exception(self.tr('Problem creating centroid structure: ') + query.lastError().text())
         self.db.commit()
-        
             
     def checkAndCreateCentroidAuxStruct(self, earthCoverageClasses):
         '''
@@ -1398,7 +1399,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             self.db.rollback()
-            
             raise Exception(self.tr('Problem getting earth coverage tables: ') + query.lastError().text())
         result = []
         while query.next():
@@ -1414,7 +1414,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             self.db.rollback()
-            
             raise Exception(self.tr('Problem getting earth coverage structure: ') + query.lastError().text())
         while query.next():
             return query.value(0)
@@ -1442,7 +1441,10 @@ class PostgisDb(AbstractDb):
         self.db.transaction()
         query = QSqlQuery(self.db)
         for cl in classList:
-            sql = self.gen.dropCentroid(cl)
+            # getting table schema
+            tableSchema = self.getTableSchemaFromDb(cl)
+            # making the query using table schema and table name
+            sql = self.gen.dropCentroid(tableSchema+'.'+cl)
             if not query.exec_(sql):
                 self.db.rollback()
                 raise Exception(self.tr('Problem dropping centroids: ') + query.lastError().text())
@@ -1469,7 +1471,6 @@ class PostgisDb(AbstractDb):
         centroidList = []
         if not query.isActive():
             self.db.rollback()
-            
             raise Exception(self.tr('Problem getting earth coverage structure: ') + query.lastError().text())
         while query.next():
             centroidList.append(query.value(0))
@@ -1486,7 +1487,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             self.db.rollback()
-            
             raise Exception(self.tr('Problem getting class name: ') + query.lastError().text())
         while query.next():
             return query.value(0)
@@ -1565,7 +1565,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             self.db.rollback()
-            
             raise Exception(errorMsg + query.lastError().text())
         result = dict()
         key = ','.join(params)
@@ -1576,7 +1575,6 @@ class PostgisDb(AbstractDb):
                 newElement.append(query.value(i))
             result[key].append(newElement)
         self.db.commit()
-        
         return result
 
     def createAndPopulateTempTableFromMap(self, tableName, featureMap):
@@ -1589,7 +1587,6 @@ class PostgisDb(AbstractDb):
         for s in sqls:
             if not query.exec_(s):
                 self.db.rollback()
-                
                 raise Exception(self.tr('Problem creating temp table: ') + query.lastError().text())
         attributes = None
         for feat in featureMap.values():
@@ -1602,12 +1599,10 @@ class PostgisDb(AbstractDb):
             insertSql = self.gen.populateTempTable(tableName, attributes, values, geometry, srid)
             if not query.exec_(insertSql):
                 self.db.rollback()
-                
                 raise Exception(self.tr('Problem populating temp table: ') + query.lastError().text())
         indexSql = self.gen.createSpatialIndex(tableName)
         if not query.exec_(indexSql):
             self.db.rollback()
-            
             raise Exception(self.tr('Problem creating spatial index on temp table: ') + query.lastError().text())
         self.db.commit()        
         
@@ -1618,7 +1613,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.dropTempTable(tableName)
         if not query.exec_(sql):
             self.db.rollback()
-            
             raise Exception(self.tr('Problem dropping temp table: ') + query.lastError().text())
         self.db.commit()
     
@@ -1628,7 +1622,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         if not query.exec_(createSql):
             self.db.rollback()
-            
             raise Exception(self.tr('Problem creating style table: ') + query.lastError().text())
         self.db.commit()
 
@@ -1638,7 +1631,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             self.db.rollback()
-            
             raise Exception(self.tr("Problem getting style table: ") + query.lastError().text())
         query.next()
         created = query.value(0)
@@ -1648,10 +1640,8 @@ class PostgisDb(AbstractDb):
             query = QSqlQuery(self.db)
             if not query.exec_(createSql):
                 self.db.rollback()
-                
                 raise Exception(self.tr('Problem creating style table: ') + query.lastError().text())
             self.db.commit()
-        
         return created
     
     def getStylesFromDb(self,dbVersion):
@@ -1660,7 +1650,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             self.db.rollback()
-            
             raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
         styleList = []
         while query.next():
@@ -1673,7 +1662,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             self.db.rollback()
-            
             raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
         styleList = []
         query.next()
@@ -1693,7 +1681,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.importStyle(styleName, table_name, parsedQml, tableSchema,dbName)
         if not query.exec_(sql):
             self.db.rollback()
-            
             raise Exception(self.tr('Problem importing style')+ styleName+'/'+ table_name +':' + query.lastError().text())
         self.db.commit()
     
@@ -1705,7 +1692,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.updateStyle(styleName, table_name, parsedQml, tableSchema)
         if not query.exec_(sql):
             self.db.rollback()
-            
             raise Exception(self.tr('Problem importing style')+ styleName+'/'+ table_name +':' + query.lastError().text())
         self.db.commit()
     
@@ -1716,7 +1702,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.deleteStyle(styleName)
         if not query.exec_(sql):
             self.db.rollback()
-            
             raise Exception(self.tr('Problem importing style')+ styleName+'/'+ table_name +':' + query.lastError().text())
         self.db.commit()
     
@@ -1766,7 +1751,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             self.db.rollback()
-            
             raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
         styleDict = dict()
         while query.next():
@@ -1789,7 +1773,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             self.db.rollback()
-            
             raise Exception(self.tr('Problem running sql ')+ sqlFilePath +':' + query.lastError().text())
         self.db.commit()
     
@@ -2172,7 +2155,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         if not query.exec_(sridSql):
             self.db.rollback()
-            
             raise Exception(self.tr('Problem setting srid: ') + query.lastError().text())
         self.db.commit()
         #this close is to allow creation from template
@@ -2224,7 +2206,6 @@ class PostgisDb(AbstractDb):
         if not query.exec_(sql):
             self.db.rollback()
             raise Exception(self.tr("Problem setting database as template: ")+query.lastError().text())
-        
     
     def getCreationSqlPath(self, version):
         currentPath = os.path.dirname(__file__)
@@ -2249,7 +2230,6 @@ class PostgisDb(AbstractDb):
         for command in commands:
             if not query.exec_(command):
                 self.db.rollback()
-                
                 raise Exception(self.tr('Error on database creation! ')+query.lastError().text()+ self.tr(' Db will be dropped.'))
         self.db.commit()
         self.alterSearchPath(version)
@@ -2266,7 +2246,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             self.db.rollback()
-            
             raise Exception(self.tr("Problem altering search path: ")+query.lastError().text())
         self.db.commit()
 
