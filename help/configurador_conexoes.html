@@ -1,58 +1,69 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-  	
-	<title>Ferramentas de Inventário</title>
-    
-    <link rel="stylesheet" href="css/bootstrap.css">
-	<link rel="stylesheet" href="everydayimstyling.css" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Ferramentas de Inventário</title>
+
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="everydayimstyling.css" />
 </head>
 
 <body>
-	
-    <h2>
-    	Configurador de Conexões
-    </h2>
-    
+
+	<h2>Configurador de Conexões</h2>
+
+	<p align="justify">O configurador de conexões permite que sejam
+		buscados todos os bancos EDGV criados em um dado servidor PostgreSQL.
+	</p>
+
+	<p align=center>
+		<img src='dsg_tools/configurador_conexoes.png' name='figuras1'
+			width=500 height=500 alt='Erro ao mostrar a imagem'>
+	</p>
+
 	<p align="justify">
-        O configurador de conexões permite que sejam buscados todos os bancos EDGV criados em um dado servidor PostgreSQL. 
-    </p>
+		Para que uma nova conexão seja adicionada basta clicar em
+		<kbd>Configurar Conexão</kbd>
+		. Desta forma, a janela seguinte aparecerá permitindo a adição.
+	</p>
 
-    <p align=center>
-        <img src='dsg_tools/configurador_conexoes.png' name='figuras1' width=500 height=500 alt='Erro ao mostrar a imagem'>
-    </p>
+	<p align=center>
+		<img src='dsg_tools/adicionar_conexoes.png' name='figuras1' width=500
+			height=500 alt='Erro ao mostrar a imagem'>
+	</p>
 
-    <p align="justify">
-        Para que uma nova conexão seja adicionada basta clicar em <kbd>Configurar Conexão</kbd>. Desta forma, a janela seguinte aparecerá
-        permitindo a adição.
-    </p>
+	<p align="justify">
+		O usuário deve selecionar o servidor que será usado para a busca de
+		bancos. Caso o servidor não esteja listado, um novo deve ser criado.
+		Basta para tal, clicar em
+		<kbd>Criar Novo Servidor</kbd>
+	</p>
 
-    <p align=center>
-        <img src='dsg_tools/adicionar_conexoes.png' name='figuras1' width=500 height=500 alt='Erro ao mostrar a imagem'>
-    </p>
+	<p align="justify">
+		Com o servidor selecionado, o plugin irá buscar automaticamente todos
+		os bancos EDGV criados pelo DSGTools. Esses bancos serão listados e a
+		versão do banco será listada. Resta ao usuário selecionar os bancos
+		desejados ou clicar em
+		<kbd>Selecionar Todos</kbd>
+		para e clicar em
+		<kbd>Criar Conexão</kbd>
+		para que as conexões sejam adicionadas.
+	</p>
 
-    <p align="justify">
-        O usuário deve selecionar o servidor que será usado para a busca de bancos. Caso o servidor não esteja listado, um novo deve ser criado. 
-        Basta para tal, clicar em <kbd>Criar Novo Servidor</kbd>
-    </p>
+	<p align=center>
+		<img src='dsg_tools/adicionar_conexoes1.png' name='figuras1' width=500
+			height=500 alt='Erro ao mostrar a imagem'>
+	</p>
 
-    <p align="justify">
-        Com o servidor selecionado, o plugin irá buscar automaticamente todos os bancos EDGV criados pelo DSGTools. Esses bancos serão listados 
-        e a versão do banco será listada. Resta ao usuário selecionar os bancos desejados ou clicar em <kbd>Selecionar Todos</kbd> para e clicar em 
-        <kbd>Criar Conexão</kbd> para que as conexões sejam adicionadas.
-    </p>
-
-    <p align=center>
-        <img src='dsg_tools/adicionar_conexoes1.png' name='figuras1' width=500 height=500 alt='Erro ao mostrar a imagem'>
-    </p>
-
-    <p align="justify">
-        Também é possível que sejam removidas registros de bancos que não existem mais. Para tanto basta clicar em
-        <kbd>Remover Conexões para Banco de Dados Faltantes</kbd> para que as conexões sejam removidas.
-    </p>
+	<p align="justify">
+		Também é possível que sejam removidas registros de bancos que não
+		existem mais. Para tanto basta clicar em
+		<kbd>Remover Conexões para Banco de Dados Faltantes</kbd>
+		para que as conexões sejam removidas.
+	</p>
 
 </body>
 </html>
