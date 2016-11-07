@@ -39,6 +39,26 @@
      </layout>
     </widget>
    </item>
+   <item row="2" column="0" colspan="2">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>556</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="2">
+    <widget class="QPushButton" name="closePushButton">
+     <property name="text">
+      <string>Close</string>
+     </property>
+    </widget>
+   </item>
    <item row="1" column="1" colspan="2">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
@@ -89,201 +109,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="dbAdmin">
-      <attribute name="title">
-       <string>Database Administration</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_5">
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="title">
-          <string>Database Administration</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="0" column="0">
-           <widget class="QPushButton" name="dropDatabasePushButton">
-            <property name="text">
-             <string>Drop Database</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="createViewsPushButton">
-            <property name="text">
-             <string>Create Domain Resolved Views</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="groupBox_5">
-         <property name="title">
-          <string>Constraint and Defaults</string>
-         </property>
-         <widget class="QRadioButton" name="constraintsOnRadioButton">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>20</y>
-            <width>94</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>On</string>
-          </property>
-         </widget>
-         <widget class="QRadioButton" name="constraintsOffRadioButton">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>40</y>
-            <width>94</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Off</string>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="turnOnConstraintsPushButton">
-          <property name="geometry">
-           <rect>
-            <x>130</x>
-            <y>30</y>
-            <width>75</width>
-            <height>25</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Turn On</string>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="turnOffConstraintsPushButton">
-          <property name="geometry">
-           <rect>
-            <x>210</x>
-            <y>30</y>
-            <width>75</width>
-            <height>25</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Turn Off</string>
-          </property>
-         </widget>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>248</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="earthCoverage">
-      <attribute name="title">
-       <string>Earth Coverage</string>
-      </attribute>
-      <widget class="QGroupBox" name="groupBox_4">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>307</width>
-         <height>63</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>Line-Centroid Structure</string>
-       </property>
-       <widget class="QRadioButton" name="lineCentroidCreatedRadioButton">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>20</y>
-          <width>94</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Created</string>
-        </property>
-       </widget>
-       <widget class="QRadioButton" name="lineCentroidNotCreatedRadioButton">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>40</y>
-          <width>94</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Not Created</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="createLineCentroidPushButton">
-        <property name="geometry">
-         <rect>
-          <x>130</x>
-          <y>30</y>
-          <width>75</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Create</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="dropLineCentroidPushButton">
-        <property name="geometry">
-         <rect>
-          <x>210</x>
-          <y>30</y>
-          <width>75</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Drop</string>
-        </property>
-       </widget>
-      </widget>
-     </widget>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="2">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>556</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="2">
-    <widget class="QPushButton" name="closePushButton">
-     <property name="text">
-      <string>Close</string>
-     </property>
     </widget>
    </item>
   </layout>

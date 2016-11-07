@@ -97,7 +97,7 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 2.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -107,6 +107,29 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 2.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="ui_about.ui" line="89"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 3.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 3.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -452,7 +475,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="DbTools/BatchDbCreator/batchDbCreator.ui" line="46"/>
         <source>Create databases based on an map index list</source>
-        <translation>Criar bancos de dados baseados numa lista de índices de nomenclatura</translation>
+        <translation type="obsolete">Criar bancos de dados baseados numa lista de índices de nomenclatura</translation>
     </message>
 </context>
 <context>
@@ -3187,27 +3210,27 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Definir Cobertura Terrestre</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/earthCoverageWidget.py" line="95"/>
+        <location filename="CustomWidgets/earthCoverageWidget.py" line="96"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/earthCoverageWidget.py" line="72"/>
+        <location filename="CustomWidgets/earthCoverageWidget.py" line="73"/>
         <source>Select a database to manage earth coverage</source>
         <translation>Selecione um banco de dados para gerenciar a cobertura terrestre</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/earthCoverageWidget.py" line="88"/>
+        <location filename="CustomWidgets/earthCoverageWidget.py" line="89"/>
         <source>Question</source>
         <translation>Questão</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/earthCoverageWidget.py" line="88"/>
+        <location filename="CustomWidgets/earthCoverageWidget.py" line="89"/>
         <source>An earth coverage is already defined. Do you want to redefine it? All data will be lost.</source>
         <translation>Uma cobertura terrestre já está definida. Você deseja redefinir ela? Todos os dados serão perdidos.</translation>
     </message>
     <message>
-        <location filename="CustomWidgets/earthCoverageWidget.py" line="95"/>
+        <location filename="CustomWidgets/earthCoverageWidget.py" line="96"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
@@ -4945,7 +4968,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Erro!</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1809"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1792"/>
         <source>Operation not defined for this database version!</source>
         <translation>Operação não definida para esta versão de banco de dados!</translation>
     </message>
@@ -4975,7 +4998,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Problema criando usuário: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2311"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2290"/>
         <source>Problem removing user: </source>
         <translation>Problema removendo usuário: </translation>
     </message>
@@ -5025,7 +5048,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Problema ao obter a estrutura do banco: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1815"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1798"/>
         <source>Problem executing query: </source>
         <translation>Problema ao executar a query: </translation>
     </message>
@@ -5040,7 +5063,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Problema ao carregar feições associadas: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2301"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2280"/>
         <source>Problem getting users: </source>
         <translation>Problema ao obter usuários: </translation>
     </message>
@@ -5215,7 +5238,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Problema checando estrutura: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1382"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1384"/>
         <source>Problem creating centroid structure: </source>
         <translation>Problema criando estrutura de centróides: </translation>
     </message>
@@ -5225,17 +5248,17 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Problema obtendo tabelas de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1475"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1476"/>
         <source>Problem getting earth coverage structure: </source>
         <translation>Problema obtendo estrutura de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1435"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1434"/>
         <source>Problem setting earth coverage structure: </source>
         <translation>Problema ajustando a estrutura de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1450"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1452"/>
         <source>Problem dropping centroids: </source>
         <translation>Problema apagando centróides: </translation>
     </message>
@@ -5270,7 +5293,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Problema ao realizar snap na classe: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2326"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2305"/>
         <source>Problem deleting flag: </source>
         <translation>Problema deletando flag: </translation>
     </message>
@@ -5280,7 +5303,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Problema ao obter tabelas do banco: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2340"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2319"/>
         <source>Problem removing empty geometries: </source>
         <translation>Problema removendo geometrias vazias: </translation>
     </message>
@@ -5290,147 +5313,147 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Lendo bancos de dados selecionados... </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1595"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1592"/>
         <source>Problem creating temp table: </source>
         <translation>Problema criando tabela temporária: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1608"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1604"/>
         <source>Problem populating temp table: </source>
         <translation>Problema populando tabela temporária: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1613"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1608"/>
         <source>Problem creating spatial index on temp table: </source>
         <translation>Problema criando índice espacial na tabela temporária: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1624"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1618"/>
         <source>Problem dropping temp table: </source>
         <translation>Problema ao apagar a tabela temporária: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1654"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1645"/>
         <source>Problem creating style table: </source>
         <translation>Problema criando tabela de estilos: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1644"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1636"/>
         <source>Problem getting style table: </source>
         <translation>Problema obtendo tabela de estilos: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1772"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1756"/>
         <source>Problem getting styles from db: </source>
         <translation>Problema obtendo estilos do db: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1722"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1707"/>
         <source>Problem importing style</source>
         <translation>Problema importanto estilo</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1731"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1716"/>
         <source>Style </source>
         <translation>Estilo </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1731"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1716"/>
         <source> does not match the version of database </source>
         <translation> não combina com a versão do banco de dados </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1748"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1733"/>
         <source>Problem importing style </source>
         <translation>Problema importando estilos </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1795"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1778"/>
         <source>Problem running sql </source>
         <translation>Problema ao rodar sql </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2045"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2028"/>
         <source>Problem getting geom schemas from db: </source>
         <translation>Problema obtendo esquemas geométricos do db: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1856"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1839"/>
         <source>Problem getting geom tables from db: </source>
         <translation>Problema obtendo tabelas geométricas do db: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="1998"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="1981"/>
         <source>EDGV Version not recognized!</source>
         <translation>Versão de EDGV não reconhecida!</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2058"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2041"/>
         <source>Problem getting geom types from db: </source>
         <translation>Problema obtendo tipos geométricos do db: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2073"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2056"/>
         <source>Problem getting geom column dict: </source>
         <translation>Problema obtendo dicionário de colunas geométricas: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2100"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2083"/>
         <source>Problem getting not null dict: </source>
         <translation>Problema obtendo dicionário de não nulos: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2117"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2100"/>
         <source>Problem getting domain dict from table </source>
         <translation>Problema obtendo dicionário de domínios da tabela </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2129"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2112"/>
         <source>Problem getting layer column dict from table </source>
         <translation>Problema obtendo dicionário de colunas da tabela </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2149"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2132"/>
         <source>Problem getting geom struct dict: </source>
         <translation>Problema obtendo dicionário de estruturas geométricas: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2168"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2151"/>
         <source>Problem creating from template: </source>
         <translation>Problema criando a partir de template: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2180"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2162"/>
         <source>Problem setting srid: </source>
         <translation>Problema ajustando srid: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2191"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2173"/>
         <source>Problem setting as template: </source>
         <translation>Problema ajustando template: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2215"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2197"/>
         <source>Problem creating database: </source>
         <translation>Problema criando banco de dados: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2230"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2212"/>
         <source>Problem setting database as template: </source>
         <translation>Problema ajustando banco como template: </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2258"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2238"/>
         <source>Error on database creation! </source>
         <translation>Erro na criação de banco de dados! </translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2258"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2238"/>
         <source> Db will be dropped.</source>
         <translation>Db será apagado.</translation>
     </message>
     <message>
-        <location filename="Factories/DbFactory/postgisDb.py" line="2275"/>
+        <location filename="Factories/DbFactory/postgisDb.py" line="2254"/>
         <source>Problem altering search path: </source>
         <translation>Problema alterando search path: </translation>
     </message>
@@ -6029,72 +6052,72 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation>Linhas</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="175"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="165"/>
         <source>Question</source>
         <translation>Questão</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="63"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="62"/>
         <source>Do you want to open an earth coverage file?</source>
         <translation>Você deseja abrir um arquivo de cobertura terrestre?</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="65"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="64"/>
         <source>Open Earth Coverage Setup configuration</source>
         <translation>Abrir ajustes de configuração de Cobertura Terrestre</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="177"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="167"/>
         <source>Earth Coverage Files (*.json)</source>
         <translation>Arquivos de Cobertura Terrestre (*.json)</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="120"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="111"/>
         <source>Open Field Setup configuration</source>
         <translation>Abrir ajsutes de Configuração de Campo</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="120"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="111"/>
         <source>Field Setup Files (*.json)</source>
         <translation>Arquivos de Configuração de Campo (*.json)</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="175"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="165"/>
         <source>Do you want to save this earth coverage setup?</source>
         <translation>Você deseja salvar este ajuste de cobertura terrestre?</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="177"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="167"/>
         <source>Save Earth Coverage Setup configuration</source>
         <translation>Salvar ajuste de Cobertura Terrestre</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="179"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="169"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="179"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="169"/>
         <source>Define a name for the earth coverage file!</source>
         <translation>Defina um nome para o arquivo de Cobertura Terrestre!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="183"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="173"/>
         <source>Information!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="183"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="173"/>
         <source>Field setup file saved successfully!</source>
         <translation>Arquivo de ajuste de Campo salvo com sucesso!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="187"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="177"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="187"/>
+        <location filename="ValidationTools/setupEarthCoverage.py" line="177"/>
         <source>Problem saving into database! 
 </source>
         <translation>Problema salvando no banco de dados!</translation>
@@ -6184,29 +6207,34 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation>Colar linhas na moldura</translation>
     </message>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="39"/>
+        <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="45"/>
         <source>Starting </source>
         <translation>Iniciando </translation>
     </message>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="39"/>
+        <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="45"/>
         <source> Process.</source>
         <translation> Processo.</translation>
     </message>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="41"/>
+        <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="47"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="45"/>
+        <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="51"/>
         <source>Empty database.</source>
         <translation>Banco de dados vazio.</translation>
     </message>
     <message>
-        <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="60"/>
+        <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="66"/>
         <source>All features snapped succesfully.</source>
         <translation>Todas as feições foram coladas com sucesso.</translation>
+    </message>
+    <message>
+        <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="39"/>
+        <source>Snap to Grid</source>
+        <translation>Colar na grade</translation>
     </message>
 </context>
 <context>
