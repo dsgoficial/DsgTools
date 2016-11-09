@@ -42,7 +42,6 @@ class PostGISLayerLoader(EDGVLayerLoader):
         self.provider = 'postgres'
         self.setDatabaseConnection()
         self.buildUri()
-        
 
     def checkLoaded(self, name, loadedLayers):
         loaded = None
@@ -115,7 +114,6 @@ class PostGISLayerLoader(EDGVLayerLoader):
         notNullDict = self.abstractDb.getNotNullDictV2()
         lyrDict = self.getLyrDict(filteredLayerList)
         
-        
         #4. Build Groups
         groupDict = self.prepareGroups(loadedGroups, dbGroup, lyrDict)
         #5. load layers
@@ -124,7 +122,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             for cat in lyrDict[prim].keys():
                 for lyr in lyrDict[prim][cat]:
                     try:
-                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], loadedLayers, useInheritance, useQml,uniqueLoad,stylePath,domainDict,multiColumnsDict,domLayerDict)
+                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict)
                         if vlayer:
                             loadedLayers.append(vlayer)
                             loadedDict[lyr]=vlayer
@@ -145,7 +143,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             sql = ''
         else:
             sql = self.abstractDb.gen.loadLayerFromDatabase(schema+'.'+lyrName)            
-        self.setDataSource(schema, lyrName, geomColumn, sql)
+        self.setDataSource(schema, self.geomDict['tablePerspective'][layerName]['tableName'], geomColumn, sql)
 
         vlayer = iface.addVectorLayer(self.uri.uri(), lyrName, self.provider)
         crs = QgsCoordinateReferenceSystem(int(srid), QgsCoordinateReferenceSystem.EpsgCrsId)

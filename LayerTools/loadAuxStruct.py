@@ -112,9 +112,9 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
             auxClasses = auxClasses + auxCentroids
             auxClasses.sort(reverse=True)
             auxClasses = ['aux_moldura_a']+auxClasses
-            factory = self.layerFactory.makeLoader(self.iface, auxClasses)
-            
+            factory = self.layerFactory.makeLoader(self.iface, self.widget.abstractDb)
+            factory.load(auxClasses)
         except Exception as e:
-                QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load auxiliary classes! Check log for details!"), level=QgsMessageBar.CRITICAL)
                 

@@ -1473,7 +1473,10 @@ class PostgisDb(AbstractDb):
             self.db.rollback()
             raise Exception(self.tr('Problem getting earth coverage structure: ') + query.lastError().text())
         while query.next():
-            centroidList.append(query.value(0))
+            table = query.value(0).split('_')
+            table[-1] = 'c'
+            layerName = '_'.join(table)
+            centroidList.append(layerName)
         return centroidList
 
     def getWhoAmI(self, cl, id):
@@ -1848,7 +1851,8 @@ class PostgisDb(AbstractDb):
             layerName = tableName
             if geometryColumn == 'centroid':
                 table = layerName.split('_')
-                layerName = table[:-1]+table[-1].replace('c','a')
+                table[-1] = 'c'
+                layerName = '_'.join(table)
             if layerName not in geomDict['tablePerspective'].keys():
                 geomDict['tablePerspective'][layerName] = dict()
                 geomDict['tablePerspective'][layerName]['schema'] = tableSchema
