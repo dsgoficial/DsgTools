@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>386</width>
-    <height>618</height>
+    <width>361</width>
+    <height>564</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,17 +32,24 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="0" colspan="2">
-         <widget class="QPushButton" name="historyButton">
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="databaseLineEdit"/>
+        </item>
+        <item row="0" column="2">
+         <widget class="QPushButton" name="openDbPushButton">
           <property name="text">
-           <string>Open History</string>
+           <string>Open</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1" colspan="4">
-         <widget class="QLineEdit" name="databaseLineEdit"/>
+        <item row="1" column="0" colspan="3">
+         <widget class="QLineEdit" name="filterLineEdit">
+          <property name="placeholderText">
+           <string>Filter by process name</string>
+          </property>
+         </widget>
         </item>
-        <item row="2" column="0" colspan="6">
+        <item row="2" column="0" colspan="3">
          <widget class="QTreeWidget" name="processTreeWidget">
           <property name="minimumSize">
            <size>
@@ -73,38 +80,37 @@
           </column>
          </widget>
         </item>
-        <item row="0" column="5">
-         <widget class="QPushButton" name="openDbPushButton">
-          <property name="text">
-           <string>Open</string>
+        <item row="3" column="0" colspan="3">
+         <widget class="QSplitter" name="splitter_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="6">
-         <widget class="QLineEdit" name="filterLineEdit">
-          <property name="placeholderText">
-           <string>Filter by process name</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="2">
-         <widget class="QPushButton" name="reRunButton">
-          <property name="text">
-           <string>Re-Run Last Process</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="3" colspan="3">
-         <widget class="QPushButton" name="runButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Run Process</string>
-          </property>
+          <widget class="QSplitter" name="splitter">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <widget class="QPushButton" name="runButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Run Process</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="reRunButton">
+            <property name="text">
+             <string>Re-Run Last Process</string>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QPushButton" name="historyButton">
+           <property name="text">
+            <string>Open History</string>
+           </property>
+          </widget>
          </widget>
         </item>
        </layout>
