@@ -1,1 +1,1 @@
-print len([1])
+print type(True + True)

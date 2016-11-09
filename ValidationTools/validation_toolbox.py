@@ -91,7 +91,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         Creates the remove flag menu
         """
-        flagId = self.tableView.selectionModel().selection().indexes().data()
+        flagId = self.tableView.selectionModel().selection().indexes()[0].data()
         self.configWindow.widget.abstractDb.deleteProcessFlags(flagId = flagId)
         self.refreshFlags()
 
