@@ -426,7 +426,6 @@ class PostGISSqlGenerator(SqlGenerator):
                 clauseList.append(classClause)
             if flagId:
                 try:
-                    flagClause
                     for row in flagId:
                         flagClauseRow = """id = {0} """.format(row)
                         clauseList.append(flagClauseRow)
@@ -1534,16 +1533,19 @@ class PostGISSqlGenerator(SqlGenerator):
         Returns all process or classes that raised flags
         """
         # to allow changing cases as desired
-        filterType = filterType.lower()
+        # filterType = filterType.lower()
         sql = ""
-        if filterType == DsgEnums.ProcessName:
+        # problemas com o Enum.
+        if 'process' in filterType.lower():
+            filterType = 0
+        elif filterType:
+            filterType = 1
+        if filterType == DsgEnums.ProcessName:            
             sql = """
         SELECT DISTINCT process_name 
             FROM validation.aux_flags_validacao;
             """
-        elif filterType == DsgEnums.ClassName:
-            # as a dropdown, it has only 2 options: either it's filtered
-            # by class or process
+        elif filterType == DsgEnums.ClassName:      
             sql = """
         SELECT DISTINCT layer
             FROM validation.aux_flags_validacao;
