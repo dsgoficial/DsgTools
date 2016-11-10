@@ -2042,7 +2042,15 @@ class PostgisDb(AbstractDb):
         geomDict = dict()
         while query.next():
             aux = json.loads(query.value(0))
-            geomDict[aux['geomtype']]=aux['classlist']
+            if aux['geomtype'] == 'POINT':
+                classlist = []
+                for layerName in aux['classlist']:
+                    table = layerName.split('_')
+                    table[-1] = 'c'
+                    classlist.append('_'.join(table))                  
+                geomDict[aux['geomtype']] = classlist
+            else:
+                geomDict[aux['geomtype']] = aux['classlist']
         return geomDict
     
     def getGeomColumnDict(self):
