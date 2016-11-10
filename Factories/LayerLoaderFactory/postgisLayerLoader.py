@@ -108,7 +108,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         else:
             domLayerDict = dict()
         #3. Get Aux dicts
-        domainDict = self.abstractDb.getDbDomainDict()
+        domainDict = self.abstractDb.getDbDomainDict(self.geomDict)
         constraintDict = self.abstractDb.getCheckConstraintDict()
         multiColumnsDict = self.abstractDb.getMultiColumnsDict()
         notNullDict = self.abstractDb.getNotNullDictV2()

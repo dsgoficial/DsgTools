@@ -1827,7 +1827,7 @@ class PostgisDb(AbstractDb):
             schemaList.append(query.value(0))
         return schemaList
     
-    def getGeomDict(self, getCentroids = False):
+    def getGeomDict(self, geomTypeDict):
         '''
         returns a dict like this:
         {'tablePerspective' : {
@@ -1839,7 +1839,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom tables from db: ")+query.lastError().text())
         geomDict = dict()
-        geomDict['primitivePerspective'] = self.getGeomTypeDict()
+        geomDict['primitivePerspective'] = geomTypeDict
         geomDict['tablePerspective'] = dict()
         while query.next():
             isCentroid = False
@@ -1862,7 +1862,7 @@ class PostgisDb(AbstractDb):
                 geomDict['tablePerspective'][layerName]['tableName'] = tableName
         return geomDict
     
-    def getDbDomainDict(self):
+    def getDbDomainDict(self, auxGeomDict):
         '''
         returns a dict like this:
         {'adm_posto_fiscal_a': {
@@ -1910,7 +1910,6 @@ class PostgisDb(AbstractDb):
             if tableName in multiDict.keys():
                 if fkAttribute in multiDict[tableName]:
                     geomDict[tableName]['columns'][fkAttribute]['isMulti'] = True
-        auxGeomDict = self.getGeomDict()
         for tableName in multiDict.keys():
             if tableName in auxGeomDict['tablePerspective'].keys():
                 for fkAttribute in multiDict[tableName]:

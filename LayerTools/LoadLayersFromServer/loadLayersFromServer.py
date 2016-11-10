@@ -169,7 +169,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                 factoryDict[dbName].load(selectedClasses,onlyWithElements=withElements, stylePath = selectedStyle, useInheritance = onlyParents)
                 progress.step()
             except Exception as e:
-                exceptionDict[dbName] = str(e.args[0])
+                exceptionDict[dbName] = ':'.join(e.args)
                 QApplication.restoreOverrideCursor()
                 progress.step()
             QApplication.restoreOverrideCursor()

@@ -49,8 +49,8 @@ class EDGVLayerLoader(QObject):
         self.utils = Utils()
         self.logErrorDict = dict()
         self.errorLog = ''
-        self.geomDict = self.abstractDb.getGeomDict()
         self.geomTypeDict = self.abstractDb.getGeomTypeDict()
+        self.geomDict = self.abstractDb.getGeomDict(self.geomTypeDict)
         self.correspondenceDict = {'POINT':self.tr('Point'), 'MULTIPOINT':self.tr('Point'), 'LINESTRING':self.tr('Line'),'MULTILINESTRING':self.tr('Line'), 'POLYGON':self.tr('Area'), 'MULTIPOLYGON':self.tr('Area')}
         
     def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False):
