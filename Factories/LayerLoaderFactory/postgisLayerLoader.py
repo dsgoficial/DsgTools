@@ -143,7 +143,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             sql = ''
         else:
             sql = self.abstractDb.gen.loadLayerFromDatabase(schema+'.'+lyrName)            
-        self.setDataSource(schema, self.geomDict['tablePerspective'][layerName]['tableName'], geomColumn, sql)
+        self.setDataSource(schema, self.geomDict['tablePerspective'][lyrName]['tableName'], geomColumn, sql)
 
         vlayer = iface.addVectorLayer(self.uri.uri(), lyrName, self.provider)
         crs = QgsCoordinateReferenceSystem(int(srid), QgsCoordinateReferenceSystem.EpsgCrsId)

@@ -103,7 +103,7 @@ class EDGVLayerLoader(QObject):
                 continue
             if self.correspondenceDict[type] not in lyrDict.keys():
                 lyrDict[self.correspondenceDict[type]] = dict()
-            for lyr in self.geomTypeDict.keys():
+            for lyr in self.geomTypeDict[type]:
                 if lyr in lyrList:
                     cat = lyr.split('_')[0]
                     if cat not in lyrDict[self.correspondenceDict[type]].keys():
