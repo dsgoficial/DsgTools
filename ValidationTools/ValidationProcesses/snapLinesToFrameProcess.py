@@ -45,8 +45,8 @@ class SnapLinesToFrameProcess(ValidationProcess):
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
-            classesWithGeom = self.abstractDb.getOrphanGeomTablesWithElements()
-            if len(classesWithElem) == 0:
+            classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
+            if len(classesWithGeom) == 0:
                 self.setStatus(self.tr('Empty database.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
