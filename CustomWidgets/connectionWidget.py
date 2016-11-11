@@ -256,10 +256,12 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         try:
             if self.serverWidget.abstractDb:
                 dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer(parentWidget = self)
+                dbList.sort()
                 self.comboBoxPostgis.clear()
                 self.comboBoxPostgis.addItem(self.tr('Select Database'))
                 for db, version in dbList:
                     self.comboBoxPostgis.addItem(db)
+                
             else:
                 self.setInitialState()
                 return
