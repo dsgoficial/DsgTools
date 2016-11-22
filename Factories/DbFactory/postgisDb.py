@@ -2197,6 +2197,9 @@ class PostgisDb(AbstractDb):
         self.createDatabase(dbName)
     
     def createDatabase(self, dbName):
+        '''
+        Creates a database with a given name
+        '''
         self.checkAndOpenDb()
         sql = self.gen.getCreateDatabase(dbName)
         query = QSqlQuery(self.db)
@@ -2226,6 +2229,8 @@ class PostgisDb(AbstractDb):
             edgvPath = os.path.join(currentPath, 'sqls', '213', 'edgv213.sql')
         elif version == 'FTer_2a_Ed':
             edgvPath = os.path.join(currentPath, 'sqls', 'FTer_2a_Ed', 'edgvFter_2a_Ed.sql')
+        elif version == 'admin':
+            edgvPath = os.path.join(currentPath, 'sqls', 'admin', 'dsgtools_admindb.sql')
         return edgvPath
     
     def setStructureFromSql(self, version, epsg):
