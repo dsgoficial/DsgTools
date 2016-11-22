@@ -45,12 +45,13 @@ class PermissionManager(QObject):
         '''
         Creates dsgtools_admindb
         '''
-        serverAbstractDb.createDatabase('dsgtools_admindb', dropIfExists = True)
+        serverAbstractDb.createAdminDb()
         (host, port, user, password) = serverAbstractDb.getParamsFromConectedDb()
-        newDb = DbFactory.createDbFactory('QPSQL')
-        newDb.connectDatabaseWithParameters(host, port, 'dsgtools_admindb', user, password)
-        sqlPath = newDb.getCreationSqlPath('admin')
-        newDb.runSqlFromFile(sqlPath)
+        
+        adminDb = DbFactory().createDbFactory('QPSQL')
+        adminDb.connectDatabaseWithParameters(host, port, 'dsgtools_admindb', user, password)
+        sqlPath = adminDb.getCreationSqlPath('admin')
+        adminDb.runSqlFromFile(sqlPath)
         
         
                 

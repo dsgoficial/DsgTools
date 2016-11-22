@@ -2337,3 +2337,13 @@ class PostgisDb(AbstractDb):
         user = self.db.userName()
         password = self.db.password()
         return (host, port, user, password)
+
+    def createAdminDb(self):
+        '''
+        Creates a database with a given name
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.getCreateDatabase('dsgtools_admindb')
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr("Problem creating database: ")+query.lastError().text())
