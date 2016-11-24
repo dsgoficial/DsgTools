@@ -1033,3 +1033,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def removeEmptyGeomtriesFromDb(self, layer):
         sql = "DELETE FROM {0} WHERE st_isempty(geom) = TRUE".format(layer)
         return sql
+    
+    def hasAdminDb(self):
+        sql = """SELECT datname from pg_database where datname = 'dsgtools_admindb';"""
+        return sql

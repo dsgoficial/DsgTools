@@ -29,30 +29,46 @@ from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 from PyQt4.Qt import QObject
 
 class PermissionManager(QObject):
+    '''
+    This class manages the permissions on dsgtools databases.
+    '''
     def __init__(self, serverAbstractDb, parentWidget = None):
         super(PermissionManager,self).__init__()
         self.parentWidget = parentWidget
-        self.instantiateAdminDb(serverAbstractDb)
+        self.serverAbstractDb = serverAbstractDb
+        self.adminDb = self.instantiateAdminDb(serverAbstractDb)
     
     def instantiateAdminDb(self, serverAbstractDb):
         '''
         Instantiates dsgtools_admindb in the same server as serverAbstractDb. 
         If dsgtools_admindb does not exists, instantiateAdminDb calls createAdminDb
         '''
-        pass
+        (host, port, user, password) = serverAbstractDb.getParamsFromConectedDb()
+        adminDb = DbFactory().createDbFactory('QPSQL')
+        if not serverAbstractDb.hasAdminDb():
+            return self.createAdminDb(serverAbstractDb, adminDb, host, port, user, password)
+        return adminDb.connectDatabaseWithParameters(host, port, 'dsgtools_admindb', user, password)
     
-    def createAdminDb(self, serverAbstractDb):
+    def createAdminDb(self, serverAbstractDb, adminDb, host, port, user, password):
         '''
         Creates dsgtools_admindb
         '''
         serverAbstractDb.createAdminDb()
-        (host, port, user, password) = serverAbstractDb.getParamsFromConectedDb()
-        
-        adminDb = DbFactory().createDbFactory('QPSQL')
         adminDb.connectDatabaseWithParameters(host, port, 'dsgtools_admindb', user, password)
         sqlPath = adminDb.getCreationSqlPath('admin')
         adminDb.runSqlFromFile(sqlPath)
-        
-        
-                
-        
+        return adminDb
+
+    def syncronizePermissionsWithAdminDb(self):
+        '''
+        Syncronizes permissions with dsgtools_admindb.
+        1- Gets roles from pg_roles
+        2-  
+        '''
+        pass
+    
+    def getProfileByName(self, name):
+        '''
+        Get profile from table public.
+        '''
+        pass

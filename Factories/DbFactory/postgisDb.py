@@ -2347,3 +2347,17 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr("Problem creating database: ")+query.lastError().text())
+    
+    def hasAdminDb(self):
+        '''
+        Checks if server has a dsgtools_admindb
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.hasAdminDb()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem looking for admindb: ")+query.lastError().text())
+        while query.next():
+            if query.value(0):
+                return True
+        return False
