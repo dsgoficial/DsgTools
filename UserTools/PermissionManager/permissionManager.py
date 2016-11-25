@@ -72,3 +72,31 @@ class PermissionManager(QObject):
         Get profile from table public.
         '''
         pass
+    
+    def updatePermission(self, roleName, newDefinition):
+        '''
+        Updates permission on all databases from server upon changes on permission definition. 
+        '''
+        pass
+    
+    def createPermission(self, permissionName, edgvVersion, jsonDict):
+        '''
+        Creates profile on dsgtools_admindb. 
+        '''
+        pass
+    
+    def updatePermission(self, permissionName, edgvVersion, newJsonDict):
+        '''
+        1. Updates public.permission_profile on dsgtools_admindb with the newJsonDict;
+        2. Gets all roles from all databases that have the same permissionName;
+        3. For each role, parse this role to detect the differences between oldJson and newJson;
+        4. For each difference, grant or revoke the change;
+        '''
+        pass
+    
+    def deletePermission(self, permissionName, edgvVersion):
+        '''
+        1. Delete permission profile from public.permission_profile on dsgtools_admindb;
+        2. Get roles with the same definition of permissionName and delete them.
+        '''
+        pass

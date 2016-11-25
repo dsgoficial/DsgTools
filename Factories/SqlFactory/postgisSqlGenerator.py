@@ -1037,3 +1037,10 @@ class PostGISSqlGenerator(SqlGenerator):
     def hasAdminDb(self):
         sql = """SELECT datname from pg_database where datname = 'dsgtools_admindb';"""
         return sql
+
+    def getRolesDict(self):
+        sql = """select distinct  pgd.datname, pgr.rolname from pg_shdepend as shd join (
+            select * from pg_roles where rolcanlogin = 'f'
+            ) as pgr on shd.refobjid = pgr.oid join pg_database as pgd on shd.dbid = pgd.oid
+            """
+        return sql

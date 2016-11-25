@@ -2361,3 +2361,20 @@ class PostgisDb(AbstractDb):
             if query.value(0):
                 return True
         return False
+    
+    def getRolesDict(self):
+        '''
+        Gets a dict with the format: 'dbname':{[-list of roles-]}
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.getRolesDict()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting roles dict: ")+query.lastError().text())
+        rolesDict = dict()
+        while query.next():
+            dbname = query.value(0)
+            if dbname not in rolesDict.keys():
+                rolesDict[dbname] = []
+            rolesDict[dbname].append(query.value(1))
+        return rolesDict
