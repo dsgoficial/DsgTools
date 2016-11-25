@@ -2378,3 +2378,16 @@ class PostgisDb(AbstractDb):
                 rolesDict[dbname] = []
             rolesDict[dbname].append(query.value(1))
         return rolesDict
+    
+    def insertIntoPermissionProfile(self, name, jsondict, edgvversion):
+        '''
+        Inserts into public.permission_profile on dsgtools_admindb (name, jsondict, edgvversion)
+        '''
+        self.checkAndOpenDb()
+        if self.db.databaseName() <> 'dsgtools_admindb':
+            raise Exception(self.tr('Error! Operation not defined for non dsgtools_admindb'))
+        sql = self.gen.insertIntoPermissionProfile(name, jsondict, edgvversion)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr("Problem inserting into permission profile: ")+query.lastError().text())
+        

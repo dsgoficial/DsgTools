@@ -59,9 +59,9 @@ class PermissionManager(QObject):
         adminDb.runSqlFromFile(sqlPath)
         return adminDb
 
-    def syncronizePermissionsWithAdminDb(self):
+    def syncPermissionsWithAdminDb(self):
         '''
-        Syncronizes permissions with dsgtools_admindb.
+        Sync permissions with dsgtools_admindb.
         1- Gets roles from pg_roles
         2-  
         '''
@@ -79,13 +79,13 @@ class PermissionManager(QObject):
         '''
         pass
     
-    def createPermission(self, permissionName, edgvVersion, jsonDict):
+    def createPermissionProfile(self, permissionName, edgvVersion, jsonDict):
         '''
         Creates profile on dsgtools_admindb. 
         '''
-        pass
+        self.adminDb.insertIntoPermissionProfile(permissionName, edgvVersion, jsonDict)
     
-    def updatePermission(self, permissionName, edgvVersion, newJsonDict):
+    def updatePermissionProfile(self, permissionName, edgvVersion, newJsonDict):
         '''
         1. Updates public.permission_profile on dsgtools_admindb with the newJsonDict;
         2. Gets all roles from all databases that have the same permissionName;
@@ -98,5 +98,35 @@ class PermissionManager(QObject):
         '''
         1. Delete permission profile from public.permission_profile on dsgtools_admindb;
         2. Get roles with the same definition of permissionName and delete them.
+        '''
+        pass
+    
+    def importProfile(self, profileName, inputJsonFilePath):
+        '''
+        1. Reads inputJsonFilePath and parses it into a python dict;
+        2. Validates inputPermissionDict;
+        3. Checks if profile with profileName already exists;
+        4. If it does not exist, import it into database;
+        '''
+        pass
+    
+    def batchImportProfiles(self, profilesDir):
+        '''
+        1. Get all profiles in profilesDir;
+        2. Import each using importProfile
+        '''
+        pass
+
+    def exportProfile(self, profileName, edgvversion, outputPath):
+        '''
+        1. Get profile from public.permission_profile;
+        2. Export it to outputPath.
+        '''
+        pass
+    
+    def batchExportProfiles(self, outputDir):
+        '''
+        1. Get all profiles in public.permission_profile;
+        2. Export each using exportProfile.
         '''
         pass

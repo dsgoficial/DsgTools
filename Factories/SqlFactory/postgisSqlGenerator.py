@@ -127,6 +127,7 @@ class PostGISSqlGenerator(SqlGenerator):
                 sql += """GRANT USAGE ON ALL SEQUENCES IN SCHEMA "{0}" TO "{1}";\n""".format(schema,roleName)
         
         sql += """GRANT SELECT ON db_metadata TO "{0}";\n""".format(roleName)
+        sql += """GRANT SELECT ON public.geometry_columns TO "{0}";\n""".format(roleName)
         sql += """GRANT ALL ON ALL TABLES IN SCHEMA information_schema TO "{0}";\n""".format(roleName)
         sql += """GRANT ALL ON ALL TABLES IN SCHEMA pg_catalog TO "{0}";\n""".format(roleName)
         sql += """GRANT ALL ON SCHEMA information_schema TO "{0}";\n""".format(roleName)
@@ -1043,4 +1044,8 @@ class PostGISSqlGenerator(SqlGenerator):
             select * from pg_roles where rolcanlogin = 'f'
             ) as pgr on shd.refobjid = pgr.oid join pg_database as pgd on shd.dbid = pgd.oid
             """
+        return sql
+    
+    def insertIntoPermissionProfile(self, name, jsondict, edgvversion):
+        sql = """INSERT INTO public.permission_profile (name, jsondict, edgvversion) VALUES ('{0}','{1}','{2}'); """.format(name, jsondict, edgvversion);
         return sql

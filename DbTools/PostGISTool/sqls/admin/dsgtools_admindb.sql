@@ -47,7 +47,7 @@ CREATE EXTENSION "uuid-ossp"
 CREATE TABLE public.permission_profile(
 	id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	name text,
-	description text NOT NULL,
+	jsondict text NOT NULL,
 	edgvversion text,
 	CONSTRAINT permissions_pk PRIMARY KEY (id),
 	CONSTRAINT unique_name_and_version UNIQUE (name,edgvversion)
@@ -80,33 +80,6 @@ CREATE TABLE public.metadata(
 ALTER TABLE public.metadata OWNER TO postgres;
 -- ddl-end --
 
--- object: public.server_databases | type: TABLE --
--- DROP TABLE IF EXISTS public.server_databases CASCADE;
-CREATE TABLE public.server_databases(
-	id uuid NOT NULL DEFAULT uuid_generate_v4(),
-	dboid oid,
-	CONSTRAINT server_databases_pk PRIMARY KEY (id)
-
-);
--- ddl-end --
-ALTER TABLE public.server_databases OWNER TO postgres;
--- ddl-end --
-
--- object: public.installed_profiles | type: TABLE --
--- DROP TABLE IF EXISTS public.installed_profiles CASCADE;
-CREATE TABLE public.installed_profiles(
-	id uuid NOT NULL DEFAULT uuid_generate_v4(),
-	dbuuid uuid,
-	profileid uuid,
-	roleuuid uuid,
-	pgroleoid oid,
-	CONSTRAINT installed_profiles_pk PRIMARY KEY (id)
-
-);
--- ddl-end --
-ALTER TABLE public.installed_profiles OWNER TO postgres;
--- ddl-end --
-
 -- object: public.admin_log | type: TABLE --
 -- DROP TABLE IF EXISTS public.admin_log CASCADE;
 CREATE TABLE public.admin_log(
@@ -118,20 +91,6 @@ CREATE TABLE public.admin_log(
 );
 -- ddl-end --
 ALTER TABLE public.admin_log OWNER TO postgres;
--- ddl-end --
-
--- object: installed_profiles_profile_fk | type: CONSTRAINT --
--- ALTER TABLE public.installed_profiles DROP CONSTRAINT IF EXISTS installed_profiles_profile_fk CASCADE;
-ALTER TABLE public.installed_profiles ADD CONSTRAINT installed_profiles_profile_fk FOREIGN KEY (profileid)
-REFERENCES public.permission_profile (id) MATCH FULL
-ON DELETE NO ACTION ON UPDATE NO ACTION;
--- ddl-end --
-
--- object: installed_profiles_db_fk | type: CONSTRAINT --
--- ALTER TABLE public.installed_profiles DROP CONSTRAINT IF EXISTS installed_profiles_db_fk CASCADE;
-ALTER TABLE public.installed_profiles ADD CONSTRAINT installed_profiles_db_fk FOREIGN KEY (dbuuid)
-REFERENCES public.server_databases (id) MATCH FULL
-ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- ddl-end --
 
 
