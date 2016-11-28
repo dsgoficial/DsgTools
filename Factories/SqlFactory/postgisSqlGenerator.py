@@ -1040,7 +1040,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getRolesDict(self):
-        sql = """select row_to_json(a) from (select distinct  pgd.datname, pgr.rolname from pg_shdepend as shd join (
+        sql = """select row_to_json(a) from (select distinct  pgd.datname as dbname, pgr.rolname as rolename from pg_shdepend as shd join (
             select * from pg_roles where rolcanlogin = 'f'
             ) as pgr on shd.refobjid = pgr.oid join pg_database as pgd on shd.dbid = pgd.oid) as a
             """
@@ -1048,4 +1048,17 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def insertIntoPermissionProfile(self, name, jsondict, edgvversion):
         sql = """INSERT INTO public.permission_profile (name, jsondict, edgvversion) VALUES ('{0}','{1}','{2}'); """.format(name, jsondict, edgvversion);
+        return sql
+    
+    def getPermissionProfile(self, name, edgvversion):
+        sql = """select jsondict as jsondict from public.permission_profile where name = '{0}' and edgvversion = '{1}';""".format(name, edgvversion)
+        return sql
+    
+    def deletePermissionProfile(self, name, edgvversion):
+        sql = """DELETE FROM public.permissionprofile where name = '{0}' and  edgvversion = '{1}';""".format(name, edgvversion)
+        return sql
+    
+    def dropRoleOnDatabase(self, roleName):
+        sql = """drop owned by "{0}" cascade;
+            drop role "{0}";""".format(roleName)
         return sql

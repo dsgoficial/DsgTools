@@ -2373,10 +2373,10 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem getting roles dict: ")+query.lastError().text())
         rolesDict = dict()
         while query.next():
-            dbname = query.value(0)
-            if dbname not in rolesDict.keys():
-                rolesDict[dbname] = []
-            rolesDict[dbname].append(query.value(1))
+            aux = json.loads(query.value(0))
+            if aux['dbname'] not in rolesDict.keys():
+                rolesDict[aux['dbname']] = []
+            rolesDict[aux['dbname']].append(aux['rolename'])
         return rolesDict
     
     def insertIntoPermissionProfile(self, name, jsondict, edgvversion):
@@ -2390,4 +2390,26 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr("Problem inserting into permission profile: ")+query.lastError().text())
-        
+    
+    def dropRoleOnDatabase(self, roleName):
+        '''
+        Drops role using drop owned by and drop role.
+        This is like dropRole, but it does not uses a specific function, hence it is more generic.
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.dropRoleOnDatabase(roleName)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr("Problem dropping profile: ")+ roleName + ' :' + query.lastError().text())
+    
+    def getRoleFromAdminDb(self, roleName, edgvVersion):
+        '''
+        Gets role from public.permission_profile
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.getPermissionProfile(roleName, edgvVersion)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting roles from adminDb: ")+query.lastError().text())
+        while query.next():
+            return query.value(0)

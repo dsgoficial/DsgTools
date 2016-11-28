@@ -98,7 +98,7 @@ class Utils:
         else:
             return self.buildOneNestedDict(inputDict, keyList, value)
     
-    def readJsonFile(self, filename):
+    def readJsonFile(self, filename, returnFileAndDict = False):
         '''
         Reads a json file and makes a dictionary
         '''
@@ -107,7 +107,10 @@ class Utils:
             data = file.read()
             fileDict = json.loads(data)
             file.close()
-            return fileDict
+            if returnFileAndDict:
+                return fileDict, data
+            else:
+                return fileDict
         except:
             return dict()
         
