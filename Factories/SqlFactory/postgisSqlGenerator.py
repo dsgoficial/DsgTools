@@ -1054,11 +1054,25 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """select jsondict as jsondict from public.permission_profile where name = '{0}' and edgvversion = '{1}';""".format(name, edgvversion)
         return sql
     
+    def updatePermisisonProfile(self, name, edgvversion, newjsondict):
+        sql = """update public.permission_profile set jsondict = '{2}' where name = '{0}' and edgvversion = '{1}'; """.format(name, edgvversion, newjsondict)
+        return sql
+    
     def deletePermissionProfile(self, name, edgvversion):
-        sql = """DELETE FROM public.permissionprofile where name = '{0}' and  edgvversion = '{1}';""".format(name, edgvversion)
+        sql = """DELETE FROM public.permission_profile where name = '{0}' and  edgvversion = '{1}';""".format(name, edgvversion)
         return sql
     
     def dropRoleOnDatabase(self, roleName):
         sql = """drop owned by "{0}" cascade;
             drop role "{0}";""".format(roleName)
+        return sql
+    
+    def getRolesWithGrantedUsers(self):
+        sql = """select row_to_json(a) from (
+                    select pgr.rolname as profile, array_agg(pgr2.rolname) as users  from pg_auth_members as pgam 
+                        left join pg_roles as pgr on pgam.roleid = pgr.oid 
+                        left join pg_roles as pgr2 on pgam.member = pgr2.oid
+                    group by pgr.rolname
+                ) as a;
+        """
         return sql

@@ -43,20 +43,31 @@ class PermissionManager(QObject):
         self.dbDict = dbDict
         self.serverAbstractDb = serverAbstractDb
         self.adminDb = self.instantiateAdminDb(serverAbstractDb)
-        self.getRolesInformation()
         self.utils = Utils()
     
+    def instantiateAbstractDb(self, name):
+        (host, port, user, password) = self.serverAbstractDb.getParamsFromConectedDb()
+        abstractDb = DbFactory().createDbFactory('QPSQL')
+        abstractDb.connectDatabaseWithParameters(host, port, name, user, password)
+        return abstractDb
+    
     def getRolesInformation(self):
-        self.dbRolesDict = self.adminDb.getRolesDict()
-        self.rolesDict = dict()
-        for db in self.dbRolesDict.keys():
-            for role in self.dbRolesDict[db]:
-                profileName = role.split('_')[0:-5]
-                if profileName not in self.rolesDict.keys():
-                    self.rolesDict[profileName] = dict()
-                if db not in self.rolesDict[profileName].keys():
-                    self.rolesDict[profileName][db] = []
-                self.rolesDict[profileName][db].append(role)
+        '''
+        Builds two dicts:
+        dbRolesDict = { 'dbname':[-list of roles-] }
+        rolesDict = { 'profileName': { 'dbname' : [-list of roles with uuid on it-] } }
+        '''
+        dbRolesDict = self.adminDb.getRolesDict()
+        rolesDict = dict()
+        for db in dbRolesDict.keys():
+            for role in dbRolesDict[db]:
+                profileName = '_'.join(role.split('_')[0:-5])
+                if profileName not in rolesDict.keys():
+                    rolesDict[profileName] = dict()
+                if db not in rolesDict[profileName].keys():
+                    rolesDict[profileName][db] = []
+                rolesDict[profileName][db].append(role)
+        return dbRolesDict, rolesDict
     
     def instantiateAdminDb(self, serverAbstractDb):
         '''
@@ -82,7 +93,7 @@ class PermissionManager(QObject):
     
     def getProfile(self, name, edgvVersion):
         '''
-        Get profile from table public.
+        Get profile from table public.permission_profile
         '''
         profileDict = json.loads(self.adminDb.getRoleFromAdminDb(name, edgvVersion))
         if not profileDict:
@@ -99,7 +110,7 @@ class PermissionManager(QObject):
         '''
         Creates profile on dsgtools_admindb.
         '''
-        self.adminDb.insertIntoPermissionProfile(permissionName, edgvVersion, jsonDict)
+        self.adminDb.insertIntoPermissionProfile(permissionName, jsonDict, edgvVersion)
     
     def grantPermission(self, dbName, permissionName, edgvVersion, userName):
         '''
@@ -109,32 +120,65 @@ class PermissionManager(QObject):
         3. Grants profile to user on db.
         '''
         profileDict = self.getProfile(permissionName, edgvVersion)
-        if not self.permissionIsInstalled(self.dbDict[dbName], dbName, permissionName):
+        self.grantPermissionWithProfileDict(dbName, permissionName, userName, profileDict)
+    
+    def grantPermissionWithProfileDict(self, dbName, permissionName, userName, profileDict):
+        '''
+        Grants permission on a db using profileDict
+        '''
+        if not self.isPermissionInstalled(self.dbDict[dbName], dbName, permissionName):
             self.dbDict[dbName].createRole(permissionName, profileDict) #creates profile in db
-            self.getRolesInformation() #done to refresh dicts due to new permission
-        for role in self.rolesDict[permissionName][dbName]:
+        (dbRolesDict, rolesDict) = self.getRolesInformation() #done to refresh dicts due to new permission 
+        for role in rolesDict[permissionName][dbName]:
             self.dbDict[dbName].grantRole(userName, role)
     
-    def permissionIsInstalled(self, abstractDb, dbName, permissionName):
+    def revokePermission(self, dbName, permissionName, userName):
+        '''
+        Revokes permission on a db from permissionName.
+        '''
+        (dbRolesDict, rolesDict) = self.getRolesInformation()
+        for realRoleName in dbRolesDict[permissionName][dbName]:
+            try:
+                self.dbDict[dbName].revokeRole(userName, realRoleName)
+            except Exception as e:
+                raise Exception(self.tr('Problem revoking role ') + permissionName + self.tr(' on database ') + dbName +':\n' + str(e))
+    
+    def isPermissionInstalled(self, abstractDb, dbName, permissionName):
         '''
         Checks if permission is already installed;
         Returns True if it is installed and False otherwise.
         '''
-        if permissionName not in self.rolesDict.keys():
+        (dbRolesDict, rolesDict) = self.getRolesInformation()
+        if permissionName not in rolesDict.keys():
             return False
-        if dbName not in self.rolesDict[permissionName].keys():
+        if dbName not in rolesDict[permissionName].keys():
             return False
         return True
 
     
-    def updatePermissionProfile(self, permissionName, edgvVersion, newJsonDict):
+    def updatePermissionProfile(self, permissionName, edgvVersion, newProfileDict):
         '''
-        1. Updates public.permission_profile on dsgtools_admindb with the newJsonDict;
-        2. Gets all roles from all databases that have the same permissionName;
-        3. For each role, parse this role to detect the differences between oldJson and newJson;
-        4. For each difference, grant or revoke the change;
+        1. Gets all roles from all databases that have the same permissionName;
+        2. For each role, get users that are granted to them;
+        3. Drop role, create a new one and grant it to previous users;
+        4. Updates public.permission_profile on dsgtools_admindb with the newJsonDict.
         '''
-        pass
+        (dbRolesDict, rolesDict) = self.getRolesInformation()
+        grantedRoleDict = self.adminDb.getGrantedRolesDict()
+        for dbName in rolesDict[permissionName].keys():
+            for roleName in rolesDict[permissionName][dbName]:
+                if dbName not in self.dbDict.keys():
+                    abstractDb = self.instantiateAbstractDb(dbName)
+                else:
+                    abstractDb = self.dbDict[dbName]
+                usersToBeGranted = []
+                if roleName in grantedRoleDict.keys():
+                    usersToBeGranted = grantedRoleDict[roleName]
+                abstractDb.dropRoleOnDatabase(roleName)
+                for userName in usersToBeGranted:
+                    self.grantPermissionWithProfileDict(dbName, permissionName, userName, newProfileDict)
+        newjsonprofile = json.dumps(newProfileDict, sort_keys=True, indent=4)
+        self.adminDb.updatePermissionProfile(permissionName, edgvVersion, newjsonprofile)
     
     def deletePermission(self, permissionName, edgvVersion):
         '''
@@ -142,8 +186,20 @@ class PermissionManager(QObject):
         2. Delete permission profile from public.permission_profile on dsgtools_admindb;
         '''
         #first step, delete roles with the same definition of selected profile
-        #
-        pass
+        try:
+            for dbName in self.rolesDict[permissionName].keys():
+                for roleName in self.rolesDict[permissionName][dbName]:
+                    if dbName not in self.dbDict.keys():
+                        abstractDb = self.instantiateAbstractDb(dbName)
+                    else:
+                        abstractDb = self.dbDict[dbName]
+                    abstractDb.dropRoleOnDatabase(roleName)
+            #after deletion, delete permission profile from public.permission_profile
+            self.adminDb.deletePermissionProfile(permissionName, edgvVersion)
+            #refreshes dicts
+            self.getRolesInformation()
+        except Exception as e:
+            raise Exception(self.tr('Problem deleting permission: ')+str(e))
     
     def importProfile(self, fullFilePath):
         '''

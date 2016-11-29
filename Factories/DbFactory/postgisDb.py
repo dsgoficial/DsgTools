@@ -2413,3 +2413,43 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem getting roles from adminDb: ")+query.lastError().text())
         while query.next():
             return query.value(0)
+    
+    def deletePermissionProfile(self, name, edgvversion):
+        '''
+        Deletes profile from from public.permission_profiles
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.deletePermissionProfile(name, edgvversion)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr("Problem deleting permission profile: ")+query.lastError().text())
+    
+    def getGrantedRolesDict(self):
+        '''
+        Gets a dict in the format:
+        { roleName : [-list of users-] } 
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.getRolesWithGrantedUsers()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting granted roles dict: ")+query.lastError().text())
+        grantedRolesDict = dict()
+        while query.next():
+            aux = json.loads(query.value(0))
+            if aux['profile'] not in grantedRolesDict.keys():
+                grantedRolesDict[aux['profile']] = []
+            for user in aux['users']:
+                if user not in grantedRolesDict[aux['profile']]:
+                    grantedRolesDict[aux['profile']].append(user)
+        return grantedRolesDict
+    
+    def updatePermissionProfile(self, name, edgvversion, newjsondict):
+        '''
+        Updates public.permission_profile with new definition.
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.updatePermisisonProfile(name, edgvversion, newjsondict)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr("Problem updating permission profile: ")+query.lastError().text())
