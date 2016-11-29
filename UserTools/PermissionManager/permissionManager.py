@@ -46,6 +46,9 @@ class PermissionManager(QObject):
         self.utils = Utils()
     
     def instantiateAbstractDb(self, name):
+        '''
+        Instantiates an abstractDb.
+        '''
         (host, port, user, password) = self.serverAbstractDb.getParamsFromConectedDb()
         abstractDb = DbFactory().createDbFactory('QPSQL')
         abstractDb.connectDatabaseWithParameters(host, port, name, user, password)
@@ -99,12 +102,6 @@ class PermissionManager(QObject):
         if not profileDict:
             raise Exception(self.tr("Profile not found on dsgtools_admindb!"))
         return profileDict
-    
-    def updatePermission(self, roleName, newDefinition):
-        '''
-        Updates permission on all databases from server upon changes on permission definition. 
-        '''
-        pass
     
     def createPermissionProfile(self, permissionName, edgvVersion, jsonDict):
         '''
@@ -163,22 +160,35 @@ class PermissionManager(QObject):
         3. Drop role, create a new one and grant it to previous users;
         4. Updates public.permission_profile on dsgtools_admindb with the newJsonDict.
         '''
-        (dbRolesDict, rolesDict) = self.getRolesInformation()
-        grantedRoleDict = self.adminDb.getGrantedRolesDict()
-        for dbName in rolesDict[permissionName].keys():
-            for roleName in rolesDict[permissionName][dbName]:
-                if dbName not in self.dbDict.keys():
-                    abstractDb = self.instantiateAbstractDb(dbName)
-                else:
-                    abstractDb = self.dbDict[dbName]
-                usersToBeGranted = []
-                if roleName in grantedRoleDict.keys():
-                    usersToBeGranted = grantedRoleDict[roleName]
-                abstractDb.dropRoleOnDatabase(roleName)
-                for userName in usersToBeGranted:
-                    self.grantPermissionWithProfileDict(dbName, permissionName, userName, newProfileDict)
-        newjsonprofile = json.dumps(newProfileDict, sort_keys=True, indent=4)
-        self.adminDb.updatePermissionProfile(permissionName, edgvVersion, newjsonprofile)
+        abstractDbsToRollBack = []
+        try:
+            abstractDbsToRollBack.append(self.adminDb)
+            self.adminDb.db.transaction() #done to rollback in case of trouble
+            (dbRolesDict, rolesDict) = self.getRolesInformation()
+            grantedRoleDict = self.adminDb.getGrantedRolesDict()
+            for dbName in rolesDict[permissionName].keys():
+                for roleName in rolesDict[permissionName][dbName]:
+                    if dbName not in self.dbDict.keys():
+                        abstractDb = self.instantiateAbstractDb(dbName)
+                    else:
+                        abstractDb = self.dbDict[dbName]
+                    #prepairs to rollback in case of exception
+                    abstractDbsToRollBack.append(abstractDb)
+                    abstractDb.db.transaction()
+                    usersToBeGranted = []
+                    if roleName in grantedRoleDict.keys():
+                        usersToBeGranted = grantedRoleDict[roleName]
+                    abstractDb.dropRoleOnDatabase(roleName)
+                    for userName in usersToBeGranted:
+                        self.grantPermissionWithProfileDict(dbName, permissionName, userName, newProfileDict)
+            newjsonprofile = json.dumps(newProfileDict, sort_keys=True, indent=4)
+            self.adminDb.updatePermissionProfile(permissionName, edgvVersion, newjsonprofile)
+            for abstractDb in abstractDbsToRollBack:
+                abstractDb.db.commit()
+        except Exception as e:
+            for abstractDb in abstractDbsToRollBack:
+                abstractDb.db.rollback()
+            raise Exception(self.tr('Unable to update profile ') + permissionName +': ' +str(e))
     
     def deletePermission(self, permissionName, edgvVersion):
         '''
@@ -186,19 +196,28 @@ class PermissionManager(QObject):
         2. Delete permission profile from public.permission_profile on dsgtools_admindb;
         '''
         #first step, delete roles with the same definition of selected profile
+        abstractDbsToRollBack = []
         try:
-            for dbName in self.rolesDict[permissionName].keys():
-                for roleName in self.rolesDict[permissionName][dbName]:
-                    if dbName not in self.dbDict.keys():
+            abstractDbsToRollBack.append(self.adminDb)
+            self.adminDb.db.transaction() #done to rollback in case of trouble
+            (dbRolesDict, rolesDict) = self.getRolesInformation()
+            for dbName in rolesDict[permissionName].keys():
+                for roleName in rolesDict[permissionName][dbName]:
+                    if dbName not in dbDict.keys():
                         abstractDb = self.instantiateAbstractDb(dbName)
                     else:
                         abstractDb = self.dbDict[dbName]
+                    #prepairs to rollback in case of exception
+                    abstractDbsToRollBack.append(abstractDb)
+                    abstractDb.db.transaction()
                     abstractDb.dropRoleOnDatabase(roleName)
             #after deletion, delete permission profile from public.permission_profile
             self.adminDb.deletePermissionProfile(permissionName, edgvVersion)
-            #refreshes dicts
-            self.getRolesInformation()
+            for abstractDb in abstractDbsToRollBack:
+                abstractDb.db.commit()
         except Exception as e:
+            for abstractDb in abstractDbsToRollBack:
+                abstractDb.db.rollback()
             raise Exception(self.tr('Problem deleting permission: ')+str(e))
     
     def importProfile(self, fullFilePath):
