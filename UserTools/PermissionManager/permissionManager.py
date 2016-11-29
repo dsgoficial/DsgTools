@@ -109,10 +109,23 @@ class PermissionManager(QObject):
         3. Grants profile to user on db.
         '''
         profileDict = self.getProfile(permissionName, edgvVersion)
-        self.checkAndInstallPermission(self.dbDict[dbName])
-            
-        pass
-        
+        if not self.permissionIsInstalled(self.dbDict[dbName], dbName, permissionName):
+            self.dbDict[dbName].createRole(permissionName, profileDict) #creates profile in db
+            self.getRolesInformation() #done to refresh dicts due to new permission
+        for role in self.rolesDict[permissionName][dbName]:
+            self.dbDict[dbName].grantRole(userName, role)
+    
+    def permissionIsInstalled(self, abstractDb, dbName, permissionName):
+        '''
+        Checks if permission is already installed;
+        Returns True if it is installed and False otherwise.
+        '''
+        if permissionName not in self.rolesDict.keys():
+            return False
+        if dbName not in self.rolesDict[permissionName].keys():
+            return False
+        return True
+
     
     def updatePermissionProfile(self, permissionName, edgvVersion, newJsonDict):
         '''
