@@ -191,54 +191,7 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="0" column="0">
-           <widget class="QPushButton" name="manageUsersPushButton">
-            <property name="text">
-             <string>Manage Users</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="manageProfilesPushButton">
-            <property name="text">
-             <string>Manage Profiles</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="managePermissionsPushButton">
-            <property name="text">
-             <string>Manage Permissions</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="3">
-           <widget class="QTreeWidget" name="treeWidget">
-            <property name="rootIsDecorated">
-             <bool>true</bool>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-            <property name="headerHidden">
-             <bool>true</bool>
-            </property>
-            <attribute name="headerVisible">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="headerDefaultSectionSize">
-             <number>100</number>
-            </attribute>
-            <column>
-             <property name="text">
-              <string notr="true">User</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Role</string>
-             </property>
-            </column>
-           </widget>
+           <widget class="PermissionWidget" name="permissionWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -351,6 +304,12 @@
    <class>EarthCoverageWidget</class>
    <extends>QWidget</extends>
    <header>DsgTools.CustomWidgets.earthCoverageWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PermissionWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.permissionWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
