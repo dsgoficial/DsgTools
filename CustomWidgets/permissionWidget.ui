@@ -16,6 +16,9 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <widget class="QPushButton" name="manageUsersPushButton">
+     <property name="toolTip">
+      <string>Create or Remove an user from selected server</string>
+     </property>
      <property name="text">
       <string>Manage Users</string>
      </property>
@@ -23,6 +26,9 @@
    </item>
    <item row="0" column="1">
     <widget class="QPushButton" name="manageProfilesPushButton">
+     <property name="toolTip">
+      <string>Create, Update or Delete a profile</string>
+     </property>
      <property name="text">
       <string>Manage Profiles</string>
      </property>
@@ -30,6 +36,9 @@
    </item>
    <item row="0" column="2" colspan="2">
     <widget class="QPushButton" name="managePermissionsPushButton">
+     <property name="toolTip">
+      <string>Grant permissions to several users in selected databases</string>
+     </property>
      <property name="text">
       <string>Manage Permissions</string>
      </property>

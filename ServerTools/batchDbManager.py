@@ -27,7 +27,7 @@ from qgis.core import QgsMessageLog
 
 # Qt imports
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, Qt, QSettings
+from PyQt4.QtCore import pyqtSlot, Qt, QSettings, pyqtSignal
 from PyQt4.QtGui import QListWidgetItem, QMessageBox, QMenu, QApplication, QCursor, QFileDialog
 from PyQt4.QtSql import QSqlDatabase,QSqlQuery
 
@@ -36,21 +36,16 @@ from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.UserTools.permission_properties import PermissionProperties
-from DsgTools.UserTools.manageServerUsers import ManageServerUsers
+
 from DsgTools.UserTools.profile_editor import ProfileEditor
 from DsgTools.ServerTools.createView import CreateView
 from DsgTools.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
 from DsgTools.ServerTools.selectStyles import SelectStyles
-from DsgTools.UserTools.PermissionManagerWizard.permissionWizard import PermissionWizard
-
-
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'batchDbManager.ui'))
 
 class BatchDbManager(QtGui.QDialog, FORM_CLASS):
-    
     def __init__(self, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
@@ -68,6 +63,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         self.serverWidget.abstractDbLoaded.connect(self.checkSuperUser)
         self.dbsCustomSelector.setTitle(self.tr('Server Databases'))
         self.dbsCustomSelector.selectionChanged.connect(self.populateStylesInterface)
+        self.
 
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
@@ -88,7 +84,8 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
 
     def setDatabases(self):
         dbList = self.populateListWithDatabasesFromServer()
-        self.dbsCustomSelector.setInitialState(dbList)        
+        self.dbsCustomSelector.setInitialState(dbList)
+        self.permissionWidget.setParameters(self.serverWidget.abstractDb,)
 
     def checkSuperUser(self):
         try:
@@ -337,27 +334,5 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                 exceptionDict[dbName] =  str(e.args[0])
         return successList, exceptionDict
     
-    @pyqtSlot(bool)
-    def on_manageUsersPushButton_clicked(self):
-        try:
-            dlg = ManageServerUsers(self.serverWidget.abstractDb)
-            dlg.exec_()
-        except:
-            QMessageBox.warning(self, self.tr('Error!'), self.tr('Select a server!'))
     
-    @pyqtSlot(bool)
-    def on_manageProfilesPushButton_clicked(self):
-        try:
-            dlg = ProfileEditor()
-            dlg.exec_()
-        except:
-            pass
     
-    @pyqtSlot(bool)
-    def on_managePermissionsPushButton_clicked(self):
-        dbsDict = self.instantiateAbstractDbs()
-        try:
-            dlg = PermissionWizard(self.serverWidget.abstractDb, dbsDict, parent = self)
-            dlg.exec_()
-        except:
-            pass

@@ -27,11 +27,16 @@ from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.QtGui import QTreeWidgetItem, QMessageBox
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'permissionWidget.ui'))
+from qgis.core import QgsMessageLog
 
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
-from qgis.core import QgsMessageLog
+from DsgTools.UserTools.permission_properties import PermissionProperties
+from DsgTools.UserTools.manageServerUsers import ManageServerUsers
+from DsgTools.UserTools.PermissionManagerWizard.permissionWizard import PermissionWizard
+
+
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'permissionWidget.ui'))
 
 class PermissionWidget(QtGui.QWidget, FORM_CLASS):
     def __init__(self, parent=None):
@@ -43,3 +48,35 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.serverAbstractDb = None
+        self.dbDict = dict()
+    
+    def setParameters(self, serverAbstractDb, dbDict):
+        self.serverAbstractDb = serverAbstractDb
+        self.dbDict = dbDict
+
+    @pyqtSlot(bool)
+    def on_manageUsersPushButton_clicked(self):
+        try:
+            dlg = ManageServerUsers(self.serverAbstractDb)
+            dlg.exec_()
+        except:
+            QMessageBox.warning(self, self.tr('Error!'), self.tr('Select a server!'))
+    
+    @pyqtSlot(bool)
+    def on_manageProfilesPushButton_clicked(self):
+        try:
+            dlg = ProfileEditor()
+            dlg.exec_()
+        except:
+            pass
+    
+    @pyqtSlot(bool)
+    def on_managePermissionsPushButton_clicked(self):
+        #REDO
+        dbsDict = self.parent.instantiateAbstractDbs()
+        try:
+            dlg = PermissionWizard(self.serverAbstractDb, dbsDict, parent = self) #REDO
+            dlg.exec_()
+        except:
+            pass
