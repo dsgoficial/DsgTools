@@ -63,7 +63,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         self.serverWidget.abstractDbLoaded.connect(self.checkSuperUser)
         self.dbsCustomSelector.setTitle(self.tr('Server Databases'))
         self.dbsCustomSelector.selectionChanged.connect(self.populateStylesInterface)
-        self.
+        self.previousTab = 0
 
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
@@ -334,5 +334,16 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                 exceptionDict[dbName] =  str(e.args[0])
         return successList, exceptionDict
     
+    @pyqtSlot(int)
+    def on_tabWidget_currentChanged(self, index):
+        if index == 2:
+            if not self.serverWidget.abstractDb:
+                selectedDbNameList = self.getSelectedDbList()
+                if len(selectedDbNameList) == 0:
+                    QMessageBox.warning(self, self.tr('Info!'), self.tr('Select databases do inspect permissions!'))
+                    self.tabWidget.setCurrentIndex(self.previousTab)
+        else:
+            self.previousTab = index
+            
     
     
