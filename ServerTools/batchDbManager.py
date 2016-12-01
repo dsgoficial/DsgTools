@@ -85,7 +85,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     def setDatabases(self):
         dbList = self.populateListWithDatabasesFromServer()
         self.dbsCustomSelector.setInitialState(dbList)
-        self.permissionWidget.setParameters(self.serverWidget.abstractDb,)
+        #self.permissionWidget.setParameters(self.serverWidget.abstractDb)
 
     def checkSuperUser(self):
         try:
@@ -338,10 +338,11 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     def on_tabWidget_currentChanged(self, index):
         if index == 2:
             if not self.serverWidget.abstractDb:
-                selectedDbNameList = self.getSelectedDbList()
-                if len(selectedDbNameList) == 0:
-                    QMessageBox.warning(self, self.tr('Info!'), self.tr('Select databases do inspect permissions!'))
-                    self.tabWidget.setCurrentIndex(self.previousTab)
+                QMessageBox.warning(self, self.tr('Info!'), self.tr('Select a server to inspect permissions!'))
+                self.tabWidget.setCurrentIndex(0)
+            elif len(self.getSelectedDbList()) == 0:
+                QMessageBox.warning(self, self.tr('Info!'), self.tr('Select databases do inspect permissions!'))
+                self.tabWidget.setCurrentIndex(0)
         else:
             self.previousTab = index
             
