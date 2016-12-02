@@ -50,6 +50,30 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.serverAbstractDb = None
         self.dbDict = dict()
+        
+    def refresh(self):
+        '''
+        Refreshes permission table according to selected view type.
+        '''
+        viewType = self.getViewType()
+        self.permissionTreeWidget.clear()
+        if viewType == 'database':
+            self.populateWithDatabasePerspective()
+        if viewType == 'user':
+            self.populateWithUserPerspective()
+    
+    def populateWithDatabasePerspective(self):
+        pass
+    
+    def populateWithUserPerspective(self):
+        pass
+    
+    def getViewType(self):
+        if self.databasePerspectivePushButton.isChecked():
+            return 'database'
+        else:
+            return 'user'
+            
     
     def setParameters(self, serverAbstractDb, dbDict):
         self.serverAbstractDb = serverAbstractDb

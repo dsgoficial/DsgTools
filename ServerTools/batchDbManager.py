@@ -8,7 +8,7 @@
         begin                : 2016-07-16
         git sha              : $Format:%H$
         copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba@dsg.eb.mil.br
+        email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -343,6 +343,9 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
             elif len(self.getSelectedDbList()) == 0:
                 QMessageBox.warning(self, self.tr('Info!'), self.tr('Select databases do inspect permissions!'))
                 self.tabWidget.setCurrentIndex(0)
+            else:
+                dbsDict = self.instantiateAbstractDbs()
+                self.permissionWidget.setParameters(self.serverWidget.abstractDb, dbsDict)
         else:
             self.previousTab = index
             
