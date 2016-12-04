@@ -50,7 +50,10 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.serverAbstractDb = None
         self.dbDict = dict()
-        
+        self.permissionManager = None
+
+    @pyqtSlot(bool, name='on_databasePerspectivePushButton_clicked')
+    @pyqtSlot(bool, name='on_userPerspectivePushButton_clicked')
     def refresh(self):
         '''
         Refreshes permission table according to selected view type.
@@ -61,12 +64,14 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             self.populateWithDatabasePerspective()
         if viewType == 'user':
             self.populateWithUserPerspective()
+        print 'lalalala'
     
     def populateWithDatabasePerspective(self):
         pass
     
     def populateWithUserPerspective(self):
         pass
+    
     
     def getViewType(self):
         if self.databasePerspectivePushButton.isChecked():
@@ -78,6 +83,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
     def setParameters(self, serverAbstractDb, dbDict):
         self.serverAbstractDb = serverAbstractDb
         self.dbDict = dbDict
+        self.permissionManager = PermissionManager(self.serverAbstractDb, self.dbDict)
 
     @pyqtSlot(bool)
     def on_manageUsersPushButton_clicked(self):

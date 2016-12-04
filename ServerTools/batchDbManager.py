@@ -346,6 +346,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
             else:
                 dbsDict = self.instantiateAbstractDbs()
                 self.permissionWidget.setParameters(self.serverWidget.abstractDb, dbsDict)
+                self.permissionWidget.refresh()
         else:
             self.previousTab = index
             
