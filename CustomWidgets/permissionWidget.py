@@ -34,6 +34,8 @@ from DsgTools.UserTools.permission_properties import PermissionProperties
 from DsgTools.UserTools.manageServerUsers import ManageServerUsers
 from DsgTools.UserTools.PermissionManagerWizard.permissionWizard import PermissionWizard
 from DsgTools.ServerManagementTools.permissionManager import PermissionManager
+from DsgTools.UserTools.profile_editor import ProfileEditor
+from dns import grange
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -61,12 +63,14 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         '''
         Refreshes permission table according to selected view type.
         '''
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         viewType = self.getViewType()
         self.permissionTreeWidget.clear()
         if viewType == 'database':
             self.populateWithDatabasePerspective()
         if viewType == 'user':
             self.populateWithUserPerspective()
+        QApplication.restoreOverrideCursor()
     
     def populateWithDatabasePerspective(self):
         dbPerspectiveDict = self.permissionManager.getDatabasePerspectiveDict()
@@ -152,7 +156,12 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         pass
     
     def manageUserPermissions(self):
-        print 'grant user'
+        currItem = self.permissionTreeWidget.currentItem()
+        childCount = currItem.childCount()
+        grantedUserList = []
+        for i in range(childCount):
+            grantedUserList.append(currItem.child(i).text(3))
+        print grantedUserList
     
     def revokeSelectedUser(self):
         userName = self.permissionTreeWidget.currentItem().text(2)

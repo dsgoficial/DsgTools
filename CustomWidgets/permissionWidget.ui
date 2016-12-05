@@ -46,6 +46,9 @@
    </item>
    <item row="1" column="0" colspan="4">
     <widget class="QTreeWidget" name="permissionTreeWidget">
+     <property name="toolTip">
+      <string>Right click for options</string>
+     </property>
      <attribute name="headerCascadingSectionResizes">
       <bool>true</bool>
      </attribute>
