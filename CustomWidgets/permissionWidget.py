@@ -33,6 +33,7 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.UserTools.permission_properties import PermissionProperties
 from DsgTools.UserTools.manageServerUsers import ManageServerUsers
 from DsgTools.UserTools.PermissionManagerWizard.permissionWizard import PermissionWizard
+from DsgTools.ServerManagementTools.permissionManager import PermissionManager
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -64,14 +65,25 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             self.populateWithDatabasePerspective()
         if viewType == 'user':
             self.populateWithUserPerspective()
-        print 'lalalala'
     
     def populateWithDatabasePerspective(self):
-        pass
-    
+        dbPerspectiveDict = self.permissionManager.getDatabasePerspectiveDict()
+        rootNode = self.permissionTreeWidget.invisibleRootItem()
+        for dbName in dbPerspectiveDict.keys():
+            parentDbItem = self.createItem(rootNode, dbName, 0)
+            for permission in dbPerspectiveDict[dbName].keys():
+                dbItem = self.createItem(parentDbItem, permission, 1)
+                for user in dbPerspectiveDict[dbName][permission]:
+                    userItem = self.createItem(dbItem, user, 2)
+        self.permissionTreeWidget.expandAll()
+
     def populateWithUserPerspective(self):
         pass
     
+    def createItem(self, parent, text, column):
+        item = QtGui.QTreeWidgetItem(parent)
+        item.setText(column, text)
+        return item
     
     def getViewType(self):
         if self.databasePerspectivePushButton.isChecked():

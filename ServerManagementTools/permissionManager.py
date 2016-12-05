@@ -72,6 +72,37 @@ class PermissionManager(QObject):
                 rolesDict[profileName][db].append(role)
         return dbRolesDict, rolesDict
     
+    def getProfiles(self):
+        '''
+        Gets all profiles from public.permission_profile
+        '''
+        return self.adminDb.getAllRolesFromAdminDb()
+    
+    def getDatabasePerspectiveDict(self):
+        '''
+        Gets a dict in the format: {dbName: {roleName :[-list of users-]}}
+        The dbs are from dbDict 
+        '''
+        (dbRolesDict, rolesDict) = self.getRolesInformation()
+        profiles = self.getProfiles()
+        grantedRoleDict = self.adminDb.getGrantedRolesDict()
+        dbPerspectiveDict = dict()
+        for dbName in self.dbDict:
+            if dbName not in dbPerspectiveDict.keys():
+                dbPerspectiveDict[dbName] = dict()
+            edgvVersion = self.dbDict[dbName].getDatabaseVersion()
+            for profile in profiles[edgvVersion]:
+                if profile not in dbPerspectiveDict[dbName].keys():
+                    dbPerspectiveDict[dbName][profile] = []
+                if profile in rolesDict.keys():
+                    if dbName in rolesDict[profile].keys():
+                        for role in rolesDict[profile][dbName]:
+                            if role in grantedRoleDict.keys():
+                                for user in grantedRoleDict[role]:
+                                    if user not in dbPerspectiveDict[dbName][profile]:
+                                        dbPerspectiveDict[dbName][profile].append(user)
+        return dbPerspectiveDict
+    
     def instantiateAdminDb(self, serverAbstractDb):
         '''
         Instantiates dsgtools_admindb in the same server as serverAbstractDb. 

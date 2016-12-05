@@ -2414,6 +2414,21 @@ class PostgisDb(AbstractDb):
         while query.next():
             return query.value(0)
     
+    def getAllRolesFromAdminDb(self):
+        '''
+        Gets role from public.permission_profile and returns a dict with format {edgvVersion:[-list of roles-]}
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.getAllPermissionProfiles()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting all roles from adminDb: ")+query.lastError().text())
+        allRolesDict = dict()
+        while query.next():
+            aux = json.loads(query.value(0))
+            allRolesDict[aux['edgvversion']] = aux['profiles']
+        return allRolesDict
+    
     def deletePermissionProfile(self, name, edgvversion):
         '''
         Deletes profile from from public.permission_profiles

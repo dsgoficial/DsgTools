@@ -1076,3 +1076,9 @@ class PostGISSqlGenerator(SqlGenerator):
                 ) as a;
         """
         return sql
+    
+    def getAllPermissionProfiles(self):
+        sql = """select row_to_json(a) from (
+                    select edgvversion, array_agg(name) as profiles from public.permission_profile group by edgvversion
+                ) as a;"""
+        return sql
