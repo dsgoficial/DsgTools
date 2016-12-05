@@ -165,7 +165,7 @@ class PermissionManager(QObject):
         Revokes permission on a db from permissionName.
         '''
         (dbRolesDict, rolesDict) = self.getRolesInformation()
-        for realRoleName in dbRolesDict[permissionName][dbName]:
+        for realRoleName in rolesDict[permissionName][dbName]:
             try:
                 self.dbDict[dbName].revokeRole(userName, realRoleName)
             except Exception as e:

@@ -24,8 +24,8 @@ import os
 import json
 
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
-from PyQt4.QtGui import QTreeWidgetItem, QMessageBox
+from PyQt4.QtCore import pyqtSlot, pyqtSignal, Qt
+from PyQt4.QtGui import QTreeWidgetItem, QMessageBox, QMenu, QApplication, QCursor
 
 from qgis.core import QgsMessageLog
 
@@ -52,6 +52,8 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         self.serverAbstractDb = None
         self.dbDict = dict()
         self.permissionManager = None
+        self.permissionTreeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.permissionTreeWidget.customContextMenuRequested.connect(self.createMenuAssigned)
 
     @pyqtSlot(bool, name='on_databasePerspectivePushButton_clicked')
     @pyqtSlot(bool, name='on_userPerspectivePushButton_clicked')
@@ -122,3 +124,49 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             dlg.exec_()
         except:
             pass
+    
+    def createMenuAssigned(self, position):
+        '''
+        Creates a pop up menu
+        '''
+        viewType = self.getViewType()
+        if viewType == 'database':
+            self.createDbPerspectiveContextMenu(position)
+        if viewType == 'user':
+            self.createUserPerspectiveContextMenu(position)
+        
+    
+    def createDbPerspectiveContextMenu(self, position):
+        menu = QMenu()
+        item = self.permissionTreeWidget.itemAt(position)
+        if item:
+            if item.text(0) <> '':
+                menu.addAction(self.tr('Revoke all permissions'), self.revokeAll)
+            elif item.text(1) <> '':
+                menu.addAction(self.tr('Manage User Permissions'), self.manageUserPermissions)
+            elif item.text(2) <> '':
+                menu.addAction(self.tr('Revoke User'), self.revokeSelectedUser)
+        menu.exec_(self.permissionTreeWidget.viewport().mapToGlobal(position))
+    
+    def createUserPerspectiveContextMenu(self, position):
+        pass
+    
+    def manageUserPermissions(self):
+        print 'grant user'
+    
+    def revokeSelectedUser(self):
+        userName = self.permissionTreeWidget.currentItem().text(2)
+        permissionName = self.permissionTreeWidget.currentItem().parent().text(1)
+        dbName = self.permissionTreeWidget.currentItem().parent().parent().text(0)
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.permissionManager.revokePermission(dbName, permissionName, userName)
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Revoke Complete!'), self.tr('Revoke for user ') + userName + self.tr(' on profile ') + permissionName + self.tr(' of database ') + dbName + self.tr('complete.'))
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Error!'), str(e))
+        self.refresh()
+
+    def revokeAll(self):
+        pass
