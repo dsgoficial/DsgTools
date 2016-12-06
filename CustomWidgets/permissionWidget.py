@@ -33,6 +33,7 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.UserTools.permission_properties import PermissionProperties
 from DsgTools.UserTools.manageServerUsers import ManageServerUsers
 from DsgTools.UserTools.PermissionManagerWizard.permissionWizard import PermissionWizard
+from DsgTools.UserTools.profileUserManager import ProfileUserManager
 from DsgTools.ServerManagementTools.permissionManager import PermissionManager
 from DsgTools.UserTools.profile_editor import ProfileEditor
 from dns import grange
@@ -110,6 +111,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             dlg.exec_()
         except:
             QMessageBox.warning(self, self.tr('Error!'), self.tr('Select a server!'))
+        self.refresh()
     
     @pyqtSlot(bool)
     def on_manageProfilesPushButton_clicked(self):
@@ -118,6 +120,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             dlg.exec_()
         except:
             pass
+        self.refresh()
     
     @pyqtSlot(bool)
     def on_managePermissionsPushButton_clicked(self):
@@ -157,11 +160,21 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
     
     def manageUserPermissions(self):
         currItem = self.permissionTreeWidget.currentItem()
+        profileName = currItem.text(1)
+        dbName = currItem.parent().text(0)
         childCount = currItem.childCount()
         grantedUserList = []
         for i in range(childCount):
-            grantedUserList.append(currItem.child(i).text(3))
-        print grantedUserList
+            grantedUserList.append(currItem.child(i).text(2))
+        userList = self.serverAbstractDb.getUsersFromServer()
+        notGrantedUserList = [i[0] for i in userList if i[0] not in grantedUserList]
+        edgvVersion = self.dbDict[dbName].getDatabaseVersion()
+        try:
+            dlg = ProfileUserManager(grantedUserList, notGrantedUserList, self.permissionManager, profileName, dbName, edgvVersion)
+            dlg.exec_()
+        except:
+            pass
+        self.refresh()
     
     def revokeSelectedUser(self):
         userName = self.permissionTreeWidget.currentItem().text(2)
@@ -174,7 +187,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             QMessageBox.warning(self, self.tr('Revoke Complete!'), self.tr('Revoke for user ') + userName + self.tr(' on profile ') + permissionName + self.tr(' of database ') + dbName + self.tr('complete.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Error!'), str(e))
+            QMessageBox.warning(self, self.tr('Error!'), str(e.args[0]))
         self.refresh()
 
     def revokeAll(self):

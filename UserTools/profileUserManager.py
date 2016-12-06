@@ -1,0 +1,105 @@
+# -*- coding: utf-8 -*-
+"""
+/***************************************************************************
+ DsgTools
+                                 A QGIS plugin
+ Brazilian Army Cartographic Production Tools
+                              -------------------
+        begin                : 2016-09-22
+        git sha              : $Format:%H$
+        copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        email                : borba.philipe@eb.mil.br
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+"""
+import os
+from os.path import expanduser
+
+from qgis.core import QgsMessageLog
+
+# Qt imports
+from PyQt4 import QtGui, uic
+from PyQt4.QtCore import pyqtSlot, Qt, QSettings
+from PyQt4.QtGui import QListWidgetItem, QMessageBox, QMenu, QApplication, QCursor, QFileDialog
+from PyQt4.QtSql import QSqlDatabase,QSqlQuery
+
+# DSGTools imports
+from DsgTools.UserTools.create_user import CreateUser
+from DsgTools.UserTools.alter_user_password import AlterUserPassword
+from DsgTools.UserTools.permission_properties import PermissionProperties
+
+
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'profileUserManager.ui'))
+
+class ProfileUserManager(QtGui.QDialog, FORM_CLASS):
+    
+    def __init__(self, grantedUserList, notGrantedUserList, permissionManager, profileName, dbName, edgvVersion, parent = None):
+        """Constructor."""
+        super(self.__class__, self).__init__(parent)
+        self.setupUi(self)
+        self.grantedUserList = grantedUserList
+        self.notGrantedUserList = notGrantedUserList
+        self.permissionManager = permissionManager
+        self.profileName = profileName
+        self.dbName = dbName
+        self.edgvVersion = edgvVersion
+        self.userCustomSelector.setTitle(self.tr('Manage user permissions to profile ') + profileName + self.tr(' on database ') + dbName)
+        self.userCustomSelector.setFromList(list(notGrantedUserList), unique = True) #passes a copy using list(<list object>)
+        self.userCustomSelector.setToList(list(grantedUserList))
+    
+    @pyqtSlot(bool)
+    def on_applyPushButton_clicked(self):
+        usersToGrant = [i for i in self.userCustomSelector.toLs if i not in self.grantedUserList]
+        usersToRevoke = [i for i in self.userCustomSelector.fromLs if i not in self.notGrantedUserList]
+        #grant operation
+        header = self.tr('Grant / Revoke operation complete: ')
+        successList = []
+        errorDict = dict()
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        for userName in usersToGrant:
+            try:
+                self.permissionManager.grantPermission(self.dbName, self.profileName, self.edgvVersion, userName) #TODO: add error treatment
+                successList.append(userName)
+            except Exception as e:
+                errorDict[userName] = str(e.args[0])
+        for userName in usersToRevoke:
+            try:
+                self.permissionManager.revokePermission(self.dbName, self.profileName, userName) #TODO: add error treatment
+                successList.append(userName)
+            except Exception as e:
+                errorDict[userName] = str(e.args[0])
+        QApplication.restoreOverrideCursor()
+        self.outputMessage(header, successList, errorDict)
+        self.close()
+    
+    @pyqtSlot(bool)
+    def on_cancelPushButton_clicked(self):
+        self.close()    
+    
+    def outputMessage(self, header, successList, exceptionDict):
+        msg = header
+        if len(successList) > 0:
+            msg += self.tr('\nSuccessful users: ')
+            msg +=', '.join(successList)
+        msg += self.logInternalError(exceptionDict)
+        QMessageBox.warning(self, self.tr('Operation Complete!'), msg)
+    
+    def logInternalError(self, exceptionDict):
+        msg = ''
+        errorDbList = exceptionDict.keys()
+        if len(errorDbList)> 0:
+            msg += self.tr('\Users with error:')
+            msg+= ', '.join(errorDbList)
+            msg+= self.tr('\nError messages for each user were output in qgis log.')
+            for errorDb in errorDbList:
+                QgsMessageLog.logMessage(self.tr('Error for user ')+ errorDb + ': ' +exceptionDict[errorDb], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        return msg 
