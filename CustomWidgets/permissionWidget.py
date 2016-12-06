@@ -37,6 +37,7 @@ from DsgTools.UserTools.profileUserManager import ProfileUserManager
 from DsgTools.ServerManagementTools.permissionManager import PermissionManager
 from DsgTools.UserTools.profile_editor import ProfileEditor
 from dns import grange
+from PIL.CurImagePlugin import CurImageFile
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -191,4 +192,14 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         self.refresh()
 
     def revokeAll(self):
-        pass
+        currItem = self.permissionTreeWidget.currentItem()
+        dbName = currItem.text(0)
+        dbChildCount = currItem.childCount()
+        for i in range(dbChildCount):
+            permissionNode = currItem.child(i)
+            permissionName = permissionNode.text(1)
+            userCount = permissionNode.childCount()
+            for j in range(userCount):
+                userName = permissionNode.child(j).text(2)
+                self.permissionManager.revokePermission(dbName, permissionName, userName)
+        self.refresh()
