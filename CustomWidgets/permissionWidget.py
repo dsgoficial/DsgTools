@@ -185,7 +185,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.permissionManager.revokePermission(dbName, permissionName, userName)
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Revoke Complete!'), self.tr('Revoke for user ') + userName + self.tr(' on profile ') + permissionName + self.tr(' of database ') + dbName + self.tr('complete.'))
+            QMessageBox.warning(self, self.tr('Revoke Complete!'), self.tr('Revoke for user ') + userName + self.tr(' on profile ') + permissionName + self.tr(' of database ') + dbName + self.tr(' complete.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Error!'), str(e.args[0]))
