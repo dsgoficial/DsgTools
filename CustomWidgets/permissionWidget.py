@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2016-02-18
+        begin                : 2016-12-01
         git sha              : $Format:%H$
         copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba@dsg.eb.mil.br
@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 import os
-import json
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, Qt
@@ -34,10 +33,9 @@ from DsgTools.UserTools.permission_properties import PermissionProperties
 from DsgTools.UserTools.manageServerUsers import ManageServerUsers
 from DsgTools.UserTools.PermissionManagerWizard.permissionWizard import PermissionWizard
 from DsgTools.UserTools.profileUserManager import ProfileUserManager
+from DsgTools.UserTools.dbProfileManager import DbProfileManager
 from DsgTools.ServerManagementTools.permissionManager import PermissionManager
 from DsgTools.UserTools.profile_editor import ProfileEditor
-from dns import grange
-from PIL.CurImagePlugin import CurImageFile
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -75,6 +73,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         QApplication.restoreOverrideCursor()
     
     def populateWithDatabasePerspective(self):
+        self.permissionTreeWidget.setHeaderLabels([self.tr('Database'), self.tr('Permission'), self.tr('User')])
         dbPerspectiveDict = self.permissionManager.getDatabasePerspectiveDict()
         rootNode = self.permissionTreeWidget.invisibleRootItem()
         for dbName in dbPerspectiveDict.keys():
@@ -86,7 +85,16 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         self.permissionTreeWidget.expandAll()
 
     def populateWithUserPerspective(self):
-        pass
+        self.permissionTreeWidget.setHeaderLabels([self.tr('User'), self.tr('Database'), self.tr('Permission')])
+        userPerspectiveDict = self.permissionManager.getUserPerspectiveDict()
+        rootNode = self.permissionTreeWidget.invisibleRootItem()
+        for userName in userPerspectiveDict.keys():
+            parentUserItem = self.createItem(rootNode, userName, 0)
+            for dbName in userPerspectiveDict[userName].keys():
+                dbItem = self.createItem(parentUserItem, dbName, 1)
+                for permission in userPerspectiveDict[userName][dbName]:
+                    permissionItem = self.createItem(dbItem, permission, 2)
+        self.permissionTreeWidget.expandAll()
     
     def createItem(self, parent, text, column):
         item = QtGui.QTreeWidgetItem(parent)
@@ -104,6 +112,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         self.serverAbstractDb = serverAbstractDb
         self.dbDict = dbDict
         self.permissionManager = PermissionManager(self.serverAbstractDb, self.dbDict)
+        self.refresh()
 
     @pyqtSlot(bool)
     def on_manageUsersPushButton_clicked(self):
@@ -122,16 +131,6 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         except:
             pass
         self.refresh()
-    
-    @pyqtSlot(bool)
-    def on_managePermissionsPushButton_clicked(self):
-        #REDO
-        dbsDict = self.parent.instantiateAbstractDbs()
-        try:
-            dlg = PermissionWizard(self.serverAbstractDb, dbsDict, parent = self) #REDO
-            dlg.exec_()
-        except:
-            pass
     
     def createMenuAssigned(self, position):
         '''
@@ -157,7 +156,16 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         menu.exec_(self.permissionTreeWidget.viewport().mapToGlobal(position))
     
     def createUserPerspectiveContextMenu(self, position):
-        pass
+        menu = QMenu()
+        item = self.permissionTreeWidget.itemAt(position)
+        if item:
+            if item.text(0) <> '':
+                menu.addAction(self.tr('Revoke permissions on all granted databases'), self.revokeAllDbs)
+            elif item.text(1) <> '':
+                menu.addAction(self.tr('Manage Permissions on database'), self.managePermissionsOnDb)
+            elif item.text(2) <> '':
+                menu.addAction(self.tr('Revoke Permission'), self.revokeSelectedPermission)
+        menu.exec_(self.permissionTreeWidget.viewport().mapToGlobal(position))
     
     def manageUserPermissions(self):
         currItem = self.permissionTreeWidget.currentItem()
@@ -202,4 +210,49 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             for j in range(userCount):
                 userName = permissionNode.child(j).text(2)
                 self.permissionManager.revokePermission(dbName, permissionName, userName)
+        self.refresh()
+    
+    def revokeAllDbs(self):
+        currItem = self.permissionTreeWidget.currentItem()
+        userName = currItem.text(0)
+        userChildCount = currItem.childCount()
+        for i in range(userChildCount):
+            dbNode = currItem.child(i)
+            dbName = dbNode.text(1)
+            permissionCount = dbNode.childCount()
+            for j in range(permissionCount):
+                permissionName = dbNode.child(j).text(2)
+                self.permissionManager.revokePermission(dbName, permissionName, userName)
+        self.refresh()
+    
+    def managePermissionsOnDb(self):
+        currItem = self.permissionTreeWidget.currentItem()
+        dbName = currItem.text(1)
+        userName = currItem.parent().text(0)
+        childCount = currItem.childCount()
+        grantedProfileList = []
+        for i in range(childCount):
+            grantedProfileList.append(currItem.child(i).text(2))
+        profileDict = self.permissionManager.getProfiles()
+        edgvVersion = self.dbDict[dbName].getDatabaseVersion()
+        notGrantedProfileList = [i for i in profileDict[edgvVersion] if i not in grantedProfileList]
+        try:
+            dlg = DbProfileManager(grantedProfileList, notGrantedProfileList, self.permissionManager, userName, dbName, edgvVersion)
+            dlg.exec_()
+        except:
+            pass
+        self.refresh()
+    
+    def revokeSelectedPermission(self):
+        permissionName = self.permissionTreeWidget.currentItem().text(2)
+        dbName = self.permissionTreeWidget.currentItem().parent().text(1)
+        userName = self.permissionTreeWidget.currentItem().parent().parent().text(0)
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.permissionManager.revokePermission(dbName, permissionName, userName)
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Revoke Complete!'), self.tr('Revoke for user ') + userName + self.tr(' on profile ') + permissionName + self.tr(' of database ') + dbName + self.tr(' complete.'))
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Error!'), str(e.args[0]))
         self.refresh()

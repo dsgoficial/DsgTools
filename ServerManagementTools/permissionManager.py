@@ -103,6 +103,25 @@ class PermissionManager(QObject):
                                         dbPerspectiveDict[dbName][profile].append(user)
         return dbPerspectiveDict
     
+    def getUserPerspectiveDict(self):
+        '''
+        Gets a dict in the format: {userName: {dbName : ['-list of roles']}
+        '''
+        dbPerspectiveDict = self.getDatabasePerspectiveDict()
+        userPerspectiveDict = dict()
+        userList = [i[0] for i in self.adminDb.getUsersFromServer()]
+        for user in userList:
+            userPerspectiveDict[user] = dict()
+        
+        for dbName in dbPerspectiveDict.keys():
+            for profile in dbPerspectiveDict[dbName]:
+                for user in dbPerspectiveDict[dbName][profile]:
+                    if dbName not in userPerspectiveDict[user].keys():
+                        userPerspectiveDict[user][dbName] = []
+                    if profile not in userPerspectiveDict[user][dbName]:
+                        userPerspectiveDict[user][dbName].append(profile)
+        return userPerspectiveDict
+    
     def instantiateAdminDb(self, serverAbstractDb):
         '''
         Instantiates dsgtools_admindb in the same server as serverAbstractDb. 
@@ -219,7 +238,7 @@ class PermissionManager(QObject):
         except Exception as e:
             for abstractDb in abstractDbsToRollBack:
                 abstractDb.db.rollback()
-            raise Exception(self.tr('Unable to update profile ') + permissionName +': ' +str(e))
+            raise Exception(self.tr('Unable to update profile ') + permissionName +': ' +e)
     
     def deletePermission(self, permissionName, edgvVersion):
         '''
