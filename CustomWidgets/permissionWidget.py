@@ -106,7 +106,6 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             return 'database'
         else:
             return 'user'
-            
     
     def setParameters(self, serverAbstractDb, dbDict):
         self.serverAbstractDb = serverAbstractDb
@@ -196,7 +195,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             QMessageBox.warning(self, self.tr('Revoke Complete!'), self.tr('Revoke for user ') + userName + self.tr(' on profile ') + permissionName + self.tr(' of database ') + dbName + self.tr(' complete.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Error!'), str(e.args[0]))
+            QMessageBox.warning(self, self.tr('Error!'), e)
         self.refresh()
 
     def revokeAll(self):
@@ -254,5 +253,5 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             QMessageBox.warning(self, self.tr('Revoke Complete!'), self.tr('Revoke for user ') + userName + self.tr(' on profile ') + permissionName + self.tr(' of database ') + dbName + self.tr(' complete.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Error!'), str(e.args[0]))
+            QMessageBox.warning(self, self.tr('Error!'), e)
         self.refresh()

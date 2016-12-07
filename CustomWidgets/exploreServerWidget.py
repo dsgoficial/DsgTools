@@ -65,6 +65,21 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         settings.endGroup()
         return currentConnections
     
+    def getServerConfiguration(self, name):
+        '''
+        Gets server configuration
+        name: server name 
+        '''
+        settings = QSettings()
+        settings.beginGroup('PostgreSQL/servers/'+name)
+        host = settings.value('host')
+        port = settings.value('port')
+        user = settings.value('username')
+        password = settings.value('password')
+        settings.endGroup()
+        
+        return (host, port, user, password)
+    
     def browseServer(self, dbList, host, port, user, password):
         '''
         Browses server for EDGV databases
@@ -146,7 +161,8 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         self.serversCombo.addItem(self.tr('Select Server'))
         currentConnections = self.getServers()
         for connection in currentConnections:
-            self.serversCombo.addItem(connection)
+            (host, port, user, password) = self.getServerConfiguration(connection)
+            self.serversCombo.addItem('{3} ({0}@{1}:{2})'.format(user, host, port, connection))
     
     @pyqtSlot(int)
     def on_serversCombo_currentIndexChanged(self):
@@ -159,7 +175,7 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
             if not self.abstractDb:
                 QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
                 return
-            (host, port, user, password) = self.abstractDb.getServerConfiguration(self.serversCombo.currentText())
+            (host, port, user, password) = self.abstractDb.getServerConfiguration(self.serversCombo.currentText().split('(')[0][0:-1])
             if host or port or user:
                 self.abstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
                 if self.superNeeded:
@@ -174,7 +190,7 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
     
     def getServerParameters(self):
         if self.serversCombo.currentIndex() != 0:
-            return self.abstractDb.getServerConfiguration(self.serversCombo.currentText())
+            return self.abstractDb.getServerConfiguration(self.serversCombo.currentText().split('(')[0][0:-1])
         else:
             return (None, None, None, None)
     

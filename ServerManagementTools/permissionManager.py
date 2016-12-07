@@ -188,7 +188,7 @@ class PermissionManager(QObject):
             try:
                 self.dbDict[dbName].revokeRole(userName, realRoleName)
             except Exception as e:
-                raise Exception(self.tr('Problem revoking role ') + permissionName + self.tr(' on database ') + dbName +':\n' + str(e))
+                raise Exception(self.tr('Problem revoking role ') + permissionName + self.tr(' on database ') + dbName +':\n' + e)
     
     def isPermissionInstalled(self, abstractDb, dbName, permissionName):
         '''
@@ -268,7 +268,7 @@ class PermissionManager(QObject):
         except Exception as e:
             for abstractDb in abstractDbsToRollBack:
                 abstractDb.db.rollback()
-            raise Exception(self.tr('Problem deleting permission: ')+str(e))
+            raise Exception(self.tr('Problem deleting permission: ')+e)
     
     def importProfile(self, fullFilePath):
         '''
@@ -290,7 +290,7 @@ class PermissionManager(QObject):
         try:
             self.createPermissionProfile(profileName, edgvVersion, inputJson)
         except Exception as e:
-            raise Exception(self.tr("Error importing profile {0}!\n").format(profileName)+str(e))
+            raise Exception(self.tr("Error importing profile {0}!\n").format(profileName)+e)
     
     def batchImportProfiles(self, profilesDir):
         '''
