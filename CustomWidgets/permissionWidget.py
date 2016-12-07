@@ -35,7 +35,7 @@ from DsgTools.UserTools.PermissionManagerWizard.permissionWizard import Permissi
 from DsgTools.UserTools.profileUserManager import ProfileUserManager
 from DsgTools.UserTools.dbProfileManager import DbProfileManager
 from DsgTools.ServerManagementTools.permissionManager import PermissionManager
-from DsgTools.UserTools.profile_editor import ProfileEditor
+from DsgTools.UserTools.serverProfilesManager import ServerProfilesManager
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -125,7 +125,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_manageProfilesPushButton_clicked(self):
         try:
-            dlg = ProfileEditor()
+            dlg = ServerProfilesManager()
             dlg.exec_()
         except:
             pass
