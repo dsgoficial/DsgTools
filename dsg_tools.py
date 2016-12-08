@@ -231,7 +231,6 @@ class DsgTools:
         server = self.addMenu(self.dsgTools, u'server', self.tr('Server Catalog'),':/plugins/DsgTools/icons/server.png')
         database = self.addMenu(self.dsgTools, u'database', self.tr('Database Tools'),':/plugins/DsgTools/icons/database.png')
         dbcreation = self.addMenu(database, u'dbcreation', self.tr('Database Creation Tools'),':/plugins/DsgTools/icons/database.png')
-        dbmanagement = self.addMenu(database, u'dbmanagement', self.tr('Database Management Tools'),':/plugins/DsgTools/icons/database.png')
         layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/icons/layers.png')
         bdgex = self.addMenu(self.dsgTools, u'bdgex', self.tr('BDGEx'),':/plugins/DsgTools/icons/eb.png')
         productiontools = self.addMenu(self.dsgTools, u'productiontools', self.tr('Production Tools'),':/plugins/DsgTools/icons/productiontools.png')
@@ -396,16 +395,6 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/icons/server.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Explore Server'),
-            callback=self.exploreDB,
-            parent=server,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        server.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/server.png'
-        action = self.add_action(
-            icon_path,
             text=self.tr('Manage Dbs from Server'),
             callback=self.batchDbManager,
             parent=server,
@@ -517,21 +506,10 @@ class DsgTools:
             icon_path,
             text=self.tr('Create Database Customization'),
             callback=self.createDbCustom,
-            parent=dbmanagement,
+            parent=database,
             add_to_menu=False,
             add_to_toolbar=False)
         database.addAction(action)
-        self.databaseButton.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/manageUserProfiles.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Manage User Permissions'),
-            callback=self.manageUserProfiles,
-            parent=dbmanagement,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        dbmanagement.addAction(action)
         self.databaseButton.addAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/validationtools.png'
@@ -599,28 +577,6 @@ class DsgTools:
             add_to_menu=False,
             add_to_toolbar=False)
         militarysimbologytools.addAction(action)
-        
-        #User Permissions submenu
-        permissions = self.addMenu(dbmanagement, u'layers', self.tr('User Permissions Tools'),':/plugins/DsgTools/icons/profile.png')
-        icon_path = ':/plugins/DsgTools/icons/profile.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('User Permissions Editor'),
-            callback=self.showProfileEditor,
-            parent=permissions,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        permissions.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/assignProfile.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Install/Remove User Permissions'),
-            callback=self.assignProfiles,
-            parent=permissions,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        permissions.addAction(action)
     
         icon_path = ':/plugins/DsgTools/icons/category.png'
         action = self.add_action(
