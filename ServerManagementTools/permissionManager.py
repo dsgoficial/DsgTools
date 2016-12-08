@@ -303,7 +303,12 @@ class PermissionManager(QObject):
         1. Get all profiles in profilesDir;
         2. Import each using importProfile;
         '''
-        pass
+        importList = []
+        for profile in os.walk(profilesDir).next()[2]:
+            if '.json' in os.path.basename(profile):
+                importList.append(os.path.join(profilesDir,profile))
+        for profileFile in importList:
+            self.importProfile(profileFile)
 
     def exportProfile(self, profileName, edgvVersion, outputPath):
         '''

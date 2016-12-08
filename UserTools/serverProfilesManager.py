@@ -322,3 +322,19 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem exporting permission: ') + e.args[0])
+    
+    @pyqtSlot(bool)
+    def on_batchImportPushButton_clicked(self):
+        fd = QFileDialog()
+        folder = fd.getExistingDirectory(caption = self.tr('Select a folder with permissions: '))
+        if folder == '':
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a input folder!'))
+            return
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.permissionManager.batchImportProfiles(folder)
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Success!'), self.tr('Permissions successfully imported.'))
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem importing permission: ') + e.args[0])
