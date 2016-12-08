@@ -251,16 +251,17 @@ class PermissionManager(QObject):
             abstractDbsToRollBack.append(self.adminDb)
             self.adminDb.db.transaction() #done to rollback in case of trouble
             (dbRolesDict, rolesDict) = self.getRolesInformation()
-            for dbName in rolesDict[permissionName].keys():
-                for roleName in rolesDict[permissionName][dbName]:
-                    if dbName not in dbDict.keys():
-                        abstractDb = self.instantiateAbstractDb(dbName)
-                    else:
-                        abstractDb = self.dbDict[dbName]
-                    #prepairs to rollback in case of exception
-                    abstractDbsToRollBack.append(abstractDb)
-                    abstractDb.db.transaction()
-                    abstractDb.dropRoleOnDatabase(roleName)
+            if permissionName in rolesDict.keys():
+                for dbName in rolesDict[permissionName].keys():
+                    for roleName in rolesDict[permissionName][dbName]:
+                        if dbName not in self.dbDict.keys():
+                            abstractDb = self.instantiateAbstractDb(dbName)
+                        else:
+                            abstractDb = self.dbDict[dbName]
+                        #prepairs to rollback in case of exception
+                        abstractDbsToRollBack.append(abstractDb)
+                        abstractDb.db.transaction()
+                        abstractDb.dropRoleOnDatabase(roleName)
             #after deletion, delete permission profile from public.permission_profile
             self.adminDb.deletePermissionProfile(permissionName, edgvVersion)
             for abstractDb in abstractDbsToRollBack:
@@ -268,7 +269,7 @@ class PermissionManager(QObject):
         except Exception as e:
             for abstractDb in abstractDbsToRollBack:
                 abstractDb.db.rollback()
-            raise Exception(self.tr('Problem deleting permission: ')+e)
+            raise Exception(self.tr('Problem deleting permission: ')+e.args[0])
     
     def importProfile(self, fullFilePath):
         '''

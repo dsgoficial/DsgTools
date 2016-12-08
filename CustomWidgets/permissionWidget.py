@@ -82,6 +82,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
                 dbItem = self.createItem(parentDbItem, permission, 1)
                 for user in dbPerspectiveDict[dbName][permission]:
                     userItem = self.createItem(dbItem, user, 2)
+        self.permissionTreeWidget.sortItems(0, Qt.AscendingOrder)
         self.permissionTreeWidget.expandAll()
 
     def populateWithUserPerspective(self):
@@ -94,6 +95,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
                 dbItem = self.createItem(parentUserItem, dbName, 1)
                 for permission in userPerspectiveDict[userName][dbName]:
                     permissionItem = self.createItem(dbItem, permission, 2)
+        self.permissionTreeWidget.sortItems(0, Qt.AscendingOrder)
         self.permissionTreeWidget.expandAll()
     
     def createItem(self, parent, text, column):
@@ -126,6 +128,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
     def on_manageProfilesPushButton_clicked(self):
         try:
             dlg = ServerProfilesManager(self.permissionManager)
+            dlg.profilesChanged.connect(self.refresh)
             dlg.exec_()
         except:
             pass

@@ -24,10 +24,13 @@ import os
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, Qt
+from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
+from PyQt4.QtGui import QMessageBox, QApplication, QCursor
+
+from qgis.core import QgsMessageLog
 
 # DSGTools imports
-from DsgTools.UserTools.create_profile import CreateProfile
+from DsgTools.UserTools.createProfileWithProfileManager import CreateProfileWithProfileManager
 
 import json
 
@@ -35,6 +38,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'serverProfilesManager.ui'))
 
 class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
+    profilesChanged = pyqtSignal()
     def __init__(self, permissionManager, parent = None):
         """
         Constructor
@@ -47,41 +51,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.permissionManager = permissionManager
-        
-    def getProfiles(self, profileName = None):
-        '''
-        Get profile files and insert them in the combo box
-        '''
-        ret = []
-        for root, dirs, files in os.walk(self.folder):
-            for file in files:
-                ext = file.split('.')[-1]
-                if ext == 'json':
-                    ret.append(file.split('.')[0])
 
-        ret.sort()
-        self.jsonCombo.clear()
-        self.jsonCombo.addItem(self.tr('Select a profile'))
-        self.jsonCombo.addItems(ret)
-        
-        index = self.jsonCombo.findText(profileName)
-        if index != -1:
-            self.jsonCombo.setCurrentIndex(index)
-        self.setInitialState()
-
-    def setInitialState(self):
-        '''
-        Gets the current selected profile in the combo box and builds the tree widget by reading the file
-        '''
-        self.treeWidget.clear()
-        self.treeWidget.setSortingEnabled(False)
-        if self.jsonCombo.count() == 0 or self.jsonCombo.currentIndex() == 0:
-            self.treeWidget.clear()
-            return
-        else:
-            profile = os.path.join(self.folder, self.jsonCombo.currentText()+'.json')
-            self.readJsonFile(profile)
-        self.treeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
         
     def createItem(self, parent, text):
         '''
@@ -169,13 +139,6 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         ret['read'] = str(item.checkState(1))
         ret['write'] = str(item.checkState(2))
         return ret
-        
-    @pyqtSlot(int)
-    def on_jsonCombo_currentIndexChanged(self):
-        '''
-        Slot to update the initial state
-        '''
-        self.setInitialState()
     
     @pyqtSlot(bool)
     def on_createButton_clicked(self):
@@ -204,6 +167,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         '''
         Saves the profile file
         '''
+        #REDO
         if self.jsonCombo.currentIndex() == 0:
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select a profile model!'))
             return
@@ -228,27 +192,17 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         '''
         self.close()
     
-    @pyqtSlot(bool)
-    def on_deletePushButton_clicked(self):
-        if self.jsonCombo.currentIndex() <> 0:
-            profileName = self.jsonCombo.currentText()
-            if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to remove profile ')+profileName+'?', QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
-                return
-            try:
-                os.remove(os.path.join(self.folder,profileName+'.json'))
-            except Exception as e:
-                QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem deleting profile! \n')+e.args[0])
-                return
-            self.getProfiles()
-            self.setInitialState()
-    
     @pyqtSlot(int)
-    def on_versionSelectionComboBox_currentIndexChanged(self, index):
+    def on_versionSelectionComboBox_currentIndexChanged(self):
+        self.refreshProfileList()
+    
+    def refreshProfileList(self):
+        index = self.versionSelectionComboBox.currentIndex()
         self.profilesListWidget.clear()
         self.treeWidget.clear()
         self.setEnabled(False)
         if index <> 0:
-            edgvVersion = self.versionSelectionComboBox.currentText().split(' ')[-1]
+            edgvVersion = self.versionSelectionComboBox.currentText()
             profilesDict = self.permissionManager.getProfiles()
             if edgvVersion in profilesDict.keys():
                 self.profilesListWidget.addItems(profilesDict[edgvVersion])
@@ -258,8 +212,8 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         '''
         Slot that opens the create profile dialog
         '''
-        dlg = CreateProfile()
-        dlg.profileCreated.connect(self.getProfiles)
+        dlg = CreateProfileWithProfileManager(self.permissionManager)
+        dlg.profileCreated.connect(self.updateInterface)
         dlg.exec_()
     
     
@@ -273,8 +227,30 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         profileName = self.profilesListWidget.currentItem().text()
         try:
             self.setEnabled(True)
-            edgvVersion = self.versionSelectionComboBox.currentText().split(' ')[-1]
+            edgvVersion = self.versionSelectionComboBox.currentText()
             self.treeWidget.clear()
             self.readJsonFromDatabase(profileName, edgvVersion)
         except:
             pass
+    
+    def updateInterface(self, profileName, edgvVersion):
+        idx = self.versionSelectionComboBox.findText(edgvVersion, flags = Qt.MatchExactly)
+        self.versionSelectionComboBox.setCurrentIndex(idx)
+        profileItem = self.profilesListWidget.findItems(profileName, Qt.MatchExactly)[0]
+        self.profilesListWidget.setCurrentItem(profileItem)
+    
+    @pyqtSlot(bool)
+    def on_deletePermissionPushButton_clicked(self):
+        profileName = self.profilesListWidget.currentItem().text()
+        edgvVersion = self.versionSelectionComboBox.currentText()
+        if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to delete profile ')+profileName+'?', QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+            return
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.permissionManager.deletePermission(profileName, edgvVersion)
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission ') + profileName + self.tr(' successfully deleted.'))
+            self.refreshProfileList()
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem deleting permission: ') + e.args[0])
