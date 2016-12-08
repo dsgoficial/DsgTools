@@ -25,7 +25,7 @@ import os
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
-from PyQt4.QtGui import QMessageBox, QApplication, QCursor
+from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog
 
 from qgis.core import QgsMessageLog
 
@@ -268,3 +268,57 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem updating permission: ') + e.args[0])
+    
+    @pyqtSlot(bool)
+    def on_importPushButton_clicked(self):
+        fd = QFileDialog()
+        filename = fd.getOpenFileName(caption=self.tr('Select a dsgtools profile'),filter=self.tr('json file (*.json)'))
+        if filename == '':
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a file to import!'))
+            return
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.permissionManager.importProfile(filename)
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission successfully imported.'))
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem importing permission: ') + e.args[0])
+        self.refreshProfileList()
+    
+    @pyqtSlot(bool)
+    def on_exportPushButton_clicked(self):
+        if not self.profilesListWidget.currentItem():
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a profile to export!'))
+            return
+        fd = QFileDialog()
+        folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
+        if folder == '':
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a output!'))
+            return
+        profileName = self.profilesListWidget.currentItem().text()
+        edgvVersion = self.versionSelectionComboBox.currentText()
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.permissionManager.exportProfile(profileName, edgvVersion, folder)
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission successfully exported.'))
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem exporting permission: ') + e.args[0])
+        
+    @pyqtSlot(bool)
+    def on_batchExportPushButton_clicked(self):
+        fd = QFileDialog()
+        folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
+        if folder == '':
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a output!'))
+            return
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.permissionManager.batchExportProfiles(folder)
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Success!'), self.tr('Permissions successfully exported.'))
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem exporting permission: ') + e.args[0])

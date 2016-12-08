@@ -296,7 +296,7 @@ class PermissionManager(QObject):
         try:
             self.createPermissionProfile(profileName, edgvVersion, inputJson)
         except Exception as e:
-            raise Exception(self.tr("Error importing profile {0}!\n").format(profileName)+e)
+            raise Exception(self.tr("Error importing profile {0}!\n").format(profileName)+e.args[0])
     
     def batchImportProfiles(self, profilesDir):
         '''
@@ -305,19 +305,28 @@ class PermissionManager(QObject):
         '''
         pass
 
-    def exportProfile(self, profileName, edgvversion, outputPath):
+    def exportProfile(self, profileName, edgvVersion, outputPath):
         '''
         1. Get profile from public.permission_profile;
         2. Export it to outputPath.
         '''
-        pass
+        jsonDict = self.getProfile(profileName, edgvVersion)
+        outputFile = os.path.join(outputPath,profileName+'.json')
+        with open(outputFile, 'w') as outfile:
+            json.dump(jsonDict, outfile, sort_keys=True, indent=4)
     
     def batchExportProfiles(self, outputDir):
         '''
         1. Get all profiles in public.permission_profile;
         2. Export each using exportProfile.
         '''
-        pass
+        profileDict = self.getProfiles()
+        for edgvVersion in profileDict.keys():
+            outputPath = os.path.join(outputDir,edgvVersion)
+            if not os.path.exists(outputPath):
+                os.makedirs(outputPath)
+            for profileName in profileDict[edgvVersion]:
+                self.exportProfile(profileName, edgvVersion, outputPath)
     
     def validateJsonProfile(self, inputJsonDict):
         '''
