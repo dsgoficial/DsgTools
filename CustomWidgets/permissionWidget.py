@@ -125,7 +125,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_manageProfilesPushButton_clicked(self):
         try:
-            dlg = ServerProfilesManager()
+            dlg = ServerProfilesManager(self.permissionManager)
             dlg.exec_()
         except:
             pass

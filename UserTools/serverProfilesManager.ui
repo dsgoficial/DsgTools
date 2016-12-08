@@ -19,7 +19,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
-        <widget class="QComboBox" name="customizationSelectionComboBox">
+        <widget class="QComboBox" name="versionSelectionComboBox">
          <item>
           <property name="text">
            <string>Select EDGV Version</string>
@@ -40,19 +40,19 @@
        <item>
         <widget class="QPushButton" name="createPermissionPushButton">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="maximumSize">
           <size>
-           <width>30</width>
+           <width>120</width>
            <height>25</height>
           </size>
          </property>
          <property name="text">
-          <string/>
+          <string>Create Profile</string>
          </property>
          <property name="icon">
           <iconset resource="../resources.qrc">
@@ -63,7 +63,7 @@
       </layout>
      </item>
      <item>
-      <widget class="QTreeWidget" name="customizationTreeWidget">
+      <widget class="QListWidget" name="profilesListWidget">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -72,15 +72,13 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>250</width>
+         <width>350</width>
          <height>16777215</height>
         </size>
        </property>
-       <column>
-        <property name="text">
-         <string>Available Profiles</string>
-        </property>
-       </column>
+       <property name="editTriggers">
+        <set>QAbstractItemView::CurrentChanged|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+       </property>
       </widget>
      </item>
      <item>
@@ -94,6 +92,46 @@
        </property>
       </widget>
      </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QPushButton" name="importPushButton">
+           <property name="text">
+            <string>Import Permission Profile</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="exportPushButton">
+           <property name="text">
+            <string>Export Permission Profile</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QPushButton" name="batchImportPushButton">
+           <property name="text">
+            <string>Batch Import Profiles</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="batchExportPushButton">
+           <property name="text">
+            <string>Batch Export Profiles</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
     </layout>
    </item>
    <item row="0" column="1">
@@ -106,6 +144,9 @@
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
          <widget class="QTreeWidget" name="treeWidget">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="rootIsDecorated">
            <bool>true</bool>
           </property>
@@ -145,22 +186,21 @@
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QPushButton" name="saveButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
-          <string>Save</string>
+          <string>Save Changes on Profile</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="clearButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Clear All</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="closeButton">
-         <property name="text">
-          <string>Close</string>
          </property>
         </widget>
        </item>

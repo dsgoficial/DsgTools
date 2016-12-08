@@ -24,7 +24,7 @@ import os
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot
+from PyQt4.QtCore import pyqtSlot, Qt
 
 # DSGTools imports
 from DsgTools.UserTools.create_profile import CreateProfile
@@ -35,7 +35,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'serverProfilesManager.ui'))
 
 class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, parent = None):
+    def __init__(self, permissionManager, parent = None):
         """
         Constructor
         """
@@ -46,6 +46,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.permissionManager = permissionManager
         
     def getProfiles(self, profileName = None):
         '''
@@ -121,19 +122,13 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         profileDict[self.parent] = permissions   
         return profileDict
     
-    def readJsonFile(self, filename):
+    def readJsonFromDatabase(self, profileName, edgvVersion):
         '''
         Reads the profile file, gets a dictionary of it and builds the tree widget
         '''
-        try:
-            file = open(filename, 'r')
-            data = file.read()
-            profileDict = json.loads(data)
-            self.parent = profileDict.keys()[0]
-            file.close()
-        except:
-            return
-            
+
+        profileDict = self.permissionManager.getProfile(profileName, edgvVersion)
+        self.parent = profileDict.keys()[0]
         #invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
         #database item
@@ -141,6 +136,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
 
         permissions = profileDict[self.parent]
         self.createChildrenItems(dbItem, permissions)
+        self.treeWidget.sortItems(0, Qt.AscendingOrder)
                                         
     def createChildrenItems(self, parent, mydict):
         '''
@@ -245,3 +241,40 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
                 return
             self.getProfiles()
             self.setInitialState()
+    
+    @pyqtSlot(int)
+    def on_versionSelectionComboBox_currentIndexChanged(self, index):
+        self.profilesListWidget.clear()
+        self.treeWidget.clear()
+        self.setEnabled(False)
+        if index <> 0:
+            edgvVersion = self.versionSelectionComboBox.currentText().split(' ')[-1]
+            profilesDict = self.permissionManager.getProfiles()
+            if edgvVersion in profilesDict.keys():
+                self.profilesListWidget.addItems(profilesDict[edgvVersion])
+    
+    @pyqtSlot(bool)
+    def on_createPermissionPushButton_clicked(self):
+        '''
+        Slot that opens the create profile dialog
+        '''
+        dlg = CreateProfile()
+        dlg.profileCreated.connect(self.getProfiles)
+        dlg.exec_()
+    
+    
+    def setEnabled(self, enabled):
+        self.treeWidget.setEnabled(enabled)
+        self.saveButton.setEnabled(enabled)
+        self.clearButton.setEnabled(enabled)
+    
+    @pyqtSlot()
+    def on_profilesListWidget_itemSelectionChanged(self):
+        profileName = self.profilesListWidget.currentItem().text()
+        try:
+            self.setEnabled(True)
+            edgvVersion = self.versionSelectionComboBox.currentText().split(' ')[-1]
+            self.treeWidget.clear()
+            self.readJsonFromDatabase(profileName, edgvVersion)
+        except:
+            pass
