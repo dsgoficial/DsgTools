@@ -525,7 +525,7 @@ class PostgisDb(AbstractDb):
         ret.sort()
         return ret
 
-    def createRole(self, role, dict):
+    def createRole(self, role, dict, permissionManager = False):
         '''
         Creates a role into this database
         role: role name
@@ -540,6 +540,11 @@ class PostgisDb(AbstractDb):
         split = sql.split(';')
         query = QSqlQuery(self.db)
         
+        if permissionManager:
+            if not query.exec_(sql):
+                raise Exception(self.tr('Problem assigning profile: ') +role+'\n'+query.lastError().text())
+            return role
+
         #try to revoke the permissions
         try:
             self.dropRole(role)

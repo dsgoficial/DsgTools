@@ -254,3 +254,17 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem deleting permission: ') + e.args[0])
+    
+    @pyqtSlot(bool)
+    def on_saveButton_clicked(self):
+        profileName = self.profilesListWidget.currentItem().text()
+        edgvVersion = self.versionSelectionComboBox.currentText()
+        newProfileDict = self.makeProfileDict()
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.permissionManager.updatePermissionProfile(profileName, edgvVersion, newProfileDict)
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission ') + profileName + self.tr(' successfully updated.'))
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem updating permission: ') + e.args[0])

@@ -169,15 +169,19 @@ class PermissionManager(QObject):
         profileDict = self.getProfile(permissionName, edgvVersion)
         self.grantPermissionWithProfileDict(dbName, permissionName, userName, profileDict)
     
-    def grantPermissionWithProfileDict(self, dbName, permissionName, userName, profileDict):
+    def grantPermissionWithProfileDict(self, dbName, permissionName, userName, profileDict, updatePermission = False):
         '''
         Grants permission on a db using profileDict
         '''
-        if not self.isPermissionInstalled(self.dbDict[dbName], dbName, permissionName):
-            self.dbDict[dbName].createRole(permissionName, profileDict) #creates profile in db
-        (dbRolesDict, rolesDict) = self.getRolesInformation() #done to refresh dicts due to new permission 
-        for role in rolesDict[permissionName][dbName]:
+        if updatePermission:
+            role = self.dbDict[dbName].createRole(permissionName, profileDict, permissionManager = True)
             self.dbDict[dbName].grantRole(userName, role)
+        else:
+            if not self.isPermissionInstalled(self.dbDict[dbName], dbName, permissionName):
+                self.dbDict[dbName].createRole(permissionName, profileDict) #creates profile in db
+            (dbRolesDict, rolesDict) = self.getRolesInformation() #done to refresh dicts due to new permission 
+            for role in rolesDict[permissionName][dbName]:
+                self.dbDict[dbName].grantRole(userName, role)
     
     def revokePermission(self, dbName, permissionName, userName):
         '''
@@ -216,21 +220,22 @@ class PermissionManager(QObject):
             self.adminDb.db.transaction() #done to rollback in case of trouble
             (dbRolesDict, rolesDict) = self.getRolesInformation()
             grantedRoleDict = self.adminDb.getGrantedRolesDict()
-            for dbName in rolesDict[permissionName].keys():
-                for roleName in rolesDict[permissionName][dbName]:
-                    if dbName not in self.dbDict.keys():
-                        abstractDb = self.instantiateAbstractDb(dbName)
-                    else:
-                        abstractDb = self.dbDict[dbName]
-                    #prepairs to rollback in case of exception
-                    abstractDbsToRollBack.append(abstractDb)
-                    abstractDb.db.transaction()
-                    usersToBeGranted = []
-                    if roleName in grantedRoleDict.keys():
-                        usersToBeGranted = grantedRoleDict[roleName]
-                    abstractDb.dropRoleOnDatabase(roleName)
-                    for userName in usersToBeGranted:
-                        self.grantPermissionWithProfileDict(dbName, permissionName, userName, newProfileDict)
+            if permissionName in rolesDict.keys():
+                for dbName in rolesDict[permissionName].keys():
+                    for roleName in rolesDict[permissionName][dbName]:
+                        if dbName not in self.dbDict.keys():
+                            abstractDb = self.instantiateAbstractDb(dbName)
+                        else:
+                            abstractDb = self.dbDict[dbName]
+                        #prepairs to rollback in case of exception
+                        abstractDbsToRollBack.append(abstractDb)
+                        abstractDb.db.transaction()
+                        usersToBeGranted = []
+                        if roleName in grantedRoleDict.keys():
+                            usersToBeGranted = grantedRoleDict[roleName]
+                        abstractDb.dropRoleOnDatabase(roleName)
+                        for userName in usersToBeGranted:
+                            self.grantPermissionWithProfileDict(dbName, permissionName, userName, newProfileDict, updatePermission = True)
             newjsonprofile = json.dumps(newProfileDict, sort_keys=True, indent=4)
             self.adminDb.updatePermissionProfile(permissionName, edgvVersion, newjsonprofile)
             for abstractDb in abstractDbsToRollBack:
@@ -238,7 +243,7 @@ class PermissionManager(QObject):
         except Exception as e:
             for abstractDb in abstractDbsToRollBack:
                 abstractDb.db.rollback()
-            raise Exception(self.tr('Unable to update profile ') + permissionName +': ' +e)
+            raise Exception(self.tr('Unable to update profile ') + permissionName +': ' +e.args[0])
     
     def deletePermission(self, permissionName, edgvVersion):
         '''
