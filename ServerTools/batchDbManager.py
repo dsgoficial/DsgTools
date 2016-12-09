@@ -63,6 +63,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         self.serverWidget.abstractDbLoaded.connect(self.checkSuperUser)
         self.dbsCustomSelector.setTitle(self.tr('Server Databases'))
         self.dbsCustomSelector.selectionChanged.connect(self.populateStylesInterface)
+        self.dbsCustomSelector.selectionChanged.connect(self.populatePermissionsInterface)
         self.previousTab = 0
 
     @pyqtSlot(bool)
@@ -85,7 +86,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     def setDatabases(self):
         dbList = self.populateListWithDatabasesFromServer()
         self.dbsCustomSelector.setInitialState(dbList)
-        #self.permissionWidget.setParameters(self.serverWidget.abstractDb)
+        self.permissionWidget.setParameters(self.serverWidget.abstractDb,{})
 
     def checkSuperUser(self):
         try:
@@ -260,7 +261,6 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         for styleName in allStylesDict.keys():
             parentStyleItem = self.createItem(rootNode, styleName, 0)
             dbList = allStylesDict[styleName].keys()
-            parentStyleItem.setText(1,'\n'.join(dbList))
             parentTimeList = []
             for dbName in dbList:
                 dbItem = self.createItem(parentStyleItem, dbName, 1)
@@ -274,7 +274,6 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                     tableItem.setText(3,allStylesDict[styleName][dbName][table].toString())
                 parentTimeList.append(max(timeList))
                 dbItem.setText(3,max(timeList))
-            parentStyleItem.setText(3,'\n'.join(parentTimeList))
     
     
     @pyqtSlot(bool)
@@ -334,21 +333,24 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                 exceptionDict[dbName] =  str(e.args[0])
         return successList, exceptionDict
     
-    @pyqtSlot(int)
-    def on_tabWidget_currentChanged(self, index):
-        if index == 2:
-            if not self.serverWidget.abstractDb:
-                QMessageBox.warning(self, self.tr('Info!'), self.tr('Select a server to inspect permissions!'))
-                self.tabWidget.setCurrentIndex(0)
-            elif len(self.getSelectedDbList()) == 0:
-                QMessageBox.warning(self, self.tr('Info!'), self.tr('Select databases do inspect permissions!'))
-                self.tabWidget.setCurrentIndex(0)
-            else:
-                dbsDict = self.instantiateAbstractDbs()
-                self.permissionWidget.setParameters(self.serverWidget.abstractDb, dbsDict)
-                self.permissionWidget.refresh()
-        else:
-            self.previousTab = index
+#     @pyqtSlot(int)
+#     def on_tabWidget_currentChanged(self, index):
+#         if index == 2:
+#             if not self.serverWidget.abstractDb:
+#                 QMessageBox.warning(self, self.tr('Info!'), self.tr('Select a server to inspect permissions!'))
+#                 self.tabWidget.setCurrentIndex(0)
+#             elif len(self.getSelectedDbList()) == 0:
+#                 QMessageBox.warning(self, self.tr('Info!'), self.tr('Select databases do inspect permissions!'))
+#                 self.tabWidget.setCurrentIndex(0)
+#             else:
+#                 dbsDict = self.instantiateAbstractDbs()
+#                 self.permissionWidget.setParameters(self.serverWidget.abstractDb, dbsDict)
+#                 self.permissionWidget.refresh()
+#         else:
+#             self.previousTab = index
             
-    
+    def populatePermissionsInterface(self):
+        dbsDict = self.instantiateAbstractDbs()
+        self.permissionWidget.setParameters(self.serverWidget.abstractDb, dbsDict)
+        self.permissionWidget.refresh()
     
