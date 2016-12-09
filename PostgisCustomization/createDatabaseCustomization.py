@@ -51,6 +51,7 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.connectionWidget.tabWidget.setTabEnabled(1, False)
+        self.contentsDict = dict()
         self.populateCustomizationCombo()
     
     def getStructDict(self):
@@ -67,9 +68,14 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         self.customDict['default'] = self.tr('Default Customization')
         self.customDict['domain'] = self.tr('Domain Customization')
         self.customDict['nullity'] = self.tr('Attribute Nullity Customization')
+        rootNode = self.customizationTreeWidget.invisibleRootItem()
         for type in self.customDict.keys():
+            if self.customDict[type] not in self.contentsDict.keys():
+                self.contentsDict[self.customDict[type]] = dict()
             self.customizationSelectionComboBox.addItem(self.customDict[type])
-            
+            self.contentsDict[self.customDict[type]]['widgetList'] = []
+            self.contentsDict[self.customDict[type]]['treeItem'] = self.createItem(rootNode, self.customDict[type], 0)
+        self.customizationTreeWidget.expandAll()
     
     @pyqtSlot(bool)
     def on_addAttributePushButton_clicked(self):
@@ -92,9 +98,17 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         pass 
     
     def addClassWidget(self):
+        widgetList = self.contentsDict[self.tr('Class Customization')]['widgetList']
+        if len(widgetList) > 0:
+            i = int(widgetList[-1].layout().itemAt(0).widget().getTitle().split('#')[-1])
+        else:
+            i = 0
         widget = NewClassWidget()
-        title = self.tr('New Custom Class')
-        self.addWidget(widget, title)
+        title = self.tr('New Custom Class #{0}'.format(i+1)) #add number
+        widget.setTitle(title)
+        self.contentsDict[self.tr('Class Customization')]['widgetList'].append(self.addWidget(widget, title))
+        self.createItem(self.contentsDict[self.tr('Class Customization')]['treeItem'], title, 0)
+        
     
     def addCodeNameWidget(self):
         pass
@@ -116,6 +130,29 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         groupBox.setSaveCollapsedState(False)
         groupBox.setLayout(layout)
         self.scrollAreaLayout.addWidget(groupBox)
+        return groupBox
     
-
-        
+    def createItem(self, parent, text, column):
+        item = QtGui.QTreeWidgetItem(parent)
+        item.setText(column, text)
+        return item
+    
+    def getWidgetIndexFromTreeItem(self, treeItem):
+        parent = treeItem.parent()
+        widgetName = treeItem.text(0) 
+        if parent == self.customizationTreeWidget.invisibleRootItem():
+            return None
+        childCount = parent.childCount()
+        for i in range(childCount):
+            child = parent.child(i)
+            if child.text(0) == widgetName:
+                return i
+    
+    @pyqtSlot(bool)
+    def on_removeSelectedPushButton_clicked(self):
+        treeItem = self.customizationTreeWidget.currentItem()
+        comboItem = self.customizationSelectionComboBox.currentText()
+        idx = self.getWidgetIndexFromTreeItem(treeItem)
+        itemToRemove = self.contentsDict[comboItem]['widgetList'].pop(idx)
+        itemToRemove.setParent(None)
+        self.contentsDict[comboItem]['treeItem'].removeChild(treeItem)

@@ -275,7 +275,6 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                 parentTimeList.append(max(timeList))
                 dbItem.setText(3,max(timeList))
     
-    
     @pyqtSlot(bool)
     def on_deleteStyles_clicked(self):
         dbsDict = self.instantiateAbstractDbs()
@@ -332,22 +331,6 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
             except Exception as e:
                 exceptionDict[dbName] =  str(e.args[0])
         return successList, exceptionDict
-    
-#     @pyqtSlot(int)
-#     def on_tabWidget_currentChanged(self, index):
-#         if index == 2:
-#             if not self.serverWidget.abstractDb:
-#                 QMessageBox.warning(self, self.tr('Info!'), self.tr('Select a server to inspect permissions!'))
-#                 self.tabWidget.setCurrentIndex(0)
-#             elif len(self.getSelectedDbList()) == 0:
-#                 QMessageBox.warning(self, self.tr('Info!'), self.tr('Select databases do inspect permissions!'))
-#                 self.tabWidget.setCurrentIndex(0)
-#             else:
-#                 dbsDict = self.instantiateAbstractDbs()
-#                 self.permissionWidget.setParameters(self.serverWidget.abstractDb, dbsDict)
-#                 self.permissionWidget.refresh()
-#         else:
-#             self.previousTab = index
             
     def populatePermissionsInterface(self):
         dbsDict = self.instantiateAbstractDbs()

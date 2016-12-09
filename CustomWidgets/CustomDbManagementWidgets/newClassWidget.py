@@ -50,6 +50,7 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
         header = self.tableWidget.horizontalHeader()
         header.setStretchLastSection(True)
+        
     
     @pyqtSlot(bool)
     def on_addAttributePushButton_clicked(self):
@@ -65,3 +66,10 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
         rowList.sort(reverse=True)
         for row in rowList:
             self.tableWidget.removeRow(row)
+    
+    def getTitle(self):
+        return self.title
+    
+    def setTitle(self, title):
+        self.title = title
+    
