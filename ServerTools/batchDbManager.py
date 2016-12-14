@@ -244,7 +244,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                 newDict =dbsDict[dbName].getAllStylesDict(perspective)
                 allStylesDict = self.utils.mergeDict(newDict, allStylesDict)
             except Exception as e:
-                exceptionDict[dbName] = str(e.args[0])
+                exceptionDict[dbName] = e.args[0]
         if len(exceptionDict.keys())>0:
             self.logInternalError(exceptionDict)
         return allStylesDict

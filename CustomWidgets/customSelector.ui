@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>318</width>
-    <height>212</height>
+    <width>282</width>
+    <height>211</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -88,6 +88,12 @@
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QPushButton" name="pushButtonSelectAll">
+          <property name="maximumSize">
+           <size>
+            <width>40</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="toolTip">
            <string>Select all categories in the database</string>
           </property>
@@ -98,6 +104,12 @@
         </item>
         <item>
          <widget class="QPushButton" name="pushButtonSelectOne">
+          <property name="maximumSize">
+           <size>
+            <width>40</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="toolTip">
            <string>Select only the selected</string>
           </property>
@@ -108,6 +120,12 @@
         </item>
         <item>
          <widget class="QPushButton" name="pushButtonDeselectOne">
+          <property name="maximumSize">
+           <size>
+            <width>40</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="toolTip">
            <string>Remove from list only the selected categories</string>
           </property>
@@ -118,6 +136,12 @@
         </item>
         <item>
          <widget class="QPushButton" name="pushButtonDeselectAll">
+          <property name="maximumSize">
+           <size>
+            <width>40</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="toolTip">
            <string>Remove all categories</string>
           </property>

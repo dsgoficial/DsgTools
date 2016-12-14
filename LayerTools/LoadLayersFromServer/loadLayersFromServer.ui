@@ -78,7 +78,14 @@
     </layout>
    </item>
    <item row="2" column="0" rowspan="2">
-    <widget class="CustomSelector" name="layersCustomSelector" native="true"/>
+    <widget class="CustomSelector" name="layersCustomSelector" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
    </item>
    <item row="2" column="1">
     <spacer name="verticalSpacer">
@@ -101,7 +108,7 @@
      <item row="0" column="0">
       <widget class="QGroupBox" name="groupBox_2">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -114,7 +121,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>220</width>
+         <width>500</width>
          <height>120</height>
         </size>
        </property>
@@ -134,6 +141,12 @@
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
            <widget class="QCheckBox" name="checkBoxPoint">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Point</string>
             </property>
@@ -144,6 +157,12 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkBoxLine">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Line</string>
             </property>
@@ -154,6 +173,12 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkBoxPolygon">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Polygon</string>
             </property>
@@ -164,6 +189,12 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkBoxAll">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Select All</string>
             </property>
@@ -180,7 +211,7 @@
      <item row="1" column="0">
       <widget class="QGroupBox" name="groupBox_3">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -193,7 +224,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>220</width>
+         <width>500</width>
          <height>120</height>
         </size>
        </property>
