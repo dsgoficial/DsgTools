@@ -62,7 +62,7 @@ class DbCreator(QObject):
     def buildAutoIncrementingDbNameList(self, dbInitialBaseName, numberOfDatabases, prefix = None, sufix = None):
         dbNameList = []
         for i in range(numberOfDatabases):
-            dbBaseName = dbInitialBaseName+str(i+1)
+            dbBaseName = dbInitialBaseName + str(i+1)
             dbNameList.append(self.buildDatabaseName(dbBaseName, prefix, sufix))
         return dbNameList
     
@@ -85,11 +85,14 @@ class DbCreator(QObject):
             except Exception as e:
                 if dbName not in errorDict.keys():
                     try:
-                        errorDict[dbName] = str(e.args[0])
+                        errorDict[dbName] = e.args[0]
                     except:
                         errorDict[dbName] = e
                 else:
-                    errorDict[dbName] += '\n' + str(e.args[0])
+                    try:
+                        errorDict[dbName] += '\n' + e.args[0]
+                    except:
+                        errorDict[dbName] += '\n' + e
             if self.parentWidget:
                 progress.step()
         return outputDbDict, errorDict
@@ -117,9 +120,15 @@ class DbCreator(QObject):
                 outputDbDict[mi] = newDb
             except Exception as e:
                 if dbName not in errorDict.keys():
-                    errorDict[dbName] = str(e.args[0])
+                    try:
+                        errorDict[dbName] = e.args[0]
+                    except:
+                        errorDict[dbName] = e
                 else:
-                    errorDict[dbName] += '\n' + str(e.args[0])
+                    try:
+                        errorDict[dbName] += '\n' + e.args[0]
+                    except:
+                        errorDict[dbName] += '\n' + e
             if self.parentWidget:
                 progress.step()
         if createFrame:
@@ -129,9 +138,15 @@ class DbCreator(QObject):
                     outputDbDict[key].createFrame('mi',scale,key)
                 except Exception as e:
                     if dbName not in errorDict.keys():
-                        errorDict[dbName] = str(e.args[0])
+                        try:
+                            errorDict[dbName] = e.args[0]
+                        except:
+                            errorDict[dbName] = e
                     else:
-                        errorDict[dbName] += '\n' + str(e.args[0])
+                        try:
+                            errorDict[dbName] += '\n' + e.args[0]
+                        except:
+                            errorDict[dbName] += '\n' + e
                 if self.parentWidget:
                     progress.step()
         return outputDbDict, errorDict
