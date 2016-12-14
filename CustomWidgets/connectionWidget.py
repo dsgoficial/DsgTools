@@ -158,7 +158,8 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.edgvSpatialiteVersionEdit.setText('')
         self.edgvSpatialiteVersionEdit.setReadOnly(True)
         self.edgvPostgisVersionEdit.setText('')
-        self.edgvPostgisVersionEdit.setReadOnly(True)     
+        self.edgvPostgisVersionEdit.setReadOnly(True)
+        self.mGroupBox.setTitle(self.tr('Database connection'))
         
         #Setting the database type
         if self.tabWidget.currentIndex() == 1:
@@ -184,6 +185,8 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
                 dbName = self.comboBoxPostgis.currentText()
                 self.abstractDb.connectDatabaseWithParameters(host, port, dbName, user, password)
                 self.edgvPostgisVersionEdit.setText(self.abstractDb.getDatabaseVersion())
+                serverName = self.serverWidget.serversCombo.currentText()
+                self.mGroupBox.setTitle(dbName + self.tr(' on ') + serverName)
 
             self.abstractDb.checkAndOpenDb()
             self.dbLoaded = True
