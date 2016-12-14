@@ -376,6 +376,70 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         #button that sent the signal
         self.buttonName = self.sender().text()
         (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
+
+        mapLayers = self.iface.mapCanvas().layers()
+        crsSrc = QgsCoordinateReferenceSystem(self.widget.crs.authid())
+        for mapLayer in mapLayers:
+            if mapLayer.type() != QgsMapLayer.VectorLayer:
+                continue
+            
+            #iterating over selected features
+            featList = []
+            mapLayerCrs = mapLayer.crs()
+            #creating a coordinate transformer (mapLayerCrs to crsSrc)
+            coordinateTransformer = QgsCoordinateTransform(mapLayerCrs, crsSrc)
+            for feature in mapLayer.selectedFeatures():
+                geom = feature.geometry()
+                geom.convertToMultiType()
+                if 'geometry' in dir(geom):
+                    if 'Multi' not in geom.geometry().geometryType():
+                        geom.geometry().dropMValue()
+                        geom.geometry().dropZValue()
+                #creating a new feature according to the reclassification layer
+                newFeature = QgsFeature(reclassificationLayer.pendingFields())
+                #transforming the geometry to the correct crs
+                geom.transform(coordinateTransformer)
+                #setting the geometry
+                newFeature.setGeometry(geom)
+                #setting the attributes using the reclassification dictionary
+                newFeature = self.setFeatureAttributes(newFeature)
+                #adding the newly created feature to the addition list
+                featList.append(newFeature)
+                somethingMade = True
+            #actual feature insertion
+            reclassificationLayer.addFeatures(featList, False)
         
-        if not reclassificationLayer:
-            return
+            if len(mapLayer.selectedFeatures()) > 0:
+                mapLayer.startEditing()
+                mapLayer.deleteSelectedFeatures()
+        
+        if somethingMade:
+            self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('Features reclassified with success!'), level=QgsMessageBar.INFO, duration=3)
+
+
+    def findReclassificationClass(self, button):
+        '''
+        Finds the reclassification class according to the button
+        button: Button clicked by the user to perform the reclassification
+        '''
+        for category in self.reclassificationDict.keys():
+            if category == 'version':
+                continue
+            for edgvClass in self.reclassificationDict[category].keys():
+                for buttonName in self.reclassificationDict[category][edgvClass].keys():
+                    if button == buttonName:
+                        #returning the desired edgvClass
+                        return (category, edgvClass)
+        return ()
+                    
+    def searchLayer(self, group, name):
+        '''
+        Checks if a layer is already loaded in TOC. Case positive return it, case negative return None
+        group: Group name
+        name: Layer name
+        '''
+        layerNodes = group.findLayers()
+        for node in layerNodes:
+            if node.layerName() == name:
+                return node.layer()
+        return None
