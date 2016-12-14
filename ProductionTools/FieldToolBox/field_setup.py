@@ -60,9 +60,10 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.treeWidget.customContextMenuRequested.connect(self.createMenu)        
         self.edgvVersion = self.abstractDb.getDatabaseVersion()
         if self.abstractDb.db.driverName() == 'QPSQL':
-            self.domainDict = self.abstractDb.getDbDomainDict()
+            self.geomTypeDict = self.abstractDb.getGeomTypeDict()
+            self.geomDict = self.abstractDb.getGeomDict(self.geomTypeDict)
+            self.domainDict = self.abstractDb.getDbDomainDict(self.geomDict)
             self.geomStructDict = self.abstractDb.getGeomStructDict()
-            self.geomDict = self.abstractDb.getGeomDict()
 #             if self.edgvVersion == 'FTer_2a_Ed':
 #                 qmlPath = self.abstractDb.getQmlDir()
 #                 qmlDict = self.utils.parseMultiQml(qmlPath, layerList)
@@ -519,4 +520,74 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             classItems = self.classListWidget.findItems(previous.parent().parent().text(0), Qt.MatchExactly)
             self.classListWidget.setCurrentItem(classItems[0])
             self.buttonNameLineEdit.setText(previous.parent().text(0))
-            self.recreateAttributeTable(previous.parent())        
+            self.recreateAttributeTable(previous.parent())
+
+    def depth(self, item):
+        '''
+        Calculates the item depth in the tree widget
+        '''
+        #calculates the depth of the item
+        depth = 0
+        while item is not None:
+            item = item.parent()
+            depth += 1
+        return depth   
+    
+    def createMenu(self, position):
+        '''
+        Creates a menu that allows button removal by the user
+        '''
+        menu = QMenu()
+        
+        item = self.treeWidget.itemAt(position)
+
+        if item and self.depth(item) < 4:
+            menu.addAction(self.tr('Remove child node'), self.removeChildNode)
+        menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
+
+    def removeChildNode(self):
+        '''
+        Removes a tree widget item and all its children
+        '''
+        item = self.treeWidget.currentItem()
+        item.parent().removeChild(item)     
+        
+    @pyqtSlot(bool)
+    def on_loadButton_clicked(self):
+        '''
+        Loads a configuration file
+        '''
+        self.loadedFileEdit.setText('')
+        
+        filename = QFileDialog.getOpenFileName(self, self.tr('Open reclassification setup file'), self.folder, self.tr('Reclassification Setup Files (*.reclas)'))
+        if not filename:
+            return
+        #makes the dictionary used to create the tree widget
+        reclassificationDict = self.readJsonFile(filename)
+        #assembles the tree widget based on the dictionary
+        self.loadReclassificationConf(reclassificationDict)
+        
+        self.loadedFileEdit.setText(filename)
+        
+    @pyqtSlot()    
+    def on_buttonBox_accepted(self):
+        '''
+        Saves the configuration work done so far.
+        '''
+        if QMessageBox.question(self, self.tr('Question'), self.tr('Do you want to save this reclassification setup?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
+            return
+            
+        filename = QFileDialog.getSaveFileName(self, self.tr('Save reclassification setup file'), self.folder, self.tr('Reclassification Setup Files (*.reclas)'))
+        if not filename:
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Define a name for the reclassification setup file!'))
+            return
+        
+        if '.reclas' not in filename:
+            filename = filename + '.reclas'
+
+        reclassificationDict = self.makeReclassificationDict()
+        with open(filename, 'w') as outfile:
+            json.dump(reclassificationDict, outfile, sort_keys=True, indent=4)
+            
+        QMessageBox.information(self, self.tr('Information!'), self.tr('Reclassification setup file saved successfully!'))
+        
