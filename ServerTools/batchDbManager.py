@@ -156,12 +156,14 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     def batchDropDbs(self, dbList):
         exceptionDict = dict()
         successList = []
+        dbsDict = self.instantiateAbstractDbs()
+        self.closeAbstractDbs(dbsDict)
         for dbName in dbList:
             try:
                 self.serverWidget.abstractDb.dropDatabase(dbName)
                 successList.append(dbName)
             except Exception as e:
-                exceptionDict[dbName] =  str(e.args[0])
+                exceptionDict[dbName] =  e.args[0]
         return successList, exceptionDict
     
     @pyqtSlot(bool)
@@ -176,7 +178,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                 if version not in versionList:
                     versionList.append(version)
             except Exception as e:
-                exceptionDict[dbName] = str(e.args[0])
+                exceptionDict[dbName] = e.args[0]
         if len(exceptionDict.keys())>0:
             self.logInternalError(exceptionDict)
         if len(versionList) > 1:
@@ -333,7 +335,8 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         return successList, exceptionDict
             
     def populatePermissionsInterface(self):
-        dbsDict = self.instantiateAbstractDbs()
-        self.permissionWidget.setParameters(self.serverWidget.abstractDb, dbsDict)
-        self.permissionWidget.refresh()
+        if self.tabWidget.currentIndex() == 2:
+            dbsDict = self.instantiateAbstractDbs()
+            self.permissionWidget.setParameters(self.serverWidget.abstractDb, dbsDict)
+            self.permissionWidget.refresh()
     
