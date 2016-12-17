@@ -51,6 +51,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.permissionManager = permissionManager
+        self.versionDict = {'2.1.3':0, 'FTer_2a_Ed':1}
 
         
     def createItem(self, parent, text):
@@ -146,9 +147,9 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         Slot that opens the create profile dialog
         '''
         dlg = CreateProfile()
-        dlg.profileCreated.connect(self.getProfiles)
+        dlg.profileCreated.connect(self.updateInterface)
         dlg.exec_()
-            
+        
     @pyqtSlot(bool)
     def on_clearButton_clicked(self):
         '''
@@ -234,6 +235,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
             pass
     
     def updateInterface(self, profileName, edgvVersion):
+        self.refreshProfileList()
         idx = self.versionSelectionComboBox.findText(edgvVersion, flags = Qt.MatchExactly)
         self.versionSelectionComboBox.setCurrentIndex(idx)
         profileItem = self.profilesListWidget.findItems(profileName, Qt.MatchExactly)[0]
