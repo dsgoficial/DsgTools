@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>562</width>
-    <height>379</height>
+    <width>636</width>
+    <height>416</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -65,7 +65,7 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>800</width>
+       <width>5000</width>
        <height>5000</height>
       </size>
      </property>
@@ -156,8 +156,8 @@
         <widget class="QGroupBox" name="groupBox_6">
          <property name="maximumSize">
           <size>
-           <width>800</width>
-           <height>400</height>
+           <width>5000</width>
+           <height>5000</height>
           </size>
          </property>
          <property name="title">
@@ -168,6 +168,12 @@
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
              <widget class="QPushButton" name="importStylesPushButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>Import Styles</string>
               </property>
@@ -175,6 +181,12 @@
             </item>
             <item>
              <widget class="QPushButton" name="deleteStyles">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>Delete Styles</string>
               </property>
@@ -351,7 +363,7 @@
   <customwidget>
    <class>QgsCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qgis.gui</header>
+   <header>qgscollapsiblegroupbox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

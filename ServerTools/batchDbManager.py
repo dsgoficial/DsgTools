@@ -340,3 +340,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
             self.permissionWidget.setParameters(self.serverWidget.abstractDb, dbsDict)
             self.permissionWidget.refresh()
     
+    @pyqtSlot(int)
+    def on_tabWidget_currentChanged(self, index):
+        if index == 2:
+            self.populatePermissionsInterface()

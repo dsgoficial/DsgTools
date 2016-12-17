@@ -51,7 +51,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.permissionManager = permissionManager
-        self.versionDict = {'2.1.3':0, 'FTer_2a_Ed':1}
+        self.versionDict = {'2.1.3':1, 'FTer_2a_Ed':2}
 
         
     def createItem(self, parent, text):

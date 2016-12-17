@@ -137,9 +137,10 @@ class CreateProfileWithProfileManager(QtGui.QDialog, FORM_CLASS):
             profileName = self.lineEdit.text()
         permissionDict = self.permissionManager.getProfiles()
         edgvVersion = self.versionCombo.currentText()
-        if profileName in permissionDict[edgvVersion]:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile ') + profileName + self.tr(' for EDGV ') + edgvVersion + self.tr(' already exists!'))
-            return
+        if edgvVersion in permissionDict.keys():
+            if profileName in permissionDict[edgvVersion]:
+                QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile ') + profileName + self.tr(' for EDGV ') + edgvVersion + self.tr(' already exists!'))
+                return
         jsonDict = json.dumps(self.profile, sort_keys=True, indent=4)
         self.permissionManager.createPermissionProfile(profileName, edgvVersion, jsonDict)
         self.profileCreated.emit(profileName, edgvVersion)
