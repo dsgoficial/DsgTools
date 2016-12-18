@@ -27,13 +27,14 @@ from PyQt4.Qt import QObject
 
 class CustomJSONBuilder(QObject):
     def __init__(self, jsonDict):
-        super(CustomJSONValidator,self).__init__()
+        super(CustomJSONBuilder,self).__init__()
         self.jsonDict = jsonDict
     
     def buildClassElement(self, name, attrList, schema):
         return {'name':name, 'attrs':attrList,'schema':schema}
     
-    def buildAttributeElement(self, attrName, attrType, isPk, isNullable, defaultValue = None):
-        return {'attrName':attrName, 'attrType':attrType, 'isPk':isPk, 'isNullable':isNullable, 'defaultValue':defaultValue}
+    def buildAttributeElement(self, attrName, attrType, isPk, isNullable, defaultValue = None, references = None):
+        return {'attrName':attrName, 'attrType':attrType, 'isPk':isPk, 'isNullable':isNullable, 'defaultValue':defaultValue, 'references':references}
 
-    
+    def buildDomainElement(self, domainName, valueDict):
+        return {'domainName':domainName, 'valueDict': valueDict}

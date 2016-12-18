@@ -28,9 +28,35 @@ class AttributeCustomization(DbCustomization):
         super(AttributeCustomization, self).__init__(customJson)
     
     def buildSql(self):
+        '''
+        self.customJson['AttributeToAdd'] = [{'schemaName':'schema', 'tableName':'nome', 'attrList':[-list of attrDef-]}]
+        attrDef = [{'attrName':'nome', 'attrType':'varchar(80)', 'isPk':False, 'isNullable':True, 'references':None, 'default':None}]
+        '''
         #Abstract method. Must be reimplemented in each child.
-        pass
+        sql = ''
+        for modItem in self.customJson['AttributeToAdd']:
+            schema = modItem['schemaName']
+            table = modItem['tableName']
+            for attr in modItem['attrList']:
+                auxSql = 'ALTER TABLE "{0}"."{1}" ADD COLUMN {2} {3}'.format(schema,table,attr['attrName'],attr['attrType'])
+                if not attr['isNullable']:
+                    auxSql += ' NOT NULL '
+                if 'references' in attr.keys():
+                    if attr['references']:
+                        if attr['default']:
+                            auxSql += ' REFERENCES {0} DEFAULT {1}'.format(attr['references'], attr['default'])
+                        else:
+                            auxSql += ' REFERENCES {0}'.format(attr['references'])
+                auxSql += ';\n'
+                sql += auxSql
+        return sql
     
     def buildUndoSql(self):
         #Abstract method. Must be reimplemented in each child.
-        pass
+        sql = ''
+        for modItem in self.customJson['AttributeToAdd']:
+            schema = modItem['schemaName']
+            table = modItem['tableName']
+            for attr in modItem['attrList']:
+                sql += 'ALTER TABLE "{0}"."{1}" DROP COLUMN IF EXISTS "{2}" CASCADE;'.format(schema, table, attr['attrName'])
+        return sql
