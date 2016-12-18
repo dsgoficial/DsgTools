@@ -20,36 +20,27 @@
  *                                                                         *
  ***************************************************************************/
 """
+import json
 #Qt Imports
 from PyQt4.Qt import QObject
 #DsgTools Imports
-from DsgTools.Utils.utils import Utils 
-from DsgTools.Factories.DbFactory.postgisDb import PostgisDb
-from DsgTools.PostgisCustomization.CustomJSONTools.customJSONValidator import CustomJSONValidator
-from DsgTools.Factories.DbCustomizationFactory.dbCustomizationFactory import DbCustomizationFactory
 
-class DbCustomizer(QObject):
-    def __init__(self, postgisDb):
-        super(DbCustomizer, self).__init__()
-        self.utils = Utils()
-        self.postgisDb = postgisDb
-        self.customJSONValidator = CustomJSONValidator()
-        self.dbCustomizationFactory = DbCustomizationFactory()
+class CustomJSONValidator(QObject):
+    def __init__(self, jsonFile):
+        super(CustomJSONValidator,self).__init__()
+        self.jsonFile = jsonFile
     
-    def importFromJSON(self, customJSON):
+    def parseJson(self):
         pass
     
-    def materializeIntoDb(self):
+    def validateTags(self):
         pass
     
-    def removeFromDb(self):
+    def validateDsgToolsClassNames(self):
         pass
     
-    def logOperation(self):
+    def validateGeometricPrimitives(self):
         pass
     
-    def buildCustomizer(self, jsonFile, type):
-        pass
-    
-    def getAvailableCustomizationsDict(self):
+    def validate(self):
         pass

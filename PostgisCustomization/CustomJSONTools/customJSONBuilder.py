@@ -5,10 +5,10 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2016-07-31
+        begin                : 2016-12-17
         git sha              : $Format:%H$
         copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba@dsg.eb.mil.br
+        email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -20,36 +20,20 @@
  *                                                                         *
  ***************************************************************************/
 """
+import json
 #Qt Imports
 from PyQt4.Qt import QObject
 #DsgTools Imports
-from DsgTools.Utils.utils import Utils 
-from DsgTools.Factories.DbFactory.postgisDb import PostgisDb
-from DsgTools.PostgisCustomization.CustomJSONTools.customJSONValidator import CustomJSONValidator
-from DsgTools.Factories.DbCustomizationFactory.dbCustomizationFactory import DbCustomizationFactory
 
-class DbCustomizer(QObject):
-    def __init__(self, postgisDb):
-        super(DbCustomizer, self).__init__()
-        self.utils = Utils()
-        self.postgisDb = postgisDb
-        self.customJSONValidator = CustomJSONValidator()
-        self.dbCustomizationFactory = DbCustomizationFactory()
+class CustomJSONBuilder(QObject):
+    def __init__(self, jsonDict):
+        super(CustomJSONValidator,self).__init__()
+        self.jsonDict = jsonDict
     
-    def importFromJSON(self, customJSON):
-        pass
+    def buildClassElement(self, name, attrList, schema):
+        return {'name':name, 'attrs':attrList,'schema':schema}
     
-    def materializeIntoDb(self):
-        pass
+    def buildAttributeElement(self, attrName, attrType, isPk, isNullable, defaultValue = None):
+        return {'attrName':attrName, 'attrType':attrType, 'isPk':isPk, 'isNullable':isNullable, 'defaultValue':defaultValue}
+
     
-    def removeFromDb(self):
-        pass
-    
-    def logOperation(self):
-        pass
-    
-    def buildCustomizer(self, jsonFile, type):
-        pass
-    
-    def getAvailableCustomizationsDict(self):
-        pass
