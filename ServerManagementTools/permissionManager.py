@@ -91,16 +91,17 @@ class PermissionManager(QObject):
             if dbName not in dbPerspectiveDict.keys():
                 dbPerspectiveDict[dbName] = dict()
             edgvVersion = self.dbDict[dbName].getDatabaseVersion()
-            for profile in profiles[edgvVersion]:
-                if profile not in dbPerspectiveDict[dbName].keys():
-                    dbPerspectiveDict[dbName][profile] = []
-                if profile in rolesDict.keys():
-                    if dbName in rolesDict[profile].keys():
-                        for role in rolesDict[profile][dbName]:
-                            if role in grantedRoleDict.keys():
-                                for user in grantedRoleDict[role]:
-                                    if user not in dbPerspectiveDict[dbName][profile]:
-                                        dbPerspectiveDict[dbName][profile].append(user)
+            if edgvVersion in profiles.keys():
+                for profile in profiles[edgvVersion]:
+                    if profile not in dbPerspectiveDict[dbName].keys():
+                        dbPerspectiveDict[dbName][profile] = []
+                    if profile in rolesDict.keys():
+                        if dbName in rolesDict[profile].keys():
+                            for role in rolesDict[profile][dbName]:
+                                if role in grantedRoleDict.keys():
+                                    for user in grantedRoleDict[role]:
+                                        if user not in dbPerspectiveDict[dbName][profile]:
+                                            dbPerspectiveDict[dbName][profile].append(user)
         return dbPerspectiveDict
     
     def getUserPerspectiveDict(self):
