@@ -28,9 +28,18 @@ class CodeNameCustomization(DbCustomization):
         super(CodeNameCustomization, self).__init__(customJson)
     
     def buildSql(self):
+        '''
+        {'domainTable':domainTable, 'codeValue':codeValue, 'oldCodeName':oldCodeName, 'newCodeName':newCodeName}
+        '''
         #Abstract method. Must be reimplemented in each child.
-        pass
+        sql = ''
+        for modItem in self.customJson['CodeNameToChange']:
+            sql += '''UPDATE dominios."{0}" SET code_name = '{1}' where code = {2};\n'''.format(modItem['domainTable'], modItem['newCodeName'], modItem['codeValue'])
+        return sql
     
     def buildUndoSql(self):
         #Abstract method. Must be reimplemented in each child.
-        pass
+        sql = ''
+        for modItem in self.customJson['CodeNameToChange']:
+            sql += '''UPDATE dominios."{0}" SET code_name = '{1}' where code = {2};\n'''.format(modItem['domainTable'], modItem['oldCodeName'], modItem['codeValue'])
+        return sql

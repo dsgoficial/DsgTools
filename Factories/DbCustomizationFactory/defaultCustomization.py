@@ -28,33 +28,22 @@ class DefaultCustomization(DbCustomization):
         super(DefaultCustomization, self).__init__(customJson)
     
     def buildSql(self, abstractDb):
+        '''
+        {'schema': schema, 'table': table, 'attrName':attrName, 'oldValue':oldValue, 'newValue':newValue}
+        '''
         #Abstract method. Must be reimplemented in each child.
-        sql = ''
-        if self.jsonDict['default'].keys() == ['all']:
-            classList = abstractDb.getTablesFromDatabase()
-            for cl in classList:
-                if self.jsonDict['default']['all'].keys() == ['all']:
-                    attrList = abstractDb.getColumnsFromTable(cl)
-                    value = self.jsonDict['default']['all']['all']
-                    for attribute in attrList:
-                        sql += """ALTER TABLE ONLY '{0}' ALTER COLUMN {1} SET DEFAULT {2};\n""".format(cl,attribute,str(value))
-                else:
-                    for attribute in self.jsonDict['default']['all'].keys():
-                         value = self.jsonDict['default']['all'][attribute]
-                         sql += """ALTER TABLE ONLY '{0}' ALTER COLUMN {1} SET DEFAULT {2};\n""".format(cl,attribute,str(value))
-        else:
-            for cl in self.jsonDict['default'].keys():
-                if self.jsonDict['default'][cl].keys() == ['all']:
-                    attrList = abstractDb.getColumnsFromTable(cl)
-                    value = self.jsonDict['default'][cl]['all']
-                    for attribute in attrList:
-                        sql += """ALTER TABLE ONLY '{0}' ALTER COLUMN {1} SET DEFAULT {2};\n""".format(cl,attribute,str(value))
-                else:
-                    for attribute in self.jsonDict['default'][cl].keys():
-                        value = self.jsonDict['default'][cl][attribute]
-                        sql += """ALTER TABLE ONLY '{0}' ALTER COLUMN {1} SET DEFAULT {2};\n""".format(cl,attribute,str(value))
+        sql = ''''''
+        for modItem in self.customJson['ChangeDefault']:
+            sql += '''ALTER TABLE ONLY "{0}"."{1}" ALTER COLUMN "{2}" SET DEFAULT {3};\n'''.format(modItem['schema'], modItem['table'], modItem['attrName'], modItem['newValue'])
         return sql
     
     def buildUndoSql(self):
+        '''
+        {'schema': schema, 'table': table, 'attrName':attrName, 'oldValue':oldValue, 'newValue':newValue}
+        '''
         #Abstract method. Must be reimplemented in each child.
-        pass
+        sql = ''''''
+        for modItem in self.customJson['ChangeDefault']:
+            sql += '''ALTER TABLE ONLY "{0}"."{1}" ALTER COLUMN "{2}" SET DEFAULT {3};\n'''.format(modItem['schema'], modItem['table'], modItem['attrName'], modItem['oldValue'])
+        return sql
+        

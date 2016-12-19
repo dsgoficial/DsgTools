@@ -36,5 +36,18 @@ class CustomJSONBuilder(QObject):
     def buildAttributeElement(self, attrName, attrType, isPk, isNullable, defaultValue = None, references = None):
         return {'attrName':attrName, 'attrType':attrType, 'isPk':isPk, 'isNullable':isNullable, 'defaultValue':defaultValue, 'references':references}
 
-    def buildDomainElement(self, domainName, valueDict):
+    def addDomainTableElement(self, domainName, valueDict):
         return {'domainName':domainName, 'valueDict': valueDict}
+    
+    def addValueToValueDict(self, valueDict, code, codeName):
+        if code not in valueDict.keys():
+            valueDict[code] = codeName
+    
+    def buildCodeNameToChangeElement(self, domainTable, codeValue, oldCodeName, newCodeName):
+        return {'domainTable':domainTable, 'codeValue':codeValue, 'oldCodeName':oldCodeName, 'newCodeName':newCodeName}
+    
+    def buildChangeDefaultElement(self, schema, table, attrName, oldValue, newValue):
+        return {'schema': schema, 'table': table, 'attrName':attrName, 'oldValue':oldValue, 'newValue':newValue}
+    
+    def buildChangeNullityElemnt(self, schema, table, attrName, notNull):
+        return {'schema':schema, 'table':table, 'attrName':attrName, 'notNull':notNull}

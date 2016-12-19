@@ -28,9 +28,23 @@ class DomainCustomization(DbCustomization):
         super(DomainCustomization, self).__init__(customJson)
     
     def buildSql(self):
+        '''
+        {'domainName':domainName, 'valueDict': valueDict}
+        '''
         #Abstract method. Must be reimplemented in each child.
-        pass
+        sql = ''
+        for modItem in self.customJson['AttributeValueToAdd']:
+            for code in modItem['valueDict'].keys():
+                sql += '''INSERT INTO dominios."{0}" (code, code_name) VALUES ({1}, '{2}');\n'''.format(modItem['domainName'],code, modItem['valueDict'][code])
+        return sql
     
     def buildUndoSql(self):
+        '''
+        {'domainName':domainName, 'valueDict': valueDict}
+        '''
         #Abstract method. Must be reimplemented in each child.
-        pass
+        sql = ''
+        for modItem in self.customJson['AttributeValueToAdd']:
+            for code in modItem['valueDict'].keys():
+                sql += '''DELETE FROM dominios."{0}" where code = {1};\n'''.format(modItem['domainName'],code)
+        return sql
