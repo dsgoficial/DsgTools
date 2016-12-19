@@ -25,7 +25,7 @@ import os
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic
+from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
 from PyQt4.QtSql import QSqlQuery
 
@@ -50,7 +50,9 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
         header = self.tableWidget.horizontalHeader()
         header.setStretchLastSection(True)
-        
+        regex = QtCore.QRegExp('[a-zA-Z][a-zA-Z\_]*')
+        validator = QtGui.QRegExpValidator(regex, self.classNameLineEdit)
+        self.classNameLineEdit.setValidator(validator)
     
     @pyqtSlot(bool)
     def on_addAttributePushButton_clicked(self):
