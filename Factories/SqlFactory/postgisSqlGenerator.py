@@ -1082,3 +1082,7 @@ class PostGISSqlGenerator(SqlGenerator):
                     select edgvversion, array_agg(name) as profiles from public.permission_profile group by edgvversion
                 ) as a;"""
         return sql
+    
+    def getDomainTables(self):
+        sql = '''select distinct table_name from information_schema.columns where table_schema = 'dominios' order by table_name asc'''
+        return sql

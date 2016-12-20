@@ -2473,3 +2473,17 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr("Problem updating permission profile: ")+query.lastError().text())
+    
+    def getDomainTables(self):
+        '''
+        Lists all domain tables available.
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.getDomainTables()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting domain tables: ")+query.lastError().text())
+        domainList = []
+        while query.next():
+            domainList.append(query.value(0))
+        return domainList

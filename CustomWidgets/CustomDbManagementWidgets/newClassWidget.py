@@ -39,7 +39,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'newClassWidget.ui'))
 
 class NewClassWidget(QtGui.QWidget, FORM_CLASS):
-    def __init__(self, parent = None):
+    def __init__(self, abstractDb, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -50,15 +50,32 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
         header = self.tableWidget.horizontalHeader()
         header.setStretchLastSection(True)
-        regex = QtCore.QRegExp('[a-zA-Z][a-zA-Z\_]*')
+        regex = QtCore.QRegExp('[a-z][a-z\_]*')
         validator = QtGui.QRegExpValidator(regex, self.classNameLineEdit)
         self.classNameLineEdit.setValidator(validator)
+        regex2 = QtCore.QRegExp('[a-z]*')
+        validator2 = QtGui.QRegExpValidator(regex2, self.categoryLineEdit)
+        self.categoryLineEdit.setValidator(validator2)
+        self.abstractDb = abstractDb
+    
+    @pyqtSlot()
+    def on_classNameLineEdit_editingFinished(self):
+        text = self.classNameLineEdit.text()
+        while text[-1] == '_':
+            self.classNameLineEdit.setText(text[0:-1])
+            text = text[0:-1]
+    
+    @pyqtSlot(str)
+    def on_classNameLineEdit_textEdited(self, newText):
+        if len(newText) > 1:
+            if newText[-1] == '_' and newText[-2] == '_':
+                    self.classNameLineEdit.setText(newText[0:-1])
     
     @pyqtSlot(bool)
     def on_addAttributePushButton_clicked(self):
         index = self.tableWidget.rowCount()
         self.tableWidget.insertRow(index)
-        newAttribute = NewAttributeWidget()
+        newAttribute = NewAttributeWidget(self.abstractDb)
         self.tableWidget.setCellWidget(index,0,newAttribute)
     
     @pyqtSlot(bool)

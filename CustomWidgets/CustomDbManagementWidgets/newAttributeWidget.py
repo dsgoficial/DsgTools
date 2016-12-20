@@ -25,7 +25,7 @@ import os
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic
+from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
 from PyQt4.QtSql import QSqlQuery
 
@@ -33,12 +33,13 @@ from PyQt4.QtSql import QSqlQuery
 from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.CustomWidgets.CustomDbManagementWidgets.domainSetter import DomainSetter
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'newAttributeWidget.ui'))
 
 class NewAttributeWidget(QtGui.QWidget, FORM_CLASS):
-    def __init__(self, parent = None):
+    def __init__(self, abstractDb, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -47,3 +48,34 @@ class NewAttributeWidget(QtGui.QWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        regex = QtCore.QRegExp('[a-z]*')
+        validator = QtGui.QRegExpValidator(regex, self.nameLineEdit)
+        self.nameLineEdit.setValidator(validator)
+        self.domainSetter = None
+        self.abstractDb = abstractDb
+    
+    def enableItems(self, enabled):
+        self.referencesLabel.setEnabled(enabled)
+        self.referencesLineEdit.setEnabled(enabled)
+        self.referencesPushButton.setEnabled(enabled)
+        self.defaultLabel.setEnabled(enabled)
+        self.defaultComboBox.setEnabled(enabled)
+    
+    @pyqtSlot(int)
+    def on_typeComboBox_currentIndexChanged(self, idx):
+        if idx == 5:
+            self.enableItems(True)
+        else:
+            self.enableItems(False)
+            self.referencesLineEdit.setText('')
+            self.defaultComboBox.clear()
+            self.domainSetter = None
+    
+    @pyqtSlot(bool)
+    def on_referencesPushButton_clicked(self):
+        if not self.domainSetter:
+            self.domainSetter = DomainSetter(self.abstractDb)
+            self.domainSetter.exec_()
+        else:
+            self.domainSetter.show()
+    

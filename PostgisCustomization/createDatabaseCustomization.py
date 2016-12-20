@@ -103,7 +103,7 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
             i = int(widgetList[-1].layout().itemAt(0).widget().getTitle().split('#')[-1])
         else:
             i = 0
-        widget = NewClassWidget()
+        widget = NewClassWidget(self.connectionWidget.abstractDb)
         title = self.tr('New Custom Class #{0}'.format(i+1)) #add number
         widget.setTitle(title)
         self.contentsDict[self.tr('Class Customization')]['widgetList'].append(self.addWidget(widget, title))

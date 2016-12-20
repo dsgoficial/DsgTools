@@ -33,8 +33,8 @@ class CustomJSONBuilder(QObject):
     def buildClassElement(self, name, attrList, schema):
         return {'name':name, 'attrs':attrList,'schema':schema}
     
-    def buildAttributeElement(self, attrName, attrType, isPk, isNullable, defaultValue = None, references = None):
-        return {'attrName':attrName, 'attrType':attrType, 'isPk':isPk, 'isNullable':isNullable, 'defaultValue':defaultValue, 'references':references}
+    def buildAttributeElement(self, attrName, attrType, isPk, isNullable, defaultValue = None, references = None, filter = []):
+        return {'attrName':attrName, 'attrType':attrType, 'isPk':isPk, 'isNullable':isNullable, 'defaultValue':defaultValue, 'references':references, 'filter':filter}
 
     def addDomainTableElement(self, domainName, valueDict):
         return {'domainName':domainName, 'valueDict': valueDict}
