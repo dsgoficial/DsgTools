@@ -75,7 +75,17 @@ class NewAttributeWidget(QtGui.QWidget, FORM_CLASS):
     def on_referencesPushButton_clicked(self):
         if not self.domainSetter:
             self.domainSetter = DomainSetter(self.abstractDb)
+            self.domainSetter.domainChanged.connect(self.populateDefaultCombo)
             self.domainSetter.exec_()
         else:
             self.domainSetter.show()
     
+    @pyqtSlot(dict, list)
+    def populateDefaultCombo(self, domainDict, filterClause):
+        self.defaultComboBox.clear()
+        for domain in domainDict:
+            if filterClause == []: 
+                self.defaultComboBox.addItem(domain)
+            elif domain in filterClause:
+                self.defaultComboBox.addItem(domain)
+        

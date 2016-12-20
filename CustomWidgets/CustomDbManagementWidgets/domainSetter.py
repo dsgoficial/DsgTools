@@ -39,6 +39,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'domainSetter.ui'))
 
 class DomainSetter(QtGui.QDialog, FORM_CLASS):
+    domainChanged = pyqtSignal(dict, list)
     def __init__(self, abstractDb, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
@@ -112,3 +113,4 @@ class DomainSetter(QtGui.QDialog, FORM_CLASS):
                 codeName = item.data(0) 
                 if codeName not in self.filterClause:
                     self.filterClause.append(self.domainDict[codeName])
+        self.domainChanged.emit(self.domainDict, self.filterClause)
