@@ -34,6 +34,7 @@ from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.newAttributeWidget import NewAttributeWidget
+from samba import schema
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'newClassWidget.ui'))
@@ -48,6 +49,7 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.geomUiDict = {self.tr('Point'):{'sufix':'p','type':'MULTIPOINT([epsg])'}, self.tr('Line'):{'sufix':'l','type':'MULTILINESTRING([epsg])'}, self.tr('Area'):{'sufix':'a','type':'MULTIPOLYGON([epsg])'}} 
         header = self.tableWidget.horizontalHeader()
         header.setStretchLastSection(True)
         regex = QtCore.QRegExp('[a-z][a-z\_]*')
@@ -57,6 +59,13 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
         validator2 = QtGui.QRegExpValidator(regex2, self.categoryLineEdit)
         self.categoryLineEdit.setValidator(validator2)
         self.abstractDb = abstractDb
+        self.populateSchemaCombo()
+    
+    def populateSchemaCombo(self):
+        self.schemaComboBox.clear()
+        schemaList = self.abstractDb.getGeometricSchemaList()
+        for schema in schemaList:
+            self.schemaComboBox.addItem(schema)
     
     @pyqtSlot()
     def on_classNameLineEdit_editingFinished(self):
@@ -92,3 +101,30 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
     def setTitle(self, title):
         self.title = title
     
+    def getChildWidgetList(self):
+        childWidgetList = []
+        for i in range(self.tableWidget.__len__()):
+            childWidgetList.append(self.tableWidget.item(i,0))
+        return childWidgetList
+    
+    def validate(self):
+        if self.categoryLineEdit.text() == '':
+            return False
+        if self.classNameLineEdit.text() == '':
+            return False
+        if self.geomComboBox.currentIndex() == 0:
+            return False 
+        return True
+
+    def validateDiagnosis(self):
+        invalidatedReason = ''
+        if self.nameLineEdit.text() == '':
+            invalidatedReason += self.tr('Attribute must have a name.\n')
+        if self.typeComboBox.currentIndex() == 0:
+            invalidatedReason += self.tr('Attribute must have a type.\n')
+        return invalidatedReason
+
+    def getJSONTag(self):
+#         if not self.validate():
+#             raise Exception(self.tr('Error in class ')+ self.title + self.tr():)
+        widgetList = self.getChildWidgetList()

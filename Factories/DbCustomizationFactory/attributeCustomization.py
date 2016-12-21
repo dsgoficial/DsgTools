@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+  # -*- coding: utf-8 -*-
 """
 /***************************************************************************
  DsgTools
@@ -30,7 +30,7 @@ class AttributeCustomization(DbCustomization):
     def buildSql(self):
         '''
         self.customJson['AttributeToAdd'] = [{'schemaName':'schema', 'tableName':'nome', 'attrList':[-list of attrDef-]}]
-        attrDef = [{'attrName':'nome', 'attrType':'varchar(80)', 'isPk':False, 'isNullable':True, 'references':None, 'default':None}]
+        attrDef = [{'attrName':'nome', 'attrType':'varchar(80)', 'isPk':False, 'isNullable':True, 'references':None, 'defaultValue':None, 'filter':[]}]
         '''
         #Abstract method. Must be reimplemented in each child.
         sql = ''
@@ -43,12 +43,14 @@ class AttributeCustomization(DbCustomization):
                     auxSql += ' NOT NULL '
                 if 'references' in attr.keys():
                     if attr['references']:
-                        if attr['default']:
-                            auxSql += ' REFERENCES {0} DEFAULT {1}'.format(attr['references'], attr['default'])
+                        if attr['defaultValue']:
+                            auxSql += ' REFERENCES {0} DEFAULT {1}'.format(attr['references'], attr['defaultValue'])
                         else:
                             auxSql += ' REFERENCES {0}'.format(attr['references'])
                 auxSql += ';\n'
                 sql += auxSql
+                if len(attr['filter']) > 0:
+                    sql += '''ALTER TABLE "{0}"."{1}" ADD CONSTRAINT "{1}_{2}_check CHECK ({2} = ANY(ARRAY[{3}]);'''.format(schema, table, attr['attrName'], '::SMALLINT,'.join(map(str,attr['filter']))+'::SMALLINT')
         return sql
     
     def buildUndoSql(self):

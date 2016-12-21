@@ -26,9 +26,8 @@ from PyQt4.Qt import QObject
 #DsgTools Imports
 
 class CustomJSONBuilder(QObject):
-    def __init__(self, jsonDict):
+    def __init__(self):
         super(CustomJSONBuilder,self).__init__()
-        self.jsonDict = jsonDict
     
     def buildClassElement(self, name, attrList, schema):
         return {'name':name, 'attrs':attrList,'schema':schema}

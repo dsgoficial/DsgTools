@@ -1086,3 +1086,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def getDomainTables(self):
         sql = '''select distinct table_name from information_schema.columns where table_schema = 'dominios' order by table_name asc'''
         return sql
+    
+    def getGeometricSchemaList(self):
+        sql = '''select distinct f_table_schema from public.geometry_columns order by f_table_schema asc;'''
+        return sql

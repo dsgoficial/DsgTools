@@ -2487,3 +2487,17 @@ class PostgisDb(AbstractDb):
         while query.next():
             domainList.append(query.value(0))
         return domainList
+    
+    def getGeometricSchemaList(self):
+        '''
+        Lists all schema with geometries.
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.getGeometricSchemaList()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geometric schema list: ")+query.lastError().text())
+        schemaList = []
+        while query.next():
+            schemaList.append(query.value(0))
+        return schemaList        

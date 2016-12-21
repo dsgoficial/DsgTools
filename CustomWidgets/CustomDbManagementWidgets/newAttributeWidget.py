@@ -34,6 +34,7 @@ from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.domainSetter import DomainSetter
+from DsgTools.PostgisCustomization.CustomJSONTools.customJSONBuilder import CustomJSONBuilder
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'newAttributeWidget.ui'))
@@ -53,6 +54,7 @@ class NewAttributeWidget(QtGui.QWidget, FORM_CLASS):
         self.nameLineEdit.setValidator(validator)
         self.domainSetter = None
         self.abstractDb = abstractDb
+        self.jsonBuilder = CustomJSONBuilder()
     
     def enableItems(self, enabled):
         self.referencesLabel.setEnabled(enabled)
@@ -80,12 +82,54 @@ class NewAttributeWidget(QtGui.QWidget, FORM_CLASS):
         else:
             self.domainSetter.show()
     
-    @pyqtSlot(dict, list)
-    def populateDefaultCombo(self, domainDict, filterClause):
+    @pyqtSlot(str, dict, list)
+    def populateDefaultCombo(self, domainName, domainDict, filterClause):
+        self.referencesLineEdit.setText(domainName)
         self.defaultComboBox.clear()
-        for domain in domainDict:
-            if filterClause == []: 
+        self.defaultComboBox.addItem('')
+        for domain in domainDict.keys():
+            if filterClause == dict(): 
                 self.defaultComboBox.addItem(domain)
-            elif domain in filterClause:
+            elif domain in filterClause.keys():
                 self.defaultComboBox.addItem(domain)
+    
+    def getChildWidgets(self):
+        return self.domainSetter
+
+    def validate(self):
+        invalidatedList = []
+        if self.nameLineEdit.text() == '':
+            return False
+        if self.typeComboBox.currentIndex() == 0:
+            return False
+        return True
+    
+    def validateDiagnosis(self):
+        invalidatedReason = ''
+        if self.nameLineEdit.text() == '':
+            invalidatedReason += self.tr('Attribute must have a name.\n')
+        if self.typeComboBox.currentIndex() == 0:
+            invalidatedReason += self.tr('Attribute must have a type.\n')
+        return invalidatedReason
+
+    def getJSONTag(self):
+        if not self.validate():
+            raise Exception(self.validateDiagnosis())
+        attrName = self.nameLineEdit.text()
+        attrType = self.typeComboBox.currentText()
+        if attrType == self.tr('EDGV Domain'):
+            attrType = 'smallint'
+        isPk = False
+        if self.notNullcheckBox.isChecked():
+            isNullable = False
+        else:
+            isNullable = True
+        defaultComboCurrentText = self.defaultCombo.currentText()
+        if defaultComboCurrentText == '':
+            defaultValue = None
+        else:
+            defaultValue = self.domainSetter.domainDict[defaultComboCurrentText]
+        references = self.domainSetter.domainName
+        filter = self.domainSetter.filterClause.values()
+        return self.jsonBuilder.buildAttributeElement(attrName, attrType, isPk, isNullable, defaultValue, references, filter)
         

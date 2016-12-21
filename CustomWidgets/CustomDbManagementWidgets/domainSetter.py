@@ -34,12 +34,13 @@ from PyQt4.QtGui import QListWidgetItem
 from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.PostgisCustomization.CustomJSONTools.customJSONBuilder import CustomJSONBuilder
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'domainSetter.ui'))
 
 class DomainSetter(QtGui.QDialog, FORM_CLASS):
-    domainChanged = pyqtSignal(dict, list)
+    domainChanged = pyqtSignal(str, dict, dict)
     def __init__(self, abstractDb, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
@@ -48,7 +49,8 @@ class DomainSetter(QtGui.QDialog, FORM_CLASS):
         self.populateDomainList()
         self.domainName = None
         self.domainDict = None
-        self.filterClause = []
+        self.filterClause = dict()
+        self.jsonBuilder = CustomJSONBuilder()
 
     def populateDomainList(self):
         self.domainTableList = self.abstractDb.getDomainTables()
@@ -62,11 +64,16 @@ class DomainSetter(QtGui.QDialog, FORM_CLASS):
         self.filterCheckBox.setCheckState(QtCore.Qt.Unchecked)
         self.domainName = None
         self.domainDict = None
-        self.filterClause = []
+        self.filterClause = dict()
         self.populateDomainList()
 
     def enableItems(self, enabled):
         self.filterListWidget.setEnabled(enabled)
+    
+    def clearCheckableItems(self):
+        for idx in range(self.filterListWidget.__len__()):
+            item = self.filterListWidget.item(idx)
+            item.setCheckState(QtCore.Qt.Unchecked)
     
     @pyqtSlot(int)
     def on_filterCheckBox_stateChanged(self, idx):
@@ -74,6 +81,7 @@ class DomainSetter(QtGui.QDialog, FORM_CLASS):
             state = True
         else:
             state = False
+            self.clearCheckableItems()
         self.enableItems(state)
     
     def getSelectedDomain(self):
@@ -111,6 +119,10 @@ class DomainSetter(QtGui.QDialog, FORM_CLASS):
             item = self.filterListWidget.item(idx)
             if item.checkState() == 2:
                 codeName = item.data(0) 
-                if codeName not in self.filterClause:
-                    self.filterClause.append(self.domainDict[codeName])
-        self.domainChanged.emit(self.domainDict, self.filterClause)
+                if codeName not in self.filterClause.keys():
+                    self.filterClause[codeName] = self.domainDict[codeName]
+        self.domainChanged.emit(self.domainName, self.domainDict, self.filterClause)
+    
+    def getChildWidgets(self):
+        return None
+    
