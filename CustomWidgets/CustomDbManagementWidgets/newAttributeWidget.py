@@ -124,12 +124,15 @@ class NewAttributeWidget(QtGui.QWidget, FORM_CLASS):
             isNullable = False
         else:
             isNullable = True
-        defaultComboCurrentText = self.defaultCombo.currentText()
-        if defaultComboCurrentText == '':
-            defaultValue = None
+        defaultComboCurrentText = self.defaultComboBox.currentText()
+        if not self.domainSetter:
+            return self.jsonBuilder.buildAttributeElement(attrName, attrType, isPk, isNullable)
         else:
-            defaultValue = self.domainSetter.domainDict[defaultComboCurrentText]
-        references = self.domainSetter.domainName
-        filter = self.domainSetter.filterClause.values()
-        return self.jsonBuilder.buildAttributeElement(attrName, attrType, isPk, isNullable, defaultValue, references, filter)
+            if defaultComboCurrentText == '':
+                defaultValue = None
+            else:
+                defaultValue = self.domainSetter.domainDict[defaultComboCurrentText]
+            references = self.domainSetter.domainName
+            filter = self.domainSetter.filterClause.values()
+            return self.jsonBuilder.buildAttributeElement(attrName, attrType, isPk, isNullable, defaultValue, references, filter)
         

@@ -34,7 +34,7 @@ from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.newAttributeWidget import NewAttributeWidget
-from samba import schema
+from DsgTools.PostgisCustomization.CustomJSONTools.customJSONBuilder import CustomJSONBuilder
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'newClassWidget.ui'))
@@ -60,6 +60,7 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
         self.categoryLineEdit.setValidator(validator2)
         self.abstractDb = abstractDb
         self.populateSchemaCombo()
+        self.jsonBuilder = CustomJSONBuilder()
     
     def populateSchemaCombo(self):
         self.schemaComboBox.clear()
@@ -103,8 +104,8 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
     
     def getChildWidgetList(self):
         childWidgetList = []
-        for i in range(self.tableWidget.__len__()):
-            childWidgetList.append(self.tableWidget.item(i,0))
+        for i in range(self.tableWidget.rowCount()):
+            childWidgetList.append(self.tableWidget.cellWidget(i,0))
         return childWidgetList
     
     def validate(self):
@@ -118,13 +119,27 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
 
     def validateDiagnosis(self):
         invalidatedReason = ''
-        if self.nameLineEdit.text() == '':
-            invalidatedReason += self.tr('Attribute must have a name.\n')
-        if self.typeComboBox.currentIndex() == 0:
-            invalidatedReason += self.tr('Attribute must have a type.\n')
+        if self.categoryLineEdit.text() == '':
+            invalidatedReason += self.tr('Class must have a category.\n')
+        if self.classNameLineEdit.text() == '':
+            invalidatedReason += self.tr('Class must have a name.\n')
+        if self.geomComboBox.currentIndex() == 0:
+            invalidatedReason += self.tr('Class must have a geometric primitive.\n')
         return invalidatedReason
 
     def getJSONTag(self):
-#         if not self.validate():
-#             raise Exception(self.tr('Error in class ')+ self.title + self.tr():)
+        if not self.validate():
+            raise Exception(self.tr('Error in class ')+ self.title + ' : ' + self.validateDiagnosis())
+        schema = self.schemaComboBox.currentText()
+        name = '_'.join([ self.categoryLineEdit.text(), self.classNameLineEdit.text(), self.geomUiDict[self.geomComboBox.currentText()]['sufix'] ])
         widgetList = self.getChildWidgetList()
+        attrList = []
+        #create pk attr
+        pkItem = self.jsonBuilder.buildAttributeElement('id', 'serial', True, False)
+        attrList.append(pkItem)
+        #create geom attr
+        geomItem = self.jsonBuilder.buildAttributeElement('geom', self.geomUiDict[self.geomComboBox.currentText()]['type'], False, False)
+        attrList.append(geomItem)
+        for widget in widgetList:
+            attrList.append(widget.getJSONTag())
+        return self.jsonBuilder.buildClassElement(schema,name,attrList)

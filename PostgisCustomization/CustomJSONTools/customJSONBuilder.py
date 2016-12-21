@@ -29,8 +29,8 @@ class CustomJSONBuilder(QObject):
     def __init__(self):
         super(CustomJSONBuilder,self).__init__()
     
-    def buildClassElement(self, name, attrList, schema):
-        return {'name':name, 'attrs':attrList,'schema':schema}
+    def buildClassElement(self, schema, name, attrList):
+        return {'schema':schema, 'name':name, 'attrs':attrList}
     
     def buildAttributeElement(self, attrName, attrType, isPk, isNullable, defaultValue = None, references = None, filter = []):
         return {'attrName':attrName, 'attrType':attrType, 'isPk':isPk, 'isNullable':isNullable, 'defaultValue':defaultValue, 'references':references, 'filter':filter}

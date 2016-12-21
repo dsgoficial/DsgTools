@@ -156,3 +156,9 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         itemToRemove = self.contentsDict[comboItem]['widgetList'].pop(idx)
         itemToRemove.setParent(None)
         self.contentsDict[comboItem]['treeItem'].removeChild(treeItem)
+    
+    @pyqtSlot()
+    def on_buttonBox_accepted(self):
+        for key in self.contentsDict.keys():
+            for widget in self.contentsDict[key]['widgetList']:
+                print widget.layout().itemAt(0).widget().getJSONTag()
