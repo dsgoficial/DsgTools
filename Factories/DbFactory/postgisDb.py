@@ -2490,7 +2490,7 @@ class PostgisDb(AbstractDb):
     
     def getGeometricSchemaList(self):
         '''
-        Lists all schema with geometries.
+        Lists all schemas with geometries.
         '''
         self.checkAndOpenDb()
         sql = self.gen.getGeometricSchemaList()
@@ -2500,4 +2500,33 @@ class PostgisDb(AbstractDb):
         schemaList = []
         while query.next():
             schemaList.append(query.value(0))
-        return schemaList        
+        return schemaList
+    
+    def getGeometricTableListFromSchema(self, schema):
+        '''
+        Lists all tables with geometries from schema
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.getGeometricTableListFromSchema(schema)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geometric table list: ")+query.lastError().text())
+        tableList = []
+        while query.next():
+            tableList.append(query.value(0))
+        return tableList
+    
+    def getParentGeomTables(self):
+        '''
+        Lists all tables with geometries from schema that are parents
+        '''
+        self.checkAndOpenDb()
+        schemaList = self.getGeometricSchemaList()
+        sql = self.gen.getGeometricTableListFromSchema(schemaList)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting parent geometric table list: ")+query.lastError().text())
+        tableList = []
+        while query.next():
+            tableList.append(query.value(0))
+        return tableList

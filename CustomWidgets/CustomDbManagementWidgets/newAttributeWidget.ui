@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>newAttributeWidget</class>
- <widget class="QDialog" name="newAttributeWidget">
+ <class>newAttributeWidget_2</class>
+ <widget class="QDialog" name="newAttributeWidget_2">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>40</height>
+    <height>100</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -19,7 +19,7 @@
   <property name="minimumSize">
    <size>
     <width>700</width>
-    <height>40</height>
+    <height>100</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -29,152 +29,47 @@
    <item row="0" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Attribute</string>
+      <string>Schema</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QLineEdit" name="nameLineEdit">
-     <property name="placeholderText">
-      <string>write an attribute</string>
+    <widget class="QComboBox" name="schemaComboBox"/>
+   </item>
+   <item row="0" column="2">
+    <widget class="QLabel" name="tableNameLabel">
+     <property name="text">
+      <string>Table Name</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QComboBox" name="typeComboBox">
-     <item>
-      <property name="text">
-       <string>Choose a type</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>int</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>float</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>char(30)</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>text</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>EDGV Domain</string>
-      </property>
-     </item>
-    </widget>
-   </item>
    <item row="0" column="3">
-    <widget class="QCheckBox" name="notNullcheckBox">
-     <property name="text">
-      <string>Not Null</string>
+    <widget class="QComboBox" name="tableComboBox">
+     <property name="enabled">
+      <bool>false</bool>
      </property>
     </widget>
    </item>
    <item row="0" column="4">
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="5">
-    <widget class="QLabel" name="referencesLabel">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
+    <widget class="QCheckBox" name="allTablesCheckBox">
      <property name="text">
-      <string>References</string>
+      <string>Create attribute on all tables with geometries</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="6">
-    <widget class="QLineEdit" name="referencesLineEdit">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="7">
-    <widget class="QPushButton" name="referencesPushButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>30</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Set Reference</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="../../resources.qrc">
-       <normaloff>:/plugins/DsgTools/icons/profile.png</normaloff>:/plugins/DsgTools/icons/profile.png</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="8">
-    <widget class="Line" name="line_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="9">
-    <widget class="QLabel" name="defaultLabel">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>Default</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="10">
-    <widget class="QComboBox" name="defaultComboBox">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>110</width>
-       <height>0</height>
-      </size>
-     </property>
-    </widget>
+   <item row="1" column="0" colspan="5">
+    <widget class="AddAttributeWidget" name="addAttributeWidget" native="true"/>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>AddAttributeWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.CustomDbManagementWidgets.addAttributeWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../../resources.qrc"/>
  </resources>

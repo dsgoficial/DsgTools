@@ -94,21 +94,24 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         else:
             QMessageBox.warning(self, self.tr('Warning'), self.tr('Select a custom operation!'))
     
-    def addAttributeWidget(self):
-        pass 
-    
-    def addClassWidget(self):
-        widgetList = self.contentsDict[self.tr('Class Customization')]['widgetList']
+    def addWidgetItem(self, contentsKey, widgetTitle, widget):
+        widgetList = self.contentsDict[contentsKey]['widgetList']
         if len(widgetList) > 0:
             i = int(widgetList[-1].layout().itemAt(0).widget().getTitle().split('#')[-1])
         else:
             i = 0
-        widget = NewClassWidget(self.connectionWidget.abstractDb)
-        title = self.tr('New Custom Class #{0}'.format(i+1)) #add number
+        title = widgetTitle+' #{0}'.format(i+1) #add number
         widget.setTitle(title)
-        self.contentsDict[self.tr('Class Customization')]['widgetList'].append(self.addWidget(widget, title))
-        self.createItem(self.contentsDict[self.tr('Class Customization')]['treeItem'], title, 0)
-        
+        self.contentsDict[contentsKey]['widgetList'].append(self.addWidget(widget, title))
+        self.createItem(self.contentsDict[contentsKey]['treeItem'], title, 0)
+    
+    def addAttributeWidget(self):
+        widget = NewAttributeWidget(self.connectionWidget.abstractDb)
+        self.addWidgetItem(self.tr('Attribute Customization'), self.tr('New Custom Attribute'), widget)
+    
+    def addClassWidget(self):
+        widget = NewClassWidget(self.connectionWidget.abstractDb)
+        self.addWidgetItem(self.tr('Class Customization'), self.tr('New Custom Class'), widget)
     
     def addCodeNameWidget(self):
         pass

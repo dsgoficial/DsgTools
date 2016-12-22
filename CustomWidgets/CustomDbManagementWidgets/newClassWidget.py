@@ -33,7 +33,7 @@ from PyQt4.QtSql import QSqlQuery
 from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.CustomWidgets.CustomDbManagementWidgets.newAttributeWidget import NewAttributeWidget
+from DsgTools.CustomWidgets.CustomDbManagementWidgets.addAttributeWidget import AddAttributeWidget
 from DsgTools.PostgisCustomization.CustomJSONTools.customJSONBuilder import CustomJSONBuilder
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -85,7 +85,7 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
     def on_addAttributePushButton_clicked(self):
         index = self.tableWidget.rowCount()
         self.tableWidget.insertRow(index)
-        newAttribute = NewAttributeWidget(self.abstractDb)
+        newAttribute = AddAttributeWidget(self.abstractDb)
         self.tableWidget.setCellWidget(index,0,newAttribute)
     
     @pyqtSlot(bool)

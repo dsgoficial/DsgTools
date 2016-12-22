@@ -1090,3 +1090,32 @@ class PostGISSqlGenerator(SqlGenerator):
     def getGeometricSchemaList(self):
         sql = '''select distinct f_table_schema from public.geometry_columns order by f_table_schema asc;'''
         return sql
+    
+    def getGeometricTableListFromSchema(self, schema):
+        sql = '''select distinct f_table_name from public.geometry_columns where f_table_schema = '{0}' and f_table_name in (
+            select distinct table_name from information_schema.tables where table_type <> 'VIEW'
+            )
+             order by f_table_name asc;'''.format(schema)
+        return sql
+    
+    def getParentGeomTables(self, schemaList):
+        schemaList = [i for i in schemaList if i <> 'validation']
+        sql = """
+            select pgcl2.n as tb from pg_class as pgcl
+                left join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
+                left join pg_namespace as pgnsp on pgcl.relnamespace = pgnsp.oid
+                left join pg_inherits as pginh on pginh.inhparent = pgcl.oid
+                join (select pgcl.oid, pgmsp.nspname as sc, pgcl.relname as n from pg_class as pgcl
+                            join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
+                            left join pg_namespace pgmsp on pgcl.relnamespace = pgmsp.oid) 
+                as pgcl2 on pgcl2.oid = pginh.inhrelid
+                where pgnsp.nspname in ({0}) and pgatt.attname IS NULL and pgcl.relkind = 'r'
+            union 
+            select distinct p.relname as tb from pg_class as p
+                left join pg_inherits as inh  on inh.inhrelid = p.oid 
+                left join geometry_columns as gc on gc.f_table_name = p.relname
+                where (inh.inhrelid IS NULL) and 
+                gc.f_table_schema in ({0})
+            
+            order by tb""".format(','.join(schemaList))
+        return sql
