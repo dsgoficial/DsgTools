@@ -1100,8 +1100,7 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def getParentGeomTables(self, schemaList):
         schemaList = [i for i in schemaList if i <> 'validation']
-        sql = """
-            select pgcl2.n as tb from pg_class as pgcl
+        sql = """select pgnsp.nspname, pgcl2.n as tb from pg_class as pgcl
                 left join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
                 left join pg_namespace as pgnsp on pgcl.relnamespace = pgnsp.oid
                 left join pg_inherits as pginh on pginh.inhparent = pgcl.oid
@@ -1109,13 +1108,23 @@ class PostGISSqlGenerator(SqlGenerator):
                             join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
                             left join pg_namespace pgmsp on pgcl.relnamespace = pgmsp.oid) 
                 as pgcl2 on pgcl2.oid = pginh.inhrelid
-                where pgnsp.nspname in ({0}) and pgatt.attname IS NULL and pgcl.relkind = 'r'
+                where pgnsp.nspname in ('{0}') and pgatt.attname IS NULL and pgcl.relkind = 'r'
             union 
-            select distinct p.relname as tb from pg_class as p
+            select distinct gc.f_table_schema,p.relname as tb from pg_class as p
                 left join pg_inherits as inh  on inh.inhrelid = p.oid 
                 left join geometry_columns as gc on gc.f_table_name = p.relname
                 where (inh.inhrelid IS NULL) and 
-                gc.f_table_schema in ({0})
+                gc.f_table_schema in ('{0}')
             
-            order by tb""".format(','.join(schemaList))
+            order by tb""".format("','".join(schemaList))
         return sql
+    
+    def getInheritanceInfo(self):
+        sql = """select row_to_json(a) from (select pgc.relname parentname, array_agg(pgc1.relname) childname 
+                from pg_inherits as pginh 
+                    left join pg_class pgc on pginh.inhparent = pgc.oid 
+                    left join pg_class as pgc1 on pginh.inhrelid = pgc1.oid
+                group by pgc.relname
+                ) as a"""
+        return sql
+        

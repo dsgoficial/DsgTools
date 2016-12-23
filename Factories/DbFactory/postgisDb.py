@@ -2516,7 +2516,7 @@ class PostgisDb(AbstractDb):
             tableList.append(query.value(0))
         return tableList
     
-    def getParentGeomTables(self):
+    def getParentGeomTables(self, getTupple = False):
         '''
         Lists all tables with geometries from schema that are parents
         '''
@@ -2527,6 +2527,29 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting parent geometric table list: ")+query.lastError().text())
         tableList = []
+        if not getTupple:
+            while query.next():
+                tableList.append(query.value(1))
+            return tableList
+        else:
+            while query.next():
+                tableList.append( (query.value(0), query.value(1)) )
+            return tableList
+    
+    def getInheritanceBloodLine(self, parent):
+        '''
+        Lists all tables that have parent as an ancestor.
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.getInheritanceInfo()
+        query = QSqlQuery(sql, self.db)
+        inhDict = dict()
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting inheritance: ")+query.lastError().text())
         while query.next():
-            tableList.append(query.value(0))
-        return tableList
+            aux = json.loads(query.value(0))
+            inhDict[aux['parentname']] = aux['childname']
+        bloodLine = []
+        self.utils.getRecursiveInheritance(parent, bloodLine, inhDict)
+        return bloodLine
+        

@@ -144,3 +144,10 @@ class Utils:
             except:
                 pass
         return refDict
+    
+    def getRecursiveInheritance(self, parent, resultList , inhDict):
+        if parent not in resultList:
+            resultList.append(parent)
+        if parent in inhDict.keys():
+            for child in inhDict[parent]:
+                self.getRecursiveInheritance(child, resultList, inhDict)

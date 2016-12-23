@@ -107,10 +107,15 @@ class NewAttributeWidget(QtGui.QWidget, FORM_CLASS):
             raise Exception(self.tr('Error in attribute ')+ self.title + ' : ' + self.validateDiagnosis())
         schema = self.schemaComboBox.currentText()
         tableName = self.tableComboBox.currentText()
+        attrList = [self.addAttributeWidget.getJSONTag()]
         if not self.allTablesCheckBox.isChecked():
-            attrList = [self.addAttributeWidget.getJSONTag()]
-            return self.jsonBuilder.buildNewAttributeElement(schema, tableName, attrList)
+            return [self.jsonBuilder.buildNewAttributeElement(schema, tableName, attrList)]
         else:
-            #TODO
-            pass
+            attrModList = []
+            classTuppleList = self.abstractDb.getParentGeomTables(getTupple = True)
+            for tupple in classTuppleList:
+                schema, tableName = tupple
+                bloodLine = [i for i in self.abstractDb.getInheritanceBloodLine(tableName) if i <> tableName]
+                attrModList.append(self.jsonBuilder.buildNewAttributeElement(schema, tableName, attrList, childrenToAlter = bloodLine)) 
+            return attrModList
             
