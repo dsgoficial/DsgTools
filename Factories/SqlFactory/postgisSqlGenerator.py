@@ -1092,14 +1092,20 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getGeometricTableListFromSchema(self, schema):
-        sql = '''select distinct f_table_name from public.geometry_columns where f_table_schema = '{0}' and f_table_name in (
-            select distinct table_name from information_schema.tables where table_type <> 'VIEW'
-            )
-             order by f_table_name asc;'''.format(schema)
+        if isinstance(schema, list):
+            sql = '''select distinct f_table_schema, f_table_name from public.geometry_columns where f_table_schema in ('{0}') and f_table_name in (
+                select distinct table_name from information_schema.tables where table_type <> 'VIEW'
+                )
+                 order by f_table_name asc;'''.format("','".join(schema))
+        else:
+            sql = '''select distinct f_table_schema, f_table_name from public.geometry_columns where f_table_schema = '{0}' and f_table_name in (
+                select distinct table_name from information_schema.tables where table_type <> 'VIEW'
+                )
+                 order by f_table_name asc;'''.format(schema)
         return sql
     
     def getParentGeomTables(self, schemaList):
-        schemaList = [i for i in schemaList if i <> 'validation']
+        schemaList = [i for i in schemaList if i not in ['validation', 'views']]
         sql = """select pgnsp.nspname, pgcl2.n as tb from pg_class as pgcl
                 left join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
                 left join pg_namespace as pgnsp on pgcl.relnamespace = pgnsp.oid

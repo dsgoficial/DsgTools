@@ -48,12 +48,12 @@ class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
+        self.abstractDb = abstractDb
         self.setupUi(self)
         regex = QtCore.QRegExp('[a-z]*')
         validator = QtGui.QRegExpValidator(regex, self.nameLineEdit)
         self.nameLineEdit.setValidator(validator)
         self.domainSetter = None
-        self.abstractDb = abstractDb
         self.jsonBuilder = CustomJSONBuilder()
     
     def enableItems(self, enabled):

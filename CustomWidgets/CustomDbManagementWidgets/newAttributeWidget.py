@@ -47,8 +47,9 @@ class NewAttributeWidget(QtGui.QWidget, FORM_CLASS):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
-        self.setupUi(self)
         self.abstractDb = abstractDb
+        self.setupUi(self)
+        self.addAttributeWidget.abstractDb = abstractDb
         self.jsonBuilder = CustomJSONBuilder()
         self.populateSchemaCombo()
     
@@ -62,7 +63,7 @@ class NewAttributeWidget(QtGui.QWidget, FORM_CLASS):
         self.schemaComboBox.clear()
         schemaList = self.abstractDb.getGeometricSchemaList()
         for schema in schemaList:
-            if schema <> 'views':
+            if schema not in ['views', 'validation']:
                 self.schemaComboBox.addItem(schema)
     
     @pyqtSlot(int)
@@ -109,13 +110,15 @@ class NewAttributeWidget(QtGui.QWidget, FORM_CLASS):
         tableName = self.tableComboBox.currentText()
         attrList = [self.addAttributeWidget.getJSONTag()]
         if not self.allTablesCheckBox.isChecked():
-            return [self.jsonBuilder.buildNewAttributeElement(schema, tableName, attrList)]
+            bloodLine = [i for i in self.abstractDb.getInheritanceBloodLine(tableName) if i <> tableName]
+            return [self.jsonBuilder.buildNewAttributeElement(schema, tableName, attrList, childrenToAlter = bloodLine)]
         else:
             attrModList = []
             classTuppleList = self.abstractDb.getParentGeomTables(getTupple = True)
             for tupple in classTuppleList:
                 schema, tableName = tupple
-                bloodLine = [i for i in self.abstractDb.getInheritanceBloodLine(tableName) if i <> tableName]
-                attrModList.append(self.jsonBuilder.buildNewAttributeElement(schema, tableName, attrList, childrenToAlter = bloodLine)) 
+                if schema not in ('views', 'validation'):
+                    bloodLine = [i for i in self.abstractDb.getInheritanceBloodLine(tableName) if i <> tableName]
+                    attrModList.append(self.jsonBuilder.buildNewAttributeElement(schema, tableName, attrList, childrenToAlter = bloodLine)) 
             return attrModList
             

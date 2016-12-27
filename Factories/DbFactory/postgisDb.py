@@ -2513,7 +2513,7 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem getting geometric table list: ")+query.lastError().text())
         tableList = []
         while query.next():
-            tableList.append(query.value(0))
+            tableList.append(query.value(1))
         return tableList
     
     def getParentGeomTables(self, getTupple = False):
@@ -2522,7 +2522,7 @@ class PostgisDb(AbstractDb):
         '''
         self.checkAndOpenDb()
         schemaList = self.getGeometricSchemaList()
-        sql = self.gen.getGeometricTableListFromSchema(schemaList)
+        sql = self.gen.getParentGeomTables(schemaList)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting parent geometric table list: ")+query.lastError().text())
