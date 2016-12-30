@@ -179,6 +179,8 @@ class InventoryThread(GenericThread):
         '''
         # get the bounding box and wkt projection
         (ogrPoly, prjWkt) = self.getExtent(line)
+        if ogrPoly == None or prjWkt == None:
+            return
         # making a QGIS projection
         crsSrc = QgsCoordinateReferenceSystem()
         crsSrc.createFromWkt(prjWkt)
@@ -339,17 +341,19 @@ class InventoryThread(GenericThread):
                 
                 # Create a Polygon from the extent tuple
                 ring = ogr.Geometry(ogr.wkbLinearRing)
-                ring.AddPoint(extent[0],extent[2])
+                ring.AddPoint(extent[0], extent[2])
                 ring.AddPoint(extent[0], extent[3])
                 ring.AddPoint(extent[1], extent[3])
                 ring.AddPoint(extent[1], extent[2])
-                ring.AddPoint(extent[0],extent[2])
+                ring.AddPoint(extent[0], extent[2])
                 box = ogr.Geometry(ogr.wkbPolygon)
                 box.AddGeometry(ring)
                 
                 poly = poly.Union(box)
             
             ogrSrc = None
+            if not spatialRef:
+                return (None, None)
             return (poly, spatialRef.ExportToWkt())
         elif gdalSrc:
             gdalSrc.GetProjectionRef()
@@ -370,7 +374,7 @@ class InventoryThread(GenericThread):
             gdalSrc = None
             return (box, prjWkt)
         else:
-            return None
+            return (None, None)
         
     def createMemoryLayer(self):
         '''
