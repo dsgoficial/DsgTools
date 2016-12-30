@@ -70,6 +70,8 @@ class InventoryThread(GenericThread):
 
         self.messenger = InventoryMessages(self)
         self.files = list()
+        gdal.DontUseExceptions()
+        ogr.DontUseExceptions()
         
     def setParameters(self, parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, isOnlyGeo, stopped):
         self.parentFolder = parentFolder
@@ -266,7 +268,7 @@ class InventoryThread(GenericThread):
         ext: file extension
         '''
         if ext in self.formatsList:
-                return True         
+            return True         
         return False
     
     def inventoryFile(self, ext):
