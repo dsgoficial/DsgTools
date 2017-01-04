@@ -877,7 +877,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getTableSchemaFromDb(self, table):
-        sql = """select distinct table_schema from information_schema.columns where table_name = '{0}'""".format(table)
+        sql = """select distinct table_schema from information_schema.columns where table_name = '{0}' and table_schema not in ('validation','views')""".format(table)
         return sql
     
     def getAllStylesFromDb(self):

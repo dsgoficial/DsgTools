@@ -2544,14 +2544,14 @@ class PostgisDb(AbstractDb):
                 parentGeomTables.append(geomTable)
         parentGeomTables.sort()
         if not getTupple:
-            return parentGeomTables
+            return [i for i in parentGeomTables if self.getTableSchemaFromDb(i) not in ['views', 'validation'] ]
         else:
             parentTuppleList = []
             for parent in parentGeomTables:
-                idx = geomTable.index(parent)
-                schema = layerList[idx].split('.')[0]
-                parentTuppleList.append( (schema, parent) )
-                return parentTuppleList
+                schema = self.getTableSchemaFromDb(parent)
+                if schema not in ['views', 'validation']:
+                    parentTuppleList.append( (schema, parent) )
+            return parentTuppleList
     
     def getInheritanceDict(self):
         self.checkAndOpenDb()
