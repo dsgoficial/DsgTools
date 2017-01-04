@@ -150,8 +150,7 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         '''
         createNewServer = ViewServers(self)
         result = createNewServer.exec_()
-        if result:
-            self.populateServersCombo()
+        self.populateServersCombo()
 
     def populateServersCombo(self):
         '''
