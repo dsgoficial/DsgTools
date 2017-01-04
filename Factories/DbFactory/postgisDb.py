@@ -150,7 +150,8 @@ class PostgisDb(AbstractDb):
         '''
         self.checkAndOpenDb()
         classList = []
-        sql = self.gen.getTablesFromDatabase()
+        schemaList = [i for i in self.getGeomSchemaList() if i not in ['validation', 'views']]
+        sql = self.gen.getGeomTables(schemaList)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem listing geom classes: ")+query.lastError().text())
@@ -158,10 +159,7 @@ class PostgisDb(AbstractDb):
             tableSchema = query.value(0)
             tableName = query.value(1)
             layerName = tableSchema+'.'+tableName
-            if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
-                or tableName.split("_")[-1] == "a":
-                if tableSchema not in ['validation', 'views']:
-                    classList.append(layerName)
+            classList.append(layerName)
         return classList
     
     def listComplexClassesFromDatabase(self):
@@ -2518,30 +2516,46 @@ class PostgisDb(AbstractDb):
     
     def getParentGeomTables(self, getTupple = False):
         '''
-        Lists all tables with geometries from schema that are parents
+        Lists all tables with geometries from schema that are parents.
         '''
         self.checkAndOpenDb()
-        schemaList = self.getGeometricSchemaList()
-        sql = self.gen.getParentGeomTables(schemaList)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(self.tr("Problem getting parent geometric table list: ")+query.lastError().text())
-        tableList = []
+        layerList = self.listGeomClassesFromDatabase()
+        geomTables = [i.split('.')[-1] for i in layerList]
+        inhDict = self.getInheritanceDict()
+        parentGeomTables = []
+        for parent in inhDict.keys():
+            if parent not in geomTables:
+                for child in inhDict[parent]:
+                    if child not in parentGeomTables:
+                        parentGeomTables.append(child)
+            else:
+                if parent not in parentGeomTables:
+                    parentGeomTables.append(parent)
+        #we must check tables that have no parent
+        childBlackList = []
+        for parent in inhDict.keys():
+            if parent not in childBlackList:
+                childBlackList.append(parent)
+            for child in inhDict[parent]:
+                if child not in childBlackList:
+                    childBlackList.append(child)
+        for geomTable in geomTables:
+            if geomTable not in childBlackList and geomTable not in parentGeomTables:
+                parentGeomTables.append(geomTable)
+        parentGeomTables.sort()
         if not getTupple:
-            while query.next():
-                tableList.append(query.value(1))
-            return tableList
+            return parentGeomTables
         else:
-            while query.next():
-                tableList.append( (query.value(0), query.value(1)) )
-            return tableList
+            parentTuppleList = []
+            for parent in parentGeomTables:
+                idx = geomTable.index(parent)
+                schema = layerList[idx].split('.')[0]
+                parentTuppleList.append( (schema, parent) )
+                return parentTuppleList
     
-    def getInheritanceBloodLine(self, parent):
-        '''
-        Lists all tables that have parent as an ancestor.
-        '''
+    def getInheritanceDict(self):
         self.checkAndOpenDb()
-        sql = self.gen.getInheritanceInfo()
+        sql = self.gen.getInheritanceDict()
         query = QSqlQuery(sql, self.db)
         inhDict = dict()
         if not query.isActive():
@@ -2549,7 +2563,16 @@ class PostgisDb(AbstractDb):
         while query.next():
             aux = json.loads(query.value(0))
             inhDict[aux['parentname']] = aux['childname']
+        return inhDict
+    
+    def getInheritanceBloodLine(self, parent, inhDict = None):
+        '''
+        Lists all tables that have parent as an ancestor.
+        '''
+        if not inhDict:
+            inhDict = self.getInheritanceDict()
         bloodLine = []
         self.utils.getRecursiveInheritance(parent, bloodLine, inhDict)
         return bloodLine
+    
         

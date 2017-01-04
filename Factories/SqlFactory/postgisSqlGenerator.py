@@ -1125,12 +1125,16 @@ class PostGISSqlGenerator(SqlGenerator):
             order by tb""".format("','".join(schemaList))
         return sql
     
-    def getInheritanceInfo(self):
+    def getInheritanceDict(self):
         sql = """select row_to_json(a) from (select pgc.relname parentname, array_agg(pgc1.relname) childname 
                 from pg_inherits as pginh 
                     left join pg_class pgc on pginh.inhparent = pgc.oid 
                     left join pg_class as pgc1 on pginh.inhrelid = pgc1.oid
                 group by pgc.relname
                 ) as a"""
+        return sql
+    
+    def getGeomTables(self, schemaList):
+        sql = """select distinct f_table_schema, f_table_name from public.geometry_columns where f_table_schema in ('{0}') order by f_table_name""".format("','".join(schemaList))
         return sql
         
