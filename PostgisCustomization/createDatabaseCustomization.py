@@ -34,6 +34,7 @@ from PyQt4.QtGui import QFormLayout, QMessageBox
 # DSGTools imports
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.newClassWidget import NewClassWidget
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.newAttributeWidget import NewAttributeWidget
+from DsgTools.CustomWidgets.CustomDbManagementWidgets.newDomainWidget import NewDomainWidget
 from DsgTools.CustomWidgets.selectFileWidget import SelectFileWidget
 from DsgTools.PostgisCustomization.dbCustomizer import DbCustomizer
 
@@ -120,7 +121,8 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         pass 
 
     def addDomainWidget(self):
-        pass
+        widget = NewDomainWidget(self.connectionWidget.abstractDb)
+        self.addWidgetItem(self.tr('Domain Customization'), self.tr('New Custom Domain'), widget)
 
     def addNullityWidget(self):
         pass

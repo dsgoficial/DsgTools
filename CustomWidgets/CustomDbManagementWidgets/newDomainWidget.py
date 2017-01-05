@@ -35,11 +35,23 @@ from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactor
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.addAttributeWidget import AddAttributeWidget
 from DsgTools.PostgisCustomization.CustomJSONTools.customJSONBuilder import CustomJSONBuilder
+from PyQt4.Qt import QTableWidgetItem, QLineEdit
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'newClassWidget.ui'))
+    os.path.dirname(__file__), 'newDomainWidget.ui'))
 
-class NewClassWidget(QtGui.QWidget, FORM_CLASS):
+class ValidatedItemDelegate(QtGui.QStyledItemDelegate):
+    def createEditor(self, widget, option, index):
+        if not index.isValid():
+            return 0
+        if index.column() == 0: #only on the cells in the first column
+            editor = QtGui.QLineEdit(widget)
+            validator = QtGui.QRegExpValidator(QtCore.QRegExp("[0-9]*"), editor)
+            editor.setValidator(validator)
+            return editor
+        return super(ValidatedItemDelegate, self).createEditor(widget, option, index)
+
+class NewDomainWidget(QtGui.QWidget, FORM_CLASS):
     def __init__(self, abstractDb, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
@@ -48,54 +60,68 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
-        self.setupUi(self)
-        self.geomUiDict = {self.tr('Point'):{'sufix':'p','type':'MULTIPOINT([epsg])'}, self.tr('Line'):{'sufix':'l','type':'MULTILINESTRING([epsg])'}, self.tr('Area'):{'sufix':'a','type':'MULTIPOLYGON([epsg])'}} 
+        self.setupUi(self) 
         header = self.tableWidget.horizontalHeader()
         header.setStretchLastSection(True)
         regex = QtCore.QRegExp('[a-z][a-z\_]*')
-        validator = QtGui.QRegExpValidator(regex, self.classNameLineEdit)
-        self.classNameLineEdit.setValidator(validator)
-        regex2 = QtCore.QRegExp('[a-z]*')
-        validator2 = QtGui.QRegExpValidator(regex2, self.categoryLineEdit)
-        self.categoryLineEdit.setValidator(validator2)
+        validator = QtGui.QRegExpValidator(regex, self.domainNameLineEdit)
+        self.domainNameLineEdit.setValidator(validator)
         self.abstractDb = abstractDb
-        self.populateSchemaCombo()
         self.jsonBuilder = CustomJSONBuilder()
-    
-    def populateSchemaCombo(self):
-        self.schemaComboBox.clear()
-        schemaList = self.abstractDb.getGeometricSchemaList()
-        for schema in schemaList:
-            if schema not in ['views', 'validation']:
-                self.schemaComboBox.addItem(schema)
+        self.tableWidget.setItemDelegate(ValidatedItemDelegate())
+        self.originalColor = None
     
     @pyqtSlot()
-    def on_classNameLineEdit_editingFinished(self):
-        text = self.classNameLineEdit.text()
+    def on_domainNameLineEdit_editingFinished(self):
+        text = self.domainNameLineEdit.text()
         while text[-1] == '_':
-            self.classNameLineEdit.setText(text[0:-1])
+            self.domainNameLineEdit.setText(text[0:-1])
             text = text[0:-1]
     
     @pyqtSlot(str)
-    def on_classNameLineEdit_textEdited(self, newText):
+    def on_domainNameLineEdit_textEdited(self, newText):
         if len(newText) > 1:
             if newText[-1] == '_' and newText[-2] == '_':
-                    self.classNameLineEdit.setText(newText[0:-1])
+                    self.domainNameLineEdit.setText(newText[0:-1])
     
     @pyqtSlot(bool)
-    def on_addAttributePushButton_clicked(self):
+    def on_addValuePushButton_clicked(self):
         index = self.tableWidget.rowCount()
         self.tableWidget.insertRow(index)
-        newAttribute = AddAttributeWidget(self.abstractDb)
-        self.tableWidget.setCellWidget(index,0,newAttribute)
+#         lineEdit = QtGui.QLineEdit()
+#         regex = QtCore.QRegExp('[0-9]*')
+#         validator = QtGui.QRegExpValidator(regex, lineEdit)
+#         lineEdit.setValidator(validator)
+#         lineEdit.setStyleSheet("QLineEdit { border : 1px solid red;}")
+#         self.tableWidget.setCellWidget(index,0, lineEdit)
     
     @pyqtSlot(bool)
-    def on_removePushButton_clicked(self):
+    def on_removeValuePushButton_clicked(self):
         selected = self.tableWidget.selectedIndexes()
         rowList = [i.row() for i in selected]
         rowList.sort(reverse=True)
         for row in rowList:
             self.tableWidget.removeRow(row)
+    
+    @pyqtSlot(QTableWidgetItem)
+    def on_tableWidget_itemChanged(self, widgetItem):
+        if widgetItem.row() == 0 and (not self.originalColor):
+            self.originalColor = self.tableWidget.itemAt(0,0).backgroundColor()
+        if self.tableWidget.currentColumn() == 0:
+            currentValue = widgetItem.text() 
+            itemList = []
+            for i in range(self.tableWidget.rowCount()):
+                if i <> widgetItem.row():
+                    curItem = self.tableWidget.itemAt(i,0)
+                    itemList.append(curItem.text())
+            if currentValue in itemList:
+                widgetItem.setBackground(QtGui.QColor(230,124,127))
+                self.tableWidget.setCurrentCell(widgetItem.row(),0)
+#                 self.tableWidget.cellWidget(0,widgetItem.row()).setStyleSheet("QTableWidget::item {""border: 1px solid red;""}")
+            else:
+#                 widgetItem.setBackground(QtGui.QColor(0,0,0,255))
+                if self.originalColor:
+                    widgetItem.setBackground(self.originalColor)
     
     def getTitle(self):
         return self.title
@@ -110,6 +136,7 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
         return childWidgetList
     
     def validate(self):
+        #TODO
         if self.categoryLineEdit.text() == '':
             return False
         if self.classNameLineEdit.text() == '':
@@ -120,27 +147,10 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
 
     def validateDiagnosis(self):
         invalidatedReason = ''
-        if self.categoryLineEdit.text() == '':
-            invalidatedReason += self.tr('Class must have a category.\n')
-        if self.classNameLineEdit.text() == '':
-            invalidatedReason += self.tr('Class must have a name.\n')
-        if self.geomComboBox.currentIndex() == 0:
-            invalidatedReason += self.tr('Class must have a geometric primitive.\n')
+        #TODO
         return invalidatedReason
 
     def getJSONTag(self):
+        #TODO
         if not self.validate():
             raise Exception(self.tr('Error in class ')+ self.title + ' : ' + self.validateDiagnosis())
-        schema = self.schemaComboBox.currentText()
-        name = '_'.join([ self.categoryLineEdit.text(), self.classNameLineEdit.text(), self.geomUiDict[self.geomComboBox.currentText()]['sufix'] ])
-        widgetList = self.getChildWidgetList()
-        attrList = []
-        #create pk attr
-        pkItem = self.jsonBuilder.buildAttributeElement('id', 'serial', True, False)
-        attrList.append(pkItem)
-        #create geom attr
-        geomItem = self.jsonBuilder.buildAttributeElement('geom', self.geomUiDict[self.geomComboBox.currentText()]['type'], False, False)
-        attrList.append(geomItem)
-        for widget in widgetList:
-            attrList.append(widget.getJSONTag())
-        return self.jsonBuilder.buildClassElement(schema,name,attrList)
