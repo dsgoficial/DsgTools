@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>472</width>
-    <height>184</height>
+    <width>450</width>
+    <height>203</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -42,6 +42,18 @@
    </item>
    <item row="1" column="0" colspan="2">
     <widget class="QTableWidget" name="tableWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>140</height>
+      </size>
+     </property>
      <column>
       <property name="text">
        <string>Code</string>

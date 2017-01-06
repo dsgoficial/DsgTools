@@ -182,7 +182,7 @@ class NewDomainWidget(QtGui.QWidget, FORM_CLASS):
 
     def getJSONTag(self):
         if not self.validate():
-            raise Exception(self.tr('Error in class ')+ self.title + ' : ' + self.validateDiagnosis())
+            raise Exception(self.tr('Error in domain ')+ self.title + ' : ' + self.validateDiagnosis())
         domainName = self.domainNameLineEdit.text()
         valueDict = dict()
         for row in range(self.tableWidget.rowCount()):

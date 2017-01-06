@@ -35,6 +35,7 @@ from PyQt4.QtGui import QFormLayout, QMessageBox
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.newClassWidget import NewClassWidget
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.newAttributeWidget import NewAttributeWidget
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.newDomainWidget import NewDomainWidget
+from DsgTools.CustomWidgets.CustomDbManagementWidgets.codeNameCustomizationWidget import CodeNameCustomizationWidget
 from DsgTools.CustomWidgets.selectFileWidget import SelectFileWidget
 from DsgTools.PostgisCustomization.dbCustomizer import DbCustomizer
 
@@ -115,7 +116,8 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         self.addWidgetItem(self.tr('Class Customization'), self.tr('New Custom Class'), widget)
     
     def addCodeNameWidget(self):
-        pass
+        widget = CodeNameCustomizationWidget(self.connectionWidget.abstractDb)
+        self.addWidgetItem(self.tr('Code Name Customization'), self.tr('New Custom Code Name'), widget)
 
     def addDefaultWidget(self):
         pass 
