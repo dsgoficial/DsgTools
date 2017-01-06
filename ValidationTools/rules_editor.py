@@ -83,8 +83,9 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
         Remove a selected rule
         '''
         selectedItems = self.tableWidget.selectedItems()
-        row = self.tableWidget.row(selectedItems[0])
-        self.tableWidget.removeRow(row)
+        rows = [self.tableWidget.row(selectedItem) for selectedItem in selectedItems]
+        for row in rows:
+            self.tableWidget.removeRow(row)
         
     def insertRow(self, layer1, necessity, predicate, layer2, cardinality):
         '''

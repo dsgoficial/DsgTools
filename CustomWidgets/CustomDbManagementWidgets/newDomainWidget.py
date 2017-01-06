@@ -69,7 +69,7 @@ class NewDomainWidget(QtGui.QWidget, FORM_CLASS):
         self.abstractDb = abstractDb
         self.jsonBuilder = CustomJSONBuilder()
         self.tableWidget.setItemDelegate(ValidatedItemDelegate())
-        self.originalColor = None
+        self.oldBackgroung = None
     
     @pyqtSlot()
     def on_domainNameLineEdit_editingFinished(self):
@@ -88,12 +88,12 @@ class NewDomainWidget(QtGui.QWidget, FORM_CLASS):
     def on_addValuePushButton_clicked(self):
         index = self.tableWidget.rowCount()
         self.tableWidget.insertRow(index)
-#         lineEdit = QtGui.QLineEdit()
-#         regex = QtCore.QRegExp('[0-9]*')
-#         validator = QtGui.QRegExpValidator(regex, lineEdit)
-#         lineEdit.setValidator(validator)
-#         lineEdit.setStyleSheet("QLineEdit { border : 1px solid red;}")
-#         self.tableWidget.setCellWidget(index,0, lineEdit)
+        codeItem = QtGui.QTableWidgetItem('')
+        valueItem = QtGui.QTableWidgetItem('')
+        self.tableWidget.setItem(self.tableWidget.rowCount()-1, 0, codeItem)
+        self.tableWidget.setItem(self.tableWidget.rowCount()-1, 1, valueItem)
+        if index == 0:
+            self.oldBackgroung = self.tableWidget.item(0,0).background()     
     
     @pyqtSlot(bool)
     def on_removeValuePushButton_clicked(self):
@@ -105,23 +105,19 @@ class NewDomainWidget(QtGui.QWidget, FORM_CLASS):
     
     @pyqtSlot(QTableWidgetItem)
     def on_tableWidget_itemChanged(self, widgetItem):
-        if widgetItem.row() == 0 and (not self.originalColor):
-            self.originalColor = self.tableWidget.itemAt(0,0).backgroundColor()
         if self.tableWidget.currentColumn() == 0:
             currentValue = widgetItem.text() 
             itemList = []
             for i in range(self.tableWidget.rowCount()):
                 if i <> widgetItem.row():
-                    curItem = self.tableWidget.itemAt(i,0)
+                    curItem = self.tableWidget.item(i, 0)
                     itemList.append(curItem.text())
             if currentValue in itemList:
                 widgetItem.setBackground(QtGui.QColor(230,124,127))
-                self.tableWidget.setCurrentCell(widgetItem.row(),0)
-#                 self.tableWidget.cellWidget(0,widgetItem.row()).setStyleSheet("QTableWidget::item {""border: 1px solid red;""}")
+                self.tableWidget.setCurrentCell(widgetItem.row(), 0)
             else:
-#                 widgetItem.setBackground(QtGui.QColor(0,0,0,255))
                 if self.originalColor:
-                    widgetItem.setBackground(self.originalColor)
+                    widgetItem.oldBackgroung(self.originalColor)
     
     def getTitle(self):
         return self.title
