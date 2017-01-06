@@ -69,7 +69,7 @@ class NewDomainWidget(QtGui.QWidget, FORM_CLASS):
         self.abstractDb = abstractDb
         self.jsonBuilder = CustomJSONBuilder()
         self.tableWidget.setItemDelegate(ValidatedItemDelegate())
-        self.oldBackgroung = None
+        self.oldBackground = None
     
     @pyqtSlot()
     def on_domainNameLineEdit_editingFinished(self):
@@ -93,7 +93,7 @@ class NewDomainWidget(QtGui.QWidget, FORM_CLASS):
         self.tableWidget.setItem(self.tableWidget.rowCount()-1, 0, codeItem)
         self.tableWidget.setItem(self.tableWidget.rowCount()-1, 1, valueItem)
         if index == 0:
-            self.oldBackgroung = self.tableWidget.item(0,0).background()     
+            self.oldBackground = self.tableWidget.item(0,0).background()     
     
     @pyqtSlot(bool)
     def on_removeValuePushButton_clicked(self):
@@ -116,8 +116,8 @@ class NewDomainWidget(QtGui.QWidget, FORM_CLASS):
                 widgetItem.setBackground(QtGui.QColor(230,124,127))
                 self.tableWidget.setCurrentCell(widgetItem.row(), 0)
             else:
-                if self.originalColor:
-                    widgetItem.oldBackgroung(self.originalColor)
+                if self.oldBackground:
+                    widgetItem.setBackground(self.oldBackground)
     
     def getTitle(self):
         return self.title
