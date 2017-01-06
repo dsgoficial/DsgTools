@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2016-08-01
+        begin                : 2017-01-04
         git sha              : $Format:%H$
         copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba@dsg.eb.mil.br
@@ -35,7 +35,7 @@ from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactor
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.addAttributeWidget import AddAttributeWidget
 from DsgTools.PostgisCustomization.CustomJSONTools.customJSONBuilder import CustomJSONBuilder
-from PyQt4.Qt import QTableWidgetItem, QLineEdit
+from PyQt4.Qt import QTableWidgetItem, QLineEdit, QToolTip
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'newDomainWidget.ui'))
@@ -48,6 +48,10 @@ class ValidatedItemDelegate(QtGui.QStyledItemDelegate):
             editor = QtGui.QLineEdit(widget)
             validator = QtGui.QRegExpValidator(QtCore.QRegExp("[0-9]*"), editor)
             editor.setValidator(validator)
+            return editor
+        elif index.column() == 1:
+            editor = QtGui.QLineEdit(widget)
+            editor.setPlaceholderText(self.tr('Enter a value.'))
             return editor
         return super(ValidatedItemDelegate, self).createEditor(widget, option, index)
 
@@ -105,19 +109,34 @@ class NewDomainWidget(QtGui.QWidget, FORM_CLASS):
     
     @pyqtSlot(QTableWidgetItem)
     def on_tableWidget_itemChanged(self, widgetItem):
+        if self.checkNull(widgetItem):
+            return
         if self.tableWidget.currentColumn() == 0:
-            currentValue = widgetItem.text() 
-            itemList = []
-            for i in range(self.tableWidget.rowCount()):
-                if i <> widgetItem.row():
-                    curItem = self.tableWidget.item(i, 0)
-                    itemList.append(curItem.text())
-            if currentValue in itemList:
-                widgetItem.setBackground(QtGui.QColor(230,124,127))
-                self.tableWidget.setCurrentCell(widgetItem.row(), 0)
-            else:
-                if self.oldBackground:
-                    widgetItem.setBackground(self.oldBackground)
+            self.checkUnique(widgetItem)
+    
+    def checkNull(self, widgetItem):
+        if widgetItem.text() == '':
+            widgetItem.setToolTip(self.tr('Enter a value!'))
+            return True
+        else:
+            widgetItem.setToolTip('')
+            return False
+    
+    def checkUnique(self, widgetItem):
+        currentValue = widgetItem.text() 
+        itemList = []
+        for i in range(self.tableWidget.rowCount()):
+            if i <> widgetItem.row():
+                curItem = self.tableWidget.item(i, 0)
+                itemList.append(curItem.text())
+        if currentValue in itemList:
+            widgetItem.setBackground(QtGui.QColor(230,124,127))
+            self.tableWidget.setCurrentCell(widgetItem.row(), 0)
+            widgetItem.setToolTip(self.tr('Code value already entered.'))
+        else:
+            if self.oldBackground:
+                widgetItem.setBackground(self.oldBackground)
+                widgetItem.setToolTip('')
     
     def getTitle(self):
         return self.title
@@ -125,28 +144,49 @@ class NewDomainWidget(QtGui.QWidget, FORM_CLASS):
     def setTitle(self, title):
         self.title = title
     
-    def getChildWidgetList(self):
-        childWidgetList = []
-        for i in range(self.tableWidget.rowCount()):
-            childWidgetList.append(self.tableWidget.cellWidget(i,0))
-        return childWidgetList
-    
     def validate(self):
-        #TODO
-        if self.categoryLineEdit.text() == '':
+        if self.domainNameLineEdit.text() == '':
             return False
-        if self.classNameLineEdit.text() == '':
+        if self.tableHasEmptyValue():
             return False
-        if self.geomComboBox.currentIndex() == 0:
+        if self.tableHasDuplicatedCode():
             return False 
         return True
 
     def validateDiagnosis(self):
         invalidatedReason = ''
-        #TODO
+        if self.domainNameLineEdit.text() == '':
+            invalidatedReason += self.tr('A domain name must be chosen.\n')
+        if self.tableHasEmptyValue():
+            invalidatedReason += self.tr('There must be no empty codes or values.\n')
+        if self.tableHasEmptyValue():
+            invalidatedReason += self.tr('Codes must be unique.\n')
         return invalidatedReason
 
+    def tableHasEmptyValue(self):
+        for row in range(self.tableWidget.rowCount()):
+            for column in range(self.tableWidget.columnCount()):
+                if self.tableWidget.item(row,column).text() == '':
+                    return True
+        return False
+    
+    def tableHasDuplicatedCode(self):
+        listOfCodes = []
+        for row in range(self.tableWidget.rowCount()):
+            code = self.tableWidget.item(row,0)
+            if code not in listOfCodes:
+                listOfCodes.append(code)
+            else:
+                return True
+        return False
+
     def getJSONTag(self):
-        #TODO
         if not self.validate():
             raise Exception(self.tr('Error in class ')+ self.title + ' : ' + self.validateDiagnosis())
+        domainName = self.domainNameLineEdit.text()
+        valueDict = dict()
+        for row in range(self.tableWidget.rowCount()):
+            code = self.tableWidget.item(row,0).text()
+            value = self.tableWidget.item(row,1).text()
+            valueDict[code] = value
+        return self.jsonBuilder.addDomainTableElement(domainName, valueDict)
