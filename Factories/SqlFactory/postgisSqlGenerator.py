@@ -1164,3 +1164,18 @@ class PostGISSqlGenerator(SqlGenerator):
         and column_name not like 'id%' order by column_name ) as a
         """.format(schema,tableName)
         return sql
+    
+    def getAttrTypeDictFromDb(self):
+        sql = """ select row_to_json(a) from (
+                    select udt_name, array_agg(row_to_json(row(table_schema::text, table_name::text, column_name::text))) from information_schema.columns where 
+                        table_name in (select f_table_name from public.geometry_columns) 
+                        and column_name not like 'id_%' 
+                        and column_name <> 'id' 
+                        and column_name not in (
+            select f_geometry_column from public.geometry_columns where f_table_schema = table_schema and f_table_name = table_name
+            )
+                        and table_schema not in ('validation','views')
+                    group by udt_name
+                    ) as a
+        """
+        return sql
