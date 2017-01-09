@@ -51,5 +51,5 @@ class CustomJSONBuilder(QObject):
     def buildChangeDefaultElement(self, schema, table, attrName, oldValue, newValue):
         return {'schema': schema, 'table': table, 'attrName':attrName, 'oldValue':oldValue, 'newValue':newValue}
     
-    def buildChangeNullityElemnt(self, schema, table, attrName, notNull):
+    def buildChangeNullityElement(self, schema, table, attrName, notNull):
         return {'schema':schema, 'table':table, 'attrName':attrName, 'notNull':notNull}

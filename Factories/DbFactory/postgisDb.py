@@ -2575,4 +2575,28 @@ class PostgisDb(AbstractDb):
         self.utils.getRecursiveInheritance(parent, bloodLine, inhDict)
         return bloodLine
     
+    def getAttributeListFromTable(self, schema, tableName):
+        '''
+        Lists all attributes from table.
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.getAttributeListFromTable(schema, tableName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting attribute list: ")+query.lastError().text())
+        attributeList = []
+        while query.next():
+            attributeList.append(query.value(0))
+        return attributeList
+    
+    def getAttributeJsonFromDb(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getAttributeDictFromDb()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting attribute list: ")+query.lastError().text())
+        attributeJson = []
+        while query.next():
+            attributeJson.append(json.loads(query.value(0)))
+        return attributeJson
         

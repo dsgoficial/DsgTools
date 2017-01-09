@@ -1137,4 +1137,30 @@ class PostGISSqlGenerator(SqlGenerator):
     def getGeomTables(self, schemaList):
         sql = """select distinct f_table_schema, f_table_name from public.geometry_columns where f_table_schema in ('{0}') order by f_table_name""".format("','".join(schemaList))
         return sql
+    
+    def getAttributeListFromTable(self, schema, tableName):
+        sql = """select distinct column_name from information_schema.columns where table_schema = '{0}' and table_name = '{1}' and column_name not in (
+        select f_geometry_column from public.geometry_columns where f_table_schema = '{0}' and f_table_name = '{1}'
+        )
+        and column_name not like 'id%' order by column_name """.format(schema,tableName)
+        return sql
+    
+    def getAttributeDictFromDb(self):
+        sql = """select row_to_json(a) from (select distinct table_schema, table_name, array_agg(column_name::text) as attributelist from information_schema.columns where table_schema not in ('views','validation')
+        and table_schema in (select distinct f_table_schema from public.geometry_columns)
+        and table_name in (select distinct f_table_name from public.geometry_columns)
         
+         and column_name not in (
+            select f_geometry_column from public.geometry_columns where f_table_schema = table_schema and f_table_name = table_name
+            )
+        and column_name not like 'id%' group by table_schema, table_name order by table_schema, table_name) as a"""
+        return sql
+    
+    def getAttributeInfoFromTable(self, schema, tableName):
+        sql = """ select row_to_json(a) from (select distinct column_name, data_type, is_nullable, column_default from information_schema.columns 
+        where table_schema = '{0}' and table_name = '{1}' and column_name not in (
+        select f_geometry_column from public.geometry_columns where f_table_schema = '{0}' and f_table_name = '{1}'
+        )
+        and column_name not like 'id%' order by column_name ) as a
+        """.format(schema,tableName)
+        return sql
