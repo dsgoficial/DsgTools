@@ -35,6 +35,7 @@ from PyQt4.QtGui import QFormLayout, QMessageBox
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.newClassWidget import NewClassWidget
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.newAttributeWidget import NewAttributeWidget
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.newDomainWidget import NewDomainWidget
+from DsgTools.CustomWidgets.CustomDbManagementWidgets.newDomainValueWidget import NewDomainValueWidget
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.codeNameCustomizationWidget import CodeNameCustomizationWidget
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.changeNullityWidget import ChangeNullityWidget
 from DsgTools.CustomWidgets.selectFileWidget import SelectFileWidget
@@ -70,6 +71,7 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         self.customDict['codeName'] = self.tr('Code Name Customization')
         self.customDict['default'] = self.tr('Default Customization')
         self.customDict['domain'] = self.tr('Domain Customization')
+        self.customDict['domainValue'] = self.tr('Domain Value Customization')
         self.customDict['nullity'] = self.tr('Attribute Nullity Customization')
         rootNode = self.customizationTreeWidget.invisibleRootItem()
         for type in self.customDict.keys():
@@ -92,6 +94,8 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
             self.addDefaultWidget()
         elif self.customizationSelectionComboBox.currentText() == self.tr('Domain Customization'):
             self.addDomainWidget()
+        elif self.customizationSelectionComboBox.currentText() == self.tr('Domain Value Customization'):
+            self.addDomainValueWidget()
         elif self.customizationSelectionComboBox.currentText() == self.tr('Attribute Nullity Customization'):
             self.addNullityWidget()
         else:
@@ -126,6 +130,10 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
     def addDomainWidget(self):
         widget = NewDomainWidget(self.connectionWidget.abstractDb)
         self.addWidgetItem(self.tr('Domain Customization'), self.tr('New Custom Domain'), widget)
+
+    def addDomainValueWidget(self):
+        widget = NewDomainValueWidget(self.connectionWidget.abstractDb)
+        self.addWidgetItem(self.tr('Domain Value Customization'), self.tr('New Domain Value'), widget)
 
     def addNullityWidget(self):
         widget = ChangeNullityWidget(self.connectionWidget.abstractDb)

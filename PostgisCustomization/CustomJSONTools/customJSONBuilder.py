@@ -53,3 +53,9 @@ class CustomJSONBuilder(QObject):
     
     def buildChangeNullityElement(self, schema, table, attrName, notNull):
         return {'schema':schema, 'table':table, 'attrName':attrName, 'notNull':notNull}
+
+    def addDomainValueElement(self, domainName, code, code_name, filterToAlterList = []):
+        return {'domainName':domainName, 'code':code, 'code_name':code_name, 'filterToAlterList':filterToAlterList}
+    
+    def filterToAlterElement(self, schema, tableName, attrName, filterName, originalFilterList, newValue):
+        return {'schema':schema, 'tableName':tableName, 'attrName':attrName, 'filterName':filterName,'originalFilterList':originalFilterList, 'newValue':newValue}

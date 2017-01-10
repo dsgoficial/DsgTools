@@ -5,10 +5,10 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2016-07-31
+        begin                : 2017-01-10
         git sha              : $Format:%H$
-        copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba@dsg.eb.mil.br
+        copyright            : (C) 2017 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -23,9 +23,9 @@
 #DsgTools Imports
 from DsgTools.Factories.DbCustomizationFactory.dbCustomization import DbCustomization
 
-class DomainCustomization(DbCustomization):
+class NewDomainTableCustomization(DbCustomization):
     def __init__(self, customJson):
-        super(DomainCustomization, self).__init__(customJson)
+        super(NewDomainTableCustomization, self).__init__(customJson)
     
     def buildSql(self):
         '''
@@ -33,7 +33,8 @@ class DomainCustomization(DbCustomization):
         '''
         #Abstract method. Must be reimplemented in each child.
         sql = ''
-        for modItem in self.customJson['AttributeValueToAdd']:
+        for modItem in self.customJson['AddDomainTable']:
+            sql += '''CREATE TABLE IF NOT EXISTS dominios."{0}";\n'''.format(modItem['domainName'])
             for code in modItem['valueDict'].keys():
                 sql += '''INSERT INTO dominios."{0}" (code, code_name) VALUES ({1}, '{2}');\n'''.format(modItem['domainName'],code, modItem['valueDict'][code])
         return sql
@@ -44,7 +45,7 @@ class DomainCustomization(DbCustomization):
         '''
         #Abstract method. Must be reimplemented in each child.
         sql = ''
-        for modItem in self.customJson['AttributeValueToAdd']:
+        for modItem in self.customJson['AddDomainTable']:
             for code in modItem['valueDict'].keys():
-                sql += '''DELETE FROM dominios."{0}" where code = {1};\n'''.format(modItem['domainName'],code)
+                sql += '''DROP TABLE IF EXISTS dominios."{0}";'''.format(modItem['domainName'])
         return sql
