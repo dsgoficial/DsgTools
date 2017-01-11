@@ -49,6 +49,7 @@ class NewDomainValueWidget(QtGui.QWidget, FORM_CLASS):
         regex = QtCore.QRegExp('[0-9]*')
         validator = QtGui.QRegExpValidator(regex, self.codeLineEdit)
         self.codeLineEdit.setValidator(validator)
+        self.filterAttributeCustomSelector.setTitle(self.tr('Select filter attributes to be changed'))
 
     def populateDomainCombo(self):
         self.domainTableList = self.abstractDb.getDomainTables()

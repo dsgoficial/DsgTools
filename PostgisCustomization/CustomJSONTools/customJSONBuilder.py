@@ -57,5 +57,5 @@ class CustomJSONBuilder(QObject):
     def addDomainValueElement(self, domainName, code, code_name, filterToAlterList = []):
         return {'domainName':domainName, 'code':code, 'code_name':code_name, 'filterToAlterList':filterToAlterList}
     
-    def filterToAlterElement(self, schema, tableName, attrName, filterName, originalFilterList, newValue):
-        return {'schema':schema, 'tableName':tableName, 'attrName':attrName, 'filterName':filterName,'originalFilterList':originalFilterList, 'newValue':newValue}
+    def filterToAlterElement(self, schema, tableName, attrName, filterName, originalFilterList, newValue, isMulti = False):
+        return {'schema':schema, 'tableName':tableName, 'attrName':attrName, 'filterName':filterName,'originalFilterList':originalFilterList, 'newValue':newValue, 'isMulti':isMulti}
