@@ -67,6 +67,20 @@ class NewDomainValueWidget(QtGui.QWidget, FORM_CLASS):
         else:
             self.codeLineEdit.setEnabled(True)
             self.codeNameLineEdit.setEnabled(True)
+    
+    @pyqtSlot(int)
+    def on_allDomainCheckBox_stateChanged(self, state):
+        if state == 2:
+            self.domainComboBox.clear()
+        else:
+            self.populateDomainCombo()
+    
+    @pyqtSlot(int)
+    def on_addNewCodeToTableFiltersCheckBox_stateChanged(self, state):
+        if state == 2:
+            self.filterAttributeCustomSelector.setEnabled(True)
+        else:
+            self.filterAttributeCustomSelector.setEnabled(False)
 
     def getTitle(self):
         return self.title
