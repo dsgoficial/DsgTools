@@ -4,11 +4,11 @@
  DsgTools
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
-                             -------------------
-        begin                : 2015-11-24
+                              -------------------
+        begin                : 2016-07-16
         git sha              : $Format:%H$
-        copyright            : (C) 2015 by Brazilian Army - Geographic Service Bureau
-        email                : suporte.dsgtools@dsg.eb.mil.br
+        copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
