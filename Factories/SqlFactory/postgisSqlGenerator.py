@@ -928,6 +928,7 @@ class PostGISSqlGenerator(SqlGenerator):
             when split_part(conrelid::regclass::text,'.',2) = '' then split_part(conrelid::regclass::text,'.',1)
             else split_part(conrelid::regclass::text,'.',2)
         end in (select f_table_name from public.geometry_columns where f_table_schema <> 'views')
+        order by cl
         """
         return sql
     
@@ -1178,4 +1179,8 @@ class PostGISSqlGenerator(SqlGenerator):
                     group by udt_name
                     ) as a
         """
+        return sql
+    
+    def getAllDomainValues(self, domainTable):
+        sql = """ select code from dominios.{0}""".format(domainTable)
         return sql

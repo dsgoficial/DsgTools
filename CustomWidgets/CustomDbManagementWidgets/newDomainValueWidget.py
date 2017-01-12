@@ -50,6 +50,7 @@ class NewDomainValueWidget(QtGui.QWidget, FORM_CLASS):
         validator = QtGui.QRegExpValidator(regex, self.codeLineEdit)
         self.codeLineEdit.setValidator(validator)
         self.filterAttributeCustomSelector.setTitle(self.tr('Select filter attributes to be changed'))
+        self.oldBackground = self.codeLineEdit.backgroundRole()
 
     def populateDomainCombo(self):
         self.domainTableList = self.abstractDb.getDomainTables()
@@ -82,6 +83,20 @@ class NewDomainValueWidget(QtGui.QWidget, FORM_CLASS):
             self.filterAttributeCustomSelector.setEnabled(True)
         else:
             self.filterAttributeCustomSelector.setEnabled(False)
+    
+    @pyqtSlot()
+    def on_codeLineEdit_editingFinished(self):
+        if self.allDomainCheckBox.checkState() == 2:
+            domainValues = self.abstractDb.getAllDomainValues()
+        else:
+            domainValues = self.abstractDb.getAllDomainValues(domainTableList = [self.domainCombo.currentText()])
+        currentValue = self.codeLineEdit.text()
+        if int(currentValue) in domainValues:
+            self.codeLineEdit.setBackgroundRole(QtGui.QColor(230,124,127))
+            self.codeLineEdit.setToolTip(self.tr('Code value already exists, choose another.'))
+        else:
+            self.codeLineEdit.setBackgroundRole(self.oldBackground)
+            self.codeLineEdit.setToolTip('')
 
     def getTitle(self):
         return self.title

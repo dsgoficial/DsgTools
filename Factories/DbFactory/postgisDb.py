@@ -2603,16 +2603,6 @@ class PostgisDb(AbstractDb):
     def getDbDomainFilterDict(self):
         #TODO
         '''
-        returns a dict like this:
-        {'adm_posto_fiscal_a': {
-            'columns':{
-                'operacional': {'references':'dominios.operacional', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3], 'isMulti':False}
-                'situacaofisica': {'references':'dominios.situacaofisica', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3], 'isMulti':False}
-                'tipopostofisc': {'references':'dominios.tipopostofisc', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3], 'isMulti':False}
-                }
-            }
-        }
-        
         {domainName : [ {'schema': schema, 'tableName' : tableName, 'attrName':attrName, 'constraintName': constraintName, 'isMulti': isMulti, constraintList: [] }]
         '''
         self.checkAndOpenDb()
@@ -2646,32 +2636,20 @@ class PostgisDb(AbstractDb):
                 if fkAttribute in checkConstraintDict[tableName].keys():
                     geomDict[tableName]['columns'][fkAttribute]['constraintList'] = checkConstraintDict[tableName][fkAttribute]
             geomDict[tableName]['columns'][fkAttribute]['nullable'] = True
-            if tableName in notNullDict.keys():
-                if fkAttribute in notNullDict[tableName]['attributes']:
-                    geomDict[tableName]['columns'][fkAttribute]['nullable'] = False
-            if tableName in multiDict.keys():
-                if fkAttribute in multiDict[tableName]:
-                    geomDict[tableName]['columns'][fkAttribute]['isMulti'] = True
-        for tableName in multiDict.keys():
-            if tableName in auxGeomDict['tablePerspective'].keys():
-                for fkAttribute in multiDict[tableName]:
-                    if tableName not in geomDict.keys():
-                        geomDict[tableName] = dict()
-                    if 'columns' not in geomDict[tableName].keys():
-                        geomDict[tableName]['columns'] = dict()
-                    if fkAttribute not in geomDict[tableName]['columns'].keys():
-                        geomDict[tableName]['columns'][fkAttribute] = dict()
-                    geomDict[tableName]['columns'][fkAttribute]['references'] = None
-                    if fkAttribute in checkConstraintDict[tableName].keys():
-                        geomDict[tableName]['columns'][fkAttribute]['constraintList'] = checkConstraintDict[tableName][fkAttribute]
-                    geomDict[tableName]['columns'][fkAttribute]['nullable'] = True
-                    if tableName in notNullDict.keys():
-                            if fkAttribute in notNullDict[tableName]['attributes']:
-                                geomDict[tableName]['columns'][fkAttribute]['nullable'] = False
-                    if tableName in multiDict.keys():
-                        if fkAttribute in multiDict[tableName]:
-                            geomDict[tableName]['columns'][fkAttribute]['isMulti'] = True
-                            geomDict[tableName]['columns'][fkAttribute]['refPk'] = 'code'
-                            geomDict[tableName]['columns'][fkAttribute]['otherKey'] = 'code_name'
-                            geomDict[tableName]['columns'][fkAttribute]['values'] = dict()
+            
         return geomDict
+    
+    def getAllDomainValues(self, domainTableList = []):
+        self.checkAndOpenDb()
+        if domainTableList == []:
+            domainTableList = self.getDomainTables()
+        valueList = []
+        for domainTable in domainTableList:
+            sql = self.gen.getAllDomainValues(domainTable)
+            query = QSqlQuery(sql, self.db)
+            while query.next():
+                value = query.value(0)
+                if value not in valueList:
+                    valueList.append(value)
+        valueList.sort()
+        return valueList
