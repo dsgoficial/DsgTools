@@ -38,6 +38,7 @@ from DsgTools.CustomWidgets.CustomDbManagementWidgets.newDomainWidget import New
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.newDomainValueWidget import NewDomainValueWidget
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.codeNameCustomizationWidget import CodeNameCustomizationWidget
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.changeNullityWidget import ChangeNullityWidget
+from DsgTools.CustomWidgets.CustomDbManagementWidgets.changeFilterWidget import ChangeFilterWidget
 from DsgTools.CustomWidgets.selectFileWidget import SelectFileWidget
 from DsgTools.PostgisCustomization.dbCustomizer import DbCustomizer
 
@@ -73,6 +74,7 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         self.customDict['domain'] = self.tr('Domain Customization')
         self.customDict['domainValue'] = self.tr('Domain Value Customization')
         self.customDict['nullity'] = self.tr('Attribute Nullity Customization')
+        self.customDict['filter'] = self.tr('Attribute Filter Customization')
         rootNode = self.customizationTreeWidget.invisibleRootItem()
         for type in self.customDict.keys():
             if self.customDict[type] not in self.contentsDict.keys():
@@ -98,6 +100,8 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
             self.addDomainValueWidget()
         elif self.customizationSelectionComboBox.currentText() == self.tr('Attribute Nullity Customization'):
             self.addNullityWidget()
+        elif self.customizationSelectionComboBox.currentText() == self.tr('Attribute Filter Customization'):
+            self.addFilterWidget()
         else:
             QMessageBox.warning(self, self.tr('Warning'), self.tr('Select a custom operation!'))
     
@@ -138,6 +142,10 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
     def addNullityWidget(self):
         widget = ChangeNullityWidget(self.connectionWidget.abstractDb)
         self.addWidgetItem(self.tr('Attribute Nullity Customization'), self.tr('New Custom Attribute Nullity'), widget)
+
+    def addFilterWidget(self):
+        widget = ChangeFilterWidget(self.connectionWidget.abstractDb)
+        self.addWidgetItem(self.tr('Attribute Filter Customization'), self.tr('New Custom Attribute Filter'), widget)
     
     def addWidget(self, widget, title):
         layout = QtGui.QFormLayout()

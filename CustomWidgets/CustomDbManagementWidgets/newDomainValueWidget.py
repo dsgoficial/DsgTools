@@ -49,8 +49,6 @@ class NewDomainValueWidget(QtGui.QWidget, FORM_CLASS):
         regex = QtCore.QRegExp('[0-9]*')
         validator = QtGui.QRegExpValidator(regex, self.codeLineEdit)
         self.codeLineEdit.setValidator(validator)
-        self.filterAttributeCustomSelector.setTitle(self.tr('Select filter attributes to be changed'))
-        self.oldBackground = self.codeLineEdit.backgroundRole()
 
     def populateDomainCombo(self):
         self.domainTableList = self.abstractDb.getDomainTables()
@@ -69,6 +67,7 @@ class NewDomainValueWidget(QtGui.QWidget, FORM_CLASS):
         else:
             self.codeLineEdit.setEnabled(True)
             self.codeNameLineEdit.setEnabled(True)
+        self.codeLineEdit.editingFinished.emit()
     
     @pyqtSlot(int)
     def on_allDomainCheckBox_stateChanged(self, state):
@@ -76,26 +75,27 @@ class NewDomainValueWidget(QtGui.QWidget, FORM_CLASS):
             self.domainComboBox.clear()
         else:
             self.populateDomainCombo()
-    
-    @pyqtSlot(int)
-    def on_addNewCodeToTableFiltersCheckBox_stateChanged(self, state):
-        if state == 2:
-            self.filterAttributeCustomSelector.setEnabled(True)
-        else:
-            self.filterAttributeCustomSelector.setEnabled(False)
+        self.codeLineEdit.editingFinished.emit()
     
     @pyqtSlot()
     def on_codeLineEdit_editingFinished(self):
+        if self.domainComboBox.currentIndex() == 0:
+            self.codeLineEdit.setStyleSheet('')
+            self.codeLineEdit.setToolTip('')
+            return
         if self.allDomainCheckBox.checkState() == 2:
             domainValues = self.abstractDb.getAllDomainValues()
         else:
-            domainValues = self.abstractDb.getAllDomainValues(domainTableList = [self.domainCombo.currentText()])
+            domainValues = self.abstractDb.getAllDomainValues(domainTableList = [self.domainComboBox.currentText()])
         currentValue = self.codeLineEdit.text()
-        if int(currentValue) in domainValues:
-            self.codeLineEdit.setBackgroundRole(QtGui.QColor(230,124,127))
+        if currentValue == '':
+            self.codeLineEdit.setStyleSheet('')
+            self.codeLineEdit.setToolTip('')
+        elif int(currentValue) in domainValues:
+            self.codeLineEdit.setStyleSheet("border: 1px solid red;")
             self.codeLineEdit.setToolTip(self.tr('Code value already exists, choose another.'))
         else:
-            self.codeLineEdit.setBackgroundRole(self.oldBackground)
+            self.codeLineEdit.setStyleSheet('')
             self.codeLineEdit.setToolTip('')
 
     def getTitle(self):
@@ -105,16 +105,37 @@ class NewDomainValueWidget(QtGui.QWidget, FORM_CLASS):
         self.title = title
 
     def validate(self):
-        #TODO
+        if self.codeLineEdit.text() == '':
+            return False
+        if self.codeNameLineEdit.text() == '':
+            return False
+        if self.allDomainCheckBox.checkState() == 2:
+            return True
+        else:
+            if self.domainComboBox.currentIndex() == 0:
+                return False
         return True
 
     def validateDiagnosis(self):
         invalidatedReason = ''
-        #TODO
+        if self.codeLineEdit.text() == '':
+            invalidatedReason += self.tr('A code value must be entered.\n')
+        if self.codeNameLineEdit.text() == '':
+            invalidatedReason += self.tr('A code name value must be entered.\n')
+        if self.domainComboBox.currentIndex() == 0 and self.allDomainCheckBox.checkState() <> 2:
+            invalidatedReason += self.tr('A domain table must be chosen.\n')
         return invalidatedReason
     
     def getJSONTag(self):
         if not self.validate():
-            raise Exception(self.tr('Error in attribute ')+ self.title + ' : ' + self.validateDiagnosis())
-        #TODO
-            
+            raise Exception(self.tr('Error in new domain value ')+ self.title + ' : ' + self.validateDiagnosis())
+        code = self.codeLineEdit.text()
+        codeName = self.codeNameLineEdit.text()
+        jsonList = []
+        if self.allDomainCheckBox.checkState() <> 2:
+            domainName = self.domainComboBox.currentText()
+            jsonList.append(self.jsonBuilder.addDomainValueElement(domainName, code, codeName))
+        else:
+            for domainName in self.domainTableList:
+                jsonList.append(self.jsonBuilder.addDomainValueElement(domainName, code, codeName))
+        return jsonList
