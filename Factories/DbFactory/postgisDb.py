@@ -2600,45 +2600,6 @@ class PostgisDb(AbstractDb):
             attributeJson.append(json.loads(query.value(0)))
         return attributeJson
     
-    def getDbDomainFilterDict(self):
-        #TODO
-        '''
-        {domainName : [ {'schema': schema, 'tableName' : tableName, 'attrName':attrName, 'constraintName': constraintName, 'isMulti': isMulti, constraintList: [] }]
-        '''
-        self.checkAndOpenDb()
-        #gets only schemas of classes with geom, to speed up the process.
-        geomTypeDict = self.getGeomTypeDict()
-        auxGeomDict = self.getGeomDict(geomTypeDict)
-        checkConstraintDict = self.getCheckConstraintDict()
-        multiDict = self.getMultiColumnsDict()
-        sql = self.gen.getGeomTablesDomains()
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
-        geomDict = dict()
-        while query.next():
-            #parse done in parseFkQuery to make code cleaner.
-            tableName, fkAttribute, domainTable, domainReferencedAttribute = self.parseFkQuery(query.value(0),query.value(1))
-            if tableName not in geomDict.keys():
-                geomDict[tableName] = dict()
-            if 'columns' not in geomDict[tableName].keys():
-                geomDict[tableName]['columns'] = dict()
-            if fkAttribute not in geomDict[tableName]['columns'].keys():
-                geomDict[tableName]['columns'][fkAttribute] = dict()
-            geomDict[tableName]['columns'][fkAttribute]['references'] = domainTable
-            geomDict[tableName]['columns'][fkAttribute]['refPk'] = domainReferencedAttribute
-            values, otherKey = self.getLayerColumnDict(domainReferencedAttribute, domainTable)
-            geomDict[tableName]['columns'][fkAttribute]['values'] = values
-            geomDict[tableName]['columns'][fkAttribute]['otherKey'] = otherKey
-            geomDict[tableName]['columns'][fkAttribute]['constraintList'] = []
-            geomDict[tableName]['columns'][fkAttribute]['isMulti'] = False
-            if tableName in checkConstraintDict.keys():
-                if fkAttribute in checkConstraintDict[tableName].keys():
-                    geomDict[tableName]['columns'][fkAttribute]['constraintList'] = checkConstraintDict[tableName][fkAttribute]
-            geomDict[tableName]['columns'][fkAttribute]['nullable'] = True
-            
-        return geomDict
-    
     def getAllDomainValues(self, domainTableList = []):
         self.checkAndOpenDb()
         if domainTableList == []:
