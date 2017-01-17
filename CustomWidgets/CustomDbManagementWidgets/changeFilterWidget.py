@@ -104,37 +104,42 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
                 for attribute in attributeList:
                     self.attributeComboBox.addItem(attribute)
     
-    #@pyqtSlot(int, name='on_tableComboBox_currentIndexChanged')
+    @pyqtSlot(int, name='on_tableComboBox_currentIndexChanged')
+    @pyqtSlot(int, name='on_schemaComboBox_currentIndexChanged')
+    @pyqtSlot(int, name='on_attributeComboBox_currentIndexChanged')
     def populateWidgetWithSingleValue(self):
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        self.singleValueComboBox.clear()
-        self.singleValueComboBox.addItem(self.tr('Select a value to alter'))
-        if self.allAttributesCheckBox.checkState() == 2:
-            tableList = [self.tableComboBox.currentText()]
-        else:
-            tableList = self.domainDict.keys()
-        allValueList = []
-        idxList = []
-        for tableName in tableList:
-            for attrName in self.domainDict[tableName]['columns'].keys():
-                for code in self.domainDict[tableName]['columns'][attrName]['values']:
-                    value = self.domainDict[tableName]['columns'][attrName]['values'][code]
-                    if value not in allValueList:
-                        allValueList.append(value)
-        
-        for value in allValueList:
+        if self.schemaComboBox.currentIndex() <> 0 and self.tableComboBox.currentIndex() <> 0 and (self.allTablesCheckBox.checkState() == 2 or self.allAttributesCheckBox.checkState() == 2):
+            self.attributeComboBox.clear()
+            self.attributeComboBox.setEnabled(False)
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.singleValueComboBox.clear()
+            self.singleValueComboBox.addItem(self.tr('Select a value to alter'))
+            if self.allAttributesCheckBox.checkState() == 2:
+                tableList = [self.tableComboBox.currentText()]
+            else:
+                tableList = self.domainDict.keys()
+            allValueList = []
+            idxList = []
             for tableName in tableList:
                 for attrName in self.domainDict[tableName]['columns'].keys():
-                    if value not in self.domainDict[tableName]['columns'][attrName]['values'].values():
-                        idx = allValueList.index(value)
-                        if idx not in idxList:
-                            idxList.append(idx)
-        idxList.sort(reverse=True)
-        for idx in idxList:
-            allValueList.pop(idx)
-        for value in allValueList:
-            self.singleValueComboBox.addItem(value)
-        QApplication.restoreOverrideCursor()
+                    for code in self.domainDict[tableName]['columns'][attrName]['values']:
+                        value = self.domainDict[tableName]['columns'][attrName]['values'][code]
+                        if value not in allValueList:
+                            allValueList.append(value)
+            
+            for value in allValueList:
+                for tableName in tableList:
+                    for attrName in self.domainDict[tableName]['columns'].keys():
+                        if value not in self.domainDict[tableName]['columns'][attrName]['values'].values():
+                            idx = allValueList.index(value)
+                            if idx not in idxList:
+                                idxList.append(idx)
+            idxList.sort(reverse=True)
+            for idx in idxList:
+                allValueList.pop(idx)
+            for value in allValueList:
+                self.singleValueComboBox.addItem(value)
+            QApplication.restoreOverrideCursor()
         
     
     @pyqtSlot(int, name='on_attributeComboBox_currentIndexChanged')
@@ -142,7 +147,13 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         self.filterCustomSelectorWidget.clearAll()
         if self.allTablesCheckBox.checkState() == 2 or self.allAttributesCheckBox.checkState() == 2:
             return
-        if self.tableComboBox.currentIndex() == 0 or self.schemaComboBox.currentIndex() == 0 or self.attributeComboBox.currentIndex() == 0:
+        if self.schemaComboBox.currentIndex() == 0:
+            self.schemaComboBox.currentIndexChanged.emit(0)
+            return
+        elif self.tableComboBox.currentIndex() == 0:
+            self.tableComboBox.currentIndexChanged.emit(0)
+            return
+        elif self.attributeComboBox.currentIndex() == 0:
             return
         filterList = []
         tableName = self.tableComboBox.currentText()
@@ -175,7 +186,6 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
     
     @pyqtSlot(int)
     def on_allAttributesCheckBox_stateChanged(self, state):
-        self.hideOrShowWidgets()
         if state == 2:
             self.allTablesCheckBox.setEnabled(False)
             self.allTablesCheckBox.setCheckState(0)
@@ -184,6 +194,7 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         if state == 0:
             self.allTablesCheckBox.setEnabled(True)
             self.attributeComboBox.setEnabled(True)
+        self.hideOrShowWidgets()
     
     def hideOrShowWidgets(self):
         if self.allAttributesCheckBox.checkState() == 2 or self.allTablesCheckBox.checkState() == 2:
@@ -197,6 +208,7 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
             self.singleValueLabel.hide()
             self.singleValueComboBox.hide()
             self.actionComboBox.hide()
+            self.tableComboBox.currentIndexChanged.emit(self.tableComboBox.currentIndex())
             self.populateListValue.emit()
     
     def getTitle(self):
@@ -206,18 +218,10 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         self.title = title
     
     def validate(self):
-        if self.actionComboBox.currentIndex() == 0:
-            return False
-        if self.allTablesCheckBox.checkState() == 2:
-            return True
-        if self.schemaComboBox.currentIndex() == 0:
-            return False
-        if self.tableComboBox.currentIndex() == 0:
-            return False
         if self.allAttributesCheckBox.checkState() == 2:
-            return True
-        elif self.attributeComboBox.currentIndex() == 0:
-            return False
+             pass
+        if self.allTablesCheckBox.checkState() == 2:
+            pass
         return True
 
     def validateDiagnosis(self):
