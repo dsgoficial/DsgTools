@@ -39,6 +39,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
     populateSingleValue = pyqtSignal()
     populateListValue = pyqtSignal()
+    populateInheritanceTree = pyqtSignal(list)
     def __init__(self, abstractDb, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
