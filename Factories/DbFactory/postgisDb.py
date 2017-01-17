@@ -2575,6 +2575,9 @@ class PostgisDb(AbstractDb):
         self.utils.getRecursiveInheritance(parent, bloodLine, inhDict)
         return bloodLine
     
+    def getFullBloodLineDict(self, candidate):
+        pass
+    
     def getAttributeListFromTable(self, schema, tableName):
         '''
         Lists all attributes from table.
