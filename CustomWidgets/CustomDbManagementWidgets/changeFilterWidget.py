@@ -28,8 +28,6 @@ from qgis.core import QgsMessageLog
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from PyQt4.QtGui import QApplication, QCursor
-from PyQt4.QtSql import QSqlQuery
-
 # DSGTools imports
 from DsgTools.PostgisCustomization.CustomJSONTools.customJSONBuilder import CustomJSONBuilder
 
@@ -55,7 +53,6 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         geomTypeDict = self.abstractDb.getGeomTypeDict()
         geomDict = self.abstractDb.getGeomDict(geomTypeDict)
         self.domainDict = self.abstractDb.getDbDomainDict(geomDict)
-        
     
     def populateSchemaCombo(self):
         self.schemaComboBox.clear()

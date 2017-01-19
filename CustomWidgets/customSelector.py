@@ -51,7 +51,7 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         '''
         self.fromList.clear()
         self.toList.clear()
-        self.filterLineEdit.clear()        
+        self.filterLineEdit.clear()
     
     def setInitialState(self, fromList, unique = False):
         '''
