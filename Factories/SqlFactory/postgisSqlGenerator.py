@@ -1184,3 +1184,6 @@ class PostGISSqlGenerator(SqlGenerator):
     def getAllDomainValues(self, domainTable):
         sql = """ select code from dominios.{0}""".format(domainTable)
         return sql
+    
+    def lalala(self):
+        return sql
