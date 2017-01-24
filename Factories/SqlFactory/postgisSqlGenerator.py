@@ -699,7 +699,7 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "select p.relname from {0} as c, pg_class as p where c.tableoid = p.oid and c.id = {1}".format(cl,id)
         return sql
     
-    def snapLinesToFrame(self, cl, tol):
+    def snapLinesToFrame(self, cl, frameTable, tol):
         schema, table = cl.split('.')
         sql = """
         update {0}.{1} as classe set geom = ST_Multi(agrupado.geom)
@@ -714,7 +714,7 @@ class PostGISSqlGenerator(SqlGenerator):
                     (   select a.id as id, a.geom as geom,
                         ST_ShortestLine(st_startpoint((ST_Dump(a.geom)).geom), 
                         ST_Boundary(m.geom)) as from_start
-                        from {0}.{1} a, public.aux_moldura_a m
+                        from {0}.{1} a, {3} m
                     ) as short
                     where ST_Length(from_start) < {2}
                 ) as simplelines group by simplelines.id
@@ -733,26 +733,25 @@ class PostGISSqlGenerator(SqlGenerator):
                         ST_ShortestLine(st_endpoint((ST_Dump(a.geom)).geom), 
                         ST_Boundary(m.geom)) as from_start,
                         ST_NPoints((ST_Dump(a.geom)).geom) as index
-                        from {0}.{1} a, public.aux_moldura_a m
+                        from {0}.{1} a, {3} m
                     ) as short
                     where ST_Length(from_start) < {2}
                 ) as simplelines group by simplelines.id
             ) as agrupado
         where classe.id = agrupado.id        
-        """.format(schema, table, str(tol))
+        """.format(schema, table, str(tol), frameTable)
         return sql
     
-    def densifyFrame(self, cl):
-        schema, table = cl.split('.')
+    def densifyFrame(self, cl, frameTable, snapTolerance):
         sql = """
-        update public.aux_moldura_a m set geom = st_multi(st_snap(m.geom, 
-        foo.vertices, 0.0000000001))
+        update {2} m set geom = st_multi(st_snap(m.geom, 
+        foo.vertices, {1}))
         from
         (
             select st_union(st_boundary(a.geom)) as vertices from 
-        {0}.{1} a
+        {0} a
         ) as foo        
-        """.format(schema, table)
+        """.format(cl, snapTolerance, frameTable)
         return sql
 
     def snapToGrid(self, cl, precision, srid):

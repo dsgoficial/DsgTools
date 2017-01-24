@@ -30,7 +30,7 @@ class SnapLinesToFrameProcess(ValidationProcess):
         '''
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Snap Lines to Frame')
-        self.parameters = {'Snap': 5.0}
+        self.parameters = {'Snap': 5.0, 'Snap Tolerance':0.001}
 
     def postProcess(self):
         '''
@@ -58,11 +58,14 @@ class SnapLinesToFrameProcess(ValidationProcess):
             for cl in lines:
                 # preparation
                 processTableName, lyr = self.prepareExecution(cl)
+                frameTableName, frameLyr = self.prepareExecution('public.aux_moldura_a')
                 #running the process in the temp table
-                self.abstractDb.snapLinesToFrame([processTableName], tol)
-                self.abstractDb.densifyFrame([processTableName])
+                self.abstractDb.snapLinesToFrame([processTableName], frameTableName, tol)
+                self.abstractDb.densifyFrame([processTableName], frameTableName, self.parameters['Snap Tolerance'])
                 # finalization
+                #TODO: Put try except to end process when error occur
                 self.postProcessSteps(processTableName, lyr)
+                self.postProcessSteps(frameTableName, frameLyr)
             msg = self.tr('All features snapped succesfully.')
             self.setStatus(msg, 1) #Finished
             QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)

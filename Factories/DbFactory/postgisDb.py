@@ -1513,7 +1513,7 @@ class PostgisDb(AbstractDb):
                 raise Exception(self.tr('Problem snapping to grid: ') + query.lastError().text())
         self.db.commit()
         
-    def snapLinesToFrame(self, classList, tol):
+    def snapLinesToFrame(self, classList, frameTable, tol):
         '''
         Snaps lines to frame. This means the lines are prolonged to the frame according to the specified tolerance
         classList: classes to be altered
@@ -1523,14 +1523,14 @@ class PostgisDb(AbstractDb):
         self.db.transaction()
         query = QSqlQuery(self.db)
         for cl in classList:
-            sqls = self.gen.snapLinesToFrame(cl, tol)
+            sqls = self.gen.snapLinesToFrame(cl, frameTable, tol)
             for sql in sqls.split('#'):
                 if not query.exec_(sql):
                     self.db.rollback()
                     raise Exception(self.tr('Problem snapping to frame: ') + query.lastError().text())
         self.db.commit()
             
-    def densifyFrame(self, classList):
+    def densifyFrame(self, classList, frameTable, snapTolerance):
         '''
         Densifies the frame creating new vertexes where the lines were snapped
         classList: classes to be altered
@@ -1539,7 +1539,7 @@ class PostgisDb(AbstractDb):
         self.db.transaction()
         query = QSqlQuery(self.db)
         for cl in classList:
-            sql = self.gen.densifyFrame(cl)
+            sql = self.gen.densifyFrame(cl, frameTable, snapTolerance)
             if not query.exec_(sql):
                 self.db.rollback()
                 raise Exception(self.tr('Problem densifying frame: ') + query.lastError().text())
