@@ -23,6 +23,8 @@
 import json
 import os
 from xml.dom.minidom import parse, parseString
+from PyQt4.QtGui import QTreeWidgetItem
+from PyQt4 import QtGui
 
 class Utils:
     def mergeDict(self, dictionary1, dictionary2):
@@ -151,3 +153,42 @@ class Utils:
         if parent in inhDict.keys():
             for child in inhDict[parent]:
                 self.getRecursiveInheritance(child, resultList, inhDict)
+    
+    def getRecursiveInheritanceTreeDict(self, parent, resultDict, inhDict):
+        if parent not in resultDict.keys():
+            resultDict[parent] = dict()
+        if parent in inhDict.keys():
+            for child in inhDict[parent]:
+                self.getRecursiveInheritanceTreeDict(child, resultDict[parent], inhDict)
+
+    def find_all_paths(self, graph, start, end, path=[]):
+        path = path + [start]
+        if start == end:
+            return [path]
+        if not graph.has_key(start):
+            return []
+        paths = []
+        for node in graph[start]:
+            if node not in path:
+                newpaths = self.find_all_paths(graph[start], node, end, path)
+                for newpath in newpaths:
+                    if newpath not in paths:
+                        paths.append(newpath)
+        return paths
+    
+    def getAllItemsInDict(self, inputDict, itemList):
+        for key in inputDict.keys():
+            if key not in itemList:
+                itemList.append(key)
+            self.getAllItemsInDict(inputDict[key], itemList)
+        
+    def createWidgetItem(self, parent, text, column):
+        item = QtGui.QTreeWidgetItem(parent)
+        item.setText(column, text)
+        return item
+    
+    def createTreeWidgetFromDict(self, parentNode, inputDict, treeWidget, column):
+        for key in inputDict.keys():
+            item = self.createWidgetItem(parentNode, key, column)
+            self.createTreeWidgetFromDict(item, inputDict[key], treeWidget, column)
+        

@@ -30,6 +30,7 @@ from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from PyQt4.QtGui import QApplication, QCursor
 # DSGTools imports
 from DsgTools.PostgisCustomization.CustomJSONTools.customJSONBuilder import CustomJSONBuilder
+from DsgTools.Utils.utils import Utils
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'changeFilterWidget.ui'))
@@ -37,7 +38,6 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
     populateSingleValue = pyqtSignal()
     populateListValue = pyqtSignal()
-    populateInheritanceTree = pyqtSignal(list)
     def __init__(self, abstractDb, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
@@ -53,6 +53,15 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         geomTypeDict = self.abstractDb.getGeomTypeDict()
         geomDict = self.abstractDb.getGeomDict(geomTypeDict)
         self.domainDict = self.abstractDb.getDbDomainDict(geomDict)
+        self.inhTree = self.abstractDb.getInheritanceTreeDict()
+        self.utils = Utils()
+
+    def populateInheritanceTree(self, nodeList):
+        self.treeWidget.clear()
+        rootNode = self.treeWidget.invisibleRootItem()
+        for node in nodeList:
+            firstNonRootNode = self.utils.find_all_paths(self.inhTree, 'root', node)[0][1]
+            self.utils.createTreeWidgetFromDict(rootNode, {firstNonRootNode:self.inhTree['root'][firstNonRootNode]}, self.treeWidget, 0)
     
     def populateSchemaCombo(self):
         self.schemaComboBox.clear()
@@ -137,7 +146,9 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
                 allValueList.pop(idx)
             for value in allValueList:
                 self.singleValueComboBox.addItem(value)
+            self.populateInheritanceTree(tableList)
             QApplication.restoreOverrideCursor()
+            
         
     
     @pyqtSlot(int, name='on_attributeComboBox_currentIndexChanged')
@@ -166,7 +177,10 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         filterFromList = [i for i in attrDomainDict.values() if i not in filterToList]
         self.filterCustomSelectorWidget.setFromList(filterFromList, unique = True)
         self.filterCustomSelectorWidget.setToList(filterToList)
+        self.populateInheritanceTree([tableName])
         
+    
+    
     
     @pyqtSlot(int)
     def on_allTablesCheckBox_stateChanged(self, state):

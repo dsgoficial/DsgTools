@@ -2617,3 +2617,37 @@ class PostgisDb(AbstractDb):
                     valueList.append(value)
         valueList.sort()
         return valueList
+    
+    def getInheritanceTreeDict(self):
+        self.checkAndOpenDb()
+        inhDict = self.getInheritanceDict()
+        layerList = self.listGeomClassesFromDatabase()
+        geomTables = [i.split('.')[-1] for i in layerList]
+        inhTreeDict = dict()
+        for parent in inhDict.keys():
+            self.utils.getRecursiveInheritanceTreeDict(parent, inhTreeDict, inhDict)
+        blackList = []
+        for parent in inhTreeDict.keys():
+            otherKeys = [i for i in inhTreeDict.keys() if i <> parent]
+            for otherKey in otherKeys:
+                if inhTreeDict[parent] in inhTreeDict[otherKey].values():
+                    if parent not in blackList:
+                        blackList.append(parent)
+                        break
+        for item in blackList:
+            inhTreeDict.pop(item)
+        childBlackList = []
+        self.utils.getAllItemsInDict(inhTreeDict,childBlackList)
+        for geomTable in geomTables:
+            if geomTable not in childBlackList:
+                schema = self.getTableSchemaFromDb(geomTable)
+                if schema not in ['views', 'validation']:
+                    inhTreeDict[geomTable] = dict()
+        r = {'root':inhTreeDict}
+        return r
+            
+            
+            
+
+        
+        
