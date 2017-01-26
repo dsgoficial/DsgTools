@@ -62,6 +62,8 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         for node in nodeList:
             firstNonRootNode = self.utils.find_all_paths(self.inhTree, 'root', node)[0][1]
             self.utils.createTreeWidgetFromDict(rootNode, {firstNonRootNode:self.inhTree['root'][firstNonRootNode]}, self.treeWidget, 0)
+        self.treeWidget.sortItems(0, Qt.AscendingOrder)
+        self.treeWidget.expandAll()
     
     def populateSchemaCombo(self):
         self.schemaComboBox.clear()
@@ -115,7 +117,7 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(int, name='on_schemaComboBox_currentIndexChanged')
     @pyqtSlot(int, name='on_attributeComboBox_currentIndexChanged')
     def populateWidgetWithSingleValue(self):
-        if self.schemaComboBox.currentIndex() <> 0 and self.tableComboBox.currentIndex() <> 0 and (self.allTablesCheckBox.checkState() == 2 or self.allAttributesCheckBox.checkState() == 2):
+        if self.allTablesCheckBox.checkState() == 2 or (self.allAttributesCheckBox.checkState() == 2 and self.schemaComboBox.currentIndex() <> 0 and self.tableComboBox.currentIndex() <> 0):
             self.attributeComboBox.clear()
             self.attributeComboBox.setEnabled(False)
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -152,6 +154,7 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         
     
     @pyqtSlot(int, name='on_attributeComboBox_currentIndexChanged')
+    @pyqtSlot(int, name='on_tableComboBox_currentIndexChanged')
     def populateWidgetWithListValue(self):
         self.filterCustomSelectorWidget.clearAll()
         if self.allTablesCheckBox.checkState() == 2 or self.allAttributesCheckBox.checkState() == 2:
@@ -159,13 +162,14 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         if self.schemaComboBox.currentIndex() == 0:
             self.schemaComboBox.currentIndexChanged.emit(0)
             return
-        elif self.tableComboBox.currentIndex() == 0:
+        if self.tableComboBox.currentIndex() == 0:
             self.tableComboBox.currentIndexChanged.emit(0)
             return
-        elif self.attributeComboBox.currentIndex() == 0:
+        tableName = self.tableComboBox.currentText()
+        self.populateInheritanceTree([tableName])
+        if self.attributeComboBox.currentIndex() == 0:
             return
         filterList = []
-        tableName = self.tableComboBox.currentText()
         attributeName = self.attributeComboBox.currentText()
         tableFilter = []
         filterToList = []
@@ -177,7 +181,6 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         filterFromList = [i for i in attrDomainDict.values() if i not in filterToList]
         self.filterCustomSelectorWidget.setFromList(filterFromList, unique = True)
         self.filterCustomSelectorWidget.setToList(filterToList)
-        self.populateInheritanceTree([tableName])
         
     
     
