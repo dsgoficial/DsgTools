@@ -34,9 +34,12 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'rules_editor.ui'))
 
 class RulesEditor(QtGui.QDialog, FORM_CLASS):
+    """
+    teste
+    """
     def __init__(self, postgisDb, parent = None):
         """
-        Constructor
+        Constructor lalalala
         """
         super(RulesEditor, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -59,9 +62,9 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
         self.readFile()
         
     def fillLayers(self):
-        '''
+        """
         List classes from database
-        '''
+        """
         classList = self.postgisDb.listGeomClassesFromDatabase()
         classList.sort()
         self.layer1Combo.addItems(classList)

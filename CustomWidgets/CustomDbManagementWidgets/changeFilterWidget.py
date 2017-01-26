@@ -231,46 +231,62 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
     
     def validate(self):
         if self.allAttributesCheckBox.checkState() == 2:
-             pass
-        if self.allTablesCheckBox.checkState() == 2:
-            pass
+             if self.singleValueComboBox.currentIndex() == 0:
+                 return False
+             if self.actionComboBox.currentIndex() == 0:
+                 return False
+        elif self.allTablesCheckBox.checkState() == 2:
+             if self.singleValueComboBox.currentIndex() == 0:
+                 return False
+             if self.actionComboBox.currentIndex() == 0:
+                 return False
+             if self.schemaComboBox.currentIndex() == 0:
+                 return False
+             if self.tableComboBox.currentIndex() == 0:
+                 return False
+        else:
+             if self.schemaComboBox.currentIndex() == 0:
+                 return False
+             if self.tableComboBox.currentIndex() == 0:
+                 return False
+             if self.attributeComboBox.currentIndex() == 0:
+                 return False
         return True
 
     def validateDiagnosis(self):
         invalidatedReason = ''
-        if self.schemaComboBox.currentIndex() == 0:
-            invalidatedReason += self.tr('A schema must be chosen.\n')
-        if self.tableComboBox.currentIndex() == 0:
-            invalidatedReason += self.tr('A table must be chosen.\n')
-        if self.actionComboBox.currentIndex() == 0:
-            invalidatedReason += self.tr('An action be chosen.\n')
-        if self.allAttributesCheckBox.checkState() <> 2 and self.attributeComboBox.currentIndex() == 0:
-            invalidatedReason += self.tr('An attribute must be chosen.\n')
+        if self.allAttributesCheckBox.checkState() == 2:
+             if self.singleValueComboBox.currentIndex() == 0:
+                 invalidatedReason += self.tr('A value must be chosen.\n')
+             if self.actionComboBox.currentIndex() == 0:
+                 invalidatedReason += self.tr('An action must be chosen.\n')
+        elif self.allTablesCheckBox.checkState() == 2:
+             if self.singleValueComboBox.currentIndex() == 0:
+                 invalidatedReason += self.tr('A value must be chosen.\n')
+             if self.actionComboBox.currentIndex() == 0:
+                 invalidatedReason += self.tr('An action must be chosen.\n')
+             if self.schemaComboBox.currentIndex() == 0:
+                 invalidatedReason += self.tr('A schema must be chosen.\n')
+             if self.tableComboBox.currentIndex() == 0:
+                 invalidatedReason += self.tr('A table must be chosen.\n')
+        else:
+             if self.schemaComboBox.currentIndex() == 0:
+                 invalidatedReason += self.tr('A schema must be chosen.\n')
+             if self.tableComboBox.currentIndex() == 0:
+                 invalidatedReason += self.tr('A table must be chosen.\n')
+             if self.attributeComboBox.currentIndex() == 0:
+                 invalidatedReason += self.tr('An attribute must be chosen.\n')
         return invalidatedReason
     
     def getJSONTag(self):
         if not self.validate():
             raise Exception(self.tr('Error in change nullity customization ')+ self.title + ' : ' + self.validateDiagnosis())
-        if self.actionComboBox.currentIndex() == 1:
-            notNull = True
-        elif self.actionComboBox.currentIndex() == 2:
-            notNull = False
         jsonList = []
-        if self.allTablesCheckBox.checkState() == 2:
-            attributeJsonList = self.abstractDb.getAttributeJsonFromDb()
-            for attributeJson in attributeJsonList:
-                schema = attributeJson['table_schema']
-                table = attributeJson['table_name']
-                for attrName in attributeJson['attributelist']:
-                    jsonList.append(self.jsonBuilder.buildChangeNullityElement(schema, table, attrName, notNull))
+        if self.allAttributesCheckBox.checkState() == 2:
+            pass
+        elif self.allTablesCheckBox.checkState() == 2:
+            pass
         else:
-            schema = self.schemaComboBox.currentText()
-            table = self.tableComboBox.currentText()
-            if self.allAttributesCheckBox.checkState() == 2:
-                attrList = self.abstractDb.getAttributeListFromTable(schema, table)
-                for attrName in attrList:
-                    jsonList.append(self.jsonBuilder.buildChangeNullityElement(schema, table, attrName, notNull))
-            else:
-                attrName = self.attributeComboBox.currentText()
-                jsonList.append(self.jsonBuilder.buildChangeNullityElement(schema, table, attrName, notNull))
+            pass
         return jsonList
+    

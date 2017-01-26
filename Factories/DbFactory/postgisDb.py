@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+"""@package docstring
 /***************************************************************************
  DsgTools
                                  A QGIS plugin
@@ -43,9 +43,9 @@ class PostgisDb(AbstractDb):
         self.gen = SqlGeneratorFactory().createSqlGenerator(False)
         
     def getDatabaseName(self):
-        '''
+        """
         Gets the database name
-        '''
+        """
         return self.db.databaseName()
     
     def getHostName(self):
