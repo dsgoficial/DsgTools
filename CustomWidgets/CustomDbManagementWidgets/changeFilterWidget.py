@@ -181,9 +181,6 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         filterFromList = [i for i in attrDomainDict.values() if i not in filterToList]
         self.filterCustomSelectorWidget.setFromList(filterFromList, unique = True)
         self.filterCustomSelectorWidget.setToList(filterToList)
-        
-    
-    
     
     @pyqtSlot(int)
     def on_allTablesCheckBox_stateChanged(self, state):
