@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1164</width>
-    <height>759</height>
+    <width>850</width>
+    <height>431</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Create Database Customization</string>
@@ -103,7 +109,7 @@
      <property name="minimumSize">
       <size>
        <width>260</width>
-       <height>500</height>
+       <height>200</height>
       </size>
      </property>
      <property name="frameShape">
@@ -120,15 +126,15 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>883</width>
-        <height>694</height>
+        <width>569</width>
+        <height>366</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <layout class="QVBoxLayout" name="scrollAreaLayout">
          <property name="sizeConstraint">
-          <enum>QLayout::SetNoConstraint</enum>
+          <enum>QLayout::SetMinAndMaxSize</enum>
          </property>
         </layout>
        </item>
