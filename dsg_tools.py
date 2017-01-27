@@ -62,6 +62,11 @@ from DsgTools.MilitarySimbologyTools.militarySimbologyDock import MilitarySimbol
 from DsgTools.DbTools.BatchDbCreator.batchDbCreator import BatchDbCreator
 
 from qgis.utils import showPluginHelp
+try:
+    import ptvsd
+    ptvsd.enable_attach(secret='my_secret', address = ('localhost', 5679))
+except:
+    pass
 
 class DsgTools:
     """QGIS Plugin Implementation."""
