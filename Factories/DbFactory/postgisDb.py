@@ -36,22 +36,21 @@ class PostgisDb(AbstractDb):
         '''
         Constructor
         '''
-        super(PostgisDb,self).__init__()
+        super(PostgisDb, self).__init__()
         #setting database type to postgresql
         self.db = QSqlDatabase('QPSQL')
         #setting up a sql generator
         self.gen = SqlGeneratorFactory().createSqlGenerator(False)
-        
+
     def getDatabaseName(self):
         """
         Gets the database name
         """
         return self.db.databaseName()
-    
     def getHostName(self):
         return str(self.db.hostName())
-    
-    def connectDatabase(self,conn=None):
+
+    def connectDatabase(self, conn=None):
         '''
         Connects to database
         conn: connection parameters. It can be a OGR connection or a QSettings connection
@@ -61,7 +60,7 @@ class PostgisDb(AbstractDb):
             parDict = dict()
             for i in connSplit[1::]:
                 par = i.split('=')
-                parDict[par[0]]=par[1]
+                parDict[par[0]] = par[1]
             self.connectDatabaseWithParameters(parDict['host'], parDict['port'], parDict['dbname'], parDict['user'], parDict['password'])
         else:
             self.connectDatabaseWithQSettings(conn)
@@ -120,7 +119,7 @@ class PostgisDb(AbstractDb):
                 try:
                     (success, user, password) = QgsCredentials.instance().get(conInfo, user, None)
                     if not success:
-                        return 
+                        return
                     self.db.setPassword(password)
                     check = True
                     self.checkAndOpenDb()
@@ -1948,7 +1947,6 @@ class PostgisDb(AbstractDb):
         }
         '''
         self.checkAndOpenDb()
-        edgvVersion = self.getDatabaseVersion()
         #gets only schemas of classes with geom, to speed up the process.
         sql = self.gen.getGeomTableConstraints()
         query = QSqlQuery(sql, self.db)
@@ -1956,8 +1954,8 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
         geomDict = dict()
         while query.next():
-            #parse done in parseFkQuery to make code cleaner.
-            tableName, attribute, checkList = self.parseCheckConstraintQuery(edgvVersion, query.value(0),query.value(1))
+            #parse done in parseCheckConstraintQuery to make code cleaner.
+            tableName, attribute, checkList = self.parseCheckConstraintQuery(query.value(0),query.value(1))
             if tableName not in geomDict.keys():
                 geomDict[tableName] = dict()
             geomDict[tableName][attribute] = checkList
@@ -1976,15 +1974,16 @@ class PostgisDb(AbstractDb):
         domainReferencedAttribute = subtextList[1].replace(')','') 
         return tableName, fkAttribute, domainTable, domainReferencedAttribute
 
-    def parseCheckConstraintQuery(self, edgvVersion, queryValue0, queryValue1):
-        if edgvVersion == '2.1.3':
-            return self.parseCheckConstraint213(queryValue0, queryValue1)
-        elif edgvVersion == 'FTer_2a_Ed':
-            return self.parseCheckConstraintFTer(queryValue0, queryValue1)
-        else:
-            raise Exception(self.tr("EDGV Version not recognized!"))
+    def parseCheckConstraintQuery(self, queryValue0, queryValue1):
+        try:
+            if 'ANY' in queryValue1:
+                return self.parseCheckConstraintWithAny(queryValue0, queryValue1)
+            else:
+                return self.parseCheckConstraintWithOr(queryValue0, queryValue1)
+        except Exception as e:
+            raise Exception(self.tr("Error parsing check constraint!\n"+e.args[0]))
     
-    def parseCheckConstraint213(self, queryValue0, queryValue1):
+    def parseCheckConstraintWithOr(self, queryValue0, queryValue1):
         if '.' in queryValue0:
             query0Split = queryValue0.split('.')
             tableSchema = query0Split[0]
@@ -1999,7 +1998,7 @@ class PostgisDb(AbstractDb):
             checkList.append(int(attrSplit[1]))
         return tableName, attribute, checkList
     
-    def parseCheckConstraintFTer(self, queryValue0, queryValue1):
+    def parseCheckConstraintWithAny(self, queryValue0, queryValue1):
         if '.' in queryValue0:
             query0Split = queryValue0.split('.')
             tableSchema = query0Split[0]
@@ -2645,7 +2644,33 @@ class PostgisDb(AbstractDb):
                     inhTreeDict[geomTable] = dict()
         r = {'root':inhTreeDict}
         return r
-            
+    
+    def getInheritanceConstraintDict(self):
+        self.checkAndOpenDb()
+        schemaList = [i for i in self.getGeometricSchemaList() if i not in ['views', 'validation']]
+        sql = self.gen.getConstraintDict(schemaList)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem constraint dict from db: ")+query.lastError().text())
+        inhConstrDict = dict()
+        while query.next():
+            queryResult = json.loads(query.value(0))
+            tableName = queryResult['tablename']
+            if tableName not in inhConstrDict.keys():
+                inhConstrDict[tableName] = dict()
+            defList = queryResult['array_agg']
+            for value in defList:
+                constraintName = value['f1'] 
+                constraintDef = value['f2']
+                attrName = constraintName.split('_')[-2]
+                currTableName = constraintName.split('_'+attrName)[0]
+                if attrName not in inhConstrDict[tableName].keys():
+                    inhConstrDict[tableName][attrName] = []
+                filterDef = self.parseCheckConstraintQuery(constraintName,constraintDef)[-1]
+                currTag = {'tableName':currTableName, 'constraintName':constraintName, 'filter':filterDef}
+                if currTag not in inhConstrDict[tableName][attrName]:
+                    inhConstrDict[tableName][attrName].append(currTag)
+        return inhConstrDict
             
             
 

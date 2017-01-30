@@ -1183,3 +1183,16 @@ class PostGISSqlGenerator(SqlGenerator):
     def getAllDomainValues(self, domainTable):
         sql = """ select code from dominios.{0}""".format(domainTable)
         return sql
+    
+    def getConstraintDict(self, domainList):
+        sql = """select row_to_json(result) from (
+        select a.tn as tablename, array_agg(row_to_json(row(a.conname::text, a.consrc::text))) from (select sch.nspname as sch, cl.relname as tn, c.conname as conname, c.consrc as consrc from 
+                (
+                    select * from pg_constraint where contype = 'c'
+                ) as c join (
+                    select oid, nspname from pg_namespace where nspname in ('{0}')
+                ) as sch on sch.oid = c.connamespace
+                left join pg_class as cl on c.conrelid = cl.oid) as a where a.tn in (select f_table_name from public.geometry_columns) group by a.tn order by a.tn
+        ) as result
+        """.format("""','""".join(domainList))
+        return sql

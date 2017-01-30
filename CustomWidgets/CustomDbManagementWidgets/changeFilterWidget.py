@@ -64,7 +64,7 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
             self.utils.createTreeWidgetFromDict(rootNode, {firstNonRootNode:self.inhTree['root'][firstNonRootNode]}, self.treeWidget, 0)
         self.treeWidget.sortItems(0, Qt.AscendingOrder)
         self.treeWidget.expandAll()
-    
+
     def populateSchemaCombo(self):
         self.schemaComboBox.clear()
         self.schemaComboBox.addItem(self.tr('Select a schema'))
@@ -72,15 +72,15 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         for schema in schemaList:
             if schema not in ['views', 'validation']:
                 self.schemaComboBox.addItem(schema)
-    
+
     def hideWidgetList(self, widgetList):
         for widget in widgetList:
             widget.hide()
-    
+
     def showWidgetList(self, widgetList):
         for widget in widgetList:
             widget.show()
-    
+
     @pyqtSlot(int)
     def on_schemaComboBox_currentIndexChanged(self, idx):
         if idx == 0:
@@ -96,7 +96,7 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
             tableList = self.abstractDb.getGeometricTableListFromSchema(schema)
             for table in tableList:
                 self.tableComboBox.addItem(table)
-    
+
     @pyqtSlot(int)
     def on_tableComboBox_currentIndexChanged(self, idx):
         if idx == 0:
@@ -112,7 +112,7 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
                 attributeList = self.domainDict[tableName]['columns'].keys()
                 for attribute in attributeList:
                     self.attributeComboBox.addItem(attribute)
-    
+
     @pyqtSlot(int, name='on_tableComboBox_currentIndexChanged')
     @pyqtSlot(int, name='on_schemaComboBox_currentIndexChanged')
     @pyqtSlot(int, name='on_attributeComboBox_currentIndexChanged')
@@ -135,7 +135,7 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
                         value = self.domainDict[tableName]['columns'][attrName]['values'][code]
                         if value not in allValueList:
                             allValueList.append(value)
-            
+
             for value in allValueList:
                 for tableName in tableList:
                     for attrName in self.domainDict[tableName]['columns'].keys():
@@ -150,9 +150,7 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
                 self.singleValueComboBox.addItem(value)
             self.populateInheritanceTree(tableList)
             QApplication.restoreOverrideCursor()
-            
-        
-    
+
     @pyqtSlot(int, name='on_attributeComboBox_currentIndexChanged')
     @pyqtSlot(int, name='on_tableComboBox_currentIndexChanged')
     def populateWidgetWithListValue(self):
@@ -179,9 +177,9 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
                 tableFilter = self.domainDict[tableName]['columns'][attributeName]['constraintList']
         filterToList = [attrDomainDict[i] for i in tableFilter]
         filterFromList = [i for i in attrDomainDict.values() if i not in filterToList]
-        self.filterCustomSelectorWidget.setFromList(filterFromList, unique = True)
+        self.filterCustomSelectorWidget.setFromList(filterFromList, unique=True)
         self.filterCustomSelectorWidget.setToList(filterToList)
-    
+
     @pyqtSlot(int)
     def on_allTablesCheckBox_stateChanged(self, state):
         self.hideOrShowWidgets()
@@ -194,8 +192,7 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
             self.allAttributesCheckBox.setCheckState(0)
             self.schemaComboBox.setCurrentIndex(0)
             self.schemaComboBox.setEnabled(False)
-            
-    
+
     @pyqtSlot(int)
     def on_allAttributesCheckBox_stateChanged(self, state):
         if state == 2:
@@ -207,7 +204,7 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
             self.allTablesCheckBox.setEnabled(True)
             self.attributeComboBox.setEnabled(True)
         self.hideOrShowWidgets()
-    
+
     def hideOrShowWidgets(self):
         if self.allAttributesCheckBox.checkState() == 2 or self.allTablesCheckBox.checkState() == 2:
             self.filterCustomSelectorWidget.hide()
@@ -222,13 +219,13 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
             self.actionComboBox.hide()
             self.tableComboBox.currentIndexChanged.emit(self.tableComboBox.currentIndex())
             self.populateListValue.emit()
-    
+
     def getTitle(self):
         return self.title
-    
+
     def setTitle(self, title):
         self.title = title
-    
+
     def validate(self):
         if self.allAttributesCheckBox.checkState() == 2:
              if self.singleValueComboBox.currentIndex() == 0:
@@ -277,7 +274,7 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
              if self.attributeComboBox.currentIndex() == 0:
                  invalidatedReason += self.tr('An attribute must be chosen.\n')
         return invalidatedReason
-    
+
     def getJSONTag(self):
         if not self.validate():
             raise Exception(self.tr('Error in change nullity customization ')+ self.title + ' : ' + self.validateDiagnosis())

@@ -27,6 +27,7 @@ from PyQt4.QtGui import QTreeWidgetItem
 from PyQt4 import QtGui
 
 class Utils:
+
     def mergeDict(self, dictionary1, dictionary2):
         '''
         Merges two dictionaries
@@ -45,13 +46,15 @@ class Utils:
                         for i in value:
                             if i not in output[item]:
                                 output[item].append(i)
-                        output[item].extend(self.mergeDict(value, dictionary2.pop(item)))
+                        output[item].extend(self.mergeDict(
+                            value, dictionary2.pop(item)))
                     else:
-                        output[item] = self.mergeDict(value, dictionary2.pop(item))
+                        output[item] = self.mergeDict(
+                            value, dictionary2.pop(item))
             else:
                 if type(value) == list:
                     if item not in output.keys():
-                        output[item]=[]
+                        output[item] = []
                     for i in value:
                         if i not in output[item]:
                             output[item].append(i)
@@ -60,14 +63,14 @@ class Utils:
         for item, value in dictionary2.iteritems():
             if type(value) == list:
                 if item not in output.keys():
-                    output[item]=[]
+                    output[item] = []
                 for i in value:
                     if i not in output[item]:
                         output[item].append(i)
             else:
                 output[item] = value
         return output
-    
+
     def buildOneNestedDict(self, inputDict, keyList, value):
         '''
         Builds a nested dictionary for a specific key
@@ -76,31 +79,32 @@ class Utils:
             if keyList[0] not in inputDict.keys():
                 inputDict[keyList[0]] = dict()
             if type(value) == list:
-                inputDict[keyList[0]]=[]
+                inputDict[keyList[0]] = []
                 for i in value:
                     if i not in inputDict[keyList[0]]:
                         inputDict[keyList[0]].append(i)
             else:
-                inputDict[keyList[0]]=value
+                inputDict[keyList[0]] = value
             return inputDict
         else:
             if keyList[0] not in inputDict.keys():
                 if len(inputDict.values()) == 0:
                     inputDict[keyList[0]] = dict()
-            inputDict[keyList[0]] = self.buildOneNestedDict(inputDict[keyList[0]], keyList[1::], value)
+            inputDict[keyList[0]] = self.buildOneNestedDict(
+                inputDict[keyList[0]], keyList[1::], value)
             return inputDict
-    
+
     def buildNestedDict(self, inputDict, keyList, value):
         '''
         Builds a nested dict
         '''
-        if len(inputDict.keys())>0:
+        if len(inputDict.keys()) > 0:
             tempDict = self.buildOneNestedDict(dict(), keyList, value)
             return self.mergeDict(inputDict, tempDict)
         else:
             return self.buildOneNestedDict(inputDict, keyList, value)
-    
-    def readJsonFile(self, filename, returnFileAndDict = False):
+
+    def readJsonFile(self, filename, returnFileAndDict=False):
         '''
         Reads a json file and makes a dictionary
         '''
@@ -115,9 +119,9 @@ class Utils:
                 return fileDict
         except:
             return dict()
-        
+
     def parseStyle(self, qml):
-        qml = qml.replace("''","'")
+        qml = qml.replace("''", "'")
         if '.qml' in qml:
             doc = parse(qml)
         else:
@@ -127,8 +131,8 @@ class Utils:
             forbiddenNode = forbiddenList[0]
             qgisNode = doc.getElementsByTagName('qgis')[0]
             qgisNode.removeChild(forbiddenNode)
-        return doc.toxml().replace('<?xml version="1.0" encoding="utf-8"?>','')
-    
+        return doc.toxml().replace('<?xml version="1.0" encoding="utf-8"?>', '')
+
     def parseMultiQml(self, qmlPath, lyrList):
         '''
         dict in the form {'lyrName': {'attributeName':'domainTableName'}}
@@ -136,30 +140,32 @@ class Utils:
         refDict = dict()
         for lyr in lyrList:
             try:
-                qml = os.path.join(qmlPath,lyr+'.qml')
+                qml = os.path.join(qmlPath, lyr + '.qml')
                 doc = parse(qml)
                 refDict[lyr] = dict()
                 for node in doc.getElementsByTagName('edittype'):
                     if node.getAttribute('widgetv2type') == 'ValueRelation':
                         attrName = node.getAttribute('name')
-                        refDict[lyr][attrName] = node.getElementsByTagName('widgetv2config')[0].getAttribute('Layer')
+                        refDict[lyr][attrName] = node.getElementsByTagName(
+                            'widgetv2config')[0].getAttribute('Layer')
             except:
                 pass
         return refDict
-    
-    def getRecursiveInheritance(self, parent, resultList , inhDict):
+
+    def getRecursiveInheritance(self, parent, resultList, inhDict):
         if parent not in resultList:
             resultList.append(parent)
         if parent in inhDict.keys():
             for child in inhDict[parent]:
                 self.getRecursiveInheritance(child, resultList, inhDict)
-    
+
     def getRecursiveInheritanceTreeDict(self, parent, resultDict, inhDict):
         if parent not in resultDict.keys():
             resultDict[parent] = dict()
         if parent in inhDict.keys():
             for child in inhDict[parent]:
-                self.getRecursiveInheritanceTreeDict(child, resultDict[parent], inhDict)
+                self.getRecursiveInheritanceTreeDict(
+                    child, resultDict[parent], inhDict)
 
     def find_all_paths(self, graph, start, end, path=[]):
         path = path + [start]
@@ -175,20 +181,29 @@ class Utils:
                     if newpath not in paths:
                         paths.append(newpath)
         return paths
-    
+
     def getAllItemsInDict(self, inputDict, itemList):
         for key in inputDict.keys():
             if key not in itemList:
                 itemList.append(key)
             self.getAllItemsInDict(inputDict[key], itemList)
-        
+
     def createWidgetItem(self, parent, text, column):
         item = QtGui.QTreeWidgetItem(parent)
         item.setText(column, text)
         return item
-    
+
     def createTreeWidgetFromDict(self, parentNode, inputDict, treeWidget, column):
         for key in inputDict.keys():
             item = self.createWidgetItem(parentNode, key, column)
-            self.createTreeWidgetFromDict(item, inputDict[key], treeWidget, column)
-        
+            self.createTreeWidgetFromDict(
+                item, inputDict[key], treeWidget, column)
+
+    def getTreeBranch(self, candidate, inputDict):
+        if len(inputDict.keys()) == 1:
+            return inputDict
+        else:
+            graph = {'root':inputDict}
+            path = self.find_all_paths(graph, 'root', candidate)[0]
+            originalRoot = path[1]
+            return inputDict[originalRoot]
