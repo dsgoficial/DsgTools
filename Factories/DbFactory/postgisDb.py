@@ -33,9 +33,9 @@ from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class PostgisDb(AbstractDb):
     def __init__(self):
-        '''
+        """
         Constructor
-        '''
+        """
         super(PostgisDb, self).__init__()
         #setting database type to postgresql
         self.db = QSqlDatabase('QPSQL')
@@ -51,10 +51,10 @@ class PostgisDb(AbstractDb):
         return str(self.db.hostName())
 
     def connectDatabase(self, conn=None):
-        '''
+        """
         Connects to database
         conn: connection parameters. It can be a OGR connection or a QSettings connection
-        '''
+        """
         if conn.split(':')[0] == 'PG':
             connSplit = conn.split(' ')
             parDict = dict()
@@ -66,14 +66,14 @@ class PostgisDb(AbstractDb):
             self.connectDatabaseWithQSettings(conn)
 
     def connectDatabaseWithParameters(self, host, port, database, user, password):
-        '''
+        """
         Connects to database with parameters
         host: host IP
         port: host port
         database: database name
         user: user name
         password: user password
-        '''
+        """
         self.db.setHostName(host)
         if type(port) != 'int':
             self.db.setPort(int(port))
@@ -88,7 +88,7 @@ class PostgisDb(AbstractDb):
                 try:
                     (success, user, password) = QgsCredentials.instance().get(conInfo, user, None)
                     if not success:
-                        return 
+                        return
                     self.db.setPassword(password)
                     check = True
                     self.checkAndOpenDb()
@@ -99,10 +99,10 @@ class PostgisDb(AbstractDb):
             self.db.setPassword(password)
 
     def connectDatabaseWithQSettings(self, name):
-        '''
+        """
         Connects to database with parameters
         name: QSettings connection name
-        '''
+        """
         #getting connection parameters from qsettings
         (host, port, database, user, password) = self.getConnectionFromQSettings(name)
         self.db.setHostName(host)
@@ -130,9 +130,9 @@ class PostgisDb(AbstractDb):
             self.db.setPassword(password)
 
     def getDatabaseVersion(self):
-        '''
+        """
         Gets the database version
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getEDGVVersion()
         query = QSqlQuery(sql, self.db)
@@ -142,11 +142,11 @@ class PostgisDb(AbstractDb):
         while query.next():
             version = query.value(0)
         return version
-    
+
     def listGeomClassesFromDatabase(self):
-        '''
+        """
         Gets a list with geometry classes from database
-        '''
+        """
         self.checkAndOpenDb()
         classList = []
         schemaList = [i for i in self.getGeomSchemaList() if i not in ['validation', 'views']]
@@ -160,11 +160,11 @@ class PostgisDb(AbstractDb):
             layerName = tableSchema+'.'+tableName
             classList.append(layerName)
         return classList
-    
+
     def listComplexClassesFromDatabase(self):
-        '''
+        """
         Gets a list with complex classes from database
-        '''
+        """
         self.checkAndOpenDb()
         classList = []
         sql = self.gen.getTablesFromDatabase()
@@ -181,9 +181,9 @@ class PostgisDb(AbstractDb):
         return classList
 
     def storeConnection(self, server):
-        '''
+        """
         Stores a connection into QSettings
-        '''
+        """
         (host, port, user, password) = self.getServerConfiguration(server)
         database = self.db.databaseName()
         connection = server+'_'+database
@@ -197,13 +197,13 @@ class PostgisDb(AbstractDb):
             settings.setValue('password', password)
             settings.endGroup()
             return True
-        return False        
+        return False
 
     def getConnectionFromQSettings(self, conName):
-        '''
+        """
         Gets a connection from QSettings
         conName: connection name stored
-        '''
+        """
         settings = QSettings()
         settings.beginGroup('PostgreSQL/connections/'+conName)
         host = settings.value('host')
@@ -215,10 +215,10 @@ class PostgisDb(AbstractDb):
         return (host, port, database, user, password)       
 
     def getServerConfiguration(self, name):
-        '''
+        """
         Gets a server configuration from QSettings
         name: server name
-        '''
+        """
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers/'+name)
         host = settings.value('host')
@@ -229,9 +229,9 @@ class PostgisDb(AbstractDb):
         return (host, port, user, password)
 
     def getStructureDict(self):
-        '''
+        """
         Gets database structure according to the edgv version
-        '''
+        """
         self.checkAndOpenDb()
         classDict = dict()
         sql = self.gen.getStructure(self.getDatabaseVersion())        
@@ -252,9 +252,9 @@ class PostgisDb(AbstractDb):
         return classDict
     
     def makeOgrConn(self):
-        '''
+        """
         Makes a OGR connection string
-        '''
+        """
         dbName = self.db.databaseName()
         dbUser = self.db.userName()
         dbHost = self.db.hostName()
@@ -264,9 +264,9 @@ class PostgisDb(AbstractDb):
         return constring
 
     def getNotNullDict(self):
-        '''
+        """
         Gets a dictionary with all not null fields for the edgv database used
-        '''
+        """
         self.checkAndOpenDb()
         if self.getDatabaseVersion() == '2.1.3':
             schemaList = ['cb', 'complexos']
@@ -292,9 +292,9 @@ class PostgisDb(AbstractDb):
         return notNullDict
 
     def getDomainDict(self):
-        '''
+        """
         Gets the domain dictionary for the edgv database used
-        '''
+        """
         self.checkAndOpenDb()        
         if self.getDatabaseVersion() == '2.1.3':
             schemaList = ['cb', 'complexos', 'dominios']
@@ -326,52 +326,52 @@ class PostgisDb(AbstractDb):
         return classDict
 
     def translateAbstractDbLayerNameToOutputFormat(self, lyr, outputAbstractDb):
-        '''
+        """
         Translates abstractdb layer name to output format
         lyr: layer name that will be translated
         outputAbstractDb: output database
-        '''
+        """
         if outputAbstractDb.db.driverName() == 'QSQLITE':
             return str(lyr.split('.')[0]+'_'+'_'.join(lyr.split('.')[1::]))
         if outputAbstractDb.db.driverName() == 'QPSQL':
             return lyr
 
     def translateOGRLayerNameToOutputFormat(self, lyr, ogrOutput):
-        '''
+        """
         Translates ogr layer name to output format
         lyr: layer name that will be translated
         ogrOutput: ogr output
-        '''
+        """
         if ogrOutput.GetDriver().name == 'SQLite':
             return str(lyr.split('.')[0]+'_'+'_'.join(lyr.split('.')[1::]))
         if ogrOutput.GetDriver().name == 'PostgreSQL':
             return lyr
 
     def getTableSchema(self,lyr):
-        '''
+        """
         Gets the table schema
         lyr: layer name
-        '''
+        """
         schema = lyr.split('.')[0]
         className = '_'.join(lyr.split('.')[1::])
         return (schema, className)
     
     def convertToSpatialite(self, outputAbstractDb, type=None):
-        '''
+        """
         Converts this to a spatialite database
         outputAbstractDb: spatialite output
         type: conversion type
-        '''
+        """
         (inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict) = self.prepareForConversion(outputAbstractDb)
         status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict)
         return status
     
     def obtainLinkColumn(self, complexClass, aggregatedClass):
-        '''
+        """
         Obtains the link column between complex and aggregated class
         complexClass: complex class name
         aggregatedClass: aggregated class name
-        '''
+        """
         self.checkAndOpenDb()
         complexClass = complexClass.replace('complexos.', '')
         #query to obtain the link column between the complex and the feature layer
@@ -385,10 +385,10 @@ class PostgisDb(AbstractDb):
         return column_name
 
     def loadAssociatedFeatures(self, complex):
-        '''
+        """
         Loads all the features associated to the complex 
         complex: complex class name
-        '''
+        """
         self.checkAndOpenDb()
         associatedDict = dict()
         complex = complex.replace('complexos.', '')
@@ -433,10 +433,10 @@ class PostgisDb(AbstractDb):
         return associatedDict
     
     def isComplexClass(self, className):
-        '''
+        """
         Checks if a class is a complex class
         className: class name to be checked
-        '''
+        """
         self.checkAndOpenDb()
         #getting all complex tables
         query = QSqlQuery(self.gen.getComplexTablesFromDatabase(), self.db)
@@ -449,21 +449,21 @@ class PostgisDb(AbstractDb):
         return False
 
     def disassociateComplexFromComplex(self, aggregated_class, link_column, id):
-        '''
+        """
         Disassociates a complex from another complex
         aggregated_class: aggregated class that will be disassociated
         link_column: link column between complex and its aggregated class
         id: complex id (uid) to be disassociated
-        '''
+        """
         sql = self.gen.disassociateComplexFromComplex(aggregated_class, link_column, id)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr('Problem disassociating complex from complex: ') + '\n' + query.lastError().text())
     
     def getUsers(self):
-        '''
+        """
         Gets 'this' database users
-        '''
+        """
         self.checkAndOpenDb()
         ret = []
         
@@ -479,10 +479,10 @@ class PostgisDb(AbstractDb):
         return ret
 
     def getUserRelatedRoles(self, username):
-        '''
+        """
         Gets user roles assigned to 'username'
         username: user name
-        '''
+        """
         self.checkAndOpenDb()
         installed = []
         assigned = []
@@ -505,9 +505,9 @@ class PostgisDb(AbstractDb):
         return installed, assigned
     
     def getRoles(self):
-        '''
+        """
         Gets roles installed in 'this' database
-        '''
+        """
         self.checkAndOpenDb()
         ret = []
 
@@ -523,11 +523,11 @@ class PostgisDb(AbstractDb):
         return ret
 
     def createRole(self, role, dict, permissionManager = False):
-        '''
+        """
         Creates a role into this database
         role: role name
         dict: role definitions
-        '''
+        """
         self.checkAndOpenDb()
         #making this so the instaciated permissions stay with different names
         uuid = str(uuid4()).replace('-', '_')
@@ -557,10 +557,10 @@ class PostgisDb(AbstractDb):
                     raise Exception(self.tr('Problem assigning profile: ') +role+'\n'+query.lastError().text())
     
     def dropRole(self, role):
-        '''
+        """
         Deletes a role from 'this' database
         role: role name
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.dropRole(role)
         split = sql.split('#')
@@ -575,11 +575,11 @@ class PostgisDb(AbstractDb):
                     raise Exception(self.tr('Problem removing profile: ') +role+'\n'+query.lastError().text())
 
     def alterUserPass(self, user, newpassword):
-        '''
+        """
         Alters the user password
         user: user name
         newpassword: new password
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.alterUserPass(user, newpassword)
         query = QSqlQuery(self.db)
@@ -588,12 +588,12 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem altering user\'s password: ') +user+'\n'+query.lastError().text())
 
     def createUser(self, user, password, isSuperUser):
-        '''
+        """
         Creates a new user
         user: user name
         password: user password
         isSuperUser: bool to define is the newly created user is a super user (i.e a user like 'postgres')
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.createUser(user, password, isSuperUser)
         query = QSqlQuery(self.db)
@@ -602,10 +602,10 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem creating user: ') +user+'\n'+query.lastError().text())
 
     def removeUser(self, user):
-        '''
+        """
         Removes a user
         user: user name
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.removeUser(user)
         query = QSqlQuery(self.db)
@@ -614,11 +614,11 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem removing user: ') +user+'\n'+query.lastError().text())
 
     def grantRole(self, user, role):
-        '''
+        """
         Grants a role to a user
         user: user name
         role: role name
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.grantRole(user, role)
         query = QSqlQuery(self.db)
@@ -627,11 +627,11 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem granting profile: ') +role+'\n'+query.lastError().text())
 
     def revokeRole(self, user, role):
-        '''
+        """
         Revokes a role from the user
         user: user name
         role: role name
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.revokeRole(user, role)
         query = QSqlQuery(self.db)
@@ -640,9 +640,9 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem revoking profile: ') +role+'\n'+query.lastError().text())
 
     def getTablesFromDatabase(self):
-        '''
+        """
         Gets all tables from database
-        '''
+        """
         self.checkAndOpenDb()
         ret = []
 
@@ -658,11 +658,11 @@ class PostgisDb(AbstractDb):
         return ret
 
     def getRolePrivileges(self, role, dbname):
-        '''
+        """
         Gets role settings (e.g. what is possible to do with the role)
         role: role name
         dbname: database name
-        '''
+        """
         self.checkAndOpenDb()
         privilegesDict = dict()
         
@@ -708,15 +708,15 @@ class PostgisDb(AbstractDb):
         return permissionsDict    
 
     def getFrameLayerName(self):
-        '''
+        """
         Gets the frame layer name
-        '''
+        """
         return 'public.aux_moldura_a'
     
     def getEDGVDbsFromServer(self, parentWidget = None):
-        '''
+        """
         Gets edgv databases from 'this' server
-        '''
+        """
         #Can only be used in postgres database.
         self.checkAndOpenDb()
         query = QSqlQuery(self.gen.getDatabasesFromServer(),self.db)
@@ -754,9 +754,9 @@ class PostgisDb(AbstractDb):
         return edvgDbList
     
     def getDbsFromServer(self):
-        '''
+        """
         Gets databases from 'this' server
-        '''
+        """
         #Can only be used in postgres database.
         self.checkAndOpenDb()
         query = QSqlQuery(self.gen.getDatabasesFromServer(),self.db)
@@ -769,9 +769,9 @@ class PostgisDb(AbstractDb):
         return dbList
     
     def checkSuperUser(self):
-        '''
+        """
         Checks if the user used to connect to this database is a super user
-        '''
+        """
         self.checkAndOpenDb()
         query = QSqlQuery(self.db)
         if query.exec_(self.gen.isSuperUser(self.db.userName())):
@@ -783,10 +783,10 @@ class PostgisDb(AbstractDb):
         return False
     
     def dropDatabase(self, candidateName):
-        '''
+        """
         Drops a database from server
         candidataName: database name
-        '''
+        """
         self.checkAndOpenDb()
         if self.checkSuperUser():
             sql = self.gen.dropDatabase(candidateName)
@@ -795,11 +795,11 @@ class PostgisDb(AbstractDb):
                 raise Exception(self.tr('Problem dropping database: ') + query.lastError().text())
     
     def createResolvedDomainViews(self, createViewClause, fromClause):
-        '''
+        """
         Creates a view with all domain values resolved
         createViewClause: sql query to create the view
         fromClause: from sql clause
-        '''
+        """
         self.checkAndOpenDb()
         if self.checkSuperUser():
             filename = self.getSqlViewFile()
@@ -818,9 +818,9 @@ class PostgisDb(AbstractDb):
                 self.db.commit()
                 
     def getSqlViewFile(self):
-        '''
+        """
         Gets the sql view file
-        '''
+        """
         self.checkAndOpenDb()
         currentPath = os.path.dirname(__file__)
         dbVersion = self.getDatabaseVersion()
@@ -832,9 +832,9 @@ class PostgisDb(AbstractDb):
         return file
     
     def getInvalidGeomRecords(self):
-        '''
+        """
         Gets invalid geometry data from database
-        '''
+        """
         self.checkAndOpenDb()
         geomList = self.listClassesWithElementsFromDatabase()
         invalidRecordsList = []
@@ -852,11 +852,11 @@ class PostgisDb(AbstractDb):
         return invalidRecordsList
     
     def insertFlags(self, flagTupleList, processName):
-        '''
+        """
         Inserts flags into database
         flagTupleList: flag tuple list
         processName: process name
-        '''
+        """
         self.checkAndOpenDb()
         srid = self.findEPSG()
         if len(flagTupleList) > 0:
@@ -877,10 +877,10 @@ class PostgisDb(AbstractDb):
             return 0
     
     def deleteProcessFlags(self, processName):
-        '''
+        """
         Deletes flags from database
         processName: process name that will have all flags removed
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.deleteFlags(processName)
         sqlList = sql.split('#')
@@ -893,9 +893,9 @@ class PostgisDb(AbstractDb):
         self.db.commit()
             
     def checkAndCreateValidationStructure(self):
-        '''
+        """
         Checks if the validation structure is already created, if not it should be created now
-        '''
+        """
         self.checkAndOpenDb()
         self.db.transaction()
         sql = self.gen.checkValidationStructure()
@@ -919,10 +919,10 @@ class PostgisDb(AbstractDb):
             self.db.commit()
                 
     def getValidationStatus(self, processName):
-        '''
+        """
         Gets the validation status for a specific process
         processName: process name
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.validationStatus(processName)
         query = QSqlQuery(sql,self.db)
@@ -936,10 +936,10 @@ class PostgisDb(AbstractDb):
         return ret
 
     def getValidationStatusText(self, processName):
-        '''
+        """
         Gets the validation message text for a specific process
         processName: process name
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.validationStatusText(processName)
         query = QSqlQuery(sql, self.db)
@@ -953,10 +953,10 @@ class PostgisDb(AbstractDb):
         return ret
 
     def setValidationProcessStatus(self, processName, log, status):
-        '''
+        """
         Sets the validation status for a specific process
         processName: process name
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.setValidationStatusQuery(processName, log, status)
         query = QSqlQuery(self.db)
@@ -966,9 +966,9 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem setting status: ') + query.lastError().text())
     
     def getRunningProc(self):
-        '''
+        """
         Gets the active running process into database
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getRunningProc()
         query = QSqlQuery(sql, self.db)
@@ -984,9 +984,9 @@ class PostgisDb(AbstractDb):
         return None
     
     def isLyrInDb(self, lyr):
-        '''
+        """
         Checks if a layer is in the database
-        '''
+        """
         candidateUri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
         candidateHost = candidateUri.host()
         candidatePort = int(candidateUri.port())
@@ -997,9 +997,9 @@ class PostgisDb(AbstractDb):
             return False
         
     def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card, rule):
-        '''
+        """
         Tests spatial predicates to check whether a rule is broken
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.testSpatialRule(class_a, necessity, predicate_function, class_b, min_card, max_card)
         query = QSqlQuery(sql, self.db)
@@ -1016,10 +1016,10 @@ class PostgisDb(AbstractDb):
         return ret
 
     def getDimension(self, geom):
-        '''
+        """
         Gets geometry's dimension
         geom: geometry tested
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getDimension(geom)
         query = QSqlQuery(sql, self.db)
@@ -1033,9 +1033,9 @@ class PostgisDb(AbstractDb):
         return dimension
     
     def getExplodeCandidates(self):
-        '''
+        """
         Gets multi geometries (i.e number of parts > 1) that will be deaggregated later
-        '''
+        """
         self.checkAndOpenDb()
         explodeDict = dict()
         classesWithElem = self.listClassesWithElementsFromDatabase()
@@ -1054,12 +1054,12 @@ class PostgisDb(AbstractDb):
         return explodeDict
 
     def getURI(self, table, useOnly = True, geomColumn = 'geom'):
-        '''
+        """
         Gets tabel URI
         table: table name
         useOnly: bool to determine if 'from only' should be used
         geomColumn: geometry column
-        '''
+        """
         schema, layer_name = self.getTableSchema(table)
 
         host = self.db.hostName()
@@ -1081,10 +1081,10 @@ class PostgisDb(AbstractDb):
         return uri
     
     def getDuplicatedGeomRecords(self, classesWithGeom):
-        '''
+        """
         Gets duplicated records
         classesWithGeom: list of classes with geomtries
-        '''
+        """
         self.checkAndOpenDb()
         duplicatedDict = dict()
         for cl in classesWithGeom:
@@ -1101,10 +1101,10 @@ class PostgisDb(AbstractDb):
         return duplicatedDict
 
     def getSmallAreasRecords(self,classesWithGeom, tol):
-        '''
+        """
         Gets duplicated records
         classesWithGeom: list of classes with geometries
-        '''
+        """
         self.checkAndOpenDb()
         smallAreasDict = dict()
         for cl in classesWithGeom:
@@ -1118,10 +1118,10 @@ class PostgisDb(AbstractDb):
         return smallAreasDict
 
     def getSmallLinesRecords(self,classesWithGeom, tol):
-        '''
+        """
         Gets small lines records 
         tol: tolerance
-        '''
+        """
         self.checkAndOpenDb()
         smallLinesDict = dict()
         for cl in classesWithGeom:
@@ -1135,12 +1135,12 @@ class PostgisDb(AbstractDb):
         return smallLinesDict
 
     def getVertexNearEdgesRecords(self, tableSchema, tableName, tol):
-        '''
+        """
         Gets vertexes near edges. These vertexes are problematic and should be treated
         tableSchema: table schema
         tableName: table name
         tol: tolerance
-        '''
+        """
         self.checkAndOpenDb()
         result = []
         sql = self.gen.prepareVertexNearEdgesStruct(tableSchema, tableName)
@@ -1166,11 +1166,11 @@ class PostgisDb(AbstractDb):
         return result
 
     def removeFeatures(self, cl, idList):
-        '''
+        """
         Removes features from class
         cl: class name
         idList: id list to be removes
-        '''
+        """
         self.checkAndOpenDb()
         tableSchema, tableName = self.getTableSchema(cl)
         sql = self.gen.deleteFeatures(tableSchema, tableName, idList)
@@ -1183,10 +1183,10 @@ class PostgisDb(AbstractDb):
         return len(idList)
 
     def getNotSimpleRecords(self, classesWithGeom):
-        '''
+        """
         Gets not simple geometries records
         classesWithGeom: class list
-        '''
+        """
         self.checkAndOpenDb()
         notSimpleDict = dict()
         for cl in classesWithGeom:
@@ -1202,12 +1202,12 @@ class PostgisDb(AbstractDb):
         return notSimpleDict
 
     def getOutOfBoundsAnglesRecords(self, tableSchema, tableName, tol):
-        '''
+        """
         Gets records with anchor points (points between segments) that are out of bounds (i.e outside a limit tolerance)
         tableSchema: table schema
         tableName: table name
         tol: tolerance
-        '''
+        """
         self.checkAndOpenDb()
         result = []
         sql = self.gen.getOutofBoundsAngles(tableSchema, tableName, tol)
@@ -1223,10 +1223,10 @@ class PostgisDb(AbstractDb):
         return result
 
     def getFlagsDictByProcess(self, processName):
-        '''
+        """
         Gets flags data dictionar by process name
         processName: process name
-        '''
+        """
         self.checkAndOpenDb()
         flagsDict = dict()
         sql = self.gen.getFlagsByProcess(processName)
@@ -1244,11 +1244,11 @@ class PostgisDb(AbstractDb):
         return flagsDict
     
     def forceValidity(self, cl, idList):
-        '''
+        """
         Forces geometry validity (i.e uses ST_MakeValid)
         cl: class
         idList: feature ids to be processed
-        '''
+        """
         self.checkAndOpenDb()
         tableSchema, tableName = self.getTableSchema(cl)
         srid = self.findEPSG()
@@ -1262,11 +1262,11 @@ class PostgisDb(AbstractDb):
         return len(idList)
     
     def getTableExtent(self, tableSchema, tableName):
-        '''
+        """
         Forces geometry validity (i.e uses ST_MakeValid)
         cl: class
         idList: feature ids to be processed
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getTableExtent(tableSchema, tableName)
         query = QSqlQuery(sql, self.db)
@@ -1285,9 +1285,9 @@ class PostgisDb(AbstractDb):
         return extent
 
     def getOrphanGeomTables(self, loading = False):
-        '''
+        """
         Gets parent classes
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getOrphanGeomTablesWithElements(loading)
         query = QSqlQuery(sql, self.db)
@@ -1301,9 +1301,9 @@ class PostgisDb(AbstractDb):
         return result
 
     def getOrphanGeomTablesWithElements(self, loading = False):
-        '''
+        """
         Gets populated parent classes
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getOrphanGeomTablesWithElements(loading)
         query = QSqlQuery(sql, self.db)
@@ -1324,13 +1324,13 @@ class PostgisDb(AbstractDb):
         return result
     
     def updateGeometries(self, tableSchema, tableName, tuplas, epsg):
-        '''
+        """
         Updates geometries on database
         tableSchema: table schema
         tableName: table name
         tuplas: tuples used during the update
         epsg: geometry srid
-        '''
+        """
         self.checkAndOpenDb()
         sqls = self.gen.updateOriginalTable(tableSchema, tableName, tuplas, epsg)
         query = QSqlQuery(self.db)
@@ -1348,9 +1348,9 @@ class PostgisDb(AbstractDb):
         self.db.commit()
     
     def checkCentroidAuxStruct(self):
-        '''
+        """
         Checks the centroid structure
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.checkCentroidAuxStruct()
         query = QSqlQuery(sql, self.db)
@@ -1364,10 +1364,10 @@ class PostgisDb(AbstractDb):
         return True
     
     def createCentroidAuxStruct(self, earthCoverageClasses):
-        '''
+        """
         Creates the centroid structure
         earthCoverageClasses: earth coverage configuration diciotnary
-        '''
+        """
         self.checkAndOpenDb()
         srid = self.findEPSG()
         self.db.transaction()
@@ -1385,17 +1385,17 @@ class PostgisDb(AbstractDb):
         self.db.commit()
             
     def checkAndCreateCentroidAuxStruct(self, earthCoverageClasses):
-        '''
+        """
         Checks the centroid structure. If not already created, it creates the centroid structure
         earthCoverageClasses: earth coverage configuration diciotnary
-        '''
+        """
         if not self.checkCentroidAuxStruct():
             self.createCentroidAuxStruct(earthCoverageClasses)
     
     def getEarthCoverageClasses(self):
-        '''
+        """
         Gets the earth coverage classes from earth coverage configuration dictionary.
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getEarthCoverageDict()
         query = QSqlQuery(sql, self.db)
@@ -1408,9 +1408,9 @@ class PostgisDb(AbstractDb):
         return result
 
     def getEarthCoverageDict(self):
-        '''
+        """
         Gets the earth coverage configuration dictionary.
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getEarthCoverageDict()
         query = QSqlQuery(sql, self.db)
@@ -1421,10 +1421,10 @@ class PostgisDb(AbstractDb):
             return query.value(0)
 
     def setEarthCoverageDict(self, textDict):
-        '''
+        """
         Sets the earth coverage configuration dictionary.
         textDict: earth coverage configuration dictionary
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.setEarthCoverageDict(textDict)
         query = QSqlQuery(self.db)
@@ -1435,10 +1435,10 @@ class PostgisDb(AbstractDb):
         self.db.commit()
         
     def dropCentroids(self, classList):
-        '''
+        """
         Drops the centroid structure
         classList: classes to be altered
-        '''
+        """
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
@@ -1453,10 +1453,10 @@ class PostgisDb(AbstractDb):
         self.db.commit()
 
     def rollbackEarthCoverage(self, classList):
-        '''
+        """
         Rolls back the centroid structure
         classList: classes to be altered
-        '''
+        """
         try:
             self.dropCentroids(classList)
             self.setEarthCoverageDict(None)
@@ -1464,9 +1464,9 @@ class PostgisDb(AbstractDb):
             raise e
 
     def getEarthCoverageCentroids(self):
-        '''
+        """
         Gets the earth coverage structure
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getEarthCoverageCentroids()
         query = QSqlQuery(sql, self.db)
@@ -1497,11 +1497,11 @@ class PostgisDb(AbstractDb):
             return query.value(0)
     
     def snapToGrid(self, classList, tol, srid):
-        '''
+        """
         Snaps tables to grid (i.e executes ST_SnapToGrid)
         classList: classes to be altered
         tol: tolerance
-        '''
+        """
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
@@ -1513,11 +1513,11 @@ class PostgisDb(AbstractDb):
         self.db.commit()
         
     def snapLinesToFrame(self, classList, frameTable, tol):
-        '''
+        """
         Snaps lines to frame. This means the lines are prolonged to the frame according to the specified tolerance
         classList: classes to be altered
         tol: tolerance
-        '''
+        """
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
@@ -1530,10 +1530,10 @@ class PostgisDb(AbstractDb):
         self.db.commit()
             
     def densifyFrame(self, classList, frameTable, snapTolerance):
-        '''
+        """
         Densifies the frame creating new vertexes where the lines were snapped
         classList: classes to be altered
-        '''
+        """
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
@@ -1545,11 +1545,11 @@ class PostgisDb(AbstractDb):
         self.db.commit()
         
     def recursiveSnap(self, classList, tol):
-        '''
+        """
         Executes a recursive snap within the class
         classList: classes to be snapped
         tol: tolerance
-        '''
+        """
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
@@ -1711,10 +1711,10 @@ class PostgisDb(AbstractDb):
         self.db.commit()
     
     def importStylesIntoDb(self, styleFolder):
-        '''
+        """
         path: path to folder
         styleFolder: folder with version. Example: edgv_213/example
-        '''
+        """
         if self.versionFolderDict[self.getDatabaseVersion()] not in styleFolder:
             raise Exception(self.tr('Style ')+styleFolder+self.tr(' does not match the version of database ') + self.db.databaseName())
         path = os.path.join(os.path.dirname(__file__),'..', '..','Styles')
@@ -1746,11 +1746,11 @@ class PostgisDb(AbstractDb):
             return query.value(0)
     
     def getAllStylesDict(self, perspective = 'style'):
-        '''
+        """
         Returns a dict of styles in a form acording to perspective:
             if perspective = 'style'    : [styleName][dbName][tableName] = timestamp
             if perspective = 'database' : [dbName][styleName][tableName] = timestamp 
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getAllStylesFromDb()
         query = QSqlQuery(sql, self.db)
@@ -1782,9 +1782,9 @@ class PostgisDb(AbstractDb):
         self.db.commit()
     
     def getStructureDict2(self):
-        '''
+        """
         Don't know the purpose of this method
-        '''
+        """
         self.checkAndOpenDb()
         
         if self.getDatabaseVersion() == '2.1.3':
@@ -1830,11 +1830,11 @@ class PostgisDb(AbstractDb):
         return schemaList
     
     def getGeomDict(self, geomTypeDict):
-        '''
+        """
         returns a dict like this:
         {'tablePerspective' : {
             'layerName' :
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getGeomTablesFromGeometryColumns()
         query = QSqlQuery(sql, self.db)
@@ -1865,7 +1865,7 @@ class PostgisDb(AbstractDb):
         return geomDict
     
     def getDbDomainDict(self, auxGeomDict):
-        '''
+        """
         returns a dict like this:
         {'adm_posto_fiscal_a': {
             'columns':{
@@ -1875,7 +1875,7 @@ class PostgisDb(AbstractDb):
                 }
             }
         }
-        '''
+        """
         self.checkAndOpenDb()
         #gets only schemas of classes with geom, to speed up the process.
         checkConstraintDict = self.getCheckConstraintDict()
@@ -1937,7 +1937,7 @@ class PostgisDb(AbstractDb):
         return geomDict
     
     def getCheckConstraintDict(self):
-        '''
+        """
         returns a dict like this:
         {'asb_dep_abast_agua_a': {
                 'finalidade': [2,3,4]
@@ -1945,7 +1945,7 @@ class PostgisDb(AbstractDb):
                 'situacaofisica': [0,1,2,3,5]
             }
         }
-        '''
+        """
         self.checkAndOpenDb()
         #gets only schemas of classes with geom, to speed up the process.
         sql = self.gen.getGeomTableConstraints()
@@ -2018,9 +2018,9 @@ class PostgisDb(AbstractDb):
         return tableName, attribute, checkList
     
     def getMultiColumnsDict(self):
-        '''
+        """
         { 'table_name':[-list of columns-] } 
-        '''
+        """
         self.checkAndOpenDb()
         #gets only schemas of classes with geom, to speed up the process.
         schemaList = self.getGeomSchemaList()
@@ -2056,9 +2056,9 @@ class PostgisDb(AbstractDb):
         return geomDict
     
     def getGeomColumnDict(self):
-        '''
+        """
         Dict in the form 'geomName':[-list of table names-]
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getGeomColumnDict()
         query = QSqlQuery(sql, self.db)
@@ -2081,10 +2081,10 @@ class PostgisDb(AbstractDb):
         return filtered
 
     def getNotNullDictV2(self):
-        '''
+        """
         Dict in the form 'tableName': { 'schema':-name of the schema'
                                         'attributes':[-list of table names-]}
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getNotNullDict()
         query = QSqlQuery(sql, self.db)
@@ -2129,10 +2129,10 @@ class PostgisDb(AbstractDb):
         return domainDict, otherKey
     
     def getGeomStructDict(self):
-        '''
+        """
         Returns dict in the following format:
         {'tableName': { 'attrName1':isNullable, 'attrName2':isNullable} }
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getGeomStructDict()
         yesNoDict = {'YES':True, 'NO':False}
@@ -2186,10 +2186,10 @@ class PostgisDb(AbstractDb):
         return False
     
     def createTemplateDatabase(self, version):
-        '''
+        """
         version: edgv version
         creates an empty database with the name of a template
-        '''
+        """
         self.checkAndOpenDb()
         dbName = self.getTemplateName(version)
         try:
@@ -2199,9 +2199,9 @@ class PostgisDb(AbstractDb):
         self.createDatabase(dbName)
     
     def createDatabase(self, dbName):
-        '''
+        """
         Creates a database with a given name
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getCreateDatabase(dbName)
         query = QSqlQuery(self.db)
@@ -2303,12 +2303,12 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem removing user: ') +user+'\n'+query.lastError().text())
         
     def removeFeatureFlags(self, layer, featureId, processName):
-        '''
+        """
         Removes flags for a specific layer, feature id and process name
         layer: layer name
         featureId: feature id
         processName: process name
-        '''
+        """
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
@@ -2319,10 +2319,10 @@ class PostgisDb(AbstractDb):
         self.db.commit()
         
     def removeEmptyGeometries(self, layer):
-        '''
+        """
         Removes empty geometries from layer
         layer: layer name
-        '''
+        """
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
@@ -2341,9 +2341,9 @@ class PostgisDb(AbstractDb):
         return (host, port, user, password)
 
     def createAdminDb(self):
-        '''
+        """
         Creates a database with a given name
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getCreateDatabase('dsgtools_admindb')
         query = QSqlQuery(self.db)
@@ -2351,9 +2351,9 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem creating database: ")+query.lastError().text())
     
     def hasAdminDb(self):
-        '''
+        """
         Checks if server has a dsgtools_admindb
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.hasAdminDb()
         query = QSqlQuery(sql, self.db)
@@ -2365,9 +2365,9 @@ class PostgisDb(AbstractDb):
         return False
     
     def getRolesDict(self):
-        '''
+        """
         Gets a dict with the format: 'dbname':{[-list of roles-]}
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getRolesDict()
         query = QSqlQuery(sql, self.db)
@@ -2382,9 +2382,9 @@ class PostgisDb(AbstractDb):
         return rolesDict
     
     def insertIntoPermissionProfile(self, name, jsondict, edgvversion):
-        '''
+        """
         Inserts into public.permission_profile on dsgtools_admindb (name, jsondict, edgvversion)
-        '''
+        """
         self.checkAndOpenDb()
         if self.db.databaseName() <> 'dsgtools_admindb':
             raise Exception(self.tr('Error! Operation not defined for non dsgtools_admindb'))
@@ -2394,10 +2394,10 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem inserting into permission profile: ")+query.lastError().text())
     
     def dropRoleOnDatabase(self, roleName):
-        '''
+        """
         Drops role using drop owned by and drop role.
         This is like dropRole, but it does not uses a specific function, hence it is more generic.
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.dropRoleOnDatabase(roleName)
         query = QSqlQuery(self.db)
@@ -2405,9 +2405,9 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem dropping profile: ")+ roleName + ' :' + query.lastError().text())
     
     def getRoleFromAdminDb(self, roleName, edgvVersion):
-        '''
+        """
         Gets role from public.permission_profile
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getPermissionProfile(roleName, edgvVersion)
         query = QSqlQuery(sql, self.db)
@@ -2417,9 +2417,9 @@ class PostgisDb(AbstractDb):
             return query.value(0)
     
     def getAllRolesFromAdminDb(self):
-        '''
+        """
         Gets role from public.permission_profile and returns a dict with format {edgvVersion:[-list of roles-]}
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getAllPermissionProfiles()
         query = QSqlQuery(sql, self.db)
@@ -2432,9 +2432,9 @@ class PostgisDb(AbstractDb):
         return allRolesDict
     
     def deletePermissionProfile(self, name, edgvversion):
-        '''
+        """
         Deletes profile from from public.permission_profiles
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.deletePermissionProfile(name, edgvversion)
         query = QSqlQuery(self.db)
@@ -2442,10 +2442,10 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem deleting permission profile: ")+query.lastError().text())
     
     def getGrantedRolesDict(self):
-        '''
+        """
         Gets a dict in the format:
         { roleName : [-list of users-] } 
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getRolesWithGrantedUsers()
         query = QSqlQuery(sql, self.db)
@@ -2462,9 +2462,9 @@ class PostgisDb(AbstractDb):
         return grantedRolesDict
     
     def updatePermissionProfile(self, name, edgvversion, newjsondict):
-        '''
+        """
         Updates public.permission_profile with new definition.
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.updatePermisisonProfile(name, edgvversion, newjsondict)
         query = QSqlQuery(self.db)
@@ -2472,9 +2472,9 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem updating permission profile: ")+query.lastError().text())
     
     def getDomainTables(self):
-        '''
+        """
         Lists all domain tables available.
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getDomainTables()
         query = QSqlQuery(sql, self.db)
@@ -2486,9 +2486,9 @@ class PostgisDb(AbstractDb):
         return domainList
     
     def getGeometricSchemaList(self):
-        '''
+        """
         Lists all schemas with geometries.
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getGeometricSchemaList()
         query = QSqlQuery(sql, self.db)
@@ -2500,9 +2500,9 @@ class PostgisDb(AbstractDb):
         return schemaList
     
     def getGeometricTableListFromSchema(self, schema):
-        '''
+        """
         Lists all tables with geometries from schema
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getGeometricTableListFromSchema(schema)
         query = QSqlQuery(sql, self.db)
@@ -2514,9 +2514,9 @@ class PostgisDb(AbstractDb):
         return tableList
     
     def getParentGeomTables(self, getTupple = False):
-        '''
+        """
         Lists all tables with geometries from schema that are parents.
-        '''
+        """
         self.checkAndOpenDb()
         layerList = self.listGeomClassesFromDatabase()
         geomTables = [i.split('.')[-1] for i in layerList]
@@ -2565,9 +2565,9 @@ class PostgisDb(AbstractDb):
         return inhDict
     
     def getInheritanceBloodLine(self, parent, inhDict = None):
-        '''
+        """
         Lists all tables that have parent as an ancestor.
-        '''
+        """
         if not inhDict:
             inhDict = self.getInheritanceDict()
         bloodLine = []
@@ -2578,9 +2578,9 @@ class PostgisDb(AbstractDb):
         pass
     
     def getAttributeListFromTable(self, schema, tableName):
-        '''
+        """
         Lists all attributes from table.
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getAttributeListFromTable(schema, tableName)
         query = QSqlQuery(sql, self.db)
@@ -2646,6 +2646,12 @@ class PostgisDb(AbstractDb):
         return r
     
     def getInheritanceConstraintDict(self):
+        """
+        Returns a dict in the form:
+            {'tableName':{'attributeName': {'tableName','constraintName', 'filter'} 
+                }
+            }
+        """
         self.checkAndOpenDb()
         schemaList = [i for i in self.getGeometricSchemaList() if i not in ['views', 'validation']]
         sql = self.gen.getConstraintDict(schemaList)
@@ -2671,8 +2677,3 @@ class PostgisDb(AbstractDb):
                 if currTag not in inhConstrDict[tableName][attrName]:
                     inhConstrDict[tableName][attrName].append(currTag)
         return inhConstrDict
-            
-            
-
-        
-        

@@ -279,11 +279,24 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         if not self.validate():
             raise Exception(self.tr('Error in change nullity customization ')+ self.title + ' : ' + self.validateDiagnosis())
         jsonList = []
+        inhConstrDict = self.abstractDb.getInheritanceConstraintDict()
         if self.allAttributesCheckBox.checkState() == 2:
             pass
         elif self.allTablesCheckBox.checkState() == 2:
             pass
         else:
-            pass
+            tableName = self.tableComboBox.currentText()
+            schema = self.schemaComboBox.currentText()
+            attrName = self.attributeComboBox.currentText()
+            originalFilterList = []
+            if tableName in self.domainDict.keys():
+                if attributeName in self.domainDict[tableName]['columns'].keys():
+                    attrDomainDict = self.domainDict[tableName]['columns'][attributeName]['values']
+            newFilter = [i for i in attrDomainDict.keys() if attrDomainDict[i] in self.filterCustomSelectorWidget.toLs]
+            if tableName in inhConstrDict.keys():
+                if attrName in inhConstrDict[tableName].keys():
+                    originalFilterList = inhConstrDict[tableName][attrName]
+
+
         return jsonList
     

@@ -492,7 +492,7 @@ batchImportProfiles	ServerManagementTools/permissionManager.py	/^    def batchIm
 batchImportStyles	ServerTools/batchDbManager.py	/^    def batchImportStyles(self, dbsDict, styleDir, styleList, version):$/;"	kind:member	line:219
 beautifyText	ValidationTools/processParametersDialog.py	/^def beautifyText(camelCasedText):$/;"	kind:function	line:140
 browseServer	CustomWidgets/exploreServerWidget.py	/^    def browseServer(self, dbList, host, port, user, password):$/;"	kind:member	line:83
-buildAttributeElement	PostgisCustomization/CustomJSONTools/customJSONBuilder.py	/^    def buildAttributeElement(self, attrName, attrType, isPk, isNullable, defaultValue = None, references = None, filter = []):$/;"	kind:member	line:38
+buildAttributeElement	PostgisCustomization/CustomJSONTools/customJSONBuilder.py	/^    def buildAttributeElement(self, attrName, attrType, isPk, isNullable, defaultValue = None, references = None, filter=[]):$/;"	kind:member	line:38
 buildAutoIncrementingDbNameList	Factories/DbCreatorFactory/dbCreator.py	/^    def buildAutoIncrementingDbNameList(self, dbInitialBaseName, numberOfDatabases, prefix = None, sufix = None):$/;"	kind:member	line:62
 buildChangeDefaultElement	PostgisCustomization/CustomJSONTools/customJSONBuilder.py	/^    def buildChangeDefaultElement(self, schema, table, attrName, oldValue, newValue):$/;"	kind:member	line:51
 buildChangeNullityElement	PostgisCustomization/CustomJSONTools/customJSONBuilder.py	/^    def buildChangeNullityElement(self, schema, table, attrName, notNull):$/;"	kind:member	line:54
@@ -503,7 +503,7 @@ buildDatabaseName	Factories/DbCreatorFactory/dbCreator.py	/^    def buildDatabas
 buildFieldMap	Factories/DbFactory/abstractDb.py	/^    def buildFieldMap(self):$/;"	kind:member	line:186
 buildInvalidatedDict	Factories/DbFactory/abstractDb.py	/^    def buildInvalidatedDict(self):$/;"	kind:member	line:408
 buildNestedDict	Utils/utils.py	/^    def buildNestedDict(self, inputDict, keyList, value):$/;"	kind:member	line:97
-buildNewAttributeElement	PostgisCustomization/CustomJSONTools/customJSONBuilder.py	/^    def buildNewAttributeElement(self, schema, name, attrList, childrenToAlter = []):$/;"	kind:member	line:35
+buildNewAttributeElement	PostgisCustomization/CustomJSONTools/customJSONBuilder.py	/^    def buildNewAttributeElement(self, schema, name, attrList, childrenToAlter=[]):$/;"	kind:member	line:35
 buildNullityDicts	ProductionTools/FieldToolBox/field_setup.py	/^    def buildNullityDicts(self):$/;"	kind:member	line:171
 buildOgrDatabase	Factories/DbFactory/abstractDb.py	/^    def buildOgrDatabase(self):$/;"	kind:member	line:521
 buildOneNestedDict	Utils/utils.py	/^    def buildOneNestedDict(self, inputDict, keyList, value):$/;"	kind:member	line:74
