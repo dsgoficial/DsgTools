@@ -55,6 +55,7 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         self.domainDict = self.abstractDb.getDbDomainDict(geomDict)
         self.inhTree = self.abstractDb.getInheritanceTreeDict()
         self.utils = Utils()
+        self.actionDict = {self.tr('Add to Filter'):'add',self.tr('Remove from Filter'):'remove'}
 
     def populateInheritanceTree(self, nodeList):
         self.treeWidget.clear()
@@ -281,37 +282,58 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         jsonList = []
         inhConstrDict = self.abstractDb.getInheritanceConstraintDict()
         if self.allAttributesCheckBox.checkState() == 2:
-            pass
+            tableName = self.tableComboBox.currentText()
+            schema = self.schemaComboBox.currentText()
+            if tableName in self.domainDict.keys():
+                for attrName in self.domainDict[tableName]['columns'].keys():
+                    attrDomainDict = self.domainDict[tableName]['columns'][attrName]['values']
+                    isMulti = self.domainDict[tableName]['columns'][attrName]['isMulti']
+                    newFilter = self.domainDict[tableName]['columns'][attrName]['constraintList']
+                    valueText = self.singleValueComboBox.currentText()
+                    code = [i for i in attrDomainDict.keys() if attrDomainDict[i] == valueText][0]
+                    if self.actionDict[self.actionComboBox.currentText()] == 'add':
+                        if code not in newFilter: newFilter.append(code)
+                    else:
+                        if code in newFilter: newFilter.pop(code)
+                    self.getJsonTagFromOneTable(schema, tableName, attrName, jsonList, inhConstrDict, newFilter, isMulti)
         elif self.allTablesCheckBox.checkState() == 2:
             pass
         else:
             tableName = self.tableComboBox.currentText()
             schema = self.schemaComboBox.currentText()
             attrName = self.attributeComboBox.currentText()
-            originalFilterList = []
             if tableName in self.domainDict.keys():
                 if attrName in self.domainDict[tableName]['columns'].keys():
                     attrDomainDict = self.domainDict[tableName]['columns'][attrName]['values']
                     isMulti = self.domainDict[tableName]['columns'][attrName]['isMulti']
             newFilter = [i for i in attrDomainDict.keys() if attrDomainDict[i] in self.filterCustomSelectorWidget.toLs]
-            if tableName in inhConstrDict.keys():
-                if attrName in inhConstrDict[tableName].keys():
-                    originalFilterList = inhConstrDict[tableName][attrName]
-            
-            if originalFilterList <> []:
-                for item in originalFilterList:
-                    newElement = self.jsonBuilder.alterFilterElement(item['schema'], item['tableName'], attrName, item['constraintName'], item['filter'], newFilter, isMulti)
-                    if newElement not in jsonList:
-                        jsonList.append(newElement)
-            else:
-                nodeLineage = self.utils.getNodeLineage(tableName, self.inhTree)
-                firstInLineage = None
-                for node in nodeLineage:
+            self.getJsonTagFromOneTable(schema, tableName, attrName, jsonList, inhConstrDict, newFilter, isMulti)
+        return jsonList
+    
+    def getJsonTagFromOneTable(self, schema, tableName, attrName, jsonList, inhConstrDict, newFilter, isMulti):
+        originalFilterList = []
+        if tableName in inhConstrDict.keys():
+            if attrName in inhConstrDict[tableName].keys():
+                originalFilterList = inhConstrDict[tableName][attrName]
+        if originalFilterList == newFilter: return
+        elif originalFilterList <> []:
+            for item in originalFilterList:
+                newElement = self.jsonBuilder.alterFilterElement(item['schema'], item['tableName'], attrName, item['constraintName'], item['filter'], newFilter, isMulti)
+                if newElement not in jsonList:
+                    jsonList.append(newElement)
+        else:
+            nodeLineage = self.utils.getNodeLineage(tableName, self.inhTree)
+            firstInLineage = None
+            for node in nodeLineage:
+                if node in self.domainDict.keys():
                     if attrName in self.domainDict[node]['columns'].keys():
                         firstInLineage = node
                         break
-                newElement = self.jsonBuilder.alterFilterElement(schema, firstInLineage, attrName, '_'.join([firstInLineage,attrName,'ks']), [], newFilter, isMulti)
-                if newElement not in jsonList:
-                    jsonList.append(newElement)
-        return jsonList
-    
+                else:
+                    schema = self.abstractDb.getTableSchemaFromDb(node)
+                    if node in self.abstractDb.getAttributeListFromTable(schema, node):
+                        firstInLineage = node
+                        break
+            newElement = self.jsonBuilder.alterFilterElement(schema, firstInLineage, attrName, '_'.join([firstInLineage,attrName,'ks']), [], newFilter, isMulti)
+            if newElement not in jsonList:
+                jsonList.append(newElement)

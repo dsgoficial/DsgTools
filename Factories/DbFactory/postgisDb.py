@@ -2678,9 +2678,3 @@ class PostgisDb(AbstractDb):
                 if currTag not in inhConstrDict[tableName][attrName]:
                     inhConstrDict[tableName][attrName].append(currTag)
         return inhConstrDict
-    
-    def getInheritanceTreeWithSameAttributes(self, attribute, tableCandidate, inhDict):
-        """
-        filters inhDict and builds one tree dict of tables that have the same attribute as tableCandidate
-        """
-        pass
