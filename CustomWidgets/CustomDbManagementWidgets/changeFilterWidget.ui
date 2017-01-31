@@ -140,7 +140,12 @@
        </item>
        <item>
         <property name="text">
-         <string>Add to Filter</string>
+         <string>Add to Filter (Leave empty if filter is empty)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Add to Filter (Add value to empty filter)</string>
         </property>
        </item>
        <item>

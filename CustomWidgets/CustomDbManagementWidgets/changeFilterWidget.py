@@ -55,7 +55,7 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         self.domainDict = self.abstractDb.getDbDomainDict(geomDict)
         self.inhTree = self.abstractDb.getInheritanceTreeDict()
         self.utils = Utils()
-        self.actionDict = {self.tr('Add to Filter'):'add',self.tr('Remove from Filter'):'remove'}
+        self.actionDict = {self.tr('Add to Filter (Leave empty if filter is empty)'):'addEmpty', self.tr('Add to Filter (Add value to empty filter)'):'add',self.tr('Remove from Filter'):'remove'}
 
     def populateInheritanceTree(self, nodeList):
         self.treeWidget.clear()
@@ -312,6 +312,9 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
                 code = [i for i in attrDomainDict.keys() if attrDomainDict[i] == valueText][0]
                 if self.actionDict[self.actionComboBox.currentText()] == 'add':
                     if code not in newFilter: newFilter.append(code)
+                elif self.actionDict[self.actionComboBox.currentText()] == 'addEmpty':
+                    if newFilter == []:
+                        continue
                 else:
                     if code in newFilter: newFilter.pop(code)
                 self.getJsonTagFromOneTable(schema, tableName, attrName, jsonList, inhConstrDict, newFilter, isMulti)
