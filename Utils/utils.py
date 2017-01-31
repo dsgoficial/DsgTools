@@ -198,12 +198,17 @@ class Utils:
             item = self.createWidgetItem(parentNode, key, column)
             self.createTreeWidgetFromDict(
                 item, inputDict[key], treeWidget, column)
-
-    def getTreeBranch(self, candidate, inputDict):
-        if len(inputDict.keys()) == 1:
-            return inputDict
-        else:
+    
+    def getTreeBranchFromNode(self, startNode, inputDict):
+        if 'root' not in inputDict.keys():
             graph = {'root':inputDict}
-            path = self.find_all_paths(graph, 'root', candidate)[0]
-            originalRoot = path[1]
-            return inputDict[originalRoot]
+        else:
+            graph = inputDict
+        path = self.find_all_paths(graph, 'root', startNode)[0]
+        for node in path:
+            graph = graph[node]
+        return {startNode:graph}
+    
+    def getNodeLineage(self, node, inputDict):
+        return self.find_all_paths(inputDict, 'root', node)[0][1::]
+

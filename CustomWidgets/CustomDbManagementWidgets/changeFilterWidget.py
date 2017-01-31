@@ -298,8 +298,19 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
                 if attrName in inhConstrDict[tableName].keys():
                     originalFilterList = inhConstrDict[tableName][attrName]
             
-            for item in originalFilterList:
-                newElement = self.jsonBuilder.alterFilterElement(item['schema'], item['tableName'], attrName, item['constraintName'], item['filter'], newFilter, isMulti)
+            if originalFilterList <> []:
+                for item in originalFilterList:
+                    newElement = self.jsonBuilder.alterFilterElement(item['schema'], item['tableName'], attrName, item['constraintName'], item['filter'], newFilter, isMulti)
+                    if newElement not in jsonList:
+                        jsonList.append(newElement)
+            else:
+                nodeLineage = self.utils.getNodeLineage(tableName, self.inhTree)
+                firstInLineage = None
+                for node in nodeLineage:
+                    if attrName in self.domainDict[node]['columns'].keys():
+                        firstInLineage = node
+                        break
+                newElement = self.jsonBuilder.alterFilterElement(schema, firstInLineage, attrName, '_'.join([firstInLineage,attrName,'ks']), [], newFilter, isMulti)
                 if newElement not in jsonList:
                     jsonList.append(newElement)
         return jsonList
