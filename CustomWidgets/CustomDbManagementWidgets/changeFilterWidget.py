@@ -228,12 +228,12 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         self.title = title
 
     def validate(self):
-        if self.allAttributesCheckBox.checkState() == 2:
+        if self.allTablesCheckBox.checkState() == 2:
              if self.singleValueComboBox.currentIndex() == 0:
                  return False
              if self.actionComboBox.currentIndex() == 0:
                  return False
-        elif self.allTablesCheckBox.checkState() == 2:
+        elif self.allAttributesCheckBox.checkState() == 2:
              if self.singleValueComboBox.currentIndex() == 0:
                  return False
              if self.actionComboBox.currentIndex() == 0:
@@ -253,12 +253,12 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
 
     def validateDiagnosis(self):
         invalidatedReason = ''
-        if self.allAttributesCheckBox.checkState() == 2:
+        if self.allTablesCheckBox.checkState() == 2:
              if self.singleValueComboBox.currentIndex() == 0:
                  invalidatedReason += self.tr('A value must be chosen.\n')
              if self.actionComboBox.currentIndex() == 0:
                  invalidatedReason += self.tr('An action must be chosen.\n')
-        elif self.allTablesCheckBox.checkState() == 2:
+        elif self.allAttributesCheckBox.checkState() == 2:
              if self.singleValueComboBox.currentIndex() == 0:
                  invalidatedReason += self.tr('A value must be chosen.\n')
              if self.actionComboBox.currentIndex() == 0:
@@ -284,20 +284,12 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         if self.allAttributesCheckBox.checkState() == 2:
             tableName = self.tableComboBox.currentText()
             schema = self.schemaComboBox.currentText()
-            if tableName in self.domainDict.keys():
-                for attrName in self.domainDict[tableName]['columns'].keys():
-                    attrDomainDict = self.domainDict[tableName]['columns'][attrName]['values']
-                    isMulti = self.domainDict[tableName]['columns'][attrName]['isMulti']
-                    newFilter = self.domainDict[tableName]['columns'][attrName]['constraintList']
-                    valueText = self.singleValueComboBox.currentText()
-                    code = [i for i in attrDomainDict.keys() if attrDomainDict[i] == valueText][0]
-                    if self.actionDict[self.actionComboBox.currentText()] == 'add':
-                        if code not in newFilter: newFilter.append(code)
-                    else:
-                        if code in newFilter: newFilter.pop(code)
-                    self.getJsonTagFromOneTable(schema, tableName, attrName, jsonList, inhConstrDict, newFilter, isMulti)
+            self.batchGetJsonTag(schema, tableName, jsonList, inhConstrDict)
         elif self.allTablesCheckBox.checkState() == 2:
-            pass
+            tableList = self.inhTree['root'].keys()
+            for tableName in tableList:
+                schema = self.abstractDb.getTableSchemaFromDb(tableName)
+                self.batchGetJsonTag(schema, tableName, jsonList, inhConstrDict)
         else:
             tableName = self.tableComboBox.currentText()
             schema = self.schemaComboBox.currentText()
@@ -309,7 +301,21 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
             newFilter = [i for i in attrDomainDict.keys() if attrDomainDict[i] in self.filterCustomSelectorWidget.toLs]
             self.getJsonTagFromOneTable(schema, tableName, attrName, jsonList, inhConstrDict, newFilter, isMulti)
         return jsonList
-    
+
+    def batchGetJsonTag(self, schema, tableName, jsonList, inhConstrDict):
+        if tableName in self.domainDict.keys():
+            for attrName in self.domainDict[tableName]['columns'].keys():
+                attrDomainDict = self.domainDict[tableName]['columns'][attrName]['values']
+                isMulti = self.domainDict[tableName]['columns'][attrName]['isMulti']
+                newFilter = self.domainDict[tableName]['columns'][attrName]['constraintList']
+                valueText = self.singleValueComboBox.currentText()
+                code = [i for i in attrDomainDict.keys() if attrDomainDict[i] == valueText][0]
+                if self.actionDict[self.actionComboBox.currentText()] == 'add':
+                    if code not in newFilter: newFilter.append(code)
+                else:
+                    if code in newFilter: newFilter.pop(code)
+                self.getJsonTagFromOneTable(schema, tableName, attrName, jsonList, inhConstrDict, newFilter, isMulti)
+
     def getJsonTagFromOneTable(self, schema, tableName, attrName, jsonList, inhConstrDict, newFilter, isMulti):
         originalFilterList = []
         if tableName in inhConstrDict.keys():
