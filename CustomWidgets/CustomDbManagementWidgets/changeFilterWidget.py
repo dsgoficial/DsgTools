@@ -113,9 +113,9 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
                 for attribute in attributeList:
                     self.attributeComboBox.addItem(attribute)
 
-    @pyqtSlot(int, name='on_tableComboBox_currentIndexChanged')
     @pyqtSlot(int, name='on_schemaComboBox_currentIndexChanged')
     @pyqtSlot(int, name='on_attributeComboBox_currentIndexChanged')
+    @pyqtSlot(int, name='on_tableComboBox_currentIndexChanged')
     def populateWidgetWithSingleValue(self):
         if self.allTablesCheckBox.checkState() == 2 or (self.allAttributesCheckBox.checkState() == 2 and self.schemaComboBox.currentIndex() <> 0 and self.tableComboBox.currentIndex() <> 0):
             self.attributeComboBox.clear()
@@ -151,6 +151,7 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
             self.populateInheritanceTree(tableList)
             QApplication.restoreOverrideCursor()
 
+    @pyqtSlot(int, name='on_schemaComboBox_currentIndexChanged')
     @pyqtSlot(int, name='on_attributeComboBox_currentIndexChanged')
     @pyqtSlot(int, name='on_tableComboBox_currentIndexChanged')
     def populateWidgetWithListValue(self):
@@ -158,10 +159,9 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         if self.allTablesCheckBox.checkState() == 2 or self.allAttributesCheckBox.checkState() == 2:
             return
         if self.schemaComboBox.currentIndex() == 0:
-            self.schemaComboBox.currentIndexChanged.emit(0)
             return
         if self.tableComboBox.currentIndex() == 0:
-            self.tableComboBox.currentIndexChanged.emit(0)
+            self.treeWidget.clear()
             return
         tableName = self.tableComboBox.currentText()
         self.populateInheritanceTree([tableName])
@@ -175,10 +175,10 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
             if attributeName in self.domainDict[tableName]['columns'].keys():
                 attrDomainDict = self.domainDict[tableName]['columns'][attributeName]['values']
                 tableFilter = self.domainDict[tableName]['columns'][attributeName]['constraintList']
-        filterToList = [attrDomainDict[i] for i in tableFilter]
-        filterFromList = [i for i in attrDomainDict.values() if i not in filterToList]
-        self.filterCustomSelectorWidget.setFromList(filterFromList, unique=True)
-        self.filterCustomSelectorWidget.setToList(filterToList)
+                filterToList = [attrDomainDict[i] for i in tableFilter]
+                filterFromList = [i for i in attrDomainDict.values() if i not in filterToList]
+                self.filterCustomSelectorWidget.setFromList(filterFromList, unique=True)
+                self.filterCustomSelectorWidget.setToList(filterToList)
 
     @pyqtSlot(int)
     def on_allTablesCheckBox_stateChanged(self, state):

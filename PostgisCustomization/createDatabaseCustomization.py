@@ -56,8 +56,12 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.connectionWidget.tabWidget.setTabEnabled(1, False)
+        self.connectionWidget.dbChanged.connect(self.minimizeConnectionWidget)
         self.contentsDict = dict()
         self.populateCustomizationCombo()
+    
+    def minimizeConnectionWidget(self):
+        self.connectionWidget.mGroupBox.setCollapsed(True)
     
     def getStructDict(self):
         pass
