@@ -39,6 +39,7 @@ from DsgTools.CustomWidgets.CustomDbManagementWidgets.newDomainValueWidget impor
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.codeNameCustomizationWidget import CodeNameCustomizationWidget
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.changeNullityWidget import ChangeNullityWidget
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.changeFilterWidget import ChangeFilterWidget
+from DsgTools.CustomWidgets.CustomDbManagementWidgets.alterDefaultWidget import AlterDefaultWidget
 from DsgTools.CustomWidgets.selectFileWidget import SelectFileWidget
 from DsgTools.PostgisCustomization.dbCustomizer import DbCustomizer
 
@@ -133,7 +134,8 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         self.addWidgetItem(self.tr('Code Name Customization'), self.tr('New Custom Code Name'), widget)
 
     def addDefaultWidget(self):
-        pass 
+        widget = AlterDefaultWidget(self.connectionWidget.abstractDb)
+        self.addWidgetItem(self.tr('Default Customization'), self.tr('New Custom Default'), widget) 
 
     def addDomainWidget(self):
         widget = NewDomainWidget(self.connectionWidget.abstractDb)

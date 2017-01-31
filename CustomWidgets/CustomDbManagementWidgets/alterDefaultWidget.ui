@@ -1,61 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>AlterDefaultWidget</class>
+ <widget class="QWidget" name="AlterDefaultWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>397</width>
-    <height>45</height>
+    <width>573</width>
+    <height>148</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Configure Connections</string>
+   <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="0">
+    <widget class="QCheckBox" name="allAttributesCheckBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Add/remove filter value on all attributes of this table</string>
+     </property>
+     <property name="autoExclusive">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QCheckBox" name="allTablesCheckBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Add/remove filter value on all attributes of selected database</string>
+     </property>
+     <property name="autoExclusive">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="singleValueLabel">
+       <property name="text">
+        <string>Value to alter</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="singleValueComboBox"/>
+     </item>
+    </layout>
+   </item>
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Schema</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="schemaComboBox">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="tableNameLabel">
        <property name="text">
-        <string>Server</string>
+        <string>Table Name</string>
        </property>
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Fixed</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>58</width>
-         <height>22</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QComboBox" name="serversCombo">
+      <widget class="QComboBox" name="tableComboBox">
        <property name="enabled">
-        <bool>true</bool>
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="createNewServerPushButton">
+      <widget class="QLabel" name="attributeNameLabel">
        <property name="text">
-        <string>Create New Server</string>
+        <string>Attribute Name</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="attributeComboBox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
       </widget>
      </item>
