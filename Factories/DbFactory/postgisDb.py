@@ -2673,7 +2673,8 @@ class PostgisDb(AbstractDb):
                 if attrName not in inhConstrDict[tableName].keys():
                     inhConstrDict[tableName][attrName] = []
                 filterDef = self.parseCheckConstraintQuery(constraintName,constraintDef)[-1]
-                currTag = {'tableName':currTableName, 'constraintName':constraintName, 'filter':filterDef}
+                schema = self.getTableSchemaFromDb(currTableName)
+                currTag = {'schema':schema, 'tableName':currTableName, 'constraintName':constraintName, 'filter':filterDef}
                 if currTag not in inhConstrDict[tableName][attrName]:
                     inhConstrDict[tableName][attrName].append(currTag)
         return inhConstrDict

@@ -277,7 +277,7 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
 
     def getJSONTag(self):
         if not self.validate():
-            raise Exception(self.tr('Error in change nullity customization ')+ self.title + ' : ' + self.validateDiagnosis())
+            raise Exception(self.tr('Error in change filter customization ')+ self.title + ' : ' + self.validateDiagnosis())
         jsonList = []
         inhConstrDict = self.abstractDb.getInheritanceConstraintDict()
         if self.allAttributesCheckBox.checkState() == 2:
@@ -290,13 +290,17 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
             attrName = self.attributeComboBox.currentText()
             originalFilterList = []
             if tableName in self.domainDict.keys():
-                if attributeName in self.domainDict[tableName]['columns'].keys():
-                    attrDomainDict = self.domainDict[tableName]['columns'][attributeName]['values']
+                if attrName in self.domainDict[tableName]['columns'].keys():
+                    attrDomainDict = self.domainDict[tableName]['columns'][attrName]['values']
+                    isMulti = self.domainDict[tableName]['columns'][attrName]['isMulti']
             newFilter = [i for i in attrDomainDict.keys() if attrDomainDict[i] in self.filterCustomSelectorWidget.toLs]
             if tableName in inhConstrDict.keys():
                 if attrName in inhConstrDict[tableName].keys():
                     originalFilterList = inhConstrDict[tableName][attrName]
-
-
+            
+            for item in originalFilterList:
+                newElement = self.jsonBuilder.alterFilterElement(item['schema'], item['tableName'], attrName, item['constraintName'], item['filter'], newFilter, isMulti)
+                if newElement not in jsonList:
+                    jsonList.append(newElement)
         return jsonList
     

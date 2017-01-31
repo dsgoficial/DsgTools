@@ -461,7 +461,7 @@ add_action	dsg_tools.py	/^    def add_action($/;"	kind:member	line:139
 adjustRecord	ComplexTools/manageComplex.py	/^    def adjustRecord(self,record):$/;"	kind:member	line:373
 allowConnections	Factories/SqlFactory/postgisSqlGenerator.py	/^    def allowConnections(self, name):$/;"	kind:member	line:63
 alterDatabasePassword	UserTools/alter_user_password.py	/^    def alterDatabasePassword(self, user, newpassword):$/;"	kind:member	line:66
-alterFilterElement	PostgisCustomization/CustomJSONTools/customJSONBuilder.py	/^    def alterFilterElement(self, schema, tableName, attrName, filterName, originalFilterList, valueList, operation = 'add', isMulti = False):$/;"	kind:member	line:60
+alterFilterElement	PostgisCustomization/CustomJSONTools/customJSONBuilder.py	/^    def alterFilterElement(self, schema, tableName, attrName, filterName, originalFilterList, valueList, isMulti = False):$/;"	kind:member	line:60
 alterSearchPath	Factories/DbFactory/postgisDb.py	/^    def alterSearchPath(self, version):$/;"	kind:member	line:2259
 alterSearchPath	Factories/SqlFactory/postgisSqlGenerator.py	/^    def alterSearchPath(self, dbName, version):$/;"	kind:member	line:1015
 alterServerPassword	UserTools/alter_user_password.py	/^    def alterServerPassword(self, userList, newpassword):$/;"	kind:member	line:74
