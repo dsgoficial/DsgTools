@@ -87,12 +87,11 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
                 attributeList = self.domainDict[tableName]['columns'].keys()
                 for attribute in attributeList:
                     self.attributeComboBox.addItem(attribute)
+            self.singleValueComboBox.clear()
     
-    @pyqtSlot(int)
-    def on_attributeComboBox_currentIndexChanged(self, idx):
-        if idx == 0:
-            QApplication.restoreOverrideCursor()
-            return
+    @pyqtSlot(int, name='on_schemaComboBox_currentIndexChanged')
+    @pyqtSlot(int, name='on_tableComboBox_currentIndexChanged')
+    def populateOnSelectAll(self):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         if self.allTablesCheckBox.checkState() == 2 or (self.allAttributesCheckBox.checkState() == 2 and self.schemaComboBox.currentIndex() <> 0 and self.tableComboBox.currentIndex() <> 0):
             self.attributeComboBox.clear()
@@ -123,28 +122,35 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
                 allValueList.pop(idx)
             for value in allValueList:
                 self.singleValueComboBox.addItem(value)
-        else:
-            filterList = []
-            attributeName = self.attributeComboBox.currentText()
-            tableFilter = []
-            filterToList = []
-            self.singleValueComboBox.clear()
-            self.singleValueComboBox.addItem(self.tr('Select a value to alter'))
-            tableName = self.tableComboBox.currentText()
-            attributeName = self.attributeComboBox.currentText()
-            if tableName in self.domainDict.keys():
-                if attributeName in self.domainDict[tableName]['columns'].keys():
-                    attrDomainDict = self.domainDict[tableName]['columns'][attributeName]['values']
-                    for value in attrDomainDict.values():
-                        self.singleValueComboBox.addItem(value)
-                    defaultCode = self.abstractDb.getDefaultFromDb(self.schemaComboBox.currentText(),tableName,attributeName)
-                    comboItem = self.singleValueComboBox.findText (attrDomainDict[int(defaultCode)], flags = Qt.MatchExactly)
-                    self.singleValueComboBox.setCurrentIndex(comboItem)
+        QApplication.restoreOverrideCursor()
+    
+    @pyqtSlot(int)
+    def on_attributeComboBox_currentIndexChanged(self, idx):
+        if idx == 0:
+            QApplication.restoreOverrideCursor()
+            return
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        filterList = []
+        attributeName = self.attributeComboBox.currentText()
+        tableFilter = []
+        filterToList = []
+        self.singleValueComboBox.clear()
+        self.singleValueComboBox.addItem(self.tr('Select a value to alter'))
+        tableName = self.tableComboBox.currentText()
+        attributeName = self.attributeComboBox.currentText()
+        if tableName in self.domainDict.keys():
+            if attributeName in self.domainDict[tableName]['columns'].keys():
+                attrDomainDict = self.domainDict[tableName]['columns'][attributeName]['values']
+                for value in attrDomainDict.values():
+                    self.singleValueComboBox.addItem(value)
+                defaultCode = self.abstractDb.getDefaultFromDb(self.schemaComboBox.currentText(),tableName,attributeName)
+                comboItem = self.singleValueComboBox.findText (attrDomainDict[int(defaultCode)], flags = Qt.MatchExactly)
+                self.singleValueComboBox.setCurrentIndex(comboItem)
         QApplication.restoreOverrideCursor()
 
     @pyqtSlot(int)
     def on_allTablesCheckBox_stateChanged(self, state):
-        self.hideOrShowWidgets()
+        self.singleValueComboBox.clear()
         if state == 0:
             self.allAttributesCheckBox.setEnabled(True)
             self.schemaComboBox.setCurrentIndex(0)
@@ -154,18 +160,22 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
             self.allAttributesCheckBox.setCheckState(0)
             self.schemaComboBox.setCurrentIndex(0)
             self.schemaComboBox.setEnabled(False)
+            self.populateOnSelectAll()
 
     @pyqtSlot(int)
     def on_allAttributesCheckBox_stateChanged(self, state):
+        self.singleValueComboBox.clear()
         if state == 2:
             self.allTablesCheckBox.setEnabled(False)
             self.allTablesCheckBox.setCheckState(0)
             self.attributeComboBox.setCurrentIndex(0)
             self.attributeComboBox.setEnabled(False)
+            self.populateOnSelectAll()
         if state == 0:
             self.allTablesCheckBox.setEnabled(True)
             self.attributeComboBox.setEnabled(True)
-        self.hideOrShowWidgets()
+            idx = self.tableComboBox.currentIndex()
+            self.tableComboBox.currentIndexChanged.emit(idx)
 
     def getTitle(self):
         return self.title
