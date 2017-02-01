@@ -1707,7 +1707,7 @@ class PostgisDb(AbstractDb):
         sql = self.gen.deleteStyle(styleName)
         if not query.exec_(sql):
             self.db.rollback()
-            raise Exception(self.tr('Problem importing style')+ styleName+'/'+ table_name +':' + query.lastError().text())
+            raise Exception(self.tr('Problem importing style')+ styleName+':' + query.lastError().text())
         self.db.commit()
     
     def importStylesIntoDb(self, styleFolder):
