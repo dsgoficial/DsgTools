@@ -23,7 +23,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Add/remove filter value on all attributes of this table</string>
+      <string>Alter default of all attributes of this table</string>
      </property>
      <property name="autoExclusive">
       <bool>false</bool>
@@ -39,7 +39,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Add/remove filter value on all attributes of selected database</string>
+      <string>Alter default of all attributes of selected database</string>
      </property>
      <property name="autoExclusive">
       <bool>false</bool>
