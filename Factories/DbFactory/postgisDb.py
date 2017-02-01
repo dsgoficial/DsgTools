@@ -2277,7 +2277,7 @@ class PostgisDb(AbstractDb):
         elif type == 'inom':
             inom = str(param)
             if scale == '250k':
-                mi = self.utmGrid.getMIR(inom)
+                mi = self.utmGrid.getINomenFromMIR(inom)
             else:
                 mi = self.utmGrid.getMIfromInom(inom)
         frame = self.createFrameFromInom(inom)
@@ -2678,3 +2678,15 @@ class PostgisDb(AbstractDb):
                 if currTag not in inhConstrDict[tableName][attrName]:
                     inhConstrDict[tableName][attrName].append(currTag)
         return inhConstrDict
+    
+    def getDefaultFromDb(self, schema, tableName, attrName):
+        """
+        Gets default value from table
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getDefaultFromDb(schema, tableName, attrName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting default from db: ")+query.lastError().text())
+        while query.next():
+            return query.value(0)

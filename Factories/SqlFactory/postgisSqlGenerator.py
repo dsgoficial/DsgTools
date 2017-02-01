@@ -688,7 +688,7 @@ class PostGISSqlGenerator(SqlGenerator):
     
     
     def makeRelationDict(self, table, codes):
-        sql = 'select code, code_name from dominios.%s where code in %s' % (table, in_clause)
+        sql = """select code, code_name from dominios.%s where code in %s""" % (table, codes)
         return sql
 
     def getEarthCoverageCentroids(self):
@@ -1195,4 +1195,8 @@ class PostGISSqlGenerator(SqlGenerator):
                 left join pg_class as cl on c.conrelid = cl.oid) as a where a.tn in (select f_table_name from public.geometry_columns) group by a.tn order by a.tn
         ) as result
         """.format("""','""".join(domainList))
+        return sql
+
+    def getDefaultFromDb(self, schema, tableName, attrName):
+        sql = """select column_default from information_schema.columns where table_schema = '{0}' and table_name = '{1}' and column_name = '{2}';""".format(schema, tableName, attrName)
         return sql

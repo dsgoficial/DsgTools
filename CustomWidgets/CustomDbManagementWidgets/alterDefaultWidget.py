@@ -48,15 +48,6 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
         self.domainDict = self.abstractDb.getDbDomainDict(geomDict)
         self.utils = Utils()
 
-    def populateInheritanceTree(self, nodeList):
-        self.treeWidget.clear()
-        rootNode = self.treeWidget.invisibleRootItem()
-        for node in nodeList:
-            firstNonRootNode = self.utils.find_all_paths(self.inhTree, 'root', node)[0][1]
-            self.utils.createTreeWidgetFromDict(rootNode, {firstNonRootNode:self.inhTree['root'][firstNonRootNode]}, self.treeWidget, 0)
-        self.treeWidget.sortItems(0, Qt.AscendingOrder)
-        self.treeWidget.expandAll()
-
     def populateSchemaCombo(self):
         self.schemaComboBox.clear()
         self.schemaComboBox.addItem(self.tr('Select a schema'))
@@ -96,15 +87,16 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
                 attributeList = self.domainDict[tableName]['columns'].keys()
                 for attribute in attributeList:
                     self.attributeComboBox.addItem(attribute)
-
-    @pyqtSlot(int, name='on_schemaComboBox_currentIndexChanged')
-    @pyqtSlot(int, name='on_attributeComboBox_currentIndexChanged')
-    @pyqtSlot(int, name='on_tableComboBox_currentIndexChanged')
-    def populateWidgetWithSingleValue(self):
+    
+    @pyqtSlot(int)
+    def on_attributeComboBox_currentIndexChanged(self, idx):
+        if idx == 0:
+            QApplication.restoreOverrideCursor()
+            return
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         if self.allTablesCheckBox.checkState() == 2 or (self.allAttributesCheckBox.checkState() == 2 and self.schemaComboBox.currentIndex() <> 0 and self.tableComboBox.currentIndex() <> 0):
             self.attributeComboBox.clear()
             self.attributeComboBox.setEnabled(False)
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.singleValueComboBox.clear()
             self.singleValueComboBox.addItem(self.tr('Select a value to alter'))
             if self.allAttributesCheckBox.checkState() == 2:
@@ -119,7 +111,6 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
                         value = self.domainDict[tableName]['columns'][attrName]['values'][code]
                         if value not in allValueList:
                             allValueList.append(value)
-
             for value in allValueList:
                 for tableName in tableList:
                     for attrName in self.domainDict[tableName]['columns'].keys():
@@ -132,35 +123,24 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
                 allValueList.pop(idx)
             for value in allValueList:
                 self.singleValueComboBox.addItem(value)
-            QApplication.restoreOverrideCursor()
-
-    @pyqtSlot(int, name='on_schemaComboBox_currentIndexChanged')
-    @pyqtSlot(int, name='on_attributeComboBox_currentIndexChanged')
-    @pyqtSlot(int, name='on_tableComboBox_currentIndexChanged')
-    def populateWidgetWithListValue(self):
-        self.filterCustomSelectorWidget.clearAll()
-        if self.allTablesCheckBox.checkState() == 2 or self.allAttributesCheckBox.checkState() == 2:
-            return
-        if self.schemaComboBox.currentIndex() == 0:
-            return
-        if self.tableComboBox.currentIndex() == 0:
-            return
-        tableName = self.tableComboBox.currentText()
-        self.populateInheritanceTree([tableName])
-        if self.attributeComboBox.currentIndex() == 0:
-            return
-        filterList = []
-        attributeName = self.attributeComboBox.currentText()
-        tableFilter = []
-        filterToList = []
-        if tableName in self.domainDict.keys():
-            if attributeName in self.domainDict[tableName]['columns'].keys():
-                attrDomainDict = self.domainDict[tableName]['columns'][attributeName]['values']
-                tableFilter = self.domainDict[tableName]['columns'][attributeName]['constraintList']
-                filterToList = [attrDomainDict[i] for i in tableFilter]
-                filterFromList = [i for i in attrDomainDict.values() if i not in filterToList]
-                self.filterCustomSelectorWidget.setFromList(filterFromList, unique=True)
-                self.filterCustomSelectorWidget.setToList(filterToList)
+        else:
+            filterList = []
+            attributeName = self.attributeComboBox.currentText()
+            tableFilter = []
+            filterToList = []
+            self.singleValueComboBox.clear()
+            self.singleValueComboBox.addItem(self.tr('Select a value to alter'))
+            tableName = self.tableComboBox.currentText()
+            attributeName = self.attributeComboBox.currentText()
+            if tableName in self.domainDict.keys():
+                if attributeName in self.domainDict[tableName]['columns'].keys():
+                    attrDomainDict = self.domainDict[tableName]['columns'][attributeName]['values']
+                    for value in attrDomainDict.values():
+                        self.singleValueComboBox.addItem(value)
+                    defaultCode = self.abstractDb.getDefaultFromDb(self.schemaComboBox.currentText(),tableName,attributeName)
+                    comboItem = self.singleValueComboBox.findText (attrDomainDict[int(defaultCode)], flags = Qt.MatchExactly)
+                    self.singleValueComboBox.setCurrentIndex(comboItem)
+        QApplication.restoreOverrideCursor()
 
     @pyqtSlot(int)
     def on_allTablesCheckBox_stateChanged(self, state):
@@ -187,21 +167,6 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
             self.attributeComboBox.setEnabled(True)
         self.hideOrShowWidgets()
 
-    def hideOrShowWidgets(self):
-        if self.allAttributesCheckBox.checkState() == 2 or self.allTablesCheckBox.checkState() == 2:
-            self.filterCustomSelectorWidget.hide()
-            self.singleValueLabel.show()
-            self.singleValueComboBox.show()
-            self.actionComboBox.show()
-            self.populateSingleValue.emit()
-        else:
-            self.filterCustomSelectorWidget.show()
-            self.singleValueLabel.hide()
-            self.singleValueComboBox.hide()
-            self.actionComboBox.hide()
-            self.tableComboBox.currentIndexChanged.emit(self.tableComboBox.currentIndex())
-            self.populateListValue.emit()
-
     def getTitle(self):
         return self.title
 
@@ -212,24 +177,22 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
         if self.allTablesCheckBox.checkState() == 2:
              if self.singleValueComboBox.currentIndex() == 0:
                  return False
-             if self.actionComboBox.currentIndex() == 0:
-                 return False
         elif self.allAttributesCheckBox.checkState() == 2:
              if self.singleValueComboBox.currentIndex() == 0:
-                 return False
-             if self.actionComboBox.currentIndex() == 0:
                  return False
              if self.schemaComboBox.currentIndex() == 0:
                  return False
              if self.tableComboBox.currentIndex() == 0:
                  return False
         else:
-             if self.schemaComboBox.currentIndex() == 0:
+            if self.singleValueComboBox.currentIndex() == 0:
                  return False
-             if self.tableComboBox.currentIndex() == 0:
-                 return False
-             if self.attributeComboBox.currentIndex() == 0:
-                 return False
+            if self.schemaComboBox.currentIndex() == 0:
+                return False
+            if self.tableComboBox.currentIndex() == 0:
+                return False
+            if self.attributeComboBox.currentIndex() == 0:
+                return False
         return True
 
     def validateDiagnosis(self):
@@ -237,24 +200,22 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
         if self.allTablesCheckBox.checkState() == 2:
              if self.singleValueComboBox.currentIndex() == 0:
                  invalidatedReason += self.tr('A value must be chosen.\n')
-             if self.actionComboBox.currentIndex() == 0:
-                 invalidatedReason += self.tr('An action must be chosen.\n')
         elif self.allAttributesCheckBox.checkState() == 2:
              if self.singleValueComboBox.currentIndex() == 0:
                  invalidatedReason += self.tr('A value must be chosen.\n')
-             if self.actionComboBox.currentIndex() == 0:
-                 invalidatedReason += self.tr('An action must be chosen.\n')
              if self.schemaComboBox.currentIndex() == 0:
                  invalidatedReason += self.tr('A schema must be chosen.\n')
              if self.tableComboBox.currentIndex() == 0:
                  invalidatedReason += self.tr('A table must be chosen.\n')
-        else:
-             if self.schemaComboBox.currentIndex() == 0:
-                 invalidatedReason += self.tr('A schema must be chosen.\n')
-             if self.tableComboBox.currentIndex() == 0:
-                 invalidatedReason += self.tr('A table must be chosen.\n')
-             if self.attributeComboBox.currentIndex() == 0:
-                 invalidatedReason += self.tr('An attribute must be chosen.\n')
+        else:             
+            if self.singleValueComboBox.currentIndex() == 0:
+                invalidatedReason += self.tr('A value must be chosen.\n')
+            if self.schemaComboBox.currentIndex() == 0:
+                invalidatedReason += self.tr('A schema must be chosen.\n')
+            if self.tableComboBox.currentIndex() == 0:
+                invalidatedReason += self.tr('A table must be chosen.\n')
+            if self.attributeComboBox.currentIndex() == 0:
+                invalidatedReason += self.tr('An attribute must be chosen.\n')
         return invalidatedReason
 
     def getJSONTag(self):
