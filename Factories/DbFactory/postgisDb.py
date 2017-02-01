@@ -1976,7 +1976,7 @@ class PostgisDb(AbstractDb):
 
     def parseCheckConstraintQuery(self, queryValue0, queryValue1):
         try:
-            if 'ANY' in queryValue1:
+            if 'ANY' in queryValue1 or '@' in queryValue1:
                 return self.parseCheckConstraintWithAny(queryValue0, queryValue1)
             else:
                 return self.parseCheckConstraintWithOr(queryValue0, queryValue1)

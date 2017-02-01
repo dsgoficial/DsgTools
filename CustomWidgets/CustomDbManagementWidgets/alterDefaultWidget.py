@@ -144,8 +144,15 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
                 for value in attrDomainDict.values():
                     self.singleValueComboBox.addItem(value)
                 defaultCode = self.abstractDb.getDefaultFromDb(self.schemaComboBox.currentText(),tableName,attributeName)
-                comboItem = self.singleValueComboBox.findText (attrDomainDict[int(defaultCode)], flags = Qt.MatchExactly)
-                self.singleValueComboBox.setCurrentIndex(comboItem)
+                if defaultCode:
+                    if 'ARRAY' in defaultCode or '@' in defaultCode:
+                        #done to extract value from multi array
+                        defaultCodeInt = int(defaultCode.replace('ARRAY','').replace('(','').replace(')','').replace(']','').replace('[','').replace('@','').replace('<','').split(':')[0])
+                    else:
+                        defaultCodeInt = int(defaultCode)
+                    if defaultCodeInt in attrDomainDict.keys():
+                        comboItem = self.singleValueComboBox.findText (attrDomainDict[defaultCodeInt], flags = Qt.MatchExactly)
+                        self.singleValueComboBox.setCurrentIndex(comboItem)
         QApplication.restoreOverrideCursor()
 
     @pyqtSlot(int)
@@ -230,18 +237,13 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
 
     def getJSONTag(self):
         if not self.validate():
-            raise Exception(self.tr('Error in change filter customization ')+ self.title + ' : ' + self.validateDiagnosis())
+            raise Exception(self.tr('Error in default customization ')+ self.title + ' : ' + self.validateDiagnosis())
         jsonList = []
         inhConstrDict = self.abstractDb.getInheritanceConstraintDict()
         if self.allAttributesCheckBox.checkState() == 2:
-            tableName = self.tableComboBox.currentText()
-            schema = self.schemaComboBox.currentText()
-            self.batchGetJsonTag(schema, tableName, jsonList, inhConstrDict)
+            pass
         elif self.allTablesCheckBox.checkState() == 2:
-            tableList = self.inhTree['root'].keys()
-            for tableName in tableList:
-                schema = self.abstractDb.getTableSchemaFromDb(tableName)
-                self.batchGetJsonTag(schema, tableName, jsonList, inhConstrDict)
+            pass
         else:
             tableName = self.tableComboBox.currentText()
             schema = self.schemaComboBox.currentText()
@@ -250,8 +252,18 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
                 if attrName in self.domainDict[tableName]['columns'].keys():
                     attrDomainDict = self.domainDict[tableName]['columns'][attrName]['values']
                     isMulti = self.domainDict[tableName]['columns'][attrName]['isMulti']
-            newFilter = [i for i in attrDomainDict.keys() if attrDomainDict[i] in self.filterCustomSelectorWidget.toLs]
-            self.getJsonTagFromOneTable(schema, tableName, attrName, jsonList, inhConstrDict, newFilter, isMulti)
+                    oldDefaultText = self.abstractDb.getDefaultFromDb(self.schemaComboBox.currentText(),tableName,attrName)
+                    if 'ARRAY' in oldDefaultText or '@' in oldDefaultText:
+                        #done to build multi array
+                        oldDefaultInt = int(oldDefaultText.replace('ARRAY','').replace('(','').replace(')','').replace(']','').replace('[','').replace('@','').replace('<','').split(':')[0])
+                    else:
+                        oldDefaultInt = int(oldDefaultText)
+                    newDefaultText = self.singleValueComboBox.currentText()
+                    newDefaultInt = [i for i in attrDomainDict.keys() if attrDomainDict[i] == newDefaultText][0]
+                    newDefault = oldDefaultText.replace(str(oldDefaultInt),str(newDefaultInt))
+                    newElement =  self.jsonBuilder.buildChangeDefaultElement(schema,tableName, attrName, oldDefaultText, newDefault)
+                    if newElement not in jsonList:
+                        jsonList.append(newElement)
         return jsonList
 
     def batchGetJsonTag(self, schema, tableName, jsonList, inhConstrDict):
