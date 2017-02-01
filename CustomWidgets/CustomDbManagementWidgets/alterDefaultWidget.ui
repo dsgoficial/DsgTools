@@ -39,7 +39,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Alter default of all attributes of selected database</string>
+      <string>Alter default of all attributes with domain of selected database</string>
      </property>
      <property name="autoExclusive">
       <bool>false</bool>

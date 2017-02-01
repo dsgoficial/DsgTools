@@ -246,9 +246,12 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
             schema = self.schemaComboBox.currentText()
             if tableName in self.domainDict.keys():
                 for attrName in self.domainDict[tableName]['columns'].keys():
-                    self.getJsonTagFromOneTable(schema, tableName, attrName,jsonList)
+                    self.getJsonTagFromOneTable(schema, tableName, attrName, jsonList)
         elif self.allTablesCheckBox.checkState() == 2:
-            pass
+            for tableName in self.domainDict.keys():
+                schema = self.abstractDb.getTableSchemaFromDb(tableName)
+                for attrName in self.domainDict[tableName]['columns'].keys():
+                    self.getJsonTagFromOneTable(schema, tableName, attrName, jsonList)
         else:
             tableName = self.tableComboBox.currentText()
             schema = self.schemaComboBox.currentText()
@@ -256,36 +259,23 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
             self.getJsonTagFromOneTable(schema, tableName, attrName, jsonList)
         return jsonList
 
-    def batchGetJsonTag(self, schema, tableName, jsonList, inhConstrDict):
-        if tableName in self.domainDict.keys():
-            for attrName in self.domainDict[tableName]['columns'].keys():
-                attrDomainDict = self.domainDict[tableName]['columns'][attrName]['values']
-                isMulti = self.domainDict[tableName]['columns'][attrName]['isMulti']
-                newFilter = self.domainDict[tableName]['columns'][attrName]['constraintList']
-                valueText = self.singleValueComboBox.currentText()
-                code = [i for i in attrDomainDict.keys() if attrDomainDict[i] == valueText][0]
-                if self.actionDict[self.actionComboBox.currentText()] == 'add':
-                    if code not in newFilter: newFilter.append(code)
-                elif self.actionDict[self.actionComboBox.currentText()] == 'addEmpty':
-                    if newFilter == []:
-                        continue
-                else:
-                    if code in newFilter: newFilter.pop(code)
-                self.getJsonTagFromOneTable(schema, tableName, attrName, jsonList)
-
     def getJsonTagFromOneTable(self, schema, tableName, attrName, jsonList):
         if tableName in self.domainDict.keys():
             if attrName in self.domainDict[tableName]['columns'].keys():
                 attrDomainDict = self.domainDict[tableName]['columns'][attrName]['values']
                 oldDefaultText = self.abstractDb.getDefaultFromDb(self.schemaComboBox.currentText(),tableName,attrName)
-                if 'ARRAY' in oldDefaultText or '@' in oldDefaultText:
-                    #done to build multi array
-                    oldDefaultInt = int(oldDefaultText.replace('ARRAY','').replace('(','').replace(')','').replace(']','').replace('[','').replace('@','').replace('<','').split(':')[0])
-                else:
-                    oldDefaultInt = int(oldDefaultText)
+                if oldDefaultText:
+                    if 'ARRAY' in oldDefaultText or '@' in oldDefaultText:
+                        #done to build multi array
+                        oldDefaultInt = int(oldDefaultText.replace('ARRAY','').replace('(','').replace(')','').replace(']','').replace('[','').replace('@','').replace('<','').split(':')[0])
+                    else:
+                        oldDefaultInt = int(oldDefaultText)
                 newDefaultText = self.singleValueComboBox.currentText()
                 newDefaultInt = [i for i in attrDomainDict.keys() if attrDomainDict[i] == newDefaultText][0]
-                newDefault = oldDefaultText.replace(str(oldDefaultInt),str(newDefaultInt))
+                if oldDefaultText:
+                    newDefault = oldDefaultText.replace(str(oldDefaultInt),str(newDefaultInt))
+                else:
+                    newDefault = str(newDefaultInt)
                 newElement =  self.jsonBuilder.buildChangeDefaultElement(schema,tableName, attrName, oldDefaultText, newDefault)
                 if newElement not in jsonList:
                     jsonList.append(newElement)
