@@ -50,11 +50,6 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
     def __init__(self, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.connectionWidget.tabWidget.setTabEnabled(1, False)
         self.connectionWidget.dbChanged.connect(self.minimizeConnectionWidget)
@@ -171,6 +166,8 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
     def getWidgetIndexFromTreeItem(self, treeItem):
         parent = treeItem.parent()
         widgetName = treeItem.text(0) 
+        if not parent:
+            return
         if parent == self.customizationTreeWidget.invisibleRootItem():
             return None
         childCount = parent.childCount()
@@ -182,14 +179,30 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_removeSelectedPushButton_clicked(self):
         treeItem = self.customizationTreeWidget.currentItem()
-        comboItem = self.customizationSelectionComboBox.currentText()
+        parent = treeItem.parent()
+        if parent == self.customizationTreeWidget.invisibleRootItem():
+            return
         idx = self.getWidgetIndexFromTreeItem(treeItem)
-        itemToRemove = self.contentsDict[comboItem]['widgetList'].pop(idx)
+        itemToRemove = self.contentsDict[parent.text(0)]['widgetList'].pop(idx)
         itemToRemove.setParent(None)
-        self.contentsDict[comboItem]['treeItem'].removeChild(treeItem)
+        self.contentsDict[parent.text(0)]['treeItem'].removeChild(treeItem)
     
     @pyqtSlot()
     def on_buttonBox_accepted(self):
+        exceptionList = []
+        customJsonDict = dict()
+        for i in self.customDict.keys():
+            customJsonDict[i] = []
+        correspondenceDict = {self.customDict[i]:i for i in self.customDict.keys()}
         for key in self.contentsDict.keys():
+            jsonTagList = []
             for widget in self.contentsDict[key]['widgetList']:
-                print widget.layout().itemAt(0).widget().getJSONTag()
+                try:
+                    jsonTagList = widget.layout().itemAt(0).widget().getJSONTag()
+                except Exception as e:
+                    exceptionList.append(e.args[0])
+                if len(exceptionList) == 0:
+                    customJsonDict[correspondenceDict[key]].append(jsonTagList)
+        print customJsonDict
+                    
+                
