@@ -202,7 +202,8 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
                 except Exception as e:
                     exceptionList.append(e.args[0])
                 if len(exceptionList) == 0:
-                    customJsonDict[correspondenceDict[key]].append(jsonTagList)
+                    for jsonItem in jsonTagList:
+                        customJsonDict[correspondenceDict[key]].append(jsonItem)
         print customJsonDict
                     
                 

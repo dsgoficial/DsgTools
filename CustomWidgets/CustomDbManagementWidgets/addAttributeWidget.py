@@ -134,5 +134,5 @@ class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
                 defaultValue = self.domainSetter.domainDict[defaultComboCurrentText]
             references = self.domainSetter.domainName
             filter = self.domainSetter.filterClause.values()
-            return self.jsonBuilder.buildAttributeElement(attrName, attrType, isPk, isNullable, defaultValue, references, filter)
+            return [self.jsonBuilder.buildAttributeElement(attrName, attrType, isPk, isNullable, defaultValue, references, filter)]
         

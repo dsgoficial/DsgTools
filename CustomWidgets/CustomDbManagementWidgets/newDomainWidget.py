@@ -189,4 +189,4 @@ class NewDomainWidget(QtGui.QWidget, FORM_CLASS):
             code = self.tableWidget.item(row,0).text()
             value = self.tableWidget.item(row,1).text()
             valueDict[code] = value
-        return self.jsonBuilder.addDomainTableElement(domainName, valueDict)
+        return [self.jsonBuilder.addDomainTableElement(domainName, valueDict)]

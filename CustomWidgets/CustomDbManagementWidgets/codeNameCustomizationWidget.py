@@ -116,7 +116,7 @@ class CodeNameCustomizationWidget(QtGui.QWidget, FORM_CLASS):
         oldCodeName = self.oldCodeNameComboBox.currentText()
         newCodeName = self.newCodeNameLineEdit.text()
         codeValue = self.domainDict[oldCodeName]
-        return self.jsonBuilder.buildCodeNameToChangeElement(domainTable, codeValue, oldCodeName, newCodeName)
+        return [self.jsonBuilder.buildCodeNameToChangeElement(domainTable, codeValue, oldCodeName, newCodeName)]
         
         
             

@@ -143,4 +143,4 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
         attrList.append(geomItem)
         for widget in widgetList:
             attrList.append(widget.getJSONTag())
-        return self.jsonBuilder.buildClassElement(schema,name,attrList)
+        return [self.jsonBuilder.buildClassElement(schema,name,attrList)]
