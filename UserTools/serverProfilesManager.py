@@ -162,29 +162,6 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         if dbItem:
             dbItem.setCheckState(1, 0)
             dbItem.setCheckState(2, 0)
-        
-    @pyqtSlot(bool)
-    def on_saveButton_clicked(self):
-        '''
-        Saves the profile file
-        '''
-        #REDO
-        if self.jsonCombo.currentIndex() == 0:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select a profile model!'))
-            return
-        else:
-            profile = self.jsonCombo.currentText()
-            
-        path = os.path.join(self.folder, profile+'.json')
-        
-        try:
-            with open(path, 'w') as outfile:
-                json.dump(self.makeProfileDict(), outfile, sort_keys=True, indent=4)
-        except Exception as e:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving file! \n')+e.args[0])
-            return
-            
-        QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile saved successfully!'))
     
     @pyqtSlot(bool)
     def on_closeButton_clicked(self):

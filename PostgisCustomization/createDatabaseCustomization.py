@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
+import os, json
 
 from qgis.core import QgsMessageLog
 from qgis.gui import QgsCollapsibleGroupBox
@@ -29,7 +29,7 @@ from qgis.gui import QgsCollapsibleGroupBox
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
 from PyQt4.QtSql import QSqlQuery
-from PyQt4.QtGui import QFormLayout, QMessageBox
+from PyQt4.QtGui import QFormLayout, QMessageBox, QFileDialog
 
 # DSGTools imports
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.newClassWidget import NewClassWidget
@@ -204,6 +204,24 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
                 if len(exceptionList) == 0:
                     for jsonItem in jsonTagList:
                         customJsonDict[correspondenceDict[key]].append(jsonItem)
-        print customJsonDict
-                    
-                
+        if self.validateJsonDict(customJsonDict):
+            self.exportJson(customJsonDict)
+    
+    def validateJsonDict(self, customJsonDict):
+        """
+        Method to apply validation to customJsonDict
+        """
+        #TODO
+        return True
+    
+    def exportJson(self, customJsonDict):
+        try:
+            fd = QFileDialog()
+            filename = fd.getSaveFileName(caption=self.tr('Choose file to output'),filter=self.tr('json file (*.json)'))
+            outputFile = os.path.join(filename+'.json')
+            with open(outputFile, 'w') as outfile:
+                json.dump(customJsonDict, outfile, sort_keys=True, indent=4)
+            QMessageBox.warning(self, self.tr('Success!'), self.tr('Customization created on: ') +str(outputFile)
+        except Exception as e:
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem exporting customization: ') + e.args[0])
+        
