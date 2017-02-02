@@ -40,7 +40,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'newClassWidget.ui'))
 
 class NewClassWidget(QtGui.QWidget, FORM_CLASS):
-    def __init__(self, abstractDb, jsonTag=None, parent = None):
+    def __init__(self, abstractDb, jsonTag = None, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.setupUi(self)
@@ -65,15 +65,15 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
         """
         if jsonTag:
             idx = self.schemaComboBox.findText(jsonTag['schema'], flags = Qt.MatchExactly)
-            self.schemaComboBox.setCurrentItem(idx)
+            self.schemaComboBox.setCurrentIndex(idx)
             nameSplit = jsonTag['name'].split('_')
             self.categoryLineEdit.setText(nameSplit[0])
-            self.classNameLineEdit.setText(nameSplit[1:-1])
+            self.classNameLineEdit.setText('_'.join(nameSplit[1:-1]))
             for primitive in self.geomUiDict.keys():
                 if self.geomUiDict[primitive]['sufix'] == nameSplit[-1]:
                     idxPrimitive = self.geomComboBox.findText(primitive, flags = Qt.MatchExactly)
                     self.geomComboBox.setCurrentIndex(idxPrimitive)
-            for attr in jsonTag['attrList']:
+            for attr in jsonTag['attrs']:
                 if attr['attrName'] not in ['id', 'geom']:
                     self.addCellWidget(jsonTag=attr)
     
@@ -157,5 +157,10 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
         geomItem = self.jsonBuilder.buildAttributeElement('geom', self.geomUiDict[self.geomComboBox.currentText()]['type'], False, False)
         attrList.append(geomItem)
         for widget in widgetList:
-            attrList.append(widget.getJSONTag())
+            newAttrJson = widget.getJSONTag()
+            if isinstance(newAttrJson,list):
+                for i in newAttrJson:
+                    attrList.append(i)
+            else:
+                attrList.append(newAttrJson)
         return [self.jsonBuilder.buildClassElement(schema,name,attrList)]

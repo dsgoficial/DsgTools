@@ -42,6 +42,7 @@ from DsgTools.CustomWidgets.CustomDbManagementWidgets.changeFilterWidget import 
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.alterDefaultWidget import AlterDefaultWidget
 from DsgTools.CustomWidgets.selectFileWidget import SelectFileWidget
 from DsgTools.PostgisCustomization.dbCustomizer import DbCustomizer
+from DsgTools.Utils.utils import Utils
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'createDatabaseCustomization.ui'))
@@ -55,8 +56,9 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         self.connectionWidget.dbChanged.connect(self.minimizeConnectionWidget)
         self.contentsDict = dict()
         self.populateCustomizationCombo()
-        self.selectFileWidget.filter = '.json'
-        self.selectFileWidget.fileSelected.connect(self.populateWidgetsFromSelectedFile)
+        self.selectFileWidget.filter = '*.json'
+        self.selectFileWidget.filesSelected.connect(self.populateWidgetsFromSelectedFile)
+        self.utils = Utils()
     
     def minimizeConnectionWidget(self):
         self.connectionWidget.mGroupBox.setCollapsed(True)
@@ -223,13 +225,13 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
             outputFile = os.path.join(filename+'.json')
             with open(outputFile, 'w') as outfile:
                 json.dump(customJsonDict, outfile, sort_keys=True, indent=4)
-            QMessageBox.warning(self, self.tr('Success!'), self.tr('Customization created on: ') +str(outputFile)
+            QMessageBox.warning(self, self.tr('Success!'), self.tr('Customization created on: ') +str(outputFile))
         except Exception as e:
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem exporting customization: ') + e.args[0])
     
     def populateWidgetsFromSelectedFile(self):
-        jsonFile = self.selectFileWidget.fileNameList
-        customJsonDict = json.loads(jsonFile)
+        jsonFileName = self.selectFileWidget.fileNameList
+        customJsonDict = self.utils.readJsonFile(jsonFileName)
         self.createWidgetsFromCustomJsonDict(customJsonDict)
     
     def createWidgetsFromCustomJsonDict(self, customJsonDict):

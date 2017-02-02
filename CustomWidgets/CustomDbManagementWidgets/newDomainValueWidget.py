@@ -39,7 +39,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'newDomainValueWidget.ui'))
 
 class NewDomainValueWidget(QtGui.QWidget, FORM_CLASS):
-    def __init__(self, abstractDb, parent = None):
+    def __init__(self, abstractDb, jsonTag = None, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.abstractDb = abstractDb

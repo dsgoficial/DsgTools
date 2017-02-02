@@ -35,7 +35,7 @@ ContourTool	ProductionTools/ContourTool/contour_tool.py	/^class ContourTool():$/
 ConvertDatabase	ConversionTools/convert_database.py	/^class ConvertDatabase(QtGui.QDialog, FORM_CLASS):$/;"	kind:class	line:45
 CreateBatchFromCsv	DbTools/BatchDbCreator/createBatchFromCsv.py	/^class CreateBatchFromCsv(QtGui.QWizardPage, FORM_CLASS):$/;"	kind:class	line:36
 CreateBatchIncrementing	DbTools/BatchDbCreator/createBatchIncrementing.py	/^class CreateBatchIncrementing(QtGui.QWizardPage, FORM_CLASS):$/;"	kind:class	line:37
-CreateDatabaseCustomization	PostgisCustomization/createDatabaseCustomization.py	/^class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):$/;"	kind:class	line:49
+CreateDatabaseCustomization	PostgisCustomization/createDatabaseCustomization.py	/^class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):$/;"	kind:class	line:50
 CreateFeatureTest	LayerTools/create_features_test.py	/^class CreateFeatureTest(): $/;"	kind:class	line:41
 CreateInomDialog	LayerTools/CreateFrameTool/ui_create_inom_dialog.py	/^class CreateInomDialog(QtGui.QDialog, FORM_CLASS):$/;"	kind:class	line:40
 CreateProfile	UserTools/create_profile.py	/^class CreateProfile(QtGui.QDialog, FORM_CLASS):$/;"	kind:class	line:39
@@ -232,16 +232,16 @@ __init__	ConversionTools/convert_database.py	/^    def __init__(self, parent = N
 __init__	CustomWidgets/AttributeValidityWidgets/attributeConditionWidget.py	/^    def __init__(self, parent = None):$/;"	kind:member	line:40
 __init__	CustomWidgets/AttributeValidityWidgets/listManagerWidget.py	/^    def __init__(self, parent = None):$/;"	kind:member	line:39
 __init__	CustomWidgets/AttributeValidityWidgets/newAttributeRuleBuilderWidget.py	/^    def __init__(self, abstractDb, parent = None):$/;"	kind:member	line:40
-__init__	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def __init__(self, abstractDb, parent = None):$/;"	kind:member	line:43
-__init__	CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py	/^    def __init__(self, abstractDb, parent = None):$/;"	kind:member	line:39
-__init__	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def __init__(self, abstractDb, parent = None):$/;"	kind:member	line:41
-__init__	CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py	/^    def __init__(self, abstractDb, parent = None):$/;"	kind:member	line:39
-__init__	CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py	/^    def __init__(self, abstractDb, parent = None):$/;"	kind:member	line:42
-__init__	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def __init__(self, abstractDb, parent = None):$/;"	kind:member	line:44
-__init__	CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py	/^    def __init__(self, abstractDb, parent = None):$/;"	kind:member	line:42
-__init__	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def __init__(self, abstractDb, parent = None):$/;"	kind:member	line:43
-__init__	CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py	/^    def __init__(self, abstractDb, parent = None):$/;"	kind:member	line:42
-__init__	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def __init__(self, abstractDb, parent = None):$/;"	kind:member	line:59
+__init__	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def __init__(self, abstractDb, jsonTag = None, parent = None):$/;"	kind:member	line:43
+__init__	CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py	/^    def __init__(self, abstractDb, jsonTag = None, parent = None):$/;"	kind:member	line:39
+__init__	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def __init__(self, abstractDb, jsonTag = None, parent = None):$/;"	kind:member	line:41
+__init__	CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py	/^    def __init__(self, abstractDb, jsonTag = None, parent = None):$/;"	kind:member	line:39
+__init__	CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py	/^    def __init__(self, abstractDb, jsonTag = None, parent = None):$/;"	kind:member	line:42
+__init__	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def __init__(self, abstractDb, references = None, filter = None, parent = None):$/;"	kind:member	line:44
+__init__	CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py	/^    def __init__(self, abstractDb, jsonTag = None, parent = None):$/;"	kind:member	line:42
+__init__	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def __init__(self, abstractDb, jsonTag = None, parent = None):$/;"	kind:member	line:43
+__init__	CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py	/^    def __init__(self, abstractDb, jsonTag = None, parent = None):$/;"	kind:member	line:42
+__init__	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def __init__(self, abstractDb, jsonTag = None, parent = None):$/;"	kind:member	line:59
 __init__	CustomWidgets/connectionWidget.py	/^    def __init__(self, parent = None):$/;"	kind:member	line:48
 __init__	CustomWidgets/customSelector.py	/^    def __init__(self, parent = None):$/;"	kind:member	line:36
 __init__	CustomWidgets/customServerConnectionWidget.py	/^    def __init__(self, parent = None):$/;"	kind:member	line:47
@@ -298,7 +298,7 @@ __init__	MilitarySimbologyTools/militarySimbologyDock.py	/^    def __init__(self
 __init__	PostgisCustomization/CustomJSONTools/customJSONBuilder.py	/^    def __init__(self):$/;"	kind:member	line:29
 __init__	PostgisCustomization/CustomJSONTools/customJSONValidator.py	/^    def __init__(self, jsonFile):$/;"	kind:member	line:29
 __init__	PostgisCustomization/CustomJSONValidator/customJSONValidator.py	/^    def __init__(self, jsonFile):$/;"	kind:member	line:29
-__init__	PostgisCustomization/createDatabaseCustomization.py	/^    def __init__(self, parent = None):$/;"	kind:member	line:50
+__init__	PostgisCustomization/createDatabaseCustomization.py	/^    def __init__(self, parent = None):$/;"	kind:member	line:51
 __init__	PostgisCustomization/dbCustomizer.py	/^    def __init__(self, postgisDb):$/;"	kind:member	line:32
 __init__	ProcessingTools/processManager.py	/^    def __init__(self, iface):$/;"	kind:member	line:32
 __init__	ProductionTools/ContourTool/calc_contour.py	/^    def __init__(self, iface, parent = None):$/;"	kind:member	line:42
@@ -432,33 +432,34 @@ activate	ProductionTools/MinimumAreaTool/shapeTool.py	/^    def activate(self):$
 activateTool	ProductionTools/ContourTool/calc_contour.py	/^    def activateTool(self):$/;"	kind:member	line:68
 activeLayer	test/qgis_interface.py	/^    def activeLayer(self):$/;"	kind:member	line:150
 addAssociatedFeature	ComplexTools/complexWindow.py	/^    def addAssociatedFeature(self, className, complexName, complexId, associatedClass, associatedId):$/;"	kind:member	line:510
-addAttributeWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def addAttributeWidget(self):$/;"	kind:member	line:119
+addAttributeWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def addAttributeWidget(self,jsonTag=None):$/;"	kind:member	line:123
 addAttributeWidget.py	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	1;"	kind:file	line:1
-addClassWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def addClassWidget(self):$/;"	kind:member	line:123
+addCellWidget	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def addCellWidget(self, jsonTag = None):$/;"	kind:member	line:101
+addClassWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def addClassWidget(self,jsonTag=None):$/;"	kind:member	line:127
 addClassesToBeDisplayedList	ValidationTools/ValidationProcesses/validationProcess.py	/^    def addClassesToBeDisplayedList(self,className):$/;"	kind:member	line:85
-addCodeNameWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def addCodeNameWidget(self):$/;"	kind:member	line:127
+addCodeNameWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def addCodeNameWidget(self,jsonTag=None):$/;"	kind:member	line:131
 addComplex	ComplexTools/manageComplex.py	/^    def addComplex(self):$/;"	kind:member	line:365
-addDefaultWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def addDefaultWidget(self):$/;"	kind:member	line:131
+addDefaultWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def addDefaultWidget(self,jsonTag=None):$/;"	kind:member	line:135
 addDockWidget	test/qgis_interface.py	/^    def addDockWidget(self, area, dock_widget):$/;"	kind:member	line:192
 addDomainTableElement	PostgisCustomization/CustomJSONTools/customJSONBuilder.py	/^    def addDomainTableElement(self, domainName, valueDict):$/;"	kind:member	line:41
 addDomainValueElement	PostgisCustomization/CustomJSONTools/customJSONBuilder.py	/^    def addDomainValueElement(self, domainName, code, codeName):$/;"	kind:member	line:57
-addDomainValueWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def addDomainValueWidget(self):$/;"	kind:member	line:139
-addDomainWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def addDomainWidget(self):$/;"	kind:member	line:135
-addFilterWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def addFilterWidget(self):$/;"	kind:member	line:147
+addDomainValueWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def addDomainValueWidget(self,jsonTag=None):$/;"	kind:member	line:143
+addDomainWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def addDomainWidget(self,jsonTag=None):$/;"	kind:member	line:139
+addFilterWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def addFilterWidget(self,jsonTag=None):$/;"	kind:member	line:151
 addFlag	ValidationTools/ValidationProcesses/validationProcess.py	/^    def addFlag(self, flagTupleList):$/;"	kind:member	line:110
 addItems	CustomWidgets/customSelector.py	/^    def addItems(self, addList, unique = False):$/;"	kind:member	line:84
 addLayer	test/qgis_interface.py	/^    def addLayer(self, layer):$/;"	kind:member	line:84
 addLayers	ProductionTools/ContourTool/calc_contour.py	/^    def addLayers(self, layers):$/;"	kind:member	line:72
 addLayers	test/qgis_interface.py	/^    def addLayers(self, layers):$/;"	kind:member	line:62
 addMenu	dsg_tools.py	/^    def addMenu(self, parent, name, title, icon_path):$/;"	kind:member	line:202
-addNullityWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def addNullityWidget(self):$/;"	kind:member	line:143
+addNullityWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def addNullityWidget(self,jsonTag=None):$/;"	kind:member	line:147
 addRasterLayer	test/qgis_interface.py	/^    def addRasterLayer(self, path, base_name):$/;"	kind:member	line:139
 addToolBar	test/qgis_interface.py	/^    def addToolBar(self, name):$/;"	kind:member	line:173
 addToolBarIcon	test/qgis_interface.py	/^    def addToolBarIcon(self, action):$/;"	kind:member	line:157
 addValueToValueDict	PostgisCustomization/CustomJSONTools/customJSONBuilder.py	/^    def addValueToValueDict(self, valueDict, code, codeName):$/;"	kind:member	line:44
 addVectorLayer	test/qgis_interface.py	/^    def addVectorLayer(self, path, base_name, provider_key):$/;"	kind:member	line:125
-addWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def addWidget(self, widget, title):$/;"	kind:member	line:151
-addWidgetItem	PostgisCustomization/createDatabaseCustomization.py	/^    def addWidgetItem(self, contentsKey, widgetTitle, widget):$/;"	kind:member	line:108
+addWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def addWidget(self, widget, title):$/;"	kind:member	line:155
+addWidgetItem	PostgisCustomization/createDatabaseCustomization.py	/^    def addWidgetItem(self, contentsKey, widgetTitle, widget):$/;"	kind:member	line:112
 add_action	dsg_tools.py	/^    def add_action($/;"	kind:member	line:139
 adjustRecord	ComplexTools/manageComplex.py	/^    def adjustRecord(self,record):$/;"	kind:member	line:373
 allowConnections	Factories/SqlFactory/postgisSqlGenerator.py	/^    def allowConnections(self, name):$/;"	kind:member	line:63
@@ -566,14 +567,14 @@ checkLoaded	Factories/LayerLoaderFactory/postgisLayerLoader.py	/^    def checkLo
 checkLoaded	Factories/LayerLoaderFactory/spatialiteLayerLoader.py	/^    def checkLoaded(self, name, loadedLayers):$/;"	kind:member	line:55
 checkMulti	Factories/LayerLoaderFactory/postgisLayerLoader.py	/^    def checkMulti(self, tableName, attrName, multiColumnsDict):$/;"	kind:member	line:228
 checkNotNull	Factories/LayerLoaderFactory/postgisLayerLoader.py	/^    def checkNotNull(self, lyrName, notNullDict):$/;"	kind:member	line:234
-checkNull	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def checkNull(self, widgetItem):$/;"	kind:member	line:117
+checkNull	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def checkNull(self, widgetItem):$/;"	kind:member	line:112
 checkStyleTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def checkStyleTable(self):$/;"	kind:member	line:829
 checkSuperUser	Factories/DbFactory/postgisDb.py	/^    def checkSuperUser(self):$/;"	kind:member	line:771
 checkSuperUser	ServerTools/batchDbManager.py	/^    def checkSuperUser(self):$/;"	kind:member	line:91
 checkSuperUser	ServerTools/exploreDb.py	/^    def checkSuperUser(self):$/;"	kind:member	line:101
 checkTemplate	Factories/DbFactory/postgisDb.py	/^    def checkTemplate(self, version):$/;"	kind:member	line:2176
 checkTemplate	Factories/SqlFactory/postgisSqlGenerator.py	/^    def checkTemplate(self):$/;"	kind:member	line:1011
-checkUnique	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def checkUnique(self, widgetItem):$/;"	kind:member	line:125
+checkUnique	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def checkUnique(self, widgetItem):$/;"	kind:member	line:120
 checkValidationStructure	Factories/SqlFactory/postgisSqlGenerator.py	/^    def checkValidationStructure(self):$/;"	kind:member	line:315
 checkValidationStructure	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def checkValidationStructure(self):$/;"	kind:member	line:161
 checkValidationStructure	Factories/SqlFactory/sqlGenerator.py	/^    def checkValidationStructure(self):$/;"	kind:member	line:130
@@ -584,13 +585,13 @@ classFactory	ValidationTools/__init__.py	/^def classFactory(iface):  # pylint: d
 classFactory	__init__.py	/^def classFactory(iface):  # pylint: disable=invalid-name$/;"	kind:function	line:27
 cleanCentroidsAreas	ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py	/^    def cleanCentroidsAreas(self, coverageClassList):$/;"	kind:member	line:45
 cleanGeometriesProcess.py	ValidationTools/ValidationProcesses/cleanGeometriesProcess.py	1;"	kind:file	line:1
-clearAll	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def clearAll(self):$/;"	kind:member	line:61
+clearAll	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def clearAll(self):$/;"	kind:member	line:77
 clearAll	CustomWidgets/connectionWidget.py	/^    def clearAll(self):$/;"	kind:member	line:74
 clearAll	CustomWidgets/customSelector.py	/^    def clearAll(self):$/;"	kind:member	line:48
 clearAll	CustomWidgets/exploreServerWidget.py	/^    def clearAll(self):$/;"	kind:member	line:196
 clearAll	ServerTools/exploreDb.py	/^    def clearAll(self):$/;"	kind:member	line:93
 clearAttributeTableWidget	ProductionTools/FieldToolBox/field_setup.py	/^    def clearAttributeTableWidget(self):$/;"	kind:member	line:101
-clearCheckableItems	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def clearCheckableItems(self):$/;"	kind:member	line:73
+clearCheckableItems	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def clearCheckableItems(self):$/;"	kind:member	line:89
 clearClassesToBeDisplayedAfterProcess	ValidationTools/ValidationProcesses/validationProcess.py	/^    def clearClassesToBeDisplayedAfterProcess(self):$/;"	kind:member	line:92
 clearDock	ComplexTools/complexWindow.py	/^    def clearDock(self):$/;"	kind:member	line:77
 clearLog	Factories/DbFactory/abstractDb.py	/^        clearLog = pyqtSignal()$/;"	kind:variable	line:43
@@ -691,7 +692,7 @@ createGeom	LayerTools/create_features_test.py	/^    def createGeom(self, layer):
 createGroup	Factories/LayerLoaderFactory/edgvLayerLoader.py	/^    def createGroup(self, groupList, groupName, parent):$/;"	kind:member	line:127
 createInventoryProcess	ProcessingTools/processManager.py	/^    def createInventoryProcess(self, parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, isOnlyGeo):$/;"	kind:member	line:158
 createItem	CustomWidgets/permissionWidget.py	/^    def createItem(self, parent, text, column):$/;"	kind:member	line:101
-createItem	PostgisCustomization/createDatabaseCustomization.py	/^    def createItem(self, parent, text, column):$/;"	kind:member	line:161
+createItem	PostgisCustomization/createDatabaseCustomization.py	/^    def createItem(self, parent, text, column):$/;"	kind:member	line:165
 createItem	ServerTools/batchDbManager.py	/^    def createItem(self, parent, text, column):$/;"	kind:member	line:254
 createItem	ServerTools/exploreDb.py	/^    def createItem(self, parent, text, column):$/;"	kind:member	line:113
 createItem	UserTools/manageServerUsers.py	/^    def createItem(self, parent, text, column):$/;"	kind:member	line:67
@@ -744,9 +745,11 @@ createValidationStructure	Factories/SqlFactory/sqlGenerator.py	/^    def createV
 createView.py	ServerTools/createView.py	1;"	kind:file	line:1
 createVrt	QGIS_Scripts/virtual_raster.py	/^def createVrt(vrt):$/;"	kind:function	line:107
 createVrt	QGIS_Scripts/virtual_raster_inloco.py	/^def createVrt(inventario, vrt):$/;"	kind:function	line:37
+createWidgetFromKey	PostgisCustomization/createDatabaseCustomization.py	/^    def createWidgetFromKey(self, key, jsonTag):$/;"	kind:member	line:242
 createWidgetItem	Utils/utils.py	/^    def createWidgetItem(self, parent, text, column):$/;"	kind:member	line:191
 createWidgetWithTabs	ProductionTools/FieldToolBox/field_toolbox.py	/^    def createWidgetWithTabs(self, formLayout):$/;"	kind:member	line:117
 createWidgetWithoutTabs	ProductionTools/FieldToolBox/field_toolbox.py	/^    def createWidgetWithoutTabs(self, formLayout):$/;"	kind:member	line:108
+createWidgetsFromCustomJsonDict	PostgisCustomization/createDatabaseCustomization.py	/^    def createWidgetsFromCustomJsonDict(self, customJsonDict):$/;"	kind:member	line:237
 create_features_test.py	LayerTools/create_features_test.py	1;"	kind:file	line:1
 create_profile.py	UserTools/create_profile.py	1;"	kind:file	line:1
 create_user.py	UserTools/create_user.py	1;"	kind:file	line:1
@@ -832,8 +835,8 @@ earthCoverageWidget.py	CustomWidgets/earthCoverageWidget.py	1;"	kind:file	line:1
 edgvLayerLoader.py	Factories/LayerLoaderFactory/edgvLayerLoader.py	1;"	kind:file	line:1
 edgv_checker	QGIS_Scripts/edgv_checker.py	/^def edgv_checker(folder, output):$/;"	kind:function	line:8
 edgv_checker.py	QGIS_Scripts/edgv_checker.py	1;"	kind:file	line:1
-enableItems	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def enableItems(self, enabled):$/;"	kind:member	line:59
-enableItems	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def enableItems(self, enabled):$/;"	kind:member	line:70
+enableItems	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def enableItems(self, enabled):$/;"	kind:member	line:76
+enableItems	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def enableItems(self, enabled):$/;"	kind:member	line:86
 enableScale	ProductionTools/InspectFeatures/inspectFeatures.py	/^    def enableScale(self):$/;"	kind:member	line:50
 enforceSpatialRulesForAddition	ValidationTools/ValidationProcesses/spatialRuleEnforcer.py	/^    def enforceSpatialRulesForAddition(self, featureId):$/;"	kind:member	line:238
 enforceSpatialRulesForChanges	ValidationTools/ValidationProcesses/spatialRuleEnforcer.py	/^    def enforceSpatialRulesForChanges(self, featureId, geometry):$/;"	kind:member	line:223
@@ -865,6 +868,7 @@ executeSql	LayerTools/create_features_test.py	/^    def executeSql(self, query, 
 exploreDB	dsg_tools.py	/^    def exploreDB(self):$/;"	kind:member	line:878
 exploreDb.py	ServerTools/exploreDb.py	1;"	kind:file	line:1
 exploreServerWidget.py	CustomWidgets/exploreServerWidget.py	1;"	kind:file	line:1
+exportJson	PostgisCustomization/createDatabaseCustomization.py	/^    def exportJson(self, customJsonDict):$/;"	kind:member	line:221
 exportProfile	ServerManagementTools/permissionManager.py	/^    def exportProfile(self, profileName, edgvVersion, outputPath):$/;"	kind:member	line:314
 field_setup.py	ProductionTools/FieldToolBox/field_setup.py	1;"	kind:file	line:1
 field_toolbox.py	ProductionTools/FieldToolBox/field_toolbox.py	1;"	kind:file	line:1
@@ -928,9 +932,9 @@ getCandidates	ProductionTools/ContourTool/contour_tool.py	/^    def getCandidate
 getCandidates	QGIS_Scripts/virtual_raster.py	/^def getCandidates(idx, layer, bbox):$/;"	kind:function	line:84
 getCandidates	ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py	/^    def getCandidates(self, idx, bbox):$/;"	kind:member	line:198
 getCheckConstraintDict	Factories/DbFactory/postgisDb.py	/^    def getCheckConstraintDict(self):$/;"	kind:member	line:1939
-getChildWidgetList	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def getChildWidgetList(self):$/;"	kind:member	line:106
-getChildWidgets	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def getChildWidgets(self):$/;"	kind:member	line:96
-getChildWidgets	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def getChildWidgets(self):$/;"	kind:member	line:126
+getChildWidgetList	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def getChildWidgetList(self):$/;"	kind:member	line:121
+getChildWidgets	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def getChildWidgets(self):$/;"	kind:member	line:117
+getChildWidgets	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def getChildWidgets(self):$/;"	kind:member	line:142
 getClassesToBeDisplayedAfterProcess	ValidationTools/ValidationProcesses/validationProcess.py	/^    def getClassesToBeDisplayedAfterProcess(self):$/;"	kind:member	line:79
 getCodeListDict	AttributeTools/code_list.py	/^    def getCodeListDict(self, field):$/;"	kind:member	line:78
 getComplexData	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getComplexData(self, complex_schema, complex):$/;"	kind:member	line:35
@@ -1060,15 +1064,15 @@ getInvalidGeomRecords	Factories/DbFactory/postgisDb.py	/^    def getInvalidGeomR
 getInventoryErrorMessage	Factories/ThreadFactory/inventoryThread.py	/^    def getInventoryErrorMessage(self):$/;"	kind:member	line:45
 getItemCheckState	UserTools/profile_editor.py	/^    def getItemCheckState(self, item):$/;"	kind:member	line:173
 getItemCheckState	UserTools/serverProfilesManager.py	/^    def getItemCheckState(self, item):$/;"	kind:member	line:135
-getJSONTag	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def getJSONTag(self):$/;"	kind:member	line:115
+getJSONTag	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def getJSONTag(self):$/;"	kind:member	line:136
 getJSONTag	CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py	/^    def getJSONTag(self):$/;"	kind:member	line:239
 getJSONTag	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def getJSONTag(self):$/;"	kind:member	line:279
 getJSONTag	CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py	/^    def getJSONTag(self):$/;"	kind:member	line:143
 getJSONTag	CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py	/^    def getJSONTag(self):$/;"	kind:member	line:112
 getJSONTag	CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py	/^    def getJSONTag(self):$/;"	kind:member	line:106
-getJSONTag	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def getJSONTag(self):$/;"	kind:member	line:131
+getJSONTag	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def getJSONTag(self):$/;"	kind:member	line:146
 getJSONTag	CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py	/^    def getJSONTag(self):$/;"	kind:member	line:129
-getJSONTag	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def getJSONTag(self):$/;"	kind:member	line:183
+getJSONTag	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def getJSONTag(self):$/;"	kind:member	line:178
 getJsonTagFromOneTable	CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py	/^    def getJsonTagFromOneTable(self, schema, tableName, attrName, jsonList):$/;"	kind:member	line:262
 getJsonTagFromOneTable	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def getJsonTagFromOneTable(self, schema, tableName, attrName, jsonList, inhConstrDict, newFilter, isMulti):$/;"	kind:member	line:322
 getKey	ProductionTools/ContourTool/contour_tool.py	/^    def getKey(self, item):$/;"	kind:member	line:58
@@ -1172,7 +1176,7 @@ getScaleIdFromScale	LayerTools/CreateFrameTool/map_index.py	/^    def getScaleId
 getScaleIdFromiNomen	LayerTools/CreateFrameTool/map_index.py	/^    def getScaleIdFromiNomen(self, inomen):$/;"	kind:member	line:70
 getScripts	ToolboxTools/models_and_scripts_installer.py	/^    def getScripts(self):$/;"	kind:member	line:92
 getSelectedDbList	ServerTools/batchDbManager.py	/^    def getSelectedDbList(self):$/;"	kind:member	line:100
-getSelectedDomain	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def getSelectedDomain(self):$/;"	kind:member	line:87
+getSelectedDomain	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def getSelectedDomain(self):$/;"	kind:member	line:103
 getSelectedItems	LayerTools/load_by_class.py	/^    def getSelectedItems(self):$/;"	kind:member	line:152
 getServerConfiguration	CustomWidgets/exploreServerWidget.py	/^    def getServerConfiguration(self, name):$/;"	kind:member	line:68
 getServerConfiguration	DbTools/PostGISTool/postgisDBTool.py	/^    def getServerConfiguration(self, name):$/;"	kind:member	line:205
@@ -1196,7 +1200,7 @@ getSrid	Factories/SqlFactory/sqlGenerator.py	/^    def getSrid(self):$/;"	kind:m
 getStatus	ValidationTools/ValidationProcesses/validationProcess.py	/^    def getStatus(self):$/;"	kind:member	line:133
 getStatusMessage	ValidationTools/ValidationProcesses/validationProcess.py	/^    def getStatusMessage(self):$/;"	kind:member	line:143
 getStretchingPercentage	ImageTools/processingTools.py	/^    def getStretchingPercentage(self):$/;"	kind:member	line:138
-getStructDict	PostgisCustomization/createDatabaseCustomization.py	/^    def getStructDict(self):$/;"	kind:member	line:62
+getStructDict	PostgisCustomization/createDatabaseCustomization.py	/^    def getStructDict(self):$/;"	kind:member	line:66
 getStructure	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getStructure(self,edgvVersion):$/;"	kind:member	line:255
 getStructure	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getStructure(self,edgvVersion):$/;"	kind:member	line:125
 getStructure	Factories/SqlFactory/sqlGenerator.py	/^    def getStructure(self,edgvVersion):$/;"	kind:member	line:106
@@ -1252,9 +1256,9 @@ getTitle	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def
 getTitle	CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py	/^    def getTitle(self):$/;"	kind:member	line:110
 getTitle	CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py	/^    def getTitle(self):$/;"	kind:member	line:56
 getTitle	CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py	/^    def getTitle(self):$/;"	kind:member	line:56
-getTitle	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def getTitle(self):$/;"	kind:member	line:100
+getTitle	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def getTitle(self):$/;"	kind:member	line:115
 getTitle	CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py	/^    def getTitle(self):$/;"	kind:member	line:101
-getTitle	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def getTitle(self):$/;"	kind:member	line:141
+getTitle	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def getTitle(self):$/;"	kind:member	line:136
 getTreeBranchFromNode	Utils/utils.py	/^    def getTreeBranchFromNode(self, startNode, inputDict):$/;"	kind:member	line:202
 getType	CustomWidgets/tabDbSelectorWidget.py	/^    def getType(self):$/;"	kind:member	line:76
 getType	Factories/DbCreatorFactory/dbCreator.py	/^    def getType(self):$/;"	kind:member	line:45
@@ -1283,7 +1287,7 @@ getVertexNearEdgesStruct	Factories/SqlFactory/postgisSqlGenerator.py	/^    def g
 getViewType	CustomWidgets/permissionWidget.py	/^    def getViewType(self):$/;"	kind:member	line:106
 getWhoAmI	Factories/DbFactory/postgisDb.py	/^    def getWhoAmI(self, cl, id):$/;"	kind:member	line:1484
 getWhoAmI	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getWhoAmI(self, cl, id):$/;"	kind:member	line:698
-getWidgetIndexFromTreeItem	PostgisCustomization/createDatabaseCustomization.py	/^    def getWidgetIndexFromTreeItem(self, treeItem):$/;"	kind:member	line:166
+getWidgetIndexFromTreeItem	PostgisCustomization/createDatabaseCustomization.py	/^    def getWidgetIndexFromTreeItem(self, treeItem):$/;"	kind:member	line:170
 get_qgis_app	test/utilities.py	/^def get_qgis_app():$/;"	kind:function	line:15
 grantPermission	ServerManagementTools/permissionManager.py	/^    def grantPermission(self, dbName, permissionName, edgvVersion, userName):$/;"	kind:member	line:163
 grantPermissionWithProfileDict	ServerManagementTools/permissionManager.py	/^    def grantPermissionWithProfileDict(self, dbName, permissionName, userName, profileDict, updatePermission = False):$/;"	kind:member	line:173
@@ -1335,6 +1339,7 @@ installModelsAndScripts	dsg_tools.py	/^    def installModelsAndScripts(self):$/;
 instantiateAbstractDb	ServerManagementTools/permissionManager.py	/^    def instantiateAbstractDb(self, name):$/;"	kind:member	line:48
 instantiateAbstractDbs	ServerTools/batchDbManager.py	/^    def instantiateAbstractDbs(self):$/;"	kind:member	line:103
 instantiateAdminDb	ServerManagementTools/permissionManager.py	/^    def instantiateAdminDb(self, serverAbstractDb):$/;"	kind:member	line:126
+instantiateDomainSetter	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def instantiateDomainSetter(self, references = None, filter = None):$/;"	kind:member	line:101
 instantiateNewDb	Factories/DbCreatorFactory/postgisDbCreator.py	/^    def instantiateNewDb(self, dbName):$/;"	kind:member	line:33
 instantiateNewDb	Factories/DbCreatorFactory/spatialiteDbCreator.py	/^    def instantiateNewDb(self, dbPath):$/;"	kind:member	line:36
 instantiateProcessByName	ValidationTools/validationManager.py	/^    def instantiateProcessByName(self, processName):$/;"	kind:member	line:69
@@ -1469,7 +1474,7 @@ mergeDict	Utils/utils.py	/^    def mergeDict(self, dictionary1, dictionary2):$/;
 message	MilitarySimbologyTools/militarySimbologyDock.py	/^    def message(self):$/;"	kind:member	line:100
 militarySimbology.py	MilitarySimbologyTools/militarySimbology.py	1;"	kind:file	line:1
 militarySimbologyDock.py	MilitarySimbologyTools/militarySimbologyDock.py	1;"	kind:file	line:1
-minimizeConnectionWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def minimizeConnectionWidget(self):$/;"	kind:member	line:59
+minimizeConnectionWidget	PostgisCustomization/createDatabaseCustomization.py	/^    def minimizeConnectionWidget(self):$/;"	kind:member	line:63
 minimumAreaTool.py	ProductionTools/MinimumAreaTool/minimumAreaTool.py	1;"	kind:file	line:1
 models_and_scripts_installer.py	ToolboxTools/models_and_scripts_installer.py	1;"	kind:file	line:1
 necessity	ValidationTools/ValidationProcesses/spatialRuleEnforcer.py	/^    necessity = {0:True,$/;"	kind:variable	line:45
@@ -1495,13 +1500,12 @@ obtainLinkColumn	Factories/DbFactory/spatialiteDb.py	/^    def obtainLinkColumn(
 okSelected	LayerTools/load_by_class.py	/^    def okSelected(self):$/;"	kind:member	line:163
 okselecionadoCriaSpatialite	DbTools/SpatialiteTool/cria_spatialite_dialog.py	/^    def okselecionadoCriaSpatialite(self):$/;"	kind:member	line:136
 oldValidation	QGIS_Scripts/virtual_raster_inloco.py	/^oldValidation = s.value( "\/Projections\/defaultBehaviour")$/;"	kind:variable	line:70
-on_addAttributePushButton_clicked	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def on_addAttributePushButton_clicked(self):$/;"	kind:member	line:86
-on_addAttributePushButton_clicked	PostgisCustomization/createDatabaseCustomization.py	/^    def on_addAttributePushButton_clicked(self):$/;"	kind:member	line:88
+on_addAttributePushButton_clicked	PostgisCustomization/createDatabaseCustomization.py	/^    def on_addAttributePushButton_clicked(self):$/;"	kind:member	line:92
 on_addButton_clicked	ImageTools/processingTools.py	/^    def on_addButton_clicked(self):$/;"	kind:member	line:102
 on_addButton_clicked	ServerTools/viewServers.py	/^    def on_addButton_clicked(self):$/;"	kind:member	line:86
 on_addFolderButton_clicked	ImageTools/processingTools.py	/^    def on_addFolderButton_clicked(self):$/;"	kind:member	line:120
 on_addUpdatePushButton_clicked	ProductionTools/FieldToolBox/field_setup.py	/^    def on_addUpdatePushButton_clicked(self):$/;"	kind:member	line:289
-on_addValuePushButton_clicked	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def on_addValuePushButton_clicked(self):$/;"	kind:member	line:92
+on_addValuePushButton_clicked	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def on_addValuePushButton_clicked(self):$/;"	kind:member	line:87
 on_allAttributesCheckBox_stateChanged	CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py	/^    def on_allAttributesCheckBox_stateChanged(self, state):$/;"	kind:member	line:174
 on_allAttributesCheckBox_stateChanged	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def on_allAttributesCheckBox_stateChanged(self, state):$/;"	kind:member	line:198
 on_allAttributesCheckBox_stateChanged	CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py	/^    def on_allAttributesCheckBox_stateChanged(self, state):$/;"	kind:member	line:100
@@ -1519,12 +1523,12 @@ on_associatePushButton_clicked	ComplexTools/complexWindow.py	/^    def on_associ
 on_attributeComboBox_currentIndexChanged	CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py	/^    def on_attributeComboBox_currentIndexChanged(self, idx):$/;"	kind:member	line:129
 on_attributeRulesEditorPushButton_clicked	ValidationTools/validation_toolbox.py	/^    def on_attributeRulesEditorPushButton_clicked(self):$/;"	kind:member	line:272
 on_backInspectButton_clicked	ProductionTools/InspectFeatures/inspectFeatures.py	/^    def on_backInspectButton_clicked(self):$/;"	kind:member	line:89
-on_batchExportPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_batchExportPushButton_clicked(self):$/;"	kind:member	line:313
-on_batchImportPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_batchImportPushButton_clicked(self):$/;"	kind:member	line:329
-on_buttonBox_accepted	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def on_buttonBox_accepted(self):$/;"	kind:member	line:117
+on_batchExportPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_batchExportPushButton_clicked(self):$/;"	kind:member	line:281
+on_batchImportPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_batchImportPushButton_clicked(self):$/;"	kind:member	line:297
+on_buttonBox_accepted	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def on_buttonBox_accepted(self):$/;"	kind:member	line:133
 on_buttonBox_accepted	ImageTools/processingTools.py	/^    def on_buttonBox_accepted(self):$/;"	kind:member	line:59
 on_buttonBox_accepted	LayerTools/LoadLayersFromServer/loadLayersFromServer.py	/^    def on_buttonBox_accepted(self):$/;"	kind:member	line:133
-on_buttonBox_accepted	PostgisCustomization/createDatabaseCustomization.py	/^    def on_buttonBox_accepted(self):$/;"	kind:member	line:187
+on_buttonBox_accepted	PostgisCustomization/createDatabaseCustomization.py	/^    def on_buttonBox_accepted(self):$/;"	kind:member	line:195
 on_buttonBox_accepted	ProductionTools/FieldToolBox/field_setup.py	/^    def on_buttonBox_accepted(self):$/;"	kind:member	line:573
 on_buttonBox_accepted	ServerTools/createView.py	/^    def on_buttonBox_accepted(self):$/;"	kind:member	line:53
 on_buttonBox_accepted	ServerTools/selectStyles.py	/^    def on_buttonBox_accepted(self):$/;"	kind:member	line:62
@@ -1533,7 +1537,7 @@ on_buttonBox_accepted	UserTools/createProfileWithProfileManager.py	/^    def on_
 on_buttonBox_accepted	UserTools/create_profile.py	/^    def on_buttonBox_accepted(self):$/;"	kind:member	line:130
 on_buttonBox_accepted	ValidationTools/rules_editor.py	/^    def on_buttonBox_accepted(self):$/;"	kind:member	line:169
 on_buttonBox_clicked	ToolboxTools/models_and_scripts_installer.py	/^    def on_buttonBox_clicked(self, button):$/;"	kind:member	line:116
-on_buttonBox_rejected	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def on_buttonBox_rejected(self):$/;"	kind:member	line:113
+on_buttonBox_rejected	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def on_buttonBox_rejected(self):$/;"	kind:member	line:129
 on_buttonBox_rejected	LayerTools/LoadLayersFromServer/loadLayersFromServer.py	/^    def on_buttonBox_rejected(self):$/;"	kind:member	line:76
 on_cancelButton_clicked	DbTools/PostGISTool/postgisDBTool.py	/^    def on_cancelButton_clicked(self):$/;"	kind:member	line:88
 on_cancelButton_clicked	InventoryTools/inventoryTools.py	/^    def on_cancelButton_clicked(self):$/;"	kind:member	line:160
@@ -1545,17 +1549,17 @@ on_cancelPushButton_clicked	UserTools/profileUserManager.py	/^    def on_cancelP
 on_checkBoxAll_toggled	LayerTools/LoadLayersFromServer/loadLayersFromServer.py	/^    def on_checkBoxAll_toggled(self, toggled):$/;"	kind:member	line:214
 on_checkBox_stateChanged	ProductionTools/FieldToolBox/field_toolbox.py	/^    def on_checkBox_stateChanged(self, state):$/;"	kind:member	line:85
 on_classListWidget_currentRowChanged	ProductionTools/FieldToolBox/field_setup.py	/^    def on_classListWidget_currentRowChanged(self,row):$/;"	kind:member	line:129
-on_classNameLineEdit_editingFinished	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def on_classNameLineEdit_editingFinished(self):$/;"	kind:member	line:73
-on_classNameLineEdit_textEdited	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def on_classNameLineEdit_textEdited(self, newText):$/;"	kind:member	line:80
+on_classNameLineEdit_editingFinished	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def on_classNameLineEdit_editingFinished(self):$/;"	kind:member	line:88
+on_classNameLineEdit_textEdited	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def on_classNameLineEdit_textEdited(self, newText):$/;"	kind:member	line:95
 on_clearButton_clicked	UserTools/profile_editor.py	/^    def on_clearButton_clicked(self):$/;"	kind:member	line:199
-on_clearButton_clicked	UserTools/serverProfilesManager.py	/^    def on_clearButton_clicked(self):$/;"	kind:member	line:154
+on_clearButton_clicked	UserTools/serverProfilesManager.py	/^    def on_clearButton_clicked(self):$/;"	kind:member	line:145
 on_closeButton_clicked	ConversionTools/convert_database.py	/^    def on_closeButton_clicked(self):$/;"	kind:member	line:117
 on_closeButton_clicked	ServerTools/viewServers.py	/^    def on_closeButton_clicked(self):$/;"	kind:member	line:79
 on_closeButton_clicked	UserTools/assign_profiles.py	/^    def on_closeButton_clicked(self):$/;"	kind:member	line:139
 on_closeButton_clicked	UserTools/create_user.py	/^    def on_closeButton_clicked(self):$/;"	kind:member	line:88
 on_closeButton_clicked	UserTools/manageServerUsers.py	/^    def on_closeButton_clicked(self):$/;"	kind:member	line:119
 on_closeButton_clicked	UserTools/profile_editor.py	/^    def on_closeButton_clicked(self):$/;"	kind:member	line:234
-on_closeButton_clicked	UserTools/serverProfilesManager.py	/^    def on_closeButton_clicked(self):$/;"	kind:member	line:190
+on_closeButton_clicked	UserTools/serverProfilesManager.py	/^    def on_closeButton_clicked(self):$/;"	kind:member	line:158
 on_closeButton_clicked	UserTools/user_profiles.py	/^    def on_closeButton_clicked(self):$/;"	kind:member	line:282
 on_closePushButton_clicked	CustomWidgets/earthCoverageWidget.py	/^    def on_closePushButton_clicked(self):$/;"	kind:member	line:61
 on_closePushButton_clicked	ServerTools/batchDbManager.py	/^    def on_closePushButton_clicked(self):$/;"	kind:member	line:70
@@ -1573,10 +1577,9 @@ on_convertButton_clicked	ConversionTools/convert_database.py	/^    def on_conver
 on_copyFilesButton_clicked	InventoryTools/inventoryTools.py	/^    def on_copyFilesButton_clicked(self):$/;"	kind:member	line:131
 on_copyFilesCheckBox_stateChanged	InventoryTools/inventoryTools.py	/^    def on_copyFilesCheckBox_stateChanged(self, state):$/;"	kind:member	line:150
 on_createButton_clicked	UserTools/profile_editor.py	/^    def on_createButton_clicked(self):$/;"	kind:member	line:190
-on_createButton_clicked	UserTools/serverProfilesManager.py	/^    def on_createButton_clicked(self):$/;"	kind:member	line:145
 on_createConnectionPushButton_clicked	ServerTools/serverDBExplorer.py	/^    def on_createConnectionPushButton_clicked(self):$/;"	kind:member	line:128
 on_createNewServerPushButton_clicked	CustomWidgets/exploreServerWidget.py	/^    def on_createNewServerPushButton_clicked(self):  $/;"	kind:member	line:147
-on_createPermissionPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_createPermissionPushButton_clicked(self):$/;"	kind:member	line:212
+on_createPermissionPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_createPermissionPushButton_clicked(self):$/;"	kind:member	line:180
 on_createSqliteButton_clicked	MilitarySimbologyTools/militarySimbologyDock.py	/^    def on_createSqliteButton_clicked(self):$/;"	kind:member	line:59
 on_createUserButton_clicked	UserTools/create_user.py	/^    def on_createUserButton_clicked(self):$/;"	kind:member	line:58
 on_createUserButton_clicked	UserTools/manageServerUsers.py	/^    def on_createUserButton_clicked(self):$/;"	kind:member	line:73
@@ -1586,27 +1589,27 @@ on_customizeFromSQLFilePushButton_clicked	ServerTools/batchDbManager.py	/^    de
 on_databaseEdit_textEdited	DbTools/PostGISTool/postgisDBTool.py	/^    def on_databaseEdit_textEdited(self, text):$/;"	kind:member	line:191
 on_dbListWidget_currentItemChanged	ServerTools/exploreDb.py	/^    def on_dbListWidget_currentItemChanged(self, current, previous):$/;"	kind:member	line:123
 on_defineEarthCoverageButton_clicked	CustomWidgets/earthCoverageWidget.py	/^    def on_defineEarthCoverageButton_clicked(self):$/;"	kind:member	line:68
-on_deletePermissionPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_deletePermissionPushButton_clicked(self):$/;"	kind:member	line:245
+on_deletePermissionPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_deletePermissionPushButton_clicked(self):$/;"	kind:member	line:213
 on_deletePushButton_clicked	UserTools/profile_editor.py	/^    def on_deletePushButton_clicked(self):$/;"	kind:member	line:241
 on_deleteStyles_clicked	ServerTools/batchDbManager.py	/^    def on_deleteStyles_clicked(self):$/;"	kind:member	line:281
 on_disassociatePushButton_clicked	ComplexTools/complexWindow.py	/^    def on_disassociatePushButton_clicked(self):$/;"	kind:member	line:356
 on_domainComboBox_currentIndexChanged	CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py	/^    def on_domainComboBox_currentIndexChanged(self, idx):$/;"	kind:member	line:70
 on_domainComboBox_currentIndexChanged	CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py	/^    def on_domainComboBox_currentIndexChanged(self, idx):$/;"	kind:member	line:61
-on_domainListWidget_currentRowChanged	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def on_domainListWidget_currentRowChanged(self, idx):$/;"	kind:member	line:91
-on_domainNameLineEdit_editingFinished	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def on_domainNameLineEdit_editingFinished(self):$/;"	kind:member	line:79
-on_domainNameLineEdit_textEdited	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def on_domainNameLineEdit_textEdited(self, newText):$/;"	kind:member	line:86
+on_domainListWidget_currentRowChanged	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def on_domainListWidget_currentRowChanged(self, idx):$/;"	kind:member	line:107
+on_domainNameLineEdit_editingFinished	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def on_domainNameLineEdit_editingFinished(self):$/;"	kind:member	line:74
+on_domainNameLineEdit_textEdited	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def on_domainNameLineEdit_textEdited(self, newText):$/;"	kind:member	line:81
 on_drawShape_clicked	ProductionTools/MinimumAreaTool/minimumAreaTool.py	/^    def on_drawShape_clicked(self):$/;"	kind:member	line:102
 on_dropDatabasePushButton_clicked	ServerTools/batchDbManager.py	/^    def on_dropDatabasePushButton_clicked(self):$/;"	kind:member	line:143
 on_dropDatabasePushButton_clicked	ServerTools/exploreDb.py	/^    def on_dropDatabasePushButton_clicked(self):$/;"	kind:member	line:174
 on_editButton_clicked	ServerTools/viewServers.py	/^    def on_editButton_clicked(self):$/;"	kind:member	line:96
-on_exportPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_exportPushButton_clicked(self):$/;"	kind:member	line:292
-on_filterCheckBox_stateChanged	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def on_filterCheckBox_stateChanged(self, idx):$/;"	kind:member	line:79
+on_exportPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_exportPushButton_clicked(self):$/;"	kind:member	line:260
+on_filterCheckBox_stateChanged	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def on_filterCheckBox_stateChanged(self, idx):$/;"	kind:member	line:95
 on_filterEdit_textChanged	LayerTools/load_by_class.py	/^    def on_filterEdit_textChanged(self, text):$/;"	kind:member	line:113
 on_filterEdit_textChanged	ProductionTools/FieldToolBox/field_setup.py	/^    def on_filterEdit_textChanged(self, text):$/;"	kind:member	line:92
-on_filterLineEdit_textChanged	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def on_filterLineEdit_textChanged(self, text):$/;"	kind:member	line:103
+on_filterLineEdit_textChanged	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def on_filterLineEdit_textChanged(self, text):$/;"	kind:member	line:119
 on_filterLineEdit_textChanged	CustomWidgets/customSelector.py	/^    def on_filterLineEdit_textChanged(self, text):$/;"	kind:member	line:187
 on_historyButton_clicked	ValidationTools/validation_toolbox.py	/^    def on_historyButton_clicked(self):$/;"	kind:member	line:158
-on_importPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_importPushButton_clicked(self):$/;"	kind:member	line:275
+on_importPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_importPushButton_clicked(self):$/;"	kind:member	line:243
 on_importStylesPushButton_clicked	ServerTools/batchDbManager.py	/^    def on_importStylesPushButton_clicked(self):$/;"	kind:member	line:170
 on_inomLineEdit_textEdited	LayerTools/CreateFrameTool/ui_create_inom_dialog.py	/^    def on_inomLineEdit_textEdited(self,s):$/;"	kind:member	line:136
 on_inomRadioButton_toggled	LayerTools/CreateFrameTool/ui_create_inom_dialog.py	/^    def on_inomRadioButton_toggled(self, toggled):$/;"	kind:member	line:308
@@ -1642,7 +1645,7 @@ on_outputFolderButton_clicked	ImageTools/processingTools.py	/^    def on_outputF
 on_parentFolderButton_clicked	InventoryTools/inventoryTools.py	/^    def on_parentFolderButton_clicked(self):$/;"	kind:member	line:123
 on_postgisEdgvComboFilter_currentIndexChanged	CustomWidgets/customServerConnectionWidget.py	/^    def on_postgisEdgvComboFilter_currentIndexChanged(self):$/;"	kind:member	line:211
 on_predicateCombo_currentIndexChanged	ValidationTools/rules_editor.py	/^    def on_predicateCombo_currentIndexChanged(self, id):$/;"	kind:member	line:157
-on_profilesListWidget_itemSelectionChanged	UserTools/serverProfilesManager.py	/^    def on_profilesListWidget_itemSelectionChanged(self):$/;"	kind:member	line:227
+on_profilesListWidget_itemSelectionChanged	UserTools/serverProfilesManager.py	/^    def on_profilesListWidget_itemSelectionChanged(self):$/;"	kind:member	line:195
 on_pushButtonCancel_clicked	LayerTools/loadAuxStruct.py	/^    def on_pushButtonCancel_clicked(self):$/;"	kind:member	line:72
 on_pushButtonDeselectAll_clicked	CustomWidgets/customSelector.py	/^    def on_pushButtonDeselectAll_clicked(self):$/;"	kind:member	line:170
 on_pushButtonDeselectOne_clicked	CustomWidgets/customSelector.py	/^    def on_pushButtonDeselectOne_clicked(self):$/;"	kind:member	line:152
@@ -1650,7 +1653,7 @@ on_pushButtonOk_clicked	LayerTools/loadAuxStruct.py	/^    def on_pushButtonOk_cl
 on_pushButtonOpenFile_clicked	CustomWidgets/connectionWidget.py	/^    def on_pushButtonOpenFile_clicked(self):  $/;"	kind:member	line:132
 on_pushButtonSelectAll_clicked	CustomWidgets/customSelector.py	/^    def on_pushButtonSelectAll_clicked(self):$/;"	kind:member	line:134
 on_pushButtonSelectOne_clicked	CustomWidgets/customSelector.py	/^    def on_pushButtonSelectOne_clicked(self):$/;"	kind:member	line:116
-on_referencesPushButton_clicked	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def on_referencesPushButton_clicked(self):$/;"	kind:member	line:77
+on_referencesPushButton_clicked	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def on_referencesPushButton_clicked(self):$/;"	kind:member	line:95
 on_removeAllButton_clicked	UserTools/user_profiles.py	/^    def on_removeAllButton_clicked(self):$/;"	kind:member	line:306
 on_removeButton_clicked	ImageTools/processingTools.py	/^    def on_removeButton_clicked(self):$/;"	kind:member	line:110
 on_removeButton_clicked	ServerTools/viewServers.py	/^    def on_removeButton_clicked(self):$/;"	kind:member	line:110
@@ -1658,12 +1661,12 @@ on_removeButton_clicked	UserTools/assign_profiles.py	/^    def on_removeButton_c
 on_removeButton_clicked	UserTools/user_profiles.py	/^    def on_removeButton_clicked(self):$/;"	kind:member	line:340
 on_removeJson_clicked	UserTools/assign_profiles.py	/^    def on_removeJson_clicked(self):$/;"	kind:member	line:183
 on_removeMissingPushButton_clicked	ServerTools/serverDBExplorer.py	/^    def on_removeMissingPushButton_clicked(self):$/;"	kind:member	line:165
-on_removePushButton_clicked	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def on_removePushButton_clicked(self):$/;"	kind:member	line:93
+on_removePushButton_clicked	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def on_removePushButton_clicked(self):$/;"	kind:member	line:108
 on_removeRuleButton_clicked	ValidationTools/rules_editor.py	/^    def on_removeRuleButton_clicked(self):$/;"	kind:member	line:84
-on_removeSelectedPushButton_clicked	PostgisCustomization/createDatabaseCustomization.py	/^    def on_removeSelectedPushButton_clicked(self):$/;"	kind:member	line:178
+on_removeSelectedPushButton_clicked	PostgisCustomization/createDatabaseCustomization.py	/^    def on_removeSelectedPushButton_clicked(self):$/;"	kind:member	line:184
 on_removeUserButton_clicked	UserTools/manageServerUsers.py	/^    def on_removeUserButton_clicked(self):$/;"	kind:member	line:82
 on_removeUserButton_clicked	UserTools/user_profiles.py	/^    def on_removeUserButton_clicked(self):$/;"	kind:member	line:188
-on_removeValuePushButton_clicked	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def on_removeValuePushButton_clicked(self):$/;"	kind:member	line:103
+on_removeValuePushButton_clicked	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def on_removeValuePushButton_clicked(self):$/;"	kind:member	line:98
 on_ruleEnforcerRadio_toggled	ValidationTools/validation_toolbox.py	/^    def on_ruleEnforcerRadio_toggled(self, checked):$/;"	kind:member	line:261
 on_ruleEnforcerRadio_toggled	ValidationTools/validation_toolbox.py	/^    def on_ruleEnforcerRadio_toggled(self, checked):$/;"	kind:member	line:285
 on_rulesEditorButton_clicked	ValidationTools/validation_toolbox.py	/^    def on_rulesEditorButton_clicked(self):$/;"	kind:member	line:249
@@ -1671,15 +1674,14 @@ on_runButton_clicked	ValidationTools/validation_toolbox.py	/^    def on_runButto
 on_saveButton_clicked	DbTools/PostGISTool/postgisDBTool.py	/^    def on_saveButton_clicked(self):$/;"	kind:member	line:74
 on_saveButton_clicked	ServerTools/serverConfigurator.py	/^    def on_saveButton_clicked(self):$/;"	kind:member	line:51
 on_saveButton_clicked	UserTools/profile_editor.py	/^    def on_saveButton_clicked(self):$/;"	kind:member	line:212
-on_saveButton_clicked	UserTools/serverProfilesManager.py	/^    def on_saveButton_clicked(self):$/;"	kind:member	line:167
-on_saveButton_clicked	UserTools/serverProfilesManager.py	/^    def on_saveButton_clicked(self):$/;"	kind:member	line:261
+on_saveButton_clicked	UserTools/serverProfilesManager.py	/^    def on_saveButton_clicked(self):$/;"	kind:member	line:229
 on_scaleCombo_currentIndexChanged	LayerTools/CreateFrameTool/ui_create_inom_dialog.py	/^    def on_scaleCombo_currentIndexChanged(self):$/;"	kind:member	line:280
 on_schemaComboBox_currentIndexChanged	CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py	/^    def on_schemaComboBox_currentIndexChanged(self, idx):$/;"	kind:member	line:60
 on_schemaComboBox_currentIndexChanged	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def on_schemaComboBox_currentIndexChanged(self, idx):$/;"	kind:member	line:86
 on_schemaComboBox_currentIndexChanged	CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py	/^    def on_schemaComboBox_currentIndexChanged(self, idx):$/;"	kind:member	line:56
 on_schemaComboBox_currentIndexChanged	CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py	/^    def on_schemaComboBox_currentIndexChanged(self, idx):$/;"	kind:member	line:70
 on_selectAllPushButton_clicked	ServerTools/serverDBExplorer.py	/^    def on_selectAllPushButton_clicked(self):$/;"	kind:member	line:155
-on_selectFilePushButton_clicked	CustomWidgets/selectFileWidget.py	/^    def on_selectFilePushButton_clicked(self):$/;"	kind:member	line:55
+on_selectFilePushButton_clicked	CustomWidgets/selectFileWidget.py	/^    def on_selectFilePushButton_clicked(self):$/;"	kind:member	line:50
 on_serverConnectionTab_currentChanged	CustomWidgets/customServerConnectionWidget.py	/^    def on_serverConnectionTab_currentChanged(self, currentTab):$/;"	kind:member	line:152
 on_serversCombo_currentIndexChanged	CustomWidgets/exploreServerWidget.py	/^    def on_serversCombo_currentIndexChanged(self):$/;"	kind:member	line:167
 on_serversCombo_currentIndexChanged	DbTools/PostGISTool/postgisDBTool.py	/^    def on_serversCombo_currentIndexChanged(self, index):$/;"	kind:member	line:185
@@ -1698,15 +1700,15 @@ on_tabWidget_currentChanged	ServerTools/batchDbManager.py	/^    def on_tabWidget
 on_tableComboBox_currentIndexChanged	CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py	/^    def on_tableComboBox_currentIndexChanged(self, idx):$/;"	kind:member	line:77
 on_tableComboBox_currentIndexChanged	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def on_tableComboBox_currentIndexChanged(self, idx):$/;"	kind:member	line:102
 on_tableComboBox_currentIndexChanged	CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py	/^    def on_tableComboBox_currentIndexChanged(self, idx):$/;"	kind:member	line:72
-on_tableWidget_itemChanged	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def on_tableWidget_itemChanged(self, widgetItem):$/;"	kind:member	line:111
+on_tableWidget_itemChanged	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def on_tableWidget_itemChanged(self, widgetItem):$/;"	kind:member	line:106
 on_testButton_clicked	ServerTools/viewServers.py	/^    def on_testButton_clicked(self):$/;"	kind:member	line:122
 on_theSelectionModel_selectionChanged	ValidationTools/validation_toolbox.py	/^    def on_theSelectionModel_selectionChanged(self):$/;"	kind:member	line:86
 on_treeWidget_currentItemChanged	ProductionTools/FieldToolBox/field_setup.py	/^    def on_treeWidget_currentItemChanged(self, previous, current):$/;"	kind:member	line:502
-on_typeComboBox_currentIndexChanged	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def on_typeComboBox_currentIndexChanged(self, idx):$/;"	kind:member	line:67
+on_typeComboBox_currentIndexChanged	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def on_typeComboBox_currentIndexChanged(self, idx):$/;"	kind:member	line:84
 on_validationTabWidget_currentChanged	ValidationTools/validation_toolbox.py	/^    def on_validationTabWidget_currentChanged(self):$/;"	kind:member	line:238
 on_versionCombo_currentIndexChanged	UserTools/createProfileWithProfileManager.py	/^    def on_versionCombo_currentIndexChanged(self):$/;"	kind:member	line:149
 on_versionCombo_currentIndexChanged	UserTools/create_profile.py	/^    def on_versionCombo_currentIndexChanged(self):$/;"	kind:member	line:147
-on_versionSelectionComboBox_currentIndexChanged	UserTools/serverProfilesManager.py	/^    def on_versionSelectionComboBox_currentIndexChanged(self):$/;"	kind:member	line:197
+on_versionSelectionComboBox_currentIndexChanged	UserTools/serverProfilesManager.py	/^    def on_versionSelectionComboBox_currentIndexChanged(self):$/;"	kind:member	line:165
 on_zoomButton_clicked	ComplexTools/complexWindow.py	/^    def on_zoomButton_clicked(self):$/;"	kind:member	line:209
 openRaster	ImageTools/raster_processing.py	/^    def openRaster(self, file):$/;"	kind:member	line:41
 openRaster	QGIS_Scripts/HSV_fusion.py	/^    def openRaster(self, file):$/;"	kind:member	line:42
@@ -1740,12 +1742,15 @@ populateCentroidLyr	ValidationTools/ValidationProcesses/closeEarthCoveragePolygo
 populateClassList	ProductionTools/FieldToolBox/field_setup.py	/^    def populateClassList(self):$/;"	kind:member	line:78
 populateClasses	ValidationTools/setupEarthCoverage.py	/^    def populateClasses(self):$/;"	kind:member	line:116
 populateComboBox	ComplexTools/complexWindow.py	/^    def populateComboBox(self):$/;"	kind:member	line:148
-populateCustomizationCombo	PostgisCustomization/createDatabaseCustomization.py	/^    def populateCustomizationCombo(self):$/;"	kind:member	line:65
-populateDefaultCombo	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def populateDefaultCombo(self, domainName, domainDict, filterClause):$/;"	kind:member	line:86
+populateCustomizationCombo	PostgisCustomization/createDatabaseCustomization.py	/^    def populateCustomizationCombo(self):$/;"	kind:member	line:69
+populateDefaultCombo	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def populateDefaultCombo(self, domainName, domainDict, filterClause):$/;"	kind:member	line:107
 populateDelimiters	ValidationTools/setupEarthCoverage.py	/^    def populateDelimiters(self):$/;"	kind:member	line:127
 populateDomainCombo	CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py	/^    def populateDomainCombo(self):$/;"	kind:member	line:62
 populateDomainCombo	CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py	/^    def populateDomainCombo(self):$/;"	kind:member	line:53
-populateDomainList	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def populateDomainList(self):$/;"	kind:member	line:55
+populateDomainList	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def populateDomainList(self):$/;"	kind:member	line:71
+populateFromJsonTag	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def populateFromJsonTag(self, jsonTag):$/;"	kind:member	line:55
+populateFromJsonTag	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def populateFromJsonTag(self, references, filter):$/;"	kind:member	line:56
+populateFromJsonTag	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def populateFromJsonTag(self, jsonTag):$/;"	kind:member	line:61
 populateIndex	ProductionTools/ContourTool/contour_tool.py	/^    def populateIndex(self):$/;"	kind:member	line:31
 populateIndex	QGIS_Scripts/virtual_raster.py	/^def populateIndex(idx, layer):$/;"	kind:function	line:77
 populateInheritanceTree	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def populateInheritanceTree(self, nodeList):$/;"	kind:member	line:60
@@ -1763,7 +1768,7 @@ populateSchemaCombo	CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.p
 populateSchemaCombo	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def populateSchemaCombo(self):$/;"	kind:member	line:69
 populateSchemaCombo	CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py	/^    def populateSchemaCombo(self):$/;"	kind:member	line:47
 populateSchemaCombo	CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py	/^    def populateSchemaCombo(self):$/;"	kind:member	line:62
-populateSchemaCombo	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def populateSchemaCombo(self):$/;"	kind:member	line:65
+populateSchemaCombo	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def populateSchemaCombo(self):$/;"	kind:member	line:80
 populateServersCombo	CustomWidgets/exploreServerWidget.py	/^    def populateServersCombo(self):$/;"	kind:member	line:155
 populateServersCombo	DbTools/PostGISTool/postgisDBTool.py	/^    def populateServersCombo(self):$/;"	kind:member	line:248
 populateSingleValue	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    populateSingleValue = pyqtSignal()$/;"	kind:variable	line:39
@@ -1779,6 +1784,7 @@ populateUsers	UserTools/manageServerUsers.py	/^    def populateUsers(self):$/;"	
 populateUsers	UserTools/user_profiles.py	/^    def populateUsers(self):$/;"	kind:member	line:125
 populateWidgetWithListValue	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def populateWidgetWithListValue(self):$/;"	kind:member	line:158
 populateWidgetWithSingleValue	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def populateWidgetWithSingleValue(self):$/;"	kind:member	line:120
+populateWidgetsFromSelectedFile	PostgisCustomization/createDatabaseCustomization.py	/^    def populateWidgetsFromSelectedFile(self):$/;"	kind:member	line:232
 populateWithDatabasePerspective	CustomWidgets/permissionWidget.py	/^    def populateWithDatabasePerspective(self):$/;"	kind:member	line:75
 populateWithUserPerspective	CustomWidgets/permissionWidget.py	/^    def populateWithUserPerspective(self):$/;"	kind:member	line:88
 postProcess	ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py	/^    def postProcess(self):$/;"	kind:member	line:40
@@ -1864,7 +1870,7 @@ recursiveSnap	Factories/DbFactory/postgisDb.py	/^    def recursiveSnap(self, cla
 recursiveSnapProcess.py	ValidationTools/ValidationProcesses/recursiveSnapProcess.py	1;"	kind:file	line:1
 refresh	CustomWidgets/permissionWidget.py	/^    def refresh(self):$/;"	kind:member	line:62
 refreshCombo	ProductionTools/MinimumAreaTool/minimumAreaTool.py	/^    def refreshCombo(self):$/;"	kind:member	line:132
-refreshProfileList	UserTools/serverProfilesManager.py	/^    def refreshProfileList(self):$/;"	kind:member	line:200
+refreshProfileList	UserTools/serverProfilesManager.py	/^    def refreshProfileList(self):$/;"	kind:member	line:168
 refreshScreen	UserTools/create_user.py	/^    def refreshScreen(self):$/;"	kind:member	line:48
 relateAreasWithCentroids	ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py	/^    def relateAreasWithCentroids(self, cl, areaLyr, centroidLyr, relateDict, centroidIdx):$/;"	kind:member	line:174
 removeAllLayers	test/qgis_interface.py	/^    def removeAllLayers(self):$/;"	kind:member	line:98
@@ -1901,7 +1907,7 @@ res	plugin_upload.py	/^        res = raw_input()$/;"	kind:variable	line:99
 reset	ProductionTools/ContourTool/dsg_line_tool.py	/^    def reset(self):$/;"	kind:member	line:54
 reset	ProductionTools/MinimumAreaTool/shapeTool.py	/^    def reset(self):$/;"	kind:member	line:60
 resetAll	CustomWidgets/customServerConnectionWidget.py	/^    resetAll = pyqtSignal()$/;"	kind:variable	line:44
-resetAll	CustomWidgets/selectFileWidget.py	/^    def resetAll(self):$/;"	kind:member	line:71
+resetAll	CustomWidgets/selectFileWidget.py	/^    def resetAll(self):$/;"	kind:member	line:66
 resetInterface	LayerTools/LoadLayersFromServer/loadLayersFromServer.py	/^    def resetInterface(self):$/;"	kind:member	line:66
 resources.py	resources.py	1;"	kind:file	line:1
 resources_rc.py	resources_rc.py	1;"	kind:file	line:1
@@ -1952,7 +1958,7 @@ serverProfilesManager.py	UserTools/serverProfilesManager.py	1;"	kind:file	line:1
 setAttributesFromButton	ProductionTools/FieldToolBox/field_toolbox.py	/^    def setAttributesFromButton(self, featureId):$/;"	kind:member	line:268
 setAvailableProcesses	ValidationTools/validationManager.py	/^    def setAvailableProcesses(self):$/;"	kind:member	line:50
 setCRS	CustomWidgets/connectionWidget.py	/^    def setCRS(self):$/;"	kind:member	line:206
-setCaption	CustomWidgets/selectFileWidget.py	/^    def setCaption(self, caption):$/;"	kind:member	line:77
+setCaption	CustomWidgets/selectFileWidget.py	/^    def setCaption(self, caption):$/;"	kind:member	line:72
 setColor	ProductionTools/MinimumAreaTool/shapeTool.py	/^    def setColor(self):$/;"	kind:member	line:49
 setConfStyleForm	MilitarySimbologyTools/militarySimbology.py	/^    def setConfStyleForm(self, tableId):$/;"	kind:member	line:59
 setConversion	ConversionTools/convert_database.py	/^    def setConversion(self,conversionType):$/;"	kind:member	line:70
@@ -1972,9 +1978,9 @@ setEarthCoverageDict	Factories/DbFactory/postgisDb.py	/^    def setEarthCoverage
 setEarthCoverageDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def setEarthCoverageDict(self,earthDict):$/;"	kind:member	line:682
 setEditorData	ComplexTools/manageComplex.py	/^    def setEditorData(self, editor, index):$/;"	kind:member	line:154
 setEditorData	ComplexTools/manageComplex.py	/^    def setEditorData(self, editor, index):$/;"	kind:member	line:202
-setEnabled	UserTools/serverProfilesManager.py	/^    def setEnabled(self, enabled):$/;"	kind:member	line:221
+setEnabled	UserTools/serverProfilesManager.py	/^    def setEnabled(self, enabled):$/;"	kind:member	line:189
 setFeatureAttributes	ProductionTools/FieldToolBox/field_toolbox.py	/^    def setFeatureAttributes(self, newFeature, editBuffer = None):$/;"	kind:member	line:285
-setFilter	CustomWidgets/selectFileWidget.py	/^    def setFilter(self,filter):$/;"	kind:member	line:80
+setFilter	CustomWidgets/selectFileWidget.py	/^    def setFilter(self,filter):$/;"	kind:member	line:75
 setFlagUnvisited	ValidationTools/validation_toolbox.py	/^    def setFlagUnvisited(self):$/;"	kind:member	line:98
 setFlagVisited	ValidationTools/validation_toolbox.py	/^    def setFlagVisited(self):$/;"	kind:member	line:92
 setFromList	CustomWidgets/customSelector.py	/^    def setFromList(self, fromList, unique = False):$/;"	kind:member	line:66
@@ -2007,13 +2013,13 @@ setTitle	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def
 setTitle	CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py	/^    def setTitle(self, title):$/;"	kind:member	line:113
 setTitle	CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py	/^    def setTitle(self, title):$/;"	kind:member	line:59
 setTitle	CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py	/^    def setTitle(self, title):$/;"	kind:member	line:59
-setTitle	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def setTitle(self, title):$/;"	kind:member	line:103
+setTitle	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def setTitle(self, title):$/;"	kind:member	line:118
 setTitle	CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py	/^    def setTitle(self, title):$/;"	kind:member	line:104
-setTitle	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def setTitle(self, title):$/;"	kind:member	line:144
+setTitle	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def setTitle(self, title):$/;"	kind:member	line:139
 setTitle	CustomWidgets/customSelector.py	/^    def setTitle(self,title):$/;"	kind:member	line:109
-setTitle	CustomWidgets/selectFileWidget.py	/^    def setTitle(self,text):$/;"	kind:member	line:74
+setTitle	CustomWidgets/selectFileWidget.py	/^    def setTitle(self,text):$/;"	kind:member	line:69
 setToList	CustomWidgets/customSelector.py	/^    def setToList(self, toList):$/;"	kind:member	line:101
-setType	CustomWidgets/selectFileWidget.py	/^    def setType(self,type):$/;"	kind:member	line:83
+setType	CustomWidgets/selectFileWidget.py	/^    def setType(self,type):$/;"	kind:member	line:78
 setUp	test/test_dsg_tools_dialog.py	/^    def setUp(self):$/;"	kind:member	line:28
 setUp	test/test_resources.py	/^    def setUp(self):$/;"	kind:member	line:24
 setUp	test/test_translations.py	/^    def setUp(self):$/;"	kind:member	line:27
@@ -2082,8 +2088,8 @@ suite	test/test_dsg_tools_dialog.py	/^    suite = unittest.makeSuite(DsgToolsDia
 suite	test/test_resources.py	/^    suite = unittest.makeSuite(DsgToolsResourcesTest)$/;"	kind:variable	line:39
 suite	test/test_translations.py	/^    suite = unittest.makeSuite(SafeTranslationsTest)$/;"	kind:variable	line:53
 tabDbSelectorWidget.py	CustomWidgets/tabDbSelectorWidget.py	1;"	kind:file	line:1
-tableHasDuplicatedCode	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def tableHasDuplicatedCode(self):$/;"	kind:member	line:173
-tableHasEmptyValue	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def tableHasEmptyValue(self):$/;"	kind:member	line:166
+tableHasDuplicatedCode	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def tableHasDuplicatedCode(self):$/;"	kind:member	line:168
+tableHasEmptyValue	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def tableHasEmptyValue(self):$/;"	kind:member	line:161
 tearDown	test/test_dsg_tools_dialog.py	/^    def tearDown(self):$/;"	kind:member	line:32
 tearDown	test/test_resources.py	/^    def tearDown(self):$/;"	kind:member	line:28
 tearDown	test/test_translations.py	/^    def tearDown(self):$/;"	kind:member	line:32
@@ -2125,7 +2131,7 @@ updateDbLineEdit	ValidationTools/validation_toolbox.py	/^    def updateDbLineEdi
 updateDbSRID	Factories/DbFactory/postgisDb.py	/^    def updateDbSRID(self, srid):$/;"	kind:member	line:2164
 updateDbSRID	Factories/SqlFactory/postgisSqlGenerator.py	/^    def updateDbSRID(self, srid):$/;"	kind:member	line:984
 updateGeometries	Factories/DbFactory/postgisDb.py	/^    def updateGeometries(self, tableSchema, tableName, tuplas, epsg):$/;"	kind:member	line:1326
-updateInterface	UserTools/serverProfilesManager.py	/^    def updateInterface(self, profileName, edgvVersion):$/;"	kind:member	line:237
+updateInterface	UserTools/serverProfilesManager.py	/^    def updateInterface(self, profileName, edgvVersion):$/;"	kind:member	line:205
 updateLayer	ProductionTools/ContourTool/calc_contour.py	/^    def updateLayer(self, geom):$/;"	kind:member	line:98
 updateLayerOnDisassociate	ComplexTools/complexWindow.py	/^    def updateLayerOnDisassociate(self, layer, aggregated_class, link_column, id):$/;"	kind:member	line:333
 updateLayersFromDbs	LayerTools/LoadLayersFromServer/loadLayersFromServer.py	/^    def updateLayersFromDbs(self, type, dbList):$/;"	kind:member	line:79
@@ -2144,33 +2150,34 @@ user_profiles.py	UserTools/user_profiles.py	1;"	kind:file	line:1
 username	plugin_upload.py	/^        username = getpass.getuser()$/;"	kind:variable	line:97
 utilities.py	test/utilities.py	1;"	kind:file	line:1
 utils.py	Utils/utils.py	1;"	kind:file	line:1
-validate	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def validate(self):$/;"	kind:member	line:99
+validate	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def validate(self):$/;"	kind:member	line:120
 validate	CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py	/^    def validate(self):$/;"	kind:member	line:194
 validate	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def validate(self):$/;"	kind:member	line:230
 validate	CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py	/^    def validate(self):$/;"	kind:member	line:116
 validate	CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py	/^    def validate(self):$/;"	kind:member	line:92
 validate	CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py	/^    def validate(self):$/;"	kind:member	line:89
-validate	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def validate(self):$/;"	kind:member	line:112
+validate	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def validate(self):$/;"	kind:member	line:127
 validate	CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py	/^    def validate(self):$/;"	kind:member	line:107
-validate	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def validate(self):$/;"	kind:member	line:147
+validate	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def validate(self):$/;"	kind:member	line:142
 validate	CustomWidgets/databaseParameterWidget.py	/^    def validate(self):$/;"	kind:member	line:76
 validate	CustomWidgets/tabDbSelectorWidget.py	/^    def validate(self):$/;"	kind:member	line:54
 validate	PostgisCustomization/CustomJSONTools/customJSONValidator.py	/^    def validate(self):$/;"	kind:member	line:45
 validate	PostgisCustomization/CustomJSONValidator/customJSONValidator.py	/^    def validate(self):$/;"	kind:member	line:45
 validateCombos	ProductionTools/MinimumAreaTool/minimumAreaTool.py	/^    def validateCombos(self,scale,size,shape):$/;"	kind:member	line:138
-validateDiagnosis	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def validateDiagnosis(self):$/;"	kind:member	line:107
+validateDiagnosis	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def validateDiagnosis(self):$/;"	kind:member	line:128
 validateDiagnosis	CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py	/^    def validateDiagnosis(self):$/;"	kind:member	line:216
 validateDiagnosis	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def validateDiagnosis(self):$/;"	kind:member	line:254
 validateDiagnosis	CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py	/^    def validateDiagnosis(self):$/;"	kind:member	line:131
 validateDiagnosis	CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py	/^    def validateDiagnosis(self):$/;"	kind:member	line:101
 validateDiagnosis	CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py	/^    def validateDiagnosis(self):$/;"	kind:member	line:97
-validateDiagnosis	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def validateDiagnosis(self):$/;"	kind:member	line:121
+validateDiagnosis	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def validateDiagnosis(self):$/;"	kind:member	line:136
 validateDiagnosis	CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py	/^    def validateDiagnosis(self):$/;"	kind:member	line:119
-validateDiagnosis	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def validateDiagnosis(self):$/;"	kind:member	line:156
+validateDiagnosis	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def validateDiagnosis(self):$/;"	kind:member	line:151
 validateDsgToolsClassNames	PostgisCustomization/CustomJSONTools/customJSONValidator.py	/^    def validateDsgToolsClassNames(self):$/;"	kind:member	line:39
 validateDsgToolsClassNames	PostgisCustomization/CustomJSONValidator/customJSONValidator.py	/^    def validateDsgToolsClassNames(self):$/;"	kind:member	line:39
 validateGeometricPrimitives	PostgisCustomization/CustomJSONTools/customJSONValidator.py	/^    def validateGeometricPrimitives(self):$/;"	kind:member	line:42
 validateGeometricPrimitives	PostgisCustomization/CustomJSONValidator/customJSONValidator.py	/^    def validateGeometricPrimitives(self):$/;"	kind:member	line:42
+validateJsonDict	PostgisCustomization/createDatabaseCustomization.py	/^    def validateJsonDict(self, customJsonDict):$/;"	kind:member	line:214
 validateJsonProfile	ServerManagementTools/permissionManager.py	/^    def validateJsonProfile(self, inputJsonDict):$/;"	kind:member	line:337
 validateMI	LayerTools/CreateFrameTool/ui_create_inom_dialog.py	/^    def validateMI(self):$/;"	kind:member	line:218
 validatePage	DbTools/BatchDbCreator/createBatchFromCsv.py	/^    def validatePage(self):$/;"	kind:member	line:74

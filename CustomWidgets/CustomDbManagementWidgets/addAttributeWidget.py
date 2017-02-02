@@ -40,7 +40,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'addAttributeWidget.ui'))
 
 class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
-    def __init__(self, abstractDb, jsonTag=None, parent = None):
+    def __init__(self, abstractDb, jsonTag = None, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.abstractDb = abstractDb
@@ -66,11 +66,11 @@ class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
             else:
                 idx = self.typeComboBox.findText(jsonTag['attrType'], flags = Qt.MatchExactly)
                 self.typeComboBox.setCurrentIndex(idx)
-            if jsonTag['notNull']:
+            if not jsonTag['isNullable']:
                 self.notNullcheckBox.setCheckState(2)
             if jsonTag['defaultValue']:
-                defaultText = [i for i in self.domainSetter.domainDict.keys() if self.domainSetter.domainDict[i] == jsonTag['defaultValue'] ]
-                idx = self.typeComboBox.findText(defaultText, flags = Qt.MatchExactly)
+                defaultText = [i for i in self.domainSetter.domainDict.keys() if self.domainSetter.domainDict[i] == jsonTag['defaultValue'] ][0]
+                idx = self.defaultComboBox.findText(defaultText, flags = Qt.MatchExactly)
                 self.defaultComboBox.setCurrentIndex(idx)
     
     def enableItems(self, enabled):
@@ -101,7 +101,9 @@ class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
     def instantiateDomainSetter(self, references = None, filter = None):
         self.domainSetter = DomainSetter(self.abstractDb, references = references, filter = filter)
         self.domainSetter.domainChanged.connect(self.populateDefaultCombo)
-        self.domainSetter.exec_()
+        self.domainSetter.applyChanges()
+        if not references or not filter:
+            self.domainSetter.exec_()
 
     @pyqtSlot(str, dict, list)
     def populateDefaultCombo(self, domainName, domainDict, filterClause):

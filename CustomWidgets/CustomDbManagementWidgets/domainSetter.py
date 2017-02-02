@@ -58,15 +58,15 @@ class DomainSetter(QtGui.QDialog, FORM_CLASS):
             item = self.domainListWidget.findItems(references, Qt.MatchExactly)
             if isinstance(item,list):
                 item = item[0]
-            self.domainListWiget.setCurrentItem(item)
+            self.domainListWidget.setCurrentItem(item)
         if filter <> []:
             codeNameList = [i for i in self.domainDict.keys() if self.domainDict[i] in filter]
             for codeName in codeNameList:
-                item = self.filterListWidget.findItems(references, Qt.MatchExactly)
+                item = self.filterListWidget.findItems(codeName, Qt.MatchExactly)
                 if isinstance(item,list):
                     item = item[0]
                 item.setCheckState(QtCore.Qt.Checked)
-
+            self.applyChanges()
 
     def populateDomainList(self):
         self.domainTableList = self.abstractDb.getDomainTables()
@@ -129,8 +129,8 @@ class DomainSetter(QtGui.QDialog, FORM_CLASS):
     def on_buttonBox_rejected(self):
         self.clearAll()
 
-    @pyqtSlot()
-    def on_buttonBox_accepted(self):
+    @pyqtSlot(name='on_buttonBox_accepted')
+    def applyChanges(self):
         for idx in range(self.filterListWidget.__len__()):
             item = self.filterListWidget.item(idx)
             if item.checkState() == 2:
