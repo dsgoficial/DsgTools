@@ -101,9 +101,10 @@ class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
     def instantiateDomainSetter(self, references = None, filter = None):
         self.domainSetter = DomainSetter(self.abstractDb, references = references, filter = filter)
         self.domainSetter.domainChanged.connect(self.populateDefaultCombo)
-        self.domainSetter.applyChanges()
         if not references or not filter:
             self.domainSetter.exec_()
+        else:
+            self.domainSetter.applyChanges()
 
     @pyqtSlot(str, dict, list)
     def populateDefaultCombo(self, domainName, domainDict, filterClause):

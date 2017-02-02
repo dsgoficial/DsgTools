@@ -59,7 +59,7 @@ class DomainSetter(QtGui.QDialog, FORM_CLASS):
             if isinstance(item,list):
                 item = item[0]
             self.domainListWidget.setCurrentItem(item)
-        if filter <> []:
+        if filter:
             codeNameList = [i for i in self.domainDict.keys() if self.domainDict[i] in filter]
             for codeName in codeNameList:
                 item = self.filterListWidget.findItems(codeName, Qt.MatchExactly)
