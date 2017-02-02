@@ -140,15 +140,6 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         ret['read'] = str(item.checkState(1))
         ret['write'] = str(item.checkState(2))
         return ret
-    
-    @pyqtSlot(bool)
-    def on_createButton_clicked(self):
-        '''
-        Slot that opens the create profile dialog
-        '''
-        dlg = CreateProfile()
-        dlg.profileCreated.connect(self.updateInterface)
-        dlg.exec_()
         
     @pyqtSlot(bool)
     def on_clearButton_clicked(self):

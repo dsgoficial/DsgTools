@@ -26,7 +26,7 @@ from qgis.core import QgsMessageLog
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
+from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from PyQt4.QtSql import QSqlQuery
 
 # DSGTools imports
@@ -40,14 +40,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'addAttributeWidget.ui'))
 
 class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
-    def __init__(self, abstractDb, parent = None):
+    def __init__(self, abstractDb, jsonTag=None, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.abstractDb = abstractDb
         self.setupUi(self)
         regex = QtCore.QRegExp('[a-z]*')
@@ -55,6 +50,28 @@ class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
         self.nameLineEdit.setValidator(validator)
         self.domainSetter = None
         self.jsonBuilder = CustomJSONBuilder()
+        self.populateFromJsonTag(jsonTag)
+    
+    def populateFromJsonTag(self, jsonTag):
+        """
+        Populates widget with jsonTag. This tag has the following format:
+         {'attrName':attrName, 'attrType':attrType, 'isPk':isPk, 'isNullable':isNullable, 'defaultValue':defaultValue, 'references':references, 'filter':filter}
+        """
+        if jsonTag:
+            self.nameLineEdit.setText(jsonTag['attrName'])
+            if jsonTag['references']:
+                idx = self.typeComboBox.findText(self.tr('EDGV Domain'), flags = Qt.MatchExactly)
+                self.typeComboBox.setCurrentIndex(idx)
+                self.instantiateDomainSetter(references = jsonTag['references'], filter = jsonTag['filter'])
+            else:
+                idx = self.typeComboBox.findText(jsonTag['attrType'], flags = Qt.MatchExactly)
+                self.typeComboBox.setCurrentIndex(idx)
+            if jsonTag['notNull']:
+                self.notNullcheckBox.setCheckState(2)
+            if jsonTag['defaultValue']:
+                defaultText = [i for i in self.domainSetter.domainDict.keys() if self.domainSetter.domainDict[i] == jsonTag['defaultValue'] ]
+                idx = self.typeComboBox.findText(defaultText, flags = Qt.MatchExactly)
+                self.defaultComboBox.setCurrentIndex(idx)
     
     def enableItems(self, enabled):
         self.referencesLabel.setEnabled(enabled)
@@ -65,7 +82,8 @@ class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
     
     @pyqtSlot(int)
     def on_typeComboBox_currentIndexChanged(self, idx):
-        if idx == 5:
+        edgvDomainIdx = self.typeComboBox.findText(self.tr('EDGV Domain'), flags = Qt.MatchExactly)
+        if idx == edgvDomainIdx:
             self.enableItems(True)
         else:
             self.enableItems(False)
@@ -76,12 +94,15 @@ class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_referencesPushButton_clicked(self):
         if not self.domainSetter:
-            self.domainSetter = DomainSetter(self.abstractDb)
-            self.domainSetter.domainChanged.connect(self.populateDefaultCombo)
-            self.domainSetter.exec_()
+            self.instantiateDomainSetter()
         else:
             self.domainSetter.show()
-    
+
+    def instantiateDomainSetter(self, references = None, filter = None):
+        self.domainSetter = DomainSetter(self.abstractDb, references = references, filter = filter)
+        self.domainSetter.domainChanged.connect(self.populateDefaultCombo)
+        self.domainSetter.exec_()
+
     @pyqtSlot(str, dict, list)
     def populateDefaultCombo(self, domainName, domainDict, filterClause):
         self.referencesLineEdit.setText(domainName)

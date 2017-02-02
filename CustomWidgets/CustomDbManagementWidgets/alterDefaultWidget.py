@@ -152,7 +152,7 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
                     else:
                         defaultCodeInt = int(defaultCode)
                     if defaultCodeInt in attrDomainDict.keys():
-                        comboItem = self.singleValueComboBox.findText (attrDomainDict[defaultCodeInt], flags = Qt.MatchExactly)
+                        comboItem = self.singleValueComboBox.findText(attrDomainDict[defaultCodeInt], flags = Qt.MatchExactly)
                         self.singleValueComboBox.setCurrentIndex(comboItem)
         QApplication.restoreOverrideCursor()
 

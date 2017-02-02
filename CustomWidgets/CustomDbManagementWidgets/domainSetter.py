@@ -41,7 +41,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class DomainSetter(QtGui.QDialog, FORM_CLASS):
     domainChanged = pyqtSignal(str, dict, dict)
-    def __init__(self, abstractDb, parent = None):
+    def __init__(self, abstractDb, references = None, filter = None, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.setupUi(self)
@@ -51,6 +51,22 @@ class DomainSetter(QtGui.QDialog, FORM_CLASS):
         self.domainDict = None
         self.filterClause = dict()
         self.jsonBuilder = CustomJSONBuilder()
+        self.populateFromJsonTag(references, filter)
+    
+    def populateFromJsonTag(self, references, filter):
+        if references:
+            item = self.domainListWidget.findItems(references, Qt.MatchExactly)
+            if isinstance(item,list):
+                item = item[0]
+            self.domainListWiget.setCurrentItem(item)
+        if filter <> []:
+            codeNameList = [i for i in self.domainDict.keys() if self.domainDict[i] in filter]
+            for codeName in codeNameList:
+                item = self.filterListWidget.findItems(references, Qt.MatchExactly)
+                if isinstance(item,list):
+                    item = item[0]
+                item.setCheckState(QtCore.Qt.Checked)
+
 
     def populateDomainList(self):
         self.domainTableList = self.abstractDb.getDomainTables()

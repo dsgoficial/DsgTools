@@ -26,7 +26,7 @@ from qgis.core import QgsMessageLog
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
+from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from PyQt4.QtSql import QSqlQuery
 
 # DSGTools imports
@@ -40,14 +40,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'newClassWidget.ui'))
 
 class NewClassWidget(QtGui.QWidget, FORM_CLASS):
-    def __init__(self, abstractDb, parent = None):
+    def __init__(self, abstractDb, jsonTag=None, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.geomUiDict = {self.tr('Point'):{'sufix':'p','type':'MULTIPOINT([epsg])'}, self.tr('Line'):{'sufix':'l','type':'MULTILINESTRING([epsg])'}, self.tr('Area'):{'sufix':'a','type':'MULTIPOLYGON([epsg])'}} 
         header = self.tableWidget.horizontalHeader()
@@ -61,6 +56,26 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
         self.abstractDb = abstractDb
         self.populateSchemaCombo()
         self.jsonBuilder = CustomJSONBuilder()
+        self.populateFromJsonTag(jsonTag)
+    
+    def populateFromJsonTag(self, jsonTag):
+        """
+        Populates widget with jsonTag. This tag has the following format:
+         {'schema':schema, 'name':name, 'attrs':attrList}
+        """
+        if jsonTag:
+            idx = self.schemaComboBox.findText(jsonTag['schema'], flags = Qt.MatchExactly)
+            self.schemaComboBox.setCurrentItem(idx)
+            nameSplit = jsonTag['name'].split('_')
+            self.categoryLineEdit.setText(nameSplit[0])
+            self.classNameLineEdit.setText(nameSplit[1:-1])
+            for primitive in self.geomUiDict.keys():
+                if self.geomUiDict[primitive]['sufix'] == nameSplit[-1]:
+                    idxPrimitive = self.geomComboBox.findText(primitive, flags = Qt.MatchExactly)
+                    self.geomComboBox.setCurrentIndex(idxPrimitive)
+            for attr in jsonTag['attrList']:
+                if attr['attrName'] not in ['id', 'geom']:
+                    self.addCellWidget(jsonTag=attr)
     
     def populateSchemaCombo(self):
         self.schemaComboBox.clear()
@@ -82,13 +97,13 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
             if newText[-1] == '_' and newText[-2] == '_':
                     self.classNameLineEdit.setText(newText[0:-1])
     
-    @pyqtSlot(bool)
-    def on_addAttributePushButton_clicked(self):
+    @pyqtSlot(bool, name='on_addAttributePushButton_clicked')
+    def addCellWidget(self, jsonTag = None):
         index = self.tableWidget.rowCount()
         self.tableWidget.insertRow(index)
-        newAttribute = AddAttributeWidget(self.abstractDb)
+        newAttribute = AddAttributeWidget(self.abstractDb, jsonTag = jsonTag)
         self.tableWidget.setCellWidget(index,0,newAttribute)
-    
+
     @pyqtSlot(bool)
     def on_removePushButton_clicked(self):
         selected = self.tableWidget.selectedIndexes()

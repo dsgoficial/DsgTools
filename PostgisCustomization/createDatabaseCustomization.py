@@ -55,6 +55,8 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         self.connectionWidget.dbChanged.connect(self.minimizeConnectionWidget)
         self.contentsDict = dict()
         self.populateCustomizationCombo()
+        self.selectFileWidget.filter = '.json'
+        self.selectFileWidget.fileSelected.connect(self.populateWidgetsFromSelectedFile)
     
     def minimizeConnectionWidget(self):
         self.connectionWidget.mGroupBox.setCollapsed(True)
@@ -116,36 +118,36 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         self.contentsDict[contentsKey]['widgetList'].append(self.addWidget(widget, title))
         self.createItem(self.contentsDict[contentsKey]['treeItem'], title, 0)
     
-    def addAttributeWidget(self):
-        widget = NewAttributeWidget(self.connectionWidget.abstractDb)
+    def addAttributeWidget(self,jsonTag=None):
+        widget = NewAttributeWidget(self.connectionWidget.abstractDb,jsonTag = jsonTag)
         self.addWidgetItem(self.tr('Attribute Customization'), self.tr('New Custom Attribute'), widget)
     
-    def addClassWidget(self):
-        widget = NewClassWidget(self.connectionWidget.abstractDb)
+    def addClassWidget(self,jsonTag=None):
+        widget = NewClassWidget(self.connectionWidget.abstractDb,jsonTag = jsonTag)
         self.addWidgetItem(self.tr('Class Customization'), self.tr('New Custom Class'), widget)
     
-    def addCodeNameWidget(self):
-        widget = CodeNameCustomizationWidget(self.connectionWidget.abstractDb)
+    def addCodeNameWidget(self,jsonTag=None):
+        widget = CodeNameCustomizationWidget(self.connectionWidget.abstractDb,jsonTag = jsonTag)
         self.addWidgetItem(self.tr('Code Name Customization'), self.tr('New Custom Code Name'), widget)
 
-    def addDefaultWidget(self):
-        widget = AlterDefaultWidget(self.connectionWidget.abstractDb)
+    def addDefaultWidget(self,jsonTag=None):
+        widget = AlterDefaultWidget(self.connectionWidget.abstractDb,jsonTag = jsonTag)
         self.addWidgetItem(self.tr('Default Customization'), self.tr('New Custom Default'), widget) 
 
-    def addDomainWidget(self):
-        widget = NewDomainWidget(self.connectionWidget.abstractDb)
+    def addDomainWidget(self,jsonTag=None):
+        widget = NewDomainWidget(self.connectionWidget.abstractDb,jsonTag = jsonTag)
         self.addWidgetItem(self.tr('Domain Customization'), self.tr('New Custom Domain'), widget)
 
-    def addDomainValueWidget(self):
-        widget = NewDomainValueWidget(self.connectionWidget.abstractDb)
+    def addDomainValueWidget(self,jsonTag=None):
+        widget = NewDomainValueWidget(self.connectionWidget.abstractDb,jsonTag = jsonTag)
         self.addWidgetItem(self.tr('Domain Value Customization'), self.tr('New Domain Value'), widget)
 
-    def addNullityWidget(self):
-        widget = ChangeNullityWidget(self.connectionWidget.abstractDb)
+    def addNullityWidget(self,jsonTag=None):
+        widget = ChangeNullityWidget(self.connectionWidget.abstractDb,jsonTag = jsonTag)
         self.addWidgetItem(self.tr('Attribute Nullity Customization'), self.tr('New Custom Attribute Nullity'), widget)
 
-    def addFilterWidget(self):
-        widget = ChangeFilterWidget(self.connectionWidget.abstractDb)
+    def addFilterWidget(self,jsonTag=None):
+        widget = ChangeFilterWidget(self.connectionWidget.abstractDb,jsonTag = jsonTag)
         self.addWidgetItem(self.tr('Attribute Filter Customization'), self.tr('New Custom Attribute Filter'), widget)
     
     def addWidget(self, widget, title):
@@ -224,4 +226,35 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
             QMessageBox.warning(self, self.tr('Success!'), self.tr('Customization created on: ') +str(outputFile)
         except Exception as e:
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem exporting customization: ') + e.args[0])
-        
+    
+    def populateWidgetsFromSelectedFile(self):
+        jsonFile = self.selectFileWidget.fileNameList
+        customJsonDict = json.loads(jsonFile)
+        self.createWidgetsFromCustomJsonDict(customJsonDict)
+    
+    def createWidgetsFromCustomJsonDict(self, customJsonDict):
+        for key in customJsonDict.keys():
+            for jsonTag in customJsonDict[key]:
+                self.createWidgetFromKey(key, jsonTag)
+    
+    def createWidgetFromKey(self, key, jsonTag):
+        if key == 'attribute':
+            self.addAttributeWidget(jsonTag=jsonTag)
+        elif key == 'class':
+            self.addClassWidget(jsonTag=jsonTag)
+        elif key == 'codeName':
+            self.addCodeNameWidget(jsonTag=jsonTag)
+        elif key == 'default':
+            self.addDefaultWidget(jsonTag=jsonTag)
+        elif key == 'domain':
+            self.addDomainWidget(jsonTag=jsonTag)
+        elif key == 'domainValue':
+            self.addDomainValueWidget(jsonTag=jsonTag)
+        elif key == 'nullity':
+            self.addNullityWidget(jsonTag=jsonTag)
+        elif key == 'filter':
+            self.addFilterWidget(jsonTag=jsonTag)
+        else:
+            pass
+    
+
