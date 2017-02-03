@@ -120,36 +120,36 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         self.contentsDict[contentsKey]['widgetList'].append(self.addWidget(widget, title))
         self.createItem(self.contentsDict[contentsKey]['treeItem'], title, 0)
     
-    def addAttributeWidget(self,jsonTag=None):
-        widget = NewAttributeWidget(self.connectionWidget.abstractDb,jsonTag = jsonTag)
+    def addAttributeWidget(self,uiParameterJsonDict=None):
+        widget = NewAttributeWidget(self.connectionWidget.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
         self.addWidgetItem(self.tr('Attribute Customization'), self.tr('New Custom Attribute'), widget)
     
-    def addClassWidget(self,jsonTag=None):
-        widget = NewClassWidget(self.connectionWidget.abstractDb,jsonTag = jsonTag)
+    def addClassWidget(self,uiParameterJsonDict=None):
+        widget = NewClassWidget(self.connectionWidget.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
         self.addWidgetItem(self.tr('Class Customization'), self.tr('New Custom Class'), widget)
     
-    def addCodeNameWidget(self,jsonTag=None):
-        widget = CodeNameCustomizationWidget(self.connectionWidget.abstractDb,jsonTag = jsonTag)
+    def addCodeNameWidget(self,uiParameterJsonDict=None):
+        widget = CodeNameCustomizationWidget(self.connectionWidget.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
         self.addWidgetItem(self.tr('Code Name Customization'), self.tr('New Custom Code Name'), widget)
 
-    def addDefaultWidget(self,jsonTag=None):
-        widget = AlterDefaultWidget(self.connectionWidget.abstractDb,jsonTag = jsonTag)
+    def addDefaultWidget(self,uiParameterJsonDict=None):
+        widget = AlterDefaultWidget(self.connectionWidget.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
         self.addWidgetItem(self.tr('Default Customization'), self.tr('New Custom Default'), widget) 
 
-    def addDomainWidget(self,jsonTag=None):
-        widget = NewDomainWidget(self.connectionWidget.abstractDb,jsonTag = jsonTag)
+    def addDomainWidget(self,uiParameterJsonDict=None):
+        widget = NewDomainWidget(self.connectionWidget.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
         self.addWidgetItem(self.tr('Domain Customization'), self.tr('New Custom Domain'), widget)
 
-    def addDomainValueWidget(self,jsonTag=None):
-        widget = NewDomainValueWidget(self.connectionWidget.abstractDb,jsonTag = jsonTag)
+    def addDomainValueWidget(self,uiParameterJsonDict=None):
+        widget = NewDomainValueWidget(self.connectionWidget.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
         self.addWidgetItem(self.tr('Domain Value Customization'), self.tr('New Domain Value'), widget)
 
-    def addNullityWidget(self,jsonTag=None):
-        widget = ChangeNullityWidget(self.connectionWidget.abstractDb,jsonTag = jsonTag)
+    def addNullityWidget(self,uiParameterJsonDict=None):
+        widget = ChangeNullityWidget(self.connectionWidget.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
         self.addWidgetItem(self.tr('Attribute Nullity Customization'), self.tr('New Custom Attribute Nullity'), widget)
 
-    def addFilterWidget(self,jsonTag=None):
-        widget = ChangeFilterWidget(self.connectionWidget.abstractDb,jsonTag = jsonTag)
+    def addFilterWidget(self,uiParameterJsonDict=None):
+        widget = ChangeFilterWidget(self.connectionWidget.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
         self.addWidgetItem(self.tr('Attribute Filter Customization'), self.tr('New Custom Attribute Filter'), widget)
     
     def addWidget(self, widget, title):
@@ -239,23 +239,23 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
             for jsonTag in customJsonDict[key]:
                 self.createWidgetFromKey(key, jsonTag)
     
-    def createWidgetFromKey(self, key, jsonTag):
+    def createWidgetFromKey(self, key, uiParameterJsonDict):
         if key == 'attribute':
-            self.addAttributeWidget(jsonTag=jsonTag)
+            self.addAttributeWidget(uiParameterJsonDict=uiParameterJsonDict)
         elif key == 'class':
-            self.addClassWidget(jsonTag=jsonTag)
+            self.addClassWidget(uiParameterJsonDict=uiParameterJsonDict)
         elif key == 'codeName':
-            self.addCodeNameWidget(jsonTag=jsonTag)
+            self.addCodeNameWidget(uiParameterJsonDict=uiParameterJsonDict)
         elif key == 'default':
-            self.addDefaultWidget(jsonTag=jsonTag)
+            self.addDefaultWidget(uiParameterJsonDict=uiParameterJsonDict)
         elif key == 'domain':
-            self.addDomainWidget(jsonTag=jsonTag)
+            self.addDomainWidget(uiParameterJsonDict=uiParameterJsonDict)
         elif key == 'domainValue':
-            self.addDomainValueWidget(jsonTag=jsonTag)
+            self.addDomainValueWidget(uiParameterJsonDict=uiParameterJsonDict)
         elif key == 'nullity':
-            self.addNullityWidget(jsonTag=jsonTag)
+            self.addNullityWidget(uiParameterJsonDict=uiParameterJsonDict)
         elif key == 'filter':
-            self.addFilterWidget(jsonTag=jsonTag)
+            self.addFilterWidget(uiParameterJsonDict=uiParameterJsonDict)
         else:
             pass
     

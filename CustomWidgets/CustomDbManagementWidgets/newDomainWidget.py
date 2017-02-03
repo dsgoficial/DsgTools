@@ -56,7 +56,7 @@ class ValidatedItemDelegate(QtGui.QStyledItemDelegate):
         return super(ValidatedItemDelegate, self).createEditor(widget, option, index)
 
 class NewDomainWidget(QtGui.QWidget, FORM_CLASS):
-    def __init__(self, abstractDb, jsonTag = None, parent = None):
+    def __init__(self, abstractDb, uiParameterJsonDict = None, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.setupUi(self) 

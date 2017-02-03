@@ -41,7 +41,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class DomainSetter(QtGui.QDialog, FORM_CLASS):
     domainChanged = pyqtSignal(str, dict, dict)
-    def __init__(self, abstractDb, references = None, filter = None, parent = None):
+    def __init__(self, abstractDb, uiParameterJsonDict = None, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.setupUi(self)
@@ -51,21 +51,28 @@ class DomainSetter(QtGui.QDialog, FORM_CLASS):
         self.domainDict = None
         self.filterClause = dict()
         self.jsonBuilder = CustomJSONBuilder()
-        self.populateFromJsonTag(references, filter)
+        self.populateFromUiParameterJsonDict(uiParameterJsonDict)
     
-    def populateFromJsonTag(self, references, filter):
-        if references:
-            item = self.domainListWidget.findItems(references, Qt.MatchExactly)
+    def populateFromUiParameterJsonDict(self, uiParameterJsonDict):
+        """
+        populates ui from  uiParameterJsonDict with the following keys:
+        {
+            'domainListWidget': --text of selected item on domainListWidget --
+            'filterCheckBox': --True or False for filterCheckBox isChecked --
+            'filterListWidgetCheckedItems' : [--list of selected code names--]
+        }
+        """
+        if uiParameterJsonDict:
+            item = self.domainListWidget.findItems(uiParameterJsonDict['domainListWidget'], Qt.MatchExactly)
             if isinstance(item,list):
                 item = item[0]
             self.domainListWidget.setCurrentItem(item)
-        if filter:
-            codeNameList = [i for i in self.domainDict.keys() if self.domainDict[i] in filter]
-            for codeName in codeNameList:
-                item = self.filterListWidget.findItems(codeName, Qt.MatchExactly)
-                if isinstance(item,list):
-                    item = item[0]
-                item.setCheckState(QtCore.Qt.Checked)
+            if uiParameterJsonDict['filterCheckBox']:
+                for codeName in uiParameterJsonDict['filterListWidgetCheckedItems']:
+                    codeNameItem = self.filterListWidget.findItems(codeName, Qt.MatchExactly)
+                    if isinstance(codeNameItem,list):
+                        codeNameItem = codeNameItem[0]
+                codeNameItem.setCheckState(QtCore.Qt.Checked)
             self.applyChanges()
 
     def populateDomainList(self):
@@ -142,3 +149,21 @@ class DomainSetter(QtGui.QDialog, FORM_CLASS):
     def getChildWidgets(self):
         return None
     
+    def getUiParameterJsonDict(self):
+        """
+        builds a dict with the following format:
+        {
+            'domainListWidget': --text of selected item on domainListWidget --
+            'filterCheckBox': --True or False for filterCheckBox isChecked --
+            'filterListWidgetCheckedItems' : [--list of selected code names--]
+        }
+        """
+        uiParameterJsonDict = dict()
+        uiParameterJsonDict['domainListWidget'] = self.domainListWidget.currentItem().data(0)
+        uiParameterJsonDict['filterCheckBox'] = self.filterCheckBox.isChecked()
+        uiParameterJsonDict['filterListWidgetCheckedItems'] = []
+        for idx in range(self.filterListWidget.__len__()):
+            item = self.filterListWidget.item(idx)
+            if item.checkState() == 2:
+                uiParameterJsonDict['filterListWidgetCheckedItems'].append(item.data(0))
+        return uiParameterJsonDict

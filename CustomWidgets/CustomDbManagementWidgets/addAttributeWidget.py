@@ -40,7 +40,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'addAttributeWidget.ui'))
 
 class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
-    def __init__(self, abstractDb, jsonTag = None, parent = None):
+    def __init__(self, abstractDb, uiParameterJsonDict = None, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.abstractDb = abstractDb
@@ -50,29 +50,33 @@ class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
         self.nameLineEdit.setValidator(validator)
         self.domainSetter = None
         self.jsonBuilder = CustomJSONBuilder()
-        self.populateFromJsonTag(jsonTag)
+        self.populateFromJsonTag(uiParameterJsonDict)
     
-    def populateFromJsonTag(self, jsonTag):
+    def populateFromUiParameterJsonDict(self, uiParameterJsonDict):
         """
-        Populates widget with jsonTag. This tag has the following format:
-         {'attrName':attrName, 'attrType':attrType, 'isPk':isPk, 'isNullable':isNullable, 'defaultValue':defaultValue, 'references':references, 'filter':filter}
+        populates ui from  uiParameterJsonDict with the following keys:
+        {
+            'nameLineEdit': --text of selected item on nameLineEdit --
+            'typeComboBox': --text of selected item on typeComboBox --
+            'notNullcheckBox' : --True or False for notNullcheckBox isChecked --
+            'defaultComboBox' : --text of selected item on typeComboBox --
+            'references' : dict from domainSetter
+        }
         """
-        if jsonTag:
-            self.nameLineEdit.setText(jsonTag['attrName'])
-            if jsonTag['references']:
+        if uiParameterJsonDict:
+            self.nameLineEdit.setText(uiParameterJsonDict['nameLineEdit'])
+            if uiParameterJsonDict['references']:
                 idx = self.typeComboBox.findText(self.tr('EDGV Domain'), flags = Qt.MatchExactly)
                 self.typeComboBox.setCurrentIndex(idx)
-                self.instantiateDomainSetter(references = jsonTag['references'], filter = jsonTag['filter'])
+                self.instantiateDomainSetter(uiParameterJsonDict['references'])
             else:
-                idx = self.typeComboBox.findText(jsonTag['attrType'], flags = Qt.MatchExactly)
+                idx = self.typeComboBox.findText(uiParameterJsonDict['typeComboBox'], flags = Qt.MatchExactly)
                 self.typeComboBox.setCurrentIndex(idx)
-            if not jsonTag['isNullable']:
+            if uiParameterJsonDict['notNullcheckBox']:
                 self.notNullcheckBox.setCheckState(2)
-            if jsonTag['defaultValue']:
-                defaultText = [i for i in self.domainSetter.domainDict.keys() if self.domainSetter.domainDict[i] == jsonTag['defaultValue'] ][0]
-                idx = self.defaultComboBox.findText(defaultText, flags = Qt.MatchExactly)
-                self.defaultComboBox.setCurrentIndex(idx)
-    
+            idx = self.defaultComboBox.findText(uiParameterJsonDict['defaultComboBox'], flags = Qt.MatchExactly)
+            self.defaultComboBox.setCurrentIndex(idx)
+
     def enableItems(self, enabled):
         self.referencesLabel.setEnabled(enabled)
         self.referencesLineEdit.setEnabled(enabled)
@@ -98,10 +102,10 @@ class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
         else:
             self.domainSetter.show()
 
-    def instantiateDomainSetter(self, references = None, filter = None):
-        self.domainSetter = DomainSetter(self.abstractDb, references = references, filter = filter)
+    def instantiateDomainSetter(self, uiParameterJsonDict = None):
+        self.domainSetter = DomainSetter(self.abstractDb, uiParameterJsonDict)
         self.domainSetter.domainChanged.connect(self.populateDefaultCombo)
-        if not references or not filter:
+        if not uiParameterJsonDict:
             self.domainSetter.exec_()
         else:
             self.domainSetter.applyChanges()
@@ -160,3 +164,23 @@ class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
             filter = self.domainSetter.filterClause.values()
             return [self.jsonBuilder.buildAttributeElement(attrName, attrType, isPk, isNullable, defaultValue, references, filter)]
         
+    def getUiParameterJsonDict(self):
+        """
+        builds a dict with the following format:
+        {
+            'nameLineEdit': --text of selected item on nameLineEdit --
+            'typeComboBox': --text of selected item on typeComboBox --
+            'notNullcheckBox' : --True or False for notNullcheckBox isChecked --
+            'defaultComboBox' : --text of selected item on typeComboBox --
+            'references' : dict from domainSetter
+        }
+        """
+        uiParameterJsonDict = dict()
+        uiParameterJsonDict['nameLineEdit'] = self.nameLineEdit.text()
+        uiParameterJsonDict['typeComboBox'] = self.typeComboBox.currentText()
+        uiParameterJsonDict['notNullcheckBox'] = self.notNullcheckBox.isChecked()
+        uiParameterJsonDict['defaultComboBox'] = self.defaultComboBox.currentText()
+        uiParameterJsonDict['references'] = None
+        if self.domainSetter:
+            uiParameterJsonDict['references'] = self.domainSetter.getUiParameterJsonList()
+        return uiParameterJsonDict

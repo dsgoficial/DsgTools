@@ -40,7 +40,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'newClassWidget.ui'))
 
 class NewClassWidget(QtGui.QWidget, FORM_CLASS):
-    def __init__(self, abstractDb, jsonTag = None, parent = None):
+    def __init__(self, abstractDb, uiParameterJsonDict = None, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.setupUi(self)
@@ -56,26 +56,28 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
         self.abstractDb = abstractDb
         self.populateSchemaCombo()
         self.jsonBuilder = CustomJSONBuilder()
-        self.populateFromJsonTag(jsonTag)
+        self.populateFromUiParameterJsonDict(uiParameterJsonDict)
     
-    def populateFromJsonTag(self, jsonTag):
+    def populateFromUiParameterJsonDict(self, uiParameterJsonDict):
         """
-        Populates widget with jsonTag. This tag has the following format:
-         {'schema':schema, 'name':name, 'attrs':attrList}
+        populates ui from  uiParameterJsonDict with the following keys:
+        {
+            'schemaComboBox': --text of selected item on schemaComboBox --
+            'categoryLineEdit': --text of categoryLineEdit --
+            'classNameLineEdit' : --text of classNameLineEdit --
+            'geomComboBox' : --text of selected item on schemaComboBox --
+            'attrWidgetList' : [--list of uiParameterJsonDict from each attributeWidget--]
+        }
         """
-        if jsonTag:
-            idx = self.schemaComboBox.findText(jsonTag['schema'], flags = Qt.MatchExactly)
+        if uiParameterJsonDict:
+            idx = self.schemaComboBox.findText(uiParameterJsonDict['schemaComboBox'], flags = Qt.MatchExactly)
             self.schemaComboBox.setCurrentIndex(idx)
-            nameSplit = jsonTag['name'].split('_')
-            self.categoryLineEdit.setText(nameSplit[0])
-            self.classNameLineEdit.setText('_'.join(nameSplit[1:-1]))
-            for primitive in self.geomUiDict.keys():
-                if self.geomUiDict[primitive]['sufix'] == nameSplit[-1]:
-                    idxPrimitive = self.geomComboBox.findText(primitive, flags = Qt.MatchExactly)
-                    self.geomComboBox.setCurrentIndex(idxPrimitive)
-            for attr in jsonTag['attrs']:
-                if attr['attrName'] not in ['id', 'geom']:
-                    self.addCellWidget(jsonTag=attr)
+            self.categoryLineEdit.setText(uiParameterJsonDict['categoryLineEdit'])
+            self.classNameLineEdit.setText(uiParameterJsonDict['classNameLineEdit'])
+            idx = self.geomComboBox.findText(uiParameterJsonDict['geomComboBox'], flags = Qt.MatchExactly)
+            self.geomComboBox.setCurrentIndex(idx)
+            for attr in uiParameterJsonDict['attrWidgetList']:
+                self.addCellWidget(uiParameterJsonDict=attr)
     
     def populateSchemaCombo(self):
         self.schemaComboBox.clear()
@@ -98,10 +100,10 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
                     self.classNameLineEdit.setText(newText[0:-1])
     
     @pyqtSlot(bool, name='on_addAttributePushButton_clicked')
-    def addCellWidget(self, jsonTag = None):
+    def addCellWidget(self, uiParameterJsonDict = None):
         index = self.tableWidget.rowCount()
         self.tableWidget.insertRow(index)
-        newAttribute = AddAttributeWidget(self.abstractDb, jsonTag = jsonTag)
+        newAttribute = AddAttributeWidget(self.abstractDb, uiParameterJsonDict = uiParameterJsonDict)
         self.tableWidget.setCellWidget(index,0,newAttribute)
 
     @pyqtSlot(bool)
@@ -130,7 +132,8 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
         if self.classNameLineEdit.text() == '':
             return False
         if self.geomComboBox.currentIndex() == 0:
-            return False 
+            return False
+        #TODO: validate attributes
         return True
 
     def validateDiagnosis(self):
@@ -141,6 +144,7 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
             invalidatedReason += self.tr('Class must have a name.\n')
         if self.geomComboBox.currentIndex() == 0:
             invalidatedReason += self.tr('Class must have a geometric primitive.\n')
+        #TODO: validate attributes
         return invalidatedReason
 
     def getJSONTag(self):
@@ -164,3 +168,27 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
             else:
                 attrList.append(newAttrJson)
         return [self.jsonBuilder.buildClassElement(schema,name,attrList)]
+
+    def getUiParameterJsonDict(self):
+        """
+        builds a dict with the following format:
+        {
+            'schemaComboBox': --text of selected item on schemaComboBox --
+            'categoryLineEdit': --text of categoryLineEdit --
+            'classNameLineEdit' : --text of classNameLineEdit --
+            'geomComboBox' : --text of selected item on schemaComboBox --
+            'attrWidgetList' : [--list of uiParameterJsonDict from each attributeWidget--]
+        }
+        """
+        uiParameterJsonDict = dict()
+        uiParameterJsonDict['schemaComboBox'] = self.schemaComboBox.currentText()
+        uiParameterJsonDict['categoryLineEdit'] = self.categoryLineEdit.text()
+        uiParameterJsonDict['classNameLineEdit'] = self.classNameLineEdit.text()
+        uiParameterJsonDict['geomComboBox'] = self.geomComboBox.currentText()
+        uiParameterJsonDict['attrWidgetList'] = []
+        widgetList = self.getChildWidgetList()
+        for widget in widgetList:
+            uiParameterJsonDict['attrWidgetList'].append(widget.getUiParameterJsonDict())
+        return uiParameterJsonDict
+
+            
