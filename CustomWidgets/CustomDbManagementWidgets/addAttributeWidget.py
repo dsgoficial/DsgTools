@@ -57,7 +57,7 @@ class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
         populates ui from  uiParameterJsonDict with the following keys:
         {
             'nameLineEdit': --text of selected item on nameLineEdit --
-            'typeComboBox': --text of selected item on typeComboBox --
+            'typeComboBox': --index of selected item on typeComboBox --
             'notNullcheckBox' : --True or False for notNullcheckBox isChecked --
             'defaultComboBox' : --text of selected item on typeComboBox --
             'references' : dict from domainSetter
@@ -70,8 +70,7 @@ class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
                 self.typeComboBox.setCurrentIndex(idx)
                 self.instantiateDomainSetter(uiParameterJsonDict['references'])
             else:
-                idx = self.typeComboBox.findText(uiParameterJsonDict['typeComboBox'], flags = Qt.MatchExactly)
-                self.typeComboBox.setCurrentIndex(idx)
+                self.typeComboBox.setCurrentIndex(int(uiParameterJsonDict['typeComboBox']))
             if uiParameterJsonDict['notNullcheckBox']:
                 self.notNullcheckBox.setCheckState(2)
             idx = self.defaultComboBox.findText(uiParameterJsonDict['defaultComboBox'], flags = Qt.MatchExactly)

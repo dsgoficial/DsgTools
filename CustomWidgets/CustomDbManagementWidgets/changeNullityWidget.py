@@ -26,7 +26,7 @@ from qgis.core import QgsMessageLog
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
+from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from PyQt4.QtSql import QSqlQuery
 
 # DSGTools imports
@@ -43,6 +43,34 @@ class ChangeNullityWidget(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.jsonBuilder = CustomJSONBuilder()
         self.populateSchemaCombo()
+        self.populateFromUiParameterJsonDict(uiParameterJsonDict)
+    
+    def populateFromUiParameterJsonDict(self, uiParameterJsonDict):
+        """
+        builds a dict with the following format:
+        {
+            'schemaComboBox': --current text of schemaComboBox --
+            'tableComboBox': --current text of tableComboBox--
+            'allAttributesCheckBox': --state of allAttributesCheckBox--
+            'allTablesCheckBox': --state of allTablesCheckBox--
+            'attributeComboBox': --current text of attributeComboBox--
+            'actionComboBoxIdx': --current index of actionComboBox--
+        }
+        """
+        if uiParameterJsonDict:
+            if uiParameterJsonDict['allTablesCheckBox']:
+                self.allTablesCheckBox.setCheckState(2)
+            else:
+                schemaIdx = self.schemaComboBox.findText(uiParameterJsonDict['schemaComboBox'], flags = Qt.MatchExactly)
+                self.schemaComboBox.setCurrentIndex(schemaIdx)
+                tableIdx = self.tableComboBox.findText(uiParameterJsonDict['tableComboBox'], flags = Qt.MatchExactly)
+                self.tableComboBox.setCurrentIndex(tableIdx)
+                if uiParameterJsonDict['allAttributesCheckBox']:
+                    self.allAttributesCheckBox.setCheckState(Qt.Checked)
+                else:
+                    attributeIdx = self.attributeComboBox.findText(uiParameterJsonDict['attributeComboBox'], flags = Qt.MatchExactly)
+                    self.attributeComboBox.setCurrentIndex(attributeIdx)
+                self.actionComboBox.setCurrentIndex(uiParameterJsonDict['actionComboBoxIdx'])
     
     def populateSchemaCombo(self):
         self.schemaComboBox.clear()
@@ -166,3 +194,24 @@ class ChangeNullityWidget(QtGui.QWidget, FORM_CLASS):
                 attrName = self.attributeComboBox.currentText()
                 jsonList.append(self.jsonBuilder.buildChangeNullityElement(schema, table, attrName, notNull))
         return jsonList
+
+    def getUiParameterJsonDict(self):
+        """
+        builds a dict with the following format:
+        {
+            'schemaComboBox': --current text of schemaComboBox --
+            'tableComboBox': --current text of tableComboBox--
+            'allAttributesCheckBox': --state of allAttributesCheckBox--
+            'allTablesCheckBox': --state of allTablesCheckBox--
+            'attributeComboBox': --current text of attributeComboBox--
+            'actionComboBox': --current index of actionComboBox--
+        }
+        """
+        uiParameterJsonDict = dict()
+        uiParameterJsonDict['schemaComboBox'] = self.schemaComboBox.currentText()
+        uiParameterJsonDict['tableComboBox'] = self.tableComboBox.currentText()
+        uiParameterJsonDict['allAttributesCheckBox'] = self.allAttributesCheckBox.isChecked()
+        uiParameterJsonDict['allTablesCheckBox'] = self.allTablesCheckBox.isChecked()
+        uiParameterJsonDict['attributeComboBox'] = self.attributeComboBox.currentText()
+        uiParameterJsonDict['actionComboBoxIdx'] = self.actionComboBox.currentIndex()
+        return uiParameterJsonDict
