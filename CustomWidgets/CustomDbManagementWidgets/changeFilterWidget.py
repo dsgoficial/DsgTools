@@ -56,6 +56,19 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         self.inhTree = self.abstractDb.getInheritanceTreeDict()
         self.utils = Utils()
         self.actionDict = {self.tr('Add to Filter (Leave empty if filter is empty)'):'addEmpty', self.tr('Add to Filter (Add value to empty filter)'):'add',self.tr('Remove from Filter'):'remove'}
+        self.populateFromUiParameterJsonDict(uiParameterJsonDict)
+    
+    def populateFromUiParameterJsonDict(self, uiParameterJsonDict):
+        """
+        builds ui from uiParameterJsonDict
+        {
+            'domainComboBox': --current text of domainComboBox --
+            'oldCodeNameComboBox': ---current text of oldCodeNameComboBox --
+            'newCodeNameLineEdit': --current text of newCodeNameLineEdit--
+        }
+        """
+        if uiParameterJsonDict:
+            pass
 
     def populateInheritanceTree(self, nodeList):
         self.treeWidget.clear()

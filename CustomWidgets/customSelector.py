@@ -112,12 +112,19 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         '''
         self.groupBox.setTitle(title)
 
-    @pyqtSlot(bool)
-    def on_pushButtonSelectOne_clicked(self):
+    @pyqtSlot(bool, name='on_pushButtonSelectOne_clicked')
+    def selectItems(self, isSelected, selectedItems=[]):
         '''
         Adds the selected items to the "to" list
         '''
-        listedItems = self.fromList.selectedItems()
+        if len(selectedItems) <> 0:
+            listedItems = []
+            for i in range(self.fromList.__len__()):
+                itemToSelect = self.fromList.item(self.fromList.row(i))
+                if itemToSelect.text() in selectedItems:
+                    listedItems.append(i)
+        else:
+            listedItems = self.fromList.selectedItems()
         added = []
         for i in listedItems:
             item = self.fromList.takeItem(self.fromList.row(i))
