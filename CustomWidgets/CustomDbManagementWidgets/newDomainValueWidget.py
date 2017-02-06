@@ -26,7 +26,7 @@ from qgis.core import QgsMessageLog
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
+from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from PyQt4.QtSql import QSqlQuery
 
 # DSGTools imports
@@ -49,7 +49,27 @@ class NewDomainValueWidget(QtGui.QWidget, FORM_CLASS):
         regex = QtCore.QRegExp('[0-9]*')
         validator = QtGui.QRegExpValidator(regex, self.codeLineEdit)
         self.codeLineEdit.setValidator(validator)
-
+        self.populateFromUiParameterJsonDict(uiParameterJsonDict)
+    
+    def populateFromUiParameterJsonDict(self, uiParameterJsonDict):
+        """
+        builds ui from uiParameterJsonDict
+        {
+            'domainComboBox': --current text of domainComboBox --
+            'allDomainCheckBox': --state of allDomainCheckBox--
+            'codeLineEdit': --current text of codeLineEdit--
+            'codeNameLineEdit': --current text of codeNameLineEdit--
+        }
+        """
+        if uiParameterJsonDict:
+            if uiParameterJsonDict['allDomainCheckBox']:
+                self.allDomainCheckBox.setCheckState(Qt.Checked)
+            else:
+                domainIdx = self.domainComboBox.findText(uiParameterJsonDict['domainComboBox'], flags = Qt.MatchExactly)
+                self.schemaComboBox.setCurrentIndex(domainIdx)
+            self.codeLineEdit.setText(uiParameterJsonDict['codeLineEdit'])
+            self.codeNameLineEdit.setText(uiParameterJsonDict['codeNameLineEdit'])
+                
     def populateDomainCombo(self):
         self.domainTableList = self.abstractDb.getDomainTables()
         self.domainComboBox.clear()
@@ -139,3 +159,21 @@ class NewDomainValueWidget(QtGui.QWidget, FORM_CLASS):
             for domainName in self.domainTableList:
                 jsonList.append(self.jsonBuilder.addDomainValueElement(domainName, code, codeName))
         return jsonList
+
+    def getUiParameterJsonDict(self):
+        """
+        builds a dict with the following format:
+        {
+            'domainComboBox': --current text of domainComboBox --
+            'allDomainCheckBox': --state of allDomainCheckBox--
+            'codeLineEdit': --current text of codeLineEdit--
+            'codeNameLineEdit': --current text of codeNameLineEdit--
+        }
+        """
+        uiParameterJsonDict = dict()
+        uiParameterJsonDict['domainComboBox'] = self.domainComboBox.currentText()
+        uiParameterJsonDict['allDomainCheckBox'] = self.allDomainCheckBox.isChecked()
+        uiParameterJsonDict['codeLineEdit'] = self.codeLineEdit.text()
+        uiParameterJsonDict['codeNameLineEdit'] = self.codeNameLineEdit.text()
+        return uiParameterJsonDict
+        
