@@ -23,22 +23,18 @@
 #DsgTools Imports
 from DsgTools.Factories.DbCustomizationFactory.dbCustomization import DbCustomization
 
-class FilterCustomization(DbCustomization):
+class DomainValueCustomization(DbCustomization):
     def __init__(self, customJson):
-        super(FilterCustomization, self).__init__(customJson)
+        super(DomainValueCustomization, self).__init__(customJson)
     
     def buildSql(self):
         '''
-        {'schema':schema, 'tableName':tableName, 'attrName':attrName, 'filterName':filterName,'originalFilterList':originalFilterList, 'valueList':valueList, 'operation':operation, 'isMulti':isMulti}
+        {'domainName':domainName, 'code':code, 'codeName':codeName}
         '''
         #Abstract method. Must be reimplemented in each child.
         sql = ''
-        for modItem in self.customJson['FilterValue']:
-            filterList = modItem['originalFilterList']
-            if modItem['code'] not in filterList:
-                filterList.append(modItem['code'])
-            sql += ''''ALTER TABLE "{0}"."{1}" DROP CONSTRAINT IF EXISTS {2};\n'''.format(modItem['schema'], modItem['tableName'], modItem['filterName'])
-            sql += '''ALTER TABLE "{0}"."{1}" ADD CONSTRAINT {2} CHECK ({3} = ANY(ARRAY[{4}]);\n'''.format(modItem['schema'], modItem['tableName'], modItem['filterName'], modItem['attrName'], '::SMALLINT,'.join(map(str,filterList))+'::SMALLINT')
+        for modItem in self.customJson['domainValue']:
+            sql += '''INSERT INTO dominios."{0}" (code, code_name) VALUES ({1}, '{2}');\n'''.format(modItem['domainName'], modItem['code'], modItem['codeName'])
         return sql
     
     def buildUndoSql(self):
@@ -47,8 +43,6 @@ class FilterCustomization(DbCustomization):
         '''
         #Abstract method. Must be reimplemented in each child.
         sql = ''
-        for modItem in self.customJson['FilterValue']:
-            filterList = modItem['originalFilterList']
-            sql += '''ALTER TABLE "{0}"."{1}" DROP CONSTRAINT IF EXISTS "{2}";\n'''.format(modItem['schema'], modItem['tableName'], modItem['filterName'])
-            sql += '''ALTER TABLE "{0}"."{1}" ADD CONSTRAINT "{2}" CHECK ({3} = ANY(ARRAY[{4}]);\n'''.format(modItem['schema'], modItem['tableName'], modItem['filterName'], modItem['attrName'], '::SMALLINT,'.join(map(str,filterList))+'::SMALLINT')
+        for modItem in self.customJson['domainValue']:
+            sql += '''DELETE FROM dominios."{0}" where code = {1};'''.format(modItem['domainName'], modItem['code'])
         return sql

@@ -21,24 +21,33 @@
  ***************************************************************************/
 """
 #DsgTools imports
+from DsgTools.Factories.DbCustomizationFactory.attributeCustomization import AttributeCustomization
 from DsgTools.Factories.DbCustomizationFactory.classCustomization import ClassCustomization
 from DsgTools.Factories.DbCustomizationFactory.codeNameCustomization import CodeNameCustomization
-from DsgTools.Factories.DbCustomizationFactory.attributeCustomization import AttributeCustomization
-from DsgTools.Factories.DbCustomizationFactory.domainCustomization import DomainCustomization
-from DsgTools.Factories.DbCustomizationFactory.nullityCustomization import NullityCustomization
 from DsgTools.Factories.DbCustomizationFactory.defaultCustomization import DefaultCustomization
+from DsgTools.Factories.DbCustomizationFactory.newDomainTableCustomization import NewDomainTableCustomization
+from DsgTools.Factories.DbCustomizationFactory.domainValueCustomization import DomainValueCustomization
+from DsgTools.Factories.DbCustomizationFactory.nullityCustomization import NullityCustomization
+from DsgTools.Factories.DbCustomizationFactory.filterCustomization import FilterCustomization
+
 
 class DbCustomizationFactory:
     def createCustomization(self, type, validatedJSONDict):
-        if type == 'class':
-            return ClassCustomization(validatedJSONDict)
-        if type == 'codeName':
-            return CodeNameCustomization(validatedJSONDict)
         if type == 'attribute':
             return AttributeCustomization(validatedJSONDict)
-        if type == 'domain':
-            return DomainCustomization(validatedJSONDict)
-        if tyle == 'nullity':
+        elif type == 'class':
+            return ClassCustomization(validatedJSONDict)
+        elif type == 'codeName':
+            return CodeNameCustomization(validatedJSONDict)
+        elif type == 'default':
+            return DefaultCustomization(validatedJSONDict)        
+        elif type == 'domain':
+            return NewDomainTableCustomization(validatedJSONDict)
+        elif type == 'domainValue':
+            return DomainValueCustomization(validatedJSONDict)
+        elif type == 'nullity':
             return NullityCustomization(validatedJSONDict)
-        if tyle == 'default':
-            return DefaultCustomization(validatedJSONDict)
+        elif type == 'filter':
+            return FilterCustomization(validatedJSONDict)
+        else:
+            raise Exception(self.tr('Customization type not defined.'))
