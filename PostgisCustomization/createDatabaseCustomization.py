@@ -246,7 +246,10 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         try:
             fd = QFileDialog()
             filename = fd.getSaveFileName(caption=self.tr('Choose file to output'),filter=self.tr('DSGTools Customization File (*.dsgtoolscustom)'))
-            outputFile = os.path.join(filename+'.dsgtoolscustom')
+            if '.dsgtoolscustom' not in filename:
+                outputFile = os.path.join(filename+'.dsgtoolscustom')
+            else:
+                outputFile = filename
             with open(outputFile, 'w') as outfile:
                 json.dump(customJsonDict, outfile, sort_keys=True, indent=4)
             QMessageBox.warning(self, self.tr('Success!'), self.tr('Customization created on: ') +str(outputFile))

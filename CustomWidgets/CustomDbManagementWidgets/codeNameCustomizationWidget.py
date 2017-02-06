@@ -26,7 +26,7 @@ from qgis.core import QgsMessageLog
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
+from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from PyQt4.QtSql import QSqlQuery
 
 # DSGTools imports
@@ -47,7 +47,24 @@ class CodeNameCustomizationWidget(QtGui.QWidget, FORM_CLASS):
         self.jsonBuilder = CustomJSONBuilder()
         self.domainDict = dict()
         self.populateDomainCombo()
+        self.populateFromUiParameterJsonDict(uiParameterJsonDict)
     
+    def populateFromUiParameterJsonDict(self, uiParameterJsonDict):
+        """
+        builds ui from uiParameterJsonDict
+        {
+            'domainComboBox': --current text of domainComboBox --
+            'oldCodeNameComboBox': ---current text of oldCodeNameComboBox --
+            'newCodeNameLineEdit': --current text of newCodeNameLineEdit--
+        }
+        """
+        if uiParameterJsonDict:
+            domainIdx = self.domainComboBox.findText(uiParameterJsonDict['domainComboBox'], flags = Qt.MatchExactly)
+            self.domainComboBox.setCurrentIndex(domainIdx)
+            oldIdx = self.oldCodeNameComboBox.findText(uiParameterJsonDict['oldCodeNameComboBox'], flags = Qt.MatchExactly)
+            self.oldCodeNameComboBox.setCurrentIndex(oldIdx)
+            self.newCodeNameLineEdit.setText(uiParameterJsonDict['newCodeNameLineEdit'])
+
     def getTitle(self):
         return self.title
     
@@ -113,5 +130,18 @@ class CodeNameCustomizationWidget(QtGui.QWidget, FORM_CLASS):
         codeValue = self.domainDict[oldCodeName]
         return [self.jsonBuilder.buildCodeNameToChangeElement(domainTable, codeValue, oldCodeName, newCodeName)]
         
-        
+    def getUiParameterJsonDict(self):
+        """
+        builds a dict with the following format:
+        {
+            'domainComboBox': --current text of domainComboBox --
+            'oldCodeNameComboBox': ---current text of oldCodeNameComboBox --
+            'newCodeNameLineEdit': --current text of newCodeNameLineEdit--
+        }
+        """
+        uiParameterJsonDict = dict()
+        uiParameterJsonDict['domainComboBox'] = self.domainComboBox.currentText()
+        uiParameterJsonDict['oldCodeNameComboBox'] = self.oldCodeNameComboBox.currentText()
+        uiParameterJsonDict['newCodeNameLineEdit'] = self.newCodeNameLineEdit.text()
+        return uiParameterJsonDict
             
