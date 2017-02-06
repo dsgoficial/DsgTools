@@ -59,7 +59,7 @@ class ChangeNullityWidget(QtGui.QWidget, FORM_CLASS):
         """
         if uiParameterJsonDict:
             if uiParameterJsonDict['allTablesCheckBox']:
-                self.allTablesCheckBox.setCheckState(2)
+                self.allTablesCheckBox.setCheckState(Qt.Checked)
             else:
                 schemaIdx = self.schemaComboBox.findText(uiParameterJsonDict['schemaComboBox'], flags = Qt.MatchExactly)
                 self.schemaComboBox.setCurrentIndex(schemaIdx)

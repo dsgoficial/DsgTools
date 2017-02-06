@@ -47,6 +47,35 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
         geomDict = self.abstractDb.getGeomDict(geomTypeDict)
         self.domainDict = self.abstractDb.getDbDomainDict(geomDict)
         self.utils = Utils()
+        self.populateFromUiParameterJsonDict(uiParameterJsonDict)
+    
+    def populateFromUiParameterJsonDict(self, uiParameterJsonDict):
+        """
+        builds a dict with the following format:
+        {
+            'schemaComboBox': --current text of schemaComboBox --
+            'tableComboBox': --current text of tableComboBox--
+            'allAttributesCheckBox': --state of allAttributesCheckBox--
+            'allTablesCheckBox': --state of allTablesCheckBox--
+            'attributeComboBox': --current text of attributeComboBox--
+            'singleValueComboBox': --current text of singleValueComboBox--
+        }
+        """
+        if uiParameterJsonDict:
+            if uiParameterJsonDict['allTablesCheckBox']:
+                self.allTablesCheckBox.setCheckState(Qt.Checked)
+            else:
+                schemaIdx = self.schemaComboBox.findText(uiParameterJsonDict['schemaComboBox'], flags = Qt.MatchExactly)
+                self.schemaComboBox.setCurrentIndex(schemaIdx)
+                tableIdx = self.tableComboBox.findText(uiParameterJsonDict['tableComboBox'], flags = Qt.MatchExactly)
+                self.tableComboBox.setCurrentIndex(tableIdx)
+                if uiParameterJsonDict['allAttributesCheckBox']:
+                    self.allAttributesCheckBox.setCheckState(Qt.Checked)
+                else:
+                    attributeIdx = self.attributeComboBox.findText(uiParameterJsonDict['attributeComboBox'], flags = Qt.MatchExactly)
+                    self.attributeComboBox.setCurrentIndex(attributeIdx)
+                idx = self.singleValueComboBox.findText(uiParameterJsonDict['singleValueComboBox'], flags = Qt.MatchExactly)
+                self.singleValueComboBox.setCurrentIndex(idx)
 
     def populateSchemaCombo(self):
         self.schemaComboBox.clear()
@@ -279,3 +308,24 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
                 newElement =  self.jsonBuilder.buildChangeDefaultElement(schema,tableName, attrName, oldDefaultText, newDefault)
                 if newElement not in jsonList:
                     jsonList.append(newElement)
+
+    def getUiParameterJsonDict(self):
+        """
+        builds a dict with the following format:
+        {
+            'schemaComboBox': --current text of schemaComboBox --
+            'tableComboBox': --current text of tableComboBox--
+            'allAttributesCheckBox': --state of allAttributesCheckBox--
+            'allTablesCheckBox': --state of allTablesCheckBox--
+            'attributeComboBox': --current text of attributeComboBox--
+            'singleValueComboBox': --current text of singleValueComboBox--
+        }
+        """
+        uiParameterJsonDict = dict()
+        uiParameterJsonDict['schemaComboBox'] = self.schemaComboBox.currentText()
+        uiParameterJsonDict['tableComboBox'] = self.tableComboBox.currentText()
+        uiParameterJsonDict['allAttributesCheckBox'] = self.allAttributesCheckBox.isChecked()
+        uiParameterJsonDict['allTablesCheckBox'] = self.allTablesCheckBox.isChecked()
+        uiParameterJsonDict['attributeComboBox'] = self.attributeComboBox.currentText()
+        uiParameterJsonDict['singleValueComboBox'] = self.actionComboBox.currentText()
+        return uiParameterJsonDict
