@@ -69,6 +69,20 @@ class NewDomainWidget(QtGui.QWidget, FORM_CLASS):
         self.jsonBuilder = CustomJSONBuilder()
         self.tableWidget.setItemDelegate(ValidatedItemDelegate())
         self.oldBackground = None
+        self.populateFromUiParameterJsonDict(uiParameterJsonDict)
+    
+    def populateFromUiParameterJsonDict(self, uiParameterJsonDict):
+        """
+        populates ui from  uiParameterJsonDict with the following keys:
+        {
+            'domainNameLineEdit': --text of domainNameLineEdit --
+            'tableWidget': [lists of code and value tuples]
+        }
+        """
+        if uiParameterJsonDict:
+            self.domainNameLineEdit.setText(uiParameterJsonDict['domainNameLineEdit'])
+            for domainItem in uiParameterJsonDict['tableWidget']:
+                self.addItemInTableWidget(codeText = domainItem[0], valueText = domainItem[1])
     
     @pyqtSlot()
     def on_domainNameLineEdit_editingFinished(self):
@@ -83,12 +97,12 @@ class NewDomainWidget(QtGui.QWidget, FORM_CLASS):
             if newText[-1] == '_' and newText[-2] == '_':
                     self.domainNameLineEdit.setText(newText[0:-1])
     
-    @pyqtSlot(bool)
-    def on_addValuePushButton_clicked(self):
+    @pyqtSlot(bool, name='on_addValuePushButton_clicked')
+    def addItemInTableWidget(self, codeText = '', valueText = ''):
         index = self.tableWidget.rowCount()
         self.tableWidget.insertRow(index)
-        codeItem = QtGui.QTableWidgetItem('')
-        valueItem = QtGui.QTableWidgetItem('')
+        codeItem = QtGui.QTableWidgetItem(codeText)
+        valueItem = QtGui.QTableWidgetItem(valueText)
         self.tableWidget.setItem(self.tableWidget.rowCount()-1, 0, codeItem)
         self.tableWidget.setItem(self.tableWidget.rowCount()-1, 1, valueItem)
         if index == 0:
@@ -185,3 +199,20 @@ class NewDomainWidget(QtGui.QWidget, FORM_CLASS):
             value = self.tableWidget.item(row,1).text()
             valueDict[code] = value
         return [self.jsonBuilder.addDomainTableElement(domainName, valueDict)]
+
+    def getUiParameterJsonDict(self):
+        """
+        builds a dict with the following format:
+        {
+            'domainNameLineEdit': --text of domainNameLineEdit --
+            'tableWidget': [lists of code and value tuples]
+        }
+        """
+        uiParameterJsonDict = dict()
+        uiParameterJsonDict['domainNameLineEdit'] = self.domainNameLineEdit.text()
+        uiParameterJsonDict['tableWidget'] = []
+        for row in range(self.tableWidget.rowCount()):
+            code = self.tableWidget.item(row,0).text()
+            value = self.tableWidget.item(row,1).text()
+            uiParameterJsonDict['tableWidget'].append((code,value))
+        return uiParameterJsonDict
