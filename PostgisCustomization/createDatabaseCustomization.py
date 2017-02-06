@@ -27,9 +27,9 @@ from qgis.gui import QgsCollapsibleGroupBox
 
 # Qt imports
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
+from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from PyQt4.QtSql import QSqlQuery
-from PyQt4.QtGui import QFormLayout, QMessageBox, QFileDialog
+from PyQt4.QtGui import QFormLayout, QMessageBox, QFileDialog, QApplication, QCursor
 
 # DSGTools imports
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.newClassWidget import NewClassWidget
@@ -42,6 +42,7 @@ from DsgTools.CustomWidgets.CustomDbManagementWidgets.changeFilterWidget import 
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.alterDefaultWidget import AlterDefaultWidget
 from DsgTools.CustomWidgets.selectFileWidget import SelectFileWidget
 from DsgTools.PostgisCustomization.dbCustomizer import DbCustomizer
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 from DsgTools.Utils.utils import Utils
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -56,7 +57,7 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         self.connectionWidget.dbChanged.connect(self.minimizeConnectionWidget)
         self.contentsDict = dict()
         self.populateCustomizationCombo()
-        self.selectFileWidget.filter = '*.json'
+        self.selectFileWidget.filter = '*.dsgtoolscustom'
         self.selectFileWidget.filesSelected.connect(self.populateWidgetsFromSelectedFile)
         self.utils = Utils()
     
@@ -193,23 +194,46 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot()
     def on_buttonBox_accepted(self):
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         exceptionList = []
         customJsonDict = dict()
         for i in self.customDict.keys():
             customJsonDict[i] = []
         correspondenceDict = {self.customDict[i]:i for i in self.customDict.keys()}
+        nCustom = 0
+        for key in self.contentsDict.keys():
+            for widgetItem in self.contentsDict[key]['widgetList']:
+                nCustom += 1
+        progress = ProgressWidget(1,nCustom,self.tr('Preparing to export customizations... '), parent = self)
+        progress.initBar()
         for key in self.contentsDict.keys():
             jsonTagList = []
             for widget in self.contentsDict[key]['widgetList']:
+                currJsonItem = {'jsonUi':None, 'dbJsonTagList':[]}
+                currentWidget = widget.layout().itemAt(0).widget()
                 try:
-                    jsonTagList = widget.layout().itemAt(0).widget().getJSONTag()
+                    jsonTagList = currentWidget.getJSONTag()
+                    jsonUi = currentWidget.getUiParameterJsonDict()
                 except Exception as e:
                     exceptionList.append(e.args[0])
                 if len(exceptionList) == 0:
+                    currJsonItem['jsonUi'] = jsonUi
                     for jsonItem in jsonTagList:
-                        customJsonDict[correspondenceDict[key]].append(jsonItem)
-        if self.validateJsonDict(customJsonDict):
+                        if jsonItem not in currJsonItem['dbJsonTagList']:
+                            currJsonItem['dbJsonTagList'].append(jsonItem)
+                    if currJsonItem not in customJsonDict[correspondenceDict[key]]:
+                        customJsonDict[correspondenceDict[key]].append(currJsonItem)
+                progress.step()
+        QApplication.restoreOverrideCursor()
+        if self.validateJsonDict(customJsonDict) and len(exceptionList) == 0:
             self.exportJson(customJsonDict)
+        else:
+            msg = ''
+            if len(exceptionList)> 0:
+                msg += self.tr('\Errors occured while trying to export customs built. Check qgis log for further details.')
+                for error in exceptionList:
+                    QgsMessageLog.logMessage(self.tr('Customization error: ') + error, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QMessageBox.warning(self, self.tr('Error!'), msg)
     
     def validateJsonDict(self, customJsonDict):
         """
@@ -221,8 +245,8 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
     def exportJson(self, customJsonDict):
         try:
             fd = QFileDialog()
-            filename = fd.getSaveFileName(caption=self.tr('Choose file to output'),filter=self.tr('json file (*.json)'))
-            outputFile = os.path.join(filename+'.json')
+            filename = fd.getSaveFileName(caption=self.tr('Choose file to output'),filter=self.tr('DSGTools Customization File (*.dsgtoolscustom)'))
+            outputFile = os.path.join(filename+'.dsgtoolscustom')
             with open(outputFile, 'w') as outfile:
                 json.dump(customJsonDict, outfile, sort_keys=True, indent=4)
             QMessageBox.warning(self, self.tr('Success!'), self.tr('Customization created on: ') +str(outputFile))
@@ -237,7 +261,7 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
     def createWidgetsFromCustomJsonDict(self, customJsonDict):
         for key in customJsonDict.keys():
             for jsonTag in customJsonDict[key]:
-                self.createWidgetFromKey(key, jsonTag)
+                self.createWidgetFromKey(key, jsonTag['jsonUi'])
     
     def createWidgetFromKey(self, key, uiParameterJsonDict):
         if key == 'attribute':

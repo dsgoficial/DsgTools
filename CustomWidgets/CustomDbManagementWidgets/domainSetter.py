@@ -68,11 +68,14 @@ class DomainSetter(QtGui.QDialog, FORM_CLASS):
                 item = item[0]
             self.domainListWidget.setCurrentItem(item)
             if uiParameterJsonDict['filterCheckBox']:
+                self.filterCheckBox.setCheckState(QtCore.Qt.Checked)
                 for codeName in uiParameterJsonDict['filterListWidgetCheckedItems']:
                     codeNameItem = self.filterListWidget.findItems(codeName, Qt.MatchExactly)
                     if isinstance(codeNameItem,list):
                         codeNameItem = codeNameItem[0]
-                codeNameItem.setCheckState(QtCore.Qt.Checked)
+                    else:
+                        codeNameItem = codeNameItem
+                    codeNameItem.setCheckState(QtCore.Qt.Checked)
             self.applyChanges()
 
     def populateDomainList(self):

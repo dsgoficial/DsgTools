@@ -50,7 +50,7 @@ class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
         self.nameLineEdit.setValidator(validator)
         self.domainSetter = None
         self.jsonBuilder = CustomJSONBuilder()
-        self.populateFromJsonTag(uiParameterJsonDict)
+        self.populateFromUiParameterJsonDict(uiParameterJsonDict)
     
     def populateFromUiParameterJsonDict(self, uiParameterJsonDict):
         """
@@ -114,12 +114,16 @@ class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
     def populateDefaultCombo(self, domainName, domainDict, filterClause):
         self.referencesLineEdit.setText(domainName)
         self.defaultComboBox.clear()
-        self.defaultComboBox.addItem('')
+        addList = ['']
         for domain in domainDict.keys():
             if filterClause == dict(): 
-                self.defaultComboBox.addItem(domain)
+                if domain not in addList:
+                    addList.append(domain)
             elif domain in filterClause.keys():
-                self.defaultComboBox.addItem(domain)
+                if domain not in addList:
+                    addList.append(domain)
+        for item in addList:
+            self.defaultComboBox.addItem(item)
     
     def getChildWidgets(self):
         return self.domainSetter
@@ -182,5 +186,5 @@ class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
         uiParameterJsonDict['defaultComboBox'] = self.defaultComboBox.currentText()
         uiParameterJsonDict['references'] = None
         if self.domainSetter:
-            uiParameterJsonDict['references'] = self.domainSetter.getUiParameterJsonList()
+            uiParameterJsonDict['references'] = self.domainSetter.getUiParameterJsonDict()
         return uiParameterJsonDict
