@@ -33,11 +33,11 @@ class DbCustomizer(QObject):
         super(DbCustomizer, self).__init__()
         self.utils = Utils()
         self.postgisDb = postgisDb
-        self.customJSONValidator = CustomJSONValidator()
+        self.customJSONValidator = None
         self.dbCustomizationFactory = DbCustomizationFactory()
     
     def importFromJSON(self, customJSON):
-        pass
+        self.customJSONValidator = CustomJSONValidator(customJSON)
     
     def materializeIntoDb(self):
         pass
