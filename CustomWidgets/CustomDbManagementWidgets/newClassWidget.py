@@ -65,7 +65,7 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
             'schemaComboBox': --text of selected item on schemaComboBox --
             'categoryLineEdit': --text of categoryLineEdit --
             'classNameLineEdit' : --text of classNameLineEdit --
-            'geomComboBox' : --index of selected item on schemaComboBox --
+            'geomComboBoxIdx' : --index of selected item on schemaComboBox --
             'attrWidgetList' : [--list of uiParameterJsonDict from each attributeWidget--]
         }
         """
@@ -74,7 +74,7 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
             self.schemaComboBox.setCurrentIndex(idx)
             self.categoryLineEdit.setText(uiParameterJsonDict['categoryLineEdit'])
             self.classNameLineEdit.setText(uiParameterJsonDict['classNameLineEdit'])
-            self.geomComboBox.setCurrentIndex(int(uiParameterJsonDict['geomComboBox']))
+            self.geomComboBox.setCurrentIndex(int(uiParameterJsonDict['geomComboBoxIdx']))
             for attr in uiParameterJsonDict['attrWidgetList']:
                 self.addCellWidget(uiParameterJsonDict=attr)
     
@@ -175,7 +175,7 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
             'schemaComboBox': --text of selected item on schemaComboBox --
             'categoryLineEdit': --text of categoryLineEdit --
             'classNameLineEdit' : --text of classNameLineEdit --
-            'geomComboBox' : --index of selected item on schemaComboBox --
+            'geomComboBoxIdx' : --index of selected item on schemaComboBox --
             'attrWidgetList' : [--list of uiParameterJsonDict from each attributeWidget--]
         }
         """
@@ -183,7 +183,7 @@ class NewClassWidget(QtGui.QWidget, FORM_CLASS):
         uiParameterJsonDict['schemaComboBox'] = self.schemaComboBox.currentText()
         uiParameterJsonDict['categoryLineEdit'] = self.categoryLineEdit.text()
         uiParameterJsonDict['classNameLineEdit'] = self.classNameLineEdit.text()
-        uiParameterJsonDict['geomComboBox'] = self.geomComboBox.currentIndex()
+        uiParameterJsonDict['geomComboBoxIdx'] = self.geomComboBox.currentIndex()
         uiParameterJsonDict['attrWidgetList'] = []
         widgetList = self.getChildWidgetList()
         for widget in widgetList:

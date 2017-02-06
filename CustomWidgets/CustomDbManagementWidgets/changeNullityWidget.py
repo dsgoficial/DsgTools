@@ -204,7 +204,7 @@ class ChangeNullityWidget(QtGui.QWidget, FORM_CLASS):
             'allAttributesCheckBox': --state of allAttributesCheckBox--
             'allTablesCheckBox': --state of allTablesCheckBox--
             'attributeComboBox': --current text of attributeComboBox--
-            'actionComboBox': --current index of actionComboBox--
+            'actionComboBoxIdx': --current index of actionComboBox--
         }
         """
         uiParameterJsonDict = dict()
