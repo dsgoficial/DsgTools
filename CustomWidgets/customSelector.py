@@ -120,14 +120,18 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         if len(selectedItems) <> 0:
             listedItems = []
             for i in range(self.fromList.__len__()):
-                itemToSelect = self.fromList.item(self.fromList.row(i))
+                itemToSelect = self.fromList.item(i)
                 if itemToSelect.text() in selectedItems:
                     listedItems.append(i)
+            listedItems.sort(reverse=True)
         else:
             listedItems = self.fromList.selectedItems()
         added = []
         for i in listedItems:
-            item = self.fromList.takeItem(self.fromList.row(i))
+            if isinstance(i, int):
+                item = self.fromList.takeItem(i)
+            else:
+                item = self.fromList.takeItem(self.fromList.row(i))
             self.toList.addItem(item)
             self.toLs.append(item.text())
             self.fromLs.remove(item.text())

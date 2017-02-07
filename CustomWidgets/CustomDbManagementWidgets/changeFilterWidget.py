@@ -60,15 +60,37 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
     
     def populateFromUiParameterJsonDict(self, uiParameterJsonDict):
         """
-        builds ui from uiParameterJsonDict
         {
-            'domainComboBox': --current text of domainComboBox --
-            'oldCodeNameComboBox': ---current text of oldCodeNameComboBox --
-            'newCodeNameLineEdit': --current text of newCodeNameLineEdit--
+            'schemaComboBox': --current text of schemaComboBox --
+            'tableComboBox': ---current text of tableComboBox --
+            'attributeComboBox': ---current text of attributeComboBox --
+            'allAttributesCheckBox': --current state of allAttributesCheckBox--
+            'allTablesCheckBox': --current state of allTablesCheckBox--
+            'filterCustomSelectorWidgetToList': [--list of selected values on filterCustomSelectorWidget--]
+            'singleValueComboBox': --current text of singleValueComboBox--
+            'actionComboBoxIdx': --current index of actionComboBoxIdx--
         }
         """
         if uiParameterJsonDict:
-            pass
+            if uiParameterJsonDict['allTablesCheckBox']:
+                self.allTablesCheckBox.setCheckState(Qt.Checked)
+                singleValueIdx = self.singleValueComboBox.findText(uiParameterJsonDict['singleValueComboBox'], flags = Qt.MatchExactly)
+                self.singleValueComboBox.setCurrentIndex(singleValueIdx)
+                self.actionComboBox.setCurrentIndex(uiParameterJsonDict['actionComboBoxIdx'])
+            else:
+                schemaIdx = self.schemaComboBox.findText(uiParameterJsonDict['schemaComboBox'], flags = Qt.MatchExactly)
+                self.schemaComboBox.setCurrentIndex(schemaIdx)
+                tableIdx = self.tableComboBox.findText(uiParameterJsonDict['tableComboBox'], flags = Qt.MatchExactly)
+                self.tableComboBox.setCurrentIndex(tableIdx)
+                if uiParameterJsonDict['allAttributesCheckBox']:
+                    self.allAttributesCheckBox.setCheckState(Qt.Checked)
+                    singleValueIdx = self.singleValueComboBox.findText(uiParameterJsonDict['singleValueComboBox'], flags = Qt.MatchExactly)
+                    self.singleValueComboBox.setCurrentIndex(singleValueIdx)
+                    self.actionComboBox.setCurrentIndex(uiParameterJsonDict['actionComboBoxIdx'])
+                else:
+                    attributeIdx = self.attributeComboBox.findText(uiParameterJsonDict['attributeComboBox'], flags = Qt.MatchExactly)
+                    self.attributeComboBox.setCurrentIndex(attributeIdx)
+                    self.filterCustomSelectorWidget.selectItems(True, selectedItems=uiParameterJsonDict['filterCustomSelectorWidgetToList'])
 
     def populateInheritanceTree(self, nodeList):
         self.treeWidget.clear()
@@ -359,3 +381,29 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
             newElement = self.jsonBuilder.alterFilterElement(schema, firstInLineage, attrName, '_'.join([firstInLineage,attrName,'ks']), [], newFilter, isMulti)
             if newElement not in jsonList:
                 jsonList.append(newElement)
+
+    def getUiParameterJsonDict(self):
+        """
+        builds a dict with the following format:
+        {
+            'schemaComboBox': --current text of schemaComboBox --
+            'tableComboBox': ---current text of tableComboBox --
+            'attributeComboBox': ---current text of attributeComboBox --
+            'allAttributesCheckBox': --current state of allAttributesCheckBox--
+            'allTablesCheckBox': --current state of allTablesCheckBox--
+            'filterCustomSelectorWidgetToList': [--list of selected values on filterCustomSelectorWidget--]
+            'singleValueComboBox': --current text of singleValueComboBox--
+            'actionComboBoxIdx': --current index of actionComboBox--
+        }
+        """
+        uiParameterJsonDict = dict()
+        uiParameterJsonDict['schemaComboBox'] = self.schemaComboBox.currentText()
+        uiParameterJsonDict['tableComboBox'] = self.tableComboBox.currentText()
+        uiParameterJsonDict['attributeComboBox'] = self.attributeComboBox.currentText()
+        uiParameterJsonDict['allAttributesCheckBox'] = self.allAttributesCheckBox.isChecked()
+        uiParameterJsonDict['allTablesCheckBox'] = self.allTablesCheckBox.isChecked()
+        uiParameterJsonDict['filterCustomSelectorWidgetToList'] = self.filterCustomSelectorWidget.toLs
+        uiParameterJsonDict['singleValueComboBox'] = self.singleValueComboBox.currentText()
+        uiParameterJsonDict['actionComboBoxIdx'] = self.actionComboBox.currentIndex()
+        return uiParameterJsonDict
+            
