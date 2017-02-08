@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>636</width>
-    <height>416</height>
+    <width>686</width>
+    <height>380</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,6 +20,40 @@
    <string>Manage Databases from a Server</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_8">
+   <item row="1" column="0">
+    <widget class="QgsCollapsibleGroupBox" name="mGroupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>400</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Click to hide database selection</string>
+     </property>
+     <property name="saveCollapsedState">
+      <bool>false</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_12">
+      <item row="0" column="0">
+       <widget class="CustomSelector" name="dbsCustomSelector" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="ExploreServerWidget" name="serverWidget" native="true">
      <property name="sizePolicy">
@@ -30,35 +64,34 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QgsCollapsibleGroupBox" name="mGroupBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="toolTip">
-      <string>Click to hide database selection</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_12">
-      <item row="0" column="0">
-       <widget class="CustomSelector" name="dbsCustomSelector" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+   <item row="3" column="0">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="1">
+      <widget class="QPushButton" name="closePushButton">
+       <property name="text">
+        <string>Close</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>556</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
    <item row="2" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -80,22 +113,21 @@
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox_3">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>80</height>
+          </size>
          </property>
          <property name="title">
           <string>Database Administration</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
-          <item row="0" column="0">
-           <widget class="QPushButton" name="dropDatabasePushButton">
-            <property name="text">
-             <string>Drop Databases</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="1">
            <widget class="QPushButton" name="createViewsPushButton">
             <property name="text">
@@ -103,46 +135,14 @@
             </property>
            </widget>
           </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="groupBox_5">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title">
-          <string>Customize Database</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="1">
-           <widget class="QPushButton" name="resetToFactoryPushButton">
-            <property name="text">
-             <string>Reset to original state</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0">
-           <widget class="QPushButton" name="applyModsFromFilePushButton">
+           <widget class="QPushButton" name="dropDatabasePushButton">
             <property name="text">
-             <string>Apply mods from file</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="customizeFromSQLFilePushButton">
-            <property name="text">
-             <string>Apply sql from provided file</string>
+             <string>Drop Databases</string>
             </property>
            </widget>
           </item>
          </layout>
-         <zorder>applyModsFromFilePushButton</zorder>
-         <zorder>resetToFactoryPushButton</zorder>
-         <zorder>customizeFromSQLFilePushButton</zorder>
         </widget>
        </item>
       </layout>
@@ -154,6 +154,12 @@
       <layout class="QGridLayout" name="gridLayout_11">
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox_6">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="maximumSize">
           <size>
            <width>5000</width>
@@ -197,7 +203,7 @@
           <item row="0" column="0">
            <widget class="QTreeWidget" name="stylesTreeWidget">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -246,7 +252,7 @@
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox_2">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -258,7 +264,7 @@
           <item row="0" column="0">
            <widget class="PermissionWidget" name="permissionWidget" native="true">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+             <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -270,6 +276,55 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Database Customization</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_13">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title">
+          <string>Customize Databases</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="0" column="0" colspan="2">
+           <widget class="CustomizationManagerWidget" name="customizationManagerWidget" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="applyModsFromFilePushButton">
+            <property name="text">
+             <string>Apply selected modification to selected databases</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="resetToFactoryPushButton">
+            <property name="text">
+             <string>Reset selected databases to original state</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+         <zorder>applyModsFromFilePushButton</zorder>
+         <zorder>resetToFactoryPushButton</zorder>
+         <zorder>customizationManagerWidget</zorder>
+        </widget>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="earthCoverage">
       <attribute name="title">
        <string>Earth Coverage</string>
@@ -277,6 +332,12 @@
       <layout class="QGridLayout" name="gridLayout_10">
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox_4">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="title">
           <string>Line-Centroid Structure</string>
          </property>
@@ -333,37 +394,13 @@
      </widget>
     </widget>
    </item>
-   <item row="3" column="0">
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="1">
-      <widget class="QPushButton" name="closePushButton">
-       <property name="text">
-        <string>Close</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>556</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
    <class>QgsCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qgis.gui</header>
+   <header>qgis.core</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -388,6 +425,12 @@
    <class>PermissionWidget</class>
    <extends>QWidget</extends>
    <header>DsgTools.CustomWidgets.permissionWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CustomizationManagerWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.customizationManagerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

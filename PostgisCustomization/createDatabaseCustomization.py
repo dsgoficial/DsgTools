@@ -49,23 +49,16 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'createDatabaseCustomization.ui'))
 
 class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, parent = None):
+    def __init__(self, abstractDb, customJsonDict = None, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.setupUi(self)
-        self.connectionWidget.tabWidget.setTabEnabled(1, False)
-        self.connectionWidget.dbChanged.connect(self.minimizeConnectionWidget)
+        self.abstractDb = abstractDb
         self.contentsDict = dict()
         self.populateCustomizationCombo()
-        self.selectFileWidget.filter = '*.dsgtoolscustom'
-        self.selectFileWidget.filesSelected.connect(self.populateWidgetsFromSelectedFile)
         self.utils = Utils()
-    
-    def minimizeConnectionWidget(self):
-        self.connectionWidget.mGroupBox.setCollapsed(True)
-    
-    def getStructDict(self):
-        pass
+        if customJsonDict:
+            self.createWidgetsFromCustomJsonDict(customJsonDict)
     
     def populateCustomizationCombo(self):
         '''
@@ -193,7 +186,7 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         self.contentsDict[parent.text(0)]['treeItem'].removeChild(treeItem)
     
     @pyqtSlot()
-    def on_buttonBox_accepted(self):
+    def on_buttonBox_saved(self):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         exceptionList = []
         customJsonDict = dict()
@@ -285,5 +278,3 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
             self.addFilterWidget(uiParameterJsonDict=uiParameterJsonDict)
         else:
             pass
-    
-

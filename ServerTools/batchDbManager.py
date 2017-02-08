@@ -49,11 +49,6 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     def __init__(self, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.utils = Utils()
         self.dbFactory = DbFactory()
@@ -61,6 +56,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         #setting the sql generator
         self.serverWidget.populateServersCombo()
         self.serverWidget.abstractDbLoaded.connect(self.checkSuperUser)
+        self.serverWidget.abstractDbLoaded.connect(self.populateCustomizationsInterface)
         self.dbsCustomSelector.setTitle(self.tr('Server Databases'))
         self.dbsCustomSelector.selectionChanged.connect(self.populateStylesInterface)
         self.dbsCustomSelector.selectionChanged.connect(self.populatePermissionsInterface)
@@ -339,6 +335,10 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
             dbsDict = self.instantiateAbstractDbs()
             self.permissionWidget.setParameters(self.serverWidget.abstractDb, dbsDict)
             self.permissionWidget.refresh()
+
+    def populateCustomizationsInterface(self):
+        self.customizationManagerWidget.setParameters(self.serverWidget.abstractDb)
+        self.customizationManagerWidget.refreshProfileList()
     
     @pyqtSlot(int)
     def on_tabWidget_currentChanged(self, index):
