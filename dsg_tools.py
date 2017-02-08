@@ -45,10 +45,6 @@ from DsgTools.ProcessingTools.processManager import ProcessManager
 from DsgTools.BDGExTools.BDGExTools import BDGExTools
 from DsgTools.InventoryTools.inventoryTools import InventoryTools
 from DsgTools.ToolboxTools.models_and_scripts_installer import ModelsAndScriptsInstaller
-from DsgTools.UserTools.profile_editor import ProfileEditor
-from DsgTools.UserTools.assign_profiles import AssignProfiles
-from DsgTools.UserTools.user_profiles import ManageUserProfiles
-from DsgTools.PostgisCustomization.createDatabaseCustomization import CreateDatabaseCustomization
 from DsgTools.ConversionTools.convert_database import ConvertDatabase
 from DsgTools.aboutdialog import AboutDialog
 from DsgTools.ProductionTools.ContourTool.calc_contour import CalcContour
@@ -506,17 +502,6 @@ class DsgTools:
         dbcreation.addAction(action)
         self.databaseButton.addAction(action) 
 
-        icon_path = ':/plugins/DsgTools/icons/manageUserProfiles.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Create Database Customization'),
-            callback=self.createDbCustom,
-            parent=database,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        database.addAction(action)
-        self.databaseButton.addAction(action)
-
         icon_path = ':/plugins/DsgTools/icons/validationtools.png'
         action = self.add_action(
             icon_path,
@@ -654,41 +639,6 @@ class DsgTools:
         Shows the about dialog
         '''
         dlg = AboutDialog()
-        dlg.exec_()
-        
-    def showProfileEditor(self):
-        '''
-        Shows the profile editor dialog
-        '''
-        dlg = ProfileEditor()
-        dlg.exec_()
-
-    def assignProfiles(self):
-        '''
-        Show the assign profiles dialog
-        '''
-        dlg = AssignProfiles()
-        dlg.exec_()
-
-    def removeProfiles(self):
-        '''
-        Shows the remove profiles dialog
-        '''
-        dlg = RemoveProfiles()
-        dlg.exec_()
-
-    def createDbCustom(self):
-        dlg = CreateDatabaseCustomization()
-        dlg.show()
-        result = dlg.exec_()
-        if result:
-            pass
-
-    def manageUserProfiles(self):
-        '''
-        Shows the manage profiles dialog
-        '''
-        dlg = ManageUserProfiles()
         dlg.exec_()
 
     def showHelp(self):
