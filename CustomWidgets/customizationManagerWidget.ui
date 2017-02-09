@@ -108,7 +108,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="userPerspectivePushButton">
+        <widget class="QPushButton" name="customizationPerspectivePushButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -135,7 +135,7 @@
          </property>
          <property name="icon">
           <iconset resource="../resources.qrc">
-           <normaloff>:/plugins/DsgTools/icons/manageUserProfiles.png</normaloff>:/plugins/DsgTools/icons/manageUserProfiles.png</iconset>
+           <normaloff>:/plugins/DsgTools/icons/custom_tools.png</normaloff>:/plugins/DsgTools/icons/custom_tools.png</iconset>
          </property>
          <property name="checkable">
           <bool>true</bool>

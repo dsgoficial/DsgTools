@@ -338,7 +338,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
 
     def populateCustomizationsInterface(self):
         self.customizationManagerWidget.setParameters(self.serverWidget.abstractDb)
-        self.customizationManagerWidget.refreshProfileList()
+        # self.customizationManagerWidget.refreshProfileList()
     
     @pyqtSlot(int)
     def on_tabWidget_currentChanged(self, index):

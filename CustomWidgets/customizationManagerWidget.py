@@ -58,14 +58,15 @@ class CustomizationManagerWidget(QtGui.QWidget, FORM_CLASS):
             self.setComponentsEnabled(False)
     
     def setComponentsEnabled(self, enabled):
-        self.versionSelectionComboBox.setEnabled(enabled)
+        self.permissionTreeWidget.setEnabled(enabled)
         self.createPushButton.setEnabled(enabled)
-        self.customizationListWidget.setEnabled(enabled)
         self.deleteCustomizationPushButton.setEnabled(enabled)
         self.importPushButton.setEnabled(enabled)
         self.batchImportPushButton.setEnabled(enabled)
         self.exportPushButton.setEnabled(enabled)
         self.batchExportPushButton.setEnabled(enabled)
+        self.databasePerspectivePushButton.setEnabled(enabled)
+        self.customizationPerspectivePushButton.setEnabled(enabled)
     
     def readJsonFromDatabase(self, customName, edgvVersion):
         '''
@@ -73,15 +74,15 @@ class CustomizationManagerWidget(QtGui.QWidget, FORM_CLASS):
         '''
         self.customDict = self.customizationManager.getCustomization(customName, edgvVersion)
     
-    @pyqtSlot(int, name='on_versionSelectionComboBox_currentIndexChanged')
-    def refreshProfileList(self):
-        index = self.versionSelectionComboBox.currentIndex()
-        self.customizationListWidget.clear()
-        if index <> 0:
-            edgvVersion = self.versionSelectionComboBox.currentText()
-            customDict = self.customizationManager.getCustomizations()
-            if edgvVersion in customDict.keys():
-                self.customizationListWidget.addItems(customDict[edgvVersion])
+    # @pyqtSlot(int, name='on_versionSelectionComboBox_currentIndexChanged')
+    # def refreshProfileList(self):
+    #     index = self.versionSelectionComboBox.currentIndex()
+    #     self.customizationListWidget.clear()
+    #     if index <> 0:
+    #         edgvVersion = self.versionSelectionComboBox.currentText()
+    #         customDict = self.customizationManager.getCustomizations()
+    #         if edgvVersion in customDict.keys():
+    #             self.customizationListWidget.addItems(customDict[edgvVersion])
     
     @pyqtSlot(bool)
     def on_createPushButton_clicked(self):

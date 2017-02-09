@@ -38,5 +38,7 @@
 		<file>icons/codelist.png</file>
 		<file>icons/militarySimbology.png</file>
 		<file>icons/batchDatabase.png</file>
+                <file>icons/page_white_wrench.png</file>
+                <file>icons/custom_tools.png</file>                
     </qresource>
 </RCC>
