@@ -58,7 +58,7 @@ class CustomizationManagerWidget(QtGui.QWidget, FORM_CLASS):
             self.setComponentsEnabled(False)
     
     def setComponentsEnabled(self, enabled):
-        self.permissionTreeWidget.setEnabled(enabled)
+        self.customizationTreeWidget.setEnabled(enabled)
         self.createPushButton.setEnabled(enabled)
         self.deleteCustomizationPushButton.setEnabled(enabled)
         self.importPushButton.setEnabled(enabled)
@@ -73,16 +73,6 @@ class CustomizationManagerWidget(QtGui.QWidget, FORM_CLASS):
         Reads the profile file, gets a dictionary of it and builds the tree widget
         '''
         self.customDict = self.customizationManager.getCustomization(customName, edgvVersion)
-    
-    # @pyqtSlot(int, name='on_versionSelectionComboBox_currentIndexChanged')
-    # def refreshProfileList(self):
-    #     index = self.versionSelectionComboBox.currentIndex()
-    #     self.customizationListWidget.clear()
-    #     if index <> 0:
-    #         edgvVersion = self.versionSelectionComboBox.currentText()
-    #         customDict = self.customizationManager.getCustomizations()
-    #         if edgvVersion in customDict.keys():
-    #             self.customizationListWidget.addItems(customDict[edgvVersion])
     
     @pyqtSlot(bool)
     def on_createPushButton_clicked(self):
@@ -117,7 +107,7 @@ class CustomizationManagerWidget(QtGui.QWidget, FORM_CLASS):
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.permissionManager.importProfile(filename)
+            self.customizationManager.importProfile(filename)
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission successfully imported.'))
         except Exception as e:
@@ -139,7 +129,7 @@ class CustomizationManagerWidget(QtGui.QWidget, FORM_CLASS):
         edgvVersion = self.versionSelectionComboBox.currentText()
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.permissionManager.exportProfile(profileName, edgvVersion, folder)
+            self.customizationManager.exportProfile(profileName, edgvVersion, folder)
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission successfully exported.'))
         except Exception as e:
@@ -177,3 +167,52 @@ class CustomizationManagerWidget(QtGui.QWidget, FORM_CLASS):
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem importing customization: ') + e.args[0])
+
+    @pyqtSlot(bool, name='on_databasePerspectivePushButton_clicked')
+    @pyqtSlot(bool, name='on_customizationPerspectivePushButton_clicked')
+    def refresh(self):
+        '''
+        Refreshes customization table according to selected view type.
+        '''
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        viewType = self.getViewType()
+        self.customizationTreeWidget.clear()
+        if viewType == 'database':
+            self.populateWithDatabasePerspective()
+        if viewType == 'customization':
+            self.populateWithCustomizationPerspective()
+        QApplication.restoreOverrideCursor()    
+
+    def getViewType(self):
+        if self.databasePerspectivePushButton.isChecked():
+            return 'database'
+        else:
+            return 'customization'
+
+    def populateWithDatabasePerspective(self):
+        #TODO
+        self.customizationTreeWidget.setHeaderLabels([self.tr('Database'), self.tr('Customization')])
+        dbPerspectiveDict = self.customizationManager.getDatabasePerspectiveDict()
+        rootNode = self.customizationTreeWidget.invisibleRootItem()
+        for dbName in dbPerspectiveDict.keys():
+            parentDbItem = self.createItem(rootNode, dbName, 0)
+            for customization in dbPerspectiveDict[dbName].keys():
+                dbItem = self.createItem(parentDbItem, customization, 1)
+                for user in dbPerspectiveDict[dbName][customization]:
+                    userItem = self.createItem(dbItem, user, 2)
+        self.customizationTreeWidget.sortItems(0, Qt.AscendingOrder)
+        self.customizationTreeWidget.expandAll()
+
+    def populateWithCustomizationPerspective(self):
+        #TODO
+        self.customizationTreeWidget.setHeaderLabels([self.tr('Customization'), self.tr('Database')])
+        customizationPerspectiveDict = self.customizationManager.getcustomizationPerspectiveDict()
+        rootNode = self.customizationTreeWidget.invisibleRootItem()
+        for customizationName in customizationPerspectiveDict.keys():
+            parentCustomItem = self.createItem(rootNode, customizationName, 0)
+            for dbName in customizationPerspectiveDict[customizationName].keys():
+                dbItem = self.createItem(parentCustomItem, dbName, 1)
+                for customization in customizationPerspectiveDict[customizationName][dbName]:
+                    customizationItem = self.createItem(dbItem, customization, 2)
+        self.customizationTreeWidget.sortItems(0, Qt.AscendingOrder)
+        self.customizationTreeWidget.expandAll()
