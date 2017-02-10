@@ -204,3 +204,6 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         self.fromList.clear()
         self.fromList.addItems(classes)
         self.fromList.sortItems()
+
+    def getToList(self):
+        return self.toLs
