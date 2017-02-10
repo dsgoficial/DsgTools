@@ -230,6 +230,8 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.populateProcessList()
         if procReturn == 0:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Process error. Check log for details.'))
+        elif procReturn == -1:
+            QtGui.QMessageBox.information(self, self.tr('Information!'), self.tr('Process canceled by user!'))
         else:
             QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Process successfully executed!'))
             #executou! show!
