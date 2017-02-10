@@ -23,7 +23,7 @@
    <item row="0" column="0" colspan="3">
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0" colspan="2">
-      <widget class="QTreeWidget" name="permissionTreeWidget">
+      <widget class="QTreeWidget" name="customizationTreeWidget">
        <property name="toolTip">
         <string>Right click for options</string>
        </property>
