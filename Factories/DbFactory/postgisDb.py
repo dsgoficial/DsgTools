@@ -843,12 +843,11 @@ class PostgisDb(AbstractDb):
             file = os.path.join(currentPath,'..','..','DbTools','PostGISTool', 'sqls', 'FTer_2a_Ed', 'views_edgvFter_2a_Ed.sql')
         return file
     
-    def getInvalidGeomRecords(self):
+    def getInvalidGeomRecords(self, geomList):
         """
         Gets invalid geometry data from database
         """
         self.checkAndOpenDb()
-        geomList = self.listClassesWithElementsFromDatabase()
         invalidRecordsList = []
         for lyr in geomList:
             tableSchema, tableName = self.getTableSchema(lyr)

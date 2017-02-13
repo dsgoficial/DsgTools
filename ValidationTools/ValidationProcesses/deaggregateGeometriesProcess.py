@@ -30,6 +30,9 @@ class DeaggregateGeometriesProcess(ValidationProcess):
         '''
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Deaggregate Geometries')
+        
+        explodeIdDict = self.abstractDb.getExplodeCandidates()
+        self.parameters = {'Classes':explodeIdDict.keys()}
 
     def execute(self):
         '''
@@ -39,12 +42,12 @@ class DeaggregateGeometriesProcess(ValidationProcess):
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName())
-            explodeIdDict = self.abstractDb.getExplodeCandidates() #list only classes with elements.
-            if len(explodeIdDict.keys()) == 0:
+            classesWithElem = self.parameters['Classes'] #list only classes with elements.
+            if len(classesWithElem) == 0:
                 self.setStatus(self.tr('There are no multi parted geometries.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('There are no multi parted geometries.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
-            for cl in explodeIdDict.keys():
+            for cl in classesWithElem:
                 #creating vector layer
                 schema, layer_name = self.abstractDb.getTableSchema(cl)
                 layer = self.layerLoader.load([layer_name],uniqueLoad=True)[layer_name]

@@ -29,7 +29,7 @@ class SnapGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Snap Geometries')
         
-        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase()
+        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False, primitiveFilter = ['a', 'l'])
         self.parameters = {'Snap': 1.0, 'MinArea':0.001, 'Classes':classesWithElem.keys()}
         
     def runProcessinAlg(self, layer, tempTableName):
@@ -81,22 +81,21 @@ class SnapGeometriesProcess(ValidationProcess):
                 return 1
             error = False
             for cl in classesWithElem:
-                if cl[-1] in ['a', 'l']:
-                    # preparation
-                    processTableName, lyr = self.prepareExecution(cl)
-                    #running the process in the temp table
-                    result = self.runProcessinAlg(lyr, processTableName)
-                    self.abstractDb.dropTempTable(processTableName)
-                    if len(result) > 0:
-                        error = True
-                        recordList = []
-                        for tupple in result:
-                            recordList.append((cl,tupple[0],self.tr('Snapping error.'),tupple[1]))
-                            self.addClassesToBeDisplayedList(cl) 
-                        numberOfProblems = self.addFlag(recordList)
-                        QgsMessageLog.logMessage(self.tr('{0} feature(s) of class {1} with snapping errors. Check flags.').format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                    else:
-                        QgsMessageLog.logMessage(self.tr('There are no snapping errors on {}.').format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                # preparation
+                processTableName, lyr = self.prepareExecution(cl)
+                #running the process in the temp table
+                result = self.runProcessinAlg(lyr, processTableName)
+                self.abstractDb.dropTempTable(processTableName)
+                if len(result) > 0:
+                    error = True
+                    recordList = []
+                    for tupple in result:
+                        recordList.append((cl,tupple[0],self.tr('Snapping error.'),tupple[1]))
+                        self.addClassesToBeDisplayedList(cl) 
+                    numberOfProblems = self.addFlag(recordList)
+                    QgsMessageLog.logMessage(self.tr('{0} feature(s) of class {1} with snapping errors. Check flags.').format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                else:
+                    QgsMessageLog.logMessage(self.tr('There are no snapping errors on {}.').format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             if error:
                 self.setStatus(self.tr('There are snapping errors. Check log.'), 4) #Finished with errors
             else:

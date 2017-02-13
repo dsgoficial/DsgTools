@@ -31,7 +31,9 @@ class CleanGeometriesProcess(ValidationProcess):
         '''
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Clean Geometries')
-        self.parameters = {'Snap': 1.0, 'MinArea':0.001}
+        
+        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase()
+        self.parameters = {'Snap': 1.0, 'MinArea':0.001, 'Classes':classesWithElem.keys()}
         
     def runProcessinAlg(self, layer, tempTableName):
         '''
@@ -81,7 +83,7 @@ class CleanGeometriesProcess(ValidationProcess):
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase()
+            classesWithElem = self.parameters['Classes']
             if len(classesWithElem) == 0:
                 self.setStatus(self.tr('Empty database.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

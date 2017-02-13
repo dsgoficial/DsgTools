@@ -31,6 +31,9 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Identify Not Simple Geometries')
 
+        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase()
+        self.parameters = {'Classes':classesWithElem.keys()}
+
     def execute(self):
         '''
         Reimplementation of the execute method from the parent class
@@ -39,8 +42,8 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
-            result = self.abstractDb.getNotSimpleRecords(classesWithGeom) #list only classes with elements.
+            classesWithElem = self.parameters['Classes']
+            result = self.abstractDb.getNotSimpleRecords(classesWithElem)
             if len(result.keys()) > 0:
                 recordList = []
                 for cl in result.keys():

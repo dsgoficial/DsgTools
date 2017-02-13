@@ -30,7 +30,9 @@ class IdentifySmallAreasProcess(ValidationProcess):
         '''
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Identify Small Areas')
-        self.parameters = {'Area': 125.0}
+        
+        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase()
+        self.parameters = {'Area': 125.0, 'Classes':classesWithElem.keys()}
 
     def execute(self):
         '''
@@ -40,9 +42,9 @@ class IdentifySmallAreasProcess(ValidationProcess):
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
+            classesWithElem = self.parameters['Classes']
             areas = []
-            for c in classesWithGeom:
+            for c in classesWithElem:
                 if c[-1] == 'a':
                     areas.append(c)
             tol = self.parameters['Area']
