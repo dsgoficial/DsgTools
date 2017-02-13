@@ -61,7 +61,7 @@ class SpatialiteDb(AbstractDb):
         filename = fd.getOpenFileName(caption=self.tr('Select a DSGTools Spatialite file'),filter=self.tr('Spatialite file databases (*.sqlite)'))
         self.db.setDatabaseName(filename)
     
-    def listGeomClassesFromDatabase(self):
+    def listGeomClassesFromDatabase(self, primitiveFilter = []):
         '''
         Gets a list with geometry classes from database
         '''
