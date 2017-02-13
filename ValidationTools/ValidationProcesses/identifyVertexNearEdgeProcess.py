@@ -30,7 +30,9 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
         '''
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Identify Vertex Near Edge')
-        self.parameters = {self.tr('Tolerance'): 1.0}
+        
+        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False, primitiveFilter = ['a', 'l'])
+        self.parameters = {self.tr('Tolerance'): 1.0, 'Classes':classesWithElem.keys()}
 
     def execute(self):
         '''
@@ -40,27 +42,26 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
+            classesWithElem = self.parameters['Classes']
             if len(classesWithGeom) == 0:
                 self.setStatus(self.tr('Empty database.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             tol = self.parameters[self.tr('Tolerance')]
             error = False
-            for cl in classesWithGeom:
+            for cl in classesWithElem:
                 tableSchema, tableName = self.abstractDb.getTableSchema(cl)
-                if cl[-1] in ['l','a']:
-                    result = self.abstractDb.getVertexNearEdgesRecords(tableSchema, tableName, tol) #list only classes with elements.
-                    if len(result) > 0:
-                        error = True
-                        recordList = []
-                        for tupple in result:
-                            recordList.append((tableSchema+'.'+tableName,tupple[0],self.tr('Vertex near edge.'),tupple[1]))
-                            self.addClassesToBeDisplayedList(tupple[0]) 
-                        numberOfProblems = self.addFlag(recordList)
-                        QgsMessageLog.logMessage(self.tr('{0} features from {1} have vertex(es) near edge(s). Check flags.').format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                    else:
-                        QgsMessageLog.logMessage(self.tr('There are no vertexes near edges on {}.').format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                result = self.abstractDb.getVertexNearEdgesRecords(tableSchema, tableName, tol) #list only classes with elements.
+                if len(result) > 0:
+                    error = True
+                    recordList = []
+                    for tupple in result:
+                        recordList.append((tableSchema+'.'+tableName,tupple[0],self.tr('Vertex near edge.'),tupple[1]))
+                        self.addClassesToBeDisplayedList(tupple[0]) 
+                    numberOfProblems = self.addFlag(recordList)
+                    QgsMessageLog.logMessage(self.tr('{0} features from {1} have vertex(es) near edge(s). Check flags.').format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                else:
+                    QgsMessageLog.logMessage(self.tr('There are no vertexes near edges on {}.').format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             if error:
                 self.setStatus(self.tr('There are vertexes near edges. Check log.'), 4) #Finished with errors
             else:

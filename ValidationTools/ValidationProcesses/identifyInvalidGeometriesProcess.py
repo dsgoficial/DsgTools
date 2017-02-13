@@ -31,7 +31,7 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Identify Invalid Geometries')
         
-        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase()
+        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False)
         self.parameters = {'Classes':classesWithElem.keys()}
 
     def execute(self):

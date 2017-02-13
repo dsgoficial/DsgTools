@@ -30,7 +30,9 @@ class RecursiveSnapProcess(ValidationProcess):
         '''
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Recursive Snap')
-        self.parameters = {'Snap': 5.0}
+        
+        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False, primitiveFilter = ['a', 'l'])
+        self.parameters = {'Snap': 5.0, 'Classes':classesWithElem.keys()}
 
     def execute(self):
         '''
@@ -39,7 +41,7 @@ class RecursiveSnapProcess(ValidationProcess):
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
-            classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase()
+            classesWithElem = self.parameters['Classes']
             if len(classesWithElem) == 0:
                 self.setStatus(self.tr('Empty database.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

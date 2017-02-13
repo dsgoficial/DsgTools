@@ -30,7 +30,9 @@ class SnapLinesToFrameProcess(ValidationProcess):
         '''
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Snap Lines to Frame')
-        self.parameters = {'Snap': 5.0, 'Snap Tolerance':0.001}
+        
+        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False, primitiveFilter = ['l'])
+        self.parameters = {'Snap': 5.0, 'Classes':classesWithElem.keys()}
 
     def postProcess(self):
         '''
@@ -45,15 +47,11 @@ class SnapLinesToFrameProcess(ValidationProcess):
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
-            classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
-            if len(classesWithGeom) == 0:
+            lines = self.parameters['Classes']
+            if len(lines) == 0:
                 self.setStatus(self.tr('Empty database.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
-            lines = []
-            for cl in classesWithGeom:
-                if cl[-1] == 'l':
-                    lines.append(cl)
             tol = self.parameters['Snap']
             for cl in lines:
                 # preparation

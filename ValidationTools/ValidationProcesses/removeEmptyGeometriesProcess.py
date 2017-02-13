@@ -31,6 +31,9 @@ class RemoveEmptyGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Remove Empty Geometries')
     
+        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False)
+        self.parameters = {'Classes':classesWithElem.keys()}
+        
     def execute(self):
         '''
         Reimplementation of the execute method from the parent class
@@ -38,12 +41,12 @@ class RemoveEmptyGeometriesProcess(ValidationProcess):
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
-            classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
-            if len(classesWithGeom) == 0:
+            classesWithElem = self.parameters['Classes']
+            if len(classesWithElem) == 0:
                 self.setStatus(self.tr('Empty database.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
-            for cl in classesWithGeom:
+            for cl in classesWithElem:
                 # preparation
                 processTableName, lyr = self.prepareExecution(cl)
                 self.abstractDb.removeEmptyGeometries(processTableName)

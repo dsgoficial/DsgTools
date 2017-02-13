@@ -30,6 +30,9 @@ class RemoveSmallAreasProcess(ValidationProcess):
         '''
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Remove Small Polygons')
+        
+        flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifySmallAreasProcess')
+        self.parameters = {'Classes':flagsDict.keys()}
 
     def preProcess(self):
         '''
@@ -44,13 +47,13 @@ class RemoveSmallAreasProcess(ValidationProcess):
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
-            flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifySmallAreasProcess')
-            if len(flagsDict.keys()) == 0:
+            flagsClasses = self.parameters['Classes']
+            if len(flagsClasses) == 0:
                 self.setStatus(self.tr('There are no small areas.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('There are no small areas.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             numberOfProblems = 0
-            for cl in flagsDict.keys():
+            for cl in flagsClasses:
                 # preparation
                 processTableName, lyr = self.prepareExecution(cl)
                 #running the process in the temp table

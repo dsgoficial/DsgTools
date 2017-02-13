@@ -30,7 +30,9 @@ class IdentifySmallLinesProcess(ValidationProcess):
         '''
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Identify Small Lines')
-        self.parameters = {self.tr('Length'): 5.0}
+        
+        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False, primitiveFilter = ['l'])
+        self.parameters = {self.tr('Length'): 5.0, 'Classes': classesWithElem.keys()}
 
     def execute(self):
         '''
@@ -40,11 +42,7 @@ class IdentifySmallLinesProcess(ValidationProcess):
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
-            lines = []
-            for c in classesWithGeom:
-                if c[-1] == 'l':
-                    lines.append(c)
+            lines = self.parameters['Classes']
             tol = self.parameters[self.tr('Length')]
             result = self.abstractDb.getSmallLinesRecords(lines, tol) #list only classes with elements.
             if len(result.keys()) > 0:
