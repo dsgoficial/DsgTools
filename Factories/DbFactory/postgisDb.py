@@ -160,8 +160,8 @@ class PostgisDb(AbstractDb):
                     dbPrimitiveList.append('LINESTRING')
                     dbPrimitiveList.append('MULTILINESTRING')
                 if primitive == 'a':
-                    dbPrimitiveList.append('LINESTRING')
-                    dbPrimitiveList.append('MULTILINESTRING')
+                    dbPrimitiveList.append('POLYGON')
+                    dbPrimitiveList.append('MULTIPOLYGON')
         sql = self.gen.getGeomTables(schemaList, dbPrimitiveList)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
