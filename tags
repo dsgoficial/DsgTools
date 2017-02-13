@@ -80,7 +80,7 @@ FieldSetup	ProductionTools/FieldToolBox/field_setup.py	/^class FieldSetup(QtGui.
 FieldToolbox	ProductionTools/FieldToolBox/field_toolbox.py	/^class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):$/;"	kind:class	line:43
 FilterCustomization	Factories/DbCustomizationFactory/filterCustomization.py	/^class FilterCustomization(DbCustomization):$/;"	kind:class	line:26
 ForceValidityGeometriesProcess	ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py	/^class ForceValidityGeometriesProcess(ValidationProcess):$/;"	kind:class	line:26
-GETTERS	ValidationTools/processParametersDialog.py	/^    GETTERS = {QtGui.QLineEdit: "text",$/;"	kind:variable	line:32
+GETTERS	ValidationTools/processParametersDialog.py	/^    GETTERS = {QtGui.QLineEdit: "text",$/;"	kind:variable	line:33
 GenericThread	Factories/ThreadFactory/genericThread.py	/^class GenericThread(QRunnable):$/;"	kind:class	line:33
 HSV_fusion.py	QGIS_Scripts/HSV_fusion.py	1;"	kind:file	line:1
 IFACE	test/utilities.py	/^IFACE = None$/;"	kind:variable	line:12
@@ -136,7 +136,7 @@ PostgisDbCreator	Factories/DbCreatorFactory/postgisDbCreator.py	/^class PostgisD
 PostgisDbMessages	Factories/ThreadFactory/postgisDbThread.py	/^class PostgisDbMessages(QObject):$/;"	kind:class	line:34
 PostgisDbThread	Factories/ThreadFactory/postgisDbThread.py	/^class PostgisDbThread(GenericThread):$/;"	kind:class	line:56
 ProcessManager	ProcessingTools/processManager.py	/^class ProcessManager(QObject):$/;"	kind:class	line:31
-ProcessParametersDialog	ValidationTools/processParametersDialog.py	/^class ProcessParametersDialog(QtGui.QDialog):$/;"	kind:class	line:25
+ProcessParametersDialog	ValidationTools/processParametersDialog.py	/^class ProcessParametersDialog(QtGui.QDialog):$/;"	kind:class	line:26
 ProcessSignals	Factories/ThreadFactory/genericThread.py	/^class ProcessSignals(QObject):$/;"	kind:class	line:27
 ProcessingTools	ImageTools/processingTools.py	/^class ProcessingTools(QDialog, FORM_CLASS):$/;"	kind:class	line:40
 ProfileEditor	UserTools/profile_editor.py	/^class ProfileEditor(QtGui.QDialog, FORM_CLASS):$/;"	kind:class	line:37
@@ -158,7 +158,7 @@ RemoveSmallAreasProcess	ValidationTools/ValidationProcesses/removeSmallAreasProc
 RemoveSmallLinesProcess	ValidationTools/ValidationProcesses/removeSmallLinesProcess.py	/^class RemoveSmallLinesProcess(ValidationProcess):$/;"	kind:class	line:26
 RulesEditor	ValidationTools/rules_editor.py	/^class RulesEditor(QtGui.QDialog, FORM_CLASS):$/;"	kind:class	line:36
 SERVER	plugin_upload.py	/^SERVER = 'plugins.qgis.org'$/;"	kind:variable	line:15
-SETTERS	ValidationTools/processParametersDialog.py	/^    SETTERS = {QtGui.QLineEdit: "setText",$/;"	kind:variable	line:37
+SETTERS	ValidationTools/processParametersDialog.py	/^    SETTERS = {QtGui.QLineEdit: "setText",$/;"	kind:variable	line:38
 SafeTranslationsTest	test/test_translations.py	/^class SafeTranslationsTest(unittest.TestCase):$/;"	kind:class	line:24
 SelectFileWidget	CustomWidgets/selectFileWidget.py	/^class SelectFileWidget(QtGui.QWidget, FORM_CLASS):$/;"	kind:class	line:37
 SelectStyles	ServerTools/selectStyles.py	/^class SelectStyles(QtGui.QDialog, FORM_CLASS):$/;"	kind:class	line:47
@@ -185,7 +185,7 @@ TestInit	test/test_init.py	/^class TestInit(unittest.TestCase):$/;"	kind:class	l
 ThreadFactory	Factories/ThreadFactory/threadFactory.py	/^class ThreadFactory:$/;"	kind:class	line:27
 Utils	Utils/utils.py	/^class Utils:$/;"	kind:class	line:29
 UtmGrid	LayerTools/CreateFrameTool/map_index.py	/^class UtmGrid:$/;"	kind:class	line:27
-VALIDATORS	ValidationTools/processParametersDialog.py	/^    VALIDATORS = {QtGui.QLineEdit: lambda x: bool(len(x)),$/;"	kind:variable	line:42
+VALIDATORS	ValidationTools/processParametersDialog.py	/^    VALIDATORS = {QtGui.QLineEdit: lambda x: bool(len(x)),$/;"	kind:variable	line:43
 VERBOSE	plugin_upload.py	/^VERBOSE = False$/;"	kind:variable	line:18
 ValidatedItemDelegate	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^class ValidatedItemDelegate(QtGui.QStyledItemDelegate):$/;"	kind:class	line:43
 ValidationConfig	ValidationTools/validation_config.py	/^class ValidationConfig(QtGui.QDialog, FORM_CLASS):$/;"	kind:class	line:36
@@ -194,7 +194,7 @@ ValidationManager	ValidationTools/validationManager.py	/^class ValidationManager
 ValidationProcess	ValidationTools/ValidationProcesses/validationProcess.py	/^class ValidationProcess(QObject):$/;"	kind:class	line:34
 ValidationToolbox	ValidationTools/validation_toolbox.py	/^class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):$/;"	kind:class	line:50
 ViewServers	ServerTools/viewServers.py	/^class ViewServers(QtGui.QDialog, FORM_CLASS):$/;"	kind:class	line:39
-WIDGETS	ValidationTools/processParametersDialog.py	/^    WIDGETS = {str: QtGui.QLineEdit,$/;"	kind:variable	line:26
+WIDGETS	ValidationTools/processParametersDialog.py	/^    WIDGETS = {str: QtGui.QLineEdit,$/;"	kind:variable	line:27
 __author__	test/__init__.py	/^__author__ = 'timlinux'$/;"	kind:variable	line:1
 __author__	test/qgis_interface.py	/^__author__ = 'tim@linfiniti.com'$/;"	kind:variable	line:17
 __author__	test/test_dsg_tools_dialog.py	/^__author__ = 'luiz.claudio@dsg.eb.mil.br'$/;"	kind:variable	line:11
@@ -363,7 +363,7 @@ __init__	ValidationTools/ValidationProcesses/spatialRuleEnforcer.py	/^    def __
 __init__	ValidationTools/ValidationProcesses/spatialRuleProcess.py	/^    def __init__(self, postgisDb, iface):$/;"	kind:member	line:48
 __init__	ValidationTools/ValidationProcesses/validationProcess.py	/^    def __init__(self, postgisDb, iface):$/;"	kind:member	line:35
 __init__	ValidationTools/attributeRulesEditor.py	/^    def __init__(self, abstractDb, parent = None):$/;"	kind:member	line:40
-__init__	ValidationTools/processParametersDialog.py	/^    def __init__(self, parent, options, required=None, title=None):$/;"	kind:member	line:48
+__init__	ValidationTools/processParametersDialog.py	/^    def __init__(self, parent, options, required=None, title=None):$/;"	kind:member	line:49
 __init__	ValidationTools/rules_editor.py	/^    def __init__(self, postgisDb, parent = None):$/;"	kind:member	line:40
 __init__	ValidationTools/setupEarthCoverage.py	/^    def __init__(self, abstractDb, areas, lines, oldCoverage, parent=None):$/;"	kind:member	line:37
 __init__	ValidationTools/validationManager.py	/^    def __init__(self,postgisDb, iface):$/;"	kind:member	line:31
@@ -428,10 +428,10 @@ __revision__	test/qgis_interface.py	/^__revision__ = '$Format:%H$'$/;"	kind:vari
 __revision__	test/test_init.py	/^__revision__ = '$Format:%H$'$/;"	kind:variable	line:5
 __test	ComplexTools/complexWindow.py	/^    def __test(self, x):$/;"	kind:member	line:529
 aboutdialog.py	aboutdialog.py	1;"	kind:file	line:1
-abstractDb	ValidationTools/validationManager.py	/^    abstractDb = DbFactory().createDbFactory('QPSQL')$/;"	kind:variable	line:137
+abstractDb	ValidationTools/validationManager.py	/^    abstractDb = DbFactory().createDbFactory('QPSQL')$/;"	kind:variable	line:138
 abstractDb.py	Factories/DbFactory/abstractDb.py	1;"	kind:file	line:1
 abstractDbLoaded	CustomWidgets/exploreServerWidget.py	/^    abstractDbLoaded = pyqtSignal()$/;"	kind:variable	line:43
-accept	ValidationTools/processParametersDialog.py	/^    def accept(self):$/;"	kind:member	line:108
+accept	ValidationTools/processParametersDialog.py	/^    def accept(self):$/;"	kind:member	line:113
 acquire	ProductionTools/FieldToolBox/field_toolbox.py	/^    def acquire(self, pressed):$/;"	kind:member	line:320
 acquisition_tools.py	ProductionTools/FieldToolBox/acquisition_tools.py	1;"	kind:file	line:1
 activate	ProductionTools/MinimumAreaTool/shapeTool.py	/^    def activate(self):$/;"	kind:member	line:134
@@ -504,7 +504,7 @@ batchGetJsonTag	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^
 batchImportCustomization	ServerManagementTools/customizationManager.py	/^    def batchImportCustomization(self, customizationsDir):$/;"	kind:member	line:130
 batchImportProfiles	ServerManagementTools/permissionManager.py	/^    def batchImportProfiles(self, profilesDir):$/;"	kind:member	line:302
 batchImportStyles	ServerTools/batchDbManager.py	/^    def batchImportStyles(self, dbsDict, styleDir, styleList, version):$/;"	kind:member	line:215
-beautifyText	ValidationTools/processParametersDialog.py	/^def beautifyText(camelCasedText):$/;"	kind:function	line:140
+beautifyText	ValidationTools/processParametersDialog.py	/^def beautifyText(camelCasedText):$/;"	kind:function	line:145
 browseServer	CustomWidgets/exploreServerWidget.py	/^    def browseServer(self, dbList, host, port, user, password):$/;"	kind:member	line:83
 buildAttributeElement	PostgisCustomization/CustomJSONTools/customJSONBuilder.py	/^    def buildAttributeElement(self, attrName, attrType, isPk, isNullable, defaultValue = None, references = None, filter=[]):$/;"	kind:member	line:38
 buildAutoIncrementingDbNameList	Factories/DbCreatorFactory/dbCreator.py	/^    def buildAutoIncrementingDbNameList(self, dbInitialBaseName, numberOfDatabases, prefix = None, sufix = None):$/;"	kind:member	line:62
@@ -873,7 +873,7 @@ execute	ValidationTools/ValidationProcesses/removeDuplicatesProcess.py	/^    def
 execute	ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py	/^    def execute(self):$/;"	kind:member	line:34
 execute	ValidationTools/ValidationProcesses/removeSmallAreasProcess.py	/^    def execute(self):$/;"	kind:member	line:40
 execute	ValidationTools/ValidationProcesses/removeSmallLinesProcess.py	/^    def execute(self):$/;"	kind:member	line:40
-execute	ValidationTools/ValidationProcesses/snapGeometriesProcess.py	/^    def execute(self):$/;"	kind:member	line:69
+execute	ValidationTools/ValidationProcesses/snapGeometriesProcess.py	/^    def execute(self):$/;"	kind:member	line:71
 execute	ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py	/^    def execute(self):$/;"	kind:member	line:41
 execute	ValidationTools/ValidationProcesses/snapToGridProcess.py	/^    def execute(self):$/;"	kind:member	line:35
 execute	ValidationTools/ValidationProcesses/spatialRuleProcess.py	/^    def execute(self):$/;"	kind:member	line:83
@@ -1277,6 +1277,7 @@ getTitle	CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py	/^    def
 getTitle	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def getTitle(self):$/;"	kind:member	line:116
 getTitle	CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py	/^    def getTitle(self):$/;"	kind:member	line:121
 getTitle	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def getTitle(self):$/;"	kind:member	line:150
+getToList	CustomWidgets/customSelector.py	/^    def getToList(self):$/;"	kind:member	line:208
 getTreeBranchFromNode	Utils/utils.py	/^    def getTreeBranchFromNode(self, startNode, inputDict):$/;"	kind:member	line:202
 getType	CustomWidgets/tabDbSelectorWidget.py	/^    def getType(self):$/;"	kind:member	line:76
 getType	Factories/DbCreatorFactory/dbCreator.py	/^    def getType(self):$/;"	kind:member	line:45
@@ -1496,7 +1497,7 @@ manageDBAuxiliarStructure.py	ServerTools/manageDBAuxiliarStructure.py	1;"	kind:f
 managePermissionsOnDb	CustomWidgets/permissionWidget.py	/^    def managePermissionsOnDb(self):$/;"	kind:member	line:230
 manageServerUsers.py	UserTools/manageServerUsers.py	1;"	kind:file	line:1
 manageUserPermissions	CustomWidgets/permissionWidget.py	/^    def manageUserPermissions(self):$/;"	kind:member	line:172
-manager	ValidationTools/validationManager.py	/^    manager = ValidationManager(abstractDb)$/;"	kind:variable	line:138
+manager	ValidationTools/validationManager.py	/^    manager = ValidationManager(abstractDb)$/;"	kind:variable	line:139
 mapCanvas	test/qgis_interface.py	/^    def mapCanvas(self):$/;"	kind:member	line:181
 mapInputLayer	ValidationTools/ValidationProcesses/validationProcess.py	/^    def mapInputLayer(self, inputLyr):$/;"	kind:member	line:188
 map_index.py	LayerTools/CreateFrameTool/map_index.py	1;"	kind:file	line:1
@@ -1550,7 +1551,7 @@ on_applyPushButton_clicked	UserTools/dbProfileManager.py	/^    def on_applyPushB
 on_applyPushButton_clicked	UserTools/profileUserManager.py	/^    def on_applyPushButton_clicked(self):$/;"	kind:member	line:53
 on_associatePushButton_clicked	ComplexTools/complexWindow.py	/^    def on_associatePushButton_clicked(self):$/;"	kind:member	line:202
 on_attributeComboBox_currentIndexChanged	CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py	/^    def on_attributeComboBox_currentIndexChanged(self, idx):$/;"	kind:member	line:158
-on_attributeRulesEditorPushButton_clicked	ValidationTools/validation_toolbox.py	/^    def on_attributeRulesEditorPushButton_clicked(self):$/;"	kind:member	line:272
+on_attributeRulesEditorPushButton_clicked	ValidationTools/validation_toolbox.py	/^    def on_attributeRulesEditorPushButton_clicked(self):$/;"	kind:member	line:274
 on_backInspectButton_clicked	ProductionTools/InspectFeatures/inspectFeatures.py	/^    def on_backInspectButton_clicked(self):$/;"	kind:member	line:89
 on_batchExportPushButton_clicked	CustomWidgets/customizationManagerWidget.py	/^    def on_batchExportPushButton_clicked(self):$/;"	kind:member	line:140
 on_batchExportPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_batchExportPushButton_clicked(self):$/;"	kind:member	line:281
@@ -1700,9 +1701,9 @@ on_removeSelectedPushButton_clicked	PostgisCustomization/createDatabaseCustomiza
 on_removeUserButton_clicked	UserTools/manageServerUsers.py	/^    def on_removeUserButton_clicked(self):$/;"	kind:member	line:82
 on_removeUserButton_clicked	UserTools/user_profiles.py	/^    def on_removeUserButton_clicked(self):$/;"	kind:member	line:188
 on_removeValuePushButton_clicked	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def on_removeValuePushButton_clicked(self):$/;"	kind:member	line:112
-on_ruleEnforcerRadio_toggled	ValidationTools/validation_toolbox.py	/^    def on_ruleEnforcerRadio_toggled(self, checked):$/;"	kind:member	line:261
-on_ruleEnforcerRadio_toggled	ValidationTools/validation_toolbox.py	/^    def on_ruleEnforcerRadio_toggled(self, checked):$/;"	kind:member	line:285
-on_rulesEditorButton_clicked	ValidationTools/validation_toolbox.py	/^    def on_rulesEditorButton_clicked(self):$/;"	kind:member	line:249
+on_ruleEnforcerRadio_toggled	ValidationTools/validation_toolbox.py	/^    def on_ruleEnforcerRadio_toggled(self, checked):$/;"	kind:member	line:263
+on_ruleEnforcerRadio_toggled	ValidationTools/validation_toolbox.py	/^    def on_ruleEnforcerRadio_toggled(self, checked):$/;"	kind:member	line:287
+on_rulesEditorButton_clicked	ValidationTools/validation_toolbox.py	/^    def on_rulesEditorButton_clicked(self):$/;"	kind:member	line:251
 on_runButton_clicked	ValidationTools/validation_toolbox.py	/^    def on_runButton_clicked(self):$/;"	kind:member	line:216
 on_saveButton_clicked	DbTools/PostGISTool/postgisDBTool.py	/^    def on_saveButton_clicked(self):$/;"	kind:member	line:74
 on_saveButton_clicked	ServerTools/serverConfigurator.py	/^    def on_saveButton_clicked(self):$/;"	kind:member	line:51
@@ -1738,7 +1739,7 @@ on_testButton_clicked	ServerTools/viewServers.py	/^    def on_testButton_clicked
 on_theSelectionModel_selectionChanged	ValidationTools/validation_toolbox.py	/^    def on_theSelectionModel_selectionChanged(self):$/;"	kind:member	line:86
 on_treeWidget_currentItemChanged	ProductionTools/FieldToolBox/field_setup.py	/^    def on_treeWidget_currentItemChanged(self, previous, current):$/;"	kind:member	line:502
 on_typeComboBox_currentIndexChanged	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def on_typeComboBox_currentIndexChanged(self, idx):$/;"	kind:member	line:87
-on_validationTabWidget_currentChanged	ValidationTools/validation_toolbox.py	/^    def on_validationTabWidget_currentChanged(self):$/;"	kind:member	line:238
+on_validationTabWidget_currentChanged	ValidationTools/validation_toolbox.py	/^    def on_validationTabWidget_currentChanged(self):$/;"	kind:member	line:240
 on_versionCombo_currentIndexChanged	UserTools/createProfileWithProfileManager.py	/^    def on_versionCombo_currentIndexChanged(self):$/;"	kind:member	line:149
 on_versionCombo_currentIndexChanged	UserTools/create_profile.py	/^    def on_versionCombo_currentIndexChanged(self):$/;"	kind:member	line:147
 on_versionSelectionComboBox_currentIndexChanged	UserTools/serverProfilesManager.py	/^    def on_versionSelectionComboBox_currentIndexChanged(self):$/;"	kind:member	line:165
@@ -1977,7 +1978,7 @@ run	ProductionTools/MinimumAreaTool/minimumAreaTool.py	/^    def run(self, scale
 run	dsg_tools.py	/^    def run(self):$/;"	kind:member	line:623
 runPolygonize	ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py	/^    def runPolygonize(self, cl, areaLyr, lineLyr):$/;"	kind:member	line:99
 runProcessinAlg	ValidationTools/ValidationProcesses/cleanGeometriesProcess.py	/^    def runProcessinAlg(self, layer, tempTableName):$/;"	kind:member	line:36
-runProcessinAlg	ValidationTools/ValidationProcesses/snapGeometriesProcess.py	/^    def runProcessinAlg(self, layer, tempTableName):$/;"	kind:member	line:33
+runProcessinAlg	ValidationTools/ValidationProcesses/snapGeometriesProcess.py	/^    def runProcessinAlg(self, layer, tempTableName):$/;"	kind:member	line:35
 runQuery	Factories/DbFactory/postgisDb.py	/^    def runQuery(self, sql, errorMsg, params):$/;"	kind:member	line:1567
 runSqlFromFile	Factories/DbFactory/postgisDb.py	/^    def runSqlFromFile(self, sqlFilePath):$/;"	kind:member	line:1772
 runner	test/test_dsg_tools_dialog.py	/^    runner = unittest.TextTestRunner(verbosity=2)$/;"	kind:variable	line:53
@@ -2245,13 +2246,13 @@ validationStatusText	Factories/SqlFactory/postgisSqlGenerator.py	/^    def valid
 validation_config.py	ValidationTools/validation_config.py	1;"	kind:file	line:1
 validation_history.py	ValidationTools/validation_history.py	1;"	kind:file	line:1
 validation_toolbox.py	ValidationTools/validation_toolbox.py	1;"	kind:file	line:1
-values	ValidationTools/processParametersDialog.py	/^    def values(self):$/;"	kind:member	line:133
+values	ValidationTools/processParametersDialog.py	/^    def values(self):$/;"	kind:member	line:138
 viewServers	dsg_tools.py	/^    def viewServers(self):$/;"	kind:member	line:818
 viewServers.py	ServerTools/viewServers.py	1;"	kind:file	line:1
 virtual_raster.py	QGIS_Scripts/virtual_raster.py	1;"	kind:file	line:1
 virtual_raster_inloco.py	QGIS_Scripts/virtual_raster_inloco.py	1;"	kind:file	line:1
 vrt	QGIS_Scripts/virtual_raster.py	/^vrt = makeVrtDict(candidates, camada)$/;"	kind:variable	line:196
-widgets	ValidationTools/processParametersDialog.py	/^    def widgets(self):$/;"	kind:member	line:126
+widgets	ValidationTools/processParametersDialog.py	/^    def widgets(self):$/;"	kind:member	line:131
 writeBlock	ImageTools/raster_processing.py	/^    def writeBlock(self, band, block, sizeX, sizeY = 1, offsetY = 0, pixelType = gdal.GDT_Byte):$/;"	kind:member	line:223
 writeBlock	QGIS_Scripts/HSV_fusion.py	/^    def writeBlock(self, band, block, sizeX, sizeY = 1, offsetY = 0, pixelType = gdal.GDT_Byte):$/;"	kind:member	line:236
 writeErrorLog	Factories/DbFactory/abstractDb.py	/^    def writeErrorLog(self,errorDict):$/;"	kind:member	line:554

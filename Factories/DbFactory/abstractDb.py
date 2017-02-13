@@ -146,17 +146,18 @@ class AbstractDb(QObject):
                 classesWithElements[cl[0]]=cl[1]   
         return classesWithElements
 
-    def listClassesWithElementsFromDatabase(self):
+    def listClassesWithElementsFromDatabase(self, useComplex = True, primitiveFilter = []):
         '''
         List classes with elements. Uses all classes (complex included)
         '''
-        geomClassList = self.listGeomClassesFromDatabase()
-        complexClassList = self.listComplexClassesFromDatabase()
+        geomClassList = self.listGeomClassesFromDatabase(primitiveFilter)
         classList = []
         for g in geomClassList:
             classList.append(g)
-        for c in complexClassList:
-            classList.append(c)
+        if useComplex:
+            complexClassList = self.listComplexClassesFromDatabase()
+            for c in complexClassList:
+                classList.append(c)
         classList.sort()
         return self.listWithElementsFromDatabase(classList)
 

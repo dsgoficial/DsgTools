@@ -1134,8 +1134,11 @@ class PostGISSqlGenerator(SqlGenerator):
                 ) as a"""
         return sql
     
-    def getGeomTables(self, schemaList):
-        sql = """select distinct f_table_schema, f_table_name from public.geometry_columns where f_table_schema in ('{0}') order by f_table_name""".format("','".join(schemaList))
+    def getGeomTables(self, schemaList, dbPrimitiveList=[]):
+        if dbPrimitiveList == []:
+            sql = """select distinct f_table_schema, f_table_name from public.geometry_columns where f_table_schema in ('{0}') order by f_table_name""".format("','".join(schemaList))
+        else:
+            sql = """select distinct f_table_schema, f_table_name from public.geometry_columns where f_table_schema in ('{0}') and type in ('{1}') order by f_table_name""".format("','".join(schemaList), "','".join(dbPrimitiveList))
         return sql
     
     def getAttributeListFromTable(self, schema, tableName):

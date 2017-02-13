@@ -143,14 +143,26 @@ class PostgisDb(AbstractDb):
             version = query.value(0)
         return version
 
-    def listGeomClassesFromDatabase(self):
+    def listGeomClassesFromDatabase(self, primitiveFilter = []):
         """
         Gets a list with geometry classes from database
         """
         self.checkAndOpenDb()
         classList = []
         schemaList = [i for i in self.getGeomSchemaList() if i not in ['validation', 'views']]
-        sql = self.gen.getGeomTables(schemaList)
+        dbPrimitiveList = []
+        if len(primitiveFilter) > 0:
+            for primitive in primitiveFilter:
+                if primitive == 'p':
+                    dbPrimitiveList.append('POINT')
+                    dbPrimitiveList.append('MULTIPOINT')
+                if primitive == 'l':
+                    dbPrimitiveList.append('LINESTRING')
+                    dbPrimitiveList.append('MULTILINESTRING')
+                if primitive == 'a':
+                    dbPrimitiveList.append('LINESTRING')
+                    dbPrimitiveList.append('MULTILINESTRING')
+        sql = self.gen.getGeomTables(schemaList, dbPrimitiveList)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem listing geom classes: ")+query.lastError().text())
