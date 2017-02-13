@@ -80,10 +80,24 @@ CREATE TABLE public.metadata(
 ALTER TABLE public.metadata OWNER TO postgres;
 -- ddl-end --
 
+-- object: public.admin_log_id_seq | type: SEQUENCE --
+-- DROP SEQUENCE IF EXISTS public.admin_log_id_seq CASCADE;
+CREATE SEQUENCE public.admin_log_id_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 9223372036854775807
+	START WITH 1
+	CACHE 1
+	NO CYCLE
+	OWNED BY NONE;
+-- ddl-end --
+ALTER SEQUENCE public.admin_log_id_seq OWNER TO postgres;
+-- ddl-end --
+
 -- object: public.admin_log | type: TABLE --
 -- DROP TABLE IF EXISTS public.admin_log CASCADE;
 CREATE TABLE public.admin_log(
-	id serial NOT NULL,
+	id integer NOT NULL DEFAULT nextval('admin_log_id_seq'::regclass),
 	logtext text,
 	time timestamp DEFAULT now(),
 	CONSTRAINT admin_log_pk PRIMARY KEY (id)
@@ -91,6 +105,66 @@ CREATE TABLE public.admin_log(
 );
 -- ddl-end --
 ALTER TABLE public.admin_log OWNER TO postgres;
+-- ddl-end --
+
+-- object: public.customization | type: TABLE --
+-- DROP TABLE IF EXISTS public.customization CASCADE;
+CREATE TABLE public.customization(
+	id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	name text,
+	jsondict text NOT NULL,
+	edgvversion text,
+	CONSTRAINT customization_pk PRIMARY KEY (id),
+	CONSTRAINT customization_unique_name_and_version UNIQUE (name,edgvversion)
+
+);
+-- ddl-end --
+ALTER TABLE public.customization OWNER TO postgres;
+-- ddl-end --
+
+-- object: public.earth_coverage | type: TABLE --
+-- DROP TABLE IF EXISTS public.earth_coverage CASCADE;
+CREATE TABLE public.earth_coverage(
+	id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	name text,
+	jsondict text NOT NULL,
+	edgvversion text,
+	CONSTRAINT earth_coverage_pk PRIMARY KEY (id),
+	CONSTRAINT earth_coverage_unique_name_and_version UNIQUE (name,edgvversion)
+
+);
+-- ddl-end --
+ALTER TABLE public.earth_coverage OWNER TO postgres;
+-- ddl-end --
+
+-- object: public.field_toolbox_config | type: TABLE --
+-- DROP TABLE IF EXISTS public.field_toolbox_config CASCADE;
+CREATE TABLE public.field_toolbox_config(
+	id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	name text,
+	jsondict text NOT NULL,
+	edgvversion text,
+	CONSTRAINT field_toolbox_config_pk PRIMARY KEY (id),
+	CONSTRAINT field_toolbox_config_unique_name_and_version UNIQUE (name,edgvversion)
+
+);
+-- ddl-end --
+ALTER TABLE public.field_toolbox_config OWNER TO postgres;
+-- ddl-end --
+
+-- object: public.validation_config | type: TABLE --
+-- DROP TABLE IF EXISTS public.validation_config CASCADE;
+CREATE TABLE public.validation_config(
+	id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	name text,
+	jsondict text NOT NULL,
+	edgvversion text,
+	CONSTRAINT validation_config_pk PRIMARY KEY (id),
+	CONSTRAINT validation_config_unique_name_and_version UNIQUE (name,edgvversion)
+
+);
+-- ddl-end --
+ALTER TABLE public.validation_config OWNER TO postgres;
 -- ddl-end --
 
 
