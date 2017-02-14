@@ -137,7 +137,7 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getEDGVVersion()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            raise Exception(self.tr("Problem getting database version: ")+query.lastError().text())
+            return 'Non_EDGV'
         version = '-1'
         while query.next():
             version = query.value(0)
@@ -761,6 +761,8 @@ class PostgisDb(AbstractDb):
                     version = query2.value(0)
                     if version:
                         edvgDbList.append((database,version))
+            else:
+                edvgDbList.append((database,'Non_EDGV'))
             if parentWidget:
                 progress.step()
         return edvgDbList
