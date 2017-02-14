@@ -65,6 +65,7 @@ class SelectFileWidget(QtGui.QWidget, FORM_CLASS):
     
     def resetAll(self):
         self.lineEdit.clear()
+        self.fileNameList = []
     
     def setTitle(self,text):
         self.label.setText(text)

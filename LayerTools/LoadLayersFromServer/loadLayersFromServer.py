@@ -113,7 +113,6 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                     self.lyrDict.pop(lyr)
         self.layersCustomSelector.setInitialState(self.lyrDict.keys(),unique = True)
     
-    
     @pyqtSlot(bool)
     def on_showCategoriesRadioButton_toggled(self, enabled):
         self.changePrimitiveCheckboxState(enabled)
@@ -154,6 +153,10 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         #2- get parameters
         withElements = self.checkBoxOnlyWithElements.isChecked()
         selectedStyle = None
+        if self.customServerConnectionWidget.edgvType == 'Non_EDGV':
+            isEdgv = False
+        else:
+            isEdgv = True
         if self.styleComboBox.currentIndex() <> 0:
             selectedStyle = self.customServerConnectionWidget.stylesDict[self.styleComboBox.currentText()]
         onlyParents = self.onlyParentsCheckBox.isChecked()
@@ -168,7 +171,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         for dbName in factoryDict.keys():
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             try:
-                factoryDict[dbName].load(selectedClasses,onlyWithElements=withElements, stylePath = selectedStyle, useInheritance = onlyParents, geomFilterList = primitives)
+                factoryDict[dbName].load(selectedClasses,onlyWithElements=withElements, stylePath = selectedStyle, useInheritance = onlyParents, geomFilterList = primitives, isEdgv = isEdgv)
                 progress.step()
             except Exception as e:
                 exceptionDict[dbName] = ':'.join(e.args)

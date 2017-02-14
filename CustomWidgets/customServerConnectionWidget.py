@@ -60,7 +60,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.serverWidget.abstractDbLoaded.connect(self.populatePostgisSelector)
         self.customFileSelector.filesSelected.connect(self.populateSpatialiteSelector)
         self.comboDict = {self.tr('Load EDGV v. 2.1.3'):'2.1.3', self.tr('Load EDGV v. FTer_2a_Ed'):'FTer_2a_Ed',self.tr('Load Non EDGV'):'Non_EDGV'}
-        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[]}
+        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[]}
         self.selectedDbsDict = dict()
         self.stylesDict = dict()
         self.postgisCustomSelector.selectionChanged.connect(self.selectedDatabases)
@@ -69,6 +69,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.customFileSelector.setCaption(self.tr('Select a DSGTools Spatialite file'))
         self.customFileSelector.setFilter(self.tr('Spatialite file databases (*.sqlite)'))
         self.customFileSelector.setType('multi')
+        self.edgvType = None
     
     def selectedDatabases(self,dbList,type):
         '''
@@ -207,24 +208,33 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.spatialiteCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]]) 
     
     def clearSpatialiteTab(self):
-        pass
+        self.spatialiteCustomSelector.clearAll()
+        self.serverWidget.clearAll()
+        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[]}
+        self.customFileSelector.resetAll()
+        self.edgvType = None
+        self.selectedDbsDict = dict()
+        self.resetAll.emit()
     
     @pyqtSlot(int)
     def on_postgisEdgvComboFilter_currentIndexChanged(self):
         comboText = self.postgisEdgvComboFilter.currentText()
         self.postgisCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]])
+        self.edgvType = self.comboDict[comboText]
         self.resetAll.emit()
     
     @pyqtSlot(int)
     def on_spatialiteEdgvComboFilter_currentIndexChanged(self):
         comboText = self.spatialiteEdgvComboFilter.currentText()
         self.spatialiteCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]])
+        self.edgvType = self.comboDict[comboText]
         self.resetAll.emit()
     
     def clearPostgisTab(self):
         self.postgisCustomSelector.clearAll()
         self.serverWidget.clearAll()
         self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[]}
+        self.edgvType = None
         self.selectedDbsDict = dict()
         self.resetAll.emit()
     

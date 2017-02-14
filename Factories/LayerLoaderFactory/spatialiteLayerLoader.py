@@ -62,7 +62,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
                     return ll
         return loaded
 
-    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = []):
+    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True):
         '''
         1. Get loaded layers
         2. Filter layers;
@@ -87,7 +87,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
             domLayerDict = dict()
         #3. Get Aux dicts
 
-        lyrDict = self.getLyrDict(filteredLayerList)
+        lyrDict = self.getLyrDict(filteredLayerList, isEdgv = isEdgv)
         
         #4. Build Groups
         groupDict = self.prepareGroups(loadedGroups, dbGroup, lyrDict)
@@ -97,16 +97,16 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
             for cat in lyrDict[prim].keys():
                 for lyr in lyrDict[prim][cat]:
                     try:
-                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], uniqueLoad, stylePath, domLayerDict)
+                        vlayer = self.loadLayer(lyr, loadedLayers, groupDict[prim][cat], uniqueLoad, stylePath, domLayerDict)
                         loadedDict[lyr]=vlayer
                     except Exception as e:
                         self.logErrorDict[lyr] = self.tr('Error for layer ')+lyr+': '+str(e.args[0])
                         self.logError()
         return loadedDict
 
-    def loadLayer(self, lyrName, idSubgrupo, uniqueLoad, stylePath, domLayerDict):
+    def loadLayer(self, lyrName, loadedLayers, idSubgrupo, uniqueLoad, stylePath, domLayerDict):
         if uniqueLoad:
-            lyr = self.checkLoaded(lyrName)
+            lyr = self.checkLoaded(lyrName, loadedLayers)
             if lyr:
                 return lyr
         tableName = self.geomDict['tablePerspective'][lyrName]['tableName']

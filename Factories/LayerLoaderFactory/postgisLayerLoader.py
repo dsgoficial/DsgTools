@@ -84,7 +84,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             finalList = semifinalList
         return finalList
 
-    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = []):
+    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True):
         '''
         1. Get loaded layers
         2. Filter layers;
@@ -112,7 +112,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         constraintDict = self.abstractDb.getCheckConstraintDict()
         multiColumnsDict = self.abstractDb.getMultiColumnsDict()
         notNullDict = self.abstractDb.getNotNullDictV2()
-        lyrDict = self.getLyrDict(filteredLayerList)
+        lyrDict = self.getLyrDict(filteredLayerList, isEdgv = isEdgv)
         
         #4. Build Groups
         groupDict = self.prepareGroups(loadedGroups, dbGroup, lyrDict)
@@ -131,7 +131,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                         self.logError()
         return loadedDict
 
-    def loadLayer(self, lyrName, idSubgrupo, loadedLayers, useInheritance, useQml, uniqueLoad,stylePath,domainDict,multiColumnsDict, domLayerDict):
+    def loadLayer(self, lyrName, idSubgrupo, loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict):
         if uniqueLoad:
             lyr = self.checkLoaded(lyrName,loadedLayers)
             if lyr:

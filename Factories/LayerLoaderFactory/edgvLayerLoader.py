@@ -95,7 +95,12 @@ class EDGVLayerLoader(QObject):
         else:
             return self.iface.legendInterface().addGroup(dbName, True, -1)
 
-    def getLyrDict(self, lyrList):
+    def getLyrDict(self, lyrList, isEdgv = True):
+        """
+        Builds lyrDict in order to build loading tree
+        lyrList: list of layers to be loaded
+        isEdgv: optional parameter to indicate when db is not edgv. If db is not edgv, layers will be grouped by schema.
+        """
         lyrDict = dict()
         for type in self.geomTypeDict.keys():
             # some tables are only registered as GEOMETRY and should not be considered
@@ -105,7 +110,10 @@ class EDGVLayerLoader(QObject):
                 lyrDict[self.correspondenceDict[type]] = dict()
             for lyr in self.geomTypeDict[type]:
                 if lyr in lyrList:
-                    cat = lyr.split('_')[0]
+                    if isEdgv:
+                        cat = lyr.split('_')[0]
+                    else:
+                        cat = self.abstractDb.getTableSchemaFromDb(lyr)
                     if cat not in lyrDict[self.correspondenceDict[type]].keys():
                         lyrDict[self.correspondenceDict[type]][cat] = []
                     lyrDict[self.correspondenceDict[type]][cat].append(lyr)
