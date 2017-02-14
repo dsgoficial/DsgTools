@@ -141,14 +141,16 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         else:
             selectedClasses = self.layersCustomSelector.toLs
         #1.1- filtering primitives
-        primitives = []
-        if self.checkBoxPoint.isChecked():
-            primitives.append('p')
-        if self.checkBoxLine.isChecked():
-            primitives.append('l')
-        if self.checkBoxPolygon.isChecked():
-            primitives.append('a')
-        selectedClasses = [layer for layer in selectedClasses if layer[-1] in primitives]
+        if self.checkBoxPoint.isChecked() and self.checkBoxLine.isChecked() and self.checkBoxPolygon.isChecked():
+            primitives = []
+        else:
+            primitives = []
+            if self.checkBoxPoint.isChecked():
+                primitives.append(self.tr('Point'))
+            if self.checkBoxLine.isChecked():
+                primitives.append(self.tr('Line'))
+            if self.checkBoxPolygon.isChecked():
+                primitives.append(self.tr('Area'))
         #2- get parameters
         withElements = self.checkBoxOnlyWithElements.isChecked()
         selectedStyle = None
@@ -166,7 +168,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         for dbName in factoryDict.keys():
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             try:
-                factoryDict[dbName].load(selectedClasses,onlyWithElements=withElements, stylePath = selectedStyle, useInheritance = onlyParents)
+                factoryDict[dbName].load(selectedClasses,onlyWithElements=withElements, stylePath = selectedStyle, useInheritance = onlyParents, geomFilterList = primitives)
                 progress.step()
             except Exception as e:
                 exceptionDict[dbName] = ':'.join(e.args)

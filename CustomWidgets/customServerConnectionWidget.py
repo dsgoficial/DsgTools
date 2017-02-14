@@ -59,7 +59,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.serverWidget.populateServersCombo()
         self.serverWidget.abstractDbLoaded.connect(self.populatePostgisSelector)
         self.customFileSelector.filesSelected.connect(self.populateSpatialiteSelector)
-        self.comboDict = {self.tr('Load EDGV v. 2.1.3'):'2.1.3', self.tr('Load EDGV v. FTer_2a_Ed'):'FTer_2a_Ed'}
+        self.comboDict = {self.tr('Load EDGV v. 2.1.3'):'2.1.3', self.tr('Load EDGV v. FTer_2a_Ed'):'FTer_2a_Ed',self.tr('Load Non EDGV'):'Non_EDGV'}
         self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[]}
         self.selectedDbsDict = dict()
         self.stylesDict = dict()
@@ -159,7 +159,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         pass
     
     def populatePostgisSelector(self):
-        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[]}
+        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[]}
         dbList = []
         try:
             if self.serverWidget.abstractDb:
@@ -174,13 +174,15 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         for (dbname, dbversion) in dbList:
             if dbversion in self.dbDict.keys():
                 self.dbDict[dbversion].append(dbname)
+            else:
+                self.dbDict['Non_EDGV'].append(dbname)
 #         if len(self.dbDict['2.1.3']) == 0:
 #             self.postgisEdgvComboFilter.setCurrentIndex(1)
         comboText = self.postgisEdgvComboFilter.currentText()
         self.postgisCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]]) 
     
     def populateSpatialiteSelector(self):
-        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[]}
+        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[]}
         self.spatialiteDict = dict()
         dbList = []
         try:
@@ -222,7 +224,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
     def clearPostgisTab(self):
         self.postgisCustomSelector.clearAll()
         self.serverWidget.clearAll()
-        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[]}
+        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[]}
         self.selectedDbsDict = dict()
         self.resetAll.emit()
     

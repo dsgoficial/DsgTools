@@ -76,7 +76,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             finalList = []
             for key in self.correspondenceDict:
                 if self.correspondenceDict[key] in geomFilterList:
-                    if key in self.geomTypeDict:
+                    if key in self.geomTypeDict.keys():
                         for lyr in semifinalList:
                             if lyr in self.geomTypeDict[key] and  lyr not in finalList:
                                 finalList.append(lyr)

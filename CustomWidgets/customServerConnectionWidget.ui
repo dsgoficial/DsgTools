@@ -45,6 +45,11 @@
            <string>Load EDGV v. FTer_2a_Ed</string>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>Load Non EDGV</string>
+          </property>
+         </item>
         </widget>
        </item>
        <item row="1" column="1">
@@ -89,6 +94,11 @@
          <item>
           <property name="text">
            <string>Load EDGV v. FTer_2a_Ed</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Load Non EDGV</string>
           </property>
          </item>
         </widget>
