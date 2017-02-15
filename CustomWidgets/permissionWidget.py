@@ -235,7 +235,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         grantedProfileList = []
         for i in range(childCount):
             grantedProfileList.append(currItem.child(i).text(2))
-        profileDict = self.permissionManager.getProfiles()
+        profileDict = self.permissionManager.getSettings()
         edgvVersion = self.dbDict[dbName].getDatabaseVersion()
         notGrantedProfileList = [i for i in profileDict[edgvVersion] if i not in grantedProfileList]
         try:

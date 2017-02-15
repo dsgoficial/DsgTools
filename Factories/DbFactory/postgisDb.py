@@ -2703,3 +2703,63 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem getting default from db: ")+query.lastError().text())
         while query.next():
             return query.value(0)
+    
+    def insertSettingIntoAdminDb(self, settingType, name, jsondict, edgvversion):
+        """
+        Inserts setting into dsgtools_admindb (name, jsondict, edgvversion),
+        according to settingType
+        """
+        self.checkAndOpenDb()
+        if self.db.databaseName() <> 'dsgtools_admindb':
+            raise Exception(self.tr('Error! Operation not defined for non dsgtools_admindb'))
+        sql = self.gen.insertSettingIntoAdminDb(settingType, name, jsondict, edgvversion)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr("Problem inserting property ")+settingType+self.tr(' into dsgtools_admindb: ')+query.lastError().text())
+    
+    def getSettingFromAdminDb(self, settingType, settingName, edgvVersion):
+        """
+        Gets role from public.permission_profile
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getSettingFromAdminDb(settingType, settingName, edgvVersion)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting setting from adminDb: ")+query.lastError().text())
+        while query.next():
+            return query.value(0)
+    
+    def getAllSettingsFromAdminDb(self, settingType):
+        """
+        Gets role from public.permission_profile and returns a dict with format {edgvVersion:[-list of roles-]}
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getAllSettingsFromAdminDb(settingType)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting settings from adminDb: ")+query.lastError().text())
+        allRolesDict = dict()
+        while query.next():
+            aux = json.loads(query.value(0))
+            allRolesDict[aux['edgvversion']] = aux['settings']
+        return allRolesDict
+    
+    def deleteSettingFromAdminDb(self, settingType, name, edgvversion):
+        """
+        Deletes profile from from public.permission_profiles
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.deleteSettingFromAdminDb(settingType, name, edgvversion)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr("Problem deleting permission setting: ")+query.lastError().text())
+    
+    def updateSettingFromAdminDb(self, settingType, name, edgvversion, newjsondict):
+        """
+        Updates public.permission_profile with new definition.
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.updateSettingFromAdminDb(settingType, name, edgvversion, newjsondict)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr("Problem updating permission profile: ")+query.lastError().text())

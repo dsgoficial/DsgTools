@@ -60,13 +60,13 @@ class ProfileUserManager(QtGui.QDialog, FORM_CLASS):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         for userName in usersToGrant:
             try:
-                self.permissionManager.grantPermission(self.dbName, self.profileName, self.edgvVersion, userName) #TODO: add error treatment
+                self.permissionManager.grantPermission(self.dbName, self.profileName, self.edgvVersion, userName)
                 successList.append(userName)
             except Exception as e:
                 errorDict[userName] = str(e.args[0])
         for userName in usersToRevoke:
             try:
-                self.permissionManager.revokePermission(self.dbName, self.profileName, userName) #TODO: add error treatment
+                self.permissionManager.revokePermission(self.dbName, self.profileName, userName)
                 successList.append(userName)
             except Exception as e:
                 errorDict[userName] = str(e.args[0])

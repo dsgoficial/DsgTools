@@ -1045,21 +1045,49 @@ class PostGISSqlGenerator(SqlGenerator):
             ) as pgr on shd.refobjid = pgr.oid join pg_database as pgd on shd.dbid = pgd.oid) as a
             """
         return sql
-    
-    def insertIntoPermissionProfile(self, name, jsondict, edgvversion):
-        sql = """INSERT INTO public.permission_profile (name, jsondict, edgvversion) VALUES ('{0}','{1}','{2}'); """.format(name, jsondict, edgvversion);
+
+    def getSettingTable(self, settingType):
+        if settingType == 'Permission':
+            tableName = 'permission_profile'
+        elif settingType == 'Customization':
+            tableName = 'customization'
+        elif settingType == 'EarthCoverage':
+            tableName = 'earth_coverage'
+        elif settingType == 'Style':
+            tableName = 'style'
+        elif settingType == 'FieldToolBoxConfig':
+            tableName = 'field_toolbox_config'
+        elif settingType == 'ValidationConfig':
+            tableName = 'validation_config'
+        else:
+            raise Exception(self.tr('Setting type not defined!'))
+        return tableName
+
+    def insertSettingIntoAdminDb(self, settingType, name, jsondict, edgvversion):
+        tableName = self.getSettingTable(settingType)
+        sql = """INSERT INTO public.{0} (name, jsondict, edgvversion) VALUES ('{1}','{2}','{3}'); """.format(tableName, name, jsondict, edgvversion)
         return sql
     
-    def getPermissionProfile(self, name, edgvversion):
-        sql = """select jsondict as jsondict from public.permission_profile where name = '{0}' and edgvversion = '{1}';""".format(name, edgvversion)
+    def getSettingFromAdminDb(self, settingType, name, edgvversion):
+        tableName = self.getSettingTable(settingType)
+        sql = """select jsondict as jsondict from public.{0} where name = '{1}' and edgvversion = '{2}';""".format(tableName, name, edgvversion)
         return sql
     
-    def updatePermisisonProfile(self, name, edgvversion, newjsondict):
-        sql = """update public.permission_profile set jsondict = '{2}' where name = '{0}' and edgvversion = '{1}'; """.format(name, edgvversion, newjsondict)
+    def updateSettingFromAdminDb(self, settingType, name, edgvversion, newjsondict):
+        tableName = self.getSettingTable(settingType)
+        sql = """update public.{0} set jsondict = '{3}' where name = '{1}' and edgvversion = '{2}'; """.format(tableName, name, edgvversion, newjsondict)
         return sql
     
-    def deletePermissionProfile(self, name, edgvversion):
-        sql = """DELETE FROM public.permission_profile where name = '{0}' and  edgvversion = '{1}';""".format(name, edgvversion)
+    def deleteSettingFromAdminDb(self, settingType, name, edgvversion):
+        tableName = self.getSettingTable(settingType)
+        sql = """DELETE FROM public.{0} where name = '{1}' and  edgvversion = '{2}';""".format(tableName, name, edgvversion)
+        return sql
+    
+    def getAllSettingsFromAdminDb(self, settingType):
+        tableName = self.getSettingTable(settingType)
+        sql = """select row_to_json(a) from (
+                    select edgvversion, array_agg(name) as settings from public.{0} group by edgvversion
+                ) as a;""".format(tableName)
         return sql
     
     def dropRoleOnDatabase(self, roleName):
@@ -1076,12 +1104,7 @@ class PostGISSqlGenerator(SqlGenerator):
                 ) as a;
         """
         return sql
-    
-    def getAllPermissionProfiles(self):
-        sql = """select row_to_json(a) from (
-                    select edgvversion, array_agg(name) as profiles from public.permission_profile group by edgvversion
-                ) as a;"""
-        return sql
+
     
     def getDomainTables(self):
         sql = '''select distinct table_name from information_schema.columns where table_schema = 'dominios' order by table_name asc'''

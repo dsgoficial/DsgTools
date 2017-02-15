@@ -98,7 +98,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         Reads the profile file, gets a dictionary of it and builds the tree widget
         '''
 
-        profileDict = self.permissionManager.getProfile(profileName, edgvVersion)
+        profileDict = self.permissionManager.getSetting(profileName, edgvVersion)
         self.parent = profileDict.keys()[0]
         #invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
@@ -172,7 +172,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         self.setEnabled(False)
         if index <> 0:
             edgvVersion = self.versionSelectionComboBox.currentText()
-            profilesDict = self.permissionManager.getProfiles()
+            profilesDict = self.permissionManager.getSettings()
             if edgvVersion in profilesDict.keys():
                 self.profilesListWidget.addItems(profilesDict[edgvVersion])
     
@@ -217,7 +217,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.permissionManager.deletePermission(profileName, edgvVersion)
+            self.permissionManager.deleteSetting(profileName, edgvVersion)
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission ') + profileName + self.tr(' successfully deleted.'))
             self.refreshProfileList()
@@ -232,7 +232,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         newProfileDict = self.makeProfileDict()
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.permissionManager.updatePermissionProfile(profileName, edgvVersion, newProfileDict)
+            self.permissionManager.updateSetting(profileName, edgvVersion, newProfileDict)
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission ') + profileName + self.tr(' successfully updated.'))
         except Exception as e:
@@ -248,7 +248,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.permissionManager.importProfile(filename)
+            self.permissionManager.importSetting(filename)
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission successfully imported.'))
         except Exception as e:
@@ -270,7 +270,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         edgvVersion = self.versionSelectionComboBox.currentText()
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.permissionManager.exportProfile(profileName, edgvVersion, folder)
+            self.permissionManager.exportSetting(profileName, edgvVersion, folder)
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission successfully exported.'))
         except Exception as e:
@@ -286,7 +286,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.permissionManager.batchExportProfiles(folder)
+            self.permissionManager.batchExportSettings(folder)
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Success!'), self.tr('Permissions successfully exported.'))
         except Exception as e:
@@ -302,7 +302,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.permissionManager.batchImportProfiles(folder)
+            self.permissionManager.batchImportSettings(folder)
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Success!'), self.tr('Permissions successfully imported.'))
         except Exception as e:

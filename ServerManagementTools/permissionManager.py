@@ -28,31 +28,18 @@ import codecs, os, json, binascii
 #DSG Tools imports
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory 
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.ServerManagementTools.genericDbManager import GenericDbManager
 from DsgTools.Utils.utils import Utils
 
 #PyQt4 imports
 from PyQt4.Qt import QObject
 
-class PermissionManager(QObject):
+class PermissionManager(GenericDbManager):
     '''
     This class manages the permissions on dsgtools databases.
     '''
     def __init__(self, serverAbstractDb, dbDict, parentWidget = None):
-        super(PermissionManager,self).__init__()
-        self.parentWidget = parentWidget
-        self.dbDict = dbDict
-        self.serverAbstractDb = serverAbstractDb
-        self.adminDb = self.instantiateAdminDb(serverAbstractDb)
-        self.utils = Utils()
-    
-    def instantiateAbstractDb(self, name):
-        '''
-        Instantiates an abstractDb.
-        '''
-        (host, port, user, password) = self.serverAbstractDb.getParamsFromConectedDb()
-        abstractDb = DbFactory().createDbFactory('QPSQL')
-        abstractDb.connectDatabaseWithParameters(host, port, name, user, password)
-        return abstractDb
+        super(self.__class__,self).__init__(serverAbstractDb, dbDict, parentWidget = None)
     
     def getRolesInformation(self):
         '''
@@ -72,19 +59,13 @@ class PermissionManager(QObject):
                 rolesDict[profileName][db].append(role)
         return dbRolesDict, rolesDict
     
-    def getProfiles(self):
-        '''
-        Gets all profiles from public.permission_profile
-        '''
-        return self.adminDb.getAllRolesFromAdminDb()
-    
     def getDatabasePerspectiveDict(self):
         '''
         Gets a dict in the format: {dbName: {roleName :[-list of users-]}}
         The dbs are from dbDict 
         '''
         (dbRolesDict, rolesDict) = self.getRolesInformation()
-        profiles = self.getProfiles()
+        profiles = self.getSettings()
         grantedRoleDict = self.adminDb.getGrantedRolesDict()
         dbPerspectiveDict = dict()
         for dbName in self.dbDict:
@@ -123,43 +104,6 @@ class PermissionManager(QObject):
                         userPerspectiveDict[user][dbName].append(profile)
         return userPerspectiveDict
     
-    def instantiateAdminDb(self, serverAbstractDb):
-        '''
-        Instantiates dsgtools_admindb in the same server as serverAbstractDb. 
-        If dsgtools_admindb does not exists, instantiateAdminDb calls createAdminDb
-        '''
-        (host, port, user, password) = serverAbstractDb.getParamsFromConectedDb()
-        adminDb = DbFactory().createDbFactory('QPSQL')
-        if not serverAbstractDb.hasAdminDb():
-            return self.createAdminDb(serverAbstractDb, adminDb, host, port, user, password)
-        adminDb.connectDatabaseWithParameters(host, port, 'dsgtools_admindb', user, password)
-        return adminDb
-    
-    def createAdminDb(self, serverAbstractDb, adminDb, host, port, user, password):
-        '''
-        Creates dsgtools_admindb
-        '''
-        serverAbstractDb.createAdminDb()
-        adminDb.connectDatabaseWithParameters(host, port, 'dsgtools_admindb', user, password)
-        sqlPath = adminDb.getCreationSqlPath('admin')
-        adminDb.runSqlFromFile(sqlPath)
-        return adminDb
-    
-    def getProfile(self, name, edgvVersion):
-        '''
-        Get profile from table public.permission_profile
-        '''
-        profileDict = json.loads(self.adminDb.getRoleFromAdminDb(name, edgvVersion))
-        if not profileDict:
-            raise Exception(self.tr("Profile not found on dsgtools_admindb!"))
-        return profileDict
-    
-    def createPermissionProfile(self, permissionName, edgvVersion, jsonDict):
-        '''
-        Creates profile on dsgtools_admindb.
-        '''
-        self.adminDb.insertIntoPermissionProfile(permissionName, jsonDict, edgvVersion)
-    
     def grantPermission(self, dbName, permissionName, edgvVersion, userName):
         '''
         Grants permission on a db to a user using a profile.
@@ -167,7 +111,7 @@ class PermissionManager(QObject):
         2. Checks if profile exists on db, if it does not, installs it;
         3. Grants profile to user on db.
         '''
-        profileDict = self.getProfile(permissionName, edgvVersion)
+        profileDict = self.getSetting(permissionName, edgvVersion)
         self.grantPermissionWithProfileDict(dbName, permissionName, userName, profileDict)
     
     def grantPermissionWithProfileDict(self, dbName, permissionName, userName, profileDict, updatePermission = False):
@@ -206,11 +150,10 @@ class PermissionManager(QObject):
         if dbName not in rolesDict[permissionName].keys():
             return False
         return True
-
     
-    def updatePermissionProfile(self, permissionName, edgvVersion, newProfileDict):
+    def updateSetting(self, settingName, edgvVersion, newProfileDict):
         '''
-        1. Gets all roles from all databases that have the same permissionName;
+        1. Gets all roles from all databases that have the same settingName;
         2. For each role, get users that are granted to them;
         3. Drop role, create a new one and grant it to previous users;
         4. Updates public.permission_profile on dsgtools_admindb with the newJsonDict.
@@ -221,9 +164,9 @@ class PermissionManager(QObject):
             self.adminDb.db.transaction() #done to rollback in case of trouble
             (dbRolesDict, rolesDict) = self.getRolesInformation()
             grantedRoleDict = self.adminDb.getGrantedRolesDict()
-            if permissionName in rolesDict.keys():
-                for dbName in rolesDict[permissionName].keys():
-                    for roleName in rolesDict[permissionName][dbName]:
+            if settingName in rolesDict.keys():
+                for dbName in rolesDict[settingName].keys():
+                    for roleName in rolesDict[settingName][dbName]:
                         if dbName not in self.dbDict.keys():
                             abstractDb = self.instantiateAbstractDb(dbName)
                         else:
@@ -236,17 +179,17 @@ class PermissionManager(QObject):
                             usersToBeGranted = grantedRoleDict[roleName]
                         abstractDb.dropRoleOnDatabase(roleName)
                         for userName in usersToBeGranted:
-                            self.grantPermissionWithProfileDict(dbName, permissionName, userName, newProfileDict, updatePermission = True)
+                            self.grantPermissionWithProfileDict(dbName, settingName, userName, newProfileDict, updatePermission = True)
             newjsonprofile = json.dumps(newProfileDict, sort_keys=True, indent=4)
-            self.adminDb.updatePermissionProfile(permissionName, edgvVersion, newjsonprofile)
+            self.adminDb.updatePermissionProfile(settingName, edgvVersion, newjsonprofile)
             for abstractDb in abstractDbsToRollBack:
                 abstractDb.db.commit()
         except Exception as e:
             for abstractDb in abstractDbsToRollBack:
                 abstractDb.db.rollback()
-            raise Exception(self.tr('Unable to update profile ') + permissionName +': ' +e.args[0])
+            raise Exception(self.tr('Unable to update profile ') + settingName +': ' +e.args[0])
     
-    def deletePermission(self, permissionName, edgvVersion):
+    def deleteSetting(self, settingName, edgvVersion):
         '''
         1. Get roles with the same definition of permissionName and delete them.
         2. Delete permission profile from public.permission_profile on dsgtools_admindb;
@@ -257,9 +200,9 @@ class PermissionManager(QObject):
             abstractDbsToRollBack.append(self.adminDb)
             self.adminDb.db.transaction() #done to rollback in case of trouble
             (dbRolesDict, rolesDict) = self.getRolesInformation()
-            if permissionName in rolesDict.keys():
-                for dbName in rolesDict[permissionName].keys():
-                    for roleName in rolesDict[permissionName][dbName]:
+            if settingName in rolesDict.keys():
+                for dbName in rolesDict[settingName].keys():
+                    for roleName in rolesDict[settingName][dbName]:
                         if dbName not in self.dbDict.keys():
                             abstractDb = self.instantiateAbstractDb(dbName)
                         else:
@@ -269,70 +212,13 @@ class PermissionManager(QObject):
                         abstractDb.db.transaction()
                         abstractDb.dropRoleOnDatabase(roleName)
             #after deletion, delete permission profile from public.permission_profile
-            self.adminDb.deletePermissionProfile(permissionName, edgvVersion)
+            self.adminDb.deletePermissionProfile(settingName, edgvVersion)
             for abstractDb in abstractDbsToRollBack:
                 abstractDb.db.commit()
         except Exception as e:
             for abstractDb in abstractDbsToRollBack:
                 abstractDb.db.rollback()
             raise Exception(self.tr('Problem deleting permission: ')+e.args[0])
-    
-    def importProfile(self, fullFilePath):
-        '''
-        Function to import profile into dsgtools_admindb. It has the following steps:
-        1. Reads inputJsonFilePath and parses it into a python dict;
-        2. Validates inputPermissionDict;
-        3. Tries to insert into database, if there is an error, abstractDb raises an error which is also raised by importProfile
-        '''
-        #getting profile name
-        profileName = os.path.basename(fullFilePath).split('.')[0]
-        #getting json
-        inputJsonDict, inputJson = self.utils.readJsonFile(fullFilePath, returnFileAndDict = True)
-        #error handling and json validation
-        if inputJsonDict == dict():
-            raise Exception(self.tr("Not valid DsgTools permission file!"))
-        if not self.validateJsonProfile(inputJsonDict):
-            raise Exception(self.tr("Not valid DsgTools permission file!"))
-        edgvVersion = inputJsonDict.keys()[0].split('_')[-1]
-        try:
-            self.createPermissionProfile(profileName, edgvVersion, inputJson)
-        except Exception as e:
-            raise Exception(self.tr("Error importing profile {0}!\n").format(profileName)+e.args[0])
-    
-    def batchImportProfiles(self, profilesDir):
-        '''
-        1. Get all profiles in profilesDir;
-        2. Import each using importProfile;
-        '''
-        importList = []
-        for profile in os.walk(profilesDir).next()[2]:
-            if '.json' in os.path.basename(profile):
-                importList.append(os.path.join(profilesDir,profile))
-        for profileFile in importList:
-            self.importProfile(profileFile)
-
-    def exportProfile(self, profileName, edgvVersion, outputPath):
-        '''
-        1. Get profile from public.permission_profile;
-        2. Export it to outputPath.
-        '''
-        jsonDict = self.getProfile(profileName, edgvVersion)
-        outputFile = os.path.join(outputPath,profileName+'.json')
-        with open(outputFile, 'w') as outfile:
-            json.dump(jsonDict, outfile, sort_keys=True, indent=4)
-    
-    def batchExportProfiles(self, outputDir):
-        '''
-        1. Get all profiles in public.permission_profile;
-        2. Export each using exportProfile.
-        '''
-        profileDict = self.getProfiles()
-        for edgvVersion in profileDict.keys():
-            outputPath = os.path.join(outputDir,edgvVersion)
-            if not os.path.exists(outputPath):
-                os.makedirs(outputPath)
-            for profileName in profileDict[edgvVersion]:
-                self.exportProfile(profileName, edgvVersion, outputPath)
     
     def validateJsonProfile(self, inputJsonDict):
         '''

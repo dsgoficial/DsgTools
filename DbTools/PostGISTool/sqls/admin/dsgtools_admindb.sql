@@ -167,4 +167,16 @@ CREATE TABLE public.validation_config(
 ALTER TABLE public.validation_config OWNER TO postgres;
 -- ddl-end --
 
+CREATE TABLE public.style(
+	id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	name text,
+	jsondict text NOT NULL,
+	edgvversion text,
+	CONSTRAINT style_config_pk PRIMARY KEY (id),
+	CONSTRAINT style_config_unique_name_and_version UNIQUE (name,edgvversion)
+
+);
+-- ddl-end --
+ALTER TABLE public.style OWNER TO postgres;
+-- ddl-end --
 
