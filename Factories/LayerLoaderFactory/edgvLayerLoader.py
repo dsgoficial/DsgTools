@@ -36,7 +36,6 @@ from qgis.utils import iface
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.Utils.utils import Utils
 
-
 class EDGVLayerLoader(QObject):
     
     def __init__(self, iface, abstractDb):

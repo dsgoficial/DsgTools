@@ -62,7 +62,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
                     return ll
         return loaded
 
-    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True):
+    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True, parent = None):
         '''
         1. Get loaded layers
         2. Filter layers;
@@ -92,6 +92,13 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         #4. Build Groups
         groupDict = self.prepareGroups(loadedGroups, dbGroup, lyrDict)
         #5. load layers
+        if parent:
+            primNumber = 0
+            for prim in lyrDict.keys():
+                for cat in lyrDict[prim].keys():
+                    for lyr in lyrDict[prim][cat]:
+                        primNumber += 1
+            localProgress = ProgressWidget(1,primNumber-1,self.tr('Loading layers... '), parent = parent)
         loadedDict = dict()
         for prim in lyrDict.keys():
             for cat in lyrDict[prim].keys():
@@ -102,6 +109,8 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
                     except Exception as e:
                         self.logErrorDict[lyr] = self.tr('Error for layer ')+lyr+': '+str(e.args[0])
                         self.logError()
+                    if parent:
+                        localProgress.step()
         return loadedDict
 
     def loadLayer(self, lyrName, loadedLayers, idSubgrupo, uniqueLoad, stylePath, domLayerDict):

@@ -171,7 +171,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         for dbName in factoryDict.keys():
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             try:
-                factoryDict[dbName].load(selectedClasses,onlyWithElements=withElements, stylePath = selectedStyle, useInheritance = onlyParents, geomFilterList = primitives, isEdgv = isEdgv)
+                factoryDict[dbName].load(selectedClasses,onlyWithElements=withElements, stylePath = selectedStyle, useInheritance = onlyParents, geomFilterList = primitives, isEdgv = isEdgv, parent = self)
                 progress.step()
             except Exception as e:
                 exceptionDict[dbName] = ':'.join(e.args)

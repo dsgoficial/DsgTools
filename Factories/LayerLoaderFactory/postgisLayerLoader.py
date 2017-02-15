@@ -33,6 +33,7 @@ from qgis.utils import iface
 
 #DsgTools imports
 from DsgTools.Factories.LayerLoaderFactory.edgvLayerLoader import EDGVLayerLoader
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class PostGISLayerLoader(EDGVLayerLoader):
     def __init__(self, iface, abstractDb):
@@ -84,7 +85,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             finalList = semifinalList
         return finalList
 
-    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True):
+    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True, parent = None):
         '''
         1. Get loaded layers
         2. Filter layers;
@@ -118,6 +119,13 @@ class PostGISLayerLoader(EDGVLayerLoader):
         groupDict = self.prepareGroups(loadedGroups, dbGroup, lyrDict)
         #5. load layers
         loadedDict = dict()
+        if parent:
+            primNumber = 0
+            for prim in lyrDict.keys():
+                for cat in lyrDict[prim].keys():
+                    for lyr in lyrDict[prim][cat]:
+                        primNumber += 1
+            localProgress = ProgressWidget(1,primNumber-1,self.tr('Loading layers... '), parent = parent)
         for prim in lyrDict.keys():
             for cat in lyrDict[prim].keys():
                 for lyr in lyrDict[prim][cat]:
@@ -129,6 +137,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
                     except Exception as e:
                         self.logErrorDict[lyr] = self.tr('Error for layer ')+lyr+': '+str(e.args[0])
                         self.logError()
+                    if parent:
+                        localProgress.step()
         return loadedDict
 
     def loadLayer(self, lyrName, idSubgrupo, loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict):
