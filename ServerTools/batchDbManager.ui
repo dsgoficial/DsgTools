@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>686</width>
+    <width>736</width>
     <height>380</height>
    </rect>
   </property>
@@ -98,8 +98,8 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>5000</width>
-       <height>5000</height>
+       <width>500000</width>
+       <height>500000</height>
       </size>
      </property>
      <property name="currentIndex">
@@ -381,8 +381,8 @@
             </property>
             <property name="maximumSize">
              <size>
-              <width>500</width>
-              <height>500</height>
+              <width>50000</width>
+              <height>50000</height>
              </size>
             </property>
            </widget>
@@ -400,7 +400,7 @@
   <customwidget>
    <class>QgsCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qgis.core</header>
+   <header>qgscollapsiblegroupbox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
