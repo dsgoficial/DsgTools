@@ -142,7 +142,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         if useInheritance:
             sql = ''
         else:
-            sql = self.abstractDb.gen.loadLayerFromDatabase(schema+'.'+lyrName)            
+            sql = self.abstractDb.gen.loadLayerFromDatabase('''"{0}"."{1}"'''.format(schema,lyrName))            
         self.setDataSource(schema, self.geomDict['tablePerspective'][lyrName]['tableName'], geomColumn, sql)
 
         vlayer = iface.addVectorLayer(self.uri.uri(), lyrName, self.provider)
