@@ -28,140 +28,34 @@ import codecs, os, json, binascii
 #DSG Tools imports
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory 
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.ServerManagementTools.genericDbManager import GenericDbManager
 from DsgTools.Utils.utils import Utils
 
 #PyQt4 imports
 from PyQt4.Qt import QObject
 
-class CustomizationManager(QObject):
+class CustomizationManager(GenericDbManager):
     '''
     This class manages the customizations on dsgtools databases.
     '''
-    def __init__(self, serverAbstractDb, parentWidget = None):
-        super(CustomizationManager,self).__init__()
-        self.parentWidget = parentWidget
-        self.serverAbstractDb = serverAbstractDb
-        self.adminDb = self.instantiateAdminDb(serverAbstractDb)
-        self.utils = Utils()
+    def __init__(self, serverAbstractDb, dbDict, parentWidget = None):
+        super(self.__class__,self).__init__(serverAbstractDb, dbDict, parentWidget = None)
     
-    def instantiateAbstractDb(self, name):
-        '''
-        Instantiates an abstractDb.
-        '''
-        (host, port, user, password) = self.serverAbstractDb.getParamsFromConectedDb()
-        abstractDb = DbFactory().createDbFactory('QPSQL')
-        abstractDb.connectDatabaseWithParameters(host, port, name, user, password)
-        return abstractDb
+    def installCustomization(self, customizationName):
+        """
+        1. Get customization from dsgtools_admindb;
+        2. Get sql from dbCustomizer;
+        3. For each db try to create custom;
+        4. If custom applyied, save it on customization table on db and on dsgtools_admindb;
+        """
+        pass
     
-    def getCustomizations(self):
-        '''
-        Gets all customizations from public.customizations
-        '''
-        return self.adminDb.getAllCustomizationsFromAdminDb()
-    
-    def instantiateAdminDb(self, serverAbstractDb):
-        '''
-        Instantiates dsgtools_admindb in the same server as serverAbstractDb. 
-        If dsgtools_admindb does not exists, instantiateAdminDb calls createAdminDb
-        '''
-        (host, port, user, password) = serverAbstractDb.getParamsFromConectedDb()
-        adminDb = DbFactory().createDbFactory('QPSQL')
-        if not serverAbstractDb.hasAdminDb():
-            return self.createAdminDb(serverAbstractDb, adminDb, host, port, user, password)
-        adminDb.connectDatabaseWithParameters(host, port, 'dsgtools_admindb', user, password)
-        return adminDb
-    
-    def createAdminDb(self, serverAbstractDb, adminDb, host, port, user, password):
-        '''
-        Creates dsgtools_admindb
-        '''
-        serverAbstractDb.createAdminDb()
-        adminDb.connectDatabaseWithParameters(host, port, 'dsgtools_admindb', user, password)
-        sqlPath = adminDb.getCreationSqlPath('admin')
-        adminDb.runSqlFromFile(sqlPath)
-        return adminDb
-    
-    def getCustomization(self, name, edgvVersion):
-        '''
-        Get profile from table public.customizations
-        '''
-        customDict = json.loads(self.adminDb.getCustomizationFromAdminDb(name, edgvVersion))
-        if not customDict:
-            raise Exception(self.tr("Customization not found on dsgtools_admindb!"))
-        return customDict
-    
-    def createCustomization(self, customizationName, edgvVersion, jsonDict):
-        '''
-        Creates customization on dsgtools_admindb.
-        '''
-        self.adminDb.insertIntoCustomizations(customizationName, jsonDict, edgvVersion)
-    
-    def updateCustomization(self, customizationName, edgvVersion, newCustomizationDict):
-        '''
-        Updates customization on dsgtools_admindb.
-        '''
-        self.adminDb.updateCustomization(customizationName, edgvVersion, newCustomizationDict)
-    
-    def deleteCustomization(self, customizationName, edgvVersion):
-        '''
-        Delete customization from public.customizations on dsgtools_admindb;
-        '''
-        self.adminDb.deletePermissionProfile(customizationName, edgvVersion)
-    
-    def importCustomization(self, fullFilePath):
-        '''
-        Function to import profile into dsgtools_admindb. It has the following steps:
-        '''
-        #getting profile name
-        profileName = os.path.basename(fullFilePath).split('.')[0]
-        #getting json
-        inputJsonDict, inputJson = self.utils.readJsonFile(fullFilePath, returnFileAndDict = True)
-        #error handling and json validation
-        if inputJsonDict == dict():
-            raise Exception(self.tr("Not valid DsgTools customization file!"))
-        if not self.validateJsonProfile(inputJsonDict):
-            raise Exception(self.tr("Not valid DsgTools customization file!"))
-        edgvVersion = inputJsonDict.keys()[0].split('_')[-1]
-        try:
-            self.createCustomization(profileName, edgvVersion, inputJson)
-        except Exception as e:
-            raise Exception(self.tr("Error importing profile {0}!\n").format(profileName)+e.args[0])
-    
-    def batchImportCustomization(self, customizationsDir):
-        '''
-        1. Get all profiles in profilesDir;
-        2. Import each using importProfile;
-        '''
-        importList = []
-        for customization in os.walk(customizationsDir).next()[2]:
-            if '.json' in os.path.basename(customization):
-                importList.append(os.path.join(customizationsDir,customization))
-        for customizationFile in importList:
-            self.importCustomization(customizationFile)
+    def removeCustomization(self, customizationName):
+        pass
 
-    def exportCustomization(self, profileName, edgvVersion, outputPath):
-        '''
-        1. Get profile from public.customizations;
-        2. Export it to outputPath.
-        '''
-        jsonDict = self.getCustomization(profileName, edgvVersion)
-        outputFile = os.path.join(outputPath,profileName+'.json')
-        with open(outputFile, 'w') as outfile:
-            json.dump(jsonDict, outfile, sort_keys=True, indent=4)
-    
-    def batchExportProfiles(self, outputDir):
-        '''
-        1. Get all profiles in public.permission_profile;
-        2. Export each using exportProfile.
-        '''
-        customizationDict = self.getCustomizations()
-        for edgvVersion in customizationDict.keys():
-            outputPath = os.path.join(outputDir,edgvVersion)
-            if not os.path.exists(outputPath):
-                os.makedirs(outputPath)
-            for customizationName in customizationDict[edgvVersion]:
-                self.exportCustomization(customizationName, edgvVersion, outputPath)
-    
+    def updateCustomization(self, customizationName):
+        pass
+
     def validateJsonProfile(self, inputJsonDict):
         '''
         1. Validates each key and value in inputJsonDict;

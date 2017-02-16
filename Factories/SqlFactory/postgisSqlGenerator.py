@@ -908,12 +908,12 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def getGeomTablesDomains(self):
         sql = """select distinct case 
-            when split_part(conrelid::regclass::text,'.',2) = '' then split_part(conrelid::regclass::text,'.',1)
-            else split_part(conrelid::regclass::text,'.',2)
+            when split_part(conrelid::regclass::text,'.',2) = '' then replace(split_part(conrelid::regclass::text,'.',1),'"','')
+            else replace(split_part(conrelid::regclass::text,'.',2),'"','')
             end as cl, pg_get_constraintdef(oid) FROM 
             pg_constraint WHERE contype = 'f' and case 
-            when split_part(conrelid::regclass::text,'.',2) = '' then split_part(conrelid::regclass::text,'.',1)
-            else split_part(conrelid::regclass::text,'.',2)
+            when replace(split_part(conrelid::regclass::text,'.',2),'"','') = '' then replace(split_part(conrelid::regclass::text,'.',1),'"','')
+            else replace(split_part(conrelid::regclass::text,'.',2),'"','')
         end in (select f_table_name from public.geometry_columns where f_table_schema <> 'views')
         """
         return sql

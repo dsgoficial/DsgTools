@@ -30,7 +30,7 @@ from PyQt4.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry
+from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry, QgsMessageLog
 
 #DsgTools imports
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
