@@ -647,3 +647,20 @@ class AbstractDb(QObject):
             raise Exception(self.tr('Problem inserting frame: ') + query.lastError().text())
         self.db.commit()
         self.db.close()
+    
+    def prepareCreateFrame(self, type, scale, param):
+        if type == 'mi':
+            mi = str(param)
+            if scale == '250k':
+                inom = self.utmGrid.getINomenFromMIR(str(param))
+            else:
+                inom = self.utmGrid.getINomenFromMI(str(param))
+        elif type == 'inom':
+            inom = str(param)
+            if scale == '250k':
+                mi = self.utmGrid.getINomenFromMIR(inom)
+            else:
+                mi = self.utmGrid.getMIfromInom(inom)
+        frame = self.createFrameFromInom(inom)
+        return frame
+    

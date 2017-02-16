@@ -2281,19 +2281,7 @@ class PostgisDb(AbstractDb):
         self.db.commit()
 
     def createFrame(self, type, scale, param):
-        if type == 'mi':
-            mi = str(param)
-            if scale == '250k':
-                inom = self.utmGrid.getINomenFromMIR(str(param))
-            else:
-                inom = self.utmGrid.getINomenFromMI(str(param))
-        elif type == 'inom':
-            inom = str(param)
-            if scale == '250k':
-                mi = self.utmGrid.getINomenFromMIR(inom)
-            else:
-                mi = self.utmGrid.getMIfromInom(inom)
-        frame = self.createFrameFromInom(inom)
+        frame = self.prepareCreateFrame(type, scale, param)
         self.insertFrame(scale,mi,inom,binascii.hexlify(frame.asWkb()))
         return frame
     
