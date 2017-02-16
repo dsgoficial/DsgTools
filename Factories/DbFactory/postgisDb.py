@@ -1985,7 +1985,7 @@ class PostgisDb(AbstractDb):
         subtextList = fkText.split(' REFERENCES ')[-1].replace(' MATCH FULL','').split('(')
         domainTable = subtextList[0]
         domainReferencedAttribute = subtextList[1].replace(')','') 
-        return tableName, fkAttribute, domainTable, domainReferencedAttribute
+        return tableName.replace('"',''), fkAttribute.replace('"',''), domainTable, domainReferencedAttribute
 
     def parseCheckConstraintQuery(self, queryValue0, queryValue1):
         try:
