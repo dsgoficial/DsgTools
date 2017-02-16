@@ -484,8 +484,8 @@ class SpatialiteDb(AbstractDb):
         return geomDict
 
     def createFrame(self, type, scale, param):
-        frame = self.prepareCreateFrame(type, scale, param)
-        self.insertFrame(scale,mi,inom,frame.asWkb())
+        mi, inom, frame = self.prepareCreateFrame(type, scale, param)
+        self.insertFrame(scale, mi, inom, frame.asWkb())
         return frame
     
     def insertFrame(self,scale,mi,inom,frame):

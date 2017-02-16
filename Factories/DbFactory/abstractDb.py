@@ -662,5 +662,4 @@ class AbstractDb(QObject):
             else:
                 mi = self.utmGrid.getMIfromInom(inom)
         frame = self.createFrameFromInom(inom)
-        return frame
-    
+        return mi, inom, frame
