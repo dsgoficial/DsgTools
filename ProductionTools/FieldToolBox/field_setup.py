@@ -150,22 +150,23 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         elif self.abstractDb.db.driverName() == 'QPSQL':
             qmlDict = dict()
             schemaName, tableName = self.abstractDb.getTableSchema(fullTableName)
-            for attrName in self.domainDict[tableName]['columns'].keys():
-                if attrName not in qmlDict.keys():
-                    qmlDict[attrName] = dict()
-                valueDict = self.domainDict[tableName]['columns'][attrName]['values']
-                constraintList = self.domainDict[tableName]['columns'][attrName]['constraintList']
-                valueRelationDict = dict()
-                for key in valueDict.keys():
-                    if len(constraintList) > 0: 
-                        if key in constraintList:
+            if tableName in self.domainDict.keys():
+                for attrName in self.domainDict[tableName]['columns'].keys():
+                    if attrName not in qmlDict.keys():
+                        qmlDict[attrName] = dict()
+                    valueDict = self.domainDict[tableName]['columns'][attrName]['values']
+                    constraintList = self.domainDict[tableName]['columns'][attrName]['constraintList']
+                    valueRelationDict = dict()
+                    for key in valueDict.keys():
+                        if len(constraintList) > 0: 
+                            if key in constraintList:
+                                qmlDict[attrName][valueDict[key]] = str(key)
+                        else:
                             qmlDict[attrName][valueDict[key]] = str(key)
-                    else:
-                        qmlDict[attrName][valueDict[key]] = str(key)
-                if tableName in self.geomStructDict.keys():
-                    if attrName in self.geomStructDict[tableName].keys():
-                        if self.geomStructDict[tableName][attrName]:
-                            qmlDict[attrName]['']=''
+                    if tableName in self.geomStructDict.keys():
+                        if attrName in self.geomStructDict[tableName].keys():
+                            if self.geomStructDict[tableName][attrName]:
+                                qmlDict[attrName]['']=''
             return qmlDict
     
     def buildNullityDicts(self):
