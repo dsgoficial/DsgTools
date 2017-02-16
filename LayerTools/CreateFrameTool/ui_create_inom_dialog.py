@@ -65,14 +65,12 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         if not self.validateMI():
             QMessageBox.warning(self, self.tr("Warning!"), self.tr('Map name index not valid!'))
             return
-        #frame = self.map_index.getQgsPolygonFrame(self.inomLineEdit.text())
-        #reprojected = self.reprojectFrame(frame)
         layer = self.loadFrameLayer()
         inom = self.inomLineEdit.text()
         scale = self.scaleCombo.currentText()
-        frame = self.widget.abstractDb.createFrame('inom', scale,inom)
-        self.zoomToLayer(layer,frame)
-        #self.insertFrameIntoLayer(reprojected)
+        frame = self.widget.abstractDb.createFrame('inom', scale, inom)
+        reprojected = self.reprojectFrame(frame)
+        self.zoomToLayer(layer, reprojected)
         self.done(1)
     
     def zoomToLayer(self, layer, frame):
@@ -94,31 +92,6 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         loader = LayerLoaderFactory().makeLoader(self.iface,self.widget.abstractDb)        
         layer = loader.load(['aux_moldura_a'], uniqueLoad=True)['aux_moldura_a']
         return layer
-
-    def insertFrameIntoLayer(self,reprojected):
-        """
-        Inserts the new frame into the layer
-        """
-        layer = self.loadFrameLayer()
-        if not layer:
-            return
-
-        layer.startEditing()
-        feat = QgsFeature()
-        feat.setFields(layer.dataProvider().fields())
-        feat.setGeometry(reprojected)
-        feat.setAttribute(2, self.inomLineEdit.text())
-        feat.setAttribute(3, self.scaleCombo.currentText())
-        layer.addFeatures([feat], makeSelected=True)
-        layer.commitChanges()
-
-        bbox = reprojected.boundingBox()
-        for feature in layer.getFeatures():
-            bbox.combineExtentWith(feature.geometry().boundingBox())
-
-        bbox = self.iface.mapCanvas().mapSettings().layerToMapCoordinates(layer, bbox)
-        self.iface.mapCanvas().setExtent(bbox)
-        self.iface.mapCanvas().refresh()
 
     def getFrameLayer(self,ifaceLayers):
         """

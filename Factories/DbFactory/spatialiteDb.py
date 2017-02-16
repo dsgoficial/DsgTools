@@ -488,7 +488,7 @@ class SpatialiteDb(AbstractDb):
         self.insertFrame(scale, mi, inom, frame.asWkb())
         return frame
     
-    def insertFrame(self,scale,mi,inom,frame):
+    def insertFrame(self, scale, mi, inom, frame):
         #TODO: use sqlite3 or ogr
         self.checkAndOpenDb()
         srid = self.findEPSG()
@@ -507,9 +507,9 @@ class SpatialiteDb(AbstractDb):
         coordTrans = osr.CoordinateTransformation(geoSrs, outSpatialRef)
         auxGeom.Transform(coordTrans)
         newFeat.SetGeometry(auxGeom)
-        newFeat.SetField('mi',mi)
-        newFeat.SetField('inom',inom)
-        newFeat.SetField('escala',scale)
+        newFeat.SetField('mi', mi)
+        newFeat.SetField('inom', inom)
+        newFeat.SetField('escala', str(scale))
         out=outputLayer.CreateFeature(newFeat)
         outputDS.Destroy()
     
