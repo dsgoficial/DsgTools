@@ -789,18 +789,20 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = 'SELECT dsgsnap(\'{0}\', {1})'.format(cl, str(tol))
         return sql
     
-    def createTempTable(self, tableName):
+    def createTempTable(self, layerName):
+        schema, tableName = layerName.split('.')
         sql = '''
-        DROP TABLE IF EXISTS {0}_temp#
-        CREATE TABLE {0}_temp as (select * from {1} where 1=2)
-        '''.format(tableName,tableName)
+        DROP TABLE IF EXISTS "{0}"."{1}_temp"#
+        CREATE TABLE "{0}"."{1}_temp" as (select * from "{0}"."{1}" where 1=2)
+        '''.format(schema,tableName)
         return sql
     
     def dropTempTable(self, tableName):
-        sql = 'DROP TABLE IF EXISTS {0}'.format(tableName)
+        sql = '''DROP TABLE IF EXISTS {0}'''.format(tableName)
         return sql
     
     def populateTempTable(self, tableName, attributes, values, geometry, srid):
+        tableName = '"'+'"."'.join(tableName.split('.'))
         columnTupleString = ','.join(map(str,attributes))
         columnTupleString += ',geom'
         valueTupple = []
@@ -815,7 +817,7 @@ class PostGISSqlGenerator(SqlGenerator):
                 valueTupple.append(value)
         valueTupple.append("ST_SetSRID(ST_Multi('{0}'),{1})".format(geometry,str(srid)))
         valueTuppleString = ','.join(map(str,valueTupple))
-        sql = """INSERT INTO {0}_temp({1}) VALUES ({2})""".format(tableName, columnTupleString, valueTuppleString)
+        sql = """INSERT INTO {0}_temp"({1}) VALUES ({2})""".format(tableName, columnTupleString, valueTuppleString)
         return sql
     
     def createSpatialIndex(self, tableName):
@@ -1157,11 +1159,14 @@ class PostGISSqlGenerator(SqlGenerator):
                 ) as a"""
         return sql
     
-    def getGeomTables(self, schemaList, dbPrimitiveList=[]):
-        if dbPrimitiveList == []:
-            sql = """select distinct f_table_schema, f_table_name from public.geometry_columns where f_table_schema in ('{0}') order by f_table_name""".format("','".join(schemaList))
-        else:
-            sql = """select distinct f_table_schema, f_table_name from public.geometry_columns where f_table_schema in ('{0}') and type in ('{1}') order by f_table_name""".format("','".join(schemaList), "','".join(dbPrimitiveList))
+    def getGeomTables(self, schemaList, dbPrimitiveList=[], excludeViews=True):
+        primitiveClause = ''
+        viewClause = ''
+        if dbPrimitiveList <> []:
+            primitiveClause = """and type in ('{0}')""".format("','".join(dbPrimitiveList))
+        if excludeViews:
+            viewClause = """and f_table_name in (select table_name from information_schema.tables where table_type <> 'VIEW')"""
+        sql = """select distinct f_table_schema, f_table_name from public.geometry_columns where f_table_schema in ('{0}') {1} {2} order by f_table_name""".format("','".join(schemaList), primitiveClause, viewClause)
         return sql
     
     def getAttributeListFromTable(self, schema, tableName):

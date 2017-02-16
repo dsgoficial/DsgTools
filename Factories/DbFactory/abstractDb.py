@@ -106,7 +106,7 @@ class AbstractDb(QObject):
             if query.value(0) > 1:
                 lyrWithElemList.appen(lyr)
         return lyrWithElemList
-    
+
     def getLayersWithElementsV2(self, layerList, useInheritance = False):
         self.checkAndOpenDb()
         lyrWithElemList = []

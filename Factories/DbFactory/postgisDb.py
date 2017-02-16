@@ -143,7 +143,7 @@ class PostgisDb(AbstractDb):
             version = query.value(0)
         return version
 
-    def listGeomClassesFromDatabase(self, primitiveFilter = []):
+    def listGeomClassesFromDatabase(self, primitiveFilter = [], withElements = False, excludeViews = True):
         """
         Gets a list with geometry classes from database
         """
@@ -162,15 +162,21 @@ class PostgisDb(AbstractDb):
                 if primitive == 'a':
                     dbPrimitiveList.append('POLYGON')
                     dbPrimitiveList.append('MULTIPOLYGON')
-        sql = self.gen.getGeomTables(schemaList, dbPrimitiveList)
+        sql = self.gen.getGeomTables(schemaList, dbPrimitiveList, excludeViews)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem listing geom classes: ")+query.lastError().text())
+        localDict = dict()
         while query.next():
             tableSchema = query.value(0)
             tableName = query.value(1)
             layerName = tableSchema+'.'+tableName
-            classList.append(layerName)
+            localDict[tableName] = {'schema':tableSchema, 'layerName':layerName}
+        if withElements:
+            listWithElements = self.getLayersWithElementsV2(localDict.keys())
+            classList = [localDict[i]['layerName'] for i in listWithElements]
+        else:
+            classList = [i['layerName'] for i in localDict.values()]
         return classList
 
     def listComplexClassesFromDatabase(self):
@@ -2751,3 +2757,4 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr("Problem updating permission profile: ")+query.lastError().text())
+    
