@@ -290,7 +290,11 @@ class ValidationProcess(QObject):
         '''
         #creating vector layer
         schema, layer_name = self.abstractDb.getTableSchema(cl)
-        lyr = self.layerLoader.load([layer_name],uniqueLoad=True)[layer_name]
+        if self.abstractDb.getDatabaseVersion() == 'Non_EDGV':
+            isEdgv = False
+        else:
+            isEdgv = True
+        lyr = self.layerLoader.load([layer_name],uniqueLoad=True, isEdgv = isEdgv)[layer_name]
         #getting feature map including the edit buffer
         featureMap = self.mapInputLayer(lyr)
         #getting table name with schema
