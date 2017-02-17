@@ -220,13 +220,13 @@ class ValidationProcess(QObject):
                     featureMap[featid] = feat
         return featureMap
     
-    def prepareWorkingStructure(self, tableName, layer):
+    def prepareWorkingStructure(self, tableName, layer, geometryColumn):
         '''
         Creates a temp table where all features plus the edit buffer features from a layer
         will be inserted
         '''
         try:
-            self.abstractDb.createAndPopulateTempTableFromMap(tableName, layer)
+            self.abstractDb.createAndPopulateTempTableFromMap(tableName, layer, geometryColumn)
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
@@ -283,7 +283,7 @@ class ValidationProcess(QObject):
             recordList.append((feature.id(), binascii.hexlify(feature.geometry().asWkb())))
         return recordList
     
-    def prepareExecution(self, cl):
+    def prepareExecution(self, cl, geometryColumn):
         '''
         Prepare the process to be executed
         cl: table name
@@ -298,7 +298,7 @@ class ValidationProcess(QObject):
         #setting temp table name
         processTableName = tableName+'_temp'
         #creating temp table
-        self.prepareWorkingStructure(tableName, featureMap)
+        self.prepareWorkingStructure(tableName, featureMap, geometryColumn)
         return processTableName, lyr
     
     def postProcessSteps(self, processTableName, lyr):

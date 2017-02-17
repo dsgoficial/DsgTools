@@ -177,7 +177,7 @@ class PostgisDb(AbstractDb):
             geometryColumn = ''
             if getGeometryColumn:
                 geometryColumn = query.value(2)
-            localList.append({'schema':tableSchema, 'layerName':layerName, 'geometryColumn':geometryColumn})
+            localList.append({'schema':tableSchema, 'tableName':tableName, 'layerName':layerName, 'geometryColumn':geometryColumn})
         #remove possible duplicates to filter layers with elements
         layerNameList = []
         for i in localList:
@@ -185,7 +185,7 @@ class PostgisDb(AbstractDb):
                 layerNameList.append(i['layerName'])
         if withElements:
             listWithElements = self.getLayersWithElementsV2(layerNameList)
-            partialTagList = [i for i in localList if i['layerName'] in layerNameList]
+            partialTagList = [i for i in localList if i['tableName'] in listWithElements]
         else:
             partialTagList = localList
         if not getGeometryColumn:
@@ -1773,7 +1773,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             self.db.rollback()
-            raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
+            raise Exception(self.tr("Problem getting table schema from db: ") + query.lastError().text())
         while query.next():
             return query.value(0)
     

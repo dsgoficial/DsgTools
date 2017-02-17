@@ -36,14 +36,14 @@ class CleanGeometriesProcess(ValidationProcess):
         classesWithElem = [i['layerName']+' ({0})'.format(i['geometryColumn']) for i in classesWithElemDictList]
         self.parameters = {'Snap': 1.0, 'MinArea':0.001, 'Classes':classesWithElem}
         
-    def runProcessinAlg(self, layer, tempTableName):
+    def runProcessinAlg(self, layer, tempTableName, geometryColumn):
         '''
         Runs the actual process
         '''
         alg = 'grass7:v.clean.advanced'
         
         #creating vector layer
-        input = QgsVectorLayer(self.abstractDb.getURI(tempTableName, True).uri(), tempTableName, "postgres")
+        input = QgsVectorLayer(self.abstractDb.getURI(tempTableName, useOnly = True, geomColumn = geometryColumn).uri(), tempTableName, "postgres")
         crs = input.crs()
         epsg = self.abstractDb.findEPSG()
         crs.createFromId(epsg)
@@ -90,11 +90,13 @@ class CleanGeometriesProcess(ValidationProcess):
                 QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             error = False
-            for cl in classesWithElem:
+            for classAndGeom in classesWithElem:
                 # preparation
-                processTableName, lyr = self.prepareExecution(cl)
+                cl, geometryColumn = classAndGeom.split(' ')
+                geometryColumn = geometryColumn.replace('(','').replace(')','')
+                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
                 #running the process in the temp table
-                result = self.runProcessinAlg(lyr, processTableName)
+                result = self.runProcessinAlg(lyr, processTableName, geometryColumn)
                 self.abstractDb.dropTempTable(processTableName)
                 if len(result) > 0:
                     error = True

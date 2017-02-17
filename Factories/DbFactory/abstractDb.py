@@ -110,8 +110,12 @@ class AbstractDb(QObject):
     def getLayersWithElementsV2(self, layerList, useInheritance = False):
         self.checkAndOpenDb()
         lyrWithElemList = []
-        for lyr in layerList:
-            schema = self.getTableSchemaFromDb(lyr)
+        for layer in layerList:
+            if '.' in layer:
+                schema, lyr = layer.replace('"','').split('.')
+            else:
+                lyr = layer
+                schema = self.getTableSchemaFromDb(lyr)
             sql = self.gen.getElementCountFromLayerV2(schema, lyr, useInheritance)
             query = QSqlQuery(sql,self.db)
             query.next()
