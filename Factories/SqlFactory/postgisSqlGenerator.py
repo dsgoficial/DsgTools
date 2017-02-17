@@ -818,10 +818,10 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = '''DROP TABLE IF EXISTS {0}'''.format(tableName)
         return sql
     
-    def populateTempTable(self, tableName, attributes, values, geometry, srid):
+    def populateTempTable(self, tableName, attributes, values, geometry, srid, geomColumnName):
         tableName = '"'+'"."'.join(tableName.split('.'))
         columnTupleString = '"'+'","'.join(map(str,attributes))+'"'
-        columnTupleString += ',geom'
+        columnTupleString += ',{0}'.format(geomColumnName)
         valueTupple = []
         for value in values:
             # surrouding texts with '' to make the sql
@@ -873,6 +873,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getStylesFromDb(self, dbVersion):
+        sql = None
         if dbVersion == '2.1.3':
             sql = """select distinct description from public.layer_styles where f_table_catalog = current_database() and description like 'edgv_213%'"""
         elif dbVersion == 'FTer_2a_Ed':
@@ -1177,14 +1178,17 @@ class PostGISSqlGenerator(SqlGenerator):
                 ) as a"""
         return sql
     
-    def getGeomTables(self, schemaList, dbPrimitiveList=[], excludeViews=True):
+    def getGeomTables(self, schemaList, dbPrimitiveList=[], excludeViews=True, geomColumn = False):
         primitiveClause = ''
         viewClause = ''
         if dbPrimitiveList <> []:
             primitiveClause = """and type in ('{0}')""".format("','".join(dbPrimitiveList))
         if excludeViews:
             viewClause = """and f_table_name in (select table_name from information_schema.tables where table_type <> 'VIEW')"""
-        sql = """select distinct f_table_schema, f_table_name from public.geometry_columns where f_table_schema in ('{0}') {1} {2} order by f_table_name""".format("','".join(schemaList), primitiveClause, viewClause)
+        selectClause = 'f_table_schema, f_table_name'
+        if geomColumn:
+            selectClause += ',f_geometry_column'
+        sql = """select distinct {0} from public.geometry_columns where f_table_schema in ('{1}') {2} {3} order by f_table_name""".format(selectClause, "','".join(schemaList), primitiveClause, viewClause)
         return sql
     
     def getAttributeListFromTable(self, schema, tableName):

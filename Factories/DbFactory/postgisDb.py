@@ -143,13 +143,16 @@ class PostgisDb(AbstractDb):
             version = query.value(0)
         return version
 
-    def listGeomClassesFromDatabase(self, primitiveFilter = [], withElements = False, excludeViews = True):
+    def listGeomClassesFromDatabase(self, primitiveFilter = [], withElements = False, excludeViews = True, getGeometryColumn = False):
         """
         Gets a list with geometry classes from database
+        returns dict if getGeometryColumn = True
+        return list if getGeometryColumn = False
         """
         self.checkAndOpenDb()
         classList = []
         schemaList = [i for i in self.getGeomSchemaList() if i not in ['validation', 'views']]
+        #primitiveFilter building
         dbPrimitiveList = []
         if len(primitiveFilter) > 0:
             for primitive in primitiveFilter:
@@ -162,21 +165,33 @@ class PostgisDb(AbstractDb):
                 if primitive == 'a':
                     dbPrimitiveList.append('POLYGON')
                     dbPrimitiveList.append('MULTIPOLYGON')
-        sql = self.gen.getGeomTables(schemaList, dbPrimitiveList, excludeViews)
+        sql = self.gen.getGeomTables(schemaList, dbPrimitiveList = dbPrimitiveList, excludeViews = excludeViews, geomColumn = getGeometryColumn)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem listing geom classes: ")+query.lastError().text())
-        localDict = dict()
+        localList = []
         while query.next():
             tableSchema = query.value(0)
             tableName = query.value(1)
             layerName = tableSchema+'.'+tableName
-            localDict[tableName] = {'schema':tableSchema, 'layerName':layerName}
+            geometryColumn = ''
+            if getGeometryColumn:
+                geometryColumn = query.value(2)
+            localList.append({'schema':tableSchema, 'layerName':layerName, 'geometryColumn':geometryColumn})
+        #remove possible duplicates to filter layers with elements
+        layerNameList = []
+        for i in localList:
+            if i['layerName'] not in layerNameList:
+                layerNameList.append(i['layerName'])
         if withElements:
-            listWithElements = self.getLayersWithElementsV2(localDict.keys())
-            classList = [localDict[i]['layerName'] for i in listWithElements]
+            listWithElements = self.getLayersWithElementsV2(layerNameList)
+            partialTagList = [i for i in localList if i['layerName'] in layerNameList]
         else:
-            classList = [i['layerName'] for i in localDict.values()]
+            partialTagList = localList
+        if not getGeometryColumn:
+            classList = [i['layerName'] for i in partialTagList]
+        else:
+            classList = partialTagList
         return classList
 
     def listComplexClassesFromDatabase(self):
@@ -916,11 +931,9 @@ class PostgisDb(AbstractDb):
         Checks if the validation structure is already created, if not it should be created now
         """
         self.checkAndOpenDb()
-        self.db.transaction()
         sql = self.gen.checkValidationStructure()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.rollback()
             raise Exception(self.tr('Problem creating structure: ')+query.lastError().text())
         created = True
         while query.next():
@@ -1601,7 +1614,7 @@ class PostgisDb(AbstractDb):
         self.db.commit()
         return result
 
-    def createAndPopulateTempTableFromMap(self, tableName, featureMap):
+    def createAndPopulateTempTableFromMap(self, tableName, featureMap, geomColumnName):
         srid = self.findEPSG()
         self.checkAndOpenDb()
         self.db.transaction()
@@ -1620,7 +1633,7 @@ class PostgisDb(AbstractDb):
             # getting only the needed attribute values
             values = [feat.attribute(fieldname) for fieldname in attributes]
             geometry = binascii.hexlify(feat.geometry().asWkb())
-            insertSql = self.gen.populateTempTable(tableName, attributes, values, geometry, srid)
+            insertSql = self.gen.populateTempTable(tableName, attributes, values, geometry, srid, geomColumnName)
             if not query.exec_(insertSql):
                 self.db.rollback()
                 raise Exception(self.tr('Problem populating temp table: ') + query.lastError().text())
@@ -1671,9 +1684,10 @@ class PostgisDb(AbstractDb):
     def getStylesFromDb(self,dbVersion):
         self.checkAndOpenDb()
         sql = self.gen.getStylesFromDb(dbVersion)
+        if not sql:
+            return []
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.rollback()
             raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
         styleList = []
         while query.next():
@@ -1685,7 +1699,6 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getStyle(styleName, table_name)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.rollback()
             raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
         styleList = []
         query.next()
