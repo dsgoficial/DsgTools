@@ -65,11 +65,13 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def loadLayerFromDatabase(self, layer_name):
-        sql = "id in (SELECT id FROM ONLY "+layer_name+")"
+        layer_name = '"."'.join(layer_name.replace('"','').split('.'))
+        sql = '''id in (SELECT id FROM ONLY "{0}")'''.format(layer_name)
         return sql
 
     def loadLayerFromDatabaseUsingInh(self, layer_name):
-        sql = "id in (SELECT id FROM "+layer_name+")"
+        layer_name = '"."'.join(layer_name.replace('"','').split('.'))
+        sql = '''id in (SELECT id FROM ONLY "{0}")'''.format(layer_name)
         return sql
 
     def getCreateDatabase(self, name, dropIfExists = False):
@@ -307,10 +309,10 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getInvalidGeom(self, tableSchema, tableName):
-        return "select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only %s.%s  where ST_IsValid(geom) = 'f') as f" % (tableSchema,tableName)
+        return '''select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only "{0}"."{1}"  where ST_IsValid(geom) = 'f') as f'''.format(tableSchema,tableName)
     
     def getNonSimpleGeom(self, tableSchema, tableName):
-        return "select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only %s.%s  where ST_IsSimple(geom) = 'f') as f" % (tableSchema,tableName)
+        return '''select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only "{0}"."{1}"  where ST_IsSimple(geom) = 'f') as f'''.format(tableSchema,tableName)
     
     def checkValidationStructure(self):
         return "select count(*) from information_schema.columns where table_name = 'aux_flags_validacao'"
@@ -415,6 +417,9 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card):
+        #TODO: Add geometry column
+        class_a = '"'+'"."'.join(class_a.replace('"','').split('.'))+'"'
+        class_b = '"'+'"."'.join(class_b.replace('"','').split('.'))+'"'
         if predicate_function == 'ST_Disjoint':
             if class_a!=class_b:
                 sameClassRestriction=''
@@ -470,6 +475,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getMulti(self,cl):
+        cl = '"'+'"."'.join(cl.replace('"','').split('.'))+'"'
         sql = "select id from only %s where ST_NumGeometries(geom) > 1" % cl
         return sql
 
@@ -477,22 +483,22 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """select * from (
         SELECT id,
         ROW_NUMBER() OVER(PARTITION BY geom ORDER BY id asc) AS Row,
-        geom FROM ONLY %s.%s 
+        geom FROM ONLY "{0}"."{1}" 
         ) dups
         where     
-        dups.Row > 1""" % (schema,cl)
+        dups.Row > 1""".format(schema,cl)
         return sql
     
     def getSmallAreas(self,schema,cl,areaTolerance):
         sql = """select  foo2.id, foo2.geom from (
-        select id, geom, ST_Area(geom) as area from %s.%s 
-        ) as foo2 where foo2.area < %s order by foo2.id""" % (schema,cl,areaTolerance)
+        select id, geom, ST_Area(geom) as area from "{0}"."{1}" 
+        ) as foo2 where foo2.area < {2} order by foo2.id""".format(schema,cl,areaTolerance)
         return sql
     
     def getSmallLines(self,schema,cl,areaTolerance):
         sql = """select  foo2.id, foo2.geom from (
-        select id, geom, ST_Length(geom) as len from %s.%s 
-        ) as foo2 where len < %s order by foo2.id""" % (schema,cl,areaTolerance)
+        select id, geom, ST_Length(geom) as len from "{0}"."{1}" 
+        ) as foo2 where len < {2} order by foo2.id""".format(schema,cl,areaTolerance)
         return sql
     
     def prepareVertexNearEdgesStruct(self, tableSchema, tableName):
@@ -506,11 +512,11 @@ class PostGISSqlGenerator(SqlGenerator):
               linestrings.id as id
             FROM
               (SELECT id as id, (ST_Dump(ST_Boundary(geom))).geom
-               FROM only {0}.{1} 
+               FROM only "{0}"."{1}" 
                ) AS linestrings
             ) AS segments)#
         drop table if exists pontos#
-        create temp table pontos as select id as id, (ST_DumpPoints(geom)).geom as geom from only {0}.{1}#
+        create temp table pontos as select id as id, (ST_DumpPoints(geom)).geom as geom from only "{0}"."{1}"#
         create index pontos_gist on pontos using gist (geom)#
         create index seg_gist on seg using gist (geom)""".format(tableSchema, tableName)
         return sql
@@ -520,18 +526,18 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def deleteFeatures(self,schema,table,idList):
-        sql = """DELETE FROM %s.%s 
-        WHERE id in (%s)""" %(schema,table,','.join(idList))
+        sql = """DELETE FROM "{0}"."{1}" 
+        WHERE id in ({2})""".format(schema,table,','.join(idList))
         return sql
     
     def deleteFeaturesNotIn(self,schema,table,idList):
-        sql = """DELETE FROM %s.%s 
-        WHERE id not in (%s)""" %(schema,table,','.join(map(str,idList)))
+        sql = """DELETE FROM "{0}"."{1}" 
+        WHERE id not in ({2})""" .format(schema,table,','.join(map(str,idList)))
         return sql        
     
     def getNotSimple(self, tableSchema, tableName):
         sql = """select foo.id as id, ST_MULTI(st_startpoint(foo.geom)) as geom from (
-        select id as id, (ST_Dump(ST_Node(ST_SetSRID(ST_MakeValid(geom),ST_SRID(geom))))).geom as geom from {0}.{1}  
+        select id as id, (ST_Dump(ST_Node(ST_SetSRID(ST_MakeValid(geom),ST_SRID(geom))))).geom as geom from "{0}"."{1}"  
         where ST_IsSimple(geom) = 'f') as foo where st_equals(st_startpoint(foo.geom),st_endpoint(foo.geom))""".format(tableSchema, tableName)
         return sql
 
@@ -550,7 +556,7 @@ class PostGISSqlGenerator(SqlGenerator):
                               linestrings.id as id
                             FROM
                               (SELECT id as id, (ST_Dump(geom)).geom as geom
-                               FROM only {0}.{1}
+                               FROM only "{0}"."{1}"
                                ) AS linestrings WHERE ST_NPoints(linestrings.geom) > 2 ) as points)
             select distinct id, anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle)
         elif  tableName.split('_')[-1] == 'a':
@@ -567,7 +573,7 @@ class PostGISSqlGenerator(SqlGenerator):
                               linestrings.id as id
                             FROM
                               (SELECT id as id, ST_Boundary((ST_Dump(ST_ForceRHR(geom))).geom) as geom
-                               FROM only {0}.{1}
+                               FROM only "{0}"."{1}"
                                ) AS linestrings WHERE ST_NPoints(linestrings.geom) > 2 ) as points)
             select distinct id, anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle)
         return sql
@@ -577,20 +583,23 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def forceValidity(self, tableSchema, tableName, idList, srid):
-        sql = """update {0}.{1} set geom = ST_Multi(result.geom) from (
-        select distinct parts.id, ST_Union(parts.geom) as geom from {0}.{1} as source, 
+        #TODO: Put pk field
+        sql = """update "{0}"."{1}" set geom = ST_Multi(result.geom) from (
+        select distinct parts.id, ST_Union(parts.geom) as geom from "{0}"."{1}" as source, 
                                         (select id as id, ST_Multi(((ST_Dump(ST_SetSRID(ST_MakeValid(geom), {3}))).geom)) as geom from 
-                                        {0}.{1}  where id in ({2})) as parts where ST_GeometryType(parts.geom) = ST_GeometryType(source.geom) group by parts.id
-        ) as result where  result.id = {0}.{1}.id""".format(tableSchema,tableName,','.join(idList),srid)
+                                        "{0}"."{1}"  where id in ({2})) as parts where ST_GeometryType(parts.geom) = ST_GeometryType(source.geom) group by parts.id
+        ) as result where  result.id = "{0}"."{1}".id""".format(tableSchema,tableName,','.join(idList),srid)
         return sql
     
     def getTableExtent(self, tableSchema, tableName):
+        #TODO: put geometry column
         sql = """
-        SELECT ST_XMin(ST_Extent(geom)), ST_XMax(ST_Extent(geom)), ST_YMin(ST_Extent(geom)), ST_YMax(ST_Extent(geom)) AS extent FROM {}.{}
+        SELECT ST_XMin(ST_Extent(geom)), ST_XMax(ST_Extent(geom)), ST_YMin(ST_Extent(geom)), ST_YMax(ST_Extent(geom)) AS extent FROM "{0}"."{1}"
         """.format(tableSchema, tableName)
         return sql
     
     def getOrphanGeomTablesWithElements(self,loading = False):
+        #TODO: Avaliate if deprecated
         if not loading:
             sql = """
             select pgcl2.n as tb from pg_class as pgcl
@@ -634,6 +643,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def updateOriginalTable(self, tableSchema, tableName, result, epsg):
+        #TODO: Put original id
         sqls = []
         for key in result.keys():
             geoms = []
@@ -643,12 +653,13 @@ class PostGISSqlGenerator(SqlGenerator):
             union = 'ST_Union(ARRAY[{}])'.format(array)
 
             sql = """
-            UPDATE {0}.{1} SET geom = ST_Multi({2}) WHERE id = {3}
+            UPDATE "{0}"."{1}" SET geom = ST_Multi({2}) WHERE id = {3}
             """.format(tableSchema, tableName, union, key)
             sqls.append(sql)
         return sqls
     
     def getOrphanTableElementCount(self, orphan):
+        cl = '"'+'"."'.join(cl.replace('"','').split('.'))+'"'
         sql = "select id from %s limit 1" % orphan
         return sql
     
@@ -657,18 +668,19 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def dropCentroid(self, table):
+        table = '"'+'"."'.join(table.replace('"','').split('.'))+'"'
         sql = "alter table %s drop column if exists centroid" % table
         return sql
     
     def createCentroidColumn(self, table_schema, table_name, srid):
-        sql = """alter table {1}.{2} add column centroid geometry('POINT',{0})#
-        alter table {1}.{2} alter column geom drop not null#
-        CREATE INDEX {3} ON {1}.{2} USING gist(centroid)""".format(srid,table_schema, table_name,table_name[:-2]+'_c_gist')
+        sql = """alter table "{1}"."{2}" add column centroid geometry('POINT',{0})#
+        alter table "{1}"."{2}" alter column geom drop not null#
+        CREATE INDEX {3} ON "{1}"."{2}" USING gist(centroid)""".format(srid,table_schema, table_name,table_name[:-2]+'_c_gist')
         return sql
     
     def createCentroidGist(self, table_schema, table_name):
         gistName = table_name[:-2]+'_c_gist'
-        sql = "CREATE INDEX {0} ON {1}.{2} USING gist(centroid)".format(gistName,table_schema,table_name)
+        sql = '''CREATE INDEX {0} ON "{1}"."{2}" USING gist(centroid)'''.format(gistName,table_schema,table_name)
         return sql
     
     def getEarthCoverageClasses(self):
@@ -702,7 +714,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def snapLinesToFrame(self, cl, frameTable, tol):
         schema, table = cl.split('.')
         sql = """
-        update {0}.{1} as classe set geom = ST_Multi(agrupado.geom)
+        update "{0}"."{1}" as classe set geom = ST_Multi(agrupado.geom)
         from
             (
                 select simplelines.id as id, ST_Union(simplelines.newline) as geom
@@ -714,13 +726,13 @@ class PostGISSqlGenerator(SqlGenerator):
                     (   select a.id as id, a.geom as geom,
                         ST_ShortestLine(st_startpoint((ST_Dump(a.geom)).geom), 
                         ST_Boundary(m.geom)) as from_start
-                        from {0}.{1} a, {3} m
+                        from "{0}"."{1}" a, {3} m
                     ) as short
                     where ST_Length(from_start) < {2}
                 ) as simplelines group by simplelines.id
             ) as agrupado
         where classe.id = agrupado.id#
-        update {0}.{1} as classe set geom = ST_Multi(agrupado.geom)
+        update "{0}"."{1}" as classe set geom = ST_Multi(agrupado.geom)
         from
             (
                 select simplelines.id as id, ST_Union(simplelines.newline) as geom
@@ -733,7 +745,7 @@ class PostGISSqlGenerator(SqlGenerator):
                         ST_ShortestLine(st_endpoint((ST_Dump(a.geom)).geom), 
                         ST_Boundary(m.geom)) as from_start,
                         ST_NPoints((ST_Dump(a.geom)).geom) as index
-                        from {0}.{1} a, {3} m
+                        from "{0}"."{1}" a, {3} m
                     ) as short
                     where ST_Length(from_start) < {2}
                 ) as simplelines group by simplelines.id
@@ -743,6 +755,8 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def densifyFrame(self, cl, frameTable, snapTolerance):
+        cl = '"'+'"."'.join(cl.replace('"','').split('.'))+'"'
+        frameTable = '"'+'"."'.join(frameTable.replace('"','').split('.'))+'"'
         sql = """
         update {2} m set geom = st_multi(st_snap(m.geom, 
         foo.vertices, {1}))
@@ -755,6 +769,8 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def snapToGrid(self, cl, precision, srid):
+        #TODO: add geometry
+        cl = '"'+'"."'.join(cl.replace('"','').split('.'))+'"'
         sql = 'update {0} set geom = ST_SetSRID(ST_SnapToGrid(geom,{1}),{2})'.format(cl, precision, srid)
         return sql
     
@@ -798,12 +814,13 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def dropTempTable(self, tableName):
+        tableName = '"'+'"."'.join(tableName.replace('"','').split('.'))+'"'
         sql = '''DROP TABLE IF EXISTS {0}'''.format(tableName)
         return sql
     
     def populateTempTable(self, tableName, attributes, values, geometry, srid):
         tableName = '"'+'"."'.join(tableName.split('.'))
-        columnTupleString = ','.join(map(str,attributes))
+        columnTupleString = '"'+'","'.join(map(str,attributes))+'"'
         columnTupleString += ',geom'
         valueTupple = []
         for value in values:
@@ -821,7 +838,8 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def createSpatialIndex(self, tableName):
-        sql = 'create index {0}_temp_gist on {1}_temp using gist (geom)'.format(tableName.split('.')[-1], tableName)
+        tableName = '"'+'"."'.join(tableName.replace('"','').split('.'))
+        sql = 'create index "{0}_temp_gist" on {1}_temp" using gist (geom)'.format(tableName.split('.')[-1].replace('"',''), tableName)
         return sql
     
     def getStyles(self):
