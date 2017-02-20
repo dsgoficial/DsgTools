@@ -44,10 +44,10 @@ class GenericDbManager(QObject):
         self.serverAbstractDb = serverAbstractDb
         self.adminDb = self.instantiateAdminDb(serverAbstractDb)
         self.utils = Utils()
-    
+
     def getManagerType(self):
         return str(self.__class__).split('.')[-1].replace('\'>', '').replace('Manager','')
-    
+
     def instantiateAbstractDb(self, name):
         '''
         Instantiates an abstractDb.
@@ -56,7 +56,7 @@ class GenericDbManager(QObject):
         abstractDb = DbFactory().createDbFactory('QPSQL')
         abstractDb.connectDatabaseWithParameters(host, port, name, user, password)
         return abstractDb
-    
+
     def instantiateAdminDb(self, serverAbstractDb):
         '''
         Instantiates dsgtools_admindb in the same server as serverAbstractDb. 
@@ -69,6 +69,13 @@ class GenericDbManager(QObject):
         adminDb.connectDatabaseWithParameters(host, port, 'dsgtools_admindb', user, password)
         return adminDb
     
+    def instantiateTemplateDb(self, edgvVersion):
+        '''
+        Instantiates a templateDb in the same server as serverAbstractDb. 
+        If template does not exists, instantiateAdminDb calls createTemplate
+        '''
+        pass
+
     def createAdminDb(self, serverAbstractDb, adminDb, host, port, user, password):
         '''
         Creates dsgtools_admindb
@@ -78,7 +85,7 @@ class GenericDbManager(QObject):
         sqlPath = adminDb.getCreationSqlPath('admin')
         adminDb.runSqlFromFile(sqlPath)
         return adminDb
-    
+
     def getSettings(self):
         '''
         Gets all profiles from public.permission_profile
@@ -102,21 +109,21 @@ class GenericDbManager(QObject):
         '''
         settingType = self.getManagerType()
         self.adminDb.insertSettingIntoAdminDb(settingType, settingName, jsonDict, edgvVersion)
-    
+
     def updateSetting(self, settingName, edgvVersion, newJsonDict):
         """
         Reimplemented in child if necessary.
         """
         settingType = self.getManagerType()
         self.adminDb.updateSettingFromAdminDb(settingType, settingName, edgvVersion, newJsonDict)
-    
+
     def deleteSetting(self, settingName, edgvVersion):
         """
         Reimplemented in child if necessary.
         """
         settingType = self.getManagerType()
         self.adminDb.deleteSettingFromAdminDb(settingType, settingName, edgvVersion)
-    
+
     def importSetting(self, fullFilePath):
         '''
         Function to import profile into dsgtools_admindb. It has the following steps:
@@ -138,7 +145,7 @@ class GenericDbManager(QObject):
             self.createSetting(settingName, edgvVersion, inputJson)
         except Exception as e:
             raise Exception(self.tr("Error importing setting ") + settingName +': '+e.args[0])
-    
+
     def batchImportSettings(self, profilesDir):
         '''
         1. Get all properties in profilesDir;
@@ -173,7 +180,7 @@ class GenericDbManager(QObject):
                 os.makedirs(outputPath)
             for profileName in settingDict[edgvVersion]:
                 self.exportSetting(profileName, edgvVersion, outputPath)
-    
+
     def validateJsonSetting(self, inputJsonDict):
         '''
         reimplemented in each child

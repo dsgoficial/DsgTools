@@ -2246,14 +2246,24 @@ class PostgisDb(AbstractDb):
         elif version == 'FTer_2a_Ed':
             return 'template_fter_2a_ed'
     
-    def setDbAsTemplate(self, version):
+    def setDbAsTemplate(self, version = None, dbName = None, setTemplate = True):
         self.checkAndOpenDb()
-        dbName = self.getTemplateName(version)
-        sql = self.gen.setDbAsTemplate(dbName)
+        if not dbName and not version:
+            dbName = self.getTemplateName(version)
+        sql = self.gen.setDbAsTemplate(dbName, setTemplate)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             self.db.rollback()
             raise Exception(self.tr("Problem setting database as template: ")+query.lastError().text())
+
+    def checkIfTemplate(self, dbName):
+        self.checkAndOpenDb()
+        sql = self.gen.checkIfTemplate(dbName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem checking  template: ")+query.lastError().text())
+        while query.next():
+            return query.value(0)
     
     def getCreationSqlPath(self, version):
         currentPath = os.path.dirname(__file__)
@@ -2283,7 +2293,7 @@ class PostgisDb(AbstractDb):
                 raise Exception(self.tr('Error on database creation! ')+query.lastError().text()+ self.tr(' Db will be dropped.'))
         self.db.commit()
         self.alterSearchPath(version)
-        self.setDbAsTemplate(version)
+        self.setDbAsTemplate(version = version)
         self.createStyleTable()
         #this close is to allow creation from template
         self.db.close()
@@ -2770,4 +2780,27 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr("Problem updating permission profile: ")+query.lastError().text())
+
+    def upgradePostgis(self):
+        self.checkAndOpenDb()
+        updateDict = self.getPostgisVersion()
+        if updateDict <> dict():
+            self.db.transaction()
+            sql = self.gen.upgradePostgis(updateDict)
+            query = QSqlQuery(self.db)
+            if not query.exec_(sql):
+                self.db.rollback()
+                raise Exception(self.tr("Problem upgrading postgis: ")+query.lastError().text())
+            self.db.commit()
     
+    def getPostgisVersion(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getPostgisVersion()
+        query = QSqlQuery(sql, self.db)
+        updateDict = dict()
+        while query.next():
+            defaultVersion = query.value(1)
+            installedVersion = query.value(2)
+            if defaultVersion <> installedVersion and installedVersion not in ['', None]:                
+                updateDict[query.value(0)] = {'defaultVersion':defaultVersion, 'installedVersion':installedVersion}
+        return updateDict

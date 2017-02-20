@@ -1025,13 +1025,19 @@ class PostGISSqlGenerator(SqlGenerator):
             order by tb)""".format(srid)
         return sql
     
-    def setDbAsTemplate(self, dbName):
-        sql = """UPDATE pg_database set datistemplate = 't' where datname = '{0}';
-        UPDATE pg_database set datallowconn = 'f' where datname = '{0}';""".format(dbName)
+    def setDbAsTemplate(self, dbName, setTemplate = True):
+        if setTemplate:
+            sql = """UPDATE pg_database set datistemplate = 't' where datname = '{0}';""".format(dbName)
+        else:
+            sql = """UPDATE pg_database set datistemplate = 'f' where datname = '{0}';""".format(dbName)
         return sql
     
     def checkTemplate(self):
         sql = """select datname from pg_database where datistemplate = 't'"""
+        return sql
+    
+    def checkIfTemplate(self, dbName):
+        sql = """select datistemplate from pg_database where datname = '{0}'""".format(dbName)
         return sql
     
     def alterSearchPath(self, dbName, version):
@@ -1254,4 +1260,14 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def getDefaultFromDb(self, schema, tableName, attrName):
         sql = """select column_default from information_schema.columns where table_schema = '{0}' and table_name = '{1}' and column_name = '{2}';""".format(schema, tableName, attrName)
+        return sql
+    
+    def upgradePostgis(self, updateDict):
+        sql = ''
+        for key in updateDict:
+            sql += """ALTER EXTENSION {0} UPDATE TO "{1}";""".format(key, updateDict[key]['defaultVersion'])
+        return sql
+    
+    def getPostgisVersion(self):
+        sql = '''SELECT name, default_version,installed_version FROM pg_available_extensions WHERE name in ('postgis', 'postgis_topology')'''
         return sql

@@ -96,9 +96,13 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     def getSelectedDbList(self):
         return [i.split(' ')[0] for i in self.dbsCustomSelector.toLs]
     
-    def instantiateAbstractDbs(self):
+    def instantiateAbstractDbs(self, instantiateTemplates = False):
         dbsDict = dict()
         selectedDbNameList = self.getSelectedDbList()
+        if instantiateTemplates:
+            for templateName in ['template_213', 'template_FTer_2a_Ed']:
+                if templateName not in selectedDbNameList:
+                    selectedDbNameList.append(templateName)
         for dbName in selectedDbNameList:
             localDb = self.dbFactory.createDbFactory('QPSQL')
             localDb.connectDatabaseWithParameters(self.serverWidget.abstractDb.db.hostName(), self.serverWidget.abstractDb.db.port(), dbName, self.serverWidget.abstractDb.db.userName(), self.serverWidget.abstractDb.db.password())
@@ -148,6 +152,35 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         self.setDatabases()
         header = self.tr('Drop operation complete. \n')
         self.outputMessage(header, successList, exceptionDict)
+
+    @pyqtSlot(bool)
+    def on_upgradePostgisPushButton_clicked(self):
+        selectedDbNameList = self.getSelectedDbList()
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        successList, exceptionDict = self.batchUpgradePostgis(selectedDbNameList)
+        QApplication.restoreOverrideCursor()
+        self.setDatabases()
+        header = self.tr('Upgrade Posgtis operation complete. \n')
+        self.outputMessage(header, successList, exceptionDict)
+
+    def batchUpgradePostgis(self, dbList):
+        exceptionDict = dict()
+        successList = []
+        dbsDict = self.instantiateAbstractDbs(instantiateTemplates = True)
+        self.closeAbstractDbs(dbsDict)
+        for dbName in dbsDict.keys():
+            try:
+                if self.serverWidget.abstractDb.checkIfTemplate(dbName):
+                    self.serverWidget.abstractDb.setDbAsTemplate(dbName = dbName, setTemplate = False)
+                    dbsDict[dbName].upgradePostgis()
+                    self.serverWidget.abstractDb.setDbAsTemplate(dbName = dbName, setTemplate = True)
+                    successList.append(dbName)
+                else:
+                    dbsDict[dbName].upgradePostgis()
+                    successList.append(dbName)
+            except Exception as e:
+                exceptionDict[dbName] =  e.args[0]
+        return successList, exceptionDict
 
     def batchDropDbs(self, dbList):
         exceptionDict = dict()
