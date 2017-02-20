@@ -43,22 +43,66 @@ from DsgTools.CustomWidgets.CustomDbManagementWidgets.alterDefaultWidget import 
 from DsgTools.CustomWidgets.selectFileWidget import SelectFileWidget
 from DsgTools.PostgisCustomization.dbCustomizer import DbCustomizer
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.Utils.utils import Utils
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'createDatabaseCustomization.ui'))
 
 class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, abstractDb, customJsonDict = None, parent = None):
+    def __init__(self, serverAbstractDb, customizationManager, customJsonDict = None, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.setupUi(self)
-        self.abstractDb = abstractDb
+        self.serverAbstractDb = serverAbstractDb
+        self.customizationManager = customizationManager
         self.contentsDict = dict()
         self.populateCustomizationCombo()
+        self.setWidgetsEnabled(False)
         self.utils = Utils()
         if customJsonDict:
             self.createWidgetsFromCustomJsonDict(customJsonDict)
+    
+    @pyqtSlot(int, name='on_versionSelectionComboBox_currentIndexChanged')
+    def setUiState(self, comboIdx = 0):
+        if comboIdx == 0:
+            self.clearWidgets()
+            self.setWidgetsEnabled(False)
+            self.abstractDb = None
+        else:
+            self.setWidgetsEnabled(True)
+            self.instantiateAbstractDb(self.versionSelectionComboBox.currentText())
+
+    def instantiateAbstractDb(self, version):
+        if version == '2.1.3':
+            database = 'template_213'
+        elif version == 'FTer_2a_Ed':
+            database = 'template_fter_2a_ed'
+        host = self.serverAbstractDb.db.hostName()
+        port = self.serverAbstractDb.db.port()
+        user = self.serverAbstractDb.db.userName()
+        password = self.serverAbstractDb.db.password()
+        self.abstractDb = DbFactory().createDbFactory('QPSQL')
+        self.abstractDb.connectDatabaseWithParameters(host, port, database, user, password)
+
+    def clearWidgets(self):
+        rootItem = self.customizationTreeWidget.invisibleRootItem()
+        childNodeCount = rootItem.childCount()
+        #remove widgets
+        for i in range(childNodeCount):
+            typeChild = rootItem.child(i)
+            childCount = typeChild.childCount()
+            childTextList = []
+            for j in range(childCount):
+                childTextList.append(typeChild.child(i).text(0))
+            for childText in childTextList:
+                self.removeWidget(widgetText = childText)
+    
+    def setWidgetsEnabled(self, enabled):
+        self.customizationSelectionComboBox.setEnabled(enabled)
+        self.addAttributePushButton.setEnabled(enabled)
+        self.customizationTreeWidget.setEnabled(enabled)
+        self.removeSelectedPushButton.setEnabled(enabled)
     
     def populateCustomizationCombo(self):
         '''
@@ -115,35 +159,35 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         self.createItem(self.contentsDict[contentsKey]['treeItem'], title, 0)
     
     def addAttributeWidget(self,uiParameterJsonDict=None):
-        widget = NewAttributeWidget(self.connectionWidget.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
+        widget = NewAttributeWidget(self.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
         self.addWidgetItem(self.tr('Attribute Customization'), self.tr('New Custom Attribute'), widget)
     
     def addClassWidget(self,uiParameterJsonDict=None):
-        widget = NewClassWidget(self.connectionWidget.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
+        widget = NewClassWidget(self.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
         self.addWidgetItem(self.tr('Class Customization'), self.tr('New Custom Class'), widget)
     
     def addCodeNameWidget(self,uiParameterJsonDict=None):
-        widget = CodeNameCustomizationWidget(self.connectionWidget.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
+        widget = CodeNameCustomizationWidget(self.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
         self.addWidgetItem(self.tr('Code Name Customization'), self.tr('New Custom Code Name'), widget)
 
     def addDefaultWidget(self,uiParameterJsonDict=None):
-        widget = AlterDefaultWidget(self.connectionWidget.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
+        widget = AlterDefaultWidget(self.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
         self.addWidgetItem(self.tr('Default Customization'), self.tr('New Custom Default'), widget) 
 
     def addDomainWidget(self,uiParameterJsonDict=None):
-        widget = NewDomainWidget(self.connectionWidget.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
+        widget = NewDomainWidget(self.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
         self.addWidgetItem(self.tr('Domain Customization'), self.tr('New Custom Domain'), widget)
 
     def addDomainValueWidget(self,uiParameterJsonDict=None):
-        widget = NewDomainValueWidget(self.connectionWidget.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
+        widget = NewDomainValueWidget(self.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
         self.addWidgetItem(self.tr('Domain Value Customization'), self.tr('New Domain Value'), widget)
 
     def addNullityWidget(self,uiParameterJsonDict=None):
-        widget = ChangeNullityWidget(self.connectionWidget.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
+        widget = ChangeNullityWidget(self.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
         self.addWidgetItem(self.tr('Attribute Nullity Customization'), self.tr('New Custom Attribute Nullity'), widget)
 
     def addFilterWidget(self,uiParameterJsonDict=None):
-        widget = ChangeFilterWidget(self.connectionWidget.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
+        widget = ChangeFilterWidget(self.abstractDb,uiParameterJsonDict = uiParameterJsonDict)
         self.addWidgetItem(self.tr('Attribute Filter Customization'), self.tr('New Custom Attribute Filter'), widget)
     
     def addWidget(self, widget, title):
@@ -174,19 +218,28 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
             if child.text(0) == widgetName:
                 return i
     
-    @pyqtSlot(bool)
-    def on_removeSelectedPushButton_clicked(self):
-        treeItem = self.customizationTreeWidget.currentItem()
-        parent = treeItem.parent()
-        if parent == self.customizationTreeWidget.invisibleRootItem():
-            return
-        idx = self.getWidgetIndexFromTreeItem(treeItem)
-        itemToRemove = self.contentsDict[parent.text(0)]['widgetList'].pop(idx)
-        itemToRemove.setParent(None)
-        self.contentsDict[parent.text(0)]['treeItem'].removeChild(treeItem)
+    @pyqtSlot(bool, name='on_removeSelectedPushButton_clicked')
+    def removeWidget(self, widgetText = None):
+        if not widgetText:
+            treeItemList = [self.customizationTreeWidget.currentItem()]
+        else:
+            treeItemList = self.customizationTreeWidget.findItems(widgetText, flags = Qt.MatchExactly)
+        if len(treeItemList)>0:
+            for treeItem in treeItemList:
+                parent = treeItem.parent()
+                if parent == self.customizationTreeWidget.invisibleRootItem():
+                    return
+                idx = self.getWidgetIndexFromTreeItem(treeItem)
+                itemToRemove = self.contentsDict[parent.text(0)]['widgetList'].pop(idx)
+                itemToRemove.setParent(None)
+                self.contentsDict[parent.text(0)]['treeItem'].removeChild(treeItem)
     
     @pyqtSlot()
-    def on_buttonBox_saved(self):
+    def on_buttonBox_accepted(self):
+        if not self.validate():
+            msg = self.validateDiagnosis()
+            QMessageBox.warning(self, self.tr('Error!'), msg)
+            return
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         exceptionList = []
         customJsonDict = dict()
@@ -219,7 +272,13 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
                 progress.step()
         QApplication.restoreOverrideCursor()
         if self.validateJsonDict(customJsonDict) and len(exceptionList) == 0:
-            self.exportJson(customJsonDict)
+            edgvVersion = self.versionSelectionComboBox.currentText()
+            versionText = 'database_'+edgvVersion
+            finalJsonDict = {versionText:customJsonDict}
+            customizationName = self.customNameLineEdit.text()
+            self.customizationManager.createSetting(customizationName, edgvVersion, finalJsonDict)
+            #EMIT to reload?
+            self.close()
         else:
             msg = ''
             if len(exceptionList)> 0:
@@ -235,20 +294,21 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         #TODO
         return True
     
-    def exportJson(self, customJsonDict):
-        try:
-            fd = QFileDialog()
-            filename = fd.getSaveFileName(caption=self.tr('Choose file to output'),filter=self.tr('DSGTools Customization File (*.dsgtoolscustom)'))
-            if '.dsgtoolscustom' not in filename:
-                outputFile = os.path.join(filename+'.dsgtoolscustom')
-            else:
-                outputFile = filename
-            with open(outputFile, 'w') as outfile:
-                json.dump(customJsonDict, outfile, sort_keys=True, indent=4)
-            QMessageBox.warning(self, self.tr('Success!'), self.tr('Customization created on: ') +str(outputFile))
-        except Exception as e:
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem exporting customization: ') + e.args[0])
-    
+    def validate(self):
+        if self.versionSelectionComboBox.currentIndex() == 0:
+            return False
+        if self.customNameLineEdit.text() == '':
+            return False
+        return True
+
+    def validateDiagnosis(self):
+        invalidatedReason = ''
+        if self.versionSelectionComboBox.currentIndex() == 0:
+            invalidatedReason += self.tr('An EDGV Version must be chosen.\n')
+        if self.actionComboBox.currentIndex() == 0:
+            invalidatedReason += self.tr('A name must be input.\n')
+        return invalidatedReason
+
     def populateWidgetsFromSelectedFile(self):
         jsonFileName = self.selectFileWidget.fileNameList
         customJsonDict = self.utils.readJsonFile(jsonFileName)

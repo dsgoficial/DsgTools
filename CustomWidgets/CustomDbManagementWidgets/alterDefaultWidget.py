@@ -327,5 +327,5 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
         uiParameterJsonDict['allAttributesCheckBox'] = self.allAttributesCheckBox.isChecked()
         uiParameterJsonDict['allTablesCheckBox'] = self.allTablesCheckBox.isChecked()
         uiParameterJsonDict['attributeComboBox'] = self.attributeComboBox.currentText()
-        uiParameterJsonDict['singleValueComboBox'] = self.actionComboBox.currentText()
+        uiParameterJsonDict['singleValueComboBox'] = self.singleValueComboBox.currentText()
         return uiParameterJsonDict

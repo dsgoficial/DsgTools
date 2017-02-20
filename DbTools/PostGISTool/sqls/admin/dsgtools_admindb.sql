@@ -180,3 +180,12 @@ CREATE TABLE public.style(
 ALTER TABLE public.style OWNER TO postgres;
 -- ddl-end --
 
+CREATE TABLE public.applied_customization(
+	id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	id_customization uuid NOT NULL,
+	dboid oid NOT NULL,
+	CONSTRAINT applied_custom_pk PRIMARY KEY (id),
+	CONSTRAINT applied_customization_customization_id_fk FOREIGN KEY (id_customization) REFERENCES public.customization (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION 
+);
+-- ddl-end --
+ALTER TABLE public.style OWNER TO postgres;

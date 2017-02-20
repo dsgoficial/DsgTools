@@ -49,11 +49,11 @@ class CustomizationManagerWidget(QtGui.QWidget, FORM_CLASS):
         self.customDict = None
         self.setComponentsEnabled(False)
     
-    def setParameters(self, abstractDb):
-        if abstractDb:
+    def setParameters(self, serverAbstractDb):
+        if serverAbstractDb:
             self.setComponentsEnabled(True)
-            self.abstractDb = abstractDb
-            self.customizationManager = CustomizationManager(abstractDb)
+            self.serverAbstractDb = serverAbstractDb
+            self.customizationManager = CustomizationManager(serverAbstractDb, {})
         else:
             self.setComponentsEnabled(False)
     
@@ -79,7 +79,7 @@ class CustomizationManagerWidget(QtGui.QWidget, FORM_CLASS):
         '''
         Slot that opens the create profile dialog
         '''
-        dlg = CreateDatabaseCustomization(self.abstractDb)
+        dlg = CreateDatabaseCustomization(self.serverAbstractDb, self.customizationManager)
         dlg.exec_()
     
     @pyqtSlot(bool)
