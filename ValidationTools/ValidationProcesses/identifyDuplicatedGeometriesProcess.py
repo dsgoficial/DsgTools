@@ -31,8 +31,9 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Identify Duplicated Geometries')
         
-        classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False)
-        self.parameters = {'Classes':classesWithGeom.keys()}
+        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements = True, getGeometryColumn = True)
+        classesWithElem = [i['layerName']+' ({0})'.format(i['geometryColumn']) for i in classesWithElemDictList]
+        self.parameters = {'Classes':classesWithElem}
 
     def execute(self):
         '''
@@ -42,7 +43,11 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            classesWithGeom = self.parameters['Classes']
+            classesWithGeom = []
+            for classAndGeom in self.parameters['Classes']:
+                cl, geometryColumn = classAndGeom.split(' ')
+                if cl not in classesWithGeom:
+                    classesWithGeom.append(cl)
             duplicated = self.abstractDb.getDuplicatedGeomRecords(classesWithGeom)
             if len(duplicated.keys()) > 0:
                 dupGeomRecordList = []

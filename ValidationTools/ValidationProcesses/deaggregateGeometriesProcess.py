@@ -31,8 +31,8 @@ class DeaggregateGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Deaggregate Geometries')
         
-        explodeIdDict = self.abstractDb.getExplodeCandidates()
-        self.parameters = {'Classes':explodeIdDict.keys()}
+        self.explodeIdDict = self.abstractDb.getExplodeCandidates()
+        self.parameters = {'Classes':self.explodeIdDict.keys()}
 
     def execute(self):
         '''
@@ -47,15 +47,15 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                 self.setStatus(self.tr('There are no multi parted geometries.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('There are no multi parted geometries.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
+            classesWithElem = self.parameters['Classes']
             for cl in classesWithElem:
                 #creating vector layer
-                schema, layer_name = self.abstractDb.getTableSchema(cl)
-                layer = self.layerLoader.load([layer_name],uniqueLoad=True)[layer_name]
+                layer = self.loadLayerBeforeValidationProcess(cl)
                 provider = layer.dataProvider()
                 if not layer.isValid():
                     QgsMessageLog.logMessage(self.tr("Layer {0} failed to load!").format(cl))
                 layer.startEditing()
-                for id in explodeIdDict[cl]:
+                for id in self.explodeIdDict[cl]:
                     layer.startEditing()
                     feat = layer.getFeatures(QgsFeatureRequest(id)).next()
                     parts = feat.geometry().asGeometryCollection()

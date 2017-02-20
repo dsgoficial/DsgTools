@@ -323,7 +323,7 @@ class PostGISSqlGenerator(SqlGenerator):
             id serial NOT NULL,
             process_name varchar(200) NOT NULL,
             layer varchar(200) NOT NULL,
-            feat_id smallint NOT NULL,
+            feat_id bigint NOT NULL,
             reason varchar(200) NOT NULL,
             user_fixed boolean NOT NULL DEFAULT FALSE,
             dimension smallint NOT NULL,
@@ -475,8 +475,9 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getMulti(self,cl):
+        #TODO: get pk
         cl = '"'+'"."'.join(cl.replace('"','').split('.'))+'"'
-        sql = "select id from only %s where ST_NumGeometries(geom) > 1" % cl
+        sql = """select id from only {0} where ST_NumGeometries(geom) > 1""".format(cl)
         return sql
 
     def getDuplicatedGeom(self,schema,cl):
@@ -1053,6 +1054,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def removeEmptyGeomtriesFromDb(self, layer):
+        layer = '"'+'"."'.join(layer.replace('"','').split('.'))
         sql = "DELETE FROM {0} WHERE st_isempty(geom) = TRUE".format(layer)
         return sql
     
@@ -1086,22 +1088,22 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def insertSettingIntoAdminDb(self, settingType, name, jsondict, edgvversion):
         tableName = self.getSettingTable(settingType)
-        sql = """INSERT INTO public.{0} (name, jsondict, edgvversion) VALUES ('{1}','{2}','{3}'); """.format(tableName, name, jsondict, edgvversion)
+        sql = """INSERT INTO "public"."{0}" (name, jsondict, edgvversion) VALUES ('{1}','{2}','{3}'); """.format(tableName, name, jsondict, edgvversion)
         return sql
     
     def getSettingFromAdminDb(self, settingType, name, edgvversion):
         tableName = self.getSettingTable(settingType)
-        sql = """select jsondict as jsondict from public.{0} where name = '{1}' and edgvversion = '{2}';""".format(tableName, name, edgvversion)
+        sql = """select jsondict as jsondict from "public"."{0}" where name = '{1}' and edgvversion = '{2}';""".format(tableName, name, edgvversion)
         return sql
     
     def updateSettingFromAdminDb(self, settingType, name, edgvversion, newjsondict):
         tableName = self.getSettingTable(settingType)
-        sql = """update public.{0} set jsondict = '{3}' where name = '{1}' and edgvversion = '{2}'; """.format(tableName, name, edgvversion, newjsondict)
+        sql = """update "public"."{0}" set jsondict = '{3}' where name = '{1}' and edgvversion = '{2}'; """.format(tableName, name, edgvversion, newjsondict)
         return sql
     
     def deleteSettingFromAdminDb(self, settingType, name, edgvversion):
         tableName = self.getSettingTable(settingType)
-        sql = """DELETE FROM public.{0} where name = '{1}' and  edgvversion = '{2}';""".format(tableName, name, edgvversion)
+        sql = """DELETE FROM "public"."{0}" where name = '{1}' and  edgvversion = '{2}';""".format(tableName, name, edgvversion)
         return sql
     
     def getAllSettingsFromAdminDb(self, settingType):

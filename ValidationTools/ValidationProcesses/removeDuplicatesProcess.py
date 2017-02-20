@@ -31,8 +31,8 @@ class RemoveDuplicatesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Remove Duplicated Elements')
         
-        flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyDuplicatedGeometriesProcess')
-        self.parameters = {'Classes':flagsDict.keys()}
+        self.flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyDuplicatedGeometriesProcess')
+        self.parameters = {'Classes':self.flagsDict.keys()}
 
     def preProcess(self):
         '''
@@ -57,7 +57,7 @@ class RemoveDuplicatesProcess(ValidationProcess):
                 # preparation
                 processTableName, lyr = self.prepareExecution(cl)
                 #running the process in the temp table
-                problems = self.abstractDb.removeFeatures(processTableName,flagsDict[cl])
+                problems = self.abstractDb.removeFeatures(processTableName,self.flagsDict[cl])
                 numberOfProblems += problems
                 # finalization
                 self.postProcessSteps(processTableName, lyr)

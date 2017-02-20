@@ -142,6 +142,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         return loadedDict
 
     def loadLayer(self, lyrName, idSubgrupo, loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict):
+        #TODO: think about if geomColumn should be also an optional parameter
         if uniqueLoad:
             lyr = self.checkLoaded(lyrName,loadedLayers)
             if lyr:

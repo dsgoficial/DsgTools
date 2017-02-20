@@ -475,11 +475,11 @@ allowConnections	Factories/SqlFactory/postgisSqlGenerator.py	/^    def allowConn
 alterDatabasePassword	UserTools/alter_user_password.py	/^    def alterDatabasePassword(self, user, newpassword):$/;"	kind:member	line:66
 alterDefaultWidget.py	CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py	1;"	kind:file	line:1
 alterFilterElement	PostgisCustomization/CustomJSONTools/customJSONBuilder.py	/^    def alterFilterElement(self, schema, tableName, attrName, filterName, originalFilterList, valueList, isMulti = False):$/;"	kind:member	line:60
-alterSearchPath	Factories/DbFactory/postgisDb.py	/^    def alterSearchPath(self, version):$/;"	kind:member	line:2278
-alterSearchPath	Factories/SqlFactory/postgisSqlGenerator.py	/^    def alterSearchPath(self, dbName, version):$/;"	kind:member	line:1017
+alterSearchPath	Factories/DbFactory/postgisDb.py	/^    def alterSearchPath(self, version):$/;"	kind:member	line:2291
+alterSearchPath	Factories/SqlFactory/postgisSqlGenerator.py	/^    def alterSearchPath(self, dbName, version):$/;"	kind:member	line:1036
 alterServerPassword	UserTools/alter_user_password.py	/^    def alterServerPassword(self, userList, newpassword):$/;"	kind:member	line:74
-alterUserPass	Factories/DbFactory/postgisDb.py	/^    def alterUserPass(self, user, newpassword):$/;"	kind:member	line:595
-alterUserPass	Factories/SqlFactory/postgisSqlGenerator.py	/^    def alterUserPass(self,user,newPass):$/;"	kind:member	line:209
+alterUserPass	Factories/DbFactory/postgisDb.py	/^    def alterUserPass(self, user, newpassword):$/;"	kind:member	line:610
+alterUserPass	Factories/SqlFactory/postgisSqlGenerator.py	/^    def alterUserPass(self,user,newPass):$/;"	kind:member	line:211
 alterUserPass	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def alterUserPass(self):$/;"	kind:member	line:111
 alterUserPass	Factories/SqlFactory/sqlGenerator.py	/^    def alterUserPass(self):$/;"	kind:member	line:94
 alter_user_password.py	UserTools/alter_user_password.py	1;"	kind:file	line:1
@@ -514,15 +514,15 @@ buildClassElement	PostgisCustomization/CustomJSONTools/customJSONBuilder.py	/^  
 buildCodeNameToChangeElement	PostgisCustomization/CustomJSONTools/customJSONBuilder.py	/^    def buildCodeNameToChangeElement(self, domainTable, codeValue, oldCodeName, newCodeName):$/;"	kind:member	line:48
 buildCustomizer	PostgisCustomization/dbCustomizer.py	/^    def buildCustomizer(self, jsonFile, type):$/;"	kind:member	line:51
 buildDatabaseName	Factories/DbCreatorFactory/dbCreator.py	/^    def buildDatabaseName(self, dbBaseName, prefix = None, sufix = None):$/;"	kind:member	line:53
-buildFieldMap	Factories/DbFactory/abstractDb.py	/^    def buildFieldMap(self):$/;"	kind:member	line:187
-buildInvalidatedDict	Factories/DbFactory/abstractDb.py	/^    def buildInvalidatedDict(self):$/;"	kind:member	line:409
+buildFieldMap	Factories/DbFactory/abstractDb.py	/^    def buildFieldMap(self):$/;"	kind:member	line:191
+buildInvalidatedDict	Factories/DbFactory/abstractDb.py	/^    def buildInvalidatedDict(self):$/;"	kind:member	line:413
 buildNestedDict	Utils/utils.py	/^    def buildNestedDict(self, inputDict, keyList, value):$/;"	kind:member	line:97
 buildNewAttributeElement	PostgisCustomization/CustomJSONTools/customJSONBuilder.py	/^    def buildNewAttributeElement(self, schema, name, attrList, childrenToAlter=[]):$/;"	kind:member	line:35
 buildNullityDicts	ProductionTools/FieldToolBox/field_setup.py	/^    def buildNullityDicts(self):$/;"	kind:member	line:172
-buildOgrDatabase	Factories/DbFactory/abstractDb.py	/^    def buildOgrDatabase(self):$/;"	kind:member	line:522
+buildOgrDatabase	Factories/DbFactory/abstractDb.py	/^    def buildOgrDatabase(self):$/;"	kind:member	line:526
 buildOneNestedDict	Utils/utils.py	/^    def buildOneNestedDict(self, inputDict, keyList, value):$/;"	kind:member	line:74
 buildQmlDict	ProductionTools/FieldToolBox/field_setup.py	/^    def buildQmlDict(self, fullTableName):$/;"	kind:member	line:140
-buildReadSummary	Factories/DbFactory/abstractDb.py	/^    def buildReadSummary(self,inputOgrDb,outputAbstractDb,classList):$/;"	kind:member	line:272
+buildReadSummary	Factories/DbFactory/abstractDb.py	/^    def buildReadSummary(self,inputOgrDb,outputAbstractDb,classList):$/;"	kind:member	line:276
 buildSql	Factories/DbCustomizationFactory/attributeCustomization.py	/^    def buildSql(self):$/;"	kind:member	line:30
 buildSql	Factories/DbCustomizationFactory/classCustomization.py	/^    def buildSql(self):$/;"	kind:member	line:30
 buildSql	Factories/DbCustomizationFactory/codeNameCustomization.py	/^    def buildSql(self):$/;"	kind:member	line:30
@@ -560,14 +560,14 @@ canvasReleaseEvent	ProductionTools/ContourTool/dsg_line_tool.py	/^    def canvas
 changeFilterWidget.py	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	1;"	kind:file	line:1
 changeNullityWidget.py	CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py	1;"	kind:file	line:1
 changePrimitiveCheckboxState	LayerTools/LoadLayersFromServer/loadLayersFromServer.py	/^    def changePrimitiveCheckboxState(self, enabled):$/;"	kind:member	line:212
-checkAndCreateCentroidAuxStruct	Factories/DbFactory/postgisDb.py	/^    def checkAndCreateCentroidAuxStruct(self, earthCoverageClasses):$/;"	kind:member	line:1406
-checkAndCreateStyleTable	Factories/DbFactory/postgisDb.py	/^    def checkAndCreateStyleTable(self):$/;"	kind:member	line:1652
+checkAndCreateCentroidAuxStruct	Factories/DbFactory/postgisDb.py	/^    def checkAndCreateCentroidAuxStruct(self, earthCoverageClasses):$/;"	kind:member	line:1419
+checkAndCreateStyleTable	Factories/DbFactory/postgisDb.py	/^    def checkAndCreateStyleTable(self):$/;"	kind:member	line:1665
 checkAndCreateStyleTable	Factories/DbFactory/spatialiteDb.py	/^    def checkAndCreateStyleTable(self):$/;"	kind:member	line:413
 checkAndCreateTemplate	Factories/DbCreatorFactory/postgisDbCreator.py	/^    def checkAndCreateTemplate(self):$/;"	kind:member	line:42
-checkAndCreateValidationStructure	Factories/DbFactory/postgisDb.py	/^    def checkAndCreateValidationStructure(self):$/;"	kind:member	line:914
+checkAndCreateValidationStructure	Factories/DbFactory/postgisDb.py	/^    def checkAndCreateValidationStructure(self):$/;"	kind:member	line:929
 checkAndOpenDb	Factories/DbFactory/abstractDb.py	/^    def checkAndOpenDb(self):$/;"	kind:member	line:66
-checkCentroidAuxStruct	Factories/DbFactory/postgisDb.py	/^    def checkCentroidAuxStruct(self):$/;"	kind:member	line:1369
-checkCentroidAuxStruct	Factories/SqlFactory/postgisSqlGenerator.py	/^    def checkCentroidAuxStruct(self):$/;"	kind:member	line:655
+checkCentroidAuxStruct	Factories/DbFactory/postgisDb.py	/^    def checkCentroidAuxStruct(self):$/;"	kind:member	line:1382
+checkCentroidAuxStruct	Factories/SqlFactory/postgisSqlGenerator.py	/^    def checkCentroidAuxStruct(self):$/;"	kind:member	line:666
 checkComplexNameField	ComplexTools/manageComplex.py	/^    def checkComplexNameField(self):$/;"	kind:member	line:407
 checkConditions	ProductionTools/FieldToolBox/field_toolbox.py	/^    def checkConditions(self):$/;"	kind:member	line:219
 checkDelimiters	ValidationTools/setupEarthCoverage.py	/^    def checkDelimiters(self, setupDict):$/;"	kind:member	line:95
@@ -579,14 +579,14 @@ checkLoaded	Factories/LayerLoaderFactory/spatialiteLayerLoader.py	/^    def chec
 checkMulti	Factories/LayerLoaderFactory/postgisLayerLoader.py	/^    def checkMulti(self, tableName, attrName, multiColumnsDict):$/;"	kind:member	line:238
 checkNotNull	Factories/LayerLoaderFactory/postgisLayerLoader.py	/^    def checkNotNull(self, lyrName, notNullDict):$/;"	kind:member	line:244
 checkNull	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def checkNull(self, widgetItem):$/;"	kind:member	line:126
-checkStyleTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def checkStyleTable(self):$/;"	kind:member	line:831
-checkSuperUser	Factories/DbFactory/postgisDb.py	/^    def checkSuperUser(self):$/;"	kind:member	line:791
+checkStyleTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def checkStyleTable(self):$/;"	kind:member	line:849
+checkSuperUser	Factories/DbFactory/postgisDb.py	/^    def checkSuperUser(self):$/;"	kind:member	line:806
 checkSuperUser	ServerTools/batchDbManager.py	/^    def checkSuperUser(self):$/;"	kind:member	line:87
 checkSuperUser	ServerTools/exploreDb.py	/^    def checkSuperUser(self):$/;"	kind:member	line:101
-checkTemplate	Factories/DbFactory/postgisDb.py	/^    def checkTemplate(self, version):$/;"	kind:member	line:2195
-checkTemplate	Factories/SqlFactory/postgisSqlGenerator.py	/^    def checkTemplate(self):$/;"	kind:member	line:1013
+checkTemplate	Factories/DbFactory/postgisDb.py	/^    def checkTemplate(self, version):$/;"	kind:member	line:2208
+checkTemplate	Factories/SqlFactory/postgisSqlGenerator.py	/^    def checkTemplate(self):$/;"	kind:member	line:1032
 checkUnique	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def checkUnique(self, widgetItem):$/;"	kind:member	line:134
-checkValidationStructure	Factories/SqlFactory/postgisSqlGenerator.py	/^    def checkValidationStructure(self):$/;"	kind:member	line:315
+checkValidationStructure	Factories/SqlFactory/postgisSqlGenerator.py	/^    def checkValidationStructure(self):$/;"	kind:member	line:317
 checkValidationStructure	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def checkValidationStructure(self):$/;"	kind:member	line:161
 checkValidationStructure	Factories/SqlFactory/sqlGenerator.py	/^    def checkValidationStructure(self):$/;"	kind:member	line:130
 classCustomization.py	Factories/DbCustomizationFactory/classCustomization.py	1;"	kind:file	line:1
@@ -632,9 +632,9 @@ connectToTemplate	Factories/ThreadFactory/postgisDbThread.py	/^    def connectTo
 connectionChanged	CustomWidgets/connectionWidget.py	/^    connectionChanged = pyqtSignal()$/;"	kind:variable	line:44
 connectionWidget.py	CustomWidgets/connectionWidget.py	1;"	kind:file	line:1
 contour_tool.py	ProductionTools/ContourTool/contour_tool.py	1;"	kind:file	line:1
-convertDatabase	Factories/DbFactory/abstractDb.py	/^    def convertDatabase(self, outputAbstractDb, type):$/;"	kind:member	line:198
+convertDatabase	Factories/DbFactory/abstractDb.py	/^    def convertDatabase(self, outputAbstractDb, type):$/;"	kind:member	line:202
 convertToPostgis	Factories/DbFactory/spatialiteDb.py	/^    def convertToPostgis(self, outputAbstractDb, type=None):$/;"	kind:member	line:242
-convertToSpatialite	Factories/DbFactory/postgisDb.py	/^    def convertToSpatialite(self, outputAbstractDb, type=None):$/;"	kind:member	line:377
+convertToSpatialite	Factories/DbFactory/postgisDb.py	/^    def convertToSpatialite(self, outputAbstractDb, type=None):$/;"	kind:member	line:392
 convert_database.py	ConversionTools/convert_database.py	1;"	kind:file	line:1
 copiaSemente	DbTools/SpatialiteTool/cria_spatialite_dialog.py	/^    def copiaSemente(self, destino, srid):$/;"	kind:member	line:116
 copy	Factories/ThreadFactory/inventoryThread.py	/^    def copy(self, destinationFolder):$/;"	kind:member	line:219
@@ -647,9 +647,9 @@ countElements	Factories/DbFactory/abstractDb.py	/^    def countElements(self, la
 coverageChanged	DbTools/BatchDbCreator/batchDbCreator.py	/^    coverageChanged = pyqtSignal()$/;"	kind:variable	line:39
 coverageChanged	DbTools/BatchDbCreator/createBatchFromCsv.py	/^    coverageChanged = pyqtSignal()$/;"	kind:variable	line:37
 coverageChanged	ValidationTools/setupEarthCoverage.py	/^    coverageChanged = pyqtSignal()$/;"	kind:variable	line:36
-createAdminDb	Factories/DbFactory/postgisDb.py	/^    def createAdminDb(self):$/;"	kind:member	line:2350
+createAdminDb	Factories/DbFactory/postgisDb.py	/^    def createAdminDb(self):$/;"	kind:member	line:2363
 createAdminDb	ServerManagementTools/genericDbManager.py	/^    def createAdminDb(self, serverAbstractDb, adminDb, host, port, user, password):$/;"	kind:member	line:72
-createAndPopulateTempTableFromMap	Factories/DbFactory/postgisDb.py	/^    def createAndPopulateTempTableFromMap(self, tableName, featureMap):$/;"	kind:member	line:1604
+createAndPopulateTempTableFromMap	Factories/DbFactory/postgisDb.py	/^    def createAndPopulateTempTableFromMap(self, tableName, featureMap, geomColumnName):$/;"	kind:member	line:1617
 createAttributeItems	ProductionTools/FieldToolBox/field_setup.py	/^    def createAttributeItems(self, fullTableName, currentDict, qmlDict, count, colour = None):$/;"	kind:member	line:250
 createAuxStruct	ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py	/^    def createAuxStruct(self, epsg):$/;"	kind:member	line:277
 createBatchFromCsv.py	DbTools/BatchDbCreator/createBatchFromCsv.py	1;"	kind:file	line:1
@@ -660,18 +660,18 @@ createButtonsWithTabs	ProductionTools/FieldToolBox/field_toolbox.py	/^    def cr
 createButtonsWithoutTabs	ProductionTools/FieldToolBox/field_toolbox.py	/^    def createButtonsWithoutTabs(self, reclassificationDict):$/;"	kind:member	line:164
 createCSV	QGIS_Scripts/Sigef.py	/^def createCSV(input, output):$/;"	kind:function	line:25
 createCellWidget	ProductionTools/FieldToolBox/field_setup.py	/^    def createCellWidget(self, qmlDict, attr, count):$/;"	kind:member	line:263
-createCentroidAuxStruct	Factories/DbFactory/postgisDb.py	/^    def createCentroidAuxStruct(self, earthCoverageClasses):$/;"	kind:member	line:1385
-createCentroidColumn	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createCentroidColumn(self, table_schema, table_name, srid):$/;"	kind:member	line:663
-createCentroidGist	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createCentroidGist(self, table_schema, table_name):$/;"	kind:member	line:669
+createCentroidAuxStruct	Factories/DbFactory/postgisDb.py	/^    def createCentroidAuxStruct(self, earthCoverageClasses):$/;"	kind:member	line:1398
+createCentroidColumn	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createCentroidColumn(self, table_schema, table_name, srid):$/;"	kind:member	line:675
+createCentroidGist	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createCentroidGist(self, table_schema, table_name):$/;"	kind:member	line:681
 createChildrenItems	UserTools/permission_properties.py	/^    def createChildrenItems(self, parent, mydict):$/;"	kind:member	line:72
 createChildrenItems	UserTools/profile_editor.py	/^    def createChildrenItems(self, parent, mydict):$/;"	kind:member	line:150
 createChildrenItems	UserTools/serverProfilesManager.py	/^    def createChildrenItems(self, parent, mydict):$/;"	kind:member	line:112
-createCustomSort	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createCustomSort(self):$/;"	kind:member	line:275
+createCustomSort	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createCustomSort(self):$/;"	kind:member	line:277
 createCustomSort	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def createCustomSort(self):$/;"	kind:member	line:145
 createCustomSort	Factories/SqlFactory/sqlGenerator.py	/^    def createCustomSort(self):$/;"	kind:member	line:118
 createCustomization	Factories/DbCustomizationFactory/dbCustomizationFactory.py	/^    def createCustomization(self, type, validatedJSONDict):$/;"	kind:member	line:35
 createDatabase	DbTools/PostGISTool/postgisDBTool.py	/^    def createDatabase(self, name):$/;"	kind:member	line:124
-createDatabase	Factories/DbFactory/postgisDb.py	/^    def createDatabase(self, dbName):$/;"	kind:member	line:2220
+createDatabase	Factories/DbFactory/postgisDb.py	/^    def createDatabase(self, dbName):$/;"	kind:member	line:2233
 createDatabaseCustomization.py	PostgisCustomization/createDatabaseCustomization.py	1;"	kind:file	line:1
 createDatabaseStructure	Factories/ThreadFactory/postgisDbThread.py	/^    def createDatabaseStructure(self):$/;"	kind:member	line:100
 createDatabases	DbTools/BatchDbCreator/createBatchFromCsv.py	/^    def createDatabases(self, parameterDict):$/;"	kind:member	line:86
@@ -682,7 +682,7 @@ createDb	Factories/DbCreatorFactory/spatialiteDbCreator.py	/^    def createDb(se
 createDbCreatorFactory	Factories/DbCreatorFactory/dbCreatorFactory.py	/^    def createDbCreatorFactory(self, driverName, createParam, version, parentWidget = None):$/;"	kind:member	line:32
 createDbFactory	Factories/DbFactory/dbFactory.py	/^    def createDbFactory(self,driverName):$/;"	kind:member	line:34
 createDbFromMIList	Factories/DbCreatorFactory/dbCreator.py	/^    def createDbFromMIList(self, miList, srid, prefix = None, sufix = None, createFrame = False,  paramDict = dict()):$/;"	kind:member	line:104
-createDbFromTemplate	Factories/DbFactory/postgisDb.py	/^    def createDbFromTemplate(self,dbName,version,templateName = 'edgv'):$/;"	kind:member	line:2171
+createDbFromTemplate	Factories/DbFactory/postgisDb.py	/^    def createDbFromTemplate(self,dbName,version,templateName = 'edgv'):$/;"	kind:member	line:2184
 createDbPerspectiveContextMenu	CustomWidgets/permissionWidget.py	/^    def createDbPerspectiveContextMenu(self, position):$/;"	kind:member	line:148
 createDbWithAutoIncrementingName	Factories/DbCreatorFactory/dbCreator.py	/^    def createDbWithAutoIncrementingName(self, dbInitialBaseName, srid, numberOfDatabases, prefix = None, sufix = None, paramDict = dict()):$/;"	kind:member	line:100
 createDict	ProductionTools/MinimumAreaTool/minimumAreaTool.py	/^    def createDict(self):$/;"	kind:member	line:62
@@ -691,13 +691,13 @@ createEditor	ComplexTools/manageComplex.py	/^    def createEditor(self, parent, 
 createEditor	ComplexTools/manageComplex.py	/^    def createEditor(self, parent, option, index):$/;"	kind:member	line:188
 createEditor	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def createEditor(self, widget, option, index):$/;"	kind:member	line:44
 createFeatures	LayerTools/create_features_test.py	/^    def createFeatures(self, layer, domainDict):$/;"	kind:member	line:77
-createFrame	Factories/DbFactory/postgisDb.py	/^    def createFrame(self, type, scale, param):$/;"	kind:member	line:2289
+createFrame	Factories/DbFactory/postgisDb.py	/^    def createFrame(self, type, scale, param):$/;"	kind:member	line:2302
 createFrame	Factories/DbFactory/spatialiteDb.py	/^    def createFrame(self, type, scale, param):$/;"	kind:member	line:486
 createFrame	LayerTools/CreateFrameTool/map_index.py	/^    def createFrame(self, map_index, layer):$/;"	kind:member	line:202
 createFrame	LayerTools/CreateFrameTool/map_index.py	/^    def createFrame(self, map_index, layer, stopScale):$/;"	kind:member	line:213
 createFrame	dsg_tools.py	/^    def createFrame(self):$/;"	kind:member	line:804
-createFrameFromInom	Factories/DbFactory/abstractDb.py	/^    def createFrameFromInom(self, inom):$/;"	kind:member	line:633
-createFromTemplate	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createFromTemplate(self,dbName, version, templateName):$/;"	kind:member	line:982
+createFrameFromInom	Factories/DbFactory/abstractDb.py	/^    def createFrameFromInom(self, inom):$/;"	kind:member	line:637
+createFromTemplate	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createFromTemplate(self,dbName, version, templateName):$/;"	kind:member	line:1001
 createGeom	LayerTools/create_features_test.py	/^    def createGeom(self, layer):$/;"	kind:member	line:164
 createGroup	Factories/LayerLoaderFactory/edgvLayerLoader.py	/^    def createGroup(self, groupList, groupName, parent):$/;"	kind:member	line:136
 createInventoryProcess	ProcessingTools/processManager.py	/^    def createInventoryProcess(self, parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, isOnlyGeo):$/;"	kind:member	line:158
@@ -727,29 +727,29 @@ createRaster	QGIS_Scripts/HSV_fusion.py	/^    def createRaster(self, srcraster, 
 createRasterFromRGBbands	ImageTools/raster_processing.py	/^    def createRasterFromRGBbands(self, srcraster, red, green, blue, destfile):$/;"	kind:member	line:94
 createRasterFromRGBbands	QGIS_Scripts/HSV_fusion.py	/^    def createRasterFromRGBbands(self, srcraster, red, green, blue, destfile):$/;"	kind:member	line:95
 createReprojectedLayer	QGIS_Scripts/virtual_raster.py	/^def createReprojectedLayer(layer, crs):$/;"	kind:function	line:35
-createResolvedDomainViews	Factories/DbFactory/postgisDb.py	/^    def createResolvedDomainViews(self, createViewClause, fromClause):$/;"	kind:member	line:817
-createRole	Factories/DbFactory/postgisDb.py	/^    def createRole(self, role, dict, permissionManager = False):$/;"	kind:member	line:543
-createRole	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createRole(self, roleName, mydict):$/;"	kind:member	line:109
+createResolvedDomainViews	Factories/DbFactory/postgisDb.py	/^    def createResolvedDomainViews(self, createViewClause, fromClause):$/;"	kind:member	line:832
+createRole	Factories/DbFactory/postgisDb.py	/^    def createRole(self, role, dict, permissionManager = False):$/;"	kind:member	line:558
+createRole	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createRole(self, roleName, mydict):$/;"	kind:member	line:111
 createRole	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def createRole(self, mydict):$/;"	kind:member	line:84
 createRole	Factories/SqlFactory/sqlGenerator.py	/^    def createRole(self, mydict):$/;"	kind:member	line:67
 createSetting	ServerManagementTools/genericDbManager.py	/^    def createSetting(self, settingName, edgvVersion, jsonDict):$/;"	kind:member	line:99
-createSpatialIndex	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createSpatialIndex(self, tableName):$/;"	kind:member	line:823
+createSpatialIndex	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createSpatialIndex(self, tableName):$/;"	kind:member	line:840
 createSpatialiteDatabase	dsg_tools.py	/^    def createSpatialiteDatabase(self):$/;"	kind:member	line:740
 createSqlGenerator	Factories/SqlFactory/sqlGeneratorFactory.py	/^    def createSqlGenerator(self, isSpatialite):$/;"	kind:member	line:29
 createSqlite.py	MilitarySimbologyTools/createSqlite.py	1;"	kind:file	line:1
-createStyleTable	Factories/DbFactory/postgisDb.py	/^    def createStyleTable(self):$/;"	kind:member	line:1643
-createStyleTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createStyleTable(self):$/;"	kind:member	line:835
-createTempTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createTempTable(self, layerName):$/;"	kind:member	line:792
-createTemplateDatabase	Factories/DbFactory/postgisDb.py	/^    def createTemplateDatabase(self, version):$/;"	kind:member	line:2207
+createStyleTable	Factories/DbFactory/postgisDb.py	/^    def createStyleTable(self):$/;"	kind:member	line:1656
+createStyleTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createStyleTable(self):$/;"	kind:member	line:853
+createTempTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createTempTable(self, layerName):$/;"	kind:member	line:808
+createTemplateDatabase	Factories/DbFactory/postgisDb.py	/^    def createTemplateDatabase(self, version):$/;"	kind:member	line:2220
 createToolButton	dsg_tools.py	/^    def createToolButton(self, parent, text):$/;"	kind:member	line:209
 createTreeItem	ComplexTools/complexWindow.py	/^    def createTreeItem(self, parent, text, uuid = ""):$/;"	kind:member	line:479
 createTreeWidgetFromDict	Utils/utils.py	/^    def createTreeWidgetFromDict(self, parentNode, inputDict, treeWidget, column):$/;"	kind:member	line:196
-createUser	Factories/DbFactory/postgisDb.py	/^    def createUser(self, user, password, isSuperUser):$/;"	kind:member	line:608
-createUser	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createUser(self,user,password,isSuperuser):$/;"	kind:member	line:198
+createUser	Factories/DbFactory/postgisDb.py	/^    def createUser(self, user, password, isSuperUser):$/;"	kind:member	line:623
+createUser	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createUser(self,user,password,isSuperuser):$/;"	kind:member	line:200
 createUser	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def createUser(self):$/;"	kind:member	line:105
 createUser	Factories/SqlFactory/sqlGenerator.py	/^    def createUser(self):$/;"	kind:member	line:88
 createUserPerspectiveContextMenu	CustomWidgets/permissionWidget.py	/^    def createUserPerspectiveContextMenu(self, position):$/;"	kind:member	line:160
-createValidationStructure	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createValidationStructure(self, srid):$/;"	kind:member	line:318
+createValidationStructure	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createValidationStructure(self, srid):$/;"	kind:member	line:320
 createValidationStructure	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def createValidationStructure(self,srid):$/;"	kind:member	line:164
 createValidationStructure	Factories/SqlFactory/sqlGenerator.py	/^    def createValidationStructure(self,srid):$/;"	kind:member	line:133
 createView.py	ServerTools/createView.py	1;"	kind:file	line:1
@@ -797,20 +797,20 @@ definePastaDestino	MilitarySimbologyTools/createSqlite.py	/^    def definePastaD
 defineQueryLayer	ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py	/^    def defineQueryLayer(self, delimiterList):$/;"	kind:member	line:78
 defineRubberBand	ProductionTools/ContourTool/dsg_line_tool.py	/^    def defineRubberBand(self):$/;"	kind:member	line:44
 defineSrid	Factories/DbCreatorFactory/spatialiteDbCreator.py	/^    def defineSrid(self, destination, srid):$/;"	kind:member	line:64
-deleteFeatureFlagsFromDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def deleteFeatureFlagsFromDb(self, layer, feat_id, processName):$/;"	kind:member	line:1032
-deleteFeatures	Factories/SqlFactory/postgisSqlGenerator.py	/^    def deleteFeatures(self,schema,table,idList):$/;"	kind:member	line:522
-deleteFeaturesNotIn	Factories/SqlFactory/postgisSqlGenerator.py	/^    def deleteFeaturesNotIn(self,schema,table,idList):$/;"	kind:member	line:527
-deleteFlags	Factories/SqlFactory/postgisSqlGenerator.py	/^    def deleteFlags(self, processName):$/;"	kind:member	line:401
-deletePermissionProfile	Factories/DbFactory/postgisDb.py	/^    def deletePermissionProfile(self, name, edgvversion):$/;"	kind:member	line:2441
-deleteProcessFlags	Factories/DbFactory/postgisDb.py	/^    def deleteProcessFlags(self, processName):$/;"	kind:member	line:898
+deleteFeatureFlagsFromDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def deleteFeatureFlagsFromDb(self, layer, feat_id, processName):$/;"	kind:member	line:1051
+deleteFeatures	Factories/SqlFactory/postgisSqlGenerator.py	/^    def deleteFeatures(self,schema,table,idList):$/;"	kind:member	line:528
+deleteFeaturesNotIn	Factories/SqlFactory/postgisSqlGenerator.py	/^    def deleteFeaturesNotIn(self,schema,table,idList):$/;"	kind:member	line:533
+deleteFlags	Factories/SqlFactory/postgisSqlGenerator.py	/^    def deleteFlags(self, processName):$/;"	kind:member	line:403
+deletePermissionProfile	Factories/DbFactory/postgisDb.py	/^    def deletePermissionProfile(self, name, edgvversion):$/;"	kind:member	line:2454
+deleteProcessFlags	Factories/DbFactory/postgisDb.py	/^    def deleteProcessFlags(self, processName):$/;"	kind:member	line:913
 deleteSetting	ServerManagementTools/genericDbManager.py	/^    def deleteSetting(self, settingName, edgvVersion):$/;"	kind:member	line:113
 deleteSetting	ServerManagementTools/permissionManager.py	/^    def deleteSetting(self, settingName, edgvVersion):$/;"	kind:member	line:192
-deleteSettingFromAdminDb	Factories/DbFactory/postgisDb.py	/^    def deleteSettingFromAdminDb(self, settingType, name, edgvversion):$/;"	kind:member	line:2741
-deleteSettingFromAdminDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def deleteSettingFromAdminDb(self, settingType, name, edgvversion):$/;"	kind:member	line:1083
-deleteStyle	Factories/DbFactory/postgisDb.py	/^    def deleteStyle(self, styleName):$/;"	kind:member	line:1722
-deleteStyle	Factories/SqlFactory/postgisSqlGenerator.py	/^    def deleteStyle(self, styleName):$/;"	kind:member	line:888
-densifyFrame	Factories/DbFactory/postgisDb.py	/^    def densifyFrame(self, classList, frameTable, snapTolerance):$/;"	kind:member	line:1551
-densifyFrame	Factories/SqlFactory/postgisSqlGenerator.py	/^    def densifyFrame(self, cl, frameTable, snapTolerance):$/;"	kind:member	line:745
+deleteSettingFromAdminDb	Factories/DbFactory/postgisDb.py	/^    def deleteSettingFromAdminDb(self, settingType, name, edgvversion):$/;"	kind:member	line:2754
+deleteSettingFromAdminDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def deleteSettingFromAdminDb(self, settingType, name, edgvversion):$/;"	kind:member	line:1102
+deleteStyle	Factories/DbFactory/postgisDb.py	/^    def deleteStyle(self, styleName):$/;"	kind:member	line:1735
+deleteStyle	Factories/SqlFactory/postgisSqlGenerator.py	/^    def deleteStyle(self, styleName):$/;"	kind:member	line:907
+densifyFrame	Factories/DbFactory/postgisDb.py	/^    def densifyFrame(self, classList, frameTable, snapTolerance):$/;"	kind:member	line:1564
+densifyFrame	Factories/SqlFactory/postgisSqlGenerator.py	/^    def densifyFrame(self, cl, frameTable, snapTolerance):$/;"	kind:member	line:757
 depth	ComplexTools/complexWindow.py	/^    def depth(self, item):$/;"	kind:member	line:404
 depth	InventoryTools/inventoryTools.py	/^    def depth(self, item):$/;"	kind:member	line:65
 depth	ProductionTools/FieldToolBox/field_setup.py	/^    def depth(self, item):$/;"	kind:member	line:526
@@ -818,7 +818,7 @@ destCrs	QGIS_Scripts/virtual_raster.py	/^destCrs = frame.crs()$/;"	kind:variable
 disableAll	LayerTools/CreateFrameTool/ui_create_inom_dialog.py	/^    def disableAll(self):$/;"	kind:member	line:319
 disassociateAggregatedClass	ComplexTools/complexWindow.py	/^    def disassociateAggregatedClass(self, item):$/;"	kind:member	line:266
 disassociateAggregatedId	ComplexTools/complexWindow.py	/^    def disassociateAggregatedId(self, item):$/;"	kind:member	line:300
-disassociateComplexFromComplex	Factories/DbFactory/postgisDb.py	/^    def disassociateComplexFromComplex(self, aggregated_class, link_column, id):$/;"	kind:member	line:469
+disassociateComplexFromComplex	Factories/DbFactory/postgisDb.py	/^    def disassociateComplexFromComplex(self, aggregated_class, link_column, id):$/;"	kind:member	line:484
 disassociateComplexFromComplex	Factories/DbFactory/spatialiteDb.py	/^    def disassociateComplexFromComplex(self, aggregated_class, link_column, id):$/;"	kind:member	line:370
 disassociateComplexFromComplex	Factories/SqlFactory/postgisSqlGenerator.py	/^    def disassociateComplexFromComplex(self, aggregated_class, link_column, uuid):$/;"	kind:member	line:55
 disassociateComplexFromComplex	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def disassociateComplexFromComplex(self, aggregated_class, link_column, uuid):$/;"	kind:member	line:60
@@ -830,20 +830,20 @@ domainChanged	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    doma
 domainSetter.py	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	1;"	kind:file	line:1
 domainValueCustomization.py	Factories/DbCustomizationFactory/domainValueCustomization.py	1;"	kind:file	line:1
 dpiThread.py	Factories/ThreadFactory/dpiThread.py	1;"	kind:file	line:1
-dropCentroid	Factories/SqlFactory/postgisSqlGenerator.py	/^    def dropCentroid(self, table):$/;"	kind:member	line:659
-dropCentroids	Factories/DbFactory/postgisDb.py	/^    def dropCentroids(self, classList):$/;"	kind:member	line:1456
-dropDatabase	Factories/DbFactory/postgisDb.py	/^    def dropDatabase(self, candidateName):$/;"	kind:member	line:805
-dropDatabase	Factories/SqlFactory/postgisSqlGenerator.py	/^    def dropDatabase(self, name):$/;"	kind:member	line:105
+dropCentroid	Factories/SqlFactory/postgisSqlGenerator.py	/^    def dropCentroid(self, table):$/;"	kind:member	line:670
+dropCentroids	Factories/DbFactory/postgisDb.py	/^    def dropCentroids(self, classList):$/;"	kind:member	line:1469
+dropDatabase	Factories/DbFactory/postgisDb.py	/^    def dropDatabase(self, candidateName):$/;"	kind:member	line:820
+dropDatabase	Factories/SqlFactory/postgisSqlGenerator.py	/^    def dropDatabase(self, name):$/;"	kind:member	line:107
 dropDatabase	Factories/SqlFactory/sqlGenerator.py	/^    def dropDatabase(self, name):$/;"	kind:member	line:64
 dropDatabase	Factories/ThreadFactory/postgisDbThread.py	/^    def dropDatabase(self,db):$/;"	kind:member	line:190
-dropRole	Factories/DbFactory/postgisDb.py	/^    def dropRole(self, role):$/;"	kind:member	line:577
-dropRole	Factories/SqlFactory/postgisSqlGenerator.py	/^    def dropRole(self, role):$/;"	kind:member	line:143
+dropRole	Factories/DbFactory/postgisDb.py	/^    def dropRole(self, role):$/;"	kind:member	line:592
+dropRole	Factories/SqlFactory/postgisSqlGenerator.py	/^    def dropRole(self, role):$/;"	kind:member	line:145
 dropRole	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def dropRole(self, role):$/;"	kind:member	line:87
 dropRole	Factories/SqlFactory/sqlGenerator.py	/^    def dropRole(self, role):$/;"	kind:member	line:70
-dropRoleOnDatabase	Factories/DbFactory/postgisDb.py	/^    def dropRoleOnDatabase(self, roleName):$/;"	kind:member	line:2403
-dropRoleOnDatabase	Factories/SqlFactory/postgisSqlGenerator.py	/^    def dropRoleOnDatabase(self, roleName):$/;"	kind:member	line:1095
-dropTempTable	Factories/DbFactory/postgisDb.py	/^    def dropTempTable(self, tableName):$/;"	kind:member	line:1633
-dropTempTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def dropTempTable(self, tableName):$/;"	kind:member	line:800
+dropRoleOnDatabase	Factories/DbFactory/postgisDb.py	/^    def dropRoleOnDatabase(self, roleName):$/;"	kind:member	line:2416
+dropRoleOnDatabase	Factories/SqlFactory/postgisSqlGenerator.py	/^    def dropRoleOnDatabase(self, roleName):$/;"	kind:member	line:1114
+dropTempTable	Factories/DbFactory/postgisDb.py	/^    def dropTempTable(self, tableName):$/;"	kind:member	line:1646
+dropTempTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def dropTempTable(self, tableName):$/;"	kind:member	line:816
 dsg_line_tool.py	ProductionTools/ContourTool/dsg_line_tool.py	1;"	kind:file	line:1
 dsg_tools.py	dsg_tools.py	1;"	kind:file	line:1
 earthCoverageWidget.py	CustomWidgets/earthCoverageWidget.py	1;"	kind:file	line:1
@@ -856,7 +856,7 @@ enableScale	ProductionTools/InspectFeatures/inspectFeatures.py	/^    def enableS
 enforceSpatialRulesForAddition	ValidationTools/ValidationProcesses/spatialRuleEnforcer.py	/^    def enforceSpatialRulesForAddition(self, featureId):$/;"	kind:member	line:238
 enforceSpatialRulesForChanges	ValidationTools/ValidationProcesses/spatialRuleEnforcer.py	/^    def enforceSpatialRulesForChanges(self, featureId, geometry):$/;"	kind:member	line:223
 errorMessage	ProductionTools/InspectFeatures/inspectFeatures.py	/^    def errorMessage(self):$/;"	kind:member	line:146
-execute	ValidationTools/ValidationProcesses/cleanGeometriesProcess.py	/^    def execute(self):$/;"	kind:member	line:78
+execute	ValidationTools/ValidationProcesses/cleanGeometriesProcess.py	/^    def execute(self):$/;"	kind:member	line:79
 execute	ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py	/^    def execute(self):$/;"	kind:member	line:318
 execute	ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py	/^    def execute(self):$/;"	kind:member	line:37
 execute	ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py	/^    def execute(self):$/;"	kind:member	line:49
@@ -878,7 +878,7 @@ execute	ValidationTools/ValidationProcesses/snapToGridProcess.py	/^    def execu
 execute	ValidationTools/ValidationProcesses/spatialRuleProcess.py	/^    def execute(self):$/;"	kind:member	line:83
 execute	ValidationTools/ValidationProcesses/validationProcess.py	/^    def execute(self):$/;"	kind:member	line:55
 executeProcess	ValidationTools/validationManager.py	/^    def executeProcess(self, process):$/;"	kind:member	line:92
-executeRecursiveSnap	Factories/SqlFactory/postgisSqlGenerator.py	/^    def executeRecursiveSnap(self, cl, tol):$/;"	kind:member	line:788
+executeRecursiveSnap	Factories/SqlFactory/postgisSqlGenerator.py	/^    def executeRecursiveSnap(self, cl, tol):$/;"	kind:member	line:804
 executeSql	LayerTools/create_features_test.py	/^    def executeSql(self, query, sql):$/;"	kind:member	line:146
 exploreDB	dsg_tools.py	/^    def exploreDB(self):$/;"	kind:member	line:828
 exploreDb.py	ServerTools/exploreDb.py	1;"	kind:file	line:1
@@ -894,7 +894,7 @@ fillLayers	ValidationTools/rules_editor.py	/^    def fillLayers(self):$/;"	kind:
 filterCustomization.py	Factories/DbCustomizationFactory/filterCustomization.py	1;"	kind:file	line:1
 filterLayerList	Factories/LayerLoaderFactory/postgisLayerLoader.py	/^    def filterLayerList(self, layerList, useInheritance, onlyWithElements, geomFilterList):$/;"	kind:member	line:66
 filterLayerList	Factories/LayerLoaderFactory/spatialiteLayerLoader.py	/^    def filterLayerList(self, layerList, useInheritance, onlyWithElements, geomFilterList):$/;"	kind:member	line:154
-findEPSG	Factories/DbFactory/abstractDb.py	/^    def findEPSG(self):$/;"	kind:member	line:122
+findEPSG	Factories/DbFactory/abstractDb.py	/^    def findEPSG(self):$/;"	kind:member	line:126
 findProcess	ProcessingTools/processManager.py	/^    def findProcess(self, uuid):$/;"	kind:member	line:53
 findProgressBar	ProcessingTools/processManager.py	/^    def findProgressBar(self, uuid):$/;"	kind:member	line:43
 findReclassificationClass	ProductionTools/FieldToolBox/field_toolbox.py	/^    def findReclassificationClass(self, button):$/;"	kind:member	line:420
@@ -902,8 +902,8 @@ findScaleText	LayerTools/CreateFrameTool/map_index.py	/^    def findScaleText(se
 find_all_paths	Utils/utils.py	/^    def find_all_paths(self, graph, start, end, path=[]):$/;"	kind:member	line:170
 finishedWithError	ValidationTools/ValidationProcesses/validationProcess.py	/^    def finishedWithError(self):$/;"	kind:member	line:165
 flags	ComplexTools/manageComplex.py	/^    def flags(self, index):$/;"	kind:member	line:70
-forceValidity	Factories/DbFactory/postgisDb.py	/^    def forceValidity(self, cl, idList):$/;"	kind:member	line:1265
-forceValidity	Factories/SqlFactory/postgisSqlGenerator.py	/^    def forceValidity(self, tableSchema, tableName, idList, srid):$/;"	kind:member	line:579
+forceValidity	Factories/DbFactory/postgisDb.py	/^    def forceValidity(self, cl, idList):$/;"	kind:member	line:1278
+forceValidity	Factories/SqlFactory/postgisSqlGenerator.py	/^    def forceValidity(self, tableSchema, tableName, idList, srid):$/;"	kind:member	line:585
 forceValidityGeometriesProcess.py	ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py	1;"	kind:file	line:1
 frame	QGIS_Scripts/virtual_raster.py	/^frame = processing.getObject(Moldura)$/;"	kind:variable	line:175
 frameidx	QGIS_Scripts/virtual_raster.py	/^frameidx = QgsSpatialIndex()$/;"	kind:variable	line:178
@@ -913,33 +913,33 @@ generateList	ComplexTools/manageComplex.py	/^    def generateList(self, column, 
 generateQml	QmlTools/qml_creator.py	/^def generateQml(filename, attrs, codelists):$/;"	kind:function	line:4
 genericDbManager.py	ServerManagementTools/genericDbManager.py	1;"	kind:file	line:1
 genericThread.py	Factories/ThreadFactory/genericThread.py	1;"	kind:file	line:1
-getAggregationAttributes	Factories/DbFactory/abstractDb.py	/^    def getAggregationAttributes(self):$/;"	kind:member	line:164
-getAggregationColumn	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAggregationColumn(self):$/;"	kind:member	line:263
+getAggregationAttributes	Factories/DbFactory/abstractDb.py	/^    def getAggregationAttributes(self):$/;"	kind:member	line:168
+getAggregationColumn	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAggregationColumn(self):$/;"	kind:member	line:265
 getAggregationColumn	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getAggregationColumn(self):$/;"	kind:member	line:133
 getAggregationColumn	Factories/SqlFactory/sqlGenerator.py	/^    def getAggregationColumn(self):$/;"	kind:member	line:109
-getAggregatorFromComplexSchema	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAggregatorFromComplexSchema(self,aggregated,aggregationColumn):$/;"	kind:member	line:271
+getAggregatorFromComplexSchema	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAggregatorFromComplexSchema(self,aggregated,aggregationColumn):$/;"	kind:member	line:273
 getAggregatorFromComplexSchema	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getAggregatorFromComplexSchema(self,aggregated,aggregationColumn):$/;"	kind:member	line:141
 getAggregatorFromComplexSchema	Factories/SqlFactory/sqlGenerator.py	/^    def getAggregatorFromComplexSchema(self,aggregated,aggregationColumn):$/;"	kind:member	line:115
-getAggregatorFromId	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAggregatorFromId(self, className, id):$/;"	kind:member	line:267
+getAggregatorFromId	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAggregatorFromId(self, className, id):$/;"	kind:member	line:269
 getAggregatorFromId	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getAggregatorFromId(self, className, id):$/;"	kind:member	line:137
 getAggregatorFromId	Factories/SqlFactory/sqlGenerator.py	/^    def getAggregatorFromId(self, className, id):$/;"	kind:member	line:112
-getAllDomainValues	Factories/DbFactory/postgisDb.py	/^    def getAllDomainValues(self, domainTableList = []):$/;"	kind:member	line:2612
-getAllDomainValues	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAllDomainValues(self, domainTable):$/;"	kind:member	line:1214
+getAllDomainValues	Factories/DbFactory/postgisDb.py	/^    def getAllDomainValues(self, domainTableList = []):$/;"	kind:member	line:2625
+getAllDomainValues	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAllDomainValues(self, domainTable):$/;"	kind:member	line:1236
 getAllItemsInDict	Utils/utils.py	/^    def getAllItemsInDict(self, inputDict, itemList):$/;"	kind:member	line:185
-getAllRolesFromAdminDb	Factories/DbFactory/postgisDb.py	/^    def getAllRolesFromAdminDb(self):$/;"	kind:member	line:2426
-getAllSettingsFromAdminDb	Factories/DbFactory/postgisDb.py	/^    def getAllSettingsFromAdminDb(self, settingType):$/;"	kind:member	line:2726
-getAllSettingsFromAdminDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAllSettingsFromAdminDb(self, settingType):$/;"	kind:member	line:1088
-getAllStylesDict	Factories/DbFactory/postgisDb.py	/^    def getAllStylesDict(self, perspective = 'style'):$/;"	kind:member	line:1767
-getAllStylesFromDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAllStylesFromDb(self):$/;"	kind:member	line:884
+getAllRolesFromAdminDb	Factories/DbFactory/postgisDb.py	/^    def getAllRolesFromAdminDb(self):$/;"	kind:member	line:2439
+getAllSettingsFromAdminDb	Factories/DbFactory/postgisDb.py	/^    def getAllSettingsFromAdminDb(self, settingType):$/;"	kind:member	line:2739
+getAllSettingsFromAdminDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAllSettingsFromAdminDb(self, settingType):$/;"	kind:member	line:1107
+getAllStylesDict	Factories/DbFactory/postgisDb.py	/^    def getAllStylesDict(self, perspective = 'style'):$/;"	kind:member	line:1780
+getAllStylesFromDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAllStylesFromDb(self):$/;"	kind:member	line:903
 getAssociatedFeaturesData	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAssociatedFeaturesData(self, aggregated_schema, aggregated_class, column_name, complex_uuid):$/;"	kind:member	line:39
 getAssociatedFeaturesData	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getAssociatedFeaturesData(self, aggregated_schema, aggregated_class, column_name, complex_uuid):$/;"	kind:member	line:38
 getAssociatedFeaturesData	Factories/SqlFactory/sqlGenerator.py	/^    def getAssociatedFeaturesData(self, aggregated_schema, aggregated_class, column_name, complex_uuid):$/;"	kind:member	line:33
-getAttrTypeDictFromDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAttrTypeDictFromDb(self):$/;"	kind:member	line:1199
-getAttributeDictFromDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAttributeDictFromDb(self):$/;"	kind:member	line:1179
-getAttributeInfoFromTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAttributeInfoFromTable(self, schema, tableName):$/;"	kind:member	line:1190
-getAttributeJsonFromDb	Factories/DbFactory/postgisDb.py	/^    def getAttributeJsonFromDb(self):$/;"	kind:member	line:2601
-getAttributeListFromTable	Factories/DbFactory/postgisDb.py	/^    def getAttributeListFromTable(self, schema, tableName):$/;"	kind:member	line:2587
-getAttributeListFromTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAttributeListFromTable(self, schema, tableName):$/;"	kind:member	line:1172
+getAttrTypeDictFromDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAttrTypeDictFromDb(self):$/;"	kind:member	line:1221
+getAttributeDictFromDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAttributeDictFromDb(self):$/;"	kind:member	line:1201
+getAttributeInfoFromTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAttributeInfoFromTable(self, schema, tableName):$/;"	kind:member	line:1212
+getAttributeJsonFromDb	Factories/DbFactory/postgisDb.py	/^    def getAttributeJsonFromDb(self):$/;"	kind:member	line:2614
+getAttributeListFromTable	Factories/DbFactory/postgisDb.py	/^    def getAttributeListFromTable(self, schema, tableName):$/;"	kind:member	line:2600
+getAttributeListFromTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAttributeListFromTable(self, schema, tableName):$/;"	kind:member	line:1194
 getAvailableCustomizationsDict	PostgisCustomization/dbCustomizer.py	/^    def getAvailableCustomizationsDict(self):$/;"	kind:member	line:54
 getBandAsArray	ImageTools/raster_processing.py	/^    def getBandAsArray(self, raster, bandnumber):$/;"	kind:member	line:55
 getBandAsArray	QGIS_Scripts/HSV_fusion.py	/^    def getBandAsArray(self, raster, bandnumber):$/;"	kind:member	line:56
@@ -948,7 +948,7 @@ getCRS	QGIS_Scripts/HSV_fusion.py	/^    def getCRS(self, raster):$/;"	kind:membe
 getCandidates	ProductionTools/ContourTool/contour_tool.py	/^    def getCandidates(self, bbox):$/;"	kind:member	line:37
 getCandidates	QGIS_Scripts/virtual_raster.py	/^def getCandidates(idx, layer, bbox):$/;"	kind:function	line:84
 getCandidates	ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py	/^    def getCandidates(self, idx, bbox):$/;"	kind:member	line:198
-getCheckConstraintDict	Factories/DbFactory/postgisDb.py	/^    def getCheckConstraintDict(self):$/;"	kind:member	line:1958
+getCheckConstraintDict	Factories/DbFactory/postgisDb.py	/^    def getCheckConstraintDict(self):$/;"	kind:member	line:1971
 getChildWidgetList	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py	/^    def getChildWidgetList(self):$/;"	kind:member	line:122
 getChildWidgets	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def getChildWidgets(self):$/;"	kind:member	line:127
 getChildWidgets	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def getChildWidgets(self):$/;"	kind:member	line:152
@@ -963,14 +963,14 @@ getComplexLinks	Factories/SqlFactory/sqlGenerator.py	/^    def getComplexLinks(s
 getComplexTablesFromDatabase	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getComplexTablesFromDatabase(self):$/;"	kind:member	line:31
 getComplexTablesFromDatabase	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getComplexTablesFromDatabase(self):$/;"	kind:member	line:30
 getComplexTablesFromDatabase	Factories/SqlFactory/sqlGenerator.py	/^    def getComplexTablesFromDatabase(self):$/;"	kind:member	line:27
-getConnectionFromQSettings	Factories/DbFactory/postgisDb.py	/^    def getConnectionFromQSettings(self, conName):$/;"	kind:member	line:220
-getConstraintDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getConstraintDict(self, domainList):$/;"	kind:member	line:1218
-getConstraints	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getConstraints(self, schemaList):$/;"	kind:member	line:892
+getConnectionFromQSettings	Factories/DbFactory/postgisDb.py	/^    def getConnectionFromQSettings(self, conName):$/;"	kind:member	line:235
+getConstraintDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getConstraintDict(self, domainList):$/;"	kind:member	line:1240
+getConstraints	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getConstraints(self, schemaList):$/;"	kind:member	line:911
 getCopyErrorMessage	Factories/ThreadFactory/inventoryThread.py	/^    def getCopyErrorMessage(self):$/;"	kind:member	line:48
-getCreateDatabase	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getCreateDatabase(self, name, dropIfExists = False):$/;"	kind:member	line:75
+getCreateDatabase	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getCreateDatabase(self, name, dropIfExists = False):$/;"	kind:member	line:77
 getCreateDatabase	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getCreateDatabase(self, name):$/;"	kind:member	line:73
 getCreateDatabase	Factories/SqlFactory/sqlGenerator.py	/^    def getCreateDatabase(self, name):$/;"	kind:member	line:55
-getCreationSqlPath	Factories/DbFactory/postgisDb.py	/^    def getCreationSqlPath(self, version):$/;"	kind:member	line:2245
+getCreationSqlPath	Factories/DbFactory/postgisDb.py	/^    def getCreationSqlPath(self, version):$/;"	kind:member	line:2258
 getDBNameFromLayer	LayerTools/CreateFrameTool/ui_create_inom_dialog.py	/^    def getDBNameFromLayer(self, lyr):$/;"	kind:member	line:107
 getDBVersion	CustomWidgets/connectionWidget.py	/^    def getDBVersion(self):$/;"	kind:member	line:233
 getDataSources	ComplexTools/complexWindow.py	/^    def getDataSources(self):$/;"	kind:member	line:165
@@ -982,102 +982,102 @@ getDatabasePerspectiveDict	ServerManagementTools/permissionManager.py	/^    def 
 getDatabaseVersion	Factories/DbFactory/postgisDb.py	/^    def getDatabaseVersion(self):$/;"	kind:member	line:132
 getDatabaseVersion	Factories/DbFactory/spatialiteDb.py	/^    def getDatabaseVersion(self):$/;"	kind:member	line:267
 getDatabasesFromServer	CustomWidgets/connectionWidget.py	/^    def getDatabasesFromServer(self):    $/;"	kind:member	line:257
-getDatabasesFromServer	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getDatabasesFromServer(self):$/;"	kind:member	line:101
+getDatabasesFromServer	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getDatabasesFromServer(self):$/;"	kind:member	line:103
 getDatabasesFromServer	Factories/SqlFactory/sqlGenerator.py	/^    def getDatabasesFromServer(self):$/;"	kind:member	line:61
-getDbDomainDict	Factories/DbFactory/postgisDb.py	/^    def getDbDomainDict(self, auxGeomDict):$/;"	kind:member	line:1886
+getDbDomainDict	Factories/DbFactory/postgisDb.py	/^    def getDbDomainDict(self, auxGeomDict):$/;"	kind:member	line:1899
 getDbInfo	UserTools/createProfileWithProfileManager.py	/^    def getDbInfo(self):$/;"	kind:member	line:67
 getDbInfo	UserTools/create_profile.py	/^    def getDbInfo(self):$/;"	kind:member	line:68
 getDbsFromServer	CustomWidgets/exploreServerWidget.py	/^    def getDbsFromServer(self, name):$/;"	kind:member	line:122
-getDbsFromServer	Factories/DbFactory/postgisDb.py	/^    def getDbsFromServer(self):$/;"	kind:member	line:776
-getDefaultFromDb	Factories/DbFactory/postgisDb.py	/^    def getDefaultFromDb(self, schema, tableName, attrName):$/;"	kind:member	line:2689
-getDefaultFromDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getDefaultFromDb(self, schema, tableName, attrName):$/;"	kind:member	line:1231
+getDbsFromServer	Factories/DbFactory/postgisDb.py	/^    def getDbsFromServer(self):$/;"	kind:member	line:791
+getDefaultFromDb	Factories/DbFactory/postgisDb.py	/^    def getDefaultFromDb(self, schema, tableName, attrName):$/;"	kind:member	line:2702
+getDefaultFromDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getDefaultFromDb(self, schema, tableName, attrName):$/;"	kind:member	line:1253
 getDict	LayerTools/CreateFrameTool/map_index.py	/^    def getDict(self, file_name):    $/;"	kind:member	line:287
-getDimension	Factories/DbFactory/postgisDb.py	/^    def getDimension(self, geom):$/;"	kind:member	line:1037
-getDimension	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getDimension(self, geom):$/;"	kind:member	line:468
-getDomainCodeDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getDomainCodeDict(self, domainTable):$/;"	kind:member	line:962
-getDomainDict	Factories/DbFactory/postgisDb.py	/^    def getDomainDict(self):$/;"	kind:member	line:312
-getDomainDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getDomainDict(self, domainTable):$/;"	kind:member	line:958
+getDimension	Factories/DbFactory/postgisDb.py	/^    def getDimension(self, geom):$/;"	kind:member	line:1050
+getDimension	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getDimension(self, geom):$/;"	kind:member	line:473
+getDomainCodeDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getDomainCodeDict(self, domainTable):$/;"	kind:member	line:981
+getDomainDict	Factories/DbFactory/postgisDb.py	/^    def getDomainDict(self):$/;"	kind:member	line:327
+getDomainDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getDomainDict(self, domainTable):$/;"	kind:member	line:977
 getDomainDict	QmlTools/qmlParser.py	/^    def getDomainDict(self):$/;"	kind:member	line:93
-getDomainDictV2	Factories/DbFactory/postgisDb.py	/^    def getDomainDictV2(self, domainTable):$/;"	kind:member	line:2123
-getDomainTables	Factories/DbFactory/postgisDb.py	/^    def getDomainTables(self):$/;"	kind:member	line:2481
-getDomainTables	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getDomainTables(self):$/;"	kind:member	line:1111
+getDomainDictV2	Factories/DbFactory/postgisDb.py	/^    def getDomainDictV2(self, domainTable):$/;"	kind:member	line:2136
+getDomainTables	Factories/DbFactory/postgisDb.py	/^    def getDomainTables(self):$/;"	kind:member	line:2494
+getDomainTables	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getDomainTables(self):$/;"	kind:member	line:1130
 getDomainsFromDb	Factories/LayerLoaderFactory/postgisLayerLoader.py	/^    def getDomainsFromDb(self, layerList, loadedLayers, domainDict, multiColumnsDict):$/;"	kind:member	line:175
-getDuplicatedGeom	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getDuplicatedGeom(self,schema,cl):$/;"	kind:member	line:476
-getDuplicatedGeomRecords	Factories/DbFactory/postgisDb.py	/^    def getDuplicatedGeomRecords(self, classesWithGeom):$/;"	kind:member	line:1102
-getEDGVDbsFromServer	Factories/DbFactory/postgisDb.py	/^    def getEDGVDbsFromServer(self, parentWidget = None):$/;"	kind:member	line:734
+getDuplicatedGeom	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getDuplicatedGeom(self,schema,cl):$/;"	kind:member	line:482
+getDuplicatedGeomRecords	Factories/DbFactory/postgisDb.py	/^    def getDuplicatedGeomRecords(self, classesWithGeom):$/;"	kind:member	line:1115
+getEDGVDbsFromServer	Factories/DbFactory/postgisDb.py	/^    def getEDGVDbsFromServer(self, parentWidget = None):$/;"	kind:member	line:749
 getEDGVVersion	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getEDGVVersion(self):$/;"	kind:member	line:167
 getEDGVVersion	Factories/SqlFactory/sqlGenerator.py	/^    def getEDGVVersion(self):$/;"	kind:member	line:42
-getEarthCoverageCentroids	Factories/DbFactory/postgisDb.py	/^    def getEarthCoverageCentroids(self):$/;"	kind:member	line:1485
-getEarthCoverageCentroids	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getEarthCoverageCentroids(self):$/;"	kind:member	line:694
-getEarthCoverageClasses	Factories/DbFactory/postgisDb.py	/^    def getEarthCoverageClasses(self):$/;"	kind:member	line:1414
-getEarthCoverageClasses	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getEarthCoverageClasses(self):$/;"	kind:member	line:674
-getEarthCoverageDict	Factories/DbFactory/postgisDb.py	/^    def getEarthCoverageDict(self):$/;"	kind:member	line:1429
-getEarthCoverageDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getEarthCoverageDict(self):$/;"	kind:member	line:678
+getEarthCoverageCentroids	Factories/DbFactory/postgisDb.py	/^    def getEarthCoverageCentroids(self):$/;"	kind:member	line:1498
+getEarthCoverageCentroids	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getEarthCoverageCentroids(self):$/;"	kind:member	line:706
+getEarthCoverageClasses	Factories/DbFactory/postgisDb.py	/^    def getEarthCoverageClasses(self):$/;"	kind:member	line:1427
+getEarthCoverageClasses	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getEarthCoverageClasses(self):$/;"	kind:member	line:686
+getEarthCoverageDict	Factories/DbFactory/postgisDb.py	/^    def getEarthCoverageDict(self):$/;"	kind:member	line:1442
+getEarthCoverageDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getEarthCoverageDict(self):$/;"	kind:member	line:690
 getEarthCoverageDictFromTree	ValidationTools/setupEarthCoverage.py	/^    def getEarthCoverageDictFromTree(self):$/;"	kind:member	line:142
-getElementCountFromLayer	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getElementCountFromLayer(self, table):$/;"	kind:member	line:86
+getElementCountFromLayer	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getElementCountFromLayer(self, table):$/;"	kind:member	line:88
 getElementCountFromLayer	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getElementCountFromLayer(self, layer):$/;"	kind:member	line:80
-getElementCountFromLayerV2	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getElementCountFromLayerV2(self, schema, table, useInheritance):$/;"	kind:member	line:90
+getElementCountFromLayerV2	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getElementCountFromLayerV2(self, schema, table, useInheritance):$/;"	kind:member	line:92
 getElementCountFromLayerV2	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getElementCountFromLayerV2(self, schema, table, useInheritance):$/;"	kind:member	line:190
-getElementCountFromLayerWithInh	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getElementCountFromLayerWithInh(self, layer):$/;"	kind:member	line:97
-getExplodeCandidates	Factories/DbFactory/postgisDb.py	/^    def getExplodeCandidates(self):$/;"	kind:member	line:1054
+getElementCountFromLayerWithInh	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getElementCountFromLayerWithInh(self, layer):$/;"	kind:member	line:99
+getExplodeCandidates	Factories/DbFactory/postgisDb.py	/^    def getExplodeCandidates(self):$/;"	kind:member	line:1067
 getExtent	Factories/ThreadFactory/inventoryThread.py	/^    def getExtent(self, filename):$/;"	kind:member	line:327
 getFactoryCreationParam	CustomWidgets/tabDbSelectorWidget.py	/^    def getFactoryCreationParam(self):$/;"	kind:member	line:68
 getFeatures	ProductionTools/ContourTool/contour_tool.py	/^    def getFeatures(self, geom):$/;"	kind:member	line:45
-getFeaturesWithSQL	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getFeaturesWithSQL(self,layer,attrList):$/;"	kind:member	line:250
+getFeaturesWithSQL	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getFeaturesWithSQL(self,layer,attrList):$/;"	kind:member	line:252
 getFeaturesWithSQL	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getFeaturesWithSQL(self,layer,attrList):$/;"	kind:member	line:120
 getFeaturesWithSQL	Factories/SqlFactory/sqlGenerator.py	/^    def getFeaturesWithSQL(self,layer,attrList):$/;"	kind:member	line:103
-getFlagsByProcess	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getFlagsByProcess(self, processName):$/;"	kind:member	line:575
-getFlagsDictByProcess	Factories/DbFactory/postgisDb.py	/^    def getFlagsDictByProcess(self, processName):$/;"	kind:member	line:1244
+getFlagsByProcess	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getFlagsByProcess(self, processName):$/;"	kind:member	line:581
+getFlagsDictByProcess	Factories/DbFactory/postgisDb.py	/^    def getFlagsDictByProcess(self, processName):$/;"	kind:member	line:1257
 getFrameLayer	LayerTools/CreateFrameTool/ui_create_inom_dialog.py	/^    def getFrameLayer(self,ifaceLayers):$/;"	kind:member	line:96
-getFrameLayerName	Factories/DbFactory/postgisDb.py	/^    def getFrameLayerName(self):$/;"	kind:member	line:728
+getFrameLayerName	Factories/DbFactory/postgisDb.py	/^    def getFrameLayerName(self):$/;"	kind:member	line:743
 getFrameLayerName	Factories/DbFactory/spatialiteDb.py	/^    def getFrameLayerName(self):$/;"	kind:member	line:401
-getFullBloodLineDict	Factories/DbFactory/postgisDb.py	/^    def getFullBloodLineDict(self, candidate):$/;"	kind:member	line:2584
+getFullBloodLineDict	Factories/DbFactory/postgisDb.py	/^    def getFullBloodLineDict(self, candidate):$/;"	kind:member	line:2597
 getFullLayerName	ValidationTools/ValidationProcesses/spatialRuleEnforcer.py	/^    def getFullLayerName(self, sender):$/;"	kind:member	line:74
 getFullTablesName	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getFullTablesName(self, name):$/;"	kind:member	line:194
 getGDALRasterType	ImageTools/processingTools.py	/^    def getGDALRasterType(self):$/;"	kind:member	line:148
-getGeomByPrimitive	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeomByPrimitive(self):$/;"	kind:member	line:946
+getGeomByPrimitive	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeomByPrimitive(self):$/;"	kind:member	line:965
 getGeomByPrimitive	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getGeomByPrimitive(self):$/;"	kind:member	line:178
-getGeomColumnDict	Factories/DbFactory/postgisDb.py	/^    def getGeomColumnDict(self):$/;"	kind:member	line:2077
+getGeomColumnDict	Factories/DbFactory/postgisDb.py	/^    def getGeomColumnDict(self):$/;"	kind:member	line:2090
 getGeomColumnDict	Factories/DbFactory/spatialiteDb.py	/^    def getGeomColumnDict(self):$/;"	kind:member	line:467
-getGeomColumnDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeomColumnDict(self):$/;"	kind:member	line:950
+getGeomColumnDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeomColumnDict(self):$/;"	kind:member	line:969
 getGeomColumnDict	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getGeomColumnDict(self):$/;"	kind:member	line:182
-getGeomDict	Factories/DbFactory/postgisDb.py	/^    def getGeomDict(self, geomTypeDict):$/;"	kind:member	line:1851
+getGeomDict	Factories/DbFactory/postgisDb.py	/^    def getGeomDict(self, geomTypeDict):$/;"	kind:member	line:1864
 getGeomDict	Factories/DbFactory/spatialiteDb.py	/^    def getGeomDict(self, getCentroids = False):$/;"	kind:member	line:436
-getGeomSchemaList	Factories/DbFactory/postgisDb.py	/^    def getGeomSchemaList(self):$/;"	kind:member	line:1840
-getGeomStructDict	Factories/DbFactory/postgisDb.py	/^    def getGeomStructDict(self):$/;"	kind:member	line:2150
-getGeomStructDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeomStructDict(self):$/;"	kind:member	line:966
-getGeomTableConstraints	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeomTableConstraints(self):$/;"	kind:member	line:923
-getGeomTables	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeomTables(self, schemaList, dbPrimitiveList=[], excludeViews=True):$/;"	kind:member	line:1162
-getGeomTablesDomains	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeomTablesDomains(self):$/;"	kind:member	line:911
-getGeomTablesFromGeometryColumns	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeomTablesFromGeometryColumns(self):$/;"	kind:member	line:907
+getGeomSchemaList	Factories/DbFactory/postgisDb.py	/^    def getGeomSchemaList(self):$/;"	kind:member	line:1853
+getGeomStructDict	Factories/DbFactory/postgisDb.py	/^    def getGeomStructDict(self):$/;"	kind:member	line:2163
+getGeomStructDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeomStructDict(self):$/;"	kind:member	line:985
+getGeomTableConstraints	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeomTableConstraints(self):$/;"	kind:member	line:942
+getGeomTables	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeomTables(self, schemaList, dbPrimitiveList=[], excludeViews=True, geomColumn = False):$/;"	kind:member	line:1181
+getGeomTablesDomains	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeomTablesDomains(self):$/;"	kind:member	line:930
+getGeomTablesFromGeometryColumns	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeomTablesFromGeometryColumns(self):$/;"	kind:member	line:926
 getGeomTablesFromGeometryColumns	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getGeomTablesFromGeometryColumns(self):$/;"	kind:member	line:174
-getGeomTypeDict	Factories/DbFactory/postgisDb.py	/^    def getGeomTypeDict(self):$/;"	kind:member	line:2057
+getGeomTypeDict	Factories/DbFactory/postgisDb.py	/^    def getGeomTypeDict(self):$/;"	kind:member	line:2070
 getGeomTypeDict	Factories/DbFactory/spatialiteDb.py	/^    def getGeomTypeDict(self):$/;"	kind:member	line:419
-getGeometricSchemaList	Factories/DbFactory/postgisDb.py	/^    def getGeometricSchemaList(self):$/;"	kind:member	line:2495
-getGeometricSchemaList	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeometricSchemaList(self):$/;"	kind:member	line:1115
-getGeometricSchemas	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeometricSchemas(self):$/;"	kind:member	line:903
-getGeometricTableListFromSchema	Factories/DbFactory/postgisDb.py	/^    def getGeometricTableListFromSchema(self, schema):$/;"	kind:member	line:2509
-getGeometricTableListFromSchema	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeometricTableListFromSchema(self, schema):$/;"	kind:member	line:1119
+getGeometricSchemaList	Factories/DbFactory/postgisDb.py	/^    def getGeometricSchemaList(self):$/;"	kind:member	line:2508
+getGeometricSchemaList	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeometricSchemaList(self):$/;"	kind:member	line:1134
+getGeometricSchemas	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeometricSchemas(self):$/;"	kind:member	line:922
+getGeometricTableListFromSchema	Factories/DbFactory/postgisDb.py	/^    def getGeometricTableListFromSchema(self, schema):$/;"	kind:member	line:2522
+getGeometricTableListFromSchema	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getGeometricTableListFromSchema(self, schema):$/;"	kind:member	line:1138
 getGeometryProblem	ValidationTools/ValidationProcesses/spatialRuleEnforcer.py	/^    def getGeometryProblem(self, geometry, feature):$/;"	kind:member	line:177
 getGeoreferenceInfo	ImageTools/raster_processing.py	/^    def getGeoreferenceInfo(self, raster):$/;"	kind:member	line:71
 getGeoreferenceInfo	QGIS_Scripts/HSV_fusion.py	/^    def getGeoreferenceInfo(self, raster):$/;"	kind:member	line:72
-getGrantedRolesDict	Factories/DbFactory/postgisDb.py	/^    def getGrantedRolesDict(self):$/;"	kind:member	line:2451
+getGrantedRolesDict	Factories/DbFactory/postgisDb.py	/^    def getGrantedRolesDict(self):$/;"	kind:member	line:2464
 getHemisphereMultiplier	LayerTools/CreateFrameTool/map_index.py	/^    def getHemisphereMultiplier(self,inomen):$/;"	kind:member	line:147
 getHostName	Factories/DbFactory/postgisDb.py	/^    def getHostName(self):$/;"	kind:member	line:50
 getINomen	LayerTools/CreateFrameTool/map_index.py	/^    def getINomen(self, dict, index):$/;"	kind:member	line:301
 getINomenFromMI	LayerTools/CreateFrameTool/map_index.py	/^    def getINomenFromMI(self,mi):$/;"	kind:member	line:295
 getINomenFromMIR	LayerTools/CreateFrameTool/map_index.py	/^    def getINomenFromMIR(self,mir):$/;"	kind:member	line:298
 getId	Factories/ThreadFactory/genericThread.py	/^    def getId(self):$/;"	kind:member	line:46
-getInheritanceBloodLine	Factories/DbFactory/postgisDb.py	/^    def getInheritanceBloodLine(self, parent, inhDict = None):$/;"	kind:member	line:2574
-getInheritanceConstraintDict	Factories/DbFactory/postgisDb.py	/^    def getInheritanceConstraintDict(self):$/;"	kind:member	line:2655
-getInheritanceDict	Factories/DbFactory/postgisDb.py	/^    def getInheritanceDict(self):$/;"	kind:member	line:2562
-getInheritanceDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getInheritanceDict(self):$/;"	kind:member	line:1153
-getInheritanceTreeDict	Factories/DbFactory/postgisDb.py	/^    def getInheritanceTreeDict(self):$/;"	kind:member	line:2627
+getInheritanceBloodLine	Factories/DbFactory/postgisDb.py	/^    def getInheritanceBloodLine(self, parent, inhDict = None):$/;"	kind:member	line:2587
+getInheritanceConstraintDict	Factories/DbFactory/postgisDb.py	/^    def getInheritanceConstraintDict(self):$/;"	kind:member	line:2668
+getInheritanceDict	Factories/DbFactory/postgisDb.py	/^    def getInheritanceDict(self):$/;"	kind:member	line:2575
+getInheritanceDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getInheritanceDict(self):$/;"	kind:member	line:1172
+getInheritanceTreeDict	Factories/DbFactory/postgisDb.py	/^    def getInheritanceTreeDict(self):$/;"	kind:member	line:2640
 getInstalledProfiles	UserTools/assign_profiles.py	/^    def getInstalledProfiles(self):$/;"	kind:member	line:93
-getInvalidGeom	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getInvalidGeom(self, tableSchema, tableName):$/;"	kind:member	line:309
+getInvalidGeom	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getInvalidGeom(self, tableSchema, tableName):$/;"	kind:member	line:311
 getInvalidGeom	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getInvalidGeom(self, tableSchema, tableName):$/;"	kind:member	line:154
 getInvalidGeom	Factories/SqlFactory/sqlGenerator.py	/^    def getInvalidGeom(self, tableSchema, tableName):$/;"	kind:member	line:127
-getInvalidGeomRecords	Factories/DbFactory/postgisDb.py	/^    def getInvalidGeomRecords(self, geomList):$/;"	kind:member	line:854
+getInvalidGeomRecords	Factories/DbFactory/postgisDb.py	/^    def getInvalidGeomRecords(self, geomList):$/;"	kind:member	line:869
 getInventoryErrorMessage	Factories/ThreadFactory/inventoryThread.py	/^    def getInventoryErrorMessage(self):$/;"	kind:member	line:45
 getItemCheckState	UserTools/profile_editor.py	/^    def getItemCheckState(self, item):$/;"	kind:member	line:173
 getItemCheckState	UserTools/serverProfilesManager.py	/^    def getItemCheckState(self, item):$/;"	kind:member	line:135
@@ -1098,9 +1098,9 @@ getLLCornerLatitude1kk	LayerTools/CreateFrameTool/map_index.py	/^    def getLLCo
 getLLCornerLongitude1kk	LayerTools/CreateFrameTool/map_index.py	/^    def getLLCornerLongitude1kk(self,inomen):$/;"	kind:member	line:168
 getLayer	ProductionTools/ContourTool/calc_contour.py	/^    def getLayer(self):$/;"	kind:member	line:87
 getLayer	ValidationTools/ValidationProcesses/spatialRuleEnforcer.py	/^    def getLayer(self, layername):$/;"	kind:member	line:83
-getLayerColumnDict	Factories/DbFactory/postgisDb.py	/^    def getLayerColumnDict(self, refPk, domainTable):$/;"	kind:member	line:2135
+getLayerColumnDict	Factories/DbFactory/postgisDb.py	/^    def getLayerColumnDict(self, refPk, domainTable):$/;"	kind:member	line:2148
 getLayerFromButton	ProductionTools/FieldToolBox/field_toolbox.py	/^    def getLayerFromButton(self, button):$/;"	kind:member	line:239
-getLayersFilterByInheritance	Factories/DbFactory/postgisDb.py	/^    def getLayersFilterByInheritance(self, layerList):$/;"	kind:member	line:2094
+getLayersFilterByInheritance	Factories/DbFactory/postgisDb.py	/^    def getLayersFilterByInheritance(self, layerList):$/;"	kind:member	line:2107
 getLayersWithElements	Factories/DbFactory/abstractDb.py	/^    def getLayersWithElements(self, layerList):$/;"	kind:member	line:98
 getLayersWithElementsV2	Factories/DbFactory/abstractDb.py	/^    def getLayersWithElementsV2(self, layerList, useInheritance = False):$/;"	kind:member	line:110
 getLinkColumn	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getLinkColumn(self, complexClass, aggregatedClass):$/;"	kind:member	line:43
@@ -1118,41 +1118,41 @@ getMiListFromCSV	DbTools/BatchDbCreator/createBatchFromCsv.py	/^    def getMiLis
 getModelProfiles	UserTools/PermissionManagerWizard/permissionWizardProfile.py	/^    def getModelProfiles(self):$/;"	kind:member	line:50
 getModelProfiles	UserTools/assign_profiles.py	/^    def getModelProfiles(self):$/;"	kind:member	line:77
 getModels	ToolboxTools/models_and_scripts_installer.py	/^    def getModels(self):$/;"	kind:member	line:84
-getMulti	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getMulti(self,cl):$/;"	kind:member	line:472
-getMultiColumns	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getMultiColumns(self, schemaList):$/;"	kind:member	line:936
-getMultiColumnsDict	Factories/DbFactory/postgisDb.py	/^    def getMultiColumnsDict(self):$/;"	kind:member	line:2039
+getMulti	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getMulti(self,cl):$/;"	kind:member	line:477
+getMultiColumns	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getMultiColumns(self, schemaList):$/;"	kind:member	line:955
+getMultiColumnsDict	Factories/DbFactory/postgisDb.py	/^    def getMultiColumnsDict(self):$/;"	kind:member	line:2052
 getName	Factories/DbCustomizationFactory/dbCustomization.py	/^    def getName(self):$/;"	kind:member	line:33
 getName	ValidationTools/ValidationProcesses/validationProcess.py	/^    def getName(self):$/;"	kind:member	line:67
 getNodeLineage	Utils/utils.py	/^    def getNodeLineage(self, node, inputDict):$/;"	kind:member	line:212
-getNonSimpleGeom	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getNonSimpleGeom(self, tableSchema, tableName):$/;"	kind:member	line:312
-getNotNullDict	Factories/DbFactory/postgisDb.py	/^    def getNotNullDict(self):$/;"	kind:member	line:284
-getNotNullDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getNotNullDict(self):$/;"	kind:member	line:954
-getNotNullDictV2	Factories/DbFactory/postgisDb.py	/^    def getNotNullDictV2(self):$/;"	kind:member	line:2102
-getNotNullFields	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getNotNullFields(self,schemaList):$/;"	kind:member	line:245
+getNonSimpleGeom	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getNonSimpleGeom(self, tableSchema, tableName):$/;"	kind:member	line:314
+getNotNullDict	Factories/DbFactory/postgisDb.py	/^    def getNotNullDict(self):$/;"	kind:member	line:299
+getNotNullDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getNotNullDict(self):$/;"	kind:member	line:973
+getNotNullDictV2	Factories/DbFactory/postgisDb.py	/^    def getNotNullDictV2(self):$/;"	kind:member	line:2115
+getNotNullFields	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getNotNullFields(self,schemaList):$/;"	kind:member	line:247
 getNotNullFields	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getNotNullFields(self):$/;"	kind:member	line:117
 getNotNullFields	Factories/SqlFactory/sqlGenerator.py	/^    def getNotNullFields(self):$/;"	kind:member	line:100
-getNotSimple	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getNotSimple(self, tableSchema, tableName):$/;"	kind:member	line:532
-getNotSimpleRecords	Factories/DbFactory/postgisDb.py	/^    def getNotSimpleRecords(self, classesWithGeom):$/;"	kind:member	line:1204
+getNotSimple	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getNotSimple(self, tableSchema, tableName):$/;"	kind:member	line:538
+getNotSimpleRecords	Factories/DbFactory/postgisDb.py	/^    def getNotSimpleRecords(self, classesWithGeom):$/;"	kind:member	line:1217
 getNumpyType	ImageTools/raster_processing.py	/^    def getNumpyType(self, pixelType = gdal.GDT_Byte):$/;"	kind:member	line:203
 getNumpyType	QGIS_Scripts/HSV_fusion.py	/^    def getNumpyType(self, pixelType = gdal.GDT_Byte):$/;"	kind:member	line:216
-getOgrDatabase	Factories/DbFactory/abstractDb.py	/^    def getOgrDatabase(self):$/;"	kind:member	line:179
-getOgrLayerIndexDict	Factories/DbFactory/abstractDb.py	/^    def getOgrLayerIndexDict(self, lyr):$/;"	kind:member	line:545
-getOrphanGeomTables	Factories/DbFactory/postgisDb.py	/^    def getOrphanGeomTables(self, loading = False):$/;"	kind:member	line:1306
+getOgrDatabase	Factories/DbFactory/abstractDb.py	/^    def getOgrDatabase(self):$/;"	kind:member	line:183
+getOgrLayerIndexDict	Factories/DbFactory/abstractDb.py	/^    def getOgrLayerIndexDict(self, lyr):$/;"	kind:member	line:549
+getOrphanGeomTables	Factories/DbFactory/postgisDb.py	/^    def getOrphanGeomTables(self, loading = False):$/;"	kind:member	line:1319
 getOrphanGeomTables	Factories/DbFactory/spatialiteDb.py	/^    def getOrphanGeomTables(self):$/;"	kind:member	line:410
-getOrphanGeomTablesWithElements	Factories/DbFactory/postgisDb.py	/^    def getOrphanGeomTablesWithElements(self, loading = False):$/;"	kind:member	line:1322
+getOrphanGeomTablesWithElements	Factories/DbFactory/postgisDb.py	/^    def getOrphanGeomTablesWithElements(self, loading = False):$/;"	kind:member	line:1335
 getOrphanGeomTablesWithElements	Factories/DbFactory/spatialiteDb.py	/^    def getOrphanGeomTablesWithElements(self, loading = False):$/;"	kind:member	line:407
-getOrphanGeomTablesWithElements	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getOrphanGeomTablesWithElements(self,loading = False):$/;"	kind:member	line:593
-getOrphanTableElementCount	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getOrphanTableElementCount(self, orphan):$/;"	kind:member	line:651
-getOutOfBoundsAnglesRecords	Factories/DbFactory/postgisDb.py	/^    def getOutOfBoundsAnglesRecords(self, tableSchema, tableName, tol):$/;"	kind:member	line:1223
-getOutofBoundsAngles	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getOutofBoundsAngles(self, tableSchema, tableName, angle):$/;"	kind:member	line:538
+getOrphanGeomTablesWithElements	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getOrphanGeomTablesWithElements(self,loading = False):$/;"	kind:member	line:601
+getOrphanTableElementCount	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getOrphanTableElementCount(self, orphan):$/;"	kind:member	line:661
+getOutOfBoundsAnglesRecords	Factories/DbFactory/postgisDb.py	/^    def getOutOfBoundsAnglesRecords(self, tableSchema, tableName, tol):$/;"	kind:member	line:1236
+getOutofBoundsAngles	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getOutofBoundsAngles(self, tableSchema, tableName, angle):$/;"	kind:member	line:544
 getParameters	DbTools/BatchDbCreator/createBatchFromCsv.py	/^    def getParameters(self):$/;"	kind:member	line:53
 getParameters	DbTools/BatchDbCreator/createBatchIncrementing.py	/^    def getParameters(self):$/;"	kind:member	line:49
 getParameters	DbTools/PostGISTool/postgisDBTool.py	/^    def getParameters(self):$/;"	kind:member	line:67
 getParameters	ImageTools/processingTools.py	/^    def getParameters(self):$/;"	kind:member	line:78
 getParameters	InventoryTools/inventoryTools.py	/^    def getParameters(self):$/;"	kind:member	line:108
-getParamsFromConectedDb	Factories/DbFactory/postgisDb.py	/^    def getParamsFromConectedDb(self):$/;"	kind:member	line:2342
-getParentGeomTables	Factories/DbFactory/postgisDb.py	/^    def getParentGeomTables(self, getTupple = False):$/;"	kind:member	line:2523
-getParentGeomTables	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getParentGeomTables(self, schemaList):$/;"	kind:member	line:1132
+getParamsFromConectedDb	Factories/DbFactory/postgisDb.py	/^    def getParamsFromConectedDb(self):$/;"	kind:member	line:2355
+getParentGeomTables	Factories/DbFactory/postgisDb.py	/^    def getParentGeomTables(self, getTupple = False):$/;"	kind:member	line:2536
+getParentGeomTables	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getParentGeomTables(self, schemaList):$/;"	kind:member	line:1151
 getProblemFeedbackMessage	Factories/ThreadFactory/dpiThread.py	/^    def getProblemFeedbackMessage(self):$/;"	kind:member	line:46
 getProblemFeedbackMessage	Factories/ThreadFactory/postgisDbThread.py	/^    def getProblemFeedbackMessage(self):$/;"	kind:member	line:43
 getProblemMessage	Factories/ThreadFactory/dpiThread.py	/^    def getProblemMessage(self):$/;"	kind:member	line:43
@@ -1163,28 +1163,28 @@ getProfiles	UserTools/profile_editor.py	/^    def getProfiles(self, profileName 
 getProfiles	UserTools/user_profiles.py	/^    def getProfiles(self, username):$/;"	kind:member	line:143
 getProxyConfiguration	BDGExTools/BDGExTools.py	/^    def getProxyConfiguration(self):$/;"	kind:member	line:74
 getQgsPolygonFrame	LayerTools/CreateFrameTool/map_index.py	/^    def getQgsPolygonFrame(self, map_index):$/;"	kind:member	line:222
-getQmlDir	Factories/DbFactory/abstractDb.py	/^    def getQmlDir(self):$/;"	kind:member	line:567
+getQmlDir	Factories/DbFactory/abstractDb.py	/^    def getQmlDir(self):$/;"	kind:member	line:571
 getQmlPath	CustomWidgets/connectionWidget.py	/^    def getQmlPath(self):$/;"	kind:member	line:245
 getRasterExtent	Factories/ThreadFactory/inventoryThread.py	/^    def getRasterExtent(self, gt, cols, rows):$/;"	kind:member	line:307
 getRecursiveInheritance	Utils/utils.py	/^    def getRecursiveInheritance(self, parent, resultList, inhDict):$/;"	kind:member	line:155
 getRecursiveInheritanceTreeDict	Utils/utils.py	/^    def getRecursiveInheritanceTreeDict(self, parent, resultDict, inhDict):$/;"	kind:member	line:162
-getRoleFromAdminDb	Factories/DbFactory/postgisDb.py	/^    def getRoleFromAdminDb(self, roleName, edgvVersion):$/;"	kind:member	line:2414
-getRolePrivileges	Factories/DbFactory/postgisDb.py	/^    def getRolePrivileges(self, role, dbname):$/;"	kind:member	line:678
-getRolePrivileges	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getRolePrivileges(self, role, dbname):$/;"	kind:member	line:301
+getRoleFromAdminDb	Factories/DbFactory/postgisDb.py	/^    def getRoleFromAdminDb(self, roleName, edgvVersion):$/;"	kind:member	line:2427
+getRolePrivileges	Factories/DbFactory/postgisDb.py	/^    def getRolePrivileges(self, role, dbname):$/;"	kind:member	line:693
+getRolePrivileges	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getRolePrivileges(self, role, dbname):$/;"	kind:member	line:303
 getRolePrivileges	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getRolePrivileges(self, role, dbname):$/;"	kind:member	line:148
 getRolePrivileges	Factories/SqlFactory/sqlGenerator.py	/^    def getRolePrivileges(self, role, dbname):$/;"	kind:member	line:121
-getRoles	Factories/DbFactory/postgisDb.py	/^    def getRoles(self):$/;"	kind:member	line:525
-getRoles	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getRoles(self):$/;"	kind:member	line:182
+getRoles	Factories/DbFactory/postgisDb.py	/^    def getRoles(self):$/;"	kind:member	line:540
+getRoles	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getRoles(self):$/;"	kind:member	line:184
 getRoles	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getRoles(self):$/;"	kind:member	line:96
 getRoles	Factories/SqlFactory/sqlGenerator.py	/^    def getRoles(self):$/;"	kind:member	line:79
-getRolesDict	Factories/DbFactory/postgisDb.py	/^    def getRolesDict(self):$/;"	kind:member	line:2374
-getRolesDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getRolesDict(self):$/;"	kind:member	line:1044
+getRolesDict	Factories/DbFactory/postgisDb.py	/^    def getRolesDict(self):$/;"	kind:member	line:2387
+getRolesDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getRolesDict(self):$/;"	kind:member	line:1063
 getRolesInformation	ServerManagementTools/permissionManager.py	/^    def getRolesInformation(self):$/;"	kind:member	line:44
-getRolesWithGrantedUsers	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getRolesWithGrantedUsers(self):$/;"	kind:member	line:1100
+getRolesWithGrantedUsers	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getRolesWithGrantedUsers(self):$/;"	kind:member	line:1119
 getRules	ValidationTools/ValidationProcesses/spatialRuleEnforcer.py	/^    def getRules(self, layerName):$/;"	kind:member	line:257
 getRules	ValidationTools/ValidationProcesses/spatialRuleProcess.py	/^    def getRules(self):$/;"	kind:member	line:57
-getRunningProc	Factories/DbFactory/postgisDb.py	/^    def getRunningProc(self):$/;"	kind:member	line:987
-getRunningProc	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getRunningProc(self):$/;"	kind:member	line:397
+getRunningProc	Factories/DbFactory/postgisDb.py	/^    def getRunningProc(self):$/;"	kind:member	line:1000
+getRunningProc	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getRunningProc(self):$/;"	kind:member	line:399
 getSQLFile	ServerTools/batchDbManager.py	/^    def getSQLFile(self):$/;"	kind:member	line:305
 getScale	LayerTools/CreateFrameTool/map_index.py	/^    def getScale(self, inomen):$/;"	kind:member	line:65
 getScaleIdFromScale	LayerTools/CreateFrameTool/map_index.py	/^    def getScaleIdFromScale(self, scale):$/;"	kind:member	line:76
@@ -1195,7 +1195,7 @@ getSelectedDomain	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    
 getSelectedItems	LayerTools/load_by_class.py	/^    def getSelectedItems(self):$/;"	kind:member	line:152
 getServerConfiguration	CustomWidgets/exploreServerWidget.py	/^    def getServerConfiguration(self, name):$/;"	kind:member	line:68
 getServerConfiguration	DbTools/PostGISTool/postgisDBTool.py	/^    def getServerConfiguration(self, name):$/;"	kind:member	line:205
-getServerConfiguration	Factories/DbFactory/postgisDb.py	/^    def getServerConfiguration(self, name):$/;"	kind:member	line:235
+getServerConfiguration	Factories/DbFactory/postgisDb.py	/^    def getServerConfiguration(self, name):$/;"	kind:member	line:250
 getServerConfiguration	ServerTools/serverDBExplorer.py	/^    def getServerConfiguration(self, name):$/;"	kind:member	line:77
 getServerConfiguration	ServerTools/viewServers.py	/^    def getServerConfiguration(self, name):$/;"	kind:member	line:151
 getServerParameters	CustomWidgets/exploreServerWidget.py	/^    def getServerParameters(self):$/;"	kind:member	line:190
@@ -1203,43 +1203,43 @@ getServers	CustomWidgets/exploreServerWidget.py	/^    def getServers(self):$/;"	
 getServers	DbTools/PostGISTool/postgisDBTool.py	/^    def getServers(self):$/;"	kind:member	line:238
 getServers	ServerTools/viewServers.py	/^    def getServers(self):$/;"	kind:member	line:141
 getSetting	ServerManagementTools/genericDbManager.py	/^    def getSetting(self, name, edgvVersion):$/;"	kind:member	line:89
-getSettingFromAdminDb	Factories/DbFactory/postgisDb.py	/^    def getSettingFromAdminDb(self, settingType, settingName, edgvVersion):$/;"	kind:member	line:2714
-getSettingFromAdminDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getSettingFromAdminDb(self, settingType, name, edgvversion):$/;"	kind:member	line:1073
-getSettingTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getSettingTable(self, settingType):$/;"	kind:member	line:1051
+getSettingFromAdminDb	Factories/DbFactory/postgisDb.py	/^    def getSettingFromAdminDb(self, settingType, settingName, edgvVersion):$/;"	kind:member	line:2727
+getSettingFromAdminDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getSettingFromAdminDb(self, settingType, name, edgvversion):$/;"	kind:member	line:1092
+getSettingTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getSettingTable(self, settingType):$/;"	kind:member	line:1070
 getSettings	ServerManagementTools/genericDbManager.py	/^    def getSettings(self):$/;"	kind:member	line:82
-getSmallAreas	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getSmallAreas(self,schema,cl,areaTolerance):$/;"	kind:member	line:486
-getSmallAreasRecords	Factories/DbFactory/postgisDb.py	/^    def getSmallAreasRecords(self,classesWithGeom, tol):$/;"	kind:member	line:1122
-getSmallLines	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getSmallLines(self,schema,cl,areaTolerance):$/;"	kind:member	line:492
-getSmallLinesRecords	Factories/DbFactory/postgisDb.py	/^    def getSmallLinesRecords(self,classesWithGeom, tol):$/;"	kind:member	line:1139
+getSmallAreas	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getSmallAreas(self,schema,cl,areaTolerance):$/;"	kind:member	line:492
+getSmallAreasRecords	Factories/DbFactory/postgisDb.py	/^    def getSmallAreasRecords(self,classesWithGeom, tol):$/;"	kind:member	line:1135
+getSmallLines	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getSmallLines(self,schema,cl,areaTolerance):$/;"	kind:member	line:498
+getSmallLinesRecords	Factories/DbFactory/postgisDb.py	/^    def getSmallLinesRecords(self,classesWithGeom, tol):$/;"	kind:member	line:1152
 getSpacingX	LayerTools/CreateFrameTool/map_index.py	/^    def getSpacingX(self,scale):$/;"	kind:member	line:81
 getSpacingY	LayerTools/CreateFrameTool/map_index.py	/^    def getSpacingY(self,scale): $/;"	kind:member	line:95
-getSqlViewFile	Factories/DbFactory/postgisDb.py	/^    def getSqlViewFile(self):$/;"	kind:member	line:840
+getSqlViewFile	Factories/DbFactory/postgisDb.py	/^    def getSqlViewFile(self):$/;"	kind:member	line:855
 getSrid	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getSrid(self):$/;"	kind:member	line:47
 getSrid	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getSrid(self):$/;"	kind:member	line:52
 getSrid	Factories/SqlFactory/sqlGenerator.py	/^    def getSrid(self):$/;"	kind:member	line:39
 getStatus	ValidationTools/ValidationProcesses/validationProcess.py	/^    def getStatus(self):$/;"	kind:member	line:133
 getStatusMessage	ValidationTools/ValidationProcesses/validationProcess.py	/^    def getStatusMessage(self):$/;"	kind:member	line:143
 getStretchingPercentage	ImageTools/processingTools.py	/^    def getStretchingPercentage(self):$/;"	kind:member	line:138
-getStructure	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getStructure(self,edgvVersion):$/;"	kind:member	line:255
+getStructure	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getStructure(self,edgvVersion):$/;"	kind:member	line:257
 getStructure	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getStructure(self,edgvVersion):$/;"	kind:member	line:125
 getStructure	Factories/SqlFactory/sqlGenerator.py	/^    def getStructure(self,edgvVersion):$/;"	kind:member	line:106
-getStructureDict	Factories/DbFactory/postgisDb.py	/^    def getStructureDict(self):$/;"	kind:member	line:249
+getStructureDict	Factories/DbFactory/postgisDb.py	/^    def getStructureDict(self):$/;"	kind:member	line:264
 getStructureDict	Factories/DbFactory/spatialiteDb.py	/^    def getStructureDict(self):$/;"	kind:member	line:102
-getStructureDict2	Factories/DbFactory/postgisDb.py	/^    def getStructureDict2(self):$/;"	kind:member	line:1803
-getStyle	Factories/DbFactory/postgisDb.py	/^    def getStyle(self, styleName, table_name, parsing = True):$/;"	kind:member	line:1683
+getStructureDict2	Factories/DbFactory/postgisDb.py	/^    def getStructureDict2(self):$/;"	kind:member	line:1816
+getStyle	Factories/DbFactory/postgisDb.py	/^    def getStyle(self, styleName, table_name, parsing = True):$/;"	kind:member	line:1697
 getStyle	Factories/LayerLoaderFactory/edgvLayerLoader.py	/^    def getStyle(self, stylePath, className):$/;"	kind:member	line:58
-getStyle	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getStyle(self, styleName, table_name):$/;"	kind:member	line:864
-getStyleDict	Factories/DbFactory/abstractDb.py	/^    def getStyleDict(self, dbVersion):$/;"	kind:member	line:588
+getStyle	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getStyle(self, styleName, table_name):$/;"	kind:member	line:883
+getStyleDict	Factories/DbFactory/abstractDb.py	/^    def getStyleDict(self, dbVersion):$/;"	kind:member	line:592
 getStyleDir	ServerTools/batchDbManager.py	/^    def getStyleDir(self, versionList):$/;"	kind:member	line:227
 getStyleFromDb	Factories/LayerLoaderFactory/postgisLayerLoader.py	/^    def getStyleFromDb(self, edgvVersion, className):$/;"	kind:member	line:195
 getStyleFromDb	Factories/LayerLoaderFactory/spatialiteLayerLoader.py	/^    def getStyleFromDb(self, edgvVersion, className):$/;"	kind:member	line:151
 getStyleFromFile	Factories/LayerLoaderFactory/edgvLayerLoader.py	/^    def getStyleFromFile(self, stylePath, className):$/;"	kind:member	line:64
 getStyleList	ServerTools/batchDbManager.py	/^    def getStyleList(self, styleDir):$/;"	kind:member	line:200
 getStyles	CustomWidgets/customServerConnectionWidget.py	/^    def getStyles(self, type, abstractDb):$/;"	kind:member	line:241
-getStyles	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getStyles(self):$/;"	kind:member	line:827
-getStylesFromDb	Factories/DbFactory/postgisDb.py	/^    def getStylesFromDb(self,dbVersion):$/;"	kind:member	line:1671
+getStyles	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getStyles(self):$/;"	kind:member	line:845
+getStylesFromDb	Factories/DbFactory/postgisDb.py	/^    def getStylesFromDb(self,dbVersion):$/;"	kind:member	line:1684
 getStylesFromDb	Factories/DbFactory/spatialiteDb.py	/^    def getStylesFromDb(self,dbVersion):$/;"	kind:member	line:416
-getStylesFromDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getStylesFromDb(self, dbVersion):$/;"	kind:member	line:857
+getStylesFromDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getStylesFromDb(self, dbVersion):$/;"	kind:member	line:875
 getStylesFromDb	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getStylesFromDb(self, dbVersion):$/;"	kind:member	line:171
 getStylesFromDbs	ServerTools/batchDbManager.py	/^    def getStylesFromDbs(self, perspective = 'style'):$/;"	kind:member	line:231
 getSuccessFeedbackMessage	Factories/ThreadFactory/dpiThread.py	/^    def getSuccessFeedbackMessage(self):$/;"	kind:member	line:52
@@ -1247,17 +1247,17 @@ getSuccessFeedbackMessage	Factories/ThreadFactory/postgisDbThread.py	/^    def g
 getSuccessInventoryAndCopyMessage	Factories/ThreadFactory/inventoryThread.py	/^    def getSuccessInventoryAndCopyMessage(self):$/;"	kind:member	line:54
 getSuccessInventoryMessage	Factories/ThreadFactory/inventoryThread.py	/^    def getSuccessInventoryMessage(self):$/;"	kind:member	line:51
 getSuccessfullFileCreation	Factories/ThreadFactory/dpiThread.py	/^    def getSuccessfullFileCreation(self):$/;"	kind:member	line:55
-getTableDomains	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getTableDomains(self,tableList):$/;"	kind:member	line:229
-getTableExtent	Factories/DbFactory/postgisDb.py	/^    def getTableExtent(self, tableSchema, tableName):$/;"	kind:member	line:1283
-getTableExtent	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getTableExtent(self, tableSchema, tableName):$/;"	kind:member	line:587
+getTableDomains	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getTableDomains(self,tableList):$/;"	kind:member	line:231
+getTableExtent	Factories/DbFactory/postgisDb.py	/^    def getTableExtent(self, tableSchema, tableName):$/;"	kind:member	line:1296
+getTableExtent	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getTableExtent(self, tableSchema, tableName):$/;"	kind:member	line:594
 getTableExtent	Factories/SqlFactory/sqlGenerator.py	/^    def getTableExtent(self, tableSchema, tableName):$/;"	kind:member	line:136
 getTableNameFromLayer	ValidationTools/ValidationProcesses/validationProcess.py	/^    def getTableNameFromLayer(self, lyr):$/;"	kind:member	line:179
-getTableSchema	Factories/DbFactory/postgisDb.py	/^    def getTableSchema(self,lyr):$/;"	kind:member	line:368
+getTableSchema	Factories/DbFactory/postgisDb.py	/^    def getTableSchema(self,lyr):$/;"	kind:member	line:383
 getTableSchema	Factories/DbFactory/spatialiteDb.py	/^    def getTableSchema(self,lyr):$/;"	kind:member	line:233
-getTableSchemaFromDb	Factories/DbFactory/postgisDb.py	/^    def getTableSchemaFromDb(self,table):$/;"	kind:member	line:1757
+getTableSchemaFromDb	Factories/DbFactory/postgisDb.py	/^    def getTableSchemaFromDb(self,table):$/;"	kind:member	line:1770
 getTableSchemaFromDb	Factories/DbFactory/spatialiteDb.py	/^    def getTableSchemaFromDb(self, table):$/;"	kind:member	line:516
-getTableSchemaFromDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getTableSchemaFromDb(self, table):$/;"	kind:member	line:880
-getTablesFromDatabase	Factories/DbFactory/postgisDb.py	/^    def getTablesFromDatabase(self):$/;"	kind:member	line:660
+getTableSchemaFromDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getTableSchemaFromDb(self, table):$/;"	kind:member	line:899
+getTablesFromDatabase	Factories/DbFactory/postgisDb.py	/^    def getTablesFromDatabase(self):$/;"	kind:member	line:675
 getTablesFromDatabase	Factories/DbFactory/spatialiteDb.py	/^    def getTablesFromDatabase(self):$/;"	kind:member	line:383
 getTablesFromDatabase	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getTablesFromDatabase(self):$/;"	kind:member	line:51
 getTablesFromDatabase	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getTablesFromDatabase(self):$/;"	kind:member	line:56
@@ -1265,7 +1265,7 @@ getTablesFromDatabase	Factories/SqlFactory/sqlGenerator.py	/^    def getTablesFr
 getTemplateLocation	DbTools/SpatialiteTool/cria_spatialite_dialog.py	/^    def getTemplateLocation(self):$/;"	kind:member	line:64
 getTemplateLocation	Factories/DbCreatorFactory/spatialiteDbCreator.py	/^    def getTemplateLocation(self, version):$/;"	kind:member	line:41
 getTemplateLocation	MilitarySimbologyTools/createSqlite.py	/^    def getTemplateLocation(self):$/;"	kind:member	line:60
-getTemplateName	Factories/DbFactory/postgisDb.py	/^    def getTemplateName(self, version):$/;"	kind:member	line:2230
+getTemplateName	Factories/DbFactory/postgisDb.py	/^    def getTemplateName(self, version):$/;"	kind:member	line:2243
 getTemplates	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getTemplates(self):$/;"	kind:member	line:59
 getTemplates	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getTemplates(self):$/;"	kind:member	line:70
 getTemplates	Factories/SqlFactory/sqlGenerator.py	/^    def getTemplates(self):$/;"	kind:member	line:52
@@ -1283,7 +1283,7 @@ getTreeBranchFromNode	Utils/utils.py	/^    def getTreeBranchFromNode(self, start
 getType	CustomWidgets/tabDbSelectorWidget.py	/^    def getType(self):$/;"	kind:member	line:76
 getType	Factories/DbCreatorFactory/dbCreator.py	/^    def getType(self):$/;"	kind:member	line:45
 getType	Factories/DbFactory/abstractDb.py	/^    def getType(self):$/;"	kind:member	line:74
-getURI	Factories/DbFactory/postgisDb.py	/^    def getURI(self, table, useOnly = True, geomColumn = 'geom'):$/;"	kind:member	line:1075
+getURI	Factories/DbFactory/postgisDb.py	/^    def getURI(self, table, useOnly = True, geomColumn = 'geom'):$/;"	kind:member	line:1088
 getUiParameterJsonDict	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def getUiParameterJsonDict(self):$/;"	kind:member	line:170
 getUiParameterJsonDict	CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py	/^    def getUiParameterJsonDict(self):$/;"	kind:member	line:312
 getUiParameterJsonDict	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def getUiParameterJsonDict(self):$/;"	kind:member	line:385
@@ -1299,35 +1299,35 @@ getUserCanceledFeedbackMessage	Factories/ThreadFactory/inventoryThread.py	/^    
 getUserCanceledFeedbackMessage	Factories/ThreadFactory/postgisDbThread.py	/^    def getUserCanceledFeedbackMessage(self):$/;"	kind:member	line:46
 getUserCredentials	ComplexTools/complexWindow.py	/^    def getUserCredentials(self, lyr):$/;"	kind:member	line:95
 getUserPerspectiveDict	ServerManagementTools/permissionManager.py	/^    def getUserPerspectiveDict(self):$/;"	kind:member	line:88
-getUserRelatedRoles	Factories/DbFactory/postgisDb.py	/^    def getUserRelatedRoles(self, username):$/;"	kind:member	line:499
-getUserRelatedRoles	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getUserRelatedRoles(self, username):$/;"	kind:member	line:186
+getUserRelatedRoles	Factories/DbFactory/postgisDb.py	/^    def getUserRelatedRoles(self, username):$/;"	kind:member	line:514
+getUserRelatedRoles	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getUserRelatedRoles(self, username):$/;"	kind:member	line:188
 getUserRelatedRoles	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getUserRelatedRoles(self):$/;"	kind:member	line:99
 getUserRelatedRoles	Factories/SqlFactory/sqlGenerator.py	/^    def getUserRelatedRoles(self):$/;"	kind:member	line:82
-getUsers	Factories/DbFactory/postgisDb.py	/^    def getUsers(self):$/;"	kind:member	line:481
-getUsers	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getUsers(self):$/;"	kind:member	line:194
+getUsers	Factories/DbFactory/postgisDb.py	/^    def getUsers(self):$/;"	kind:member	line:496
+getUsers	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getUsers(self):$/;"	kind:member	line:196
 getUsers	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getUsers(self):$/;"	kind:member	line:102
 getUsers	Factories/SqlFactory/sqlGenerator.py	/^    def getUsers(self):$/;"	kind:member	line:85
-getUsersFromServer	Factories/DbFactory/postgisDb.py	/^    def getUsersFromServer(self):$/;"	kind:member	line:2294
-getUsersFromServer	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getUsersFromServer(self):$/;"	kind:member	line:1024
-getValidationStatus	Factories/DbFactory/postgisDb.py	/^    def getValidationStatus(self, processName):$/;"	kind:member	line:940
-getValidationStatusText	Factories/DbFactory/postgisDb.py	/^    def getValidationStatusText(self, processName):$/;"	kind:member	line:957
+getUsersFromServer	Factories/DbFactory/postgisDb.py	/^    def getUsersFromServer(self):$/;"	kind:member	line:2307
+getUsersFromServer	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getUsersFromServer(self):$/;"	kind:member	line:1043
+getValidationStatus	Factories/DbFactory/postgisDb.py	/^    def getValidationStatus(self, processName):$/;"	kind:member	line:953
+getValidationStatusText	Factories/DbFactory/postgisDb.py	/^    def getValidationStatusText(self, processName):$/;"	kind:member	line:970
 getVersion	CustomWidgets/databaseParameterWidget.py	/^    def getVersion(self):$/;"	kind:member	line:73
-getVertexNearEdgesRecords	Factories/DbFactory/postgisDb.py	/^    def getVertexNearEdgesRecords(self, tableSchema, tableName, tol):$/;"	kind:member	line:1156
-getVertexNearEdgesStruct	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getVertexNearEdgesStruct(self, epsg, tol):$/;"	kind:member	line:518
+getVertexNearEdgesRecords	Factories/DbFactory/postgisDb.py	/^    def getVertexNearEdgesRecords(self, tableSchema, tableName, tol):$/;"	kind:member	line:1169
+getVertexNearEdgesStruct	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getVertexNearEdgesStruct(self, epsg, tol):$/;"	kind:member	line:524
 getViewType	CustomWidgets/customizationManagerWidget.py	/^    def getViewType(self):$/;"	kind:member	line:186
 getViewType	CustomWidgets/permissionWidget.py	/^    def getViewType(self):$/;"	kind:member	line:106
-getWhoAmI	Factories/DbFactory/postgisDb.py	/^    def getWhoAmI(self, cl, id):$/;"	kind:member	line:1503
-getWhoAmI	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getWhoAmI(self, cl, id):$/;"	kind:member	line:698
+getWhoAmI	Factories/DbFactory/postgisDb.py	/^    def getWhoAmI(self, cl, id):$/;"	kind:member	line:1516
+getWhoAmI	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getWhoAmI(self, cl, id):$/;"	kind:member	line:710
 getWidgetIndexFromTreeItem	PostgisCustomization/createDatabaseCustomization.py	/^    def getWidgetIndexFromTreeItem(self, treeItem):$/;"	kind:member	line:164
 get_qgis_app	test/utilities.py	/^def get_qgis_app():$/;"	kind:function	line:15
 grantPermission	ServerManagementTools/permissionManager.py	/^    def grantPermission(self, dbName, permissionName, edgvVersion, userName):$/;"	kind:member	line:107
 grantPermissionWithProfileDict	ServerManagementTools/permissionManager.py	/^    def grantPermissionWithProfileDict(self, dbName, permissionName, userName, profileDict, updatePermission = False):$/;"	kind:member	line:117
-grantRole	Factories/DbFactory/postgisDb.py	/^    def grantRole(self, user, role):$/;"	kind:member	line:634
-grantRole	Factories/SqlFactory/postgisSqlGenerator.py	/^    def grantRole(self, user, role):$/;"	kind:member	line:174
+grantRole	Factories/DbFactory/postgisDb.py	/^    def grantRole(self, user, role):$/;"	kind:member	line:649
+grantRole	Factories/SqlFactory/postgisSqlGenerator.py	/^    def grantRole(self, user, role):$/;"	kind:member	line:176
 grantRole	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def grantRole(self, user, role):$/;"	kind:member	line:90
 grantRole	Factories/SqlFactory/sqlGenerator.py	/^    def grantRole(self, user, role):$/;"	kind:member	line:73
-hasAdminDb	Factories/DbFactory/postgisDb.py	/^    def hasAdminDb(self):$/;"	kind:member	line:2360
-hasAdminDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def hasAdminDb(self):$/;"	kind:member	line:1040
+hasAdminDb	Factories/DbFactory/postgisDb.py	/^    def hasAdminDb(self):$/;"	kind:member	line:2373
+hasAdminDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def hasAdminDb(self):$/;"	kind:member	line:1059
 hideOrShowWidgets	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def hideOrShowWidgets(self):$/;"	kind:member	line:244
 hideWidgetList	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def hideWidgetList(self, widgetList):$/;"	kind:member	line:112
 hide_password	plugin_upload.py	/^def hide_password(url, start=6):$/;"	kind:function	line:55
@@ -1340,9 +1340,9 @@ identifySmallLinesProcess.py	ValidationTools/ValidationProcesses/identifySmallLi
 identifyVertexNearEdgeProcess.py	ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py	1;"	kind:file	line:1
 importFromJSON	PostgisCustomization/dbCustomizer.py	/^    def importFromJSON(self, customJSON):$/;"	kind:member	line:39
 importSetting	ServerManagementTools/genericDbManager.py	/^    def importSetting(self, fullFilePath):$/;"	kind:member	line:120
-importStyle	Factories/DbFactory/postgisDb.py	/^    def importStyle(self, styleName, table_name, qml, tableSchema):$/;"	kind:member	line:1699
-importStyle	Factories/SqlFactory/postgisSqlGenerator.py	/^    def importStyle(self, styleName, table_name, parsedQml, tableSchema, dbName):$/;"	kind:member	line:872
-importStylesIntoDb	Factories/DbFactory/postgisDb.py	/^    def importStylesIntoDb(self, styleFolder):$/;"	kind:member	line:1732
+importStyle	Factories/DbFactory/postgisDb.py	/^    def importStyle(self, styleName, table_name, qml, tableSchema):$/;"	kind:member	line:1712
+importStyle	Factories/SqlFactory/postgisSqlGenerator.py	/^    def importStyle(self, styleName, table_name, parsedQml, tableSchema, dbName):$/;"	kind:member	line:891
+importStylesIntoDb	Factories/DbFactory/postgisDb.py	/^    def importStylesIntoDb(self, styleFolder):$/;"	kind:member	line:1745
 initBar	CustomWidgets/progressWidget.py	/^    def initBar(self):$/;"	kind:member	line:46
 initGui	ProductionTools/MinimumAreaTool/minimumAreaTool.py	/^    def initGui(self):$/;"	kind:member	line:56
 initGui	ServerTools/viewServers.py	/^    def initGui(self):$/;"	kind:member	line:53
@@ -1350,21 +1350,21 @@ initGui	dsg_tools.py	/^    def initGui(self):$/;"	kind:member	line:220
 inom	LayerTools/CreateFrameTool/map_index.py	/^    inom = 'SA-23-Y-C-IV-4'$/;"	kind:variable	line:338
 inputData	ValidationTools/ValidationProcesses/validationProcess.py	/^    def inputData(self):$/;"	kind:member	line:173
 insertExtension	InventoryTools/inventoryTools.py	/^    def insertExtension(self):$/;"	kind:member	line:92
-insertFlagIntoDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def insertFlagIntoDb(self,layer,feat_id,reason,geom,srid,processName, dimension):$/;"	kind:member	line:387
-insertFlags	Factories/DbFactory/postgisDb.py	/^    def insertFlags(self, flagTupleList, processName):$/;"	kind:member	line:873
-insertFrame	Factories/DbFactory/abstractDb.py	/^    def insertFrame(self,scale,mi,inom,frame):$/;"	kind:member	line:637
+insertFlagIntoDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def insertFlagIntoDb(self,layer,feat_id,reason,geom,srid,processName, dimension):$/;"	kind:member	line:389
+insertFlags	Factories/DbFactory/postgisDb.py	/^    def insertFlags(self, flagTupleList, processName):$/;"	kind:member	line:888
+insertFrame	Factories/DbFactory/abstractDb.py	/^    def insertFrame(self,scale,mi,inom,frame):$/;"	kind:member	line:641
 insertFrame	Factories/DbFactory/spatialiteDb.py	/^    def insertFrame(self, scale, mi, inom, frame):$/;"	kind:member	line:491
-insertFrame	Factories/SqlFactory/postgisSqlGenerator.py	/^    def insertFrame(self,scale,mi,inom,frame,srid,geoSrid):$/;"	kind:member	line:978
+insertFrame	Factories/SqlFactory/postgisSqlGenerator.py	/^    def insertFrame(self,scale,mi,inom,frame,srid,geoSrid):$/;"	kind:member	line:997
 insertFrame	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def insertFrame(self,scale,mi,inom,frame,srid,geoSrid):$/;"	kind:member	line:186
 insertFrameIntoQgsLayer	LayerTools/CreateFrameTool/map_index.py	/^    def insertFrameIntoQgsLayer(self, layer, poly, map_index):$/;"	kind:member	line:263
-insertFrameIntoTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def insertFrameIntoTable(self, wkt):$/;"	kind:member	line:82
+insertFrameIntoTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def insertFrameIntoTable(self, wkt):$/;"	kind:member	line:84
 insertFrameIntoTable	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def insertFrameIntoTable(self, wkt):$/;"	kind:member	line:76
 insertFrameIntoTable	Factories/SqlFactory/sqlGenerator.py	/^    def insertFrameIntoTable(self, wkb):$/;"	kind:member	line:58
 insertIntoMemoryLayer	Factories/ThreadFactory/inventoryThread.py	/^    def insertIntoMemoryLayer(self, layer, poly, attributes):$/;"	kind:member	line:410
-insertIntoPermissionProfile	Factories/DbFactory/postgisDb.py	/^    def insertIntoPermissionProfile(self, name, jsondict, edgvversion):$/;"	kind:member	line:2391
+insertIntoPermissionProfile	Factories/DbFactory/postgisDb.py	/^    def insertIntoPermissionProfile(self, name, jsondict, edgvversion):$/;"	kind:member	line:2404
 insertRow	ValidationTools/rules_editor.py	/^    def insertRow(self, layer1, necessity, predicate, layer2, cardinality):$/;"	kind:member	line:93
-insertSettingIntoAdminDb	Factories/DbFactory/postgisDb.py	/^    def insertSettingIntoAdminDb(self, settingType, name, jsondict, edgvversion):$/;"	kind:member	line:2701
-insertSettingIntoAdminDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def insertSettingIntoAdminDb(self, settingType, name, jsondict, edgvversion):$/;"	kind:member	line:1068
+insertSettingIntoAdminDb	Factories/DbFactory/postgisDb.py	/^    def insertSettingIntoAdminDb(self, settingType, name, jsondict, edgvversion):$/;"	kind:member	line:2714
+insertSettingIntoAdminDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def insertSettingIntoAdminDb(self, settingType, name, jsondict, edgvversion):$/;"	kind:member	line:1087
 inspectFeatures.py	ProductionTools/InspectFeatures/inspectFeatures.py	1;"	kind:file	line:1
 installCustomization	ServerManagementTools/customizationManager.py	/^    def installCustomization(self, customizationName):$/;"	kind:member	line:44
 installModelsAndScripts	dsg_tools.py	/^    def installModelsAndScripts(self):$/;"	kind:member	line:731
@@ -1379,15 +1379,15 @@ inventario	QGIS_Scripts/virtual_raster.py	/^inventario = processing.getObject(In
 inventoryFile	Factories/ThreadFactory/inventoryThread.py	/^    def inventoryFile(self, ext):$/;"	kind:member	line:276
 inventoryThread.py	Factories/ThreadFactory/inventoryThread.py	1;"	kind:file	line:1
 inventoryTools.py	InventoryTools/inventoryTools.py	1;"	kind:file	line:1
-isComplexClass	Factories/DbFactory/postgisDb.py	/^    def isComplexClass(self, className):$/;"	kind:member	line:453
+isComplexClass	Factories/DbFactory/postgisDb.py	/^    def isComplexClass(self, className):$/;"	kind:member	line:468
 isComplexClass	Factories/DbFactory/spatialiteDb.py	/^    def isComplexClass(self, className):$/;"	kind:member	line:353
 isComplexClass	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def isComplexClass(self, aggregatedClass):$/;"	kind:member	line:64
 isDBConnected	CustomWidgets/connectionWidget.py	/^    def isDBConnected(self):$/;"	kind:member	line:227
 isInFormatsList	Factories/ThreadFactory/inventoryThread.py	/^    def isInFormatsList(self, ext):$/;"	kind:member	line:267
-isLyrInDb	Factories/DbFactory/postgisDb.py	/^    def isLyrInDb(self, lyr):$/;"	kind:member	line:1005
+isLyrInDb	Factories/DbFactory/postgisDb.py	/^    def isLyrInDb(self, lyr):$/;"	kind:member	line:1018
 isPermissionInstalled	ServerManagementTools/permissionManager.py	/^    def isPermissionInstalled(self, abstractDb, dbName, permissionName):$/;"	kind:member	line:142
 isSpatialiteDatabase	ComplexTools/complexWindow.py	/^    def isSpatialiteDatabase(self, dbName):$/;"	kind:member	line:86
-isSuperUser	Factories/SqlFactory/postgisSqlGenerator.py	/^    def isSuperUser(self,user):$/;"	kind:member	line:305
+isSuperUser	Factories/SqlFactory/postgisSqlGenerator.py	/^    def isSuperUser(self,user):$/;"	kind:member	line:307
 isSuperUser	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def isSuperUser(self,user):$/;"	kind:member	line:151
 isSuperUser	Factories/SqlFactory/sqlGenerator.py	/^    def isSuperUser(self,user):$/;"	kind:member	line:124
 iterateFeature	ProductionTools/InspectFeatures/inspectFeatures.py	/^    def iterateFeature(self, method):$/;"	kind:member	line:96
@@ -1396,13 +1396,13 @@ layers	LayerTools/create_features_test.py	/^layers = iface.mapCanvas().layers()$
 legendInterface	test/qgis_interface.py	/^    def legendInterface(self):$/;"	kind:member	line:203
 lineCreated	ProductionTools/ContourTool/dsg_line_tool.py	/^    lineCreated = pyqtSignal(QgsGeometry)$/;"	kind:variable	line:31
 listClassesFromDatabase	LayerTools/load_by_class.py	/^    def listClassesFromDatabase(self):$/;"	kind:member	line:90
-listClassesWithElementsFromDatabase	Factories/DbFactory/abstractDb.py	/^    def listClassesWithElementsFromDatabase(self, useComplex = True, primitiveFilter = []):$/;"	kind:member	line:149
-listComplexClassesFromDatabase	Factories/DbFactory/postgisDb.py	/^    def listComplexClassesFromDatabase(self):$/;"	kind:member	line:182
+listClassesWithElementsFromDatabase	Factories/DbFactory/abstractDb.py	/^    def listClassesWithElementsFromDatabase(self, useComplex = True, primitiveFilter = []):$/;"	kind:member	line:153
+listComplexClassesFromDatabase	Factories/DbFactory/postgisDb.py	/^    def listComplexClassesFromDatabase(self):$/;"	kind:member	line:197
 listComplexClassesFromDatabase	Factories/DbFactory/spatialiteDb.py	/^    def listComplexClassesFromDatabase(self):$/;"	kind:member	line:83
-listGeomClassesFromDatabase	Factories/DbFactory/postgisDb.py	/^    def listGeomClassesFromDatabase(self, primitiveFilter = [], withElements = False, excludeViews = True):$/;"	kind:member	line:146
+listGeomClassesFromDatabase	Factories/DbFactory/postgisDb.py	/^    def listGeomClassesFromDatabase(self, primitiveFilter = [], withElements = False, excludeViews = True, getGeometryColumn = False):$/;"	kind:member	line:146
 listGeomClassesFromDatabase	Factories/DbFactory/spatialiteDb.py	/^    def listGeomClassesFromDatabase(self, primitiveFilter = []):$/;"	kind:member	line:64
 listManagerWidget.py	CustomWidgets/AttributeValidityWidgets/listManagerWidget.py	1;"	kind:file	line:1
-listWithElementsFromDatabase	Factories/DbFactory/abstractDb.py	/^    def listWithElementsFromDatabase(self, classList):$/;"	kind:member	line:136
+listWithElementsFromDatabase	Factories/DbFactory/abstractDb.py	/^    def listWithElementsFromDatabase(self, classList):$/;"	kind:member	line:140
 load	Factories/LayerLoaderFactory/edgvLayerLoader.py	/^    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False):$/;"	kind:member	line:55
 load	Factories/LayerLoaderFactory/postgisLayerLoader.py	/^    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True, parent = None):$/;"	kind:member	line:88
 load	Factories/LayerLoaderFactory/spatialiteLayerLoader.py	/^    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True, parent = None):$/;"	kind:member	line:65
@@ -1419,7 +1419,7 @@ load50kLayer	dsg_tools.py	/^    def load50kLayer(self):$/;"	kind:member	line:882
 load50kRasterIndex	dsg_tools.py	/^    def load50kRasterIndex(self):$/;"	kind:member	line:914
 load50kVectorIndex	dsg_tools.py	/^    def load50kVectorIndex(self):$/;"	kind:member	line:942
 loadAssociatedFeatures	ComplexTools/complexWindow.py	/^    def loadAssociatedFeatures(self):$/;"	kind:member	line:379
-loadAssociatedFeatures	Factories/DbFactory/postgisDb.py	/^    def loadAssociatedFeatures(self, complex):$/;"	kind:member	line:405
+loadAssociatedFeatures	Factories/DbFactory/postgisDb.py	/^    def loadAssociatedFeatures(self, complex):$/;"	kind:member	line:420
 loadAssociatedFeatures	Factories/DbFactory/spatialiteDb.py	/^    def loadAssociatedFeatures(self, complex):$/;"	kind:member	line:299
 loadAuxStruct	dsg_tools.py	/^    def loadAuxStruct(self):$/;"	kind:member	line:779
 loadAuxStruct.py	LayerTools/loadAuxStruct.py	1;"	kind:file	line:1
@@ -1442,7 +1442,7 @@ loadLayer	Factories/LayerLoaderFactory/spatialiteLayerLoader.py	/^    def loadLa
 loadLayer	MilitarySimbologyTools/militarySimbology.py	/^    def loadLayer(self, listOfConf, uri, nameLayer):$/;"	kind:member	line:99
 loadLayer	ProductionTools/FieldToolBox/field_toolbox.py	/^    def loadLayer(self, layer):$/;"	kind:member	line:209
 loadLayerFromDatabase	Factories/SqlFactory/postgisSqlGenerator.py	/^    def loadLayerFromDatabase(self, layer_name):$/;"	kind:member	line:67
-loadLayerFromDatabaseUsingInh	Factories/SqlFactory/postgisSqlGenerator.py	/^    def loadLayerFromDatabaseUsingInh(self, layer_name):$/;"	kind:member	line:71
+loadLayerFromDatabaseUsingInh	Factories/SqlFactory/postgisSqlGenerator.py	/^    def loadLayerFromDatabaseUsingInh(self, layer_name):$/;"	kind:member	line:72
 loadLayers	LayerTools/loadAuxStruct.py	/^    def loadLayers(self):$/;"	kind:member	line:100
 loadLayers	LayerTools/load_by_class.py	/^    def loadLayers(self):$/;"	kind:member	line:171
 loadLayersFromServer	dsg_tools.py	/^    def loadLayersFromServer(self):$/;"	kind:member	line:793
@@ -1472,23 +1472,23 @@ makeBreaksPredicateFlag	ValidationTools/ValidationProcesses/spatialRuleEnforcer.
 makeIndex	ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py	/^    def makeIndex(self, centroidLyr):$/;"	kind:member	line:189
 makeInventory	Factories/ThreadFactory/inventoryThread.py	/^    def makeInventory(self, parentFolder, outputFile, destinationFolder):$/;"	kind:member	line:98
 makeLoader	Factories/LayerLoaderFactory/layerLoaderFactory.py	/^    def makeLoader(self, iface, abstractDb):$/;"	kind:member	line:30
-makeOgrConn	Factories/DbFactory/postgisDb.py	/^    def makeOgrConn(self):$/;"	kind:member	line:272
+makeOgrConn	Factories/DbFactory/postgisDb.py	/^    def makeOgrConn(self):$/;"	kind:member	line:287
 makeOgrConn	Factories/DbFactory/spatialiteDb.py	/^    def makeOgrConn(self):$/;"	kind:member	line:132
 makeProcess	Factories/ThreadFactory/threadFactory.py	/^    def makeProcess(self, name):$/;"	kind:member	line:28
 makeProfileDict	UserTools/profile_editor.py	/^    def makeProfileDict(self):$/;"	kind:member	line:101
 makeProfileDict	UserTools/serverProfilesManager.py	/^    def makeProfileDict(self):$/;"	kind:member	line:68
 makeQgsPolygon	LayerTools/CreateFrameTool/map_index.py	/^    def makeQgsPolygon(self, xmin, ymin, xmax, ymax):$/;"	kind:member	line:109
 makeReclassificationDict	ProductionTools/FieldToolBox/field_setup.py	/^    def makeReclassificationDict(self):$/;"	kind:member	line:437
-makeRecursiveSnapFunction	Factories/SqlFactory/postgisSqlGenerator.py	/^    def makeRecursiveSnapFunction(self):$/;"	kind:member	line:761
-makeRelationDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def makeRelationDict(self, table, codes):$/;"	kind:member	line:690
+makeRecursiveSnapFunction	Factories/SqlFactory/postgisSqlGenerator.py	/^    def makeRecursiveSnapFunction(self):$/;"	kind:member	line:777
+makeRelationDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def makeRelationDict(self, table, codes):$/;"	kind:member	line:702
 makeRelationDict	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def makeRelationDict(self, table, in_clause):$/;"	kind:member	line:157
 makeRulesList	ValidationTools/rules_editor.py	/^    def makeRulesList(self):$/;"	kind:member	line:132
-makeTranslationMap	Factories/DbFactory/abstractDb.py	/^    def makeTranslationMap(self, layerName, layer, outLayer, fieldMapper):$/;"	kind:member	line:288
-makeValidationSummary	Factories/DbFactory/abstractDb.py	/^    def makeValidationSummary(self, invalidatedDataDict):$/;"	kind:member	line:209
+makeTranslationMap	Factories/DbFactory/abstractDb.py	/^    def makeTranslationMap(self, layerName, layer, outLayer, fieldMapper):$/;"	kind:member	line:292
+makeValidationSummary	Factories/DbFactory/abstractDb.py	/^    def makeValidationSummary(self, invalidatedDataDict):$/;"	kind:member	line:213
 makeValueRelationDict	AttributeTools/code_list.py	/^    def makeValueRelationDict(self, valueDict):$/;"	kind:member	line:89
 makeValueRelationDict	ComplexTools/manageComplex.py	/^    def makeValueRelationDict(self, table, codes):$/;"	kind:member	line:312
 makeValueRelationDict	ComplexTools/manageComplex.py	/^    def makeValueRelationDict(self, table, codes):$/;"	kind:member	line:50
-makeValueRelationDict	Factories/DbFactory/abstractDb.py	/^    def makeValueRelationDict(self, table, codes):$/;"	kind:member	line:618
+makeValueRelationDict	Factories/DbFactory/abstractDb.py	/^    def makeValueRelationDict(self, table, codes):$/;"	kind:member	line:622
 makeValueRelationDict	ProductionTools/FieldToolBox/field_setup.py	/^    def makeValueRelationDict(self, table, codes):$/;"	kind:member	line:108
 makeVrtDict	QGIS_Scripts/virtual_raster.py	/^def makeVrtDict(candidates, camada):$/;"	kind:function	line:94
 manageComplex.py	ComplexTools/manageComplex.py	1;"	kind:file	line:1
@@ -1525,7 +1525,7 @@ normalize	QGIS_Scripts/HSV_fusion.py	/^    def normalize(self, arr):$/;"	kind:me
 nullityCustomization.py	Factories/DbCustomizationFactory/nullityCustomization.py	1;"	kind:file	line:1
 obj	ImageTools/raster_processing.py	/^obj = RasterProcess()$/;"	kind:variable	line:236
 obj	QGIS_Scripts/HSV_fusion.py	/^obj = RasterProcess()$/;"	kind:variable	line:249
-obtainLinkColumn	Factories/DbFactory/postgisDb.py	/^    def obtainLinkColumn(self, complexClass, aggregatedClass):$/;"	kind:member	line:387
+obtainLinkColumn	Factories/DbFactory/postgisDb.py	/^    def obtainLinkColumn(self, complexClass, aggregatedClass):$/;"	kind:member	line:402
 obtainLinkColumn	Factories/DbFactory/spatialiteDb.py	/^    def obtainLinkColumn(self, complexClass, aggregatedClass):$/;"	kind:member	line:281
 okSelected	LayerTools/load_by_class.py	/^    def okSelected(self):$/;"	kind:member	line:163
 okselecionadoCriaSpatialite	DbTools/SpatialiteTool/cria_spatialite_dialog.py	/^    def okselecionadoCriaSpatialite(self):$/;"	kind:member	line:136
@@ -1753,10 +1753,10 @@ outputMessage	UserTools/profileUserManager.py	/^    def outputMessage(self, head
 pansharpenImage	ImageTools/raster_processing.py	/^    def pansharpenImage(self, rgbfile, panfile, destfile):$/;"	kind:member	line:131
 pansharpenImage	QGIS_Scripts/HSV_fusion.py	/^    def pansharpenImage(self, rgbfile, panfile, destfile):$/;"	kind:member	line:132
 parametersSet	DbTools/BatchDbCreator/createBatchIncrementing.py	/^    parametersSet = pyqtSignal(dict)$/;"	kind:variable	line:38
-parseCheckConstraintQuery	Factories/DbFactory/postgisDb.py	/^    def parseCheckConstraintQuery(self, queryValue0, queryValue1):$/;"	kind:member	line:1996
-parseCheckConstraintWithAny	Factories/DbFactory/postgisDb.py	/^    def parseCheckConstraintWithAny(self, queryValue0, queryValue1):$/;"	kind:member	line:2020
-parseCheckConstraintWithOr	Factories/DbFactory/postgisDb.py	/^    def parseCheckConstraintWithOr(self, queryValue0, queryValue1):$/;"	kind:member	line:2005
-parseFkQuery	Factories/DbFactory/postgisDb.py	/^    def parseFkQuery(self, queryValue0, queryValue1):$/;"	kind:member	line:1983
+parseCheckConstraintQuery	Factories/DbFactory/postgisDb.py	/^    def parseCheckConstraintQuery(self, queryValue0, queryValue1):$/;"	kind:member	line:2009
+parseCheckConstraintWithAny	Factories/DbFactory/postgisDb.py	/^    def parseCheckConstraintWithAny(self, queryValue0, queryValue1):$/;"	kind:member	line:2033
+parseCheckConstraintWithOr	Factories/DbFactory/postgisDb.py	/^    def parseCheckConstraintWithOr(self, queryValue0, queryValue1):$/;"	kind:member	line:2018
+parseFkQuery	Factories/DbFactory/postgisDb.py	/^    def parseFkQuery(self, queryValue0, queryValue1):$/;"	kind:member	line:1996
 parseJson	PostgisCustomization/CustomJSONTools/customJSONValidator.py	/^    def parseJson(self):$/;"	kind:member	line:33
 parseJson	PostgisCustomization/CustomJSONValidator/customJSONValidator.py	/^    def parseJson(self):$/;"	kind:member	line:33
 parseJson	UserTools/assign_profiles.py	/^    def parseJson(self, filename):$/;"	kind:member	line:64
@@ -1818,7 +1818,7 @@ populateStyleCombo	LayerTools/LoadLayersFromServer/loadLayersFromServer.py	/^   
 populateStyleCombo	LayerTools/load_by_class.py	/^    def populateStyleCombo(self, styleDict):$/;"	kind:member	line:198
 populateStylesInterface	ServerTools/batchDbManager.py	/^    def populateStylesInterface(self):$/;"	kind:member	line:255
 populateTable	ServerTools/viewServers.py	/^    def populateTable(self):$/;"	kind:member	line:61
-populateTempTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def populateTempTable(self, tableName, attributes, values, geometry, srid):$/;"	kind:member	line:804
+populateTempTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def populateTempTable(self, tableName, attributes, values, geometry, srid, geomColumnName):$/;"	kind:member	line:821
 populateTreeDict	UserTools/createProfileWithProfileManager.py	/^    def populateTreeDict(self):$/;"	kind:member	line:89
 populateTreeDict	UserTools/create_profile.py	/^    def populateTreeDict(self):$/;"	kind:member	line:90
 populateUsers	UserTools/manageServerUsers.py	/^    def populateUsers(self):$/;"	kind:member	line:53
@@ -1833,7 +1833,7 @@ populateWithUserPerspective	CustomWidgets/permissionWidget.py	/^    def populate
 postProcess	ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py	/^    def postProcess(self):$/;"	kind:member	line:43
 postProcess	ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py	/^    def postProcess(self):$/;"	kind:member	line:37
 postProcess	ValidationTools/ValidationProcesses/validationProcess.py	/^    def postProcess(self):$/;"	kind:member	line:104
-postProcessSteps	ValidationTools/ValidationProcesses/validationProcess.py	/^    def postProcessSteps(self, processTableName, lyr):$/;"	kind:member	line:304
+postProcessSteps	ValidationTools/ValidationProcesses/validationProcess.py	/^    def postProcessSteps(self, processTableName, lyr):$/;"	kind:member	line:308
 postgisDBTool.py	DbTools/PostGISTool/postgisDBTool.py	1;"	kind:file	line:1
 postgisDb.py	Factories/DbFactory/postgisDb.py	1;"	kind:file	line:1
 postgisDbCreator.py	Factories/DbCreatorFactory/postgisDbCreator.py	1;"	kind:file	line:1
@@ -1848,15 +1848,15 @@ preProcess	ValidationTools/ValidationProcesses/removeSmallLinesProcess.py	/^    
 preProcess	ValidationTools/ValidationProcesses/validationProcess.py	/^    def preProcess(self):$/;"	kind:member	line:98
 predicates	ValidationTools/ValidationProcesses/spatialRuleEnforcer.py	/^    predicates = {0:'equals',$/;"	kind:variable	line:34
 predicates	ValidationTools/ValidationProcesses/spatialRuleProcess.py	/^    predicates = {0:'ST_Equals',$/;"	kind:variable	line:33
-prepareCreateFrame	Factories/DbFactory/abstractDb.py	/^    def prepareCreateFrame(self, type, scale, param):$/;"	kind:member	line:651
-prepareExecution	ValidationTools/ValidationProcesses/validationProcess.py	/^    def prepareExecution(self, cl):$/;"	kind:member	line:286
-prepareForConversion	Factories/DbFactory/abstractDb.py	/^    def prepareForConversion(self,outputAbstractDb):$/;"	kind:member	line:422
+prepareCreateFrame	Factories/DbFactory/abstractDb.py	/^    def prepareCreateFrame(self, type, scale, param):$/;"	kind:member	line:655
+prepareExecution	ValidationTools/ValidationProcesses/validationProcess.py	/^    def prepareExecution(self, cl, geometryColumn):$/;"	kind:member	line:286
+prepareForConversion	Factories/DbFactory/abstractDb.py	/^    def prepareForConversion(self,outputAbstractDb):$/;"	kind:member	line:426
 prepareGroups	Factories/LayerLoaderFactory/edgvLayerLoader.py	/^    def prepareGroups(self, groupList, parent, lyrDict):$/;"	kind:member	line:124
 prepareLoad	Factories/LayerLoaderFactory/edgvLayerLoader.py	/^    def prepareLoad(self):$/;"	kind:member	line:74
 prepareProcess	ProcessingTools/processManager.py	/^    def prepareProcess(self, process, message):$/;"	kind:member	line:104
 prepareReclassification	ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py	/^    def prepareReclassification(self, cl, areaLyr, centroidLyr, relateDict):$/;"	kind:member	line:201
-prepareVertexNearEdgesStruct	Factories/SqlFactory/postgisSqlGenerator.py	/^    def prepareVertexNearEdgesStruct(self, tableSchema, tableName):$/;"	kind:member	line:498
-prepareWorkingStructure	ValidationTools/ValidationProcesses/validationProcess.py	/^    def prepareWorkingStructure(self, tableName, layer):$/;"	kind:member	line:223
+prepareVertexNearEdgesStruct	Factories/SqlFactory/postgisSqlGenerator.py	/^    def prepareVertexNearEdgesStruct(self, tableSchema, tableName):$/;"	kind:member	line:504
+prepareWorkingStructure	ValidationTools/ValidationProcesses/validationProcess.py	/^    def prepareWorkingStructure(self, tableName, layer, geometryColumn):$/;"	kind:member	line:223
 problemOccurred	CustomWidgets/connectionWidget.py	/^    problemOccurred = pyqtSignal(str)$/;"	kind:variable	line:45
 processFinished	ProcessingTools/processManager.py	/^    def processFinished( self, feedback, message, uuid):$/;"	kind:member	line:85
 processFlags	ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py	/^    def processFlags(self, areaLyr):$/;"	kind:member	line:57
@@ -1906,12 +1906,12 @@ readJsonFromDatabase	CustomWidgets/customizationManagerWidget.py	/^    def readJ
 readJsonFromDatabase	UserTools/serverProfilesManager.py	/^    def readJsonFromDatabase(self, profileName, edgvVersion):$/;"	kind:member	line:96
 readQGISElement	QmlTools/qmlParser.py	/^    def readQGISElement(self):$/;"	kind:member	line:47
 readTablesSqlite	MilitarySimbologyTools/militarySimbology.py	/^    def readTablesSqlite(self, uri):$/;"	kind:member	line:44
-reasignAndDropUser	Factories/SqlFactory/postgisSqlGenerator.py	/^    def reasignAndDropUser(self, user):$/;"	kind:member	line:1028
-reassignAndDropUser	Factories/DbFactory/postgisDb.py	/^    def reassignAndDropUser(self, user):$/;"	kind:member	line:2305
+reasignAndDropUser	Factories/SqlFactory/postgisSqlGenerator.py	/^    def reasignAndDropUser(self, user):$/;"	kind:member	line:1047
+reassignAndDropUser	Factories/DbFactory/postgisDb.py	/^    def reassignAndDropUser(self, user):$/;"	kind:member	line:2318
 reclassify	ProductionTools/FieldToolBox/field_toolbox.py	/^    def reclassify(self):$/;"	kind:member	line:367
 reclassifyAreasWithCentroids	ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py	/^    def reclassifyAreasWithCentroids(self, coverageClassList, areaLyr, centroidLyr, relateDict):$/;"	kind:member	line:259
 recreateAttributeTable	ProductionTools/FieldToolBox/field_setup.py	/^    def recreateAttributeTable(self, buttonItem):$/;"	kind:member	line:386
-recursiveSnap	Factories/DbFactory/postgisDb.py	/^    def recursiveSnap(self, classList, tol):$/;"	kind:member	line:1566
+recursiveSnap	Factories/DbFactory/postgisDb.py	/^    def recursiveSnap(self, classList, tol):$/;"	kind:member	line:1579
 recursiveSnapProcess.py	ValidationTools/ValidationProcesses/recursiveSnapProcess.py	1;"	kind:file	line:1
 refresh	CustomWidgets/customizationManagerWidget.py	/^    def refresh(self):$/;"	kind:member	line:173
 refresh	CustomWidgets/permissionWidget.py	/^    def refresh(self):$/;"	kind:member	line:62
@@ -1925,25 +1925,25 @@ removeComplex	ComplexTools/manageComplex.py	/^    def removeComplex(self):$/;"	k
 removeConnections	ServerTools/serverDBExplorer.py	/^    def removeConnections(self,candidate,removedConn):$/;"	kind:member	line:193
 removeCustomization	ServerManagementTools/customizationManager.py	/^    def removeCustomization(self, customizationName):$/;"	kind:member	line:53
 removeDuplicatesProcess.py	ValidationTools/ValidationProcesses/removeDuplicatesProcess.py	1;"	kind:file	line:1
-removeEmptyGeometries	Factories/DbFactory/postgisDb.py	/^    def removeEmptyGeometries(self, layer):$/;"	kind:member	line:2328
+removeEmptyGeometries	Factories/DbFactory/postgisDb.py	/^    def removeEmptyGeometries(self, layer):$/;"	kind:member	line:2341
 removeEmptyGeometriesProcess.py	ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py	1;"	kind:file	line:1
-removeEmptyGeomtriesFromDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def removeEmptyGeomtriesFromDb(self, layer):$/;"	kind:member	line:1036
+removeEmptyGeomtriesFromDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def removeEmptyGeomtriesFromDb(self, layer):$/;"	kind:member	line:1055
 removeExtension	InventoryTools/inventoryTools.py	/^    def removeExtension(self):$/;"	kind:member	line:100
-removeFeatureFlags	Factories/DbFactory/postgisDb.py	/^    def removeFeatureFlags(self, layer, featureId, processName):$/;"	kind:member	line:2312
+removeFeatureFlags	Factories/DbFactory/postgisDb.py	/^    def removeFeatureFlags(self, layer, featureId, processName):$/;"	kind:member	line:2325
 removeFeatureFlags	ValidationTools/ValidationProcesses/validationProcess.py	/^    def removeFeatureFlags(self, layer, featureId):$/;"	kind:member	line:121
-removeFeatures	Factories/DbFactory/postgisDb.py	/^    def removeFeatures(self, cl, idList):$/;"	kind:member	line:1187
+removeFeatures	Factories/DbFactory/postgisDb.py	/^    def removeFeatures(self, cl, idList):$/;"	kind:member	line:1200
 removeFromDb	PostgisCustomization/dbCustomizer.py	/^    def removeFromDb(self):$/;"	kind:member	line:45
 removeServerConfiguration	ServerTools/viewServers.py	/^    def removeServerConfiguration(self, name):$/;"	kind:member	line:166
 removeSmallAreasProcess.py	ValidationTools/ValidationProcesses/removeSmallAreasProcess.py	1;"	kind:file	line:1
 removeSmallLinesProcess.py	ValidationTools/ValidationProcesses/removeSmallLinesProcess.py	1;"	kind:file	line:1
 removeToolBarIcon	test/qgis_interface.py	/^    def removeToolBarIcon(self, action):$/;"	kind:member	line:165
-removeUser	Factories/DbFactory/postgisDb.py	/^    def removeUser(self, user):$/;"	kind:member	line:622
-removeUser	Factories/SqlFactory/postgisSqlGenerator.py	/^    def removeUser(self,user):$/;"	kind:member	line:205
+removeUser	Factories/DbFactory/postgisDb.py	/^    def removeUser(self, user):$/;"	kind:member	line:637
+removeUser	Factories/SqlFactory/postgisSqlGenerator.py	/^    def removeUser(self,user):$/;"	kind:member	line:207
 removeUser	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def removeUser(self):$/;"	kind:member	line:108
 removeUser	Factories/SqlFactory/sqlGenerator.py	/^    def removeUser(self):$/;"	kind:member	line:91
 renewDb	ComplexTools/complexWindow.py	/^    def renewDb(self):$/;"	kind:member	line:69
 renewDb	ServerTools/exploreDb.py	/^    def renewDb(self):$/;"	kind:member	line:85
-reorderTupleList	Factories/DbFactory/abstractDb.py	/^    def reorderTupleList(self, ls):$/;"	kind:member	line:530
+reorderTupleList	Factories/DbFactory/abstractDb.py	/^    def reorderTupleList(self, ls):$/;"	kind:member	line:534
 reproject	ProductionTools/ContourTool/contour_tool.py	/^    def reproject(self, geom, canvasCrs):$/;"	kind:member	line:78
 reproject	ProductionTools/MinimumAreaTool/shapeTool.py	/^    def reproject(self, geom, canvasCrs):$/;"	kind:member	line:140
 reprojectBoundingBox	Factories/ThreadFactory/inventoryThread.py	/^    def reprojectBoundingBox(self, crsSrc, ogrPoly):$/;"	kind:member	line:392
@@ -1963,13 +1963,13 @@ returnSelectedName	ServerTools/viewServers.py	/^    def returnSelectedName(self)
 revokeAll	CustomWidgets/permissionWidget.py	/^    def revokeAll(self):$/;"	kind:member	line:204
 revokeAllDbs	CustomWidgets/permissionWidget.py	/^    def revokeAllDbs(self):$/;"	kind:member	line:217
 revokePermission	ServerManagementTools/permissionManager.py	/^    def revokePermission(self, dbName, permissionName, userName):$/;"	kind:member	line:131
-revokeRole	Factories/DbFactory/postgisDb.py	/^    def revokeRole(self, user, role):$/;"	kind:member	line:647
-revokeRole	Factories/SqlFactory/postgisSqlGenerator.py	/^    def revokeRole(self, user, role):$/;"	kind:member	line:178
+revokeRole	Factories/DbFactory/postgisDb.py	/^    def revokeRole(self, user, role):$/;"	kind:member	line:662
+revokeRole	Factories/SqlFactory/postgisSqlGenerator.py	/^    def revokeRole(self, user, role):$/;"	kind:member	line:180
 revokeRole	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def revokeRole(self, user, role):$/;"	kind:member	line:93
 revokeRole	Factories/SqlFactory/sqlGenerator.py	/^    def revokeRole(self, user, role):$/;"	kind:member	line:76
 revokeSelectedPermission	CustomWidgets/permissionWidget.py	/^    def revokeSelectedPermission(self):$/;"	kind:member	line:248
 revokeSelectedUser	CustomWidgets/permissionWidget.py	/^    def revokeSelectedUser(self):$/;"	kind:member	line:190
-rollbackEarthCoverage	Factories/DbFactory/postgisDb.py	/^    def rollbackEarthCoverage(self, classList):$/;"	kind:member	line:1474
+rollbackEarthCoverage	Factories/DbFactory/postgisDb.py	/^    def rollbackEarthCoverage(self, classList):$/;"	kind:member	line:1487
 rules_editor.py	ValidationTools/rules_editor.py	1;"	kind:file	line:1
 run	Factories/ThreadFactory/dpiThread.py	/^    def run(self):$/;"	kind:member	line:94
 run	Factories/ThreadFactory/genericThread.py	/^    def run(self):$/;"	kind:member	line:43
@@ -1978,10 +1978,10 @@ run	Factories/ThreadFactory/postgisDbThread.py	/^    def run(self):$/;"	kind:mem
 run	ProductionTools/MinimumAreaTool/minimumAreaTool.py	/^    def run(self, scale, size, shape):$/;"	kind:member	line:119
 run	dsg_tools.py	/^    def run(self):$/;"	kind:member	line:623
 runPolygonize	ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py	/^    def runPolygonize(self, cl, areaLyr, lineLyr):$/;"	kind:member	line:99
-runProcessinAlg	ValidationTools/ValidationProcesses/cleanGeometriesProcess.py	/^    def runProcessinAlg(self, layer, tempTableName):$/;"	kind:member	line:38
+runProcessinAlg	ValidationTools/ValidationProcesses/cleanGeometriesProcess.py	/^    def runProcessinAlg(self, layer, tempTableName, geometryColumn):$/;"	kind:member	line:39
 runProcessinAlg	ValidationTools/ValidationProcesses/snapGeometriesProcess.py	/^    def runProcessinAlg(self, layer, tempTableName):$/;"	kind:member	line:35
-runQuery	Factories/DbFactory/postgisDb.py	/^    def runQuery(self, sql, errorMsg, params):$/;"	kind:member	line:1586
-runSqlFromFile	Factories/DbFactory/postgisDb.py	/^    def runSqlFromFile(self, sqlFilePath):$/;"	kind:member	line:1791
+runQuery	Factories/DbFactory/postgisDb.py	/^    def runQuery(self, sql, errorMsg, params):$/;"	kind:member	line:1599
+runSqlFromFile	Factories/DbFactory/postgisDb.py	/^    def runSqlFromFile(self, sqlFilePath):$/;"	kind:member	line:1804
 runner	test/test_dsg_tools_dialog.py	/^    runner = unittest.TextTestRunner(verbosity=2)$/;"	kind:variable	line:53
 runner	test/test_resources.py	/^    runner = unittest.TextTestRunner(verbosity=2)$/;"	kind:variable	line:40
 runner	test/test_translations.py	/^    runner = unittest.TextTestRunner(verbosity=2)$/;"	kind:variable	line:54
@@ -2017,13 +2017,13 @@ setDataSource	Factories/LayerLoaderFactory/edgvLayerLoader.py	/^    def setDataS
 setDatabase	CustomWidgets/earthCoverageWidget.py	/^    def setDatabase(self, db):$/;"	kind:member	line:51
 setDatabaseConnection	Factories/LayerLoaderFactory/postgisLayerLoader.py	/^    def setDatabaseConnection(self):$/;"	kind:member	line:56
 setDatabases	ServerTools/batchDbManager.py	/^    def setDatabases(self):$/;"	kind:member	line:82
-setDbAsTemplate	Factories/DbFactory/postgisDb.py	/^    def setDbAsTemplate(self, version):$/;"	kind:member	line:2236
-setDbAsTemplate	Factories/SqlFactory/postgisSqlGenerator.py	/^    def setDbAsTemplate(self, dbName):$/;"	kind:member	line:1008
+setDbAsTemplate	Factories/DbFactory/postgisDb.py	/^    def setDbAsTemplate(self, version):$/;"	kind:member	line:2249
+setDbAsTemplate	Factories/SqlFactory/postgisSqlGenerator.py	/^    def setDbAsTemplate(self, dbName):$/;"	kind:member	line:1027
 setDbNameVisible	CustomWidgets/databaseParameterWidget.py	/^    def setDbNameVisible(self, visible):$/;"	kind:member	line:67
 setDomainsAndRestrictions	Factories/LayerLoaderFactory/postgisLayerLoader.py	/^    def setDomainsAndRestrictions(self, lyr, lyrName, domainDict, multiColumnsDict, domLayerDict):$/;"	kind:member	line:198
 setDomainsAndRestrictionsWithQml	Factories/LayerLoaderFactory/edgvLayerLoader.py	/^    def setDomainsAndRestrictionsWithQml(self, vlayer):$/;"	kind:member	line:172
-setEarthCoverageDict	Factories/DbFactory/postgisDb.py	/^    def setEarthCoverageDict(self, textDict):$/;"	kind:member	line:1442
-setEarthCoverageDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def setEarthCoverageDict(self,earthDict):$/;"	kind:member	line:682
+setEarthCoverageDict	Factories/DbFactory/postgisDb.py	/^    def setEarthCoverageDict(self, textDict):$/;"	kind:member	line:1455
+setEarthCoverageDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def setEarthCoverageDict(self,earthDict):$/;"	kind:member	line:694
 setEditorData	ComplexTools/manageComplex.py	/^    def setEditorData(self, editor, index):$/;"	kind:member	line:154
 setEditorData	ComplexTools/manageComplex.py	/^    def setEditorData(self, editor, index):$/;"	kind:member	line:202
 setEnabled	UserTools/serverProfilesManager.py	/^    def setEnabled(self, enabled):$/;"	kind:member	line:189
@@ -2055,7 +2055,7 @@ setProgressRange	ProcessingTools/processManager.py	/^    def setProgressRange(se
 setServerConfiguration	ServerTools/serverConfigurator.py	/^    def setServerConfiguration(self, name):$/;"	kind:member	line:110
 setState	AttributeTools/code_list.py	/^    def setState(self):$/;"	kind:member	line:55
 setStatus	ValidationTools/ValidationProcesses/validationProcess.py	/^    def setStatus(self, msg, status):$/;"	kind:member	line:153
-setStructureFromSql	Factories/DbFactory/postgisDb.py	/^    def setStructureFromSql(self, version, epsg):$/;"	kind:member	line:2257
+setStructureFromSql	Factories/DbFactory/postgisDb.py	/^    def setStructureFromSql(self, version, epsg):$/;"	kind:member	line:2270
 setSufixVisible	CustomWidgets/databaseParameterWidget.py	/^    def setSufixVisible(self, visible):$/;"	kind:member	line:61
 setTitle	CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py	/^    def setTitle(self, title):$/;"	kind:member	line:220
 setTitle	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def setTitle(self, title):$/;"	kind:member	line:262
@@ -2074,8 +2074,8 @@ setUp	test/test_resources.py	/^    def setUp(self):$/;"	kind:member	line:24
 setUp	test/test_translations.py	/^    def setUp(self):$/;"	kind:member	line:27
 setUrllibProxy	BDGExTools/BDGExTools.py	/^    def setUrllibProxy(self, url):$/;"	kind:member	line:53
 setValidCharacters	LayerTools/CreateFrameTool/ui_create_inom_dialog.py	/^    def setValidCharacters(self):$/;"	kind:member	line:178
-setValidationProcessStatus	Factories/DbFactory/postgisDb.py	/^    def setValidationProcessStatus(self, processName, log, status):$/;"	kind:member	line:974
-setValidationStatusQuery	Factories/SqlFactory/postgisSqlGenerator.py	/^    def setValidationStatusQuery(self, processName,log,status):$/;"	kind:member	line:383
+setValidationProcessStatus	Factories/DbFactory/postgisDb.py	/^    def setValidationProcessStatus(self, processName, log, status):$/;"	kind:member	line:987
+setValidationStatusQuery	Factories/SqlFactory/postgisSqlGenerator.py	/^    def setValidationStatusQuery(self, processName,log,status):$/;"	kind:member	line:385
 setaSistCoordCriaSpatialite	DbTools/SpatialiteTool/cria_spatialite_dialog.py	/^    def setaSistCoordCriaSpatialite(self):$/;"	kind:member	line:99
 setupEarthCoverage.py	ValidationTools/setupEarthCoverage.py	1;"	kind:file	line:1
 setupFromFile	ValidationTools/setupEarthCoverage.py	/^    def setupFromFile(self):$/;"	kind:member	line:58
@@ -2101,12 +2101,12 @@ showRect	ProductionTools/MinimumAreaTool/shapeTool.py	/^    def showRect(self, s
 showValidationToolbox	dsg_tools.py	/^    def showValidationToolbox(self):$/;"	kind:member	line:710
 showWidgetList	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def showWidgetList(self, widgetList):$/;"	kind:member	line:116
 snapGeometriesProcess.py	ValidationTools/ValidationProcesses/snapGeometriesProcess.py	1;"	kind:file	line:1
-snapLinesToFrame	Factories/DbFactory/postgisDb.py	/^    def snapLinesToFrame(self, classList, frameTable, tol):$/;"	kind:member	line:1534
-snapLinesToFrame	Factories/SqlFactory/postgisSqlGenerator.py	/^    def snapLinesToFrame(self, cl, frameTable, tol):$/;"	kind:member	line:702
+snapLinesToFrame	Factories/DbFactory/postgisDb.py	/^    def snapLinesToFrame(self, classList, frameTable, tol):$/;"	kind:member	line:1547
+snapLinesToFrame	Factories/SqlFactory/postgisSqlGenerator.py	/^    def snapLinesToFrame(self, cl, frameTable, tol):$/;"	kind:member	line:714
 snapLinesToFrameProcess.py	ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py	1;"	kind:file	line:1
 snapPoint	ProductionTools/ContourTool/dsg_line_tool.py	/^    def snapPoint(self, p):$/;"	kind:member	line:87
-snapToGrid	Factories/DbFactory/postgisDb.py	/^    def snapToGrid(self, classList, tol, srid):$/;"	kind:member	line:1518
-snapToGrid	Factories/SqlFactory/postgisSqlGenerator.py	/^    def snapToGrid(self, cl, precision, srid):$/;"	kind:member	line:757
+snapToGrid	Factories/DbFactory/postgisDb.py	/^    def snapToGrid(self, classList, tol, srid):$/;"	kind:member	line:1531
+snapToGrid	Factories/SqlFactory/postgisSqlGenerator.py	/^    def snapToGrid(self, cl, precision, srid):$/;"	kind:member	line:771
 snapToGridProcess.py	ValidationTools/ValidationProcesses/snapToGridProcess.py	1;"	kind:file	line:1
 sortFeatures	ProductionTools/ContourTool/contour_tool.py	/^    def sortFeatures(self, geom, features):$/;"	kind:member	line:61
 spatialRuleEnforcer.py	ValidationTools/ValidationProcesses/spatialRuleEnforcer.py	1;"	kind:file	line:1
@@ -2124,7 +2124,7 @@ step	CustomWidgets/progressWidget.py	/^    def step(self):$/;"	kind:member	line:
 stepProcessed	Factories/ThreadFactory/genericThread.py	/^    stepProcessed = pyqtSignal(str)$/;"	kind:variable	line:29
 stepProcessed	ProcessingTools/processManager.py	/^    def stepProcessed(self, uuid):$/;"	kind:member	line:75
 stop	MilitarySimbologyTools/createSqlite.py	/^    def stop(self):$/;"	kind:member	line:53
-storeConnection	Factories/DbFactory/postgisDb.py	/^    def storeConnection(self, server):$/;"	kind:member	line:201
+storeConnection	Factories/DbFactory/postgisDb.py	/^    def storeConnection(self, server):$/;"	kind:member	line:216
 storeConnection	ServerTools/serverDBExplorer.py	/^    def storeConnection(self, server, database):$/;"	kind:member	line:59
 storeConnectionConfiguration	DbTools/PostGISTool/postgisDBTool.py	/^    def storeConnectionConfiguration(self, server, database):$/;"	kind:member	line:219
 storeConnectionConfiguration	ServerTools/serverDBExplorer.py	/^    def storeConnectionConfiguration(self, server, database):$/;"	kind:member	line:90
@@ -2147,8 +2147,8 @@ testIndexBackwards	ProductionTools/InspectFeatures/inspectFeatures.py	/^    def 
 testIndexFoward	ProductionTools/InspectFeatures/inspectFeatures.py	/^    def testIndexFoward(self, index, maxIndex, minIndex):$/;"	kind:member	line:70
 testRule	ValidationTools/ValidationProcesses/spatialRuleEnforcer.py	/^    def testRule(self, rule, featureId, geometry):$/;"	kind:member	line:91
 testServer	ServerTools/viewServers.py	/^    def testServer(self, name):$/;"	kind:member	line:175
-testSpatialRule	Factories/DbFactory/postgisDb.py	/^    def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card, rule):$/;"	kind:member	line:1018
-testSpatialRule	Factories/SqlFactory/postgisSqlGenerator.py	/^    def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card):$/;"	kind:member	line:417
+testSpatialRule	Factories/DbFactory/postgisDb.py	/^    def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card, rule):$/;"	kind:member	line:1031
+testSpatialRule	Factories/SqlFactory/postgisSqlGenerator.py	/^    def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card):$/;"	kind:member	line:419
 test_dialog_cancel	test/test_dsg_tools_dialog.py	/^    def test_dialog_cancel(self):$/;"	kind:member	line:44
 test_dialog_ok	test/test_dsg_tools_dialog.py	/^    def test_dialog_ok(self):$/;"	kind:member	line:36
 test_dsg_tools_dialog.py	test/test_dsg_tools_dialog.py	1;"	kind:file	line:1
@@ -2164,12 +2164,12 @@ test_translations.py	test/test_translations.py	1;"	kind:file	line:1
 threadFactory.py	Factories/ThreadFactory/threadFactory.py	1;"	kind:file	line:1
 toolFinished	ProductionTools/MinimumAreaTool/shapeTool.py	/^    toolFinished = pyqtSignal()$/;"	kind:variable	line:33
 tr	dsg_tools.py	/^    def tr(self, message):$/;"	kind:member	line:123
-translateAbstractDbLayerNameToOutputFormat	Factories/DbFactory/postgisDb.py	/^    def translateAbstractDbLayerNameToOutputFormat(self, lyr, outputAbstractDb):$/;"	kind:member	line:346
+translateAbstractDbLayerNameToOutputFormat	Factories/DbFactory/postgisDb.py	/^    def translateAbstractDbLayerNameToOutputFormat(self, lyr, outputAbstractDb):$/;"	kind:member	line:361
 translateAbstractDbLayerNameToOutputFormat	Factories/DbFactory/spatialiteDb.py	/^    def translateAbstractDbLayerNameToOutputFormat(self, lyr, outputAbstractDb):$/;"	kind:member	line:211
-translateDS	Factories/DbFactory/abstractDb.py	/^    def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList, errorDict,invalidated=None):$/;"	kind:member	line:357
-translateLayer	Factories/DbFactory/abstractDb.py	/^    def translateLayer(self, inputLayer, inputLayerName, outputLayer, outputFileName, layerPanMap, errorDict, defaults={}, translateValues={}):$/;"	kind:member	line:307
-translateLayerWithDataFix	Factories/DbFactory/abstractDb.py	/^    def translateLayerWithDataFix(self, inputLayer, inputLayerName, outputLayer, outputFileName, layerPanMap, invalidated, errorDict, defaults={}, translateValues={}):$/;"	kind:member	line:436
-translateOGRLayerNameToOutputFormat	Factories/DbFactory/postgisDb.py	/^    def translateOGRLayerNameToOutputFormat(self, lyr, ogrOutput):$/;"	kind:member	line:357
+translateDS	Factories/DbFactory/abstractDb.py	/^    def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList, errorDict,invalidated=None):$/;"	kind:member	line:361
+translateLayer	Factories/DbFactory/abstractDb.py	/^    def translateLayer(self, inputLayer, inputLayerName, outputLayer, outputFileName, layerPanMap, errorDict, defaults={}, translateValues={}):$/;"	kind:member	line:311
+translateLayerWithDataFix	Factories/DbFactory/abstractDb.py	/^    def translateLayerWithDataFix(self, inputLayer, inputLayerName, outputLayer, outputFileName, layerPanMap, invalidated, errorDict, defaults={}, translateValues={}):$/;"	kind:member	line:440
+translateOGRLayerNameToOutputFormat	Factories/DbFactory/postgisDb.py	/^    def translateOGRLayerNameToOutputFormat(self, lyr, ogrOutput):$/;"	kind:member	line:372
 translateOGRLayerNameToOutputFormat	Factories/DbFactory/spatialiteDb.py	/^    def translateOGRLayerNameToOutputFormat(self, lyr, ogrOutput):$/;"	kind:member	line:222
 ui_create_inom_dialog.py	LayerTools/CreateFrameTool/ui_create_inom_dialog.py	1;"	kind:file	line:1
 unload	dsg_tools.py	/^    def unload(self):$/;"	kind:member	line:609
@@ -2177,24 +2177,24 @@ updateComplexClass	ComplexTools/complexWindow.py	/^    def updateComplexClass(se
 updateConnectionName	DbTools/PostGISTool/postgisDBTool.py	/^    def updateConnectionName(self):$/;"	kind:member	line:176
 updateCustomization	ServerManagementTools/customizationManager.py	/^    def updateCustomization(self, customizationName):$/;"	kind:member	line:56
 updateDbLineEdit	ValidationTools/validation_toolbox.py	/^    def updateDbLineEdit(self):$/;"	kind:member	line:166
-updateDbSRID	Factories/DbFactory/postgisDb.py	/^    def updateDbSRID(self, srid):$/;"	kind:member	line:2183
-updateDbSRID	Factories/SqlFactory/postgisSqlGenerator.py	/^    def updateDbSRID(self, srid):$/;"	kind:member	line:986
-updateGeometries	Factories/DbFactory/postgisDb.py	/^    def updateGeometries(self, tableSchema, tableName, tuplas, epsg):$/;"	kind:member	line:1345
+updateDbSRID	Factories/DbFactory/postgisDb.py	/^    def updateDbSRID(self, srid):$/;"	kind:member	line:2196
+updateDbSRID	Factories/SqlFactory/postgisSqlGenerator.py	/^    def updateDbSRID(self, srid):$/;"	kind:member	line:1005
+updateGeometries	Factories/DbFactory/postgisDb.py	/^    def updateGeometries(self, tableSchema, tableName, tuplas, epsg):$/;"	kind:member	line:1358
 updateInterface	UserTools/serverProfilesManager.py	/^    def updateInterface(self, profileName, edgvVersion):$/;"	kind:member	line:205
 updateLayer	ProductionTools/ContourTool/calc_contour.py	/^    def updateLayer(self, geom):$/;"	kind:member	line:98
 updateLayerOnDisassociate	ComplexTools/complexWindow.py	/^    def updateLayerOnDisassociate(self, layer, aggregated_class, link_column, id):$/;"	kind:member	line:333
 updateLayersFromDbs	LayerTools/LoadLayersFromServer/loadLayersFromServer.py	/^    def updateLayersFromDbs(self, type, dbList):$/;"	kind:member	line:79
 updateLog	Factories/DbFactory/abstractDb.py	/^        updateLog = pyqtSignal(str)$/;"	kind:variable	line:42
 updateOriginalLayer	ValidationTools/ValidationProcesses/validationProcess.py	/^    def updateOriginalLayer(self, pgInputLayer, qgisOutputVector):$/;"	kind:member	line:234
-updateOriginalTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def updateOriginalTable(self, tableSchema, tableName, result, epsg):$/;"	kind:member	line:636
-updatePermissionProfile	Factories/DbFactory/postgisDb.py	/^    def updatePermissionProfile(self, name, edgvversion, newjsondict):$/;"	kind:member	line:2471
+updateOriginalTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def updateOriginalTable(self, tableSchema, tableName, result, epsg):$/;"	kind:member	line:645
+updatePermissionProfile	Factories/DbFactory/postgisDb.py	/^    def updatePermissionProfile(self, name, edgvversion, newjsondict):$/;"	kind:member	line:2484
 updateReference	ProductionTools/ContourTool/contour_tool.py	/^    def updateReference(self, referenceLayer):$/;"	kind:member	line:27
 updateSetting	ServerManagementTools/genericDbManager.py	/^    def updateSetting(self, settingName, edgvVersion, newJsonDict):$/;"	kind:member	line:106
 updateSetting	ServerManagementTools/permissionManager.py	/^    def updateSetting(self, settingName, edgvVersion, newProfileDict):$/;"	kind:member	line:154
-updateSettingFromAdminDb	Factories/DbFactory/postgisDb.py	/^    def updateSettingFromAdminDb(self, settingType, name, edgvversion, newjsondict):$/;"	kind:member	line:2751
-updateSettingFromAdminDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def updateSettingFromAdminDb(self, settingType, name, edgvversion, newjsondict):$/;"	kind:member	line:1078
-updateStyle	Factories/DbFactory/postgisDb.py	/^    def updateStyle(self, styleName, table_name, qml, tableSchema):$/;"	kind:member	line:1711
-updateStyle	Factories/SqlFactory/postgisSqlGenerator.py	/^    def updateStyle(self, styleName, table_name, parsedQml, tableSchema):$/;"	kind:member	line:868
+updateSettingFromAdminDb	Factories/DbFactory/postgisDb.py	/^    def updateSettingFromAdminDb(self, settingType, name, edgvversion, newjsondict):$/;"	kind:member	line:2764
+updateSettingFromAdminDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def updateSettingFromAdminDb(self, settingType, name, edgvversion, newjsondict):$/;"	kind:member	line:1097
+updateStyle	Factories/DbFactory/postgisDb.py	/^    def updateStyle(self, styleName, table_name, qml, tableSchema):$/;"	kind:member	line:1724
+updateStyle	Factories/SqlFactory/postgisSqlGenerator.py	/^    def updateStyle(self, styleName, table_name, parsedQml, tableSchema):$/;"	kind:member	line:887
 updateTable	ComplexTools/manageComplex.py	/^    def updateTable(self):$/;"	kind:member	line:419
 updateTableView	ComplexTools/manageComplex.py	/^    def updateTableView(self):$/;"	kind:member	line:333
 user_profiles.py	UserTools/user_profiles.py	1;"	kind:file	line:1
@@ -2238,15 +2238,15 @@ validatePage	DbTools/BatchDbCreator/createBatchIncrementing.py	/^    def validat
 validatePage	UserTools/PermissionManagerWizard/permissionWizardProfile.py	/^    def validatePage(self):$/;"	kind:member	line:61
 validateTags	PostgisCustomization/CustomJSONTools/customJSONValidator.py	/^    def validateTags(self):$/;"	kind:member	line:36
 validateTags	PostgisCustomization/CustomJSONValidator/customJSONValidator.py	/^    def validateTags(self):$/;"	kind:member	line:36
-validateWithDomain	Factories/SqlFactory/postgisSqlGenerator.py	/^    def validateWithDomain(self,schemaList):$/;"	kind:member	line:213
+validateWithDomain	Factories/SqlFactory/postgisSqlGenerator.py	/^    def validateWithDomain(self,schemaList):$/;"	kind:member	line:215
 validateWithDomain	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def validateWithDomain(self):$/;"	kind:member	line:114
 validateWithDomain	Factories/SqlFactory/sqlGenerator.py	/^    def validateWithDomain(self):$/;"	kind:member	line:97
-validateWithOutputDatabaseSchema	Factories/DbFactory/abstractDb.py	/^    def validateWithOutputDatabaseSchema(self, outputAbstractDb):$/;"	kind:member	line:195
+validateWithOutputDatabaseSchema	Factories/DbFactory/abstractDb.py	/^    def validateWithOutputDatabaseSchema(self, outputAbstractDb):$/;"	kind:member	line:199
 validateWithOutputDatabaseSchema	Factories/DbFactory/spatialiteDb.py	/^    def validateWithOutputDatabaseSchema(self, outputAbstractDb):$/;"	kind:member	line:139
 validationManager.py	ValidationTools/validationManager.py	1;"	kind:file	line:1
 validationProcess.py	ValidationTools/ValidationProcesses/validationProcess.py	1;"	kind:file	line:1
-validationStatus	Factories/SqlFactory/postgisSqlGenerator.py	/^    def validationStatus(self, processName):$/;"	kind:member	line:375
-validationStatusText	Factories/SqlFactory/postgisSqlGenerator.py	/^    def validationStatusText(self, processName):$/;"	kind:member	line:379
+validationStatus	Factories/SqlFactory/postgisSqlGenerator.py	/^    def validationStatus(self, processName):$/;"	kind:member	line:377
+validationStatusText	Factories/SqlFactory/postgisSqlGenerator.py	/^    def validationStatusText(self, processName):$/;"	kind:member	line:381
 validation_config.py	ValidationTools/validation_config.py	1;"	kind:file	line:1
 validation_history.py	ValidationTools/validation_history.py	1;"	kind:file	line:1
 validation_toolbox.py	ValidationTools/validation_toolbox.py	1;"	kind:file	line:1
@@ -2259,7 +2259,7 @@ vrt	QGIS_Scripts/virtual_raster.py	/^vrt = makeVrtDict(candidates, camada)$/;"	k
 widgets	ValidationTools/processParametersDialog.py	/^    def widgets(self):$/;"	kind:member	line:131
 writeBlock	ImageTools/raster_processing.py	/^    def writeBlock(self, band, block, sizeX, sizeY = 1, offsetY = 0, pixelType = gdal.GDT_Byte):$/;"	kind:member	line:223
 writeBlock	QGIS_Scripts/HSV_fusion.py	/^    def writeBlock(self, band, block, sizeX, sizeY = 1, offsetY = 0, pixelType = gdal.GDT_Byte):$/;"	kind:member	line:236
-writeErrorLog	Factories/DbFactory/abstractDb.py	/^    def writeErrorLog(self,errorDict):$/;"	kind:member	line:555
+writeErrorLog	Factories/DbFactory/abstractDb.py	/^    def writeErrorLog(self,errorDict):$/;"	kind:member	line:559
 writeIntoDb	ValidationTools/setupEarthCoverage.py	/^    def writeIntoDb(self):$/;"	kind:member	line:156
 writeLine	Factories/ThreadFactory/inventoryThread.py	/^    def writeLine(self, outwriter, line, extension):$/;"	kind:member	line:286
 zoomFeature	ProductionTools/InspectFeatures/inspectFeatures.py	/^    def zoomFeature(self, zoom):$/;"	kind:member	line:161
