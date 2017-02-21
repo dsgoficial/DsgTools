@@ -32,15 +32,16 @@ from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry
 from qgis.gui import QgsMessageBar
 
 #DSGTools imports
+
 from DsgTools.ProductionTools.ContourTool.dsg_line_tool import DsgLineTool
 from DsgTools.ProductionTools.ContourTool.contour_tool import ContourTool
+
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'calc_contour.ui'))
 
 class CalcContour(QtGui.QDockWidget, FORM_CLASS):
     def __init__(self, iface, parent = None):
-        """Constructor."""
         super(CalcContour, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -66,15 +67,27 @@ class CalcContour(QtGui.QDockWidget, FORM_CLASS):
         QgsMapLayerRegistry.instance().layersRemoved.connect(self.populateLayers)
 
     def activateTool(self):
+
+        '''
+        Sets this tool as the current active qgis tool
+        '''
+
         self.tool.reset()
         self.iface.mapCanvas().setMapTool(self.tool)
 
     def addLayers(self, layers):
+        '''
+        Add layer in the layer combo box
+        layers: layer to be added
+        '''
         for layer in layers:
             if layer.type() == QgsMapLayer.VectorLayer:
                 self.layerCombo.addItem(layer.name())
 
     def populateLayers(self):
+        '''
+        Populates the layer combo box
+        '''
         self.layerCombo.clear()
         
         self.layerCombo.addItem(self.tr('Select a Layer'))
@@ -85,6 +98,9 @@ class CalcContour(QtGui.QDockWidget, FORM_CLASS):
                 self.layerCombo.addItem(layer.name())
 
     def getLayer(self):
+        '''
+        Gets the leayer selected in the combo box
+        '''
         currentLayerName = self.layerCombo.currentText()
 
         layers = self.iface.mapCanvas().layers()
@@ -96,6 +112,9 @@ class CalcContour(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot(QgsGeometry)
     def updateLayer(self, geom):
+        '''
+        Updates the layer
+        '''
         if self.layerCombo.currentIndex() == 0:
             QMessageBox.information(None, self.tr('Information'), self.tr('A layer must be selected!'))
             return
@@ -115,9 +134,17 @@ class CalcContour(QtGui.QDockWidget, FORM_CLASS):
             self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('Problem ordering the features!'), level=QgsMessageBar.CRITICAL, duration=3)
         elif ret == -2:
             self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('The line created does not cross any features in the selected layer!'), level=QgsMessageBar.CRITICAL, duration=3)
-        
+
     @pyqtSlot(int)
     def on_layerCombo_currentIndexChanged(self):
+        elif ret == -3:
+            self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('Assign a value for the selected attribute of the first crossed feature!'), level=QgsMessageBar.CRITICAL, duration=3)
+
+    @pyqtSlot(int)
+    def on_layerCombo_currentIndexChanged(self):
+        '''
+        Slot to update the layer when the current index changes in the layer combo
+        '''
         if self.layerCombo.currentIndex() == 0:
             return
         

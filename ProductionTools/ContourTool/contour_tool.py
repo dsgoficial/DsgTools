@@ -22,6 +22,7 @@
 """
 
 from qgis.core import QgsFeatureRequest, QgsGeometry, QGis, QgsSpatialIndex, QgsCoordinateTransform
+
 from DsgTools.ProductionTools.ContourTool.contour_value import ContourValue
 
 class ContourTool():
