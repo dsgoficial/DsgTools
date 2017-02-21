@@ -2248,13 +2248,15 @@ class PostgisDb(AbstractDb):
     
     def setDbAsTemplate(self, version = None, dbName = None, setTemplate = True):
         self.checkAndOpenDb()
-        if not dbName and not version:
+        if not dbName:
             dbName = self.getTemplateName(version)
         sql = self.gen.setDbAsTemplate(dbName, setTemplate)
         query = QSqlQuery(self.db)
+        self.db.transaction()
         if not query.exec_(sql):
             self.db.rollback()
             raise Exception(self.tr("Problem setting database as template: ")+query.lastError().text())
+        self.db.commit()
 
     def checkIfTemplate(self, dbName):
         self.checkAndOpenDb()

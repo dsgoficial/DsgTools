@@ -71,19 +71,8 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
             self.abstractDb = None
         else:
             self.setWidgetsEnabled(True)
-            self.instantiateAbstractDb(self.versionSelectionComboBox.currentText())
-
-    def instantiateAbstractDb(self, version):
-        if version == '2.1.3':
-            database = 'template_213'
-        elif version == 'FTer_2a_Ed':
-            database = 'template_fter_2a_ed'
-        host = self.serverAbstractDb.db.hostName()
-        port = self.serverAbstractDb.db.port()
-        user = self.serverAbstractDb.db.userName()
-        password = self.serverAbstractDb.db.password()
-        self.abstractDb = DbFactory().createDbFactory('QPSQL')
-        self.abstractDb.connectDatabaseWithParameters(host, port, database, user, password)
+            edgvVersion = self.versionSelectionComboBox.currentText()
+            self.abstractDb = self.customizationManager.instantiateTemplateDb(edgvVersion)
 
     def clearWidgets(self):
         rootItem = self.customizationTreeWidget.invisibleRootItem()

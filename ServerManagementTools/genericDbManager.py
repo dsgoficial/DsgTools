@@ -68,13 +68,22 @@ class GenericDbManager(QObject):
             return self.createAdminDb(serverAbstractDb, adminDb, host, port, user, password)
         adminDb.connectDatabaseWithParameters(host, port, 'dsgtools_admindb', user, password)
         return adminDb
-    
+            
     def instantiateTemplateDb(self, edgvVersion):
         '''
         Instantiates a templateDb in the same server as serverAbstractDb. 
         If template does not exists, instantiateAdminDb calls createTemplate
         '''
-        pass
+        templateName = self.serverAbstractDb.getTemplateName(edgvVersion)
+        hasTemplate = self.serverAbstractDb.checkTemplate(edgvVersion)
+        if not hasTemplate:
+            self.serverAbstractDb.createTemplateDatabase(edgvVersion)
+            templateDb = self.instantiateAbstractDb(templateName)
+            templateDb.setStructureFromSql(edgvVersion, 4674)
+            templateDb.setDbAsTemplate(version = edgvVersion)
+        else:
+            templateDb = self.instantiateAbstractDb(templateName)
+        return templateDb
 
     def createAdminDb(self, serverAbstractDb, adminDb, host, port, user, password):
         '''
