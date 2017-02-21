@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CreateBatchFromCsv</class>
+ <widget class="QWizardPage" name="CreateBatchFromCsv">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>WizardPage</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="TabDbSelectorWidget" name="tabDbSelectorWidget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="SelectFileWidget" name="customFileSelector" native="true"/>
+   </item>
+   <item row="2" column="0">
+    <widget class="DatabaseParameterWidget" name="databaseParameterWidget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SelectFileWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.selectFileWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DatabaseParameterWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.databaseParameterWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TabDbSelectorWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.tabDbSelectorWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

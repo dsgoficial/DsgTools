@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 from DsgTools.Factories.SqlFactory.sqlGenerator import SqlGenerator
+import PyQt4
 
 class PostGISSqlGenerator(SqlGenerator):
     def getComplexLinks(self, complex):
@@ -64,23 +65,35 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def loadLayerFromDatabase(self, layer_name):
-        sql = "id in (SELECT id FROM ONLY "+layer_name+")"
+        layer_name = '"."'.join(layer_name.replace('"','').split('.'))
+        sql = '''id in (SELECT id FROM ONLY "{0}")'''.format(layer_name)
         return sql
 
     def loadLayerFromDatabaseUsingInh(self, layer_name):
-        sql = "id in (SELECT id FROM "+layer_name+")"
+        layer_name = '"."'.join(layer_name.replace('"','').split('.'))
+        sql = '''id in (SELECT id FROM ONLY "{0}")'''.format(layer_name)
         return sql
 
-    def getCreateDatabase(self, name):
-        sql = "CREATE DATABASE "+name
+    def getCreateDatabase(self, name, dropIfExists = False):
+        sql = ''
+        if dropIfExists:
+            sql+= """DROP DATABASE IF EXISTS "{0}";""".format(name)
+        sql += """CREATE DATABASE "{0}";""".format(name)
         return sql
 
     def insertFrameIntoTable(self, wkt):
         sql = "INSERT INTO aux_moldura_a(geom) VALUES(ST_GeomFromText("+wkt+"))"
         return sql
 
-    def getElementCountFromLayer(self, layer):
-        sql = "SELECT count(*) FROM ONLY "+layer
+    def getElementCountFromLayer(self, table):
+        sql = "SELECT count(id) FROM ONLY {0} limit 1".format(table)
+        return sql
+    
+    def getElementCountFromLayerV2(self, schema, table, useInheritance):
+        if useInheritance == False:
+            sql = '''SELECT count(*) FROM ONLY "{0}"."{1}" limit 1'''.format(schema,table)
+        else:
+            sql = '''SELECT count(*) FROM "{0}"."{1}" limit 1'''.format(schema,table)
         return sql
 
     def getElementCountFromLayerWithInh(self, layer):
@@ -92,38 +105,41 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def dropDatabase(self, name):
-        sql = "DROP DATABASE "+name
+        sql = """DROP DATABASE "{0}" """.format(name)
         return sql
     
     def createRole(self, roleName, mydict):
-        sql = "CREATE ROLE "+roleName+" with NOLOGIN REPLICATION;\n"
+        sql = """CREATE ROLE "{0}" with NOLOGIN REPLICATION;\n""".format(roleName)
         for db in mydict.keys():
             for schema in mydict[db].keys():
                 for cat in mydict[db][schema].keys():
-                    for table in mydict[db][schema][cat].keys():
-                        read = mydict[db][schema][cat][table]["read"]
-                        write = mydict[db][schema][cat][table]["write"]
+                    for tableWithSchema in mydict[db][schema][cat].keys():
+                        tableList = tableWithSchema.split('.')
+                        table = '''"{0}"."{1}"'''.format(tableList[0],tableList[1])
+                        read = mydict[db][schema][cat][tableWithSchema]["read"]
+                        write = mydict[db][schema][cat][tableWithSchema]["write"]
                         if write == '2':
-                            sql+='GRANT ALL ON '+table+' TO '+roleName+';\n'
+                            sql+="""GRANT ALL ON {0} TO "{1}";\n""".format(table,roleName)
                         elif read == '2':
-                            sql+='GRANT SELECT ON '+table+' TO '+roleName+';\n'
-                sql += 'GRANT ALL ON SCHEMA '+schema+' TO '+roleName+';\n'
-                sql += 'REVOKE CREATE ON SCHEMA '+schema+' FROM '+roleName+';\n'
-                sql += 'GRANT USAGE ON SCHEMA '+schema+' TO '+roleName+';\n'
-                sql += 'GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA '+schema+' TO '+roleName+';\n'
-                sql += 'GRANT USAGE ON ALL SEQUENCES IN SCHEMA '+schema+' TO '+roleName+';\n'
+                            sql+="""GRANT SELECT ON {0} TO "{1}";\n""".format(table,roleName)
+                sql += """GRANT ALL ON SCHEMA "{0}" TO "{1}";\n""".format(schema,roleName)
+                sql += """REVOKE CREATE ON SCHEMA "{0}" FROM "{1}";\n""".format(schema,roleName)
+                sql += """GRANT USAGE ON SCHEMA "{0}" TO "{1}";\n""".format(schema,roleName)
+                sql += """GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA "{0}" TO "{1}";\n""".format(schema,roleName)
+                sql += """GRANT USAGE ON ALL SEQUENCES IN SCHEMA "{0}" TO "{1}";\n""".format(schema,roleName)
         
-        sql += 'GRANT SELECT ON db_metadata TO '+roleName+';\n'
-        sql += 'GRANT ALL ON ALL TABLES IN SCHEMA information_schema TO '+roleName+';\n'
-        sql += 'GRANT ALL ON ALL TABLES IN SCHEMA pg_catalog TO '+roleName+';\n'
-        sql += 'GRANT ALL ON SCHEMA information_schema TO '+roleName+';\n'
-        sql += 'GRANT ALL ON SCHEMA pg_catalog TO '+roleName+';\n'
-        sql += 'REVOKE CREATE ON SCHEMA information_schema FROM '+roleName+';\n'
-        sql += 'REVOKE CREATE ON SCHEMA pg_catalog FROM '+roleName+';\n'
-        sql += 'GRANT USAGE ON SCHEMA information_schema TO '+roleName+';\n'
-        sql += 'GRANT USAGE ON SCHEMA pg_catalog TO '+roleName+';\n'
-        sql += 'GRANT USAGE ON ALL SEQUENCES IN SCHEMA information_schema TO '+roleName+';\n'
-        sql += 'GRANT USAGE ON ALL SEQUENCES IN SCHEMA pg_catalog TO '+roleName
+        sql += """GRANT SELECT ON db_metadata TO "{0}";\n""".format(roleName)
+        sql += """GRANT SELECT ON public.geometry_columns TO "{0}";\n""".format(roleName)
+        sql += """GRANT ALL ON ALL TABLES IN SCHEMA information_schema TO "{0}";\n""".format(roleName)
+        sql += """GRANT ALL ON ALL TABLES IN SCHEMA pg_catalog TO "{0}";\n""".format(roleName)
+        sql += """GRANT ALL ON SCHEMA information_schema TO "{0}";\n""".format(roleName)
+        sql += """GRANT ALL ON SCHEMA pg_catalog TO "{0}";\n""".format(roleName)
+        sql += """REVOKE CREATE ON SCHEMA information_schema FROM "{0}";\n""".format(roleName)
+        sql += """REVOKE CREATE ON SCHEMA pg_catalog FROM "{0}";\n""".format(roleName)
+        sql += """GRANT USAGE ON SCHEMA information_schema TO "{0}";\n""".format(roleName)
+        sql += """GRANT USAGE ON SCHEMA pg_catalog TO "{0}";\n""".format(roleName)
+        sql += """GRANT USAGE ON ALL SEQUENCES IN SCHEMA information_schema TO "{0}";\n""".format(roleName)
+        sql += """GRANT USAGE ON ALL SEQUENCES IN SCHEMA pg_catalog TO "{0}" """.format(roleName)
         return sql
 
     def dropRole(self, role):
@@ -211,6 +227,22 @@ class PostGISSqlGenerator(SqlGenerator):
                             ON ccu.constraint_name = tc.constraint_name
                 WHERE constraint_type = 'FOREIGN KEY' and tc.constraint_schema in (%s)''' % schemas
         return sql
+    
+    def getTableDomains(self,tableList):
+        schemas = '\''+'\',\''.join(schemaList)+'\''
+        sql = '''SELECT
+                tc.table_schema,tc.table_name, kcu.column_name, 
+                ccu.table_name AS foreign_table_name,
+                ccu.column_name AS foreign_column_name,
+                'SELECT ' || ccu.column_name || ' FROM dominios.' || ccu.table_name || ' ORDER BY ' || ccu.column_name || ' ASC'
+                    FROM 
+                        information_schema.table_constraints AS tc 
+                        JOIN information_schema.key_column_usage AS kcu
+                        ON tc.constraint_name = kcu.constraint_name
+                        JOIN information_schema.constraint_column_usage AS ccu
+                            ON ccu.constraint_name = tc.constraint_name
+                WHERE constraint_type = 'FOREIGN KEY' and tc.constraint_schema in (%s)''' % schemas
+        return sql
 
     def getNotNullFields(self,schemaList):
         schemas = '\''+'\',\''.join(schemaList)+'\''
@@ -277,10 +309,10 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getInvalidGeom(self, tableSchema, tableName):
-        return "select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only %s.%s  where ST_IsValid(geom) = 'f') as f" % (tableSchema,tableName)
+        return '''select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only "{0}"."{1}"  where ST_IsValid(geom) = 'f') as f'''.format(tableSchema,tableName)
     
     def getNonSimpleGeom(self, tableSchema, tableName):
-        return "select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only %s.%s  where ST_IsSimple(geom) = 'f') as f" % (tableSchema,tableName)
+        return '''select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only "{0}"."{1}"  where ST_IsSimple(geom) = 'f') as f'''.format(tableSchema,tableName)
     
     def checkValidationStructure(self):
         return "select count(*) from information_schema.columns where table_name = 'aux_flags_validacao'"
@@ -291,7 +323,7 @@ class PostGISSqlGenerator(SqlGenerator):
             id serial NOT NULL,
             process_name varchar(200) NOT NULL,
             layer varchar(200) NOT NULL,
-            feat_id smallint NOT NULL,
+            feat_id bigint NOT NULL,
             reason varchar(200) NOT NULL,
             user_fixed boolean NOT NULL DEFAULT FALSE,
             dimension smallint NOT NULL,
@@ -385,6 +417,9 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card):
+        #TODO: Add geometry column
+        class_a = '"'+'"."'.join(class_a.replace('"','').split('.'))+'"'
+        class_b = '"'+'"."'.join(class_b.replace('"','').split('.'))+'"'
         if predicate_function == 'ST_Disjoint':
             if class_a!=class_b:
                 sameClassRestriction=''
@@ -440,29 +475,31 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getMulti(self,cl):
-        sql = "select id from only %s where ST_NumGeometries(geom) > 1" % cl
+        #TODO: get pk
+        cl = '"'+'"."'.join(cl.replace('"','').split('.'))+'"'
+        sql = """select id from only {0} where ST_NumGeometries(geom) > 1""".format(cl)
         return sql
 
     def getDuplicatedGeom(self,schema,cl):
         sql = """select * from (
         SELECT id,
         ROW_NUMBER() OVER(PARTITION BY geom ORDER BY id asc) AS Row,
-        geom FROM ONLY %s.%s 
+        geom FROM ONLY "{0}"."{1}" 
         ) dups
         where     
-        dups.Row > 1""" % (schema,cl)
+        dups.Row > 1""".format(schema,cl)
         return sql
     
     def getSmallAreas(self,schema,cl,areaTolerance):
         sql = """select  foo2.id, foo2.geom from (
-        select id, geom, ST_Area(geom) as area from %s.%s 
-        ) as foo2 where foo2.area < %s order by foo2.id""" % (schema,cl,areaTolerance)
+        select id, geom, ST_Area(geom) as area from "{0}"."{1}" 
+        ) as foo2 where foo2.area < {2} order by foo2.id""".format(schema,cl,areaTolerance)
         return sql
     
     def getSmallLines(self,schema,cl,areaTolerance):
         sql = """select  foo2.id, foo2.geom from (
-        select id, geom, ST_Length(geom) as len from %s.%s 
-        ) as foo2 where len < %s order by foo2.id""" % (schema,cl,areaTolerance)
+        select id, geom, ST_Length(geom) as len from "{0}"."{1}" 
+        ) as foo2 where len < {2} order by foo2.id""".format(schema,cl,areaTolerance)
         return sql
     
     def prepareVertexNearEdgesStruct(self, tableSchema, tableName):
@@ -476,11 +513,11 @@ class PostGISSqlGenerator(SqlGenerator):
               linestrings.id as id
             FROM
               (SELECT id as id, (ST_Dump(ST_Boundary(geom))).geom
-               FROM only {0}.{1} 
+               FROM only "{0}"."{1}" 
                ) AS linestrings
             ) AS segments)#
         drop table if exists pontos#
-        create temp table pontos as select id as id, (ST_DumpPoints(geom)).geom as geom from only {0}.{1}#
+        create temp table pontos as select id as id, (ST_DumpPoints(geom)).geom as geom from only "{0}"."{1}"#
         create index pontos_gist on pontos using gist (geom)#
         create index seg_gist on seg using gist (geom)""".format(tableSchema, tableName)
         return sql
@@ -490,18 +527,18 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def deleteFeatures(self,schema,table,idList):
-        sql = """DELETE FROM %s.%s 
-        WHERE id in (%s)""" %(schema,table,','.join(idList))
+        sql = """DELETE FROM "{0}"."{1}" 
+        WHERE id in ({2})""".format(schema,table,','.join(idList))
         return sql
     
     def deleteFeaturesNotIn(self,schema,table,idList):
-        sql = """DELETE FROM %s.%s 
-        WHERE id not in (%s)""" %(schema,table,','.join(map(str,idList)))
+        sql = """DELETE FROM "{0}"."{1}" 
+        WHERE id not in ({2})""" .format(schema,table,','.join(map(str,idList)))
         return sql        
     
     def getNotSimple(self, tableSchema, tableName):
         sql = """select foo.id as id, ST_MULTI(st_startpoint(foo.geom)) as geom from (
-        select id as id, (ST_Dump(ST_Node(ST_SetSRID(ST_MakeValid(geom),ST_SRID(geom))))).geom as geom from {0}.{1}  
+        select id as id, (ST_Dump(ST_Node(ST_SetSRID(ST_MakeValid(geom),ST_SRID(geom))))).geom as geom from "{0}"."{1}"  
         where ST_IsSimple(geom) = 'f') as foo where st_equals(st_startpoint(foo.geom),st_endpoint(foo.geom))""".format(tableSchema, tableName)
         return sql
 
@@ -520,7 +557,7 @@ class PostGISSqlGenerator(SqlGenerator):
                               linestrings.id as id
                             FROM
                               (SELECT id as id, (ST_Dump(geom)).geom as geom
-                               FROM only {0}.{1}
+                               FROM only "{0}"."{1}"
                                ) AS linestrings WHERE ST_NPoints(linestrings.geom) > 2 ) as points)
             select distinct id, anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle)
         elif  tableName.split('_')[-1] == 'a':
@@ -537,7 +574,7 @@ class PostGISSqlGenerator(SqlGenerator):
                               linestrings.id as id
                             FROM
                               (SELECT id as id, ST_Boundary((ST_Dump(ST_ForceRHR(geom))).geom) as geom
-                               FROM only {0}.{1}
+                               FROM only "{0}"."{1}"
                                ) AS linestrings WHERE ST_NPoints(linestrings.geom) > 2 ) as points)
             select distinct id, anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle)
         return sql
@@ -547,42 +584,67 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def forceValidity(self, tableSchema, tableName, idList, srid):
-        sql = """update {0}.{1} set geom = ST_Multi(result.geom) from (
-        select distinct parts.id, ST_Union(parts.geom) as geom from {0}.{1} as source, 
+        #TODO: Put pk field
+        sql = """update "{0}"."{1}" set geom = ST_Multi(result.geom) from (
+        select distinct parts.id, ST_Union(parts.geom) as geom from "{0}"."{1}" as source, 
                                         (select id as id, ST_Multi(((ST_Dump(ST_SetSRID(ST_MakeValid(geom), {3}))).geom)) as geom from 
-                                        {0}.{1}  where id in ({2})) as parts where ST_GeometryType(parts.geom) = ST_GeometryType(source.geom) group by parts.id
-        ) as result where  result.id = {0}.{1}.id""".format(tableSchema,tableName,','.join(idList),srid)
+                                        "{0}"."{1}"  where id in ({2})) as parts where ST_GeometryType(parts.geom) = ST_GeometryType(source.geom) group by parts.id
+        ) as result where  result.id = "{0}"."{1}".id""".format(tableSchema,tableName,','.join(idList),srid)
         return sql
     
     def getTableExtent(self, tableSchema, tableName):
+        #TODO: put geometry column
         sql = """
-        SELECT ST_XMin(ST_Extent(geom)), ST_XMax(ST_Extent(geom)), ST_YMin(ST_Extent(geom)), ST_YMax(ST_Extent(geom)) AS extent FROM {}.{}
+        SELECT ST_XMin(ST_Extent(geom)), ST_XMax(ST_Extent(geom)), ST_YMin(ST_Extent(geom)), ST_YMax(ST_Extent(geom)) AS extent FROM "{0}"."{1}"
         """.format(tableSchema, tableName)
         return sql
     
-    def getOrphanGeomTablesWithElements(self):
-        sql = """
-        select pgcl2.sc || '.' || pgcl2.n as tb from pg_class as pgcl
-            left join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
-            left join pg_namespace as pgnsp on pgcl.relnamespace = pgnsp.oid
-            left join pg_inherits as pginh on pginh.inhparent = pgcl.oid
-            join (select pgcl.oid, pgmsp.nspname as sc, pgcl.relname as n from pg_class as pgcl
-                        join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
-                        left join pg_namespace pgmsp on pgcl.relnamespace = pgmsp.oid) 
-            as pgcl2 on pgcl2.oid = pginh.inhrelid
-            where pgnsp.nspname in ('ge','pe', 'cb', 'public') and pgatt.attname IS NULL and pgcl.relkind = 'r'
-        union 
-        select distinct gc.f_table_schema || '.' || p.relname as tb from pg_class as p
-            left join pg_inherits as inh  on inh.inhrelid = p.oid 
-            left join geometry_columns as gc on gc.f_table_name = p.relname
-            where (inh.inhrelid IS NULL) and 
-            gc.f_table_schema in ('cb', 'pe', 'ge', 'public')
-        
-        order by tb
-        """
+    def getOrphanGeomTablesWithElements(self,loading = False):
+        #TODO: Avaliate if deprecated
+        if not loading:
+            sql = """
+            select pgcl2.n as tb from pg_class as pgcl
+                left join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
+                left join pg_namespace as pgnsp on pgcl.relnamespace = pgnsp.oid
+                left join pg_inherits as pginh on pginh.inhparent = pgcl.oid
+                join (select pgcl.oid, pgmsp.nspname as sc, pgcl.relname as n from pg_class as pgcl
+                            join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
+                            left join pg_namespace pgmsp on pgcl.relnamespace = pgmsp.oid) 
+                as pgcl2 on pgcl2.oid = pginh.inhrelid
+                where pgnsp.nspname in ('ge','pe', 'cb') and pgatt.attname IS NULL and pgcl.relkind = 'r'
+            union 
+            select distinct p.relname as tb from pg_class as p
+                left join pg_inherits as inh  on inh.inhrelid = p.oid 
+                left join geometry_columns as gc on gc.f_table_name = p.relname
+                where (inh.inhrelid IS NULL) and 
+                gc.f_table_schema in ('cb', 'pe', 'ge')
+            
+            order by tb
+            """
+        else:
+            sql = """
+            select pgcl2.n as tb from pg_class as pgcl
+                left join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
+                left join pg_namespace as pgnsp on pgcl.relnamespace = pgnsp.oid
+                left join pg_inherits as pginh on pginh.inhparent = pgcl.oid
+                join (select pgcl.oid, pgmsp.nspname as sc, pgcl.relname as n from pg_class as pgcl
+                            join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
+                            left join pg_namespace pgmsp on pgcl.relnamespace = pgmsp.oid) 
+                as pgcl2 on pgcl2.oid = pginh.inhrelid
+                where pgnsp.nspname in ('ge','pe', 'cb', 'public') and pgatt.attname IS NULL and pgcl.relkind = 'r'
+            union 
+            select distinct p.relname as tb from pg_class as p
+                left join pg_inherits as inh  on inh.inhrelid = p.oid 
+                left join geometry_columns as gc on gc.f_table_name = p.relname
+                where (inh.inhrelid IS NULL) and 
+                gc.f_table_schema in ('cb', 'pe', 'ge', 'public')
+            
+            order by tb
+            """
         return sql
     
     def updateOriginalTable(self, tableSchema, tableName, result, epsg):
+        #TODO: Put original id
         sqls = []
         for key in result.keys():
             geoms = []
@@ -592,12 +654,13 @@ class PostGISSqlGenerator(SqlGenerator):
             union = 'ST_Union(ARRAY[{}])'.format(array)
 
             sql = """
-            UPDATE {0}.{1} SET geom = ST_Multi({2}) WHERE id = {3}
+            UPDATE "{0}"."{1}" SET geom = ST_Multi({2}) WHERE id = {3}
             """.format(tableSchema, tableName, union, key)
             sqls.append(sql)
         return sqls
     
     def getOrphanTableElementCount(self, orphan):
+        cl = '"'+'"."'.join(cl.replace('"','').split('.'))+'"'
         sql = "select id from %s limit 1" % orphan
         return sql
     
@@ -606,18 +669,19 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def dropCentroid(self, table):
+        table = '"'+'"."'.join(table.replace('"','').split('.'))+'"'
         sql = "alter table %s drop column if exists centroid" % table
         return sql
     
     def createCentroidColumn(self, table_schema, table_name, srid):
-        sql = """alter table {1}.{2} add column centroid geometry('POINT',{0})#
-        alter table {1}.{2} alter column geom drop not null#
-        CREATE INDEX {3} ON {1}.{2} USING gist(centroid)""".format(srid,table_schema, table_name,table_name[:-2]+'_c_gist')
+        sql = """alter table "{1}"."{2}" add column centroid geometry('POINT',{0})#
+        alter table "{1}"."{2}" alter column geom drop not null#
+        CREATE INDEX {3} ON "{1}"."{2}" USING gist(centroid)""".format(srid,table_schema, table_name,table_name[:-2]+'_c_gist')
         return sql
     
     def createCentroidGist(self, table_schema, table_name):
         gistName = table_name[:-2]+'_c_gist'
-        sql = "CREATE INDEX {0} ON {1}.{2} USING gist(centroid)".format(gistName,table_schema,table_name)
+        sql = '''CREATE INDEX {0} ON "{1}"."{2}" USING gist(centroid)'''.format(gistName,table_schema,table_name)
         return sql
     
     def getEarthCoverageClasses(self):
@@ -637,21 +701,21 @@ class PostGISSqlGenerator(SqlGenerator):
     
     
     def makeRelationDict(self, table, codes):
-        sql = 'select code, code_name from dominios.%s where code in %s' % (table, in_clause)
+        sql = """select code, code_name from dominios.%s where code in %s""" % (table, codes)
         return sql
 
     def getEarthCoverageCentroids(self):
-        sql = "select distinct table_schema ||'.'|| table_name from information_schema.columns where column_name = 'centroid'"
+        sql = "select distinct table_name from information_schema.columns where column_name = 'centroid'"
         return sql
     
     def getWhoAmI(self, cl, id):
         sql = "select p.relname from {0} as c, pg_class as p where c.tableoid = p.oid and c.id = {1}".format(cl,id)
         return sql
     
-    def snapLinesToFrame(self, cl, tol):
+    def snapLinesToFrame(self, cl, frameTable, tol):
         schema, table = cl.split('.')
         sql = """
-        update {0}.{1} as classe set geom = ST_Multi(agrupado.geom)
+        update "{0}"."{1}" as classe set geom = ST_Multi(agrupado.geom)
         from
             (
                 select simplelines.id as id, ST_Union(simplelines.newline) as geom
@@ -663,13 +727,13 @@ class PostGISSqlGenerator(SqlGenerator):
                     (   select a.id as id, a.geom as geom,
                         ST_ShortestLine(st_startpoint((ST_Dump(a.geom)).geom), 
                         ST_Boundary(m.geom)) as from_start
-                        from {0}.{1} a, public.aux_moldura_a m
+                        from "{0}"."{1}" a, {3} m
                     ) as short
                     where ST_Length(from_start) < {2}
                 ) as simplelines group by simplelines.id
             ) as agrupado
         where classe.id = agrupado.id#
-        update {0}.{1} as classe set geom = ST_Multi(agrupado.geom)
+        update "{0}"."{1}" as classe set geom = ST_Multi(agrupado.geom)
         from
             (
                 select simplelines.id as id, ST_Union(simplelines.newline) as geom
@@ -682,30 +746,33 @@ class PostGISSqlGenerator(SqlGenerator):
                         ST_ShortestLine(st_endpoint((ST_Dump(a.geom)).geom), 
                         ST_Boundary(m.geom)) as from_start,
                         ST_NPoints((ST_Dump(a.geom)).geom) as index
-                        from {0}.{1} a, public.aux_moldura_a m
+                        from "{0}"."{1}" a, {3} m
                     ) as short
                     where ST_Length(from_start) < {2}
                 ) as simplelines group by simplelines.id
             ) as agrupado
         where classe.id = agrupado.id        
-        """.format(schema, table, str(tol))
+        """.format(schema, table, str(tol), frameTable)
         return sql
     
-    def densifyFrame(self, cl):
-        schema, table = cl.split('.')
+    def densifyFrame(self, cl, frameTable, snapTolerance):
+        cl = '"'+'"."'.join(cl.replace('"','').split('.'))+'"'
+        frameTable = '"'+'"."'.join(frameTable.replace('"','').split('.'))+'"'
         sql = """
-        update public.aux_moldura_a m set geom = st_multi(st_snap(m.geom, 
-        foo.vertices, 0.0000000001))
+        update {2} m set geom = st_multi(st_snap(m.geom, 
+        foo.vertices, {1}))
         from
         (
             select st_union(st_boundary(a.geom)) as vertices from 
-        {0}.{1} a
+        {0} a
         ) as foo        
-        """.format(schema, table)
+        """.format(cl, snapTolerance, frameTable)
         return sql
 
-    def snapToGrid(self, cl, precision):
-        sql = 'update {0} set geom = ST_SnapToGrid(geom,{1})'.format(cl, precision)
+    def snapToGrid(self, cl, precision, srid):
+        #TODO: add geometry
+        cl = '"'+'"."'.join(cl.replace('"','').split('.'))+'"'
+        sql = 'update {0} set geom = ST_SetSRID(ST_SnapToGrid(geom,{1}),{2})'.format(cl, precision, srid)
         return sql
     
     def makeRecursiveSnapFunction(self):
@@ -738,11 +805,484 @@ class PostGISSqlGenerator(SqlGenerator):
     def executeRecursiveSnap(self, cl, tol):
         sql = 'SELECT dsgsnap(\'{0}\', {1})'.format(cl, str(tol))
         return sql
+    
+    def createTempTable(self, layerName):
+        schema, tableName = layerName.split('.')
+        sql = '''
+        DROP TABLE IF EXISTS "{0}"."{1}_temp"#
+        CREATE TABLE "{0}"."{1}_temp" as (select * from "{0}"."{1}" where 1=2)
+        '''.format(schema,tableName)
+        return sql
+    
+    def dropTempTable(self, tableName):
+        tableName = '"'+'"."'.join(tableName.replace('"','').split('.'))+'"'
+        sql = '''DROP TABLE IF EXISTS {0}'''.format(tableName)
+        return sql
+    
+    def populateTempTable(self, tableName, attributes, values, geometry, srid, geomColumnName):
+        tableName = '"'+'"."'.join(tableName.split('.'))
+        columnTupleString = '"'+'","'.join(map(str,attributes))+'"'
+        columnTupleString += ',{0}'.format(geomColumnName)
+        valueTupple = []
+        for value in values:
+            # surrouding texts with '' to make the sql
+            if isinstance(value, str) or isinstance(value, unicode):
+                valueTupple.append("'{0}'".format(value))
+            elif isinstance(value, PyQt4.QtCore.QDate):
+                value = 'NULL'
+                valueTupple.append(value)
+            else:
+                valueTupple.append(value)
+        valueTupple.append("ST_SetSRID(ST_Multi('{0}'),{1})".format(geometry,str(srid)))
+        valueTuppleString = ','.join(map(str,valueTupple))
+        sql = """INSERT INTO {0}_temp"({1}) VALUES ({2})""".format(tableName, columnTupleString, valueTuppleString)
+        return sql
+    
+    def createSpatialIndex(self, tableName):
+        tableName = '"'+'"."'.join(tableName.replace('"','').split('.'))
+        sql = 'create index "{0}_temp_gist" on {1}_temp" using gist (geom)'.format(tableName.split('.')[-1].replace('"',''), tableName)
+        return sql
+    
+    def getStyles(self):
+        sql = 'select description, f_table_schema, f_table_name, stylename from public.layer_styles where f_table_catalog = current_database()'
+        return sql
+
+    def checkStyleTable(self):
+        sql = "select relname from pg_class where relname = 'layer_styles' limit 1"
+        return sql
+    
+    def createStyleTable(self):
+        sql = """
+        CREATE TABLE public.layer_styles
+        (
+          id serial NOT NULL,
+          f_table_catalog character varying,
+          f_table_schema character varying,
+          f_table_name character varying,
+          f_geometry_column character varying,
+          stylename text,
+          styleqml text,
+          stylesld text,
+          useasdefault boolean,
+          description text,
+          owner character varying(30),
+          ui xml,
+          update_time timestamp without time zone DEFAULT now(),
+          CONSTRAINT layer_styles_pkey PRIMARY KEY (id)
+        )
+        """
+        return sql
+    
+    def getStylesFromDb(self, dbVersion):
+        sql = None
+        if dbVersion == '2.1.3':
+            sql = """select distinct description from public.layer_styles where f_table_catalog = current_database() and description like 'edgv_213%'"""
+        elif dbVersion == 'FTer_2a_Ed':
+            sql = """select distinct description from public.layer_styles where f_table_catalog = current_database() and description like 'edgv_FTer_2a_Ed%'"""
+        return sql
+    
+    def getStyle(self, styleName, table_name):
+        sql = """SELECT styleqml from public.layer_styles where f_table_name = '{0}' and description = '{1}' and f_table_catalog = current_database()""".format(table_name, styleName)
+        return sql
+    
+    def updateStyle(self, styleName, table_name, parsedQml, tableSchema):
+        sql = """UPDATE public.layer_styles SET styleqml = '{0}', update_time = now() where f_table_name = '{1}' and description = '{2}'""".format(parsedQml.replace("'","''"),table_name, styleName)
+        return sql
+    
+    def importStyle(self, styleName, table_name, parsedQml, tableSchema, dbName):
+        if table_name[-1] == 'c':
+            geomColumn = 'centroid'
+        else:
+            geomColumn = 'geom'
+        sql = """INSERT INTO  public.layer_styles (styleqml, f_table_name, description, f_geometry_column, stylename, f_table_schema, f_table_catalog, useasdefault) VALUES ('"""+parsedQml.replace("'","''")+"""','{0}','{1}','{2}','{3}','{4}','{5}',FALSE)""".format(table_name, styleName, geomColumn, styleName.split('/')[-1]+'/'+table_name, tableSchema, dbName)
+        return sql
+    
+    def getTableSchemaFromDb(self, table):
+        sql = """select distinct table_schema from information_schema.columns where table_name = '{0}' and table_schema not in ('validation','views')""".format(table)
+        return sql
+    
+    def getAllStylesFromDb(self):
+        sql = """SELECT DISTINCT f_table_catalog, description, f_table_name, update_time from public.layer_styles order by f_table_catalog, description, f_table_name asc """
+        return sql
+    
+    def deleteStyle(self, styleName):
+        sql = """delete from public.layer_styles where description = '{0}'""".format(styleName)
+        return sql
+    
+    def getConstraints(self, schemaList):
+        sql = """select sch.nspname, cl.relname, c.conname, c.consrc from 
+            (
+                select * from pg_constraint where contype = 'c'
+            ) as c join (
+                select oid, nspname from pg_namespace where nspname in ({0})
+            ) as sch on sch.oid = c.connamespace
+            left join pg_class as cl on c.conrelid = cl.oid
+            """.format(','.schemaList)
+        return sql
+    
+    def getGeometricSchemas(self):
+        sql = 'select distinct f_table_schema from public.geometry_columns'
+        return sql
+    
+    def getGeomTablesFromGeometryColumns(self):
+        sql = 'select srid, f_geometry_column, type, f_table_schema, f_table_name from public.geometry_columns'
+        return sql
+    
+    def getGeomTablesDomains(self):
+        sql = """select distinct case 
+            when split_part(conrelid::regclass::text,'.',2) = '' then replace(split_part(conrelid::regclass::text,'.',1),'"','')
+            else replace(split_part(conrelid::regclass::text,'.',2),'"','')
+            end as cl, pg_get_constraintdef(oid) FROM 
+            pg_constraint WHERE contype = 'f' and case 
+            when replace(split_part(conrelid::regclass::text,'.',2),'"','') = '' then replace(split_part(conrelid::regclass::text,'.',1),'"','')
+            else replace(split_part(conrelid::regclass::text,'.',2),'"','')
+        end in (select f_table_name from public.geometry_columns where f_table_schema <> 'views')
+        """
+        return sql
+    
+    def getGeomTableConstraints(self):
+        sql = """select distinct case 
+            when split_part(conrelid::regclass::text,'.',2) = '' then split_part(conrelid::regclass::text,'.',1)
+            else split_part(conrelid::regclass::text,'.',2)
+            end as cl, pg_get_constraintdef(oid) FROM 
+             pg_constraint WHERE contype = 'c' and case 
+            when split_part(conrelid::regclass::text,'.',2) = '' then split_part(conrelid::regclass::text,'.',1)
+            else split_part(conrelid::regclass::text,'.',2)
+        end in (select f_table_name from public.geometry_columns where f_table_schema <> 'views')
+        order by cl
+        """
+        return sql
+    
+    def getMultiColumns(self, schemaList):
+        sql = """select row_to_json(a) from (
+                select t.table_name, array_agg(t.column_name::text) as attributes from 
+                (select table_name, column_name from information_schema.columns  
+                where data_type = 'ARRAY' and table_schema in ({0}) 
+                ) as t group by t.table_name
+            ) as a
+        """.format("'"+"','".join(schemaList)+"'")
+        return sql
+    
+    def getGeomByPrimitive(self):
+        sql = """select row_to_json(a) from (select type as geomtype, array_agg(f_table_name) as classlist from public.geometry_columns where f_table_schema not in ('views','topology') group by type) as a"""
+        return sql
+    
+    def getGeomColumnDict(self):
+        sql = """select row_to_json(row(f_table_name, f_geometry_column)) from public.geometry_columns where f_table_schema not in ('views','topology')"""
+        return sql
+    
+    def getNotNullDict(self):
+        sql = """select row_to_json(row(table_name, table_schema,  array_agg(column_name::text))) from information_schema.columns where table_name in (select distinct f_table_name from public.geometry_columns) and is_nullable = 'NO' and data_type = 'smallint' group by table_name, table_schema"""
+        return sql
+    
+    def getDomainDict(self, domainTable):
+        sql = """select row_to_json(row(code, code_name)) from {0}""".format(domainTable)
+        return sql
+
+    def getDomainCodeDict(self, domainTable):
+        sql = """select row_to_json(a) from (select * from {0}) as a""".format(domainTable)
+        return sql
+
+    def getGeomStructDict(self):
+        sql = """select row_to_json(a) from (
+                    select table_name, array_agg(row_to_json(row(column_name::text, is_nullable))) from information_schema.columns where 
+                        table_name in (select f_table_name from public.geometry_columns) 
+                        and column_name not like 'id_%' 
+                        and column_name not in ('id','geom') 
+                        and table_schema not in ('validation','views')
+                    group by table_name
+                    ) as a
+        """
+        return sql
+    
+    def insertFrame(self,scale,mi,inom,frame,srid,geoSrid):
+        sql = """INSERT INTO public.aux_moldura_a (mi,inom,escala,geom) VALUES ('{0}','{1}','{2}',ST_Transform(ST_SetSRID(ST_Multi('{3}'),{4}), {5}))""".format(mi,inom,scale,frame,geoSrid,srid)
+        return sql
+    
+    def createFromTemplate(self,dbName, version, templateName):
+        sql = """CREATE DATABASE "{0}" with template = "{1}";""".format(dbName,templateName)
+        return sql
+    
+    def updateDbSRID(self, srid):
+        sql = """select UpdateGeometrySRID(f_table_catalog::varchar, f_table_schema::varchar, f_table_name::varchar, f_geometry_column::varchar,{0}) from geometry_columns where f_table_name in 
+
+            (select pgcl2.n as tb from pg_class as pgcl
+                left join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
+                left join pg_namespace as pgnsp on pgcl.relnamespace = pgnsp.oid
+                left join pg_inherits as pginh on pginh.inhparent = pgcl.oid
+                join (select pgcl.oid, pgmsp.nspname as sc, pgcl.relname as n from pg_class as pgcl
+                            join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
+                            left join pg_namespace pgmsp on pgcl.relnamespace = pgmsp.oid) 
+                as pgcl2 on pgcl2.oid = pginh.inhrelid
+                where pgnsp.nspname in ('ge','pe', 'cb', 'public') and pgatt.attname IS NULL and pgcl.relkind = 'r'
+            union 
+            select distinct p.relname as tb from pg_class as p
+                left join pg_inherits as inh  on inh.inhrelid = p.oid 
+                left join geometry_columns as gc on gc.f_table_name = p.relname
+                where (inh.inhrelid IS NULL) and 
+                gc.f_table_schema in ('cb', 'pe', 'ge', 'public')
+            
+            order by tb)""".format(srid)
+        return sql
+    
+    def setDbAsTemplate(self, dbName, setTemplate = True):
+        if setTemplate:
+            sql = """UPDATE pg_database set datistemplate = 't' where datname = '{0}';""".format(dbName)
+        else:
+            sql = """UPDATE pg_database set datistemplate = 'f' where datname = '{0}';""".format(dbName)
+        return sql
+    
+    def checkTemplate(self):
+        sql = """select datname from pg_database where datistemplate = 't'"""
+        return sql
+    
+    def checkIfTemplate(self, dbName):
+        sql = """select datistemplate from pg_database where datname = '{0}'""".format(dbName)
+        return sql
+    
+    def alterSearchPath(self, dbName, version):
+        if version == '2.1.3':
+            sql = 'ALTER DATABASE "{0}" SET search_path = "$user", public, topology,\'cb\',\'complexos\',\'dominios\';'.format(dbName)
+        elif version == 'FTer_2a_Ed':
+            sql = 'ALTER DATABASE "{0}" SET search_path = "$user", public, topology,\'pe\',\'ge\',\'complexos\',\'dominios\';'.format(dbName)
+        return sql
+    
+    def getUsersFromServer(self):
+        sql = """SELECT usename, usesuper FROM pg_user WHERE usename <> 'postgres' order by usename"""
+        return sql
+    
+    def reasignAndDropUser(self, user):
+        sql = """REASSIGN OWNED BY {0} to postgres; DROP USER {0};""".format(user)
+        return sql
 
     def deleteFeatureFlagsFromDb(self, layer, feat_id, processName):
         sql = "DELETE FROM validation.aux_flags_validacao WHERE process_name = '{0}' AND layer = '{1}' AND feat_id = {2}".format(processName, layer, feat_id)
         return sql
     
     def removeEmptyGeomtriesFromDb(self, layer):
+        layer = '"'+'"."'.join(layer.replace('"','').split('.'))
         sql = "DELETE FROM {0} WHERE st_isempty(geom) = TRUE".format(layer)
+        return sql
+    
+    def hasAdminDb(self):
+        sql = """SELECT datname from pg_database where datname = 'dsgtools_admindb';"""
+        return sql
+
+    def getRolesDict(self):
+        sql = """select row_to_json(a) from (select distinct  pgd.datname as dbname, pgr.rolname as rolename from pg_shdepend as shd join (
+            select * from pg_roles where rolcanlogin = 'f'
+            ) as pgr on shd.refobjid = pgr.oid join pg_database as pgd on shd.dbid = pgd.oid) as a
+            """
+        return sql
+
+    def getSettingTable(self, settingType):
+        if settingType == 'Permission':
+            tableName = 'permission_profile'
+        elif settingType == 'Customization':
+            tableName = 'customization'
+        elif settingType == 'EarthCoverage':
+            tableName = 'earth_coverage'
+        elif settingType == 'Style':
+            tableName = 'style'
+        elif settingType == 'FieldToolBoxConfig':
+            tableName = 'field_toolbox_config'
+        elif settingType == 'ValidationConfig':
+            tableName = 'validation_config'
+        else:
+            raise Exception(self.tr('Setting type not defined!'))
+        return tableName
+
+    def insertSettingIntoAdminDb(self, settingType, name, jsondict, edgvversion):
+        tableName = self.getSettingTable(settingType)
+        sql = """INSERT INTO "public"."{0}" (name, jsondict, edgvversion) VALUES ('{1}','{2}','{3}'); """.format(tableName, name, jsondict, edgvversion)
+        return sql
+    
+    def getSettingFromAdminDb(self, settingType, name, edgvversion):
+        tableName = self.getSettingTable(settingType)
+        sql = """select jsondict as jsondict from "public"."{0}" where name = '{1}' and edgvversion = '{2}';""".format(tableName, name, edgvversion)
+        return sql
+    
+    def updateSettingFromAdminDb(self, settingType, name, edgvversion, newjsondict):
+        tableName = self.getSettingTable(settingType)
+        sql = """update "public"."{0}" set jsondict = '{3}' where name = '{1}' and edgvversion = '{2}'; """.format(tableName, name, edgvversion, newjsondict)
+        return sql
+    
+    def deleteSettingFromAdminDb(self, settingType, name, edgvversion):
+        tableName = self.getSettingTable(settingType)
+        sql = """DELETE FROM "public"."{0}" where name = '{1}' and  edgvversion = '{2}';""".format(tableName, name, edgvversion)
+        return sql
+    
+    def getAllSettingsFromAdminDb(self, settingType):
+        tableName = self.getSettingTable(settingType)
+        sql = """select row_to_json(a) from (
+                    select edgvversion, array_agg(name) as settings from public.{0} group by edgvversion
+                ) as a;""".format(tableName)
+        return sql
+    
+    def dropRoleOnDatabase(self, roleName):
+        sql = """drop owned by "{0}" cascade;
+            drop role "{0}";""".format(roleName)
+        return sql
+    
+    def getRolesWithGrantedUsers(self):
+        sql = """select row_to_json(a) from (
+                    select pgr.rolname as profile, array_agg(pgr2.rolname) as users  from pg_auth_members as pgam 
+                        left join pg_roles as pgr on pgam.roleid = pgr.oid 
+                        left join pg_roles as pgr2 on pgam.member = pgr2.oid
+                    group by pgr.rolname
+                ) as a;
+        """
+        return sql
+
+    
+    def getDomainTables(self):
+        sql = '''select distinct table_name from information_schema.columns where table_schema = 'dominios' order by table_name asc'''
+        return sql
+    
+    def getGeometricSchemaList(self):
+        sql = '''select distinct f_table_schema from public.geometry_columns order by f_table_schema asc;'''
+        return sql
+    
+    def getGeometricTableListFromSchema(self, schema):
+        if isinstance(schema, list):
+            sql = '''select distinct f_table_schema, f_table_name from public.geometry_columns where f_table_schema in ('{0}') and f_table_name in (
+                select distinct table_name from information_schema.tables where table_type <> 'VIEW'
+                )
+                 order by f_table_name asc;'''.format("','".join(schema))
+        else:
+            sql = '''select distinct f_table_schema, f_table_name from public.geometry_columns where f_table_schema = '{0}' and f_table_name in (
+                select distinct table_name from information_schema.tables where table_type <> 'VIEW'
+                )
+                 order by f_table_name asc;'''.format(schema)
+        return sql
+    
+    def getParentGeomTables(self, schemaList):
+        schemaList = [i for i in schemaList if i not in ['validation', 'views']]
+        sql = """select pgnsp.nspname, pgcl2.n as tb from pg_class as pgcl
+                left join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
+                left join pg_namespace as pgnsp on pgcl.relnamespace = pgnsp.oid
+                left join pg_inherits as pginh on pginh.inhparent = pgcl.oid
+                join (select pgcl.oid, pgmsp.nspname as sc, pgcl.relname as n from pg_class as pgcl
+                            join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
+                            left join pg_namespace pgmsp on pgcl.relnamespace = pgmsp.oid) 
+                as pgcl2 on pgcl2.oid = pginh.inhrelid
+                where pgnsp.nspname in ('{0}') and pgatt.attname IS NULL and pgcl.relkind = 'r'
+            union 
+            select distinct gc.f_table_schema,p.relname as tb from pg_class as p
+                left join pg_inherits as inh  on inh.inhrelid = p.oid 
+                left join geometry_columns as gc on gc.f_table_name = p.relname
+                where (inh.inhrelid IS NULL) and 
+                gc.f_table_schema in ('{0}')
+            
+            order by tb""".format("','".join(schemaList))
+        return sql
+    
+    def getInheritanceDict(self):
+        sql = """select row_to_json(a) from (select pgc.relname parentname, array_agg(pgc1.relname) childname 
+                from pg_inherits as pginh 
+                    left join pg_class pgc on pginh.inhparent = pgc.oid 
+                    left join pg_class as pgc1 on pginh.inhrelid = pgc1.oid
+                group by pgc.relname
+                ) as a"""
+        return sql
+    
+    def getGeomTables(self, schemaList, dbPrimitiveList=[], excludeViews=True, geomColumn = False):
+        primitiveClause = ''
+        viewClause = ''
+        if dbPrimitiveList <> []:
+            primitiveClause = """and type in ('{0}')""".format("','".join(dbPrimitiveList))
+        if excludeViews:
+            viewClause = """and f_table_name in (select table_name from information_schema.tables where table_type <> 'VIEW')"""
+        selectClause = 'f_table_schema, f_table_name'
+        if geomColumn:
+            selectClause += ',f_geometry_column'
+        sql = """select distinct {0} from public.geometry_columns where f_table_schema in ('{1}') {2} {3} order by f_table_name""".format(selectClause, "','".join(schemaList), primitiveClause, viewClause)
+        return sql
+    
+    def getAttributeListFromTable(self, schema, tableName):
+        sql = """select distinct column_name from information_schema.columns where table_schema = '{0}' and table_name = '{1}' and column_name not in (
+        select f_geometry_column from public.geometry_columns where f_table_schema = '{0}' and f_table_name = '{1}'
+        )
+        and column_name not like 'id%' order by column_name """.format(schema,tableName)
+        return sql
+    
+    def getAttributeDictFromDb(self):
+        sql = """select row_to_json(a) from (select distinct table_schema, table_name, array_agg(column_name::text) as attributelist from information_schema.columns where table_schema not in ('views','validation')
+        and table_schema in (select distinct f_table_schema from public.geometry_columns)
+        and table_name in (select distinct f_table_name from public.geometry_columns)
+        
+         and column_name not in (
+            select f_geometry_column from public.geometry_columns where f_table_schema = table_schema and f_table_name = table_name
+            )
+        and column_name not like 'id%' group by table_schema, table_name order by table_schema, table_name) as a"""
+        return sql
+    
+    def getAttributeInfoFromTable(self, schema, tableName):
+        sql = """ select row_to_json(a) from (select distinct column_name, data_type, is_nullable, column_default from information_schema.columns 
+        where table_schema = '{0}' and table_name = '{1}' and column_name not in (
+        select f_geometry_column from public.geometry_columns where f_table_schema = '{0}' and f_table_name = '{1}'
+        )
+        and column_name not like 'id%' order by column_name ) as a
+        """.format(schema,tableName)
+        return sql
+    
+    def getAttrTypeDictFromDb(self):
+        sql = """ select row_to_json(a) from (
+                    select udt_name, array_agg(row_to_json(row(table_schema::text, table_name::text, column_name::text))) from information_schema.columns where 
+                        table_name in (select f_table_name from public.geometry_columns) 
+                        and column_name not like 'id_%' 
+                        and column_name <> 'id' 
+                        and column_name not in (
+            select f_geometry_column from public.geometry_columns where f_table_schema = table_schema and f_table_name = table_name
+            )
+                        and table_schema not in ('validation','views')
+                    group by udt_name
+                    ) as a
+        """
+        return sql
+    
+    def getAllDomainValues(self, domainTable):
+        sql = """ select code from dominios.{0}""".format(domainTable)
+        return sql
+    
+    def getConstraintDict(self, domainList):
+        sql = """select row_to_json(result) from (
+        select a.tn as tablename, array_agg(row_to_json(row(a.conname::text, a.consrc::text))) from (select sch.nspname as sch, cl.relname as tn, c.conname as conname, c.consrc as consrc from 
+                (
+                    select * from pg_constraint where contype = 'c'
+                ) as c join (
+                    select oid, nspname from pg_namespace where nspname in ('{0}')
+                ) as sch on sch.oid = c.connamespace
+                left join pg_class as cl on c.conrelid = cl.oid) as a where a.tn in (select f_table_name from public.geometry_columns) group by a.tn order by a.tn
+        ) as result
+        """.format("""','""".join(domainList))
+        return sql
+
+    def getDefaultFromDb(self, schema, tableName, attrName):
+        sql = """select column_default from information_schema.columns where table_schema = '{0}' and table_name = '{1}' and column_name = '{2}';""".format(schema, tableName, attrName)
+        return sql
+    
+    def upgradePostgis(self, updateDict):
+        sql = ''
+        for key in updateDict:
+            sql += """ALTER EXTENSION {0} UPDATE TO "{1}";""".format(key, updateDict[key]['defaultVersion'])
+        return sql
+    
+    def getPostgisVersion(self):
+        sql = '''SELECT name, default_version,installed_version FROM pg_available_extensions WHERE name in ('postgis', 'postgis_topology')'''
+        return sql
+
+    def getCustomizationPerspectiveDict(self, perspective):
+        if perspective == 'customization':
+            sql = '''select row_to_json(a) from (
+                        select name, array_agg(datname) from customization as custom 
+                            left join applied_customization as appcust on custom.id = appcust.id_customization
+                            left join pg_database as pgd on pgd.oid = appcust.dboid group by name
+                    ) as a'''
+        if perspective == 'database':
+            sql = '''select row_to_json(a) from (
+                        select datname as name, array_agg(name) from customization as custom 
+                            left join applied_customization as appcust on custom.id = appcust.id_customization
+                            left join pg_database as pgd on pgd.oid = appcust.dboid group by datname
+                    ) as a'''
         return sql

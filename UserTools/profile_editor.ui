@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>652</width>
+    <width>816</width>
     <height>449</height>
    </rect>
   </property>
@@ -25,6 +25,12 @@
      </item>
      <item>
       <widget class="QComboBox" name="jsonCombo">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="editable">
         <bool>false</bool>
        </property>
@@ -37,6 +43,13 @@
       <widget class="QPushButton" name="createButton">
        <property name="text">
         <string>Create Permissions Model</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="deletePushButton">
+       <property name="text">
+        <string>Delete Selected Model</string>
        </property>
       </widget>
      </item>

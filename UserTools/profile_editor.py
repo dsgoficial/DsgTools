@@ -236,3 +236,17 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         Closes the dialog
         '''
         self.close()
+    
+    @pyqtSlot(bool)
+    def on_deletePushButton_clicked(self):
+        if self.jsonCombo.currentIndex() <> 0:
+            profileName = self.jsonCombo.currentText()
+            if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to remove profile ')+profileName+'?', QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+                return
+            try:
+                os.remove(os.path.join(self.folder,profileName+'.json'))
+            except Exception as e:
+                QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem deleting profile! \n')+e.args[0])
+                return
+            self.getProfiles()
+            self.setInitialState()

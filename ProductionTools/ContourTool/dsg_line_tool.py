@@ -34,6 +34,7 @@ class DsgLineTool(QgsMapTool):
         '''
         Constructor
         '''
+
         super(DsgLineTool, self).__init__(canvas)
         
         self.canvas = canvas

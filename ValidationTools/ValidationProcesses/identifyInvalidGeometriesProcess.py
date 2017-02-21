@@ -24,33 +24,40 @@ from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class IdentifyInvalidGeometriesProcess(ValidationProcess):
-    def __init__(self, postgisDb, codelist):
+    def __init__(self, postgisDb, iface):
         '''
         Constructor
         '''
-        super(self.__class__,self).__init__(postgisDb, codelist)
+        super(self.__class__,self).__init__(postgisDb, iface)
+        self.processAlias = self.tr('Identify Invalid Geometries')
+        
+        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False)
+        self.parameters = {'Classes':classesWithElem.keys()}
 
     def execute(self):
         '''
         Reimplementation of the execute method from the parent class
         '''
-        QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName())
-            invalidGeomRecordList = self.abstractDb.getInvalidGeomRecords() #list only classes with elements.
+            classesWithElem = self.parameters['Classes']
+            invalidGeomRecordList = self.abstractDb.getInvalidGeomRecords(classesWithElem)
+            if len(invalidGeomRecordList) > 0:
+                numberOfInvGeom = self.addFlag(invalidGeomRecordList)
+                for tuple in invalidGeomRecordList:
+                    self.addClassesToBeDisplayedList(tuple[0])  
+                msg = self.tr('{} features are invalid. Check flags.').format(numberOfInvGeom)
+                self.setStatus(msg, 4) #Finished with flags
+                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 1
+            else:
+                msg = self.tr('All features are valid.')
+                self.setStatus(msg, 1) #Finished
+                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         except Exception as e:
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
             return 0
 
-        if len(invalidGeomRecordList) > 0:
-            numberOfInvGeom = self.addFlag(invalidGeomRecordList)
-            for tuple in invalidGeomRecordList:
-                self.addClassesToBeDisplayedList(tuple[0])        
-            self.setStatus('%s features are invalid. Check flags.\n' % numberOfInvGeom, 4) #Finished with flags
-            QgsMessageLog.logMessage('%s features are invalid. Check flags.\n' % numberOfInvGeom, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            return 1
-        else:
-            self.setStatus('All features are valid.\n', 1) #Finished
-            QgsMessageLog.logMessage('All features are valid.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)

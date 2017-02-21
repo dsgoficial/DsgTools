@@ -123,20 +123,18 @@ class ProcessManager(QObject):
         #initiating processing
         QThreadPool.globalInstance().start(process)
 
-    def createPostgisDatabaseProcess(self, db, version,epsg):
+    def createPostgisDatabaseProcess(self, dbName, abstractDb, version,epsg):
         '''
         Create the postgis databsae process
         '''
         #creating process
         process = self.threadFactory.makeProcess('pgdb')
         stopped = [False]
-        process.setParameters(db,version,epsg,stopped)
-
+        process.setParameters(abstractDb,dbName,version,epsg,stopped)
         #connecting signal/slots
         process.signals.rangeCalculated.connect(self.setProgressRange)
         process.signals.stepProcessed.connect(self.stepProcessed)
         process.signals.processingFinished.connect(self.processFinished)
-
         #preparing the progressBar that will be created
         self.prepareProcess(process, self.tr("Creating database structure..."))
 

@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
+import os, binascii
 from uuid import uuid4
 
 from osgeo import ogr, osr
@@ -28,6 +28,7 @@ from osgeo import ogr, osr
 # DsgTools imports
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.Utils.utils import Utils
+from DsgTools.LayerTools.CreateFrameTool.map_index import UtmGrid
 
 #PyQt imports
 from PyQt4.QtSql import QSqlQuery, QSqlDatabase
@@ -35,6 +36,7 @@ from PyQt4.QtCore import QSettings, SIGNAL, pyqtSignal, QObject
 
 #Qgis imports
 import qgis.core 
+from qgis.core import QgsCoordinateReferenceSystem 
 
 class DbSignals(QObject):
         updateLog = pyqtSignal(str)
@@ -50,8 +52,9 @@ class AbstractDb(QObject):
         self.utils = Utils()
         self.signals = DbSignals()
         self.slotConnected = False
-        pass
-    
+        self.versionFolderDict = dict({'2.1.3':'edgv_213','FTer_2a_Ed':'edgv_FTer_2a_Ed'})
+        self.utmGrid = UtmGrid()
+
     def __del__(self):
         '''
         Destructor
@@ -90,8 +93,36 @@ class AbstractDb(QObject):
                 if not query.exec_(sql):
                     raise Exception(self.tr("Problem counting elements: ")+query.lastError().text())
                 listaQuantidades.append([layer, number])
-        return listaQuantidades     
+        return listaQuantidades
+    
+    def getLayersWithElements(self, layerList):
+        self.checkAndOpenDb()
+        lyrWithElemList = []
+        for lyr in layerList:
+            schema=self.getTableSchemaFromDb(lyr)
+            sql = self.gen.getElementCountFromLayer(schema,lyr)
+            query = QSqlQuery(sql,self.db)
+            query.next()
+            if query.value(0) > 1:
+                lyrWithElemList.appen(lyr)
+        return lyrWithElemList
 
+    def getLayersWithElementsV2(self, layerList, useInheritance = False):
+        self.checkAndOpenDb()
+        lyrWithElemList = []
+        for layer in layerList:
+            if '.' in layer:
+                schema, lyr = layer.replace('"','').split('.')
+            else:
+                lyr = layer
+                schema = self.getTableSchemaFromDb(lyr)
+            sql = self.gen.getElementCountFromLayerV2(schema, lyr, useInheritance)
+            query = QSqlQuery(sql,self.db)
+            query.next()
+            if query.value(0) > 0:
+                lyrWithElemList.append(lyr)
+        return lyrWithElemList
+    
     def findEPSG(self):
         '''
         Finds the database EPSG
@@ -119,17 +150,18 @@ class AbstractDb(QObject):
                 classesWithElements[cl[0]]=cl[1]   
         return classesWithElements
 
-    def listClassesWithElementsFromDatabase(self):
+    def listClassesWithElementsFromDatabase(self, useComplex = True, primitiveFilter = []):
         '''
         List classes with elements. Uses all classes (complex included)
         '''
-        geomClassList = self.listGeomClassesFromDatabase()
-        complexClassList = self.listComplexClassesFromDatabase()
+        geomClassList = self.listGeomClassesFromDatabase(primitiveFilter)
         classList = []
         for g in geomClassList:
             classList.append(g)
-        for c in complexClassList:
-            classList.append(c)
+        if useComplex:
+            complexClassList = self.listComplexClassesFromDatabase()
+            for c in complexClassList:
+                classList.append(c)
         classList.sort()
         return self.listWithElementsFromDatabase(classList)
 
@@ -291,6 +323,8 @@ class AbstractDb(QObject):
         feat=inputLayer.GetNextFeature()
         #for feat in inputLayer:
         while feat:
+            if not feat.geometry():
+                continue
             inputId = feat.GetFID()
             if feat.geometry().GetGeometryCount() > 1:
                 #Deaggregator
@@ -412,6 +446,7 @@ class AbstractDb(QObject):
         4. nullAttribute: excluir do mapeamento aquele atributo caso ele seja não nulo
         5. classNotFoundInOutput: pular classe na conversão e mostrar no warning
         6. attributeNotFoundInOutput: pular atributo e mostrar no warning para todas as feicoes
+        7. nullGeometry: excluir a feicao do mapeamento
         '''
         inputLayer.ResetReading()
         fieldCount = inputLayer.GetLayerDefn().GetFieldCount()
@@ -427,6 +462,8 @@ class AbstractDb(QObject):
         outputOgrLyrDict = self.getOgrLayerIndexDict(outputLayer)
         if inputLayerName not in invalidated['classNotFoundInOutput']:
             while feat:
+                if not feat.geometry():
+                    continue
                 nullLine = True
                 #Case 1: nullLine
                 for i in range(fieldCount):
@@ -535,7 +572,6 @@ class AbstractDb(QObject):
         '''
         Gets the QML directory
         '''
-        self.checkAndOpenDb()
         currentPath = os.path.dirname(__file__)
         if qgis.core.QGis.QGIS_VERSION_INT >= 20600:
             qmlVersionPath = os.path.join(currentPath, '..', '..', 'Qmls', 'qgis_26')
@@ -552,6 +588,36 @@ class AbstractDb(QObject):
         else:
             qmlPath = ''
         return qmlPath
+
+    def getStyleDict(self, dbVersion):
+        '''
+        dbVersion: database version in the format of abstractDb.getVersion()
+        The first iteration of walk lists all dirs as the second element of the list in os.walk(styleDir).next()[1]. 
+        As only God and Mauricio were going to remember this, I wrote it down.
+        '''
+        currentPath = os.path.dirname(__file__)
+        styleDir = os.path.join(currentPath, '..', '..', 'Styles')
+        if dbVersion == '2.1.3':
+            styleDir = os.path.join(styleDir, 'edgv_213')
+        elif dbVersion == 'FTer_2a_Ed':
+            styleDir = os.path.join(styleDir, 'edgv_FTer_2a_Ed')
+        styleList = os.walk(styleDir).next()[1]
+        styleDict = dict()
+        try:
+            for s in styleList:
+                styleDict['dir:'+s] = os.path.join(styleDir, s)
+            #here we get the styles from db if there are any
+        except:
+            pass
+        try:
+            dbStyles = self.getStylesFromDb(dbVersion)
+            if dbStyles:
+                for style in dbStyles:
+                    name = style.split('/')[-1]
+                    styleDict['db:'+name] = 'db:'+style
+        except:
+            pass
+        return styleDict
     
     def makeValueRelationDict(self, table, codes):
         '''
@@ -567,3 +633,37 @@ class AbstractDb(QObject):
             code_name = query.value(1)
             ret[code_name] = code
         return ret
+    
+    def createFrameFromInom(self, inom):
+        frame = self.utmGrid.getQgsPolygonFrame(inom)
+        return frame
+    
+    def insertFrame(self,scale,mi,inom,frame):
+        self.checkAndOpenDb()
+        srid = self.findEPSG()
+        geoSrid = QgsCoordinateReferenceSystem(int(srid)).geographicCRSAuthId().split(':')[-1]
+        sql = self.gen.insertFrame(scale,mi,inom,frame,srid,geoSrid)
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            self.db.rollback()
+            self.db.close()
+            raise Exception(self.tr('Problem inserting frame: ') + query.lastError().text())
+        self.db.commit()
+        self.db.close()
+    
+    def prepareCreateFrame(self, type, scale, param):
+        if type == 'mi':
+            mi = str(param)
+            if scale == '250k':
+                inom = self.utmGrid.getINomenFromMIR(str(param))
+            else:
+                inom = self.utmGrid.getINomenFromMI(str(param))
+        elif type == 'inom':
+            inom = str(param)
+            if scale == '250k':
+                mi = self.utmGrid.getINomenFromMIR(inom)
+            else:
+                mi = self.utmGrid.getMIfromInom(inom)
+        frame = self.createFrameFromInom(inom)
+        return mi, inom, frame

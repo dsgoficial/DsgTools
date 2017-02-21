@@ -14,36 +14,34 @@
    <string>Reclassification Toolbox</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QGridLayout" name="gridLayout_3">
-    <item row="0" column="0">
-     <widget class="QgsCollapsibleGroupBox" name="mGroupBox">
-      <property name="title">
-       <string>Database connection</string>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0" colspan="2">
+     <widget class="ConnectionWidget" name="widget" native="true"/>
+    </item>
+    <item row="1" column="1">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
       </property>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>10</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="1" column="0">
-        <widget class="ConnectionWidget" name="widget" native="true"/>
-       </item>
-      </layout>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>13</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <widget class="QCheckBox" name="checkBox">
+      <property name="text">
+       <string>Use real time editing</string>
+      </property>
      </widget>
     </item>
-    <item row="2" column="0">
+    <item row="3" column="0" colspan="2">
      <widget class="QScrollArea" name="scrollArea">
       <property name="widgetResizable">
        <bool>true</bool>
@@ -53,25 +51,18 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>281</width>
-         <height>291</height>
+         <width>279</width>
+         <height>311</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2"/>
       </widget>
      </widget>
     </item>
-    <item row="3" column="0">
+    <item row="4" column="0" colspan="2">
      <widget class="QPushButton" name="setupButton">
       <property name="text">
        <string>Setup</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QCheckBox" name="checkBox">
-      <property name="text">
-       <string>Use real time editing</string>
       </property>
      </widget>
     </item>
@@ -79,12 +70,6 @@
   </widget>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>QgsCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>qgis.gui</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>ConnectionWidget</class>
    <extends>QWidget</extends>

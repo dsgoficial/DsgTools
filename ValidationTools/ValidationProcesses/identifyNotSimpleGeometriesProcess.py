@@ -24,22 +24,26 @@ from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
-    def __init__(self, postgisDb, codelist):
+    def __init__(self, postgisDb, iface):
         '''
         Constructor
         '''
-        super(self.__class__,self).__init__(postgisDb, codelist)
+        super(self.__class__,self).__init__(postgisDb, iface)
+        self.processAlias = self.tr('Identify Not Simple Geometries')
+
+        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False, primitiveFilter = ['a', 'l'])
+        self.parameters = {'Classes':classesWithElem.keys()}
 
     def execute(self):
         '''
         Reimplementation of the execute method from the parent class
         '''
-        QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
-            result = self.abstractDb.getNotSimpleRecords(classesWithGeom) #list only classes with elements.
+            classesWithElem = self.parameters['Classes']
+            result = self.abstractDb.getNotSimpleRecords(classesWithElem)
             if len(result.keys()) > 0:
                 recordList = []
                 for cl in result.keys():
@@ -48,14 +52,16 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
                         recordList.append((tableSchema+'.'+tableName,id,'Not simple geometry.',result[cl][id]))
                 numberOfProblems = self.addFlag(recordList)
                 for tuple in recordList:
-                    self.addClassesToBeDisplayedList(tuple[0])        
-                self.setStatus('%s features are not simple. Check flags.\n' % numberOfProblems, 4) #Finished with flags
-                QgsMessageLog.logMessage('%s features are not simple. Check flags.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    self.addClassesToBeDisplayedList(tuple[0])
+                msg = self.tr('{} features are not simple. Check flags.').format(numberOfProblems)        
+                self.setStatus(msg, 4) #Finished with flags
+                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
-                self.setStatus('All features are simple.\n', 1) #Finished
-                QgsMessageLog.logMessage('All features are simple.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                msg = self.tr('All features are simple.')
+                self.setStatus(msg, 1) #Finished
+                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
             return 0

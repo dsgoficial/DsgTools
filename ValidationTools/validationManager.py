@@ -28,14 +28,15 @@ from PyQt4.QtGui import QMessageBox
 from PyQt4.Qt import QObject
 
 class ValidationManager(QObject):
-    def __init__(self,postgisDb,codelist):
+    def __init__(self,postgisDb, iface):
         '''
         Constructor
         '''
         super(ValidationManager, self).__init__()
         self.processList = []
         self.postgisDb = postgisDb
-        self.codelist = codelist
+        self.iface = iface
+        self.processDict = dict()
         try:
             #creating validation structure
             self.postgisDb.checkAndCreateValidationStructure()
@@ -44,7 +45,7 @@ class ValidationManager(QObject):
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            self.processList = []
+            
 
     def setAvailableProcesses(self):
         '''
@@ -63,13 +64,14 @@ class ValidationManager(QObject):
                 chars[0] = chars[0].upper()
                 processClass = ''.join(chars)
                 self.processList.append(processClass)
+                self.processDict[self.instantiateProcessByName(processClass).processAlias] = processClass 
             
     def instantiateProcessByName(self, processName):
         '''
         This method instantiate a process by its name.
         The import is made dynamically using the __import__ function.
         The class to be import is obtained using the getattr function.
-        The class instance is made using: klass(self.postgisDb, self.codelist)
+        The class instance is made using: klass(self.postgisDb, self.iface)
         '''
         currProc = None
         for processClass in self.processList:
@@ -84,15 +86,16 @@ class ValidationManager(QObject):
                 #obtaining the class name
                 klass = getattr(mod, processClass)
                 #instantiating the class
-                currProc = klass(self.postgisDb, self.codelist)
+                currProc = klass(self.postgisDb, self.iface)
                 return currProc
 
-    def executeProcess(self, processName):
+    def executeProcess(self, process):
         '''
         Executes a process by its name
         processName: process name
         '''
         #checking for running processes
+        processName = self.processDict[process]
         runningProc = None
         try:
             runningProc = self.postgisDb.getRunningProc()
@@ -113,7 +116,8 @@ class ValidationManager(QObject):
             # setting parameters
             if currProc.parameters:
                 dlg = ProcessParametersDialog(None, currProc.parameters, None, 'Process parameters setter')
-                dlg.exec_()
+                if dlg.exec_() == 0:
+                    return -1
                 # get parameters
                 params = dlg.values
                 # adjusting the parameters in the process
@@ -121,6 +125,7 @@ class ValidationManager(QObject):
             #check status
             QgsMessageLog.logMessage('Process %s Log:\n' % currProc.getName(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             ret = currProc.execute() #run bitch run!
+            #status = currProc.getStatus() #must set status
             QgsMessageLog.logMessage('Process ran with status %s\n' % currProc.getStatusMessage(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             #checking for existing post process
             postProcessName = currProc.postProcess()

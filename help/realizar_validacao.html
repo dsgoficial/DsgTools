@@ -1,0 +1,368 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title></title>
+
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="everydayimstyling.css" />
+</head>
+
+<body>
+	<!--Insira o título da seção adicionada na próxima tag-->
+	<h2>Realizar validação de banco de dados</h2>
+
+	<h3>Ferramentas de Validação</h3>
+
+	<p align=justify>As ferramentas de validação atualmente disponíveis
+		são capazes de identificar e resolver diversos problemas geométricos
+		que ocorrem no processo de produção de geoinformação vetorial. Essas
+		ferramentas são um primeiro passo na garantia da qualidade geométrica.
+		Nos itens seguintes será mostrado o objetivo de cada ferramenta e como
+		usá-las.</p>
+
+	<h4>Visão geral</h4>
+
+	<p align="justify">O primeiro passo para usar as ferramentas de
+		validação é selecionar o banco de dados EDGV que se deseja validar
+		geometricamente. Isso se faz clicando no botão "Abrir" como se pode
+		ver na figura 37.</p>
+
+	<p align=center>
+		<img src='dsg_tools/validacao1.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+
+	<p align="justify">Com a seleção do banco de dados desejado é
+		possível ver a lista de processos disponíveis. Atualmente existem 20
+		processos disponíveis. Na próxima seção serão analisados, em detalhes,
+		cada um desses processos.</p>
+
+	<h4>Processos disponíveis</h4>
+
+	<p align="justify">Todos os processos funcionam em todas as camadas
+		existente no banco de dados selecionado. Existem processos de
+		identificação de erros e processos de correção de erros. Os processos
+		de identificação apenas levantam flags (erros marcados para posterior
+		análise do operador) enquanto que os processos de correção executam
+		modificações nas camadas, deixando-as em modo edição para posterior
+		análise do operador. Caso tudo esteja conforme o esperado, o operador
+		pode salvar as modificações e prosseguir com a validação.</p>
+
+	<h4>Colar Geometrias</h4>
+
+	<p align="justify">Processo que usa o GRASS de forma semelhante ao
+		"Limpar geometrias", porém ele apenas executa o snap. Este processo
+		produz resultados semelhantes ao "Snap recursivo", porém usando a
+		topologia do GRASS, sendo assim ele é mais recomendado.</p>
+
+	<h4>Colar linhas na moldura</h4>
+
+	<p align="justify">O processo de colar linhas na moldura prolonga
+		linhas e faz o snap das mesmas para a moldura do produto. O processo
+		densifica a moldura criando novos vértices nela que são usados no
+		processo de fechamento de áreas usado no processo "Fechar polígonos de
+		Cobertura Terrestre". Da mesma forma como o processo de identificação
+		de linhas pequenas é necessário que o operador informe a tolerância
+		para o processo.</p>
+
+	<p align="justify">O funcionamento do processo trabalha em
+		situações como a presente na figura abaixo.</p>
+
+	<p align=center>
+		<img src='dsg_tools/validacao2.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+
+	<p align="justify">Gerando o resultado presente na figura abaixo.</p>
+
+	<p align=center>
+		<img src='dsg_tools/validacao3.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+
+	<h4>Colar na grade</h4>
+
+	<p align="justify">Este processo funciona com o uso da função
+		ST_SnapToGrid do PostGIS. O objetivo desta ferramenta é ajustar a
+		precisão das coordenadas. Ele é essencial para que os processamentos
+		topológicos corretamente, para garantir que, por exemplo, duas
+		geometrias se toquem de fato.</p>
+	<p align="justify">Sem o uso desse processo, mesmo que duas
+		geometrias teoricamente se toquem (por terem sido adquiridas com o
+		snap do QGIS ligado), não é possível obter o resultado esperado de uma
+		relação de "toca" por exemplo.</p>
+	<p align="justify">Resumindo, esse processo deve ser rodado para,
+		por exemplo, transformas uma coordenada com 17 casas decimais para uma
+		coordenada com apenas 3 casa decimais (ficando limitada aos
+		milímetros, o que é suficiente).</p>
+
+	<h4>Desagregar geometrias</h4>
+
+	<p align="justify">Esse processo separa multigeometrias facilitando
+		o processamento das mesmas pelo banco de dados.</p>
+	<h4>Fechar polígonos de Cobertura Terrestre</h4>
+
+	<p align="justify">Para este processo funcionar é necessário que já
+		haja uma configuração de cobertura terrestra já existente para o banco
+		de dados selecionado..</p>
+	<p align="justify">O processo funciona realizando a criação de
+		polígonos delimitados por feições lineares conforme estipulado na
+		configuração de cobertura terrestre. Para cada área criada é feita a
+		verificação da existência ou não de centróides (feições pontuais que
+		contém os atributos da área delimitada). Caso haja apenas um centróide
+		todos os atributos são copiados para a classe correspondente,
+		finalizando a criação do polígono componente da cobertura terrestre.
+		Caso não haja centróide ou haja centróides conflitantes em uma mesma
+		área há a criação de flags para posterior intervenção do operador.</p>
+	<p align="justify">A figura abaixo mostra um exemplo de uso da
+		ferramenta.</p>
+	<p align=center>
+		<img src='dsg_tools/validacao4.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+
+	<h4>Forçar validade de geometrias</h4>
+
+	<p align="justify">Esse processo funciona com o uso da função
+		ST_MakeValid do PostGIS. Ele roda em todas as feições levantadas pelo
+		processo "Identificar geometrias inválidas". A figura abaixo mostra o
+		antes e depois do processo para um caso de auto interseção.</p>
+	<p align=center>
+		<img src='dsg_tools/validacao5.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+
+	<h4>Identificar geometrias duplicadas</h4>
+
+	<p align="justify">Processo que identifica geometrias repetidas no
+		banco de dados. Para cada geometria duplicada é levantada uma flag.</p>
+
+	<h4>Identificar geometrias inválidas</h4>
+
+	<p align="justify">Este processo funciona com o uso da função
+		ST_IsValid do PostGIS. Sendo assim, polígonos com auto interseção ou
+		conforme os presentes na figura abaixo são inválidos e, portanto,
+		identificados por meio de flags.</p>
+	<p align=center>
+		<img src='dsg_tools/validacao6.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+
+	<h4>Identificar geometrias não simples</h4>
+
+	<p align="justify">O processo funciona gerando flags para
+		geometrias não simples. O conceito pode ser visto na figura abaixo
+		onde os elementos (b) e (d) são não simples e os elementos (a) e (c)
+		são simples.</p>
+	<p align=center>
+		<img src='dsg_tools/validacao7.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+
+	<h4>Identificar linhas pequenas</h4>
+
+	<p align="justify">Este processo funciona de maneira simples, ele
+		apenas identifica, de acordo com um comprimento limite, linhas
+		pequenas e levanta flags para cada uma delas.</p>
+	<h4>Identificador de vértices próximos a arestas</h4>
+
+	<p align="justify">Este processo necessita da entrada de uma
+		tolerância pelo operador para identificar os vértices que são
+		considerados errôneos por estarem muito próximo a arestas. A entrada
+		da tolerância é feita por meio da janela da figura abaixo que é
+		mostrada ao operador no momento da execução do processo.</p>
+	<p align=center>
+		<img src='dsg_tools/validacao8.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+	<p align="justify">O funcionamento pode ser exemplificado com o uso
+		da feição mostrada na figura 45. O vértice em destaque com o quadrado
+		amarelo será identificado e levantado como flag por estar a uma
+		distância menor que a tolerância da aresta presente logo abaixo dele.
+	</p>
+	<p align=center>
+		<img src='dsg_tools/validacao9.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+	<h4>Identificar áreas pequenas</h4>
+
+	<p align="justify">Processo que funciona exatamente como o
+		"Identificar linhas pequenas", porém a tolerância usada é a área
+		mínima a ser usada.</p>
+
+	<h4>Identificar ângulos fora de limites</h4>
+
+	<p align="justify">Este processo funciona identificando vértices de
+		feições do tipo linha e área que formam ângulos fora de um limite
+		pré-estabelecido. Este limite deve ser entrado pelo operador no
+		momento de execução do processo. Na figura xx pode-se ver a entrada do
+		valor de 10° como limite.</p>
+	<p align=center>
+		<img src='dsg_tools/validacao10.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+	<p align="justify">Considere que as feições analisadas são conforme
+		a figura abaixo.</p>
+	<p align=center>
+		<img src='dsg_tools/validacao11.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+	<p align="justify">Quando finalizado, o processo levantará flags
+		para posterior intervenção do operador marcando os vértices mostrados
+		na figura 48.</p>
+	<p align=center>
+		<img src='dsg_tools/validacao12.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+
+	<h4>Limpar geometrias</h4>
+
+	<p align="justify">
+		Este processo funciona com o uso do GRASS, executando os seguintes
+		passos:
+		<ul>
+			<li>carregamento na estrutura do GRASS com o uso do snap
+				conforme os parêmetros informados pelo operador;</li>
+			<li>quebra de linhas/limites em interseções e também quebra de
+				linhas/limites que formam um loop colapsado;</li>
+			<li>remoção de pequenos ângulos (tão pequenos que são medidos
+				como 0°); e</li>
+			<li>remoção de pontas soltas</li>
+		</ul>
+	</p>
+	<p align="justify">Resumindo, problemas como os presentes na figura
+		abaixo são resolvidos automaticamente gerando os resultados presentes
+		na figura seguinte.</p>
+	<p align=center>
+		<img src='dsg_tools/validacao13.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+	<p align=center>
+		<img src='dsg_tools/validacao14.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+	<h4>Remover feições duplicadas</h4>
+
+	<p align="justify">Processo de remoção que funciona usando as flags
+		levantadas pelo processo "Identificar geometrias duplicadas".</p>
+	<h4>Remover geometrias vazias</h4>
+
+	<p align="justify">Este processo é simples, ele funciona removendo
+		feições cuja as geometrias são nulas. Ao término do processo é
+		possível ver em detalhes quantas feições foram removidas abrindo-se o
+		log de mensagens do QGIS.</p>
+	<h4>Remover linhas pequenas</h4>
+
+	<p align="justify">Este processo funciona removendo feições a
+		partir das flags levantadas pelo processo "Identificar linhas
+		pequenas".</p>
+	<h4>Verificador de regras espaciais</h4>
+
+	<p align="justify">Este processo necessita de uma configuração de
+		regras topológicas para funcionar. Essa definição de regras é feita
+		por meio da aba "Regras" na Caixa de ferramentas de validação. O
+		acesso ao editor de regras é feito por meio do botão "Mostrar editor
+		de regras espaciais". Ao se clicar nesse botão o diálogo presente na
+		figura abaixo será mostrado.</p>
+	<p align=center>
+		<img src='dsg_tools/validacao15.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+	<p align="justify">A edição de regras é bem simples, tudo é feito a
+		partir de seleções nos campos mostrados na figura abaixo.</p>
+	<p align=center>
+		<img src='dsg_tools/validacao16.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+	<p align="justify">Ao fim da seleção dos valores de "Camada #1",
+		"Necessidade", "Predicado espacial", "Camada #2" e "Cardinalidade"
+		deve-se clicar em "Inserir Regra" para adicioná-la a lista de regras
+		já existentes. Da mesma forma, é possível remover regras clicando-se
+		em uma já existente e posteriormente clicando em "Remover Regra". Ao
+		término do processo deve-se clicar em "Ok" para salvar a configuração
+		de regras.</p>
+	<p align="justify">Agora resta ao operador rodar o processo para
+		que sejam levantadas flags para cada erro levantado no verificação das
+		regras.</p>
+	<h4>Snap recursivo</h4>
+
+	<p align="justify">Este processo funciona dentro de cada camada e
+		pode ser útil na resolução de problemas como o presente na figura
+		abaixo. Os resultados são semelhantes aos obtidos pelo processo "Colar
+		geometrias", porém o Snap Recursivo não usa uma estrutura topológica.
+	</p>
+	<p align=center>
+		<img src='dsg_tools/validacao17.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+	<p align="justify">Assim como os processo de identificação de
+		vértices próximo a arestas, este processo necessita de uma tolerância
+		informada pelo operador. Com a indicação da tolerância o processo
+		executa a correção dos problemas citados como se pode ver na figura
+		abaixo.</p>
+	<p align=center>
+		<img src='dsg_tools/validacao18.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+	<h4>Reforçador de Regras Espaciais</h4>
+
+	<p align="justify">O reforçador de regras espaciais roda em tempo
+		real testando as regras de relacionamento topológico para a camada
+		corrente que está em modo edição no QGIS. Este processo funciona como
+		o "Verificador de regras espaciais", porém gera flags em tempo real. O
+		reforçador foi implementado tendo em vista que existe ferramenta
+		semelhante no Gothic e, segundo os operadores entrevistados, este
+		processo é muito útil na validação de uma carta.</p>
+	<p align="justify">A ativação do reforçador é feita por meio da aba
+		"Regras" ao clicar-se em "Iniciar/Parar Reforçador de Regras
+		Espaciais" como se pode ver na figura abaixo.</p>
+	<p align=center>
+		<img src='dsg_tools/validacao19.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+	<p align="justify">A partir da ativação do reforçador, cada evento
+		de edição na camada executado pelo operador vai disparar os testes
+		topológicos e, caso haja erros, serão levantadas flags.</p>
+	<h3>Verificando as flags levantadas pelos processos</h3>
+
+	<p align="justify">A aba "Flags" possui a tabela de flags levantada
+		por cada processo de validação para o banco de dados selecionado. Na
+		figura abaixo vemos um exemplo de flags levantadas para o processo
+		"Identificador de vértices próximos a arestas"</p>
+	<p align=center>
+		<img src='dsg_tools/validacao20.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+	<p align="justify">Na tabela de flags é possível ver a classe onde
+		foi levantada a flag, o id da feição que deu origem a flag, a motivo
+		da flag ter sido levantada, uma coluna que futuramente será usada para
+		marcar se a flag já foi corrigida pelo operador e a dimensão da flag
+		(ponto – 0, linha – 1, área – 2).</p>
+	<p align="justify">Para visitar a flag para inspeção do operador
+		basta que seja clicado o botão direito do mouse em uma das flags para
+		ver um menu com a opção "Zoom para a flag" como se pode ver na figura
+		abaixo. Isso irá carregar a camada de flags e centralizará a
+		visualização do QGIS na flag selecionada exatamente como se pode ver
+		na figura do item "Identificador de vértices próximos a arestas".</p>
+	<p align=center>
+		<img src='dsg_tools/validacao21.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+	<h3>Histórico de Validação</h3>
+
+	<p align="justify">O histórico permite ao operador verificar todas
+		as execuções de processos de validação informando nome do processo, o
+		log do processo, o estado do processo ao término da execução e a
+		data/hora do processo. O histórico é acessado pelo botão "Abrir
+		Histórico" presenta na aba "Processos". A figura abaixo mostra um
+		exemplo de histórico.</p>
+	<p align=center>
+		<img src='dsg_tools/validacao22.png' name='figuras1'
+			alt='Erro ao mostrar a imagem'>
+	</p>
+</body>
+</html>

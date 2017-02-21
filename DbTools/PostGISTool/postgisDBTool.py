@@ -33,7 +33,9 @@ from qgis.gui import QgsGenericProjectionSelector
 
 #DsgTools Imports
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.ServerTools.viewServers import ViewServers
+
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_postgisDBTool.ui'))
@@ -54,7 +56,8 @@ class PostgisDBTool(QDialog, FORM_CLASS):
         self.populateServersCombo()
 
         self.srs = None
-
+        self.db = None
+        self.abstractDb = None
         self.factory = SqlGeneratorFactory()
         #setting the sql generator
         self.gen = self.factory.createSqlGenerator(False)
@@ -65,18 +68,21 @@ class PostgisDBTool(QDialog, FORM_CLASS):
         '''
         Gets database parameters
         '''
-        return (self.getDatabase(self.databaseEdit.text()), self.versionCombo.currentText(), self.epsg)
+        return (self.databaseEdit.text(), self.abstractDb, self.versionCombo.currentText(), self.epsg)
 
     @pyqtSlot(bool)
     def on_saveButton_clicked(self):
         '''
         Creates a postgis database
         '''
-        if self.createDatabase(self.databaseEdit.text()):
-            self.storeConnectionConfiguration(self.serversCombo.currentText(), self.databaseEdit.text())
-            self.done(1)
+        if self.databaseEdit.text() == '':
+            QgsMessageLog.logMessage('Enter database name!', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         else:
-            self.done(0)
+            self.db = self.getDatabase()
+            if self.db:
+                self.storeConnectionConfiguration(self.serversCombo.currentText(), self.databaseEdit.text())
+                self.done(1)
+
 
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
@@ -114,6 +120,7 @@ class PostgisDBTool(QDialog, FORM_CLASS):
         except:
             QMessageBox.warning(self, self.tr("Warning!"), self.tr(message))
 
+
     def createDatabase(self, name):
         '''
         Creates the database
@@ -136,23 +143,18 @@ class PostgisDBTool(QDialog, FORM_CLASS):
         Gets a a QSqlDatabase 
         '''
         (host, port, user, password) = self.getServerConfiguration(self.serversCombo.currentText())
-        db = QSqlDatabase("QPSQL")
-        db.setConnectOptions('connect_timeout=10')
-        db.setDatabaseName(database)
-        db.setHostName(host)
-        db.setPort(int(port))
-        db.setUserName(user)
+        self.abstractDb = DbFactory().createDbFactory('QPSQL')
 
         if password == '':
             conInfo = 'host='+host+' port='+port+' dbname='+database
-            self.setCredentials(db, conInfo, user)
+            self.setCredentials(self.abstractDb.db, conInfo, user)
         else:
-            db.setPassword(password)
+            self.abstractDb.connectDatabaseWithParameters(host, port, database, user, password)
 
-        if not db.open():
+        if not self.abstractDb.db.open():
             QgsMessageLog.logMessage(db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
-        return db
+        return self.abstractDb
 
     def setCredentials(self, db, conInfo, user):
         '''
@@ -190,8 +192,6 @@ class PostgisDBTool(QDialog, FORM_CLASS):
         '''
         Adjusts the text before updating the connection name
         '''
-        text = text.lower()
-        self.databaseEdit.setText(text)
         self.updateConnectionName()
 
     def checkFields(self):

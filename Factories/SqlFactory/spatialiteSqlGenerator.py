@@ -166,4 +166,32 @@ class SpatialiteSqlGenerator(SqlGenerator):
     
     def getEDGVVersion(self):
         sql = "SELECT edgvversion FROM public_db_metadata LIMIT 1"
-        return sql    
+        return sql
+    
+    def getStylesFromDb(self, dbVersion):
+        return None
+
+    def getGeomTablesFromGeometryColumns(self):
+        sql = 'select srid, f_geometry_column, type, f_table_name from geometry_columns'
+        return sql
+
+    def getGeomByPrimitive(self):
+        sql = """select type, f_table_name from geometry_columns"""
+        return sql
+    
+    def getGeomColumnDict(self):
+        sql = """select f_geometry_column, f_table_name from geometry_columns"""
+        return sql
+    
+    def insertFrame(self,scale,mi,inom,frame,srid,geoSrid):
+        sql = """INSERT INTO public_aux_moldura_a (mi,inom,escala,GEOMETRY) VALUES ('{0}','{1}','{2}',Transform(ST_GeomFromText('{3}',{4}), {5}))""".format(mi,inom,scale,frame,geoSrid,srid)
+        return sql
+    
+    def getElementCountFromLayerV2(self, schema, table, useInheritance):
+        layer = '_'.join([schema, table])
+        return self.getElementCountFromLayer(layer)
+    
+    def getFullTablesName(self, name):
+        sql = "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE '%{0}%' ORDER BY name".format(name)
+        return sql
+    

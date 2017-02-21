@@ -20,43 +20,57 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, QgsVectorLayer
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class ForceValidityGeometriesProcess(ValidationProcess):
-    def __init__(self, postgisDb, codelist):
+    def __init__(self, postgisDb, iface):
         '''
         Constructor
         '''
-        super(self.__class__,self).__init__(postgisDb, codelist)
+        super(self.__class__,self).__init__(postgisDb, iface)
+        self.processAlias = self.tr('Force Geometries Validity')
+        
+        flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyInvalidGeometriesProcess')
+        self.parameters = {'Classes':flagsDict.keys()}
         
     def preProcess(self):
         '''
         Gets the process that should be execute before this one
         '''
-        return 'IdentifyInvalidGeometriesProcess'
+        return self.tr('Identify Invalid Geometries')
         
     def postProcess(self):
         '''
         Gets the process that should be execute after this one
         '''
-        return 'DeaggregateGeometriesProcess'
+        return self.tr('Deaggregate Geometries')
 
     def execute(self):
         '''
         Reimplementation of the execute method from the parent class
         '''
-        QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr('Process.\n'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
-            flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyInvalidGeometriesProcess')
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
+            classesWithFlags = self.parameters['Classes']
+            if len(classesWithFlags) == 0:
+                self.setStatus(self.tr('There are no invalid geometries.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('There are no invalid geometries.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 1
             numberOfProblems = 0
-            for cl in flagsDict.keys():
-                numberOfProblems += self.abstractDb.forceValidity(cl,flagsDict[cl])
-            self.setStatus('%s features were changed.\n' % numberOfProblems, 1) #Finished with flags
-            QgsMessageLog.logMessage('%s features were changed.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            return
+            for cl in classesWithFlags:
+                # preparation
+                processTableName, lyr = self.prepareExecution(cl)
+                #running the process in the temp table
+                problems = self.abstractDb.forceValidity(processTableName, flagsDict[cl])
+                numberOfProblems += problems
+                # finalization
+                self.postProcessSteps(processTableName, lyr)
+                QgsMessageLog.logMessage(self.tr('{0} features from {1} were changed.').format(problems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            self.setStatus(self.tr('{0} features were changed.').format(numberOfProblems), 1) #Finished
+            return 1
         except Exception as e:
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
-            return
+            return 0

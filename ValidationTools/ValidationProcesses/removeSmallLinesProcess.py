@@ -24,39 +24,47 @@ from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class RemoveSmallLinesProcess(ValidationProcess):
-    def __init__(self, postgisDb, codelist):
+    def __init__(self, postgisDb, iface):
         '''
         Constructor
         '''
-        super(self.__class__,self).__init__(postgisDb, codelist)
+        super(self.__class__,self).__init__(postgisDb, iface)
+        self.processAlias = self.tr('Remove Small Lines')
+        
+        flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifySmallLinesProcess')
+        self.parameters = {'Classes':flagsDict.keys()}
     
     def preProcess(self):
         '''
         Gets the process that should be execute before this one
         '''
-        return 'IdentifySmallLinesProcess'
-
-    def postProcess(self):
-        '''
-        Gets the process that should be execute after this one
-        '''
-        return 'IdentifySmallLinesProcess'
+        return self.tr('Identify Small Lines')
 
     def execute(self):
         '''
         Reimplementation of the execute method from the parent class
         '''
-        QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
-            flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifySmallLinesProcess')
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
+            flagsClasses = self.parameters['Classes']
+            if len(flagsClasses) == 0:
+                self.setStatus(self.tr('There are no small areas.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('There are no small areas.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 1
             numberOfProblems = 0
-            for cl in flagsDict.keys():
-                numberOfProblems += self.abstractDb.removeFeatures(cl,flagsDict[cl])
-            self.setStatus('%s features were removed.\n' % numberOfProblems, 1) #Finished with flags
-            QgsMessageLog.logMessage('%s features were changed.\n' % numberOfProblems, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            for cl in flagsClasses:
+                # preparation
+                processTableName, lyr = self.prepareExecution(cl)
+                #running the process in the temp table
+                problems = self.abstractDb.removeFeatures(processTableName,flagsDict[cl])
+                numberOfProblems += problems
+                # finalization
+                self.postProcessSteps(processTableName, lyr)
+                QgsMessageLog.logMessage(self.tr('{0} features from {1}were changed.').format(problems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            self.setStatus(self.tr('{} features were removed.').format(numberOfProblems), 1) #Finished with flags
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
             return 0

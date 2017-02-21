@@ -26,8 +26,9 @@ from qgis.core import QgsCoordinateReferenceSystem,QgsMessageLog
 
 # Qt imports
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
+from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from PyQt4.QtSql import QSqlDatabase
+from PyQt4.QtGui import QApplication, QCursor, QMessageBox
 
 # DSGTools imports
 from DsgTools.Utils.utils import Utils
@@ -43,7 +44,7 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
     connectionChanged = pyqtSignal()
     problemOccurred = pyqtSignal(str)
     dbChanged = pyqtSignal(AbstractDb)
-    
+    styleChanged = pyqtSignal(dict)
     def __init__(self, parent = None):
         """Constructor."""
         super(ConnectionWidget, self).__init__(parent)
@@ -53,8 +54,11 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        
         self.setInitialState()
+        self.serverWidget.populateServersCombo()
+        self.serverWidget.abstractDbLoaded.connect(self.getDatabasesFromServer)
+        self.serverWidget.clearWidgets.connect(self.clearAll)
+        
          
     def __del__(self):
         self.closeDatabase()
@@ -66,6 +70,26 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         if self.abstractDb:
             del self.abstractDb
             self.abstractDb = None
+                 
+    def clearAll(self):
+        self.filename = ''
+        self.dbLoaded = False
+        self.epsg = 0
+        self.crs = None
+        
+        self.abstractDb = None
+        self.isSpatialite = False
+        self.abstractDbFactory = DbFactory()
+        self.utils = Utils()
+
+        #populating the postgis combobox
+        self.comboBoxPostgis.clear()
+        self.spatialiteFileEdit.setReadOnly(True)   
+        self.postGISCrsEdit.setReadOnly(True)
+        self.spatialiteCrsEdit.setReadOnly(True)   
+        self.edgvSpatialiteVersionEdit.setReadOnly(True)
+        self.edgvPostgisVersionEdit.setReadOnly(True)      
+      
 
     def setInitialState(self):
         '''
@@ -77,19 +101,19 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.crs = None
         
         self.abstractDb = None
-        self.isSpatialite = True
+        self.isSpatialite = False
         self.tabWidget.setCurrentIndex(0)
         self.abstractDbFactory = DbFactory()
         self.utils = Utils()
+        self.serverWidget.serversCombo.setCurrentIndex(0)
 
         #populating the postgis combobox
-        self.comboBoxPostgis.setCurrentIndex(0)
-        self.populatePostGISConnectionsCombo()
+        self.comboBoxPostgis.clear()
         self.spatialiteFileEdit.setReadOnly(True)   
         self.postGISCrsEdit.setReadOnly(True)
         self.spatialiteCrsEdit.setReadOnly(True)   
         self.edgvSpatialiteVersionEdit.setReadOnly(True)
-        self.edgvPostgisVersionEdit.setReadOnly(True)       
+        self.edgvPostgisVersionEdit.setReadOnly(True)      
 
     @pyqtSlot(int)
     def on_comboBoxPostgis_currentIndexChanged(self):
@@ -103,7 +127,6 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
             self.edgvPostgisVersionEdit.setReadOnly(True)  
             self.loadDatabase()
             self.connectionChanged.emit()
-            self.dbChanged.emit(self.abstractDb)
         
     @pyqtSlot(bool)
     def on_pushButtonOpenFile_clicked(self):  
@@ -120,12 +143,12 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         Changes the tab to work with spatialite or postgis databases
         '''
         self.filename = ''
-        self.comboBoxPostgis.setCurrentIndex(0)
+        self.comboBoxPostgis.clear()
         self.dbLoaded = False
         self.epsg = 0
         self.crs = None
         self.dbVersion = ''
-        
+        self.serverWidget.serversCombo.setCurrentIndex(0)
         self.spatialiteFileEdit.setReadOnly(True)
         self.spatialiteFileEdit.setText(self.filename)
         self.postGISCrsEdit.setText('')
@@ -135,10 +158,11 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.edgvSpatialiteVersionEdit.setText('')
         self.edgvSpatialiteVersionEdit.setReadOnly(True)
         self.edgvPostgisVersionEdit.setText('')
-        self.edgvPostgisVersionEdit.setReadOnly(True)     
+        self.edgvPostgisVersionEdit.setReadOnly(True)
+        self.mGroupBox.setTitle(self.tr('Database connection'))
         
         #Setting the database type
-        if self.tabWidget.currentIndex() == 0:
+        if self.tabWidget.currentIndex() == 1:
             self.isSpatialite = True
         else:
             self.isSpatialite = False
@@ -157,12 +181,20 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
                     
             else:
                 self.abstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
-                self.abstractDb.connectDatabase(self.comboBoxPostgis.currentText())
+                (host, port, user, password) = self.serverWidget.getServerParameters()
+                dbName = self.comboBoxPostgis.currentText()
+                self.abstractDb.connectDatabaseWithParameters(host, port, dbName, user, password)
                 self.edgvPostgisVersionEdit.setText(self.abstractDb.getDatabaseVersion())
+                serverName = self.serverWidget.serversCombo.currentText()
+                self.mGroupBox.setTitle(dbName + self.tr(' on ') + serverName)
 
             self.abstractDb.checkAndOpenDb()
             self.dbLoaded = True
             self.dbVersion = self.abstractDb.getDatabaseVersion()
+            self.abstractDb.checkAndCreateStyleTable()
+            self.styles = self.abstractDb.getStyleDict(self.dbVersion)
+            self.styleChanged.emit(self.styles)
+            self.dbChanged.emit(self.abstractDb)
             if self.dbVersion == '-1':
                 self.problemOccurred.emit(self.tr('This is not a valid DsgTools database!'))
             else:
@@ -191,13 +223,6 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
-    def populatePostGISConnectionsCombo(self):
-        '''
-        Populates the available postgis databases
-        '''
-        self.comboBoxPostgis.clear()
-        self.comboBoxPostgis.addItem(self.tr('Select Database'))
-        self.comboBoxPostgis.addItems(self.getPostGISConnections())
         
     def isDBConnected(self):
         '''
@@ -228,23 +253,23 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         return ret
-        
-    @pyqtSlot(bool)
-    def on_addConnectionButton_clicked(self):  
-        '''
-        Opens the server explorer
-        '''
-        newConnectionDialog =  ServerDBExplorer(self)
-        retvalue = newConnectionDialog.exec_()
-        self.populatePostGISConnectionsCombo()
-        return retvalue
     
-    def getPostGISConnections(self):
-        '''
-        Gets postgis connections from QSettings
-        '''
-        settings = QSettings()
-        settings.beginGroup('PostgreSQL/connections')
-        currentConnections = settings.childGroups()
-        settings.endGroup()
-        return currentConnections
+    def getDatabasesFromServer(self):    
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        try:
+            if self.serverWidget.abstractDb:
+                dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer(parentWidget = self)
+                dbList.sort()
+                self.comboBoxPostgis.clear()
+                self.comboBoxPostgis.addItem(self.tr('Select Database'))
+                for db, version in dbList:
+                    self.comboBoxPostgis.addItem(db)
+                
+            else:
+                self.setInitialState()
+                return
+        except Exception as e:
+            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            self.setInitialState()
+            self.setInitialState()
+        QApplication.restoreOverrideCursor()

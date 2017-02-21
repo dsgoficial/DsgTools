@@ -76,7 +76,7 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
                 self.tableWidget.setItem(i, 4, QTableWidgetItem(self.tr('Saved')))
         
     @pyqtSlot(bool)
-    def on_cancelButton_clicked(self):
+    def on_closeButton_clicked(self):
         '''
         Closes the dialog
         '''

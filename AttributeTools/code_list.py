@@ -74,7 +74,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
                 self.loadCodeList()
         except:
             pass
-                
+        
     def getCodeListDict(self, field):
         '''
         Gets the code list dictionary

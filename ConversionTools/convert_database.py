@@ -85,23 +85,23 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
             self.fixDataRadioButton.setEnabled(False) 
                              
         if conversionType == 'postgis2spatialite':
-            self.widget.tabWidget.setTabEnabled(1,True)
-            self.widget.tabWidget.setTabEnabled(0,False)
-            self.widget.tabWidget.setCurrentIndex(1)
-            self.widget_2.tabWidget.setTabEnabled(0,True)
-            self.widget_2.tabWidget.setTabEnabled(1,False)
-            self.widget_2.tabWidget.setCurrentIndex(0)
-            
-            self.allDataRadioButton.setEnabled(False)
-            self.fixDataRadioButton.setEnabled(False)        
-
-        if conversionType == 'spatialite2postgis':
             self.widget.tabWidget.setTabEnabled(0,True)
             self.widget.tabWidget.setTabEnabled(1,False)
             self.widget.tabWidget.setCurrentIndex(0)
             self.widget_2.tabWidget.setTabEnabled(1,True)
             self.widget_2.tabWidget.setTabEnabled(0,False)
             self.widget_2.tabWidget.setCurrentIndex(1)
+            
+            self.allDataRadioButton.setEnabled(False)
+            self.fixDataRadioButton.setEnabled(False)        
+
+        if conversionType == 'spatialite2postgis':
+            self.widget.tabWidget.setTabEnabled(1,True)
+            self.widget.tabWidget.setTabEnabled(0,False)
+            self.widget.tabWidget.setCurrentIndex(1)
+            self.widget_2.tabWidget.setTabEnabled(0,True)
+            self.widget_2.tabWidget.setTabEnabled(1,False)
+            self.widget_2.tabWidget.setCurrentIndex(0)
             
             self.allDataRadioButton.setEnabled(True)
             self.fixDataRadioButton.setEnabled(True)   

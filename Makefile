@@ -1,208 +1,216 @@
-#/***************************************************************************
-# DsgTools
+# Makefile for Sphinx documentation
 #
-# Brazilian Army Cartographic Production Tools
-#							 -------------------
-#		begin				: 2014-10-09
-#		git sha				: $Format:%H$
-#		copyright			: (C) 2014 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
-#		email				: luiz.claudio@dsg.eb.mil.br
-# ***************************************************************************/
-#
-#/***************************************************************************
-# *																		 *
-# *   This program is free software; you can redistribute it and/or modify  *
-# *   it under the terms of the GNU General Public License as published by  *
-# *   the Free Software Foundation; either version 2 of the License, or	 *
-# *   (at your option) any later version.								   *
-# *																		 *
-# ***************************************************************************/
 
-#################################################
-# Edit the following to match your sources lists
-#################################################
+# You can set these variables from the command line.
+SPHINXOPTS    =
+SPHINXBUILD   = sphinx-build
+PAPER         =
+BUILDDIR      = build
 
+# User-friendly check for sphinx-build
+ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $$?), 1)
+$(error The '$(SPHINXBUILD)' command was not found. Make sure you have Sphinx installed, then set the SPHINXBUILD environment variable to point to the full path of the '$(SPHINXBUILD)' executable. Alternatively you can add the directory with the executable to your PATH. If you don't have Sphinx installed, grab it from http://sphinx-doc.org/)
+endif
 
-#Add iso code for any locales you want to support here (space separated)
-LOCALES = af
+# Internal variables.
+PAPEROPT_a4     = -D latex_paper_size=a4
+PAPEROPT_letter = -D latex_paper_size=letter
+ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
+# the i18n builder cannot share the environment and doctrees with the others
+I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 
-# translation
-SOURCES = \
-	__init__.py \
-	dsg_tools.py \
-	dsg_tools_dialog.py
+.PHONY: help
+help:
+	@echo "Please use \`make <target>' where <target> is one of"
+	@echo "  html       to make standalone HTML files"
+	@echo "  dirhtml    to make HTML files named index.html in directories"
+	@echo "  singlehtml to make a single large HTML file"
+	@echo "  pickle     to make pickle files"
+	@echo "  json       to make JSON files"
+	@echo "  htmlhelp   to make HTML files and a HTML help project"
+	@echo "  qthelp     to make HTML files and a qthelp project"
+	@echo "  applehelp  to make an Apple Help Book"
+	@echo "  devhelp    to make HTML files and a Devhelp project"
+	@echo "  epub       to make an epub"
+	@echo "  latex      to make LaTeX files, you can set PAPER=a4 or PAPER=letter"
+	@echo "  latexpdf   to make LaTeX files and run them through pdflatex"
+	@echo "  latexpdfja to make LaTeX files and run them through platex/dvipdfmx"
+	@echo "  text       to make text files"
+	@echo "  man        to make manual pages"
+	@echo "  texinfo    to make Texinfo files"
+	@echo "  info       to make Texinfo files and run them through makeinfo"
+	@echo "  gettext    to make PO message catalogs"
+	@echo "  changes    to make an overview of all changed/added/deprecated items"
+	@echo "  xml        to make Docutils-native XML files"
+	@echo "  pseudoxml  to make pseudoxml-XML files for display purposes"
+	@echo "  linkcheck  to check all external links for integrity"
+	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
+	@echo "  coverage   to run coverage check of the documentation (if enabled)"
 
-PLUGINNAME = DsgTools
-
-PY_FILES = \
-	dsg_tools.py \
-	dsg_tools_dialog.py \
-	__init__.py
-
-EXTRAS = icon.png metadata.txt
-
-COMPILED_RESOURCE_FILES = resources_rc.py
-
-
-#################################################
-# Normally you would not need to edit below here
-#################################################
-
-HELP = help/build/html
-
-PLUGIN_UPLOAD = $(c)/plugin_upload.py
-
-QGISDIR=.qgis2
-
-default: compile
-
-compile: $(COMPILED_RESOURCE_FILES)
-
-%_rc.py : %.qrc
-	pyrcc4 -o $*_rc.py  $<
-
-%.qm : %.ts
-	lrelease $<
-
-test: compile transcompile
-	@echo
-	@echo "----------------------"
-	@echo "Regression Test Suite"
-	@echo "----------------------"
-
-	@# Preceding dash means that make will continue in case of errors
-	@-export PYTHONPATH=`pwd`:$(PYTHONPATH); \
-		export QGIS_DEBUG=0; \
-		export QGIS_LOG_FILE=/dev/null; \
-		nosetests -v --with-id --with-coverage --cover-package=. \
-		3>&1 1>&2 2>&3 3>&- || true
-	@echo "----------------------"
-	@echo "If you get a 'no module named qgis.core error, try sourcing"
-	@echo "the helper script we have provided first then run make test."
-	@echo "e.g. source run-env-linux.sh <path to qgis install>; make test"
-	@echo "----------------------"
-
-deploy: compile doc transcompile
-	@echo
-	@echo "------------------------------------------"
-	@echo "Deploying plugin to your .qgis2 directory."
-	@echo "------------------------------------------"
-	# The deploy  target only works on unix like operating system where
-	# the Python plugin directory is located at:
-	# $HOME/$(QGISDIR)/python/plugins
-	mkdir -p $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vf $(PY_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vf $(COMPILED_UI_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vf $(COMPILED_RESOURCE_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vf $(EXTRAS) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vfr i18n $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vfr $(HELP) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/help
-
-# The dclean target removes compiled python files from plugin directory
-# also deletes any .svn entry
-dclean:
-	@echo
-	@echo "-----------------------------------"
-	@echo "Removing any compiled python files."
-	@echo "-----------------------------------"
-	find $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME) -iname "*.pyc" -delete
-	find $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME) -iname ".svn" -prune -exec rm -Rf {} \;
-
-
-derase:
-	@echo
-	@echo "-------------------------"
-	@echo "Removing deployed plugin."
-	@echo "-------------------------"
-	rm -Rf $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-
-zip: deploy dclean
-	@echo
-	@echo "---------------------------"
-	@echo "Creating plugin zip bundle."
-	@echo "---------------------------"
-	# The zip target deploys the plugin and creates a zip file with the deployed
-	# content. You can then upload the zip file on http://plugins.qgis.org
-	rm -f $(PLUGINNAME).zip
-	cd $(HOME)/$(QGISDIR)/python/plugins; zip -9r $(CURDIR)/$(PLUGINNAME).zip $(PLUGINNAME)
-
-package: compile
-	# Create a zip package of the plugin named $(PLUGINNAME).zip.
-	# This requires use of git (your plugin development directory must be a
-	# git repository).
-	# To use, pass a valid commit or tag as follows:
-	#   make package VERSION=Version_0.3.2
-	@echo
-	@echo "------------------------------------"
-	@echo "Exporting plugin to zip package.	"
-	@echo "------------------------------------"
-	rm -f $(PLUGINNAME).zip
-	git archive --prefix=$(PLUGINNAME)/ -o $(PLUGINNAME).zip $(VERSION)
-	echo "Created package: $(PLUGINNAME).zip"
-
-upload: zip
-	@echo
-	@echo "-------------------------------------"
-	@echo "Uploading plugin to QGIS Plugin repo."
-	@echo "-------------------------------------"
-	$(PLUGIN_UPLOAD) $(PLUGINNAME).zip
-
-transup:
-	@echo
-	@echo "------------------------------------------------"
-	@echo "Updating translation files with any new strings."
-	@echo "------------------------------------------------"
-	@chmod +x scripts/update-strings.sh
-	@scripts/update-strings.sh $(LOCALES)
-
-transcompile:
-	@echo
-	@echo "----------------------------------------"
-	@echo "Compiled translation files to .qm files."
-	@echo "----------------------------------------"
-	@chmod +x scripts/compile-strings.sh
-	@scripts/compile-strings.sh $(LOCALES)
-
-transclean:
-	@echo
-	@echo "------------------------------------"
-	@echo "Removing compiled translation files."
-	@echo "------------------------------------"
-	rm -f i18n/*.qm
-
+.PHONY: clean
 clean:
-	@echo
-	@echo "------------------------------------"
-	@echo "Removing uic and rcc generated files"
-	@echo "------------------------------------"
-	rm $(COMPILED_UI_FILES) $(COMPILED_RESOURCE_FILES)
+	rm -rf $(BUILDDIR)/*
 
-doc:
+.PHONY: html
+html:
+	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
-	@echo "------------------------------------"
-	@echo "Building documentation using sphinx."
-	@echo "------------------------------------"
-	cd help; make html
+	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
-pylint:
+.PHONY: dirhtml
+dirhtml:
+	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
 	@echo
-	@echo "-----------------"
-	@echo "Pylint violations"
-	@echo "-----------------"
-	@pylint --reports=n --rcfile=pylintrc . || true
-	@echo
-	@echo "----------------------"
-	@echo "If you get a 'no module named qgis.core' error, try sourcing"
-	@echo "the helper script we have provided first then run make pylint."
-	@echo "e.g. source run-env-linux.sh <path to qgis install>; make pylint"
-	@echo "----------------------"
+	@echo "Build finished. The HTML pages are in $(BUILDDIR)/dirhtml."
 
-
-# Run pep8 style checking
-#http://pypi.python.org/pypi/pep8
-pep8:
+.PHONY: singlehtml
+singlehtml:
+	$(SPHINXBUILD) -b singlehtml $(ALLSPHINXOPTS) $(BUILDDIR)/singlehtml
 	@echo
-	@echo "-----------"
-	@echo "PEP8 issues"
-	@echo "-----------"
-	@pep8 --repeat --ignore=E203,E121,E122,E123,E124,E125,E126,E127,E128 --exclude pydev,resources_rc.py,conf.py . || true
+	@echo "Build finished. The HTML page is in $(BUILDDIR)/singlehtml."
+
+.PHONY: pickle
+pickle:
+	$(SPHINXBUILD) -b pickle $(ALLSPHINXOPTS) $(BUILDDIR)/pickle
+	@echo
+	@echo "Build finished; now you can process the pickle files."
+
+.PHONY: json
+json:
+	$(SPHINXBUILD) -b json $(ALLSPHINXOPTS) $(BUILDDIR)/json
+	@echo
+	@echo "Build finished; now you can process the JSON files."
+
+.PHONY: htmlhelp
+htmlhelp:
+	$(SPHINXBUILD) -b htmlhelp $(ALLSPHINXOPTS) $(BUILDDIR)/htmlhelp
+	@echo
+	@echo "Build finished; now you can run HTML Help Workshop with the" \
+	      ".hhp project file in $(BUILDDIR)/htmlhelp."
+
+.PHONY: qthelp
+qthelp:
+	$(SPHINXBUILD) -b qthelp $(ALLSPHINXOPTS) $(BUILDDIR)/qthelp
+	@echo
+	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
+	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/DsgTools.qhcp"
+	@echo "To view the help file:"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/DsgTools.qhc"
+
+.PHONY: applehelp
+applehelp:
+	$(SPHINXBUILD) -b applehelp $(ALLSPHINXOPTS) $(BUILDDIR)/applehelp
+	@echo
+	@echo "Build finished. The help book is in $(BUILDDIR)/applehelp."
+	@echo "N.B. You won't be able to view it unless you put it in" \
+	      "~/Library/Documentation/Help or install it in your application" \
+	      "bundle."
+
+.PHONY: devhelp
+devhelp:
+	$(SPHINXBUILD) -b devhelp $(ALLSPHINXOPTS) $(BUILDDIR)/devhelp
+	@echo
+	@echo "Build finished."
+	@echo "To view the help file:"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/DsgTools"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/DsgTools"
+	@echo "# devhelp"
+
+.PHONY: epub
+epub:
+	$(SPHINXBUILD) -b epub $(ALLSPHINXOPTS) $(BUILDDIR)/epub
+	@echo
+	@echo "Build finished. The epub file is in $(BUILDDIR)/epub."
+
+.PHONY: latex
+latex:
+	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
+	@echo
+	@echo "Build finished; the LaTeX files are in $(BUILDDIR)/latex."
+	@echo "Run \`make' in that directory to run these through (pdf)latex" \
+	      "(use \`make latexpdf' here to do that automatically)."
+
+.PHONY: latexpdf
+latexpdf:
+	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
+	@echo "Running LaTeX files through pdflatex..."
+	$(MAKE) -C $(BUILDDIR)/latex all-pdf
+	@echo "pdflatex finished; the PDF files are in $(BUILDDIR)/latex."
+
+.PHONY: latexpdfja
+latexpdfja:
+	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
+	@echo "Running LaTeX files through platex and dvipdfmx..."
+	$(MAKE) -C $(BUILDDIR)/latex all-pdf-ja
+	@echo "pdflatex finished; the PDF files are in $(BUILDDIR)/latex."
+
+.PHONY: text
+text:
+	$(SPHINXBUILD) -b text $(ALLSPHINXOPTS) $(BUILDDIR)/text
+	@echo
+	@echo "Build finished. The text files are in $(BUILDDIR)/text."
+
+.PHONY: man
+man:
+	$(SPHINXBUILD) -b man $(ALLSPHINXOPTS) $(BUILDDIR)/man
+	@echo
+	@echo "Build finished. The manual pages are in $(BUILDDIR)/man."
+
+.PHONY: texinfo
+texinfo:
+	$(SPHINXBUILD) -b texinfo $(ALLSPHINXOPTS) $(BUILDDIR)/texinfo
+	@echo
+	@echo "Build finished. The Texinfo files are in $(BUILDDIR)/texinfo."
+	@echo "Run \`make' in that directory to run these through makeinfo" \
+	      "(use \`make info' here to do that automatically)."
+
+.PHONY: info
+info:
+	$(SPHINXBUILD) -b texinfo $(ALLSPHINXOPTS) $(BUILDDIR)/texinfo
+	@echo "Running Texinfo files through makeinfo..."
+	make -C $(BUILDDIR)/texinfo info
+	@echo "makeinfo finished; the Info files are in $(BUILDDIR)/texinfo."
+
+.PHONY: gettext
+gettext:
+	$(SPHINXBUILD) -b gettext $(I18NSPHINXOPTS) $(BUILDDIR)/locale
+	@echo
+	@echo "Build finished. The message catalogs are in $(BUILDDIR)/locale."
+
+.PHONY: changes
+changes:
+	$(SPHINXBUILD) -b changes $(ALLSPHINXOPTS) $(BUILDDIR)/changes
+	@echo
+	@echo "The overview file is in $(BUILDDIR)/changes."
+
+.PHONY: linkcheck
+linkcheck:
+	$(SPHINXBUILD) -b linkcheck $(ALLSPHINXOPTS) $(BUILDDIR)/linkcheck
+	@echo
+	@echo "Link check complete; look for any errors in the above output " \
+	      "or in $(BUILDDIR)/linkcheck/output.txt."
+
+.PHONY: doctest
+doctest:
+	$(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
+	@echo "Testing of doctests in the sources finished, look at the " \
+	      "results in $(BUILDDIR)/doctest/output.txt."
+
+.PHONY: coverage
+coverage:
+	$(SPHINXBUILD) -b coverage $(ALLSPHINXOPTS) $(BUILDDIR)/coverage
+	@echo "Testing of coverage in the sources finished, look at the " \
+	      "results in $(BUILDDIR)/coverage/python.txt."
+
+.PHONY: xml
+xml:
+	$(SPHINXBUILD) -b xml $(ALLSPHINXOPTS) $(BUILDDIR)/xml
+	@echo
+	@echo "Build finished. The XML files are in $(BUILDDIR)/xml."
+
+.PHONY: pseudoxml
+pseudoxml:
+	$(SPHINXBUILD) -b pseudoxml $(ALLSPHINXOPTS) $(BUILDDIR)/pseudoxml
+	@echo
+	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."

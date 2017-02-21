@@ -25,21 +25,25 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 import processing, binascii
 
 class CleanGeometriesProcess(ValidationProcess):
-    def __init__(self, postgisDb, codelist):
+    def __init__(self, postgisDb, iface):
         '''
         Constructor
         '''
-        super(self.__class__,self).__init__(postgisDb, codelist)
-        self.parameters = {'Snap': 1.0, 'MinArea':0.001}
+        super(self.__class__,self).__init__(postgisDb, iface)
+        self.processAlias = self.tr('Clean Geometries')
         
-    def runProcessinAlg(self, cl):
+        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter = ['a', 'l'], withElements = True, getGeometryColumn = True)
+        classesWithElem = [i['layerName']+' ({0})'.format(i['geometryColumn']) for i in classesWithElemDictList]
+        self.parameters = {'Snap': 1.0, 'MinArea':0.001, 'Classes':classesWithElem}
+        
+    def runProcessinAlg(self, layer, tempTableName, geometryColumn):
         '''
         Runs the actual process
         '''
         alg = 'grass7:v.clean.advanced'
         
         #creating vector layer
-        input = QgsVectorLayer(self.abstractDb.getURI(cl, True).uri(), cl, "postgres")
+        input = QgsVectorLayer(self.abstractDb.getURI(tempTableName, useOnly = True, geomColumn = geometryColumn).uri(), tempTableName, "postgres")
         crs = input.crs()
         epsg = self.abstractDb.findEPSG()
         crs.createFromId(epsg)
@@ -53,7 +57,7 @@ class CleanGeometriesProcess(ValidationProcess):
         threshold = -1
 
         #getting table extent (bounding box)
-        tableSchema, tableName = self.abstractDb.getTableSchema(cl)        
+        tableSchema, tableName = self.abstractDb.getTableSchema(tempTableName)        
         (xmin, xmax, ymin, ymax) = self.abstractDb.getTableExtent(tableSchema, tableName)
         extent = '{0},{1},{2},{3}'.format(xmin, xmax, ymin, ymax)
         
@@ -64,84 +68,52 @@ class CleanGeometriesProcess(ValidationProcess):
 
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
-        self.updateOriginalLayer(input, outputLayer)
-          
+        self.updateOriginalLayer(layer, outputLayer)
+
         #getting error flags
         errorLayer = processing.getObject(ret['error'])
         #removing from registry
         QgsMapLayerRegistry.instance().removeMapLayer(input.id())
         return self.getProcessingErrors(errorLayer)
 
-    def updateOriginalLayer(self, pgInputLyr, grassOutputLyr):
-        '''
-        Updates the original layer using the grass output layer
-        pgInputLyr: postgis input layer
-        grassOutputLyr: grass output layer
-        '''
-        provider = pgInputLyr.dataProvider()
-        pgInputLyr.startEditing()
-        addList = []
-        for feature in pgInputLyr.getFeatures():
-            id = feature['id']
-            grassFeats = []
-            for gf in grassOutputLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%id))):
-                grassFeats.append(gf)
-            for i in range(len(grassFeats)):
-                if i == 0:
-                    newGeom = grassFeats[i].geometry()
-                    newGeom.convertToMultiType()
-                    feature.setGeometry(newGeom)
-                    pgInputLyr.updateFeature(feature)
-                else:
-                    newFeat = QgsFeature(feature)
-                    newGeom = grassFeats[i].geometry()
-                    newGeom.convertToMultiType()
-                    newFeat.setGeometry(newGeom)
-                    idx = newFeat.fieldNameIndex('id')
-                    newFeat.setAttribute(idx,provider.defaultValue(idx))                    
-                    addList.append(newFeat)
-        pgInputLyr.addFeatures(addList,True)
-        pgInputLyr.commitChanges()
-    
-    def getProcessingErrors(self, layer):
-        '''
-        Gets processing errors
-        layer: error layer output made by grass
-        '''
-        recordList = []
-        for feature in layer.getFeatures():
-            recordList.append((feature.id(), binascii.hexlify(feature.geometry().asWkb())))
-        return recordList
-        
     def execute(self):
         '''
         Reimplementation of the execute method from the parent class
         '''
-        QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
-            if classesWithGeom.__len__() == 0:
-                self.setStatus('Empty database!\n', 1) #Finished
-                QgsMessageLog.logMessage('Empty database!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
-                return
-            for cl in classesWithGeom:
-                if cl[-1] in ['a', 'l']:
-                    result = self.runProcessinAlg(cl)
-                    if len(result) > 0:
-                        recordList = []
-                        for tupple in result:
-                            recordList.append((cl,tupple[0],'Cleaning error.',tupple[1]))
-                            self.addClassesToBeDisplayedList(cl) 
-                        numberOfProblems = self.addFlag(recordList)
-                        self.setStatus('{} feature(s) of class '+cl+' with cleaning errors. Check flags.\n'.format(numberOfProblems), 4) #Finished with flags
-                        QgsMessageLog.logMessage('{} feature(s) of class '+cl+' with cleaning errors. Check flags.\n'.format(numberOfProblems), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                    else:
-                        self.setStatus('There are no cleaning errors on '+cl+'.\n', 1) #Finished
-                        QgsMessageLog.logMessage('There are no cleaning errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            classesWithElem = self.parameters['Classes']
+            if len(classesWithElem) == 0:
+                self.setStatus(self.tr('Empty database.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 1
+            error = False
+            for classAndGeom in classesWithElem:
+                # preparation
+                cl, geometryColumn = classAndGeom.split(' ')
+                geometryColumn = geometryColumn.replace('(','').replace(')','')
+                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+                #running the process in the temp table
+                result = self.runProcessinAlg(lyr, processTableName, geometryColumn)
+                self.abstractDb.dropTempTable(processTableName)
+                if len(result) > 0:
+                    error = True
+                    recordList = []
+                    for tupple in result:
+                        recordList.append((cl, tupple[0], self.tr('Cleaning error.'), tupple[1]))
+                        self.addClassesToBeDisplayedList(cl)
+                    numberOfProblems = self.addFlag(recordList)
+                    QgsMessageLog.logMessage(self.tr('{0} feature(s) from {1} with cleaning errors. Check flags.').format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                else:
+                    QgsMessageLog.logMessage(self.tr('There are no cleaning errors on {0}.').format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            if error:
+                self.setStatus(self.tr('There are cleaning errors. Check log.'), 4) #Finished with errors
+            else:
+                self.setStatus(self.tr('There are no cleaning errors.'), 1) #Finished
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
             return 0

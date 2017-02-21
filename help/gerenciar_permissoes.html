@@ -1,123 +1,153 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-  	
-	<title></title>
-    
-    <link rel="stylesheet" href="css/bootstrap.css">
-	<link rel="stylesheet" href="everydayimstyling.css" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="everydayimstyling.css" />
 </head>
 
 <body>
 	<!--Insira o título da seção adicionada na próxima tag-->
-    <h2>
-    	Gerenciar Permissões de Usuário
-    </h2>
-    
-    <!--Insira parágrafos usando o modelo da próxima tag-->
-	<p align="justify">
-		O DSGTools permite que sejam criadas permissões para os usuários.
-		Essas permissões definem como o usuário terá acesso aos bancos de dados criados pelo DSGTools.
-		A permissões só funcionam em bancos PostGIS.
+	<h2>Gerenciar Permissões de Usuário</h2>
+
+	<!--Insira parágrafos usando o modelo da próxima tag-->
+	<p align="justify">O DSGTools permite que sejam criadas permissões
+		para os usuários. Essas permissões definem como o usuário terá acesso
+		aos bancos de dados criados pelo DSGTools. A permissões só funcionam
+		em bancos PostGIS.</p>
+
+	<p align=justify>Aqui é possível ver um vídeo mostrando como
+		realizar a atribuição de permissões para um usuário. O vídeo mostra
+		todo o fluxo de trabalho que deve ser feito pelo operador. Isso
+		engloba a criação de usuários, criação de modelo de permissões,
+		instalação de modelo de permissões e atribuição de permissões. Tudo
+		isso é mostrado no vídeo, para maiores detalhes conceituais existem,
+		abaixo do vídeo, os conceitos relacionados.</p>
+	<p align=center>
+		<iframe width="560" height="315"
+			src="https://www.youtube.com/embed/TyYFKNGDhcY" frameborder="0"
+			allowfullscreen></iframe>
 	</p>
-    
-    <p align=justify>
-        Aqui é possível ver um vídeo mostrando como realizar a atribuição de permissões para um usuário. 
-        O vídeo mostra todo o fluxo de trabalho que deve ser feito pelo operador. Isso engloba a criação de usuários, 
-        criação de modelo de permissões, instalação de modelo de permissões e atribuição de permissões. 
-        Tudo isso é mostrado no vídeo, para maiores detalhes conceituais existem, abaixo do vídeo, os conceitos relacionados.
-    </p>
-    <p align=center>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/TyYFKNGDhcY" frameborder="0" allowfullscreen></iframe>
-    </p>
 
 	<p align="justify">
-		Inicialmente deve ser selecionado o banco de dados que será configurado. Caso o banco não esteja na lista pode-se efetuar a adição do
-		banco pelo botão <a target="content_frame" href='configurador_conexoes.html'>Adicionar Conexão</a>.
+		Inicialmente deve ser selecionado o banco de dados que será
+		configurado. Caso o banco não esteja na lista pode-se efetuar a adição
+		do banco pelo botão <a target="content_frame"
+			href='configurador_conexoes.html'>Adicionar Conexão</a>.
 	</p>
-    
-    <!--Insira imagens usando o modelo da próxima tag-->
-    <p align=center>
-        <img src='dsg_tools/gerenciar_permissoes1.png' name='figuras1' width=600 height=450 alt='Erro ao mostrar a imagem'>
-    </p>
-    
+
+	<!--Insira imagens usando o modelo da próxima tag-->
+	<p align=center>
+		<img src='dsg_tools/gerenciar_permissoes1.png' name='figuras1'
+			width=600 height=450 alt='Erro ao mostrar a imagem'>
+	</p>
+
 	<p align="justify">
-		Com a seleção do banco feita deve se selecionar um <kbd>Usuário</kbd> já criado no banco.
-		Caso o usuário ainda não exista é possível criar com o uso do Botão <kbd>Criar usuário</kbd>
+		Com a seleção do banco feita deve se selecionar um
+		<kbd>Usuário</kbd>
+		já criado no banco. Caso o usuário ainda não exista é possível criar
+		com o uso do Botão
+		<kbd>Criar usuário</kbd>
 		como se pode ver na figura a seguir.
 	</p>
-    
-    <p align=center>
-        <img src='dsg_tools/criar_usuario.png' name='figuras1' width=400 height=300 alt='Erro ao mostrar a imagem'>
-    </p>
 
-	<p align="justify">
-		Com os dados preechidos é só clicar em <kbd>Criar Usuário</kbd> e esperar a mensagem de retorno. É possível definir também se o usuário que está sendo criado será ou não superusuário clicando em <kbd>Supersuário</kbd>. 
-		É possível também alterar o password com o botão <kbd>Alterar Password</kbd> e é possível remover o usuário selecionado com o botão <kbd>Remover Usuário</kbd>. 
-		Agora resta selecionar o usuário recém criado.
-	</p>
-    
-	<p align="justify">
-		No caso em questão vamos trabalhar com o usuário "luiz". Abaixo pode se ver a janela para este usuário.
-	</p>
-
-    <p align=center>
-        <img src='dsg_tools/gerenciar_permissoes2.png' name='figuras1' width=600 height=450 alt='Erro ao mostrar a imagem'>
-    </p>
-
-	<p align="justify">
-		Com o usuário selecionado é possível ver as permissões já existentes no banco selecionado no campo <kbd>Permissões de Usuário Instaladas</kbd>, no caso: altimetria, hid, vegetação.
-		Caso a permissão desejada não esteja lá, é possível clicar no botão
-		<a target="content_frame" href='instalar_remover_permissoes.html'>Instalar Nova Permissão de Usuário</a>
-		(clique no link para maiores informações).
+	<p align=center>
+		<img src='dsg_tools/criar_usuario.png' name='figuras1' width=400
+			height=300 alt='Erro ao mostrar a imagem'>
 	</p>
 
 	<p align="justify">
-		Com o modelo de permissões criado e instalado no banco de dados é possível se fazer a atribuição dessas permissões a um usuário selecionado. 
-		Suponhamos que o usuário criado seja "luiz", ao se fazer a seleção dele é possível ver as Permissões de Usuário instaladas no banco e as permissões que ele possui. 
-		Para se instalar um conjunto de permissões nova deve se selecionar uma (ou mais) permissões e clicar em <kbd>>></kbd>, <kbd>></kbd>, <kbd><</kbd>, <kbd><<</kbd> para, 
-		respectivamente, atribuir todas as permissões, atribuir somente uma, remover uma e remover todas as permissões previamente atribuídas. 
+		Com os dados preechidos é só clicar em
+		<kbd>Criar Usuário</kbd>
+		e esperar a mensagem de retorno. É possível definir também se o
+		usuário que está sendo criado será ou não superusuário clicando em
+		<kbd>Supersuário</kbd>
+		. É possível também alterar o password com o botão
+		<kbd>Alterar Password</kbd>
+		e é possível remover o usuário selecionado com o botão
+		<kbd>Remover Usuário</kbd>
+		. Agora resta selecionar o usuário recém criado.
 	</p>
-    
-	<p align="justify">
-		Supondo a atribuição das permissões de vegetação (onde é possível ver todo o banco mas somente editar a categaoria vegetação) teríamos o resultado como se pode ver na figura abaixo.
+
+	<p align="justify">No caso em questão vamos trabalhar com o usuário
+		"luiz". Abaixo pode se ver a janela para este usuário.</p>
+
+	<p align=center>
+		<img src='dsg_tools/gerenciar_permissoes2.png' name='figuras1'
+			width=600 height=450 alt='Erro ao mostrar a imagem'>
 	</p>
-    
-    <p align=center>
-        <img src='dsg_tools/gerenciar_permissoes3.png' name='figuras1' width=600 height=450 alt='Erro ao mostrar a imagem'>
-    </p>
 
 	<p align="justify">
-		Desta forma as permissões do usuário "luiz" foram definidas. 
+		Com o usuário selecionado é possível ver as permissões já existentes
+		no banco selecionado no campo
+		<kbd>Permissões de Usuário Instaladas</kbd>
+		, no caso: altimetria, hid, vegetação. Caso a permissão desejada não
+		esteja lá, é possível clicar no botão <a target="content_frame"
+			href='instalar_remover_permissoes.html'>Instalar Nova Permissão
+			de Usuário</a> (clique no link para maiores informações).
 	</p>
-    
-	<p align="justify">
-		Tendo sido definidas as permissões é possível ao usuário verificar as características das permissões instaladas e atribuidas através do clique 
-		com o botão direito em uma dada permissão. Isso pode ser verificado na figura abaixo. 
-	</p>
-    
-    <p align=center>
-        <img src='dsg_tools/gerenciar_permissoes4.png' name='figuras1' width=600 height=450 alt='Erro ao mostrar a imagem'>
-    </p>
 
 	<p align="justify">
-		Clicando-se na opção é aberta uma janela mostrando as características das permissões selecionada como se pode ver na figura abaixo. 
+		Com o modelo de permissões criado e instalado no banco de dados é
+		possível se fazer a atribuição dessas permissões a um usuário
+		selecionado. Suponhamos que o usuário criado seja "luiz", ao se fazer
+		a seleção dele é possível ver as Permissões de Usuário instaladas no
+		banco e as permissões que ele possui. Para se instalar um conjunto de
+		permissões nova deve se selecionar uma (ou mais) permissões e clicar
+		em
+		<kbd>>></kbd>
+		,
+		<kbd>></kbd>
+		,
+		<kbd><</kbd>
+		,
+		<kbd><<</kbd>
+		para, respectivamente, atribuir todas as permissões, atribuir somente
+		uma, remover uma e remover todas as permissões previamente atribuídas.
 	</p>
-    
-    <p align=center>
-        <img src='dsg_tools/gerenciar_permissoes5.png' name='figuras1' width=600 height=450 alt='Erro ao mostrar a imagem'>
-    </p>
 
-    <p align=justify>
-        Agora é possível conectar em um banco PostGIS previamente criado adicionando uma nova conexão. 
-        O vídeo abaixo mostra todos os passos para utilizar um usuário com suas permissões previamente atribuídas.
-    </p>
-    <p align=center>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/T1N6EfX3TTw" frameborder="0" allowfullscreen></iframe>
-    </p>
+	<p align="justify">Supondo a atribuição das permissões de vegetação
+		(onde é possível ver todo o banco mas somente editar a categaoria
+		vegetação) teríamos o resultado como se pode ver na figura abaixo.</p>
+
+	<p align=center>
+		<img src='dsg_tools/gerenciar_permissoes3.png' name='figuras1'
+			width=600 height=450 alt='Erro ao mostrar a imagem'>
+	</p>
+
+	<p align="justify">Desta forma as permissões do usuário "luiz"
+		foram definidas.</p>
+
+	<p align="justify">Tendo sido definidas as permissões é possível ao
+		usuário verificar as características das permissões instaladas e
+		atribuidas através do clique com o botão direito em uma dada
+		permissão. Isso pode ser verificado na figura abaixo.</p>
+
+	<p align=center>
+		<img src='dsg_tools/gerenciar_permissoes4.png' name='figuras1'
+			width=600 height=450 alt='Erro ao mostrar a imagem'>
+	</p>
+
+	<p align="justify">Clicando-se na opção é aberta uma janela
+		mostrando as características das permissões selecionada como se pode
+		ver na figura abaixo.</p>
+
+	<p align=center>
+		<img src='dsg_tools/gerenciar_permissoes5.png' name='figuras1'
+			width=600 height=450 alt='Erro ao mostrar a imagem'>
+	</p>
+
+	<p align=justify>Agora é possível conectar em um banco PostGIS
+		previamente criado adicionando uma nova conexão. O vídeo abaixo mostra
+		todos os passos para utilizar um usuário com suas permissões
+		previamente atribuídas.</p>
+	<p align=center>
+		<iframe width="560" height="315"
+			src="https://www.youtube.com/embed/T1N6EfX3TTw" frameborder="0"
+			allowfullscreen></iframe>
+	</p>
 
 </body>
 </html>

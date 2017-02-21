@@ -20,29 +20,30 @@
  ***************************************************************************/
 """
 import sys
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
+from DsgTools.CustomWidgets.customSelector import CustomSelector
 
 class ProcessParametersDialog(QtGui.QDialog):
     WIDGETS = {str: QtGui.QLineEdit,
                unicode: QtGui.QLineEdit,
                int: QtGui.QSpinBox,
                float: QtGui.QDoubleSpinBox,
-               list: QtGui.QComboBox,
+               list: CustomSelector,
                bool: QtGui.QCheckBox}
     GETTERS = {QtGui.QLineEdit: "text",
                QtGui.QSpinBox: "value",
                QtGui.QDoubleSpinBox: "value",
-               QtGui.QComboBox: "currentText",
+               CustomSelector: "getToList",
                QtGui.QCheckBox: "isChecked"}
     SETTERS = {QtGui.QLineEdit: "setText",
                QtGui.QSpinBox: "setValue",
                QtGui.QDoubleSpinBox: "setValue",
-               QtGui.QComboBox: "addItems",
+               CustomSelector: "setInitialState",
                QtGui.QCheckBox: "setChecked"}
     VALIDATORS = {QtGui.QLineEdit: lambda x: bool(len(x)),
                   QtGui.QSpinBox: lambda x: True,
                   QtGui.QDoubleSpinBox: lambda x: True,
-                  QtGui.QComboBox: lambda x: True,
+                  CustomSelector: lambda x: True,
                   QtGui.QCheckBox: lambda x: True}
 
     def __init__(self, parent, options, required=None, title=None):
@@ -75,8 +76,12 @@ class ProcessParametersDialog(QtGui.QDialog):
             if self.WIDGETS[type(v)] == QtGui.QSpinBox:
                 widget.setMaximum(1000000)
                 widget.setMinimum(-1000000)
-                
-            getattr(widget, self.SETTERS[type(widget)])(v)
+            
+            if self.WIDGETS[type(v)] == CustomSelector:
+                getattr(widget, self.SETTERS[type(widget)])(v,unique=True)
+                widget.setTitle(self.tr('Select classes'))
+            else:
+                getattr(widget, self.SETTERS[type(widget)])(v)
 
             if k in self.required:
                 label.setStyleSheet("color: red;")

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+"""@package docstring
 /***************************************************************************
  DsgTools
                                  A QGIS plugin
@@ -24,52 +24,56 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 from PyQt4.QtCore import QSettings
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceURI
+from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceURI, QgsFeature, QgsVectorLayer, QgsField
 from osgeo import ogr
 from uuid import uuid4
-import codecs, os, json
+import codecs, os, json, binascii
+import psycopg2
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class PostgisDb(AbstractDb):
     def __init__(self):
-        '''
+        """
         Constructor
-        '''
-        super(PostgisDb,self).__init__()
+        """
+        super(PostgisDb, self).__init__()
         #setting database type to postgresql
         self.db = QSqlDatabase('QPSQL')
         #setting up a sql generator
         self.gen = SqlGeneratorFactory().createSqlGenerator(False)
-        
+
     def getDatabaseName(self):
-        '''
+        """
         Gets the database name
-        '''
+        """
         return self.db.databaseName()
-    
-    def connectDatabase(self,conn=None):
-        '''
+    def getHostName(self):
+        return str(self.db.hostName())
+
+    def connectDatabase(self, conn=None):
+        """
         Connects to database
         conn: connection parameters. It can be a OGR connection or a QSettings connection
-        '''
+        """
         if conn.split(':')[0] == 'PG':
             connSplit = conn.split(' ')
             parDict = dict()
             for i in connSplit[1::]:
                 par = i.split('=')
-                parDict[par[0]]=par[1]
+                parDict[par[0]] = par[1]
             self.connectDatabaseWithParameters(parDict['host'], parDict['port'], parDict['dbname'], parDict['user'], parDict['password'])
         else:
             self.connectDatabaseWithQSettings(conn)
 
     def connectDatabaseWithParameters(self, host, port, database, user, password):
-        '''
+        """
         Connects to database with parameters
         host: host IP
         port: host port
         database: database name
         user: user name
         password: user password
-        '''
+        """
         self.db.setHostName(host)
         if type(port) != 'int':
             self.db.setPort(int(port))
@@ -84,7 +88,7 @@ class PostgisDb(AbstractDb):
                 try:
                     (success, user, password) = QgsCredentials.instance().get(conInfo, user, None)
                     if not success:
-                        return 
+                        return
                     self.db.setPassword(password)
                     check = True
                     self.checkAndOpenDb()
@@ -95,10 +99,10 @@ class PostgisDb(AbstractDb):
             self.db.setPassword(password)
 
     def connectDatabaseWithQSettings(self, name):
-        '''
+        """
         Connects to database with parameters
         name: QSettings connection name
-        '''
+        """
         #getting connection parameters from qsettings
         (host, port, database, user, password) = self.getConnectionFromQSettings(name)
         self.db.setHostName(host)
@@ -115,7 +119,7 @@ class PostgisDb(AbstractDb):
                 try:
                     (success, user, password) = QgsCredentials.instance().get(conInfo, user, None)
                     if not success:
-                        return 
+                        return
                     self.db.setPassword(password)
                     check = True
                     self.checkAndOpenDb()
@@ -126,43 +130,74 @@ class PostgisDb(AbstractDb):
             self.db.setPassword(password)
 
     def getDatabaseVersion(self):
-        '''
+        """
         Gets the database version
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getEDGVVersion()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            raise Exception(self.tr("Problem getting database version: ")+query.lastError().text())
+            return 'Non_EDGV'
         version = '-1'
         while query.next():
             version = query.value(0)
         return version
-    
-    def listGeomClassesFromDatabase(self):
-        '''
+
+    def listGeomClassesFromDatabase(self, primitiveFilter = [], withElements = False, excludeViews = True, getGeometryColumn = False):
+        """
         Gets a list with geometry classes from database
-        '''
+        returns dict if getGeometryColumn = True
+        return list if getGeometryColumn = False
+        """
         self.checkAndOpenDb()
         classList = []
-        sql = self.gen.getTablesFromDatabase()
+        schemaList = [i for i in self.getGeomSchemaList() if i not in ['validation', 'views']]
+        #primitiveFilter building
+        dbPrimitiveList = []
+        if len(primitiveFilter) > 0:
+            for primitive in primitiveFilter:
+                if primitive == 'p':
+                    dbPrimitiveList.append('POINT')
+                    dbPrimitiveList.append('MULTIPOINT')
+                if primitive == 'l':
+                    dbPrimitiveList.append('LINESTRING')
+                    dbPrimitiveList.append('MULTILINESTRING')
+                if primitive == 'a':
+                    dbPrimitiveList.append('POLYGON')
+                    dbPrimitiveList.append('MULTIPOLYGON')
+        sql = self.gen.getGeomTables(schemaList, dbPrimitiveList = dbPrimitiveList, excludeViews = excludeViews, geomColumn = getGeometryColumn)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem listing geom classes: ")+query.lastError().text())
+        localList = []
         while query.next():
             tableSchema = query.value(0)
             tableName = query.value(1)
             layerName = tableSchema+'.'+tableName
-            if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
-                or tableName.split("_")[-1] == "a":
-                if tableSchema not in ['validation', 'views']:
-                    classList.append(layerName)
+            geometryColumn = ''
+            if getGeometryColumn:
+                geometryColumn = query.value(2)
+            localList.append({'schema':tableSchema, 'tableName':tableName, 'layerName':layerName, 'geometryColumn':geometryColumn})
+        #remove possible duplicates to filter layers with elements
+        layerNameList = []
+        for i in localList:
+            if i['layerName'] not in layerNameList:
+                layerNameList.append(i['layerName'])
+        if withElements:
+            listWithElements = self.getLayersWithElementsV2(layerNameList)
+            partialTagList = [i for i in localList if i['tableName'] in listWithElements]
+        else:
+            partialTagList = localList
+        if not getGeometryColumn:
+            classList = [i['layerName'] for i in partialTagList]
+        else:
+            classList = partialTagList
         return classList
-    
+
     def listComplexClassesFromDatabase(self):
-        '''
+        """
         Gets a list with complex classes from database
-        '''
+        """
         self.checkAndOpenDb()
         classList = []
         sql = self.gen.getTablesFromDatabase()
@@ -179,9 +214,9 @@ class PostgisDb(AbstractDb):
         return classList
 
     def storeConnection(self, server):
-        '''
+        """
         Stores a connection into QSettings
-        '''
+        """
         (host, port, user, password) = self.getServerConfiguration(server)
         database = self.db.databaseName()
         connection = server+'_'+database
@@ -195,13 +230,13 @@ class PostgisDb(AbstractDb):
             settings.setValue('password', password)
             settings.endGroup()
             return True
-        return False        
+        return False
 
     def getConnectionFromQSettings(self, conName):
-        '''
+        """
         Gets a connection from QSettings
         conName: connection name stored
-        '''
+        """
         settings = QSettings()
         settings.beginGroup('PostgreSQL/connections/'+conName)
         host = settings.value('host')
@@ -213,10 +248,10 @@ class PostgisDb(AbstractDb):
         return (host, port, database, user, password)       
 
     def getServerConfiguration(self, name):
-        '''
+        """
         Gets a server configuration from QSettings
         name: server name
-        '''
+        """
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers/'+name)
         host = settings.value('host')
@@ -227,9 +262,9 @@ class PostgisDb(AbstractDb):
         return (host, port, user, password)
 
     def getStructureDict(self):
-        '''
+        """
         Gets database structure according to the edgv version
-        '''
+        """
         self.checkAndOpenDb()
         classDict = dict()
         sql = self.gen.getStructure(self.getDatabaseVersion())        
@@ -250,9 +285,9 @@ class PostgisDb(AbstractDb):
         return classDict
     
     def makeOgrConn(self):
-        '''
+        """
         Makes a OGR connection string
-        '''
+        """
         dbName = self.db.databaseName()
         dbUser = self.db.userName()
         dbHost = self.db.hostName()
@@ -262,9 +297,9 @@ class PostgisDb(AbstractDb):
         return constring
 
     def getNotNullDict(self):
-        '''
+        """
         Gets a dictionary with all not null fields for the edgv database used
-        '''
+        """
         self.checkAndOpenDb()
         if self.getDatabaseVersion() == '2.1.3':
             schemaList = ['cb', 'complexos']
@@ -290,9 +325,9 @@ class PostgisDb(AbstractDb):
         return notNullDict
 
     def getDomainDict(self):
-        '''
+        """
         Gets the domain dictionary for the edgv database used
-        '''
+        """
         self.checkAndOpenDb()        
         if self.getDatabaseVersion() == '2.1.3':
             schemaList = ['cb', 'complexos', 'dominios']
@@ -324,52 +359,52 @@ class PostgisDb(AbstractDb):
         return classDict
 
     def translateAbstractDbLayerNameToOutputFormat(self, lyr, outputAbstractDb):
-        '''
+        """
         Translates abstractdb layer name to output format
         lyr: layer name that will be translated
         outputAbstractDb: output database
-        '''
+        """
         if outputAbstractDb.db.driverName() == 'QSQLITE':
             return str(lyr.split('.')[0]+'_'+'_'.join(lyr.split('.')[1::]))
         if outputAbstractDb.db.driverName() == 'QPSQL':
             return lyr
 
     def translateOGRLayerNameToOutputFormat(self, lyr, ogrOutput):
-        '''
+        """
         Translates ogr layer name to output format
         lyr: layer name that will be translated
         ogrOutput: ogr output
-        '''
+        """
         if ogrOutput.GetDriver().name == 'SQLite':
             return str(lyr.split('.')[0]+'_'+'_'.join(lyr.split('.')[1::]))
         if ogrOutput.GetDriver().name == 'PostgreSQL':
             return lyr
 
     def getTableSchema(self,lyr):
-        '''
+        """
         Gets the table schema
         lyr: layer name
-        '''
+        """
         schema = lyr.split('.')[0]
         className = '_'.join(lyr.split('.')[1::])
         return (schema, className)
     
     def convertToSpatialite(self, outputAbstractDb, type=None):
-        '''
+        """
         Converts this to a spatialite database
         outputAbstractDb: spatialite output
         type: conversion type
-        '''
+        """
         (inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict) = self.prepareForConversion(outputAbstractDb)
         status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict)
         return status
     
     def obtainLinkColumn(self, complexClass, aggregatedClass):
-        '''
+        """
         Obtains the link column between complex and aggregated class
         complexClass: complex class name
         aggregatedClass: aggregated class name
-        '''
+        """
         self.checkAndOpenDb()
         complexClass = complexClass.replace('complexos.', '')
         #query to obtain the link column between the complex and the feature layer
@@ -383,10 +418,10 @@ class PostgisDb(AbstractDb):
         return column_name
 
     def loadAssociatedFeatures(self, complex):
-        '''
+        """
         Loads all the features associated to the complex 
         complex: complex class name
-        '''
+        """
         self.checkAndOpenDb()
         associatedDict = dict()
         complex = complex.replace('complexos.', '')
@@ -431,10 +466,10 @@ class PostgisDb(AbstractDb):
         return associatedDict
     
     def isComplexClass(self, className):
-        '''
+        """
         Checks if a class is a complex class
         className: class name to be checked
-        '''
+        """
         self.checkAndOpenDb()
         #getting all complex tables
         query = QSqlQuery(self.gen.getComplexTablesFromDatabase(), self.db)
@@ -447,21 +482,21 @@ class PostgisDb(AbstractDb):
         return False
 
     def disassociateComplexFromComplex(self, aggregated_class, link_column, id):
-        '''
+        """
         Disassociates a complex from another complex
         aggregated_class: aggregated class that will be disassociated
         link_column: link column between complex and its aggregated class
         id: complex id (uid) to be disassociated
-        '''
+        """
         sql = self.gen.disassociateComplexFromComplex(aggregated_class, link_column, id)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr('Problem disassociating complex from complex: ') + '\n' + query.lastError().text())
     
     def getUsers(self):
-        '''
+        """
         Gets 'this' database users
-        '''
+        """
         self.checkAndOpenDb()
         ret = []
         
@@ -477,10 +512,10 @@ class PostgisDb(AbstractDb):
         return ret
 
     def getUserRelatedRoles(self, username):
-        '''
+        """
         Gets user roles assigned to 'username'
         username: user name
-        '''
+        """
         self.checkAndOpenDb()
         installed = []
         assigned = []
@@ -503,9 +538,9 @@ class PostgisDb(AbstractDb):
         return installed, assigned
     
     def getRoles(self):
-        '''
+        """
         Gets roles installed in 'this' database
-        '''
+        """
         self.checkAndOpenDb()
         ret = []
 
@@ -520,12 +555,12 @@ class PostgisDb(AbstractDb):
         ret.sort()
         return ret
 
-    def createRole(self, role, dict):
-        '''
+    def createRole(self, role, dict, permissionManager = False):
+        """
         Creates a role into this database
         role: role name
         dict: role definitions
-        '''
+        """
         self.checkAndOpenDb()
         #making this so the instaciated permissions stay with different names
         uuid = str(uuid4()).replace('-', '_')
@@ -535,6 +570,11 @@ class PostgisDb(AbstractDb):
         split = sql.split(';')
         query = QSqlQuery(self.db)
         
+        if permissionManager:
+            if not query.exec_(sql):
+                raise Exception(self.tr('Problem assigning profile: ') +role+'\n'+query.lastError().text())
+            return role
+
         #try to revoke the permissions
         try:
             self.dropRole(role)
@@ -550,10 +590,10 @@ class PostgisDb(AbstractDb):
                     raise Exception(self.tr('Problem assigning profile: ') +role+'\n'+query.lastError().text())
     
     def dropRole(self, role):
-        '''
+        """
         Deletes a role from 'this' database
         role: role name
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.dropRole(role)
         split = sql.split('#')
@@ -568,11 +608,11 @@ class PostgisDb(AbstractDb):
                     raise Exception(self.tr('Problem removing profile: ') +role+'\n'+query.lastError().text())
 
     def alterUserPass(self, user, newpassword):
-        '''
+        """
         Alters the user password
         user: user name
         newpassword: new password
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.alterUserPass(user, newpassword)
         query = QSqlQuery(self.db)
@@ -581,12 +621,12 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem altering user\'s password: ') +user+'\n'+query.lastError().text())
 
     def createUser(self, user, password, isSuperUser):
-        '''
+        """
         Creates a new user
         user: user name
         password: user password
         isSuperUser: bool to define is the newly created user is a super user (i.e a user like 'postgres')
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.createUser(user, password, isSuperUser)
         query = QSqlQuery(self.db)
@@ -595,10 +635,10 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem creating user: ') +user+'\n'+query.lastError().text())
 
     def removeUser(self, user):
-        '''
+        """
         Removes a user
         user: user name
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.removeUser(user)
         query = QSqlQuery(self.db)
@@ -607,11 +647,11 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem removing user: ') +user+'\n'+query.lastError().text())
 
     def grantRole(self, user, role):
-        '''
+        """
         Grants a role to a user
         user: user name
         role: role name
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.grantRole(user, role)
         query = QSqlQuery(self.db)
@@ -620,11 +660,11 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem granting profile: ') +role+'\n'+query.lastError().text())
 
     def revokeRole(self, user, role):
-        '''
+        """
         Revokes a role from the user
         user: user name
         role: role name
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.revokeRole(user, role)
         query = QSqlQuery(self.db)
@@ -633,9 +673,9 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem revoking profile: ') +role+'\n'+query.lastError().text())
 
     def getTablesFromDatabase(self):
-        '''
+        """
         Gets all tables from database
-        '''
+        """
         self.checkAndOpenDb()
         ret = []
 
@@ -651,11 +691,11 @@ class PostgisDb(AbstractDb):
         return ret
 
     def getRolePrivileges(self, role, dbname):
-        '''
+        """
         Gets role settings (e.g. what is possible to do with the role)
         role: role name
         dbname: database name
-        '''
+        """
         self.checkAndOpenDb()
         privilegesDict = dict()
         
@@ -701,15 +741,15 @@ class PostgisDb(AbstractDb):
         return permissionsDict    
 
     def getFrameLayerName(self):
-        '''
+        """
         Gets the frame layer name
-        '''
+        """
         return 'public.aux_moldura_a'
     
-    def getEDGVDbsFromServer(self):
-        '''
+    def getEDGVDbsFromServer(self, parentWidget = None):
+        """
         Gets edgv databases from 'this' server
-        '''
+        """
         #Can only be used in postgres database.
         self.checkAndOpenDb()
         query = QSqlQuery(self.gen.getDatabasesFromServer(),self.db)
@@ -722,6 +762,9 @@ class PostgisDb(AbstractDb):
             dbList.append(query.value(0))
         
         edvgDbList = []
+        if parentWidget:
+            progress = ProgressWidget(1,len(dbList),self.tr('Reading selected databases... '), parent = parentWidget)
+            progress.initBar()
         for database in dbList:
             db = None
             db = QSqlDatabase("QPSQL")
@@ -739,12 +782,16 @@ class PostgisDb(AbstractDb):
                     version = query2.value(0)
                     if version:
                         edvgDbList.append((database,version))
+            else:
+                edvgDbList.append((database,'Non_EDGV'))
+            if parentWidget:
+                progress.step()
         return edvgDbList
     
     def getDbsFromServer(self):
-        '''
+        """
         Gets databases from 'this' server
-        '''
+        """
         #Can only be used in postgres database.
         self.checkAndOpenDb()
         query = QSqlQuery(self.gen.getDatabasesFromServer(),self.db)
@@ -757,9 +804,9 @@ class PostgisDb(AbstractDb):
         return dbList
     
     def checkSuperUser(self):
-        '''
+        """
         Checks if the user used to connect to this database is a super user
-        '''
+        """
         self.checkAndOpenDb()
         query = QSqlQuery(self.db)
         if query.exec_(self.gen.isSuperUser(self.db.userName())):
@@ -771,10 +818,10 @@ class PostgisDb(AbstractDb):
         return False
     
     def dropDatabase(self, candidateName):
-        '''
+        """
         Drops a database from server
         candidataName: database name
-        '''
+        """
         self.checkAndOpenDb()
         if self.checkSuperUser():
             sql = self.gen.dropDatabase(candidateName)
@@ -783,11 +830,11 @@ class PostgisDb(AbstractDb):
                 raise Exception(self.tr('Problem dropping database: ') + query.lastError().text())
     
     def createResolvedDomainViews(self, createViewClause, fromClause):
-        '''
+        """
         Creates a view with all domain values resolved
         createViewClause: sql query to create the view
         fromClause: from sql clause
-        '''
+        """
         self.checkAndOpenDb()
         if self.checkSuperUser():
             filename = self.getSqlViewFile()
@@ -801,14 +848,14 @@ class PostgisDb(AbstractDb):
                 query = QSqlQuery(self.db)
                 for command in commands:
                     if not query.exec_(command):
-                        self.db.rollback()
+                        self.db.rollback() 
                         raise Exception(self.tr('Problem creating views: ') + query.lastError().text())
                 self.db.commit()
                 
     def getSqlViewFile(self):
-        '''
+        """
         Gets the sql view file
-        '''
+        """
         self.checkAndOpenDb()
         currentPath = os.path.dirname(__file__)
         dbVersion = self.getDatabaseVersion()
@@ -819,12 +866,11 @@ class PostgisDb(AbstractDb):
             file = os.path.join(currentPath,'..','..','DbTools','PostGISTool', 'sqls', 'FTer_2a_Ed', 'views_edgvFter_2a_Ed.sql')
         return file
     
-    def getInvalidGeomRecords(self):
-        '''
+    def getInvalidGeomRecords(self, geomList):
+        """
         Gets invalid geometry data from database
-        '''
+        """
         self.checkAndOpenDb()
-        geomList = self.listClassesWithElementsFromDatabase()
         invalidRecordsList = []
         for lyr in geomList:
             tableSchema, tableName = self.getTableSchema(lyr)
@@ -840,11 +886,11 @@ class PostgisDb(AbstractDb):
         return invalidRecordsList
     
     def insertFlags(self, flagTupleList, processName):
-        '''
+        """
         Inserts flags into database
         flagTupleList: flag tuple list
         processName: process name
-        '''
+        """
         self.checkAndOpenDb()
         srid = self.findEPSG()
         if len(flagTupleList) > 0:
@@ -865,10 +911,10 @@ class PostgisDb(AbstractDb):
             return 0
     
     def deleteProcessFlags(self, processName):
-        '''
+        """
         Deletes flags from database
         processName: process name that will have all flags removed
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.deleteFlags(processName)
         sqlList = sql.split('#')
@@ -881,9 +927,9 @@ class PostgisDb(AbstractDb):
         self.db.commit()
             
     def checkAndCreateValidationStructure(self):
-        '''
+        """
         Checks if the validation structure is already created, if not it should be created now
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.checkValidationStructure()
         query = QSqlQuery(sql, self.db)
@@ -905,14 +951,16 @@ class PostgisDb(AbstractDb):
             self.db.commit()
                 
     def getValidationStatus(self, processName):
-        '''
+        """
         Gets the validation status for a specific process
         processName: process name
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.validationStatus(processName)
         query = QSqlQuery(sql,self.db)
         if not query.isActive():
+            self.db.rollback()
+            
             raise Exception(self.tr('Problem acquiring status: ') + query.lastError().text()) 
         ret = None
         while query.next():
@@ -920,14 +968,16 @@ class PostgisDb(AbstractDb):
         return ret
 
     def getValidationStatusText(self, processName):
-        '''
+        """
         Gets the validation message text for a specific process
         processName: process name
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.validationStatusText(processName)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            
             raise Exception(self.tr('Problem acquiring status: ') + query.lastError().text()) 
         ret = None
         while query.next():
@@ -935,24 +985,28 @@ class PostgisDb(AbstractDb):
         return ret
 
     def setValidationProcessStatus(self, processName, log, status):
-        '''
+        """
         Sets the validation status for a specific process
         processName: process name
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.setValidationStatusQuery(processName, log, status)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
+            self.db.rollback()
+            
             raise Exception(self.tr('Problem setting status: ') + query.lastError().text())
     
     def getRunningProc(self):
-        '''
+        """
         Gets the active running process into database
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getRunningProc()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            
             raise Exception(self.tr('Problem getting running process: ') + query.lastError().text()) 
         while query.next():
             processName = query.value(0)
@@ -962,9 +1016,9 @@ class PostgisDb(AbstractDb):
         return None
     
     def isLyrInDb(self, lyr):
-        '''
+        """
         Checks if a layer is in the database
-        '''
+        """
         candidateUri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
         candidateHost = candidateUri.host()
         candidatePort = int(candidateUri.port())
@@ -975,13 +1029,15 @@ class PostgisDb(AbstractDb):
             return False
         
     def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card, rule):
-        '''
+        """
         Tests spatial predicates to check whether a rule is broken
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.testSpatialRule(class_a, necessity, predicate_function, class_b, min_card, max_card)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            
             raise Exception(self.tr('Problem testing spatial rule: ') + query.lastError().text()) 
         ret = []
         while query.next():
@@ -992,14 +1048,16 @@ class PostgisDb(AbstractDb):
         return ret
 
     def getDimension(self, geom):
-        '''
+        """
         Gets geometry's dimension
         geom: geometry tested
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getDimension(geom)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            
             raise Exception(self.tr('Problem getting dimension: ') + query.lastError().text()) 
         dimension = 0
         while query.next():
@@ -1007,9 +1065,9 @@ class PostgisDb(AbstractDb):
         return dimension
     
     def getExplodeCandidates(self):
-        '''
+        """
         Gets multi geometries (i.e number of parts > 1) that will be deaggregated later
-        '''
+        """
         self.checkAndOpenDb()
         explodeDict = dict()
         classesWithElem = self.listClassesWithElementsFromDatabase()
@@ -1017,6 +1075,8 @@ class PostgisDb(AbstractDb):
             sql= self.gen.getMulti(cl)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
+                self.db.rollback()
+                
                 raise Exception(self.tr('Problem exploding geometries: ') + query.lastError().text())
             idList = []
             while query.next():
@@ -1026,12 +1086,12 @@ class PostgisDb(AbstractDb):
         return explodeDict
 
     def getURI(self, table, useOnly = True, geomColumn = 'geom'):
-        '''
+        """
         Gets tabel URI
         table: table name
         useOnly: bool to determine if 'from only' should be used
         geomColumn: geometry column
-        '''
+        """
         schema, layer_name = self.getTableSchema(table)
 
         host = self.db.hostName()
@@ -1053,10 +1113,10 @@ class PostgisDb(AbstractDb):
         return uri
     
     def getDuplicatedGeomRecords(self, classesWithGeom):
-        '''
+        """
         Gets duplicated records
         classesWithGeom: list of classes with geomtries
-        '''
+        """
         self.checkAndOpenDb()
         duplicatedDict = dict()
         for cl in classesWithGeom:
@@ -1065,16 +1125,18 @@ class PostgisDb(AbstractDb):
                 sql = self.gen.getDuplicatedGeom(tableSchema, tableName)
                 query = QSqlQuery(sql, self.db)
                 if not query.isActive():
+                    self.db.rollback()
+                    
                     raise Exception(self.tr('Problem getting duplicated geometries: ') + query.lastError().text())
                 while query.next():
                     duplicatedDict = self.utils.buildNestedDict(duplicatedDict, [cl,query.value(0)], query.value(2))
         return duplicatedDict
 
     def getSmallAreasRecords(self,classesWithGeom, tol):
-        '''
+        """
         Gets duplicated records
         classesWithGeom: list of classes with geometries
-        '''
+        """
         self.checkAndOpenDb()
         smallAreasDict = dict()
         for cl in classesWithGeom:
@@ -1082,17 +1144,16 @@ class PostgisDb(AbstractDb):
             sql = self.gen.getSmallAreas(tableSchema, tableName, tol)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
-                self.db.rollback()
                 raise Exception(self.tr('Problem getting small areas: ') + query.lastError().text())
             while query.next():
                 smallAreasDict = self.utils.buildNestedDict(smallAreasDict, [cl,query.value(0)], query.value(1))
         return smallAreasDict
 
     def getSmallLinesRecords(self,classesWithGeom, tol):
-        '''
+        """
         Gets small lines records 
         tol: tolerance
-        '''
+        """
         self.checkAndOpenDb()
         smallLinesDict = dict()
         for cl in classesWithGeom:
@@ -1106,12 +1167,12 @@ class PostgisDb(AbstractDb):
         return smallLinesDict
 
     def getVertexNearEdgesRecords(self, tableSchema, tableName, tol):
-        '''
+        """
         Gets vertexes near edges. These vertexes are problematic and should be treated
         tableSchema: table schema
         tableName: table name
         tol: tolerance
-        '''
+        """
         self.checkAndOpenDb()
         result = []
         sql = self.gen.prepareVertexNearEdgesStruct(tableSchema, tableName)
@@ -1137,11 +1198,11 @@ class PostgisDb(AbstractDb):
         return result
 
     def removeFeatures(self, cl, idList):
-        '''
+        """
         Removes features from class
         cl: class name
         idList: id list to be removes
-        '''
+        """
         self.checkAndOpenDb()
         tableSchema, tableName = self.getTableSchema(cl)
         sql = self.gen.deleteFeatures(tableSchema, tableName, idList)
@@ -1154,10 +1215,10 @@ class PostgisDb(AbstractDb):
         return len(idList)
 
     def getNotSimpleRecords(self, classesWithGeom):
-        '''
+        """
         Gets not simple geometries records
         classesWithGeom: class list
-        '''
+        """
         self.checkAndOpenDb()
         notSimpleDict = dict()
         for cl in classesWithGeom:
@@ -1165,23 +1226,27 @@ class PostgisDb(AbstractDb):
             sql = self.gen.getNotSimple(tableSchema, tableName)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
+                self.db.rollback()
+                
                 raise Exception(self.tr('Problem getting not simple geometries: ') + query.lastError().text())
             while query.next():
                 notSimpleDict = self.utils.buildNestedDict(notSimpleDict, [cl,query.value(0)], query.value(1))
         return notSimpleDict
 
     def getOutOfBoundsAnglesRecords(self, tableSchema, tableName, tol):
-        '''
+        """
         Gets records with anchor points (points between segments) that are out of bounds (i.e outside a limit tolerance)
         tableSchema: table schema
         tableName: table name
         tol: tolerance
-        '''
+        """
         self.checkAndOpenDb()
         result = []
         sql = self.gen.getOutofBoundsAngles(tableSchema, tableName, tol)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            
             raise Exception(self.tr('Problem getting not out of bounds angles: ') + query.lastError().text())
         while query.next():
             id = query.value(0)
@@ -1190,15 +1255,17 @@ class PostgisDb(AbstractDb):
         return result
 
     def getFlagsDictByProcess(self, processName):
-        '''
+        """
         Gets flags data dictionar by process name
         processName: process name
-        '''
+        """
         self.checkAndOpenDb()
         flagsDict = dict()
         sql = self.gen.getFlagsByProcess(processName)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            
             raise Exception(self.tr('Problem getting flags dict: ') + query.lastError().text())
         while query.next():
             cl = query.value(0)
@@ -1209,11 +1276,11 @@ class PostgisDb(AbstractDb):
         return flagsDict
     
     def forceValidity(self, cl, idList):
-        '''
+        """
         Forces geometry validity (i.e uses ST_MakeValid)
         cl: class
         idList: feature ids to be processed
-        '''
+        """
         self.checkAndOpenDb()
         tableSchema, tableName = self.getTableSchema(cl)
         srid = self.findEPSG()
@@ -1227,15 +1294,17 @@ class PostgisDb(AbstractDb):
         return len(idList)
     
     def getTableExtent(self, tableSchema, tableName):
-        '''
+        """
         Forces geometry validity (i.e uses ST_MakeValid)
         cl: class
         idList: feature ids to be processed
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getTableExtent(tableSchema, tableName)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            
             raise Exception(self.tr('Problem getting table extent: ') + query.lastError().text())
         
         extent = None
@@ -1247,28 +1316,32 @@ class PostgisDb(AbstractDb):
             extent = (xmin, xmax, ymin, ymax)
         return extent
 
-    def getOrphanGeomTables(self):
-        '''
+    def getOrphanGeomTables(self, loading = False):
+        """
         Gets parent classes
-        '''
+        """
         self.checkAndOpenDb()
-        sql = self.gen.getOrphanGeomTablesWithElements()
+        sql = self.gen.getOrphanGeomTablesWithElements(loading)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            
             raise Exception(self.tr('Problem getting orphan tables: ') + query.lastError().text())
         result = []
         while query.next():
             result.append(query.value(0))
         return result
 
-    def getOrphanGeomTablesWithElements(self):
-        '''
+    def getOrphanGeomTablesWithElements(self, loading = False):
+        """
         Gets populated parent classes
-        '''
+        """
         self.checkAndOpenDb()
-        sql = self.gen.getOrphanGeomTablesWithElements()
+        sql = self.gen.getOrphanGeomTablesWithElements(loading)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            
             raise Exception(self.tr('Problem getting orphan tables: ') + query.lastError().text())
         result = []
         while query.next():
@@ -1283,13 +1356,13 @@ class PostgisDb(AbstractDb):
         return result
     
     def updateGeometries(self, tableSchema, tableName, tuplas, epsg):
-        '''
+        """
         Updates geometries on database
         tableSchema: table schema
         tableName: table name
         tuplas: tuples used during the update
         epsg: geometry srid
-        '''
+        """
         self.checkAndOpenDb()
         sqls = self.gen.updateOriginalTable(tableSchema, tableName, tuplas, epsg)
         query = QSqlQuery(self.db)
@@ -1307,13 +1380,15 @@ class PostgisDb(AbstractDb):
         self.db.commit()
     
     def checkCentroidAuxStruct(self):
-        '''
+        """
         Checks the centroid structure
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.checkCentroidAuxStruct()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
+            
             raise Exception(self.tr('Problem checking structure: ')+query.lastError().text())
         while query.next():
             if query.value(0) == None:
@@ -1321,16 +1396,18 @@ class PostgisDb(AbstractDb):
         return True
     
     def createCentroidAuxStruct(self, earthCoverageClasses):
-        '''
+        """
         Creates the centroid structure
         earthCoverageClasses: earth coverage configuration diciotnary
-        '''
+        """
         self.checkAndOpenDb()
         srid = self.findEPSG()
         self.db.transaction()
         for cl in earthCoverageClasses:
-            table_schema, table_name = self.getTableSchema(cl)
-            sqltext = self.gen.createCentroidColumn(table_schema, table_name, srid)
+            # getting table schema
+            tableSchema = self.getTableSchemaFromDb(cl)
+            # making the query using table schema and table name
+            sqltext = self.gen.createCentroidColumn(tableSchema, cl, srid)
             sqlList = sqltext.split('#')
             query = QSqlQuery(self.db)
             for sql2 in sqlList:
@@ -1340,21 +1417,22 @@ class PostgisDb(AbstractDb):
         self.db.commit()
             
     def checkAndCreateCentroidAuxStruct(self, earthCoverageClasses):
-        '''
+        """
         Checks the centroid structure. If not already created, it creates the centroid structure
         earthCoverageClasses: earth coverage configuration diciotnary
-        '''
+        """
         if not self.checkCentroidAuxStruct():
             self.createCentroidAuxStruct(earthCoverageClasses)
     
     def getEarthCoverageClasses(self):
-        '''
+        """
         Gets the earth coverage classes from earth coverage configuration dictionary.
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getEarthCoverageDict()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
             raise Exception(self.tr('Problem getting earth coverage tables: ') + query.lastError().text())
         result = []
         while query.next():
@@ -1362,22 +1440,23 @@ class PostgisDb(AbstractDb):
         return result
 
     def getEarthCoverageDict(self):
-        '''
+        """
         Gets the earth coverage configuration dictionary.
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getEarthCoverageDict()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
             raise Exception(self.tr('Problem getting earth coverage structure: ') + query.lastError().text())
         while query.next():
             return query.value(0)
 
     def setEarthCoverageDict(self, textDict):
-        '''
+        """
         Sets the earth coverage configuration dictionary.
         textDict: earth coverage configuration dictionary
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.setEarthCoverageDict(textDict)
         query = QSqlQuery(self.db)
@@ -1388,25 +1467,28 @@ class PostgisDb(AbstractDb):
         self.db.commit()
         
     def dropCentroids(self, classList):
-        '''
+        """
         Drops the centroid structure
         classList: classes to be altered
-        '''
+        """
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
         for cl in classList:
-            sql = self.gen.dropCentroid(cl)
+            # getting table schema
+            tableSchema = self.getTableSchemaFromDb(cl)
+            # making the query using table schema and table name
+            sql = self.gen.dropCentroid(tableSchema+'.'+cl)
             if not query.exec_(sql):
                 self.db.rollback()
                 raise Exception(self.tr('Problem dropping centroids: ') + query.lastError().text())
         self.db.commit()
-            
+
     def rollbackEarthCoverage(self, classList):
-        '''
+        """
         Rolls back the centroid structure
         classList: classes to be altered
-        '''
+        """
         try:
             self.dropCentroids(classList)
             self.setEarthCoverageDict(None)
@@ -1414,17 +1496,21 @@ class PostgisDb(AbstractDb):
             raise e
 
     def getEarthCoverageCentroids(self):
-        '''
+        """
         Gets the earth coverage structure
-        '''
+        """
         self.checkAndOpenDb()
         sql = self.gen.getEarthCoverageCentroids()
         query = QSqlQuery(sql, self.db)
         centroidList = []
         if not query.isActive():
+            self.db.rollback()
             raise Exception(self.tr('Problem getting earth coverage structure: ') + query.lastError().text())
         while query.next():
-            centroidList.append(query.value(0))
+            table = query.value(0).split('_')
+            table[-1] = 'c'
+            layerName = '_'.join(table)
+            centroidList.append(layerName)
         return centroidList
 
     def getWhoAmI(self, cl, id):
@@ -1437,64 +1523,65 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getWhoAmI(cl, id)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
+            self.db.rollback()
             raise Exception(self.tr('Problem getting class name: ') + query.lastError().text())
         while query.next():
             return query.value(0)
     
-    def snapToGrid(self, classList, tol):
-        '''
+    def snapToGrid(self, classList, tol, srid):
+        """
         Snaps tables to grid (i.e executes ST_SnapToGrid)
         classList: classes to be altered
         tol: tolerance
-        '''
+        """
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
         for cl in classList:
-            sql = self.gen.snapToGrid(cl, tol)
+            sql = self.gen.snapToGrid(cl, tol, srid)
             if not query.exec_(sql):
                 self.db.rollback()
                 raise Exception(self.tr('Problem snapping to grid: ') + query.lastError().text())
         self.db.commit()
         
-    def snapLinesToFrame(self, classList, tol):
-        '''
+    def snapLinesToFrame(self, classList, frameTable, tol):
+        """
         Snaps lines to frame. This means the lines are prolonged to the frame according to the specified tolerance
         classList: classes to be altered
         tol: tolerance
-        '''
+        """
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
         for cl in classList:
-            sqls = self.gen.snapLinesToFrame(cl, tol)
+            sqls = self.gen.snapLinesToFrame(cl, frameTable, tol)
             for sql in sqls.split('#'):
                 if not query.exec_(sql):
                     self.db.rollback()
                     raise Exception(self.tr('Problem snapping to frame: ') + query.lastError().text())
         self.db.commit()
             
-    def densifyFrame(self, classList):
-        '''
+    def densifyFrame(self, classList, frameTable, snapTolerance):
+        """
         Densifies the frame creating new vertexes where the lines were snapped
         classList: classes to be altered
-        '''
+        """
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
         for cl in classList:
-            sql = self.gen.densifyFrame(cl)
+            sql = self.gen.densifyFrame(cl, frameTable, snapTolerance)
             if not query.exec_(sql):
                 self.db.rollback()
                 raise Exception(self.tr('Problem densifying frame: ') + query.lastError().text())
         self.db.commit()
-                
+        
     def recursiveSnap(self, classList, tol):
-        '''
+        """
         Executes a recursive snap within the class
         classList: classes to be snapped
         tol: tolerance
-        '''
+        """
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
@@ -1508,14 +1595,752 @@ class PostgisDb(AbstractDb):
                 self.db.rollback()
                 raise Exception(self.tr('Problem snapping class: ') + query.lastError().text())
         self.db.commit()
+    
+    def runQuery(self, sql, errorMsg, params):
+        self.checkAndOpenDb()
+        self.db.transaction()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            self.db.rollback()
+            raise Exception(errorMsg + query.lastError().text())
+        result = dict()
+        key = ','.join(params)
+        result[key] = []
+        while query.next():
+            newElement = []
+            for i in range(len(params)):
+                newElement.append(query.value(i))
+            result[key].append(newElement)
+        self.db.commit()
+        return result
+
+    def createAndPopulateTempTableFromMap(self, tableName, featureMap, geomColumnName):
+        srid = self.findEPSG()
+        self.checkAndOpenDb()
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        sql = self.gen.createTempTable(tableName)
+        sqls = sql.split('#')
+        for s in sqls:
+            if not query.exec_(s):
+                self.db.rollback()
+                raise Exception(self.tr('Problem creating temp table: ') + query.lastError().text())
+        attributes = None
+        for feat in featureMap.values():
+            if not attributes:
+                # getting only provider fields (we ignore expression fields - type = 6)
+                attributes = [field.name() for field in feat.fields() if field.type() != 6]
+            # getting only the needed attribute values
+            values = [feat.attribute(fieldname) for fieldname in attributes]
+            geometry = binascii.hexlify(feat.geometry().asWkb())
+            insertSql = self.gen.populateTempTable(tableName, attributes, values, geometry, srid, geomColumnName)
+            if not query.exec_(insertSql):
+                self.db.rollback()
+                raise Exception(self.tr('Problem populating temp table: ') + query.lastError().text())
+        indexSql = self.gen.createSpatialIndex(tableName)
+        if not query.exec_(indexSql):
+            self.db.rollback()
+            raise Exception(self.tr('Problem creating spatial index on temp table: ') + query.lastError().text())
+        self.db.commit()        
+        
+    def dropTempTable(self, tableName):
+        self.checkAndOpenDb()
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        sql = self.gen.dropTempTable(tableName)
+        if not query.exec_(sql):
+            self.db.rollback()
+            raise Exception(self.tr('Problem dropping temp table: ') + query.lastError().text())
+        self.db.commit()
+    
+    def createStyleTable(self):
+        self.db.transaction()
+        createSql = self.gen.createStyleTable()
+        query = QSqlQuery(self.db)
+        if not query.exec_(createSql):
+            self.db.rollback()
+            raise Exception(self.tr('Problem creating style table: ') + query.lastError().text())
+        self.db.commit()
+
+    def checkAndCreateStyleTable(self):
+        self.checkAndOpenDb()
+        sql = self.gen.checkStyleTable()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            self.db.rollback()
+            raise Exception(self.tr("Problem getting style table: ") + query.lastError().text())
+        query.next()
+        created = query.value(0)
+        if not created:
+            self.db.transaction()
+            createSql = self.gen.createStyleTable()
+            query = QSqlQuery(self.db)
+            if not query.exec_(createSql):
+                self.db.rollback()
+                raise Exception(self.tr('Problem creating style table: ') + query.lastError().text())
+            self.db.commit()
+        return created
+    
+    def getStylesFromDb(self,dbVersion):
+        self.checkAndOpenDb()
+        sql = self.gen.getStylesFromDb(dbVersion)
+        if not sql:
+            return []
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
+        styleList = []
+        while query.next():
+            styleList.append(query.value(0))
+        return styleList
+    
+    def getStyle(self, styleName, table_name, parsing = True):
+        self.checkAndOpenDb()
+        sql = self.gen.getStyle(styleName, table_name)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
+        styleList = []
+        query.next()
+        qml = query.value(0)
+        #TODO: post parse qml to remove possible attribute value type
+        if parsing:
+            if qml:
+                qml = self.utils.parseStyle(qml)
+        return qml
+    
+    def importStyle(self, styleName, table_name, qml, tableSchema):
+        self.checkAndOpenDb()
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        parsedQml = self.utils.parseStyle(qml)
+        dbName = self.db.databaseName()
+        sql = self.gen.importStyle(styleName, table_name, parsedQml, tableSchema,dbName)
+        if not query.exec_(sql):
+            self.db.rollback()
+            raise Exception(self.tr('Problem importing style')+ styleName+'/'+ table_name +':' + query.lastError().text())
+        self.db.commit()
+    
+    def updateStyle(self, styleName, table_name, qml, tableSchema):
+        self.checkAndOpenDb()
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        parsedQml = self.utils.parseStyle(qml)
+        sql = self.gen.updateStyle(styleName, table_name, parsedQml, tableSchema)
+        if not query.exec_(sql):
+            self.db.rollback()
+            raise Exception(self.tr('Problem importing style')+ styleName+'/'+ table_name +':' + query.lastError().text())
+        self.db.commit()
+    
+    def deleteStyle(self, styleName):
+        self.checkAndOpenDb()
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        sql = self.gen.deleteStyle(styleName)
+        if not query.exec_(sql):
+            self.db.rollback()
+            raise Exception(self.tr('Problem importing style')+ styleName+':' + query.lastError().text())
+        self.db.commit()
+    
+    def importStylesIntoDb(self, styleFolder):
+        """
+        path: path to folder
+        styleFolder: folder with version. Example: edgv_213/example
+        """
+        if self.versionFolderDict[self.getDatabaseVersion()] not in styleFolder:
+            raise Exception(self.tr('Style ')+styleFolder+self.tr(' does not match the version of database ') + self.db.databaseName())
+        path = os.path.join(os.path.dirname(__file__),'..', '..','Styles')
+        stylePath = os.path.join(path,styleFolder)
+        availableStyles = os.walk(stylePath).next()[2]
+        created = self.checkAndCreateStyleTable()
+        for style in availableStyles:
+            tableName = style.split('.')[0]
+            localStyle = os.path.join(stylePath,style)
+            tableSchema = self.getTableSchemaFromDb(tableName)
+            #check if style already exists. If it does, update it.
+            #if style does not exist, create one.
+            if self.getStyle(styleFolder, tableName, parsing = False):
+                self.updateStyle(styleFolder, tableName, localStyle, tableSchema)
+            else:
+                try:
+                    self.importStyle(styleFolder, tableName, localStyle, tableSchema)
+                except Exception as e:
+                    raise Exception(self.tr('Problem importing style ')+style+':'+str(e.args[0]))
+
+    def getTableSchemaFromDb(self,table):
+        self.checkAndOpenDb()
+        sql = self.gen.getTableSchemaFromDb(table)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            self.db.rollback()
+            raise Exception(self.tr("Problem getting table schema from db: ") + query.lastError().text())
+        while query.next():
+            return query.value(0)
+    
+    def getAllStylesDict(self, perspective = 'style'):
+        """
+        Returns a dict of styles in a form acording to perspective:
+            if perspective = 'style'    : [styleName][dbName][tableName] = timestamp
+            if perspective = 'database' : [dbName][styleName][tableName] = timestamp 
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getAllStylesFromDb()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            self.db.rollback()
+            raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
+        styleDict = dict()
+        while query.next():
+            dbName = query.value(0)
+            styleName = query.value(1)
+            tableName = query.value(2)
+            timestamp = query.value(3)
+            if perspective == 'style':
+                styleDict = self.utils.buildNestedDict(styleDict, [styleName, dbName, tableName], timestamp)
+            elif perspective == 'database':
+                styleDict = self.utils.buildNestedDict(styleDict, [dbName, styleName, tableName], timestamp)
+        return styleDict
+    
+    def runSqlFromFile(self, sqlFilePath):
+        self.checkAndOpenDb()
+        file = codecs.open(sqlFilePath, encoding='utf-8', mode='r')
+        #file = open(sqlFilePath,'r')
+        sql = file.read()
+        #sql = sql.replace('\xef\xbb\xbf','')
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            self.db.rollback()
+            raise Exception(self.tr('Problem running sql ')+ sqlFilePath +':' + query.lastError().text())
+        self.db.commit()
+    
+    def getStructureDict2(self):
+        """
+        Don't know the purpose of this method
+        """
+        self.checkAndOpenDb()
+        
+        if self.getDatabaseVersion() == '2.1.3':
+            schemaList = ['cb', 'complexos', 'dominios']
+        elif self.getDatabaseVersion() == 'FTer_2a_Ed':
+            schemaList = ['pe','ge', 'complexos']
+        else:
+            QgsMessageLog.logMessage(self.tr('Operation not defined for this database version!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return
+        
+        sql = self.gen.validateWithDomain(schemaList)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem executing query: ")+query.lastError().text())
+
+        classDict = dict()
+        domainDict = dict()
+        while query.next():
+            schemaName = str(query.value(0))
+            className = str(query.value(1))
+            attName = str(query.value(2))
+            domainName = str(query.value(3))
+            domainTable = str(query.value(4))
+            domainQuery = str(query.value(5))
+            cl = schemaName+'.'+className
+            query2 = QSqlQuery(domainQuery,self.db)
+            while query2.next():
+                value = int(query2.value(0))
+                code_name = query2.value(1)
+                classDict = self.utils.buildNestedDict(classDict,[str(cl),str(attName)],[(value,code_name)])
+        #TODO: get constraints
+        return classDict
+    
+    def getGeomSchemaList(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getGeometricSchemas()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
+        schemaList = []
+        while query.next():
+            schemaList.append(query.value(0))
+        return schemaList
+    
+    def getGeomDict(self, geomTypeDict):
+        """
+        returns a dict like this:
+        {'tablePerspective' : {
+            'layerName' :
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getGeomTablesFromGeometryColumns()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom tables from db: ")+query.lastError().text())
+        geomDict = dict()
+        geomDict['primitivePerspective'] = geomTypeDict
+        geomDict['tablePerspective'] = dict()
+        while query.next():
+            isCentroid = False
+            srid = query.value(0)
+            geometryType = query.value(2)
+            tableSchema = query.value(3)
+            tableName = query.value(4)
+            geometryColumn = query.value(1)
+            layerName = tableName
+            if geometryColumn == 'centroid':
+                table = layerName.split('_')
+                table[-1] = 'c'
+                layerName = '_'.join(table)
+            if layerName not in geomDict['tablePerspective'].keys():
+                geomDict['tablePerspective'][layerName] = dict()
+                geomDict['tablePerspective'][layerName]['schema'] = tableSchema
+                geomDict['tablePerspective'][layerName]['srid'] = str(srid)
+                geomDict['tablePerspective'][layerName]['geometryColumn'] = geometryColumn
+                geomDict['tablePerspective'][layerName]['geometryType'] = geometryType
+                geomDict['tablePerspective'][layerName]['tableName'] = tableName
+        return geomDict
+    
+    def getDbDomainDict(self, auxGeomDict):
+        """
+        returns a dict like this:
+        {'adm_posto_fiscal_a': {
+            'columns':{
+                'operacional': {'references':'dominios.operacional', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3], 'isMulti':False}
+                'situacaofisica': {'references':'dominios.situacaofisica', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3], 'isMulti':False}
+                'tipopostofisc': {'references':'dominios.tipopostofisc', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3], 'isMulti':False}
+                }
+            }
+        }
+        """
+        self.checkAndOpenDb()
+        #gets only schemas of classes with geom, to speed up the process.
+        checkConstraintDict = self.getCheckConstraintDict()
+        notNullDict = self.getNotNullDictV2()
+        multiDict = self.getMultiColumnsDict()
+        sql = self.gen.getGeomTablesDomains()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
+        geomDict = dict()
+        while query.next():
+            #parse done in parseFkQuery to make code cleaner.
+            tableName, fkAttribute, domainTable, domainReferencedAttribute = self.parseFkQuery(query.value(0),query.value(1))
+            if tableName not in geomDict.keys():
+                geomDict[tableName] = dict()
+            if 'columns' not in geomDict[tableName].keys():
+                geomDict[tableName]['columns'] = dict()
+            if fkAttribute not in geomDict[tableName]['columns'].keys():
+                geomDict[tableName]['columns'][fkAttribute] = dict()
+            geomDict[tableName]['columns'][fkAttribute]['references'] = domainTable
+            geomDict[tableName]['columns'][fkAttribute]['refPk'] = domainReferencedAttribute
+            values, otherKey = self.getLayerColumnDict(domainReferencedAttribute, domainTable)
+            geomDict[tableName]['columns'][fkAttribute]['values'] = values
+            geomDict[tableName]['columns'][fkAttribute]['otherKey'] = otherKey
+            geomDict[tableName]['columns'][fkAttribute]['constraintList'] = []
+            geomDict[tableName]['columns'][fkAttribute]['isMulti'] = False
+            if tableName in checkConstraintDict.keys():
+                if fkAttribute in checkConstraintDict[tableName].keys():
+                    geomDict[tableName]['columns'][fkAttribute]['constraintList'] = checkConstraintDict[tableName][fkAttribute]
+            geomDict[tableName]['columns'][fkAttribute]['nullable'] = True
+            if tableName in notNullDict.keys():
+                if fkAttribute in notNullDict[tableName]['attributes']:
+                    geomDict[tableName]['columns'][fkAttribute]['nullable'] = False
+            if tableName in multiDict.keys():
+                if fkAttribute in multiDict[tableName]:
+                    geomDict[tableName]['columns'][fkAttribute]['isMulti'] = True
+        for tableName in multiDict.keys():
+            if tableName in auxGeomDict['tablePerspective'].keys():
+                for fkAttribute in multiDict[tableName]:
+                    if tableName not in geomDict.keys():
+                        geomDict[tableName] = dict()
+                    if 'columns' not in geomDict[tableName].keys():
+                        geomDict[tableName]['columns'] = dict()
+                    if fkAttribute not in geomDict[tableName]['columns'].keys():
+                        geomDict[tableName]['columns'][fkAttribute] = dict()
+                    geomDict[tableName]['columns'][fkAttribute]['references'] = None
+                    if fkAttribute in checkConstraintDict[tableName].keys():
+                        geomDict[tableName]['columns'][fkAttribute]['constraintList'] = checkConstraintDict[tableName][fkAttribute]
+                    geomDict[tableName]['columns'][fkAttribute]['nullable'] = True
+                    if tableName in notNullDict.keys():
+                            if fkAttribute in notNullDict[tableName]['attributes']:
+                                geomDict[tableName]['columns'][fkAttribute]['nullable'] = False
+                    if tableName in multiDict.keys():
+                        if fkAttribute in multiDict[tableName]:
+                            geomDict[tableName]['columns'][fkAttribute]['isMulti'] = True
+                            geomDict[tableName]['columns'][fkAttribute]['refPk'] = 'code'
+                            geomDict[tableName]['columns'][fkAttribute]['otherKey'] = 'code_name'
+                            geomDict[tableName]['columns'][fkAttribute]['values'] = dict()
+        return geomDict
+    
+    def getCheckConstraintDict(self):
+        """
+        returns a dict like this:
+        {'asb_dep_abast_agua_a': {
+                'finalidade': [2,3,4]
+                'construcao': [1,2]
+                'situacaofisica': [0,1,2,3,5]
+            }
+        }
+        """
+        self.checkAndOpenDb()
+        #gets only schemas of classes with geom, to speed up the process.
+        sql = self.gen.getGeomTableConstraints()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
+        geomDict = dict()
+        while query.next():
+            #parse done in parseCheckConstraintQuery to make code cleaner.
+            tableName, attribute, checkList = self.parseCheckConstraintQuery(query.value(0),query.value(1))
+            if tableName not in geomDict.keys():
+                geomDict[tableName] = dict()
+            geomDict[tableName][attribute] = checkList
+        return geomDict
+    
+    def parseFkQuery(self, queryValue0, queryValue1):
+        if '.' in queryValue0:
+            splitList = queryValue0.split('.')
+            tableName = splitList[1]
+        else:
+            tableName = queryValue0
+        fkText = queryValue1
+        fkAttribute = fkText.split(')')[0].replace('FOREIGN KEY (','')
+        subtextList = fkText.split(' REFERENCES ')[-1].replace(' MATCH FULL','').split('(')
+        domainTable = subtextList[0]
+        domainReferencedAttribute = subtextList[1].replace(')','') 
+        return tableName.replace('"',''), fkAttribute.replace('"',''), domainTable, domainReferencedAttribute
+
+    def parseCheckConstraintQuery(self, queryValue0, queryValue1):
+        try:
+            if 'ANY' in queryValue1 or '@' in queryValue1:
+                return self.parseCheckConstraintWithAny(queryValue0, queryValue1)
+            else:
+                return self.parseCheckConstraintWithOr(queryValue0, queryValue1)
+        except Exception as e:
+            raise Exception(self.tr("Error parsing check constraint!\n"+e.args[0]))
+    
+    def parseCheckConstraintWithOr(self, queryValue0, queryValue1):
+        if '.' in queryValue0:
+            query0Split = queryValue0.split('.')
+            tableSchema = query0Split[0]
+            tableName = query0Split[1]
+        else:
+            tableName = queryValue0
+        query1Split = queryValue1.replace('CHECK ','').replace('(','').replace(')','').replace(' ','').replace('"','').split('OR')
+        checkList = []
+        for i in query1Split:
+            attrSplit = i.split('=')
+            attribute = attrSplit[0]
+            checkList.append(int(attrSplit[1]))
+        return tableName, attribute, checkList
+    
+    def parseCheckConstraintWithAny(self, queryValue0, queryValue1):
+        if '.' in queryValue0:
+            query0Split = queryValue0.split('.')
+            tableSchema = query0Split[0]
+            tableName = query0Split[1]
+        else:
+            tableName = queryValue0
+        query1Split = queryValue1.replace('"','').replace('ANY','').replace('ARRAY','').replace('::smallint','').replace('(','').replace(')','').replace('CHECK','').replace('[','').replace(']','').replace(' ','')
+        checkList = []
+        splitToken = ''
+        if '=' in query1Split:
+            splitToken = '='
+        elif '<@' in query1Split:
+            splitToken = '<@'
+        equalSplit = query1Split.split(splitToken)
+        attribute = equalSplit[0]
+        checkList = map(int,equalSplit[1].split(','))
+        return tableName, attribute, checkList
+    
+    def getMultiColumnsDict(self):
+        """
+        { 'table_name':[-list of columns-] } 
+        """
+        self.checkAndOpenDb()
+        #gets only schemas of classes with geom, to speed up the process.
+        schemaList = self.getGeomSchemaList()
+        sql = self.gen.getMultiColumns(schemaList)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
+        geomDict = dict()
+        while query.next():
+            #TODO: check if 2.1.3 raises problem, because of empty query
+            aux = json.loads(query.value(0))
+            geomDict[aux['table_name']]=aux['attributes']
+        return geomDict
+    
+    def getGeomTypeDict(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getGeomByPrimitive()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom types from db: ")+query.lastError().text())
+        geomDict = dict()
+        while query.next():
+            aux = json.loads(query.value(0))
+            if aux['geomtype'] == 'POINT':
+                classlist = []
+                for layerName in aux['classlist']:
+                    table = layerName.split('_')
+                    table[-1] = 'c'
+                    classlist.append('_'.join(table))                  
+                geomDict[aux['geomtype']] = classlist
+            else:
+                geomDict[aux['geomtype']] = aux['classlist']
+        return geomDict
+    
+    def getGeomColumnDict(self):
+        """
+        Dict in the form 'geomName':[-list of table names-]
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getGeomColumnDict()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom column dict: ")+query.lastError().text())
+        geomDict = dict()
+        while query.next():
+            aux = json.loads(query.value(0))
+            if aux['f2'] not in geomDict.keys():
+                geomDict[aux['f2']] = []
+            geomDict[aux['f2']].append(aux['f1'])
+        return geomDict
+    
+    def getLayersFilterByInheritance(self, layerList):
+        filter = [i.split('.')[-1] for i in self.getOrphanGeomTables(loading = True)]
+        filtered = []
+        for lyr in layerList:
+            if lyr in filter:
+                filtered.append(lyr)
+        return filtered
+
+    def getNotNullDictV2(self):
+        """
+        Dict in the form 'tableName': { 'schema':-name of the schema'
+                                        'attributes':[-list of table names-]}
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getNotNullDict()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting not null dict: ")+query.lastError().text())
+        notNullDict = dict()
+        while query.next():
+            aux = json.loads(query.value(0))
+            if aux['f1'] not in notNullDict.keys():
+                notNullDict[aux['f1']] = dict()
+            notNullDict[aux['f1']]['schema'] = aux['f2']
+            if 'attributes' not in notNullDict[aux['f1']].keys():
+                notNullDict[aux['f1']]['attributes'] = []
+            notNullDict[aux['f1']]['attributes'] = aux['f3']
+        return notNullDict
+    
+    def getDomainDictV2(self, domainTable):
+        self.checkAndOpenDb()
+        sql = self.gen.getDomainDict(domainTable)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting domain dict from table ")+domainTable+':'+query.lastError().text())
+        domainDict = dict()
+        while query.next():
+            aux = json.loads(query.value(0))
+            domainDict[aux['f2']] = aux['f1']
+        return domainDict
+    
+    def getLayerColumnDict(self, refPk, domainTable):
+        self.checkAndOpenDb()
+        sql = self.gen.getDomainCodeDict(domainTable)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting layer column dict from table ")+domainTable+':'+query.lastError().text())
+        domainDict = dict()
+        otherKey = None
+        while query.next():
+            aux = json.loads(query.value(0))
+            if not otherKey:
+                otherKey = [key for key in aux.keys() if key <> 'code'][0]
+            domainDict[aux[refPk]] = aux[otherKey]
+        return domainDict, otherKey
+    
+    def getGeomStructDict(self):
+        """
+        Returns dict in the following format:
+        {'tableName': { 'attrName1':isNullable, 'attrName2':isNullable} }
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getGeomStructDict()
+        yesNoDict = {'YES':True, 'NO':False}
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom struct dict: ")+query.lastError().text())
+        geomStructDict = dict()
+        while query.next():
+            aux = json.loads(query.value(0))
+            tableName = aux['table_name']
+            if tableName not in geomStructDict.keys():
+                geomStructDict[tableName] = dict()
+            for d in aux['array_agg']:
+                geomStructDict[tableName][d['f1']] = yesNoDict[d['f2']]
+        return geomStructDict
+    
+    def createDbFromTemplate(self,dbName,version,templateName = 'edgv'):
+        #check if created, if created prompt if drop is needed
+        self.checkAndOpenDb()
+        if templateName == 'edgv':
+            templateName = self.getTemplateName(version)
+        sql = self.gen.createFromTemplate(dbName,version,templateName)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr('Problem creating from template: ') + query.lastError().text())
+        #this close is to allow creation from template
+        self.db.close()
+    
+    def updateDbSRID(self, srid):
+        self.checkAndOpenDb()
+        self.db.transaction()
+        sridSql = self.gen.updateDbSRID(srid)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sridSql):
+            self.db.rollback()
+            raise Exception(self.tr('Problem setting srid: ') + query.lastError().text())
+        self.db.commit()
+        #this close is to allow creation from template
+        self.db.close()
+    
+    def checkTemplate(self, version):
+        self.checkAndOpenDb()
+        dbName = self.getTemplateName(version)
+        sql = self.gen.checkTemplate()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem setting as template: ")+query.lastError().text())
+        while query.next():
+            if query.value(0) == dbName:
+                return True
+        return False
+    
+    def createTemplateDatabase(self, version):
+        """
+        version: edgv version
+        creates an empty database with the name of a template
+        """
+        self.checkAndOpenDb()
+        dbName = self.getTemplateName(version)
+        try:
+            self.dropDatabase(dbName)
+        except:
+            pass
+        self.createDatabase(dbName)
+    
+    def createDatabase(self, dbName):
+        """
+        Creates a database with a given name
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getCreateDatabase(dbName)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr("Problem creating database: ")+query.lastError().text())
+    
+    def getTemplateName(self, version):
+        if version == '2.1.3':
+            return 'template_213'
+        elif version == 'FTer_2a_Ed':
+            return 'template_fter_2a_ed'
+    
+    def setDbAsTemplate(self, version = None, dbName = None, setTemplate = True):
+        self.checkAndOpenDb()
+        if not dbName:
+            dbName = self.getTemplateName(version)
+        sql = self.gen.setDbAsTemplate(dbName, setTemplate)
+        query = QSqlQuery(self.db)
+        self.db.transaction()
+        if not query.exec_(sql):
+            self.db.rollback()
+            raise Exception(self.tr("Problem setting database as template: ")+query.lastError().text())
+        self.db.commit()
+
+    def checkIfTemplate(self, dbName):
+        self.checkAndOpenDb()
+        sql = self.gen.checkIfTemplate(dbName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem checking  template: ")+query.lastError().text())
+        while query.next():
+            return query.value(0)
+    
+    def getCreationSqlPath(self, version):
+        currentPath = os.path.dirname(__file__)
+        currentPath = os.path.join(currentPath, '..', '..', 'DbTools', 'PostGISTool')
+        edgvPath = ''
+        if version == '2.1.3':
+            edgvPath = os.path.join(currentPath, 'sqls', '213', 'edgv213.sql')
+        elif version == 'FTer_2a_Ed':
+            edgvPath = os.path.join(currentPath, 'sqls', 'FTer_2a_Ed', 'edgvFter_2a_Ed.sql')
+        elif version == 'admin':
+            edgvPath = os.path.join(currentPath, 'sqls', 'admin', 'dsgtools_admindb.sql')
+        return edgvPath
+    
+    def setStructureFromSql(self, version, epsg):
+        self.checkAndOpenDb()
+        edgvPath = self.getCreationSqlPath(version)
+        file = codecs.open(edgvPath, encoding='utf-8', mode="r")
+        sql = file.read()
+        sql = sql.replace('[epsg]', str(epsg))
+        file.close()
+        commands = sql.split('#')
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        for command in commands:
+            if not query.exec_(command):
+                self.db.rollback()
+                raise Exception(self.tr('Error on database creation! ')+query.lastError().text()+ self.tr(' Db will be dropped.'))
+        self.db.commit()
+        self.alterSearchPath(version)
+        self.setDbAsTemplate(version = version)
+        self.createStyleTable()
+        #this close is to allow creation from template
+        self.db.close()
+    
+    def alterSearchPath(self, version):
+        self.checkAndOpenDb()
+        dbName = self.db.databaseName()
+        sql = self.gen.alterSearchPath(dbName, version)
+        self.db.transaction()
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            self.db.rollback()
+            raise Exception(self.tr("Problem altering search path: ")+query.lastError().text())
+        self.db.commit()
+
+    def createFrame(self, type, scale, param):
+        mi, inom, frame = self.prepareCreateFrame(type, scale, param)
+        self.insertFrame(scale, mi, inom, binascii.hexlify(frame.asWkb()))
+        return frame
+    
+    def getUsersFromServer(self):
+        self.checkAndOpenDb()
+        ret = []
+        sql = self.gen.getUsersFromServer()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting users: ")+query.lastError().text())
+        while query.next():
+            ret.append((query.value(0), query.value(1)))
+        return ret
+    
+    def reassignAndDropUser(self, user):
+        self.checkAndOpenDb()
+        sql = self.gen.reasignAndDropUser(user)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr('Problem removing user: ') +user+'\n'+query.lastError().text())
         
     def removeFeatureFlags(self, layer, featureId, processName):
-        '''
+        """
         Removes flags for a specific layer, feature id and process name
         layer: layer name
         featureId: feature id
         processName: process name
-        '''
+        """
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
@@ -1526,10 +2351,10 @@ class PostgisDb(AbstractDb):
         self.db.commit()
         
     def removeEmptyGeometries(self, layer):
-        '''
+        """
         Removes empty geometries from layer
         layer: layer name
-        '''
+        """
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
@@ -1538,4 +2363,460 @@ class PostgisDb(AbstractDb):
             self.db.rollback()
             raise Exception(self.tr('Problem removing empty geometries: ') + query.lastError().text())
         self.db.commit()
-        
+    
+    def getParamsFromConectedDb(self):
+        self.checkAndOpenDb()
+        host = self.db.hostName()
+        port = self.db.port()
+        user = self.db.userName()
+        password = self.db.password()
+        return (host, port, user, password)
+
+    def createAdminDb(self):
+        """
+        Creates a database with a given name
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getCreateDatabase('dsgtools_admindb')
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr("Problem creating database: ")+query.lastError().text())
+    
+    def hasAdminDb(self):
+        """
+        Checks if server has a dsgtools_admindb
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.hasAdminDb()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem looking for admindb: ")+query.lastError().text())
+        while query.next():
+            if query.value(0):
+                return True
+        return False
+    
+    def getRolesDict(self):
+        """
+        Gets a dict with the format: 'dbname':{[-list of roles-]}
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getRolesDict()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting roles dict: ")+query.lastError().text())
+        rolesDict = dict()
+        while query.next():
+            aux = json.loads(query.value(0))
+            if aux['dbname'] not in rolesDict.keys():
+                rolesDict[aux['dbname']] = []
+            rolesDict[aux['dbname']].append(aux['rolename'])
+        return rolesDict
+    
+    def insertIntoPermissionProfile(self, name, jsondict, edgvversion):
+        """
+        Inserts into public.permission_profile on dsgtools_admindb (name, jsondict, edgvversion)
+        """
+        self.checkAndOpenDb()
+        if self.db.databaseName() <> 'dsgtools_admindb':
+            raise Exception(self.tr('Error! Operation not defined for non dsgtools_admindb'))
+        sql = self.gen.insertIntoPermissionProfile(name, jsondict, edgvversion)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr("Problem inserting into permission profile: ")+query.lastError().text())
+    
+    def dropRoleOnDatabase(self, roleName):
+        """
+        Drops role using drop owned by and drop role.
+        This is like dropRole, but it does not uses a specific function, hence it is more generic.
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.dropRoleOnDatabase(roleName)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr("Problem dropping profile: ")+ roleName + ' :' + query.lastError().text())
+    
+    def getRoleFromAdminDb(self, roleName, edgvVersion):
+        """
+        Gets role from public.permission_profile
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getPermissionProfile(roleName, edgvVersion)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting roles from adminDb: ")+query.lastError().text())
+        while query.next():
+            return query.value(0)
+    
+    def getAllRolesFromAdminDb(self):
+        """
+        Gets role from public.permission_profile and returns a dict with format {edgvVersion:[-list of roles-]}
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getAllPermissionProfiles()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting all roles from adminDb: ")+query.lastError().text())
+        allRolesDict = dict()
+        while query.next():
+            aux = json.loads(query.value(0))
+            allRolesDict[aux['edgvversion']] = aux['profiles']
+        return allRolesDict
+    
+    def deletePermissionProfile(self, name, edgvversion):
+        """
+        Deletes profile from from public.permission_profiles
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.deletePermissionProfile(name, edgvversion)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr("Problem deleting permission profile: ")+query.lastError().text())
+    
+    def getGrantedRolesDict(self):
+        """
+        Gets a dict in the format:
+        { roleName : [-list of users-] } 
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getRolesWithGrantedUsers()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting granted roles dict: ")+query.lastError().text())
+        grantedRolesDict = dict()
+        while query.next():
+            aux = json.loads(query.value(0))
+            if aux['profile'] not in grantedRolesDict.keys():
+                grantedRolesDict[aux['profile']] = []
+            for user in aux['users']:
+                if user not in grantedRolesDict[aux['profile']]:
+                    grantedRolesDict[aux['profile']].append(user)
+        return grantedRolesDict
+    
+    def updatePermissionProfile(self, name, edgvversion, newjsondict):
+        """
+        Updates public.permission_profile with new definition.
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.updatePermisisonProfile(name, edgvversion, newjsondict)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr("Problem updating permission profile: ")+query.lastError().text())
+    
+    def getDomainTables(self):
+        """
+        Lists all domain tables available.
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getDomainTables()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting domain tables: ")+query.lastError().text())
+        domainList = []
+        while query.next():
+            domainList.append(query.value(0))
+        return domainList
+    
+    def getGeometricSchemaList(self):
+        """
+        Lists all schemas with geometries.
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getGeometricSchemaList()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geometric schema list: ")+query.lastError().text())
+        schemaList = []
+        while query.next():
+            schemaList.append(query.value(0))
+        return schemaList
+    
+    def getGeometricTableListFromSchema(self, schema):
+        """
+        Lists all tables with geometries from schema
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getGeometricTableListFromSchema(schema)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geometric table list: ")+query.lastError().text())
+        tableList = []
+        while query.next():
+            tableList.append(query.value(1))
+        return tableList
+    
+    def getParentGeomTables(self, getTupple = False):
+        """
+        Lists all tables with geometries from schema that are parents.
+        """
+        self.checkAndOpenDb()
+        layerList = self.listGeomClassesFromDatabase()
+        geomTables = [i.split('.')[-1] for i in layerList]
+        inhDict = self.getInheritanceDict()
+        parentGeomTables = []
+        for parent in inhDict.keys():
+            if parent not in geomTables:
+                for child in inhDict[parent]:
+                    if child not in parentGeomTables:
+                        parentGeomTables.append(child)
+            else:
+                if parent not in parentGeomTables:
+                    parentGeomTables.append(parent)
+        #we must check tables that have no parent
+        childBlackList = []
+        for parent in inhDict.keys():
+            if parent not in childBlackList:
+                childBlackList.append(parent)
+            for child in inhDict[parent]:
+                if child not in childBlackList:
+                    childBlackList.append(child)
+        for geomTable in geomTables:
+            if geomTable not in childBlackList and geomTable not in parentGeomTables:
+                parentGeomTables.append(geomTable)
+        parentGeomTables.sort()
+        if not getTupple:
+            return [i for i in parentGeomTables if self.getTableSchemaFromDb(i) not in ['views', 'validation'] ]
+        else:
+            parentTuppleList = []
+            for parent in parentGeomTables:
+                schema = self.getTableSchemaFromDb(parent)
+                if schema not in ['views', 'validation']:
+                    parentTuppleList.append( (schema, parent) )
+            return parentTuppleList
+    
+    def getInheritanceDict(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getInheritanceDict()
+        query = QSqlQuery(sql, self.db)
+        inhDict = dict()
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting inheritance: ")+query.lastError().text())
+        while query.next():
+            aux = json.loads(query.value(0))
+            inhDict[aux['parentname']] = aux['childname']
+        return inhDict
+    
+    def getInheritanceBloodLine(self, parent, inhDict = None):
+        """
+        Lists all tables that have parent as an ancestor.
+        """
+        if not inhDict:
+            inhDict = self.getInheritanceDict()
+        bloodLine = []
+        self.utils.getRecursiveInheritance(parent, bloodLine, inhDict)
+        return bloodLine
+    
+    def getFullBloodLineDict(self, candidate):
+        pass
+    
+    def getAttributeListFromTable(self, schema, tableName):
+        """
+        Lists all attributes from table.
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getAttributeListFromTable(schema, tableName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting attribute list: ")+query.lastError().text())
+        attributeList = []
+        while query.next():
+            attributeList.append(query.value(0))
+        return attributeList
+    
+    def getAttributeJsonFromDb(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getAttributeDictFromDb()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting attribute list: ")+query.lastError().text())
+        attributeJson = []
+        while query.next():
+            attributeJson.append(json.loads(query.value(0)))
+        return attributeJson
+    
+    def getAllDomainValues(self, domainTableList = []):
+        self.checkAndOpenDb()
+        if domainTableList == []:
+            domainTableList = self.getDomainTables()
+        valueList = []
+        for domainTable in domainTableList:
+            sql = self.gen.getAllDomainValues(domainTable)
+            query = QSqlQuery(sql, self.db)
+            while query.next():
+                value = query.value(0)
+                if value not in valueList:
+                    valueList.append(value)
+        valueList.sort()
+        return valueList
+    
+    def getInheritanceTreeDict(self):
+        self.checkAndOpenDb()
+        inhDict = self.getInheritanceDict()
+        layerList = self.listGeomClassesFromDatabase()
+        geomTables = [i.split('.')[-1] for i in layerList]
+        inhTreeDict = dict()
+        for parent in inhDict.keys():
+            self.utils.getRecursiveInheritanceTreeDict(parent, inhTreeDict, inhDict)
+        blackList = []
+        for parent in inhTreeDict.keys():
+            otherKeys = [i for i in inhTreeDict.keys() if i <> parent]
+            for otherKey in otherKeys:
+                if inhTreeDict[parent] in inhTreeDict[otherKey].values():
+                    if parent not in blackList:
+                        blackList.append(parent)
+                        break
+        for item in blackList:
+            inhTreeDict.pop(item)
+        childBlackList = []
+        self.utils.getAllItemsInDict(inhTreeDict,childBlackList)
+        for geomTable in geomTables:
+            if geomTable not in childBlackList:
+                schema = self.getTableSchemaFromDb(geomTable)
+                if schema not in ['views', 'validation']:
+                    inhTreeDict[geomTable] = dict()
+        r = {'root':inhTreeDict}
+        return r
+    
+    def getInheritanceConstraintDict(self):
+        """
+        Returns a dict in the form:
+            {'tableName':{'attributeName': {'tableName','constraintName', 'filter'} 
+                }
+            }
+        """
+        self.checkAndOpenDb()
+        schemaList = [i for i in self.getGeometricSchemaList() if i not in ['views', 'validation']]
+        sql = self.gen.getConstraintDict(schemaList)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem constraint dict from db: ")+query.lastError().text())
+        inhConstrDict = dict()
+        while query.next():
+            queryResult = json.loads(query.value(0))
+            tableName = queryResult['tablename']
+            if tableName not in inhConstrDict.keys():
+                inhConstrDict[tableName] = dict()
+            defList = queryResult['array_agg']
+            for value in defList:
+                constraintName = value['f1'] 
+                constraintDef = value['f2']
+                attrName = constraintName.split('_')[-2]
+                currTableName = constraintName.split('_'+attrName)[0]
+                if attrName not in inhConstrDict[tableName].keys():
+                    inhConstrDict[tableName][attrName] = []
+                filterDef = self.parseCheckConstraintQuery(constraintName,constraintDef)[-1]
+                schema = self.getTableSchemaFromDb(currTableName)
+                currTag = {'schema':schema, 'tableName':currTableName, 'constraintName':constraintName, 'filter':filterDef}
+                if currTag not in inhConstrDict[tableName][attrName]:
+                    inhConstrDict[tableName][attrName].append(currTag)
+        return inhConstrDict
+    
+    def getDefaultFromDb(self, schema, tableName, attrName):
+        """
+        Gets default value from table
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getDefaultFromDb(schema, tableName, attrName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting default from db: ")+query.lastError().text())
+        while query.next():
+            return query.value(0)
+    
+    def insertSettingIntoAdminDb(self, settingType, name, jsondict, edgvversion):
+        """
+        Inserts setting into dsgtools_admindb (name, jsondict, edgvversion),
+        according to settingType
+        """
+        self.checkAndOpenDb()
+        if self.db.databaseName() <> 'dsgtools_admindb':
+            raise Exception(self.tr('Error! Operation not defined for non dsgtools_admindb'))
+        sql = self.gen.insertSettingIntoAdminDb(settingType, name, jsondict, edgvversion)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr("Problem inserting property ")+settingType+self.tr(' into dsgtools_admindb: ')+query.lastError().text())
+    
+    def getSettingFromAdminDb(self, settingType, settingName, edgvVersion):
+        """
+        Gets role from public.permission_profile
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getSettingFromAdminDb(settingType, settingName, edgvVersion)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting setting from adminDb: ")+query.lastError().text())
+        while query.next():
+            return query.value(0)
+    
+    def getAllSettingsFromAdminDb(self, settingType):
+        """
+        Gets role from public.permission_profile and returns a dict with format {edgvVersion:[-list of roles-]}
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getAllSettingsFromAdminDb(settingType)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting settings from adminDb: ")+query.lastError().text())
+        allRolesDict = dict()
+        while query.next():
+            aux = json.loads(query.value(0))
+            allRolesDict[aux['edgvversion']] = aux['settings']
+        return allRolesDict
+    
+    def deleteSettingFromAdminDb(self, settingType, name, edgvversion):
+        """
+        Deletes profile from from public.permission_profiles
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.deleteSettingFromAdminDb(settingType, name, edgvversion)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr("Problem deleting permission setting: ")+query.lastError().text())
+    
+    def updateSettingFromAdminDb(self, settingType, name, edgvversion, newjsondict):
+        """
+        Updates public.permission_profile with new definition.
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.updateSettingFromAdminDb(settingType, name, edgvversion, newjsondict)
+        query = QSqlQuery(self.db)
+        if not query.exec_(sql):
+            raise Exception(self.tr("Problem updating permission profile: ")+query.lastError().text())
+
+    def upgradePostgis(self):
+        self.checkAndOpenDb()
+        updateDict = self.getPostgisVersion()
+        if updateDict <> dict():
+            self.db.transaction()
+            sql = self.gen.upgradePostgis(updateDict)
+            query = QSqlQuery(self.db)
+            if not query.exec_(sql):
+                self.db.rollback()
+                raise Exception(self.tr("Problem upgrading postgis: ")+query.lastError().text())
+            self.db.commit()
+    
+    def getPostgisVersion(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getPostgisVersion()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting postgis version: ")+query.lastError().text())
+        updateDict = dict()
+        while query.next():
+            defaultVersion = query.value(1)
+            installedVersion = query.value(2)
+            if defaultVersion <> installedVersion and installedVersion not in ['', None]:                
+                updateDict[query.value(0)] = {'defaultVersion':defaultVersion, 'installedVersion':installedVersion}
+        return updateDict
+    
+    def getCustomizationPerspectiveDict(self, perspective):
+        self.checkAndOpenDb()
+        sql = self.gen.getCustomizationPerspectiveDict(perspective)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting applied customizations: ")+query.lastError().text())
+        customDict = dict()
+        while query.next():
+            jsonDict = json.loads(query.value(0))
+            customDict[jsonDict['name']] = jsonDict['array_agg']
+        return customDict

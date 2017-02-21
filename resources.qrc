@@ -27,5 +27,18 @@
         <file>icons/centroid.png</file>
         <file>icons/fieldToolbox.png</file>
         <file>icons/productiontools.png</file>
+		<file>icons/plus.png</file>
+		<file>icons/remove.png</file>
+		<file>icons/areaTool.png</file>
+		<file>icons/backInspect.png</file>
+		<file>icons/nextInspect.png</file>
+		<file>icons/minAreaTool.png</file>
+		<file>icons/inspectFeatures.png</file>
+		<file>icons/validationtools.png</file>
+		<file>icons/codelist.png</file>
+		<file>icons/militarySimbology.png</file>
+		<file>icons/batchDatabase.png</file>
+                <file>icons/page_white_wrench.png</file>
+                <file>icons/custom_tools.png</file>                
     </qresource>
 </RCC>

@@ -28,6 +28,8 @@ from PyQt4.QtSql import QSqlDatabase
 from DsgTools.Factories.DbFactory.spatialiteDb import SpatialiteDb
 from DsgTools.Factories.DbFactory.postgisDb import PostgisDb
 
+from qgis.core import QgsMessageLog
+
 class DbFactory:
     def createDbFactory(self,driverName):
         #TODO Treat none return

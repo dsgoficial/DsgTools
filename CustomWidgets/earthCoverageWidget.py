@@ -45,6 +45,7 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.earthCoverageDict = dict()
+        self.abstractDb = None
 
     @pyqtSlot(AbstractDb)
     def setDatabase(self, db):
@@ -80,20 +81,20 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
                     areas.append(cl)
                 if cl[-1] == 'l':
                     lines.append(cl)
-            lines.append('public.aux_linha_l')
+            if 'aux_linha_l' not in lines:        
+                lines.append('aux_linha_l')
             oldCoverage = None
             data = self.abstractDb.getEarthCoverageDict()
             if data:
                 if QMessageBox.question(self, self.tr('Question'), self.tr('An earth coverage is already defined. Do you want to redefine it? All data will be lost.'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
                     return
                 oldCoverage = json.loads(data)
-            dlg = SetupEarthCoverage(self.abstractDb,areas,lines, oldCoverage)
+            dlg = SetupEarthCoverage(self.abstractDb, areas, lines, oldCoverage)
             dlg.coverageChanged.connect(self.loadEarthCoverage)
             dlg.exec_()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        pass
 
     def clearTree(self):
         '''
@@ -103,7 +104,7 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
 
     def loadEarthCoverage(self):
         '''
-        Loads a previously saved earth converage configuration
+        Loads a previously saved earth coverage configuration
         '''
         try:
             self.clearTree()

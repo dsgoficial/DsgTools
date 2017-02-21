@@ -24,29 +24,38 @@ from qgis.core import QgsVectorLayer,QgsDataSourceURI, QgsMessageLog, QgsFeature
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class DeaggregateGeometriesProcess(ValidationProcess):
-    def __init__(self, postgisDb, codelist):
+    def __init__(self, postgisDb, iface):
         '''
         Constructor
         '''
-        super(self.__class__,self).__init__(postgisDb, codelist)
+        super(self.__class__,self).__init__(postgisDb, iface)
+        self.processAlias = self.tr('Deaggregate Geometries')
+        
+        self.explodeIdDict = self.abstractDb.getExplodeCandidates()
+        self.parameters = {'Classes':self.explodeIdDict.keys()}
 
     def execute(self):
         '''
         Reimplementation of the execute method from the parent class
         '''
-        QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr('Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName())
-            explodeIdDict = self.abstractDb.getExplodeCandidates() #list only classes with elements.
-            for cl in explodeIdDict.keys():
-                uri = self.abstractDb.getURI(cl)
-                layer = QgsVectorLayer(uri.uri(), cl, 'postgres')
+            classesWithElem = self.parameters['Classes'] #list only classes with elements.
+            if len(classesWithElem) == 0:
+                self.setStatus(self.tr('There are no multi parted geometries.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('There are no multi parted geometries.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 1
+            classesWithElem = self.parameters['Classes']
+            for cl in classesWithElem:
+                #creating vector layer
+                layer = self.loadLayerBeforeValidationProcess(cl)
                 provider = layer.dataProvider()
                 if not layer.isValid():
-                    QgsMessageLog.logMessage("Layer %s failed to load!" % cl)
+                    QgsMessageLog.logMessage(self.tr("Layer {0} failed to load!").format(cl))
                 layer.startEditing()
-                for id in explodeIdDict[cl]:
+                for id in self.explodeIdDict[cl]:
                     layer.startEditing()
                     feat = layer.getFeatures(QgsFeatureRequest(id)).next()
                     parts = feat.geometry().asGeometryCollection()
@@ -62,11 +71,11 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                     feat.setGeometry(parts[0])
                     layer.updateFeature(feat)
                     layer.addFeatures(addList,True)
-                    layer.commitChanges()
-            self.setStatus('All geometries are now single parted.\n', 1) #Finished
-            QgsMessageLog.logMessage('All features are valid.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            msg = self.tr('All geometries are now single parted.')
+            self.setStatus(msg, 1) #Finished
+            QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
             return 0

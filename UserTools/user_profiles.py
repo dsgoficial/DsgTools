@@ -26,7 +26,7 @@ import os
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSlot, Qt
 from PyQt4.QtSql import QSqlQuery
-from PyQt4.QtGui import QMenu
+from PyQt4.QtGui import QMenu, QMessageBox
 
 # DSGTools imports
 from DsgTools.Utils.utils import Utils
@@ -52,8 +52,8 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.widget.tabWidget.setTabEnabled(0, False)
-        
+        self.widget.tabWidget.setTabEnabled(1, False)
+        self.widget.serverWidget.superNeeded = True
         #Objects Connections
         QtCore.QObject.connect(self.widget, QtCore.SIGNAL(("connectionChanged()")), self.populateUsers)
         
@@ -168,7 +168,7 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
         '''
         Slot to install profile
         '''
-        dlg = AssignProfiles(self.widget.comboBoxPostgis.currentIndex())
+        dlg = AssignProfiles(self.widget.serverWidget.serversCombo.currentIndex(),self.widget.comboBoxPostgis.currentIndex())
         dlg.exec_()
         self.getProfiles(self.comboBox.currentText())        
 

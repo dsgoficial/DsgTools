@@ -34,9 +34,12 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'rules_editor.ui'))
 
 class RulesEditor(QtGui.QDialog, FORM_CLASS):
+    """
+    teste
+    """
     def __init__(self, postgisDb, parent = None):
         """
-        Constructor
+        Constructor lalalala
         """
         super(RulesEditor, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -59,9 +62,9 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
         self.readFile()
         
     def fillLayers(self):
-        '''
+        """
         List classes from database
-        '''
+        """
         classList = self.postgisDb.listGeomClassesFromDatabase()
         classList.sort()
         self.layer1Combo.addItems(classList)
@@ -83,8 +86,9 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
         Remove a selected rule
         '''
         selectedItems = self.tableWidget.selectedItems()
-        row = self.tableWidget.row(selectedItems[0])
-        self.tableWidget.removeRow(row)
+        rows = [self.tableWidget.row(selectedItem) for selectedItem in selectedItems]
+        for row in rows:
+            self.tableWidget.removeRow(row)
         
     def insertRow(self, layer1, necessity, predicate, layer2, cardinality):
         '''

@@ -28,11 +28,13 @@ from qgis.core import QgsMessageLog
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
 from PyQt4.QtSql import QSqlQuery
+from PyQt4.QtGui import QMessageBox
 
 # DSGTools imports
 from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'exploreServerWidget.ui'))
@@ -49,7 +51,9 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.superNeeded = False
         self.dbFactory = DbFactory()
+        self.abstractDb = None
 
     def getServers(self):
         '''
@@ -61,6 +65,21 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         settings.endGroup()
         return currentConnections
     
+    def getServerConfiguration(self, name):
+        '''
+        Gets server configuration
+        name: server name 
+        '''
+        settings = QSettings()
+        settings.beginGroup('PostgreSQL/servers/'+name)
+        host = settings.value('host')
+        port = settings.value('port')
+        user = settings.value('username')
+        password = settings.value('password')
+        settings.endGroup()
+        
+        return (host, port, user, password)
+    
     def browseServer(self, dbList, host, port, user, password):
         '''
         Browses server for EDGV databases
@@ -70,20 +89,35 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         user: user name
         password: password
         '''
-        gen = self.factory.createSqlGenerator(False)
-        edvgDbList = []
-        for database in dbList:
-            db = self.getPostGISDatabaseWithParams(database, host, port, user, password)
-            if not db.open():
-                qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+db.lastError().databaseText(), level=QgsMessageBar.CRITICAL)
-
-            query = QSqlQuery(db)
-            if query.exec_(gen.getEDGVVersion()):
-                while query.next():
-                    version = query.value(0)
-                    if version:
-                        edvgDbList.append((database, version))
-        return edvgDbList
+        canLoad = True
+        if self.superNeeded:
+            canLoad = False
+            try:
+                if self.serverWidget.abstractDb.checkSuperUser():
+                    canLoad = True
+                else:
+                    QMessageBox.warning(self, self.tr('Info!'), self.tr('Connection refused. Connect with a super user to inspect server.'))
+                    return []
+            except Exception as e:
+                QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+        if canLoad:
+            progress = ProgressWidget(1,len(dbList),self.tr('Loading databases from server... '), parent = self)
+            progress.initBar()
+            gen = self.factory.createSqlGenerator(False)
+            edvgDbList = []
+            for database in dbList:
+                db = self.getPostGISDatabaseWithParams(database, host, port, user, password)
+                if not db.open():
+                    qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+db.lastError().databaseText(), level=QgsMessageBar.CRITICAL)
+    
+                query = QSqlQuery(db)
+                if query.exec_(gen.getEDGVVersion()):
+                    while query.next():
+                        version = query.value(0)
+                        if version:
+                            edvgDbList.append((database, version))
+                progress.step()
+            return edvgDbList
     
     def getDbsFromServer(self, name):
         '''
@@ -116,8 +150,7 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         '''
         createNewServer = ViewServers(self)
         result = createNewServer.exec_()
-        if result:
-            self.populateServersCombo()
+        self.populateServersCombo()
 
     def populateServersCombo(self):
         '''
@@ -127,7 +160,8 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         self.serversCombo.addItem(self.tr('Select Server'))
         currentConnections = self.getServers()
         for connection in currentConnections:
-            self.serversCombo.addItem(connection)
+            (host, port, user, password) = self.getServerConfiguration(connection)
+            self.serversCombo.addItem('{3} ({0}@{1}:{2})'.format(user, host, port, connection))
     
     @pyqtSlot(int)
     def on_serversCombo_currentIndexChanged(self):
@@ -140,6 +174,31 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
             if not self.abstractDb:
                 QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
                 return
-            (host, port, user, password) = self.abstractDb.getServerConfiguration(self.serversCombo.currentText())
-            self.abstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
-            self.abstractDbLoaded.emit()
+            (host, port, user, password) = self.abstractDb.getServerConfiguration(self.serversCombo.currentText().split('(')[0][0:-1])
+            if host or port or user:
+                self.abstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
+                if self.superNeeded:
+                    try:
+                        if not self.abstractDb.checkSuperUser():
+                            QMessageBox.warning(self, self.tr('Info!'), self.tr('Connection refused. Connect with a super user to inspect server.'))
+                            self.serversCombo.setCurrentIndex(0)
+                            return
+                    except Exception as e:
+                        QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+                self.abstractDbLoaded.emit()
+    
+    def getServerParameters(self):
+        if self.serversCombo.currentIndex() != 0:
+            return self.abstractDb.getServerConfiguration(self.serversCombo.currentText().split('(')[0][0:-1])
+        else:
+            return (None, None, None, None)
+    
+    def clearAll(self):
+        try:
+            if self.abstractDb:
+                self.abstractDb.__del__()
+                self.abstractDb = None
+        except:
+            pass
+        self.serversCombo.setCurrentIndex(0)
+            

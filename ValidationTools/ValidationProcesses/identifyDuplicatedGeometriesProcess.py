@@ -24,22 +24,31 @@ from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
-    def __init__(self, postgisDb, codelist):
+    def __init__(self, postgisDb, iface):
         '''
         Constructor
         '''
-        super(self.__class__,self).__init__(postgisDb, codelist)
+        super(self.__class__,self).__init__(postgisDb, iface)
+        self.processAlias = self.tr('Identify Duplicated Geometries')
+        
+        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements = True, getGeometryColumn = True)
+        classesWithElem = [i['layerName']+' ({0})'.format(i['geometryColumn']) for i in classesWithElemDictList]
+        self.parameters = {'Classes':classesWithElem}
 
     def execute(self):
         '''
         Reimplementation of the execute method from the parent class
         '''
-        QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
-            duplicated = self.abstractDb.getDuplicatedGeomRecords(classesWithGeom) #list only classes with elements.
+            classesWithGeom = []
+            for classAndGeom in self.parameters['Classes']:
+                cl, geometryColumn = classAndGeom.split(' ')
+                if cl not in classesWithGeom:
+                    classesWithGeom.append(cl)
+            duplicated = self.abstractDb.getDuplicatedGeomRecords(classesWithGeom)
             if len(duplicated.keys()) > 0:
                 dupGeomRecordList = []
                 for cl in duplicated.keys():
@@ -49,15 +58,16 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
                             dupGeomRecordList.append((tableSchema+'.'+tableName,id,'Duplicated Geometry',duplicated[cl][id]))
                 numberOfDupGeom = self.addFlag(dupGeomRecordList)
                 for tuple in dupGeomRecordList:
-                    self.addClassesToBeDisplayedList(tuple[0])        
-                self.setStatus('%s features are duplicated. Check flags.\n' % numberOfDupGeom, 4) #Finished with flags
-                QgsMessageLog.logMessage('%s features are duplicated. Check flags.\n' % numberOfDupGeom, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                return
+                    self.addClassesToBeDisplayedList(tuple[0])
+                msg =  self.tr('{} features are duplicated. Check flags.').format(numberOfDupGeom)     
+                self.setStatus(msg, 4) #Finished with flags
+                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
-                self.setStatus('There are no duplicated geometries.\n', 1) #Finished
-                QgsMessageLog.logMessage('There are no duplicated geometries.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                msg = self.tr('There are no duplicated geometries.')
+                self.setStatus(msg, 1) #Finished
+                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
             return 0

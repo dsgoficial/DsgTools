@@ -436,6 +436,8 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         forbiddenLayers = []
         self.layers = self.iface.mapCanvas().layers()
         for layer in self.layers:
+            if layer.type() != QgsMapLayer.VectorLayer:
+                continue
             #case no fetures selected we proceed to the next one
             selectedFeatures = layer.selectedFeatures()
             if len(selectedFeatures) == 0:

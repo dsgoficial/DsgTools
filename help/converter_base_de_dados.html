@@ -1,71 +1,80 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-  	
-	<title></title>
-    
-    <link rel="stylesheet" href="css/bootstrap.css">
-	<link rel="stylesheet" href="everydayimstyling.css" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title></title>
+
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="everydayimstyling.css" />
 </head>
 
 <body>
 	<!--Insira o título da seção adicionada na próxima tag-->
-    <h2>
-    	Converter Banco de Dados
-    </h2>
-    
-    <!--Insira parágrafos usando o modelo da próxima tag-->
+	<h2>Converter Banco de Dados</h2>
+
+	<!--Insira parágrafos usando o modelo da próxima tag-->
+	<p align="justify">O DsgTools permite que sejam feitas conversões
+		de bancos de dados EDGV criados por ele. A conversão pode ser feita de
+		PostGIS para Spatialite e de Spatialite para PostGIS.</p>
+
 	<p align="justify">
-		O DsgTools permite que sejam feitas conversões de bancos de dados EDGV criados por ele. A conversão pode ser feita de PostGIS para Spatialite 
-    	e de Spatialite para PostGIS.
+		Para converter o usuário precisa definir como será feita a conversão
+		dos dados. Caso a conversão seja de PostGIS para Spatialite não há a
+		necessidade de se escolher como a conversão será feita pois o PostGIS
+		é um banco que garante a integridade de seus dados de acordo com o
+		previsto na EDGV. Caso a conversão seja feita de Spatialite para
+		PostGIS o usuśrio deve escolher como proceder durante a conversão.
+		Nesse caso existem duas opções:
+		<ul style="list-style-type: square">
+			<li>Somente converter o que estiver estritamente compatível com
+				a EDGV</li>
+			<li>Converter os dados executando um reparação de dados
+				defeituosos (Usar valores padrão e -9999 para os dados que devem ser
+				não nulos)</li>
+		</ul>
+	</p>
+
+	<p align="justify">Para iniciar uma conversão o usuário deve
+		escolher entre um dos dois tipos disponíveis, postgis2spatialite ou
+		spatialite2postgis, como se pode ver na figura abaixo.</p>
+
+	<!--Insira imagens usando o modelo da próxima tag-->
+	<p align=center>
+		<img src='dsg_tools/converter_banco_1.png' name='figuras1' width=700
+			height=380 alt='Erro ao mostrar a imagem'>
 	</p>
 
 	<p align="justify">
-		Para converter o usuário precisa definir como será feita a conversão dos dados. Caso a conversão seja de PostGIS para Spatialite não há a 
-		necessidade de se escolher como a conversão será feita pois o PostGIS é um banco que garante a integridade de seus dados de acordo com o 
-		previsto na EDGV. Caso a conversão seja feita de Spatialite para PostGIS o usuśrio deve escolher como proceder durante a conversão. Nesse caso 
-		existem duas opções: 
-		 <ul style="list-style-type:square">
-		  <li>Somente converter o que estiver estritamente compatível com a EDGV</li>
-		  <li>Converter os dados executando um reparação de dados defeituosos (Usar valores padrão e -9999 para os dados que devem ser não nulos)</li>
-		</ul> 		
+		Com a escolha feita, deve se escolher o banco de entrada e o banco de
+		saída. Deve se lembrar que
+		<kbd>os bancos devem estar previamente criados</kbd>
+		.
 	</p>
-    
-	<p align="justify">
-		Para iniciar uma conversão o usuário deve escolher entre um dos dois tipos disponíveis, postgis2spatialite ou spatialite2postgis, como se pode ver 
-		na figura abaixo. 		
+
+	<!--Insira imagens usando o modelo da próxima tag-->
+	<p align=center>
+		<img src='dsg_tools/converter_banco_2.png' name='figuras1' width=700
+			height=380 alt='Erro ao mostrar a imagem'>
 	</p>
-    
-    <!--Insira imagens usando o modelo da próxima tag-->
-    <p align=center>
-        <img src='dsg_tools/converter_banco_1.png' name='figuras1' width=700 height=380 alt='Erro ao mostrar a imagem'>
-    </p>
-	
+
 	<p align="justify">
-		Com a escolha feita, deve se escolher o banco de entrada e o banco de saída. Deve se lembrar que <kbd>os bancos devem estar previamente criados</kbd>.		
-	</p>
-    
-    <!--Insira imagens usando o modelo da próxima tag-->
-    <p align=center>
-        <img src='dsg_tools/converter_banco_2.png' name='figuras1' width=700 height=380 alt='Erro ao mostrar a imagem'>
-    </p>
-	
-	<p align="justify">
-		Com os bancos de entrada e saída definidos só resta clicar em <kbd>Converter</kbd> e esperar o processamento. Dependendo do tamanho o banco o 
-		processo pode levar diversos minutos. Após a conversão aparecerá um resumo das atividades executadas para o usuário verificar se tudo foi convertido 
+		Com os bancos de entrada e saída definidos só resta clicar em
+		<kbd>Converter</kbd>
+		e esperar o processamento. Dependendo do tamanho o banco o processo
+		pode levar diversos minutos. Após a conversão aparecerá um resumo das
+		atividades executadas para o usuário verificar se tudo foi convertido
 		corretamente.
 	</p>
-    
-    <!--Insira imagens usando o modelo da próxima tag-->
-    <p align=center>
-        <img src='dsg_tools/converter_banco_3.png' name='figuras1' width=700 height=380 alt='Erro ao mostrar a imagem'>
-    </p>
-	
+
+	<!--Insira imagens usando o modelo da próxima tag-->
+	<p align=center>
+		<img src='dsg_tools/converter_banco_3.png' name='figuras1' width=700
+			height=380 alt='Erro ao mostrar a imagem'>
+	</p>
+
 	<br>
-
-
 </body>
 </html>

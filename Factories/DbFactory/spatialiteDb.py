@@ -24,7 +24,8 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 from PyQt4.QtGui import QFileDialog
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from osgeo import ogr
+from osgeo import ogr, osr
+from qgis.core import QgsCoordinateReferenceSystem 
 
 class SpatialiteDb(AbstractDb):
 
@@ -60,7 +61,7 @@ class SpatialiteDb(AbstractDb):
         filename = fd.getOpenFileName(caption=self.tr('Select a DSGTools Spatialite file'),filter=self.tr('Spatialite file databases (*.sqlite)'))
         self.db.setDatabaseName(filename)
     
-    def listGeomClassesFromDatabase(self):
+    def listGeomClassesFromDatabase(self, primitiveFilter = []):
         '''
         Gets a list with geometry classes from database
         '''
@@ -402,3 +403,122 @@ class SpatialiteDb(AbstractDb):
         Gets the frame layer name
         '''
         return 'public_aux_moldura_a'
+
+    def getOrphanGeomTablesWithElements(self, loading = False):
+        return []
+    
+    def getOrphanGeomTables(self):
+        return []
+    
+    def checkAndCreateStyleTable(self):
+        return None
+
+    def getStylesFromDb(self,dbVersion):
+        return None
+
+    def getGeomTypeDict(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getGeomByPrimitive()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom types from db: ")+query.lastError().text())
+        geomDict = dict()
+        while query.next():
+            type = query.value(0)
+            tableName = query.value(1)
+            layerName = '_'.join(tableName.split('_')[1::])
+            if type not in geomDict.keys():
+                geomDict[type] = []
+            if layerName not in geomDict[type]:
+                geomDict[type].append(layerName)
+        return geomDict
+    
+    def getGeomDict(self, getCentroids = False):
+        '''
+        returns a dict like this:
+        {'tablePerspective' : {
+            'layerName' :
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.getGeomTablesFromGeometryColumns()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom tables from db: ")+query.lastError().text())
+        geomDict = dict()
+        geomDict['primitivePerspective'] = self.getGeomTypeDict()
+        geomDict['tablePerspective'] = dict()
+        while query.next():
+            isCentroid = False
+            srid = query.value(0)
+            geometryType = query.value(2)
+            tableName = query.value(3)
+            tableSchema = tableName.split('_')[0]
+            geometryColumn = query.value(1)
+            layerName = '_'.join(tableName.split('_')[1::])
+            if layerName not in geomDict['tablePerspective'].keys():
+                geomDict['tablePerspective'][layerName] = dict()
+                geomDict['tablePerspective'][layerName]['schema'] = tableSchema
+                geomDict['tablePerspective'][layerName]['srid'] = str(srid)
+                geomDict['tablePerspective'][layerName]['geometryColumn'] = geometryColumn
+                geomDict['tablePerspective'][layerName]['geometryType'] = geometryType
+                geomDict['tablePerspective'][layerName]['tableName'] = tableName
+        return geomDict
+    
+    def getGeomColumnDict(self):
+        '''
+        Dict in the form 'geomName':[-list of table names-]
+        '''
+        self.checkAndOpenDb()
+        sql = self.gen.getGeomColumnDict()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom column dict: ")+query.lastError().text())
+        geomDict = dict()
+        while query.next():
+            geomColumn = query.value(0)
+            tableName = query.value(1)
+            lyrName = '_'.join(tableName.split('_')[1::])
+            if geomColumn not in geomDict.keys():
+                geomDict[geomColumn] = []
+            geomDict[geomColumn].append(lyrName)
+        return geomDict
+
+    def createFrame(self, type, scale, param):
+        mi, inom, frame = self.prepareCreateFrame(type, scale, param)
+        self.insertFrame(scale, mi, inom, frame.asWkb())
+        return frame
+    
+    def insertFrame(self, scale, mi, inom, frame):
+        #TODO: use sqlite3 or ogr
+        self.checkAndOpenDb()
+        srid = self.findEPSG()
+        geoSrid = QgsCoordinateReferenceSystem(int(srid)).geographicCRSAuthId().split(':')[-1]
+        ogr.UseExceptions()
+        outputDS = self.buildOgrDatabase()
+        outputLayer=outputDS.GetLayerByName('public_aux_moldura_a')
+        newFeat=ogr.Feature(outputLayer.GetLayerDefn())
+        auxGeom = ogr.CreateGeometryFromWkb(frame)
+        #set geographic srid from frame
+        geoSrs = ogr.osr.SpatialReference()
+        geoSrs.ImportFromEPSG(int(geoSrid))
+        auxGeom.AssignSpatialReference(geoSrs)
+        #reproject geom
+        outSpatialRef = outputLayer.GetSpatialRef()
+        coordTrans = osr.CoordinateTransformation(geoSrs, outSpatialRef)
+        auxGeom.Transform(coordTrans)
+        newFeat.SetGeometry(auxGeom)
+        newFeat.SetField('mi', mi)
+        newFeat.SetField('inom', inom)
+        newFeat.SetField('escala', str(scale))
+        out=outputLayer.CreateFeature(newFeat)
+        outputDS.Destroy()
+    
+    def getTableSchemaFromDb(self, table):
+        self.checkAndOpenDb()
+        sql = self.gen.getFullTablesName(table)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting full table name: ")+query.lastError().text())
+        while query.next():
+            return query.value(0).split('_')[0]
+        

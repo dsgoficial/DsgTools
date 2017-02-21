@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   width="39"
+   height="38"
+   viewBox="0 0 39 38"
+   sodipodi:docname="triangulo.svg">
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="738"
+     id="namedview4"
+     showgrid="false"
+     inkscape:zoom="6.2105263"
+     inkscape:cx="19.5"
+     inkscape:cy="19"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <path
+     style="fill:#000000"
+     d="M 9.5067768,19.287199 C 14.671119,9.3493963 19.24253,1.2173716 19.665469,1.2160336 c 0.422938,-0.0013 5.002014,8.1295917 10.175723,18.0687324 l 9.406745,18.071166 -19.565436,0 -19.56543717,0 L 9.5067768,19.287199 Z M 28.437023,20.511468 C 24.16022,12.347012 20.211017,5.6691206 19.661017,5.6717086 c -0.55,0.0026 -4.485496,6.6825964 -8.745546,14.8444644 l -7.7455462,14.839759 16.5215522,0 16.521553,0 -7.776007,-14.844464 z"
+     id="path3338"
+     inkscape:connector-curvature="0" />
+</svg>

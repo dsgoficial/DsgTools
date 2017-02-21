@@ -10,7 +10,7 @@
 name=DSG Tools
 qgisMinimumVersion=2.14
 description=Brazilian Army Cartographic Production Tools
-version=2.1
+version=3.0
 author=Brazilian Army - Geographic Service Bureau
 email=suporte.dsgtools@dsg.eb.mil.br
 about=
@@ -66,7 +66,7 @@ changelog=
 	2.0rc09 - Bug fixes and adjustments for EDGV FTer_2a_Ed
 	2.0rc10 - Bug fixes and adjustments for EDGV FTer_2a_Ed
 	2.0 - Bug fixes and adjustments for EDGV FTer_2a_Ed
-	2.1 - New Tool to reclassify features (move them to another layer) with predefined attributes
+	3.0 - New Tool to reclassify features (move them to another layer) with predefined attributes. Several batch management tools (db creation, user permissions, customizations and etc). Validation Tools (fix geometry problems prior to creating a topology structure). Other bug fixes.
 
 # Tags are comma separated with spaces allowed
 tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script

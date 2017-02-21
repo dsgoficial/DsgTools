@@ -25,21 +25,18 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 import processing, binascii
 
 class SnapGeometriesProcess(ValidationProcess):
-    def __init__(self, postgisDb, codelist):
-        super(self.__class__,self).__init__(postgisDb, codelist)
-        self.parameters = {'Snap': 1.0, 'MinArea':0.001}
+    def __init__(self, postgisDb, iface):
+        super(self.__class__,self).__init__(postgisDb, iface)
+        self.processAlias = self.tr('Snap Geometries')
         
-    def postProcess(self):
-        '''
-        Gets the process that should be execute after this one
-        '''
-        return 'ForceValidityGeometriesProcess'
-
-    def runProcessinAlg(self, cl):
+        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False, primitiveFilter = ['a', 'l'])
+        self.parameters = {'Snap': 1.0, 'MinArea':0.001, 'Classes':classesWithElem.keys()}
+        
+    def runProcessinAlg(self, layer, tempTableName):
         alg = 'grass7:v.clean.advanced'
         
         #creating vector layer
-        input = QgsVectorLayer(self.abstractDb.getURI(cl, True).uri(), cl, "postgres")
+        input = QgsVectorLayer(self.abstractDb.getURI(tempTableName, True).uri(), tempTableName, "postgres")
         crs = input.crs()
         epsg = self.abstractDb.findEPSG()
         crs.createFromId(epsg)
@@ -50,12 +47,12 @@ class SnapGeometriesProcess(ValidationProcess):
         
         #setting tools
         tools = 'snap'
-        threshold = self.parameters['Snap']
+        threshold = -1
         minArea = self.parameters['MinArea']
-        snap = -1
+        snap = self.parameters['Snap']
 
         #getting table extent (bounding box)
-        tableSchema, tableName = self.abstractDb.getTableSchema(cl)        
+        tableSchema, tableName = self.abstractDb.getTableSchema(tempTableName)        
         (xmin, xmax, ymin, ymax) = self.abstractDb.getTableExtent(tableSchema, tableName)
         extent = '{0},{1},{2},{3}'.format(xmin, xmax, ymin, ymax)
         
@@ -63,7 +60,7 @@ class SnapGeometriesProcess(ValidationProcess):
 
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
-        self.updateOriginalLayer(input, outputLayer)
+        self.updateOriginalLayer(layer, outputLayer)
           
         #getting error flags
         errorLayer = processing.getObject(ret['error'])
@@ -71,71 +68,40 @@ class SnapGeometriesProcess(ValidationProcess):
         QgsMapLayerRegistry.instance().removeMapLayer(input.id())
         return self.getProcessingErrors(errorLayer)
 
-    def updateOriginalLayer(self, pgInputLyr, grassOutputLyr):
-        '''
-        Updates the original layer using the grass output layer
-        pgInputLyr: postgis input layer
-        grassOutputLyr: grass output layer
-        '''
-        provider = pgInputLyr.dataProvider()
-        pgInputLyr.startEditing()
-        addList = []
-        for feature in pgInputLyr.getFeatures():
-            id = feature['id']
-            grassFeats = []
-            for gf in grassOutputLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%id))):
-                grassFeats.append(gf)
-            for i in range(len(grassFeats)):
-                if i == 0:
-                    newGeom = grassFeats[i].geometry()
-                    newGeom.convertToMultiType()
-                    feature.setGeometry(newGeom)
-                    pgInputLyr.updateFeature(feature)
-                else:
-                    newFeat = QgsFeature(feature)
-                    newGeom = grassFeats[i].geometry()
-                    newGeom.convertToMultiType()
-                    newFeat.setGeometry(newGeom)
-                    idx = newFeat.fieldNameIndex('id')
-                    newFeat.setAttribute(idx,provider.defaultValue(idx))                    
-                    addList.append(newFeat)
-        pgInputLyr.addFeatures(addList,True)
-        pgInputLyr.commitChanges()
-    
-    def getProcessingErrors(self, layer):
-        recordList = []
-        for feature in layer.getFeatures():
-            recordList.append((feature.id(), binascii.hexlify(feature.geometry().asWkb())))
-        return recordList
-        
     def execute(self):
         #abstract method. MUST be reimplemented.
-        QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            classesWithGeom = self.abstractDb.listClassesWithElementsFromDatabase()
-            if classesWithGeom.__len__() == 0:
-                self.setStatus('Empty database!\n', 1) #Finished
-                QgsMessageLog.logMessage('Empty database!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
-                return
-            for cl in classesWithGeom:
-                if cl[-1]  in ['a', 'l']:
-                    print cl
-                    result = self.runProcessinAlg(cl)
-                    if len(result) > 0:
-                        recordList = []
-                        for tupple in result:
-                            recordList.append((cl,tupple[0],'Snapping error.',tupple[1]))
-                            self.addClassesToBeDisplayedList(cl) 
-                        numberOfProblems = self.addFlag(recordList)
-                        self.setStatus('{} feature(s) of class '+cl+' with snapping errors. Check flags.\n' .format(numberOfProblems), 4) #Finished with flags
-                        QgsMessageLog.logMessage('{} feature(s) of class '+cl+' with snapping errors. Check flags.\n' .format(numberOfProblems), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                    else:
-                        self.setStatus('There are no snapping errors on '+cl+'.\n', 1) #Finished
-                        QgsMessageLog.logMessage('There are no snapping errors on '+cl+'.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            classesWithElem = self.parameters['Classes']
+            if len(classesWithElem) == 0:
+                self.setStatus(self.tr('Empty database.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 1
+            error = False
+            for cl in classesWithElem:
+                # preparation
+                processTableName, lyr = self.prepareExecution(cl)
+                #running the process in the temp table
+                result = self.runProcessinAlg(lyr, processTableName)
+                self.abstractDb.dropTempTable(processTableName)
+                if len(result) > 0:
+                    error = True
+                    recordList = []
+                    for tupple in result:
+                        recordList.append((cl,tupple[0],self.tr('Snapping error.'),tupple[1]))
+                        self.addClassesToBeDisplayedList(cl) 
+                    numberOfProblems = self.addFlag(recordList)
+                    QgsMessageLog.logMessage(self.tr('{0} feature(s) of class {1} with snapping errors. Check flags.').format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                else:
+                    QgsMessageLog.logMessage(self.tr('There are no snapping errors on {}.').format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            if error:
+                self.setStatus(self.tr('There are snapping errors. Check log.'), 4) #Finished with errors
+            else:
+                self.setStatus(self.tr('There are no snapping errors.'), 1) #Finished
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
             return 0

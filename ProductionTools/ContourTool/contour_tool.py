@@ -22,8 +22,8 @@
 """
 
 from qgis.core import QgsFeatureRequest, QgsGeometry, QGis, QgsSpatialIndex, QgsCoordinateTransform
-from DsgTools.VectorTools.contour_value import ContourValue
 
+from DsgTools.ProductionTools.ContourTool.contour_value import ContourValue
 
 class ContourTool():
     def updateReference(self, referenceLayer):

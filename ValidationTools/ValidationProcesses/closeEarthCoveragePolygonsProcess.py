@@ -29,24 +29,19 @@ import json
 #update imports
 
 class CloseEarthCoveragePolygonsProcess(ValidationProcess):
-    def __init__(self, postgisDb, codelist):
+    def __init__(self, postgisDb, iface):
         '''
         Constructor
         '''
-        super(self.__class__,self).__init__(postgisDb, codelist)
+        super(self.__class__,self).__init__(postgisDb, iface)
+        self.processAlias = self.tr('Close Earth Coverage Polygons')
         
     def preProcess(self):
         '''
         Gets the process that should be execute before this one
         '''
-        return 'SnapLinesToFrameProcess'
+        return self.tr('Snap Lines to Frame')
         
-    def postProcess(self):
-        '''
-        Gets the process that should be execute after this one
-        '''
-        return None
-
     def cleanCentroidsAreas(self, coverageClassList):
         '''
         Cleans all the previously created areas
@@ -151,7 +146,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             if feat.geometry().within(hole):
                 #After detecting that feat is indeed a flag (area with conflicted centroids), combines it with the rest of earth coverage
                 combined = combined.combine(feat.geometry())
-                flagTupleList.append((feat['cl'],-1,'Area with conflicted centroid.',binascii.hexlify(feat.geometry().asWkb())))
+                flagTupleList.append((feat['cl'],-1,self.tr('Area with conflicted centroid.'),binascii.hexlify(feat.geometry().asWkb())))
         
         destIdx = areaLyr.fieldNameIndex('destid')
         notFlagDict = dict()
@@ -164,15 +159,17 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         areaLyr.dataProvider().changeAttributeValues(notFlagDict)
         areasWithoutCentroids = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid = -1000')))]
         for feat in areasWithoutCentroids:
-                flagTupleList.append((feat['cl'],-1,'Area without centroid.',binascii.hexlify(feat.geometry().asWkb())))
+                flagTupleList.append((feat['cl'],-1,self.tr('Area without centroid.'),binascii.hexlify(feat.geometry().asWkb())))
         #finishing the raise flags step
         if len(flagTupleList) > 0:
             self.addFlag(flagTupleList)
-            self.setStatus('Process finished with problems. Check flags.\n', 4) #Finished with flags
-            QgsMessageLog.logMessage('Process finished with problems. Check flags.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            msg = self.tr('Process finished with problems. Check flags.')
+            self.setStatus(msg, 4) #Finished with flags
+            QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         else:
-            self.setStatus('There are no area building errors.\n', 1)
-            QgsMessageLog.logMessage('There are no area building errors.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)        
+            msg = self.tr('There are no area building errors.')
+            self.setStatus(msg, 1)
+            QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)        
     
     def relateAreasWithCentroids(self, cl, areaLyr, centroidLyr, relateDict, centroidIdx):
         '''
@@ -322,24 +319,24 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         '''
         Reimplementation of the execute method from the parent class
         '''
-        QgsMessageLog.logMessage('Starting '+self.getName()+'Process.\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
-            self.setStatus('Running', 3) #now I'm running!
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             #TODO: check if frame is created
             dadsWithGeom = self.abstractDb.getOrphanGeomTablesWithElements()
             earthCoverageDict = json.loads(self.abstractDb.getEarthCoverageDict())
             if len(earthCoverageDict.keys()) == 0:
-                self.setStatus('Earth coverage not defined!\n', 1)
-                QgsMessageLog.logMessage('Earth coverage not defined!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus(self.tr('Earth coverage not defined!'), 1)
+                QgsMessageLog.logMessage(self.tr('Earth coverage not defined!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return
             coverageClassList = []
             for cl in dadsWithGeom:
                 if cl in earthCoverageDict.keys():
                     coverageClassList.append(cl)
             if coverageClassList.__len__() == 0:
-                self.setStatus('Empty earth coverage!\n', 1) #Finished
-                QgsMessageLog.logMessage('Empty earth coverage!\n', "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
+                self.setStatus(self.tr('Empty earth coverage!'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('Empty earth coverage!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
                 return
             self.cleanCentroidsAreas(coverageClassList)
             #making temp layers
@@ -362,6 +359,6 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             self.raiseFlags(areaLyr)     
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
             return 0

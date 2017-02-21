@@ -11,7 +11,6 @@
         mod history          : 2015-04-12 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : luiz.claudio@dsg.eb.mil.br
  ***************************************************************************/
-
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -32,39 +31,44 @@ import resources_rc
 
 currentPath = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-
-from DsgTools.LayerTools.load_by_class import LoadByClass
-from DsgTools.LayerTools.load_by_category import LoadByCategory
+from DsgTools.LayerTools.LoadLayersFromServer.loadLayersFromServer import LoadLayersFromServer
 from DsgTools.LayerTools.loadAuxStruct import LoadAuxStruct
-from DsgTools.LayerTools.ui_create_inom_dialog import CreateInomDialog
+from DsgTools.LayerTools.CreateFrameTool.ui_create_inom_dialog import CreateInomDialog
 from DsgTools.DbTools.SpatialiteTool.cria_spatialite_dialog import CriaSpatialiteDialog
 from DsgTools.DbTools.PostGISTool.postgisDBTool import PostgisDBTool
 from DsgTools.ComplexTools.complexWindow import ComplexWindow
 from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.ServerTools.exploreDb import ExploreDb
+from DsgTools.ServerTools.batchDbManager import BatchDbManager
 from DsgTools.ImageTools.processingTools import ProcessingTools
 from DsgTools.ProcessingTools.processManager import ProcessManager
 from DsgTools.BDGExTools.BDGExTools import BDGExTools
 from DsgTools.InventoryTools.inventoryTools import InventoryTools
 from DsgTools.ToolboxTools.models_and_scripts_installer import ModelsAndScriptsInstaller
-from DsgTools.UserTools.profile_editor import ProfileEditor
-from DsgTools.UserTools.assign_profiles import AssignProfiles
-from DsgTools.UserTools.user_profiles import ManageUserProfiles
 from DsgTools.ConversionTools.convert_database import ConvertDatabase
 from DsgTools.aboutdialog import AboutDialog
-from DsgTools.VectorTools.calc_contour import CalcContour
+from DsgTools.ProductionTools.ContourTool.calc_contour import CalcContour
 from DsgTools.ProductionTools.FieldToolBox.field_toolbox import FieldToolbox
 from DsgTools.AttributeTools.code_list import CodeList
 from DsgTools.AttributeTools.attributes_viewer import AttributesViewer
 from DsgTools.ValidationTools.validation_toolbox import ValidationToolbox
+from DsgTools.ProductionTools.MinimumAreaTool.minimumAreaTool import MinimumAreaTool
+from DsgTools.ProductionTools.InspectFeatures.inspectFeatures import InspectFeatures
+from DsgTools.MilitarySimbologyTools.militarySimbologyDock import MilitarySimbologyDock
+from DsgTools.DbTools.BatchDbCreator.batchDbCreator import BatchDbCreator
+
 from qgis.utils import showPluginHelp
+try:
+    import ptvsd
+    ptvsd.enable_attach(secret='my_secret', address = ('localhost', 5679))
+except:
+    pass
 
 class DsgTools:
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
         """Constructor.
-
         :param iface: An interface instance that will be passed to this class
             which provides the hook by which you can manipulate the QGIS
             application at run time.
@@ -101,26 +105,26 @@ class DsgTools:
         self.menuBar = self.iface.mainWindow().menuBar()
 
         #QDockWidgets
-        self.complexWindow = ComplexWindow(iface)
+        self.complexWindow = None
         self.codeList = CodeList(iface)
         #self.attributesViewer = AttributesViewer(iface)
-        self.validationToolbox = ValidationToolbox(iface,self.codeList)
+        self.validationToolbox = None
         self.contourDock = None
         self.fieldDock = None
+        self.militaryDock = None
 
         self.processManager = ProcessManager(iface)
 
         self.BDGExTools = BDGExTools()
+        self.minimumAreaTool = MinimumAreaTool(iface)
+        self.inspectFeatures = InspectFeatures(iface)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
-
         We implement this ourselves since we do not inherit QObject.
-
         :param message: String for translation.
         :type message: str, QString
-
         :returns: Translated version of message.
         :rtype: QString
         """
@@ -140,39 +144,29 @@ class DsgTools:
         whats_this=None,
         parent=None):
         """Add a toolbar icon to the InaSAFE toolbar.
-
         :param icon_path: Path to the icon for this action. Can be a resource
             path (e.g. ':/plugins/foo/bar.png') or a normal file system path.
         :type icon_path: str
-
         :param text: Text that should be shown in menu items for this action.
         :type text: str
-
         :param callback: Function to be called when the action is triggered.
         :type callback: function
-
         :param enabled_flag: A flag indicating if the action should be enabled
             by default. Defaults to True.
         :type enabled_flag: bool
-
         :param add_to_menu: Flag indicating whether the action should also
             be added to the menu. Defaults to True.
         :type add_to_menu: bool
-
         :param add_to_toolbar: Flag indicating whether the action should also
             be added to the toolbar. Defaults to True.
         :type add_to_toolbar: bool
-
         :param status_tip: Optional text to show in a popup when mouse pointer
             hovers over the action.
         :type status_tip: str
-
         :param parent: Parent widget for the new action. Defaults None.
         :type parent: QWidget
-
         :param whats_this: Optional text to show in the status bar when the
             mouse pointer hovers over the action.
-
         :returns: The action that was created. Note that the action is also
             added to self.actions list.
         :rtype: QAction
@@ -237,17 +231,18 @@ class DsgTools:
         #Sub menus
         server = self.addMenu(self.dsgTools, u'server', self.tr('Server Catalog'),':/plugins/DsgTools/icons/server.png')
         database = self.addMenu(self.dsgTools, u'database', self.tr('Database Tools'),':/plugins/DsgTools/icons/database.png')
+        dbcreation = self.addMenu(database, u'dbcreation', self.tr('Database Creation Tools'),':/plugins/DsgTools/icons/database.png')
         layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/icons/layers.png')
         bdgex = self.addMenu(self.dsgTools, u'bdgex', self.tr('BDGEx'),':/plugins/DsgTools/icons/eb.png')
-        vectortools = self.addMenu(self.dsgTools, u'vectortools', self.tr('Vector Tools'),':/plugins/DsgTools/icons/vectortools.png')
         productiontools = self.addMenu(self.dsgTools, u'productiontools', self.tr('Production Tools'),':/plugins/DsgTools/icons/productiontools.png')
+        validationtools = self.addMenu(productiontools, u'validationtools', self.tr('Validation Tools'),':/plugins/DsgTools/icons/validationtools.png')
+        militarysimbologytools = self.addMenu(self.dsgTools, u'militarysimbologytools', self.tr('Military Simbology Tools'),':/plugins/DsgTools/icons/militarySimbology.png')
         topocharts = self.addMenu(bdgex, u'topocharts', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
         coverageLyr = self.addMenu(bdgex, u'coverageLyr', self.tr('Coverage Layers'),':/plugins/DsgTools/icons/eb.png')
         indexes = self.addMenu(bdgex, u'indexes', self.tr('Product Indexes'),':/plugins/DsgTools/icons/eb.png')
         rasterIndex = self.addMenu(indexes, u'rasterindex', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
         vectorIndex = self.addMenu(indexes, u'vectorindex', self.tr('Vectorial Charts'),':/plugins/DsgTools/icons/eb.png')
 
-        icon_path = ':/plugins/DsgTools/icons/eb.png'
         icon_path = ':/plugins/DsgTools/icons/eb.png'
         action = self.add_action(
             icon_path,
@@ -401,8 +396,8 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/icons/server.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Explore Server'),
-            callback=self.exploreDB,
+            text=self.tr('Manage Dbs from Server'),
+            callback=self.batchDbManager,
             parent=server,
             add_to_menu=False,
             add_to_toolbar=False)
@@ -471,111 +466,119 @@ class DsgTools:
         #QToolButtons
         self.databaseButton = self.createToolButton(self.toolbar, u'DatabaseTools')
         self.layerButton = self.createToolButton(self.toolbar, u'LayerTools')
-        self.vectorButton = self.createToolButton(self.toolbar, u'VectorTools')
         self.productionButton = self.createToolButton(self.toolbar, u'ProductionTools')
-
-        icon_path = ':/plugins/DsgTools/icons/spatialite.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Create Spatialite'),
-            callback=self.createSpatialiteDatabase,
-            parent=database,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        database.addAction(action)
-        self.databaseButton.addAction(action)
-        self.databaseButton.setDefaultAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/postgis.png'
         action = self.add_action(
             icon_path,
             text=self.tr('Create PostGIS'),
             callback=self.createPostGISDatabase,
-            parent=database,
+            parent=dbcreation,
             add_to_menu=False,
             add_to_toolbar=False)
-        database.addAction(action)
+        dbcreation.addAction(action)
         self.databaseButton.addAction(action)
+        self.databaseButton.setDefaultAction(action)
 
-        icon_path = ':/plugins/DsgTools/icons/manageUserProfiles.png'
+        icon_path = ':/plugins/DsgTools/icons/spatialite.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Manage User Permissions'),
-            callback=self.manageUserProfiles,
-            parent=database,
+            text=self.tr('Create Spatialite'),
+            callback=self.createSpatialiteDatabase,
+            parent=dbcreation,
             add_to_menu=False,
             add_to_toolbar=False)
-        database.addAction(action)
-        self.databaseButton.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/calccontour.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Assign Contour Values'),
-            callback=self.showCalcContour,
-            parent=vectortools,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        vectortools.addAction(action)
-        self.vectorButton.addAction(action)
-        self.vectorButton.setDefaultAction(action)
+        dbcreation.addAction(action)
+        self.databaseButton.addAction(action) 
         
+        icon_path = ':/plugins/DsgTools/icons/batchDatabase.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Batch Database Creation'),
+            callback=self.batchDatabaseCreation,
+            parent=dbcreation,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        dbcreation.addAction(action)
+        self.databaseButton.addAction(action) 
+
+        icon_path = ':/plugins/DsgTools/icons/validationtools.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Perform database validation'),
+            callback=self.showValidationToolbox,
+            parent=validationtools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        validationtools.addAction(action)
+        self.productionButton.addAction(action)
+        self.productionButton.setDefaultAction(action)
+
         icon_path = ':/plugins/DsgTools/icons/fieldToolbox.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Reclassify Feature Tool'),
+            text=self.tr('Feature reclassification tool'),
             callback=self.showFieldToolbox,
             parent=productiontools,
             add_to_menu=False,
             add_to_toolbar=False)
         productiontools.addAction(action)
         self.productionButton.addAction(action)
-        self.productionButton.setDefaultAction(action)
 
-        #User Permissions submenu
-        permissions = self.addMenu(database, u'layers', self.tr('User Permissions Tools'),':/plugins/DsgTools/icons/profile.png')
-        icon_path = ':/plugins/DsgTools/icons/profile.png'
+        icon_path = ':/plugins/DsgTools/icons/complex.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('User Permissions Editor'),
-            callback=self.showProfileEditor,
-            parent=permissions,
+            text=self.tr('Build Complex Structures'),
+            callback=self.showComplexDock,
+            parent=productiontools,
             add_to_menu=False,
             add_to_toolbar=False)
-        permissions.addAction(action)
+        productiontools.addAction(action)
+        self.productionButton.addAction(action)
 
-        icon_path = ':/plugins/DsgTools/icons/assignProfile.png'
+        icon_path = ':/plugins/DsgTools/icons/calccontour.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Install/Remove User Permissions'),
-            callback=self.assignProfiles,
-            parent=permissions,
+            text=self.tr('Assign Contour Values'),
+            callback=self.showCalcContour,
+            parent=productiontools,
             add_to_menu=False,
             add_to_toolbar=False)
-        permissions.addAction(action)
+        productiontools.addAction(action)
+        self.productionButton.addAction(action)
 
+        icon_path = ':/plugins/DsgTools/icons/codelist.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('View Code List Codes and Values'),
+            callback=self.showCodeList,
+            parent=productiontools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        productiontools.addAction(action)
+        self.productionButton.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/militarySimbology.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Create and Load Military Simbology'),
+            callback=self.showMilitarySimbologyDock,
+            parent=militarysimbologytools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        militarysimbologytools.addAction(action)
+    
         icon_path = ':/plugins/DsgTools/icons/category.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Load by Category'),
-            callback=self.loadByCategory,
+            text=self.tr('Load Layers'),
+            callback=self.loadLayersFromServer,
             parent=layers,
             add_to_menu=False,
             add_to_toolbar=False)
         layers.addAction(action)
         self.layerButton.addAction(action)
         self.layerButton.setDefaultAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/class.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Load by Class'),
-            callback=self.loadByClass,
-            parent=layers,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        layers.addAction(action)
-        self.layerButton.addAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/centroid.png'
         action = self.add_action(
@@ -598,11 +601,10 @@ class DsgTools:
             add_to_toolbar=False)
         layers.addAction(action)
         self.layerButton.addAction(action)
+        
+        self.toolbar.addWidget(self.minimumAreaTool)
+        self.toolbar.addWidget(self.inspectFeatures)
 
-        self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.codeList)
-        #self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.attributesViewer)
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.validationToolbox)
 
     def unload(self):
         """
@@ -617,10 +619,6 @@ class DsgTools:
         if self.dsgTools is not None:
             self.menuBar.removeAction(self.dsgTools.menuAction())
 
-            self.iface.removeDockWidget(self.complexWindow)
-            self.iface.removeDockWidget(self.codeList)
-            #self.iface.removeDockWidget(self.attributesViewer)
-            self.iface.removeDockWidget(self.validationToolbox)
 
     def run(self):
         """
@@ -641,34 +639,6 @@ class DsgTools:
         Shows the about dialog
         '''
         dlg = AboutDialog()
-        dlg.exec_()
-        
-    def showProfileEditor(self):
-        '''
-        Shows the profile editor dialog
-        '''
-        dlg = ProfileEditor()
-        dlg.exec_()
-
-    def assignProfiles(self):
-        '''
-        Show the assign profiles dialog
-        '''
-        dlg = AssignProfiles()
-        dlg.exec_()
-
-    def removeProfiles(self):
-        '''
-        Shows the remove profiles dialog
-        '''
-        dlg = RemoveProfiles()
-        dlg.exec_()
-
-    def manageUserProfiles(self):
-        '''
-        Shows the manage profiles dialog
-        '''
-        dlg = ManageUserProfiles()
         dlg.exec_()
 
     def showHelp(self):
@@ -720,6 +690,12 @@ class DsgTools:
             self.contourDock = CalcContour(self.iface)
         self.contourDock.activateTool()
         self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.contourDock)
+    
+    def showCodeList(self):
+        if self.codeList:
+            self.iface.removeDockWidget(self.codeList)
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.codeList)
+
 
     def showFieldToolbox(self):
         '''
@@ -728,8 +704,29 @@ class DsgTools:
         if self.fieldDock:
             self.iface.removeDockWidget(self.fieldToolbox)
         else:
-            self.fieldToolbox = FieldToolbox(self.iface, self.codeList)
+            self.fieldToolbox = FieldToolbox(self.iface)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.fieldToolbox)
+    
+    def showValidationToolbox(self):
+        if self.validationToolbox:
+            self.iface.removeDockWidget(self.validationToolbox)
+        else:
+            self.validationToolbox = ValidationToolbox(self.iface)
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.validationToolbox)
+
+    def showComplexDock(self):
+        if self.complexWindow:
+            self.iface.removeDockWidget(self.complexWindow)
+        else:
+            self.complexWindow = ComplexWindow(self.iface)
+        self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
+
+    def showMilitarySimbologyDock(self):
+        if self.militaryDock:
+            self.iface.removeDockWidget(self.militaryDock)
+        else:
+            self.militaryDock = MilitarySimbologyDock(self.iface)
+        self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.militaryDock)
             
     def installModelsAndScripts(self):
         '''
@@ -752,6 +749,16 @@ class DsgTools:
         result = dlg.exec_()
         if result:
             pass
+    
+    def batchDatabaseCreation(self):
+        try:
+            self.databaseButton.setDefaultAction(self.toolbar.sender())
+        except:
+            pass
+        dlg = BatchDbCreator()
+        result = dlg.exec_()
+        if result:
+            pass
 
     def createPostGISDatabase(self):
         '''
@@ -764,23 +771,10 @@ class DsgTools:
         dlg = PostgisDBTool(self.iface)
         result = dlg.exec_()
         if result == 1:
-            (db, version, epsg) = dlg.getParameters()
+            (dbName, abstractDb , version, epsg) = dlg.getParameters()
             #creating the separate process
-            self.processManager.createPostgisDatabaseProcess(db, version, epsg)
+            self.processManager.createPostgisDatabaseProcess(dbName,abstractDb, version, epsg)
 
-    def loadByCategory(self):
-        '''
-        Shows the load by category dialog
-        '''
-        try:
-            self.layerButton.setDefaultAction(self.toolbar.sender())
-        except:
-            pass
-        dlg = LoadByCategory(self.codeList)
-        dlg.show()
-        result = dlg.exec_()
-        if result:
-            pass
 
     def loadAuxStruct(self):
         '''
@@ -790,21 +784,18 @@ class DsgTools:
             self.layerButton.setDefaultAction(self.toolbar.sender())
         except:
             pass
-        dlg = LoadAuxStruct(self.codeList)
+        dlg = LoadAuxStruct(self.iface)
         dlg.show()
         result = dlg.exec_()
         if result:
             pass
-
-    def loadByClass(self):
-        '''
-        Shows the load by class dialog
-        '''
+    
+    def loadLayersFromServer(self):
         try:
             self.layerButton.setDefaultAction(self.toolbar.sender())
         except:
             pass
-        dlg = LoadByClass(self.codeList)
+        dlg = LoadLayersFromServer(self.iface)
         dlg.show()
         result = dlg.exec_()
         if result:
@@ -818,7 +809,7 @@ class DsgTools:
             self.layerButton.setDefaultAction(self.toolbar.sender())
         except:
             pass
-        dlg = CreateInomDialog(self.iface,self.codeList)
+        dlg = CreateInomDialog(self.iface)
         dlg.show()
         result = dlg.exec_()
         if result:
@@ -839,6 +830,13 @@ class DsgTools:
         Shows the explore database dialog
         '''
         dlg = ExploreDb()
+        dlg.show()
+        result = dlg.exec_()
+        if result:
+            pass
+
+    def batchDbManager(self):
+        dlg = BatchDbManager()
         dlg.show()
         result = dlg.exec_()
         if result:
@@ -953,4 +951,4 @@ class DsgTools:
         Loads 25k vector index layer
         '''
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F25_WGS84_VETORIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
-        self.iface.addRasterLayer(urlWithParams, self.tr('1:25k Available Vectorial Charts'), 'wms')
+        self.iface.addRasterLayer(urlWithParams, self.tr('1:25k Available Vectorial Charts'),'wms')

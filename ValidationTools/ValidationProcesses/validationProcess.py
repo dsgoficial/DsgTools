@@ -20,22 +20,31 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog
+import binascii
+# Qt imports
 from PyQt4.QtGui import QMessageBox
 from PyQt4.Qt import QObject
 
+#QGIS imports
+from qgis.core import QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceURI, QgsFeatureRequest, QgsMessageLog, QgsExpression
+
+# DSGTools imports
+from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+
 class ValidationProcess(QObject):
-    def __init__(self, postgisDb, codelist):
+    def __init__(self, postgisDb, iface):
         '''
         Constructor
         '''
         super(ValidationProcess, self).__init__()
         self.abstractDb = postgisDb
         if self.getStatus() == None:
-            self.setStatus('Instantianting process', 0)
+            self.setStatus(self.tr('Instantianting process'), 0)
         self.classesToBeDisplayedAfterProcess = []
         self.parameters = None
-        self.codelist = codelist
+        self.iface = iface
+        self.layerLoader = LayerLoaderFactory().makeLoader(self.iface, self.abstractDb)
+        self.processAlias = self.tr('Validation Process')
         
     def setParameters(self, params):
         '''
@@ -158,13 +167,155 @@ class ValidationProcess(QObject):
         Sets the finished with error status (status number 2)
         Clears the classes to be displayed
         '''
-        self.setStatus('Process finished with errors.', 2) #Failed status
-        self.clearClassesToBeDisplayedAfterProcess()        
+        self.setStatus(self.tr('Process finished with errors.'), 2) #Failed status
+        self.clearClassesToBeDisplayedAfterProcess()
     
-    def outputData(self, inputClass, dataLyr):
-        edgvLayer = self.layerFactory.makeLayer(self.abstractDb, self.codeList, inputClass)
-        crs = self.abstractDb.getSrid()
-        lyr = edgvLayer.load(crs, uniqueLoad = True)
-        updateList = []
+    def inputData(self):
+        '''
+        Returns current active layers
+        '''
+        return self.iface.mapCanvas().layers()
+
+    def getTableNameFromLayer(self, lyr):
+        '''
+        Gets the layer name as present in the rules
+        '''
+        uri = lyr.dataProvider().dataSourceUri()
+        dsUri = QgsDataSourceURI(uri)
+        name = '.'.join([dsUri.schema(), dsUri.table()])
+        return name
+
+    def mapInputLayer(self, inputLyr):
+        '''
+        Gets the layer features considering the edit buffer in the case
+        the layer is already in edition mode
+        '''
+        #return dict
+        featureMap = dict()
+        #getting edit buffer
+        editBuffer = inputLyr.editBuffer()
+        #black list for removed features
+        blackList = []
+        if editBuffer:
+            blackList = editBuffer.deletedFeatureIds()
+            #1 - changed
+            changedMap = editBuffer.changedGeometries()
+            for featid in changedMap.keys():
+                newFeat = inputLyr.getFeatures(QgsFeatureRequest(featid)).next()
+                newFeat.setGeometry(changedMap[featid])
+                featureMap[featid] = newFeat
+            #2 - old
+            for feat in inputLyr.getFeatures():
+                featid = feat.id()
+                if featid not in featureMap.keys() and featid not in blackList:
+                    featureMap[featid] = feat
+            #3 -added
+            for feat in editBuffer.addedFeatures().values():
+                featureMap[featid] = feat
+        else:
+            #2 - just the old
+            for feat in inputLyr.getFeatures():
+                featid = feat.id()
+                if featid not in featureMap.keys() and featid not in blackList:
+                    featureMap[featid] = feat
+        return featureMap
+    
+    def prepareWorkingStructure(self, tableName, layer, geometryColumn):
+        '''
+        Creates a temp table where all features plus the edit buffer features from a layer
+        will be inserted
+        '''
+        try:
+            self.abstractDb.createAndPopulateTempTableFromMap(tableName, layer, geometryColumn)
+        except Exception as e:
+            QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+
+    def updateOriginalLayer(self, pgInputLayer, qgisOutputVector):
+        '''
+        Updates the original layer using the grass output layer
+        pgInputLyr: postgis input layer
+        grassOutputLyr: grass output layer
+        '''
+        provider = pgInputLayer.dataProvider()
+        pgInputLayer.startEditing()
         addList = []
-        deleteList = []
+        idsToRemove = []
+        #making the changes and inserts
+        for feature in pgInputLayer.getFeatures():
+            id = feature['id']
+            outFeats = []
+            #getting the output features with the specific id
+            for gf in qgisOutputVector.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%id))):
+                outFeats.append(gf)
+            #starting to make changes
+            for i in range(len(outFeats)):
+                if i == 0:
+                    #let's update this feature
+                    newGeom = outFeats[i].geometry()
+                    newGeom.convertToMultiType()
+                    feature.setGeometry(newGeom)
+                    pgInputLayer.updateFeature(feature)
+                else:
+                    #for the rest, let's add them
+                    newFeat = QgsFeature(feature)
+                    newGeom = outFeats[i].geometry()
+                    newGeom.convertToMultiType()
+                    newFeat.setGeometry(newGeom)
+                    idx = newFeat.fieldNameIndex('id')
+                    newFeat.setAttribute(idx, provider.defaultValue(idx))
+                    addList.append(newFeat)
+            #in the case we don't find features in the output we should mark them to be removed
+            if len(outFeats) == 0:
+                idsToRemove.append(id)
+        #pushing the changes into the edit buffer
+        pgInputLayer.addFeatures(addList, True)
+        #removing features from the layer.
+        pgInputLayer.deleteFeatures(idsToRemove)
+
+    def getProcessingErrors(self, layer):
+        '''
+        Gets processing errors
+        layer: error layer (QgsVectorLayer) output made by grass
+        '''
+        recordList = []
+        for feature in layer.getFeatures():
+            recordList.append((feature.id(), binascii.hexlify(feature.geometry().asWkb())))
+        return recordList
+    
+    def loadLayerBeforeValidationProcess(self, cl):
+        #creating vector layer
+        schema, layer_name = self.abstractDb.getTableSchema(cl)
+        if self.abstractDb.getDatabaseVersion() == 'Non_EDGV':
+            isEdgv = False
+        else:
+            isEdgv = True
+        lyr = self.layerLoader.load([layer_name],uniqueLoad=True, isEdgv = isEdgv)[layer_name]
+        return lyr
+    
+    def prepareExecution(self, cl, geometryColumn='geom'):
+        '''
+        Prepare the process to be executed
+        cl: table name
+        '''
+        lyr = self.loadLayerBeforeValidationProcess(cl)
+        #getting feature map including the edit buffer
+        featureMap = self.mapInputLayer(lyr)
+        #getting table name with schema
+        tableName = self.getTableNameFromLayer(lyr)
+        #setting temp table name
+        processTableName = tableName+'_temp'
+        #creating temp table
+        self.prepareWorkingStructure(tableName, featureMap, geometryColumn)
+        return processTableName, lyr
+    
+    def postProcessSteps(self, processTableName, lyr):
+        '''
+        Execute the final steps after the actual process
+        '''
+        #getting the output as a QgsVectorLayer
+        outputLayer = QgsVectorLayer(self.abstractDb.getURI(processTableName, True).uri(), processTableName, "postgres")
+        #updating the original layer (lyr)
+        self.updateOriginalLayer(lyr, outputLayer)
+        #dropping the temp table as we don't need it anymore
+        self.abstractDb.dropTempTable(processTableName)
