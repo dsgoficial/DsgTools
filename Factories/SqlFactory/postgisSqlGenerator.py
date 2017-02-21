@@ -1271,3 +1271,18 @@ class PostGISSqlGenerator(SqlGenerator):
     def getPostgisVersion(self):
         sql = '''SELECT name, default_version,installed_version FROM pg_available_extensions WHERE name in ('postgis', 'postgis_topology')'''
         return sql
+
+    def getCustomizationPerspectiveDict(self, perspective):
+        if perspective == 'customization':
+            sql = '''select row_to_json(a) from (
+                        select name, array_agg(datname) from customization as custom 
+                            left join applied_customization as appcust on custom.id = appcust.id_customization
+                            left join pg_database as pgd on pgd.oid = appcust.dboid group by name
+                    ) as a'''
+        if perspective == 'database':
+            sql = '''select row_to_json(a) from (
+                        select datname as name, array_agg(name) from customization as custom 
+                            left join applied_customization as appcust on custom.id = appcust.id_customization
+                            left join pg_database as pgd on pgd.oid = appcust.dboid group by datname
+                    ) as a'''
+        return sql

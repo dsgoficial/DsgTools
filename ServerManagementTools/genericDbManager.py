@@ -117,6 +117,8 @@ class GenericDbManager(QObject):
         Creates setting on dsgtools_admindb.
         '''
         settingType = self.getManagerType()
+        if isinstance(jsonDict,dict):
+            jsonDict = json.dumps(jsonDict,sort_keys=True, indent=4)
         self.adminDb.insertSettingIntoAdminDb(settingType, settingName, jsonDict, edgvVersion)
 
     def updateSetting(self, settingName, edgvVersion, newJsonDict):

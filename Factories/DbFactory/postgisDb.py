@@ -2799,6 +2799,8 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         sql = self.gen.getPostgisVersion()
         query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting postgis version: ")+query.lastError().text())
         updateDict = dict()
         while query.next():
             defaultVersion = query.value(1)
@@ -2806,3 +2808,15 @@ class PostgisDb(AbstractDb):
             if defaultVersion <> installedVersion and installedVersion not in ['', None]:                
                 updateDict[query.value(0)] = {'defaultVersion':defaultVersion, 'installedVersion':installedVersion}
         return updateDict
+    
+    def getCustomizationPerspectiveDict(self, perspective):
+        self.checkAndOpenDb()
+        sql = self.gen.getCustomizationPerspectiveDict(perspective)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting applied customizations: ")+query.lastError().text())
+        customDict = dict()
+        while query.next():
+            jsonDict = json.loads(query.value(0))
+            customDict[jsonDict['name']] = jsonDict['array_agg']
+        return customDict

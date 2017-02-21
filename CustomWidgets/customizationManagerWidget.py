@@ -30,6 +30,7 @@ from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog
 #DsgTools imports
 from DsgTools.ServerManagementTools.customizationManager import CustomizationManager
 from DsgTools.PostgisCustomization.createDatabaseCustomization import CreateDatabaseCustomization
+from DsgTools.Utils.utils import Utils
 
 from qgis.core import QgsMessageLog
 import json
@@ -48,12 +49,14 @@ class CustomizationManagerWidget(QtGui.QWidget, FORM_CLASS):
         self.versionDict = {'2.1.3':1, 'FTer_2a_Ed':2}
         self.customDict = None
         self.setComponentsEnabled(False)
+        self.utils = Utils()
     
     def setParameters(self, serverAbstractDb):
         if serverAbstractDb:
             self.setComponentsEnabled(True)
             self.serverAbstractDb = serverAbstractDb
             self.customizationManager = CustomizationManager(serverAbstractDb, {})
+            self.refresh()
         else:
             self.setComponentsEnabled(False)
     
@@ -168,51 +171,26 @@ class CustomizationManagerWidget(QtGui.QWidget, FORM_CLASS):
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem importing customization: ') + e.args[0])
 
-    @pyqtSlot(bool, name='on_databasePerspectivePushButton_clicked')
-    @pyqtSlot(bool, name='on_customizationPerspectivePushButton_clicked')
-    def refresh(self):
-        '''
-        Refreshes customization table according to selected view type.
-        '''
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        viewType = self.getViewType()
-        self.customizationTreeWidget.clear()
-        if viewType == 'database':
-            self.populateWithDatabasePerspective()
-        if viewType == 'customization':
-            self.populateWithCustomizationPerspective()
-        QApplication.restoreOverrideCursor()    
-
     def getViewType(self):
         if self.databasePerspectivePushButton.isChecked():
             return 'database'
         else:
             return 'customization'
 
-    def populateWithDatabasePerspective(self):
-        #TODO
-        self.customizationTreeWidget.setHeaderLabels([self.tr('Database'), self.tr('Customization')])
-        dbPerspectiveDict = self.customizationManager.getDatabasePerspectiveDict()
+    @pyqtSlot(bool, name='on_databasePerspectivePushButton_clicked')
+    @pyqtSlot(bool, name='on_customizationPerspectivePushButton_clicked')
+    def refresh(self):
+        viewType = self.getViewType()
+        if viewType == 'database':
+            self.customizationTreeWidget.setHeaderLabels([self.tr('Database'), self.tr('Customization')])
+        else:
+            self.customizationTreeWidget.setHeaderLabels([self.tr('Customization'), self.tr('Database')])
+        customizationPerspectiveDict = self.customizationManager.getCustomizationPerspectiveDict(viewType)
+        self.customizationTreeWidget.clear()
         rootNode = self.customizationTreeWidget.invisibleRootItem()
-        for dbName in dbPerspectiveDict.keys():
-            parentDbItem = self.createItem(rootNode, dbName, 0)
-            for customization in dbPerspectiveDict[dbName].keys():
-                dbItem = self.createItem(parentDbItem, customization, 1)
-                for user in dbPerspectiveDict[dbName][customization]:
-                    userItem = self.createItem(dbItem, user, 2)
-        self.customizationTreeWidget.sortItems(0, Qt.AscendingOrder)
-        self.customizationTreeWidget.expandAll()
-
-    def populateWithCustomizationPerspective(self):
-        #TODO
-        self.customizationTreeWidget.setHeaderLabels([self.tr('Customization'), self.tr('Database')])
-        customizationPerspectiveDict = self.customizationManager.getcustomizationPerspectiveDict()
-        rootNode = self.customizationTreeWidget.invisibleRootItem()
-        for customizationName in customizationPerspectiveDict.keys():
-            parentCustomItem = self.createItem(rootNode, customizationName, 0)
-            for dbName in customizationPerspectiveDict[customizationName].keys():
-                dbItem = self.createItem(parentCustomItem, dbName, 1)
-                for customization in customizationPerspectiveDict[customizationName][dbName]:
-                    customizationItem = self.createItem(dbItem, customization, 2)
+        for key in customizationPerspectiveDict.keys():
+            parentCustomItem = self.utils.createWidgetItem(rootNode, key, 0)
+            for item in customizationPerspectiveDict[key]:
+                dbItem = self.utils.createWidgetItem(parentCustomItem, item, 1)
         self.customizationTreeWidget.sortItems(0, Qt.AscendingOrder)
         self.customizationTreeWidget.expandAll()

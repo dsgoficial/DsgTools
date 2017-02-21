@@ -294,7 +294,7 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         invalidatedReason = ''
         if self.versionSelectionComboBox.currentIndex() == 0:
             invalidatedReason += self.tr('An EDGV Version must be chosen.\n')
-        if self.actionComboBox.currentIndex() == 0:
+        if self.customNameLineEdit.text() == '':
             invalidatedReason += self.tr('A name must be input.\n')
         return invalidatedReason
 

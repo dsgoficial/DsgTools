@@ -65,3 +65,11 @@ class CustomizationManager(GenericDbManager):
         '''
         #TODO
         return True
+    
+    def getCustomizationPerspectiveDict(self, viewType):
+        '''
+        Gets a dict in the format:
+        if viewType == 'customization': {customizationName: ['-list of databases with customization']}
+        if viewType == 'database': {databaseName: ['-list of customizations with customization']}
+        '''
+        return self.adminDb.getCustomizationPerspectiveDict(viewType)

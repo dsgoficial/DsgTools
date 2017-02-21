@@ -53,11 +53,13 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         self.utils = Utils()
         self.dbFactory = DbFactory()
         self.factory = SqlGeneratorFactory()
+        self.showTabs(show = False)
         #setting the sql generator
         self.serverWidget.populateServersCombo()
         self.serverWidget.abstractDbLoaded.connect(self.checkSuperUser)
         self.serverWidget.abstractDbLoaded.connect(self.populateCustomizationsInterface)
         self.dbsCustomSelector.setTitle(self.tr('Server Databases'))
+        self.dbsCustomSelector.selectionChanged.connect(self.showTabs)
         self.dbsCustomSelector.selectionChanged.connect(self.populateStylesInterface)
         self.dbsCustomSelector.selectionChanged.connect(self.populatePermissionsInterface)
         self.previousTab = 0
@@ -65,6 +67,12 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
         self.done(0)
+    
+    def showTabs(self, show = True):
+        if show:
+            self.tabWidget.show()
+        else:
+            self.tabWidget.hide()
 
     def populateListWithDatabasesFromServer(self):
         dbList = []
