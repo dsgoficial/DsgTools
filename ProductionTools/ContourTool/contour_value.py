@@ -55,7 +55,11 @@ class ContourValue(QtGui.QDialog, FORM_CLASS):
         self.done(0)
         
     @pyqtSlot()    
-    def on_ok_push_button_clicked(self): 
+    def on_ok_push_button_clicked(self):
+        """
+        Gets the first value entered by the user and return it
+        :return: 1 - Success
+        """
         value = self.value_line_edit.text()
         self.contour_tool.setFirstValue(int(value))
         self.done(1)

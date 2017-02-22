@@ -58,17 +58,17 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
         self.populateTreeDict()
         
     def __del__(self):
-        '''
+        """
         Destructor
-        '''
+        """
         if self.abstractDb:
             del self.abstractDb
             self.abstractDb = None
         
     def getDbInfo(self):
-        '''
+        """
         Gets database info. This info is used to create a profile model that will be adjusted by the user
-        '''
+        """
         currentPath = os.path.dirname(__file__)
         if self.versionCombo.currentText() == '2.1.3':
             edgvPath = os.path.join(currentPath, '..', 'DbTools', 'SpatialiteTool', 'template', '213', 'seed_edgv213.sqlite')
@@ -88,9 +88,9 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
             QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
 
     def populateTreeDict(self):
-        '''
+        """
         Makes a tree widget were the user can define profile properties
-        '''
+        """
         self.getDbInfo()
 
         tables = []
@@ -128,9 +128,9 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot()
     def on_buttonBox_accepted(self):
-        '''
+        """
         Creates the profile file
-        '''
+        """
         if not self.lineEdit.text():
             QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Fill the profile name!'))
             return
@@ -145,7 +145,7 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(int)
     def on_versionCombo_currentIndexChanged(self):
-        '''
+        """
         Changes the edgv version and updates the tree widget
-        '''
+        """
         self.populateTreeDict()

@@ -46,9 +46,9 @@ class CreateUser(QtGui.QDialog, FORM_CLASS):
         self.refreshScreen()
     
     def refreshScreen(self):
-        '''
+        """
         Restores the initial state
-        '''
+        """
         self.userLineEdit.setText('')
         self.passwordLineEdit.setText('')
         self.passwordLineEdit_2.setText('')
@@ -56,9 +56,9 @@ class CreateUser(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_createUserButton_clicked(self):
-        '''
+        """
         Creates the user in the database (i.e create user sql query)
-        '''
+        """
         user = self.userLineEdit.text()
         password = self.passwordLineEdit.text()
         password_2 = self.passwordLineEdit_2.text()
@@ -86,7 +86,7 @@ class CreateUser(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_closeButton_clicked(self):
-        '''
+        """
         Closes the dialog
-        '''
+        """
         self.close()

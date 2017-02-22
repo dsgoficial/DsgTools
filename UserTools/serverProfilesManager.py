@@ -55,9 +55,9 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
 
         
     def createItem(self, parent, text):
-        '''
+        """
         Creates tree widget items
-        '''
+        """
         item = QtGui.QTreeWidgetItem(parent)
         item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsTristate | QtCore.Qt.ItemIsUserCheckable)
         item.setCheckState(1, QtCore.Qt.Unchecked)
@@ -66,9 +66,9 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         return item
     
     def makeProfileDict(self):
-        '''
+        """
         Makes a dictionary out of the tree widget items
-        '''
+        """
         profileDict = dict()
         
         #invisible root item
@@ -94,9 +94,9 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         return profileDict
     
     def readJsonFromDatabase(self, profileName, edgvVersion):
-        '''
+        """
         Reads the profile file, gets a dictionary of it and builds the tree widget
-        '''
+        """
 
         profileDict = self.permissionManager.getSetting(profileName, edgvVersion)
         self.parent = profileDict.keys()[0]
@@ -110,9 +110,9 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         self.treeWidget.sortItems(0, Qt.AscendingOrder)
                                         
     def createChildrenItems(self, parent, mydict):
-        '''
+        """
         Creates children item in the tree widget
-        '''
+        """
         #permissions
         lista = ['read', 'write']
         for key in mydict.keys():
@@ -124,18 +124,18 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
                 self.createChildrenItems(item, mydict[key])
                 
     def setItemCheckState(self, item, mydict, key):
-        '''
+        """
         Sets the item check state
-        '''
+        """
         if key == 'read':
             item.setCheckState(1, int(mydict[key]))
         elif key == 'write':
             item.setCheckState(2, int(mydict[key]))
     
     def getItemCheckState(self, item):
-        '''
+        """
         Gets the item check state for READ and WRITE columns
-        '''
+        """
         ret = dict()
         ret['read'] = str(item.checkState(1))
         ret['write'] = str(item.checkState(2))
@@ -143,9 +143,9 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_clearButton_clicked(self):
-        '''
+        """
         Clears the tree widget
-        '''
+        """
         #invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
         #database item
@@ -156,9 +156,9 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_closeButton_clicked(self):
-        '''
+        """
         Closes the dialog
-        '''
+        """
         self.close()
     
     @pyqtSlot(int)
@@ -178,9 +178,9 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_createPermissionPushButton_clicked(self):
-        '''
+        """
         Slot that opens the create profile dialog
-        '''
+        """
         dlg = CreateProfileWithProfileManager(self.permissionManager)
         dlg.profileCreated.connect(self.updateInterface)
         dlg.exec_()

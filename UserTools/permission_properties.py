@@ -57,11 +57,11 @@ class PermissionProperties(QtGui.QDialog, FORM_CLASS):
         self.treeWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         
     def createItem(self, parent, text):
-        '''
+        """
         Creates a tree widget item
         parent: parent item
         text: item text
-        '''
+        """
         item = QtGui.QTreeWidgetItem(parent)
         item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsTristate)
         item.setCheckState(1, QtCore.Qt.Unchecked)
@@ -70,11 +70,11 @@ class PermissionProperties(QtGui.QDialog, FORM_CLASS):
         return item
     
     def createChildrenItems(self, parent, mydict):
-        '''
+        """
         Creates children items
         parent: parent item
         mydict: data dictionary used to populate tree items
-        '''
+        """
         #permissions
         lista = ['read', 'write']
         for key in mydict.keys():
@@ -86,9 +86,9 @@ class PermissionProperties(QtGui.QDialog, FORM_CLASS):
                 self.createChildrenItems(item, mydict[key])
                 
     def setItemCheckState(self, item, mydict, key):
-        '''
+        """
         Sets item check state
-        '''
+        """
         if key == 'read':
             item.setCheckState(1, int(mydict[key]))
         elif key == 'write':

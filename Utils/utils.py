@@ -29,9 +29,9 @@ from PyQt4 import QtGui
 class Utils:
 
     def mergeDict(self, dictionary1, dictionary2):
-        '''
+        """
         Merges two dictionaries
-        '''
+        """
         output = dict()
         if type(dictionary1) <> dict or type(dictionary2) <> dict:
             return dictionary2
@@ -72,9 +72,9 @@ class Utils:
         return output
 
     def buildOneNestedDict(self, inputDict, keyList, value):
-        '''
+        """
         Builds a nested dictionary for a specific key
-        '''
+        """
         if len(keyList) == 1:
             if keyList[0] not in inputDict.keys():
                 inputDict[keyList[0]] = dict()
@@ -95,9 +95,9 @@ class Utils:
             return inputDict
 
     def buildNestedDict(self, inputDict, keyList, value):
-        '''
+        """
         Builds a nested dict
-        '''
+        """
         if len(inputDict.keys()) > 0:
             tempDict = self.buildOneNestedDict(dict(), keyList, value)
             return self.mergeDict(inputDict, tempDict)
@@ -105,9 +105,9 @@ class Utils:
             return self.buildOneNestedDict(inputDict, keyList, value)
 
     def readJsonFile(self, filename, returnFileAndDict=False):
-        '''
+        """
         Reads a json file and makes a dictionary
-        '''
+        """
         try:
             file = open(filename, 'r')
             data = file.read()
@@ -134,9 +134,9 @@ class Utils:
         return doc.toxml().replace('<?xml version="1.0" encoding="utf-8"?>', '')
 
     def parseMultiQml(self, qmlPath, lyrList):
-        '''
+        """
         dict in the form {'lyrName': {'attributeName':'domainTableName'}}
-        '''
+        """
         refDict = dict()
         for lyr in lyrList:
             try:

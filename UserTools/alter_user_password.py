@@ -49,9 +49,9 @@ class AlterUserPassword(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_alterPasswordButton_clicked(self):
-        '''
+        """
         Slot to alter user's password
-        '''
+        """
         newpassword = self.newPasswordLineEdit.text()
         newpassword_2 = self.newPasswordLineEdit_2.text()
         if newpassword <> newpassword_2:
@@ -64,6 +64,9 @@ class AlterUserPassword(QtGui.QDialog, FORM_CLASS):
         self.close()
     
     def alterDatabasePassword(self, user, newpassword):
+        """
+        Alters the password of a specific user
+        """
         try:
             self.abstractDb.alterUserPass(self.user, newpassword)
         except Exception as e:
@@ -72,6 +75,9 @@ class AlterUserPassword(QtGui.QDialog, FORM_CLASS):
         QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('User ') +self.user+self.tr(' password successfully updated on database ')+self.abstractDb.getDatabaseName()+'!')
     
     def alterServerPassword(self, userList, newpassword):
+        """
+        Alters the password of a list of database users
+        """
         successList = []
         exceptionDict = dict()
         for user in userList:
@@ -84,6 +90,9 @@ class AlterUserPassword(QtGui.QDialog, FORM_CLASS):
         self.outputMessage(header, successList, exceptionDict)
     
     def outputMessage(self, header, successList, exceptionDict):
+        """
+        Makes the output message
+        """
         msg = header
         if len(successList) > 0:
             msg += self.tr('\nSuccessful users: ')
@@ -92,6 +101,9 @@ class AlterUserPassword(QtGui.QDialog, FORM_CLASS):
         QMessageBox.warning(self, self.tr('Operation Complete!'), msg)
 
     def logInternalError(self, exceptionDict):
+        """
+        Logs all internal errors into QGIS' log
+        """
         msg = ''
         errorDbList = exceptionDict.keys()
         if len(errorDbList)> 0:
@@ -104,7 +116,7 @@ class AlterUserPassword(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
-        '''
+        """
         Cancels everything
-        '''
+        """
         self.close()
