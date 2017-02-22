@@ -7,6 +7,11 @@ from qgis.core import *
 import csv
 
 def dd2dms_sigef(dd):
+    """
+    Converts decimal degrees to degree, minute, second
+    :param dd:
+    :return:
+    """
     # calculos com numeros
     d = int(dd)
     m = abs(int(60*(dd-int(dd))))
@@ -23,6 +28,12 @@ def dd2dms_sigef(dd):
     return dms_sigef
     
 def createCSV(input, output):
+    """
+    Creates the output CSV file
+    :param input:
+    :param output:
+    :return:
+    """
     layer = processing.getObject(input)
     features = layer.selectedFeatures()
     if len(features) != 1:

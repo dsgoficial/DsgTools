@@ -38,9 +38,9 @@ currentPath = os.path.dirname(__file__)
 
 class ModelsAndScriptsInstaller(QDialog, FORM_CLASS):
     def __init__(self):
-        '''
+        """
         Constructor
-        '''
+        """
         super(ModelsAndScriptsInstaller, self).__init__()
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -59,18 +59,18 @@ class ModelsAndScriptsInstaller(QDialog, FORM_CLASS):
         pass
 
     def createItems(self, widget, names):
-        '''
+        """
         Create items 
-        '''
+        """
         for name in names:
             item = QListWidgetItem(widget)
             text = name.split(os.sep)[-1]
             item.setText(text)
 
     def scanFolder(self, folder, extension):
-        '''
+        """
         Scans folder for models and scripts
-        '''
+        """
         ret = []
         for root, dirs, files in os.walk(folder):
             for file in files:
@@ -82,25 +82,25 @@ class ModelsAndScriptsInstaller(QDialog, FORM_CLASS):
         return ret
 
     def getModels(self):
-        '''
+        """
         Get models in the folder
-        '''
+        """
         modelspath = os.path.join(currentPath, '..', 'QGIS_Models')
         extension = 'model'
         return self.scanFolder(modelspath, extension)
 
     def getScripts(self):
-        '''
+        """
         Get scripts in the folder
-        '''
+        """
         scriptspath = os.path.join(currentPath, '..', 'QGIS_Scripts')
         extension = 'py'
         return self.scanFolder(scriptspath, extension)
 
     def copyFiles(self, widget, files, folder):
-        '''
+        """
         Copy selected files to the correct scripts/models folder location
-        '''
+        """
         for item in widget.selectedItems():
             text = item.text()
             for file in files:
@@ -114,18 +114,18 @@ class ModelsAndScriptsInstaller(QDialog, FORM_CLASS):
 
     @pyqtSlot(QAbstractButton)
     def on_buttonBox_clicked(self, button):
-        '''
+        """
         Clears the selection
-        '''
+        """
         if self.buttonBox.standardButton(button) == QDialogButtonBox.Reset:
             self.modelsList.clearSelection()
             self.scriptsList.clearSelection()
 
     @pyqtSlot()
     def on_buttonBox_accepted(self):
-        '''
+        """
         Copy the files to the correct location
-        '''
+        """
         self.copyFiles(self.scriptsList, self.scripts, os.path.join(currentPath, '..', '..', '..', '..', 'processing', 'scripts'))
         Processing.initialize()
         self.copyFiles(self.modelsList, self.models, os.path.join(currentPath, '..', '..', '..', '..', 'processing', 'models'))

@@ -24,9 +24,9 @@ from PyQt4.QtXml import *
 
 class QmlParser:
     def __init__(self, fileName):
-        '''
+        """
         Constructor
-        '''
+        """
         self.fileName = fileName
         self.qml = QDomDocument()
         self.qgisElement = None
@@ -35,9 +35,9 @@ class QmlParser:
         self.domainDict = dict()
 
     def loadFileContent(self):
-        '''
+        """
         Loads QML data
-        '''
+        """
         qml = open(self.fileName, 'r')
         data = qml.read()
         loaded = self.qml.setContent(data)
@@ -45,15 +45,15 @@ class QmlParser:
         return loaded
 
     def readQGISElement(self):
-        '''
+        """
         Reads the QML's parent node
-        '''
+        """
         self.qgisElement = self.qml.documentElement()
 
     def readEdittypesElement(self):
-        '''
+        """
         Read edittypes element
-        '''
+        """
         self.edittypeElementList = []
 
         elements = self.qgisElement.elementsByTagName("edittypes")
@@ -63,9 +63,9 @@ class QmlParser:
             self.edittypeElementList.append(elements.item(i).toElement())
 
     def readEdittypeElement(self, edittypeElement):
-        '''
+        """
         Read a specific edittype tag
-        '''
+        """
         type = edittypeElement.attribute("widgetv2type")
         if type == "ValueMap":
             name = edittypeElement.attribute("name")
@@ -91,9 +91,9 @@ class QmlParser:
             self.domainDict[name] = (table, filter_keys)
 
     def getDomainDict(self):
-        '''
+        """
         Gets the domain dictionary (value relation and value map)
-        '''
+        """
         self.domainDict.clear()
 
         if not self.loadFileContent():

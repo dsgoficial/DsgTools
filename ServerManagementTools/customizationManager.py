@@ -35,9 +35,9 @@ from DsgTools.Utils.utils import Utils
 from PyQt4.Qt import QObject
 
 class CustomizationManager(GenericDbManager):
-    '''
+    """
     This class manages the customizations on dsgtools databases.
-    '''
+    """
     def __init__(self, serverAbstractDb, dbDict, parentWidget = None):
         super(self.__class__,self).__init__(serverAbstractDb, dbDict, parentWidget = None)
     
@@ -57,19 +57,19 @@ class CustomizationManager(GenericDbManager):
         pass
 
     def validateJsonProfile(self, inputJsonDict):
-        '''
+        """
         1. Validates each key and value in inputJsonDict;
         2. If input is ok, returns True;
         3. If one piece of json is not valid, returns False.
         This validator does not validate the name of classes or names of categories. It only checks the format of dsgtools json profile.
-        '''
+        """
         #TODO
         return True
     
     def getCustomizationPerspectiveDict(self, viewType):
-        '''
+        """
         Gets a dict in the format:
         if viewType == 'customization': {customizationName: ['-list of databases with customization']}
         if viewType == 'database': {databaseName: ['-list of customizations with customization']}
-        '''
+        """
         return self.adminDb.getCustomizationPerspectiveDict(viewType)

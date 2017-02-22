@@ -30,9 +30,9 @@ from DsgTools.Factories.ThreadFactory.threadFactory import ThreadFactory
 
 class ProcessManager(QObject):
     def __init__(self, iface):
-        '''
+        """
         Constructor
-        '''
+        """
         super(ProcessManager, self).__init__()
 
         self.iface = iface
@@ -41,9 +41,9 @@ class ProcessManager(QObject):
         self.threadFactory = ThreadFactory()
 
     def findProgressBar(self, uuid):
-        '''
+        """
         Gets a process progress bar by its uuid
-        '''
+        """
         for key in self.processDict.keys():
             id = key.getId()
             if id == uuid:
@@ -51,9 +51,9 @@ class ProcessManager(QObject):
         return None
 
     def findProcess(self, uuid):
-        '''
+        """
         Finds a process by its uuid
-        '''
+        """
         for key in self.processDict.keys():
             id = key.getId()
             if id == uuid:
@@ -62,33 +62,33 @@ class ProcessManager(QObject):
 
     @pyqtSlot(int, str)
     def setProgressRange(self, maximum, uuid):
-        '''
+        """
         Sets the progress range for the process
         maximum: progress range
         uuid: process uuid
-        '''
+        """
         progressBar = self.findProgressBar(uuid)
         if not sip.isdeleted(progressBar):
             progressBar.setRange(0, maximum)
 
     @pyqtSlot(str)
     def stepProcessed(self, uuid):
-        '''
+        """
         Updates the process progress bar
         uuid: process uuid
-        '''
+        """
         progressBar = self.findProgressBar(uuid)
         if not sip.isdeleted(progressBar):
             progressBar.setValue(progressBar.value() + 1)
 
     @pyqtSlot(int,str,str)
     def processFinished( self, feedback, message, uuid):
-        '''
+        """
         Finalizes the process
         feedback: feedback code
         message: feedback message
         uuid: process uuid
-        '''
+        """
         progressBar = self.findProgressBar(uuid)
 
         process = self.findProcess(uuid)
@@ -102,11 +102,11 @@ class ProcessManager(QObject):
         QMessageBox.information(self.iface.mainWindow(), 'DSG Tools', message)
 
     def prepareProcess(self, process, message):
-        '''
+        """
         Prepares the process to be executed.
         Creates a message bar.
         Connects the destroyed progress bar signal to the process cancel method
-        '''
+        """
         # Setting the progress bar
         progressMessageBar = self.iface.messageBar().createMessage(message)
         progressBar = QProgressBar()
@@ -124,9 +124,9 @@ class ProcessManager(QObject):
         QThreadPool.globalInstance().start(process)
 
     def createPostgisDatabaseProcess(self, dbName, abstractDb, version,epsg):
-        '''
+        """
         Create the postgis databsae process
-        '''
+        """
         #creating process
         process = self.threadFactory.makeProcess('pgdb')
         stopped = [False]
@@ -139,9 +139,9 @@ class ProcessManager(QObject):
         self.prepareProcess(process, self.tr("Creating database structure..."))
 
     def createDpiProcess(self, filesList, rasterType, minOutValue, maxOutValue, outDir, percent, epsg):
-        '''
+        """
         Creates the digital image process
-        '''
+        """
         #creating process
         process = self.threadFactory.makeProcess('dpi')
         stopped = [False]
@@ -156,9 +156,9 @@ class ProcessManager(QObject):
         self.prepareProcess(process, self.tr("Processing images..."))
 
     def createInventoryProcess(self, parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, isOnlyGeo):
-        '''
+        """
         Creates the inventory process
-        '''
+        """
         #creating process
         process = self.threadFactory.makeProcess('inventory')
         stopped = [False]
@@ -175,9 +175,9 @@ class ProcessManager(QObject):
 
     @pyqtSlot(str, bool)
     def loadInventoryFile(self, outputFile, isOnlyGeo):
-        '''
+        """
         Loads the inventory upon completion
-        '''
+        """
         if not isOnlyGeo:
             # Adding the layer and making it active
             url = QUrl.fromLocalFile(outputFile)
