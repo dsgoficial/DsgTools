@@ -25,9 +25,9 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 
 class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface):
-        '''
+        """
         Constructor
-        '''
+        """
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Identify Out Of Bounds Angles')
         
@@ -35,9 +35,9 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
         self.parameters = {'Angle': 10.0, 'Classes': classesWithElem.keys()}
 
     def execute(self):
-        '''
+        """
         Reimplementation of the execute method from the parent class
-        '''
+        """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!

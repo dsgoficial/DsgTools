@@ -31,7 +31,6 @@ from qgis.core import QgsMapLayer, QGis
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'inspectFeatures.ui'))
 
-
 class InspectFeatures(QWidget,FORM_CLASS): 
     def __init__(self, iface, parent = None):
         """
@@ -48,9 +47,9 @@ class InspectFeatures(QWidget,FORM_CLASS):
         self.allLayers={}
         
     def enableScale(self):
-        '''
+        """
         The scale combo should only be enabled for point layers
-        '''
+        """
         currentLayer = self.iface.activeLayer()
         if QgsMapLayer is not None and currentLayer:
                 if currentLayer.type() == QgsMapLayer.VectorLayer:
@@ -61,25 +60,25 @@ class InspectFeatures(QWidget,FORM_CLASS):
  
     @pyqtSlot(bool)
     def on_nextInspectButton_clicked(self):
-        '''
+        """
         Inspects the next feature
-        '''
+        """
         method = getattr(self, 'testIndexFoward')
         self.iterateFeature(method)
     
     def testIndexFoward(self, index, maxIndex, minIndex):
-        '''
+        """
         Gets the next index
-        '''
+        """
         index += 1
         if index > maxIndex:
             index = minIndex
         return index
     
     def testIndexBackwards(self, index, maxIndex, minIndex):
-        '''
+        """
         gets the previous index
-        '''
+        """
         index -= 1
         if index < minIndex:
             index = maxIndex
@@ -87,17 +86,17 @@ class InspectFeatures(QWidget,FORM_CLASS):
             
     @pyqtSlot(bool)
     def on_backInspectButton_clicked(self):
-        '''
+        """
         Inspects the previous feature
-        '''
+        """
         method = getattr(self, 'testIndexBackwards')
         self.iterateFeature(method)
             
     def iterateFeature(self, method):
-        '''
+        """
         Iterates over the features selecting and zooming to the desired one
         method: method used to determine the desired feature index
-        '''
+        """
         currentLayer = self.iface.activeLayer()
         lyrName = currentLayer.name()
         
@@ -144,34 +143,34 @@ class InspectFeatures(QWidget,FORM_CLASS):
             self.errorMessage()
             
     def errorMessage(self):
-        '''
+        """
         Shows am error message
-        '''
+        """
         QMessageBox.warning(self.iface.mainWindow(), self.tr(u"ERROR:"), self.tr(u"<font color=red>There are no features in the current layer:<br></font><font color=blue>Add features and try again!</font>"), QMessageBox.Close)
 
     def selectLayer(self, index, currentLayer):
-        '''
+        """
         Remove current layer feature selection
         currentLayer: layer that will have the feature selection removed
-        '''
+        """
         if currentLayer:
             currentLayer.removeSelection()
             currentLayer.select(index)
 
     def zoomFeature(self, zoom):
-        '''
+        """
         Zooms to current layer selected features according to a specific zoom
         zoom: zoom to be applied
-        '''
+        """
         self.iface.actionZoomToSelected().trigger()
         if self.canvas.currentLayer().geometryType() == QGis.Point:
             self.iface.mapCanvas().zoomScale(float(1/zoom))
         
     @pyqtSlot(bool)
     def on_inspectPushButton_toggled(self, toggled):
-        '''
+        """
         Shows/Hides the tool bar
-        '''
+        """
         if toggled:
             self.splitter.show()
         else:

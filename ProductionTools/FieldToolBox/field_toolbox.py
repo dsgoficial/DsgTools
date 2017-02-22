@@ -62,9 +62,9 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_setupButton_clicked(self):
-        '''
+        """
         Creates the buttons according to the field setup
-        '''
+        """
         if self.widget.abstractDb == None:
             QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('First select a database!'))
             return
@@ -83,10 +83,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             
     @pyqtSlot(int)
     def on_checkBox_stateChanged(self, state):
-        '''
+        """
         Adjusts tool behavior. The default state makes the tool work with selected features
         but the user can choose to acquire a feature in real time. When working in real time the buttons must be checkable.
-        '''
+        """
         if self.checkBox.checkState() == Qt.Checked:
             #connecting iface signals
             self.iface.currentLayerChanged.connect(self.acquire)
@@ -106,19 +106,19 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                 button.setCheckable(False)            
         
     def createWidgetWithoutTabs(self, formLayout):
-        '''
+        """
         Adjusts the scroll area to receive the buttons directly (not grouped by category)
         formLayout: Layout used to receive all the buttons
-        '''
+        """
         w = QtGui.QWidget()
         w.setLayout(formLayout)
         self.scrollArea.setWidget(w)
 
     def createWidgetWithTabs(self, formLayout):
-        '''
+        """
         Creates a scroll area for each form layout.
         formLayout: Layout used to receive the buttons in each tab
-        '''
+        """
         scrollArea = QtGui.QScrollArea()
         scrollArea.setWidgetResizable(True)
         scrollArea.setFrameShape(QtGui.QFrame.Shape(0))  # no frame
@@ -128,10 +128,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         return scrollArea
     
     def createButton(self, button):
-        '''
+        """
         Creates the buttons according to the user size definition
         button: Button name
-        '''
+        """
         pushButton = QtGui.QPushButton(button)
         pushButton.clicked.connect(self.reclassify)
         pushButton.toggled.connect(self.acquire)
@@ -148,10 +148,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         return pushButton        
         
     def createButtons(self, reclassificationDict, createTabs = False):
-        '''
+        """
         Convenience method to create buttons
         createTabs: Indicates if the buttons must be created within tabs
-        '''
+        """
         self.buttons = []
         widget = self.scrollArea.takeWidget()
         if createTabs:
@@ -162,10 +162,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.on_checkBox_stateChanged(0)
             
     def createButtonsWithoutTabs(self, reclassificationDict):
-        '''
+        """
         Specific method to create buttons without tabs
         reclassificationDict: dictionary used to create the buttons
-        '''
+        """
         formLayout = QtGui.QFormLayout()
         self.createWidgetWithoutTabs(formLayout)
         sortedButtonNames = []
@@ -181,10 +181,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             formLayout.addRow(pushButton)
 
     def createButtonsWithTabs(self, reclassificationDict):
-        '''
+        """
         Specific method to create buttons with tabs
         reclassificationDict: dictionary used to create the buttons
-        '''
+        """
         gridLayout = QtGui.QGridLayout()
         tabWidget = QtGui.QTabWidget()
         tabWidget.setTabPosition(QtGui.QTabWidget.West)
@@ -207,19 +207,19 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                 formLayout.addRow(pushButton)
                     
     def loadLayer(self, layer):
-        '''
+        """
         Loads the layer used in the actual reclassification
         layer: Layer name
-        '''
+        """
         try:
             return self.layerLoader.load([layer],uniqueLoad=True)[layer]
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('Could not load the selected classes!\n')+str(e.args[0]))
             
     def checkConditions(self):
-        '''
+        """
         Check the conditions to see if the tool can be used
-        '''
+        """
         if not self.widget.abstractDb:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Please, select a database.'))
             return False
@@ -237,9 +237,9 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         return True
     
     def getLayerFromButton(self, button):
-        '''
+        """
         Gets the correct layer to be used in the tool
-        '''
+        """
         #edgvClass found in the dictionary (this is made using the sqlite seed)
         (category, edgvClass) = self.findReclassificationClass(button)
         
@@ -266,10 +266,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
     
     @pyqtSlot(int)
     def setAttributesFromButton(self, featureId):
-        '''
+        """
         Sets the attributes for the newly added feature
         featureId: added feature
-        '''
+        """
         #layer that sent the signal
         layer = self.sender()
         #accessing added features
@@ -283,11 +283,11 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                 self.setFeatureAttributes(feature, editBuffer)
                 
     def setFeatureAttributes(self, newFeature, editBuffer = None):
-        '''
+        """
         Changes attribute values according to the reclassification dict using the edit buffer
         newFeature: newly added
         editBuffer: layer edit buffer
-        '''
+        """
         #setting the attributes using the reclassification dictionary
         for attribute in self.reclassificationDict[self.category][self.edgvClass][self.buttonName].keys():
             idx = newFeature.fieldNameIndex(attribute)
@@ -306,9 +306,9 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             return newFeature
         
     def disconnectLayerSignals(self):
-        '''
+        """
         Disconnecting the signals from the previous layer
-        '''
+        """
         if self.prevLayer:
             try:
                 self.prevLayer.featureAdded.disconnect(self.setAttributesFromButton)
@@ -318,10 +318,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             
     @pyqtSlot(bool)
     def acquire(self, pressed):
-        '''
+        """
         Performs the actual reclassification, moving the geometry to the correct layer along with the specified attributes.
         The difference here is the use of real time editing to make the reclassification
-        '''
+        """
         if pressed:
             if not self.checkConditions():
                 return
@@ -365,9 +365,9 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             
     @pyqtSlot()
     def reclassify(self):
-        '''
+        """
         Performs the actual reclassification, moving the geometry to the correct layer along with the specified attributes
-        '''
+        """
         if not self.checkConditions():
             return
         
@@ -418,10 +418,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
 
 
     def findReclassificationClass(self, button):
-        '''
+        """
         Finds the reclassification class according to the button
         button: Button clicked by the user to perform the reclassification
-        '''
+        """
         for category in self.reclassificationDict.keys():
             if category == 'version':
                 continue
@@ -433,11 +433,11 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         return ()
                     
     def searchLayer(self, group, name):
-        '''
+        """
         Checks if a layer is already loaded in TOC. Case positive return it, case negative return None
         group: Group name
         name: Layer name
-        '''
+        """
         layerNodes = group.findLayers()
         for node in layerNodes:
             if node.layerName() == name:

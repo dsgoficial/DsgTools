@@ -26,9 +26,9 @@ import processing, binascii
 
 class CleanGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface):
-        '''
+        """
         Constructor
-        '''
+        """
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Clean Geometries')
         
@@ -37,9 +37,9 @@ class CleanGeometriesProcess(ValidationProcess):
         self.parameters = {'Snap': 1.0, 'MinArea':0.001, 'Classes':classesWithElem}
         
     def runProcessinAlg(self, layer, tempTableName, geometryColumn):
-        '''
-        Runs the actual process
-        '''
+        """
+        Runs the actual grass process
+        """
         alg = 'grass7:v.clean.advanced'
         
         #creating vector layer
@@ -77,9 +77,9 @@ class CleanGeometriesProcess(ValidationProcess):
         return self.getProcessingErrors(errorLayer)
 
     def execute(self):
-        '''
+        """
         Reimplementation of the execute method from the parent class
-        '''
+        """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!

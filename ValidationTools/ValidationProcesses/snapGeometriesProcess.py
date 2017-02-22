@@ -26,6 +26,9 @@ import processing, binascii
 
 class SnapGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface):
+        """
+        Constructor
+        """
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Snap Geometries')
         
@@ -33,6 +36,9 @@ class SnapGeometriesProcess(ValidationProcess):
         self.parameters = {'Snap': 1.0, 'MinArea':0.001, 'Classes':classesWithElem.keys()}
         
     def runProcessinAlg(self, layer, tempTableName):
+        """
+        Runs the actual grass process
+        """
         alg = 'grass7:v.clean.advanced'
         
         #creating vector layer
@@ -69,6 +75,9 @@ class SnapGeometriesProcess(ValidationProcess):
         return self.getProcessingErrors(errorLayer)
 
     def execute(self):
+        """
+        Reimplementation of the execute method from the parent class
+        """
         #abstract method. MUST be reimplemented.
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:

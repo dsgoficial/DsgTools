@@ -29,9 +29,9 @@ from PyQt4.Qt import QObject
 
 class ValidationManager(QObject):
     def __init__(self,postgisDb, iface):
-        '''
+        """
         Constructor
-        '''
+        """
         super(ValidationManager, self).__init__()
         self.processList = []
         self.postgisDb = postgisDb
@@ -48,11 +48,11 @@ class ValidationManager(QObject):
             
 
     def setAvailableProcesses(self):
-        '''
+        """
         Sets all available processes.
         This method is a dynamic method that scans the processes folder for .py files.
         All .py files within the folder (minus the ignored ones) are listed as available processes
-        '''
+        """
         ignoredFiles = ['__init__.py', 'validationProcess.py', 'spatialRuleEnforcer.py']
         for root, dirs, files in os.walk(os.path.join(os.path.dirname(__file__), 'ValidationProcesses')):
             files.sort()
@@ -67,12 +67,12 @@ class ValidationManager(QObject):
                 self.processDict[self.instantiateProcessByName(processClass).processAlias] = processClass 
             
     def instantiateProcessByName(self, processName):
-        '''
+        """
         This method instantiate a process by its name.
         The import is made dynamically using the __import__ function.
         The class to be import is obtained using the getattr function.
         The class instance is made using: klass(self.postgisDb, self.iface)
-        '''
+        """
         currProc = None
         for processClass in self.processList:
             if processClass == processName:
@@ -90,10 +90,10 @@ class ValidationManager(QObject):
                 return currProc
 
     def executeProcess(self, process):
-        '''
+        """
         Executes a process by its name
         processName: process name
-        '''
+        """
         #checking for running processes
         processName = self.processDict[process]
         runningProc = None

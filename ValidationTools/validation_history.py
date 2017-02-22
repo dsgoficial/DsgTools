@@ -32,9 +32,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class ValidationHistory(QtGui.QDialog, FORM_CLASS):
     def __init__(self,postgisDb, parent=None):
-        '''
+        """
         Constructor
-        '''
+        """
         super(ValidationHistory, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -50,7 +50,7 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
-        '''
+        """
         Closes the dialog
-        '''
+        """
         self.hide()

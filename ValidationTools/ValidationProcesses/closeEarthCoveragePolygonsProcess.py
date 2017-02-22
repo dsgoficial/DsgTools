@@ -30,22 +30,22 @@ import json
 
 class CloseEarthCoveragePolygonsProcess(ValidationProcess):
     def __init__(self, postgisDb, iface):
-        '''
+        """
         Constructor
-        '''
+        """
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Close Earth Coverage Polygons')
         
     def preProcess(self):
-        '''
+        """
         Gets the process that should be execute before this one
-        '''
+        """
         return self.tr('Snap Lines to Frame')
         
     def cleanCentroidsAreas(self, coverageClassList):
-        '''
+        """
         Cleans all the previously created areas
-        '''
+        """
         for cl in coverageClassList:
             auxCentroidLyr = QgsVectorLayer(self.abstractDb.getURI(cl, False, geomColumn = 'geom').uri(), cl, "postgres")
             featDict = dict()
@@ -55,10 +55,10 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             auxCentroidLyr.dataProvider().changeGeometryValues(featDict)
     
     def processFlags(self, areaLyr):
-        '''
+        """
         Gets flags candidates and filters those who are within other flags
         areaLayers: list of layers with possible flags
-        '''
+        """
         
         feats = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid = -1000 or destid = -2000')))]
         idx = QgsSpatialIndex()
@@ -76,9 +76,9 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         pass
         
     def defineQueryLayer(self, delimiterList):
-        '''
+        """
         Defines a query layer composed by all features from earthCoverage lines and also by frame
-        '''
+        """
         #TODO: add frame
         epsg = self.abstractDb.findEPSG()
         lineLyr = QgsVectorLayer("multilinestring?crs=EPSG:%d" % epsg,"tempLine",'memory')
@@ -97,11 +97,11 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         return lineLyr
         
     def runPolygonize(self, cl, areaLyr, lineLyr):
-        '''
+        """
         runs polygonize to generate coverage areas.
         store the polygonize return in the memory area layer with the following attributes:
         cl - original area class
-        '''
+        """
         QgsMapLayerRegistry.instance().addMapLayer(lineLyr)
         ret = processing.runalg('qgis:polygonize', lineLyr, False, True, None)
         if not ret:
@@ -121,9 +121,9 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         QgsMapLayerRegistry.instance().removeMapLayer(lineLyr.id())
         
     def raiseFlags(self, areaLyr):
-        '''
+        """
         run difference to determine holes in the coverage
-        '''
+        """
         frame = QgsVectorLayer(self.abstractDb.getURI('public.aux_moldura_a', False).uri(), 'public.aux_moldura_a', "postgres")
         frameFeat = frame.getFeatures().next()
         
@@ -172,9 +172,9 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)        
     
     def relateAreasWithCentroids(self, cl, areaLyr, centroidLyr, relateDict, centroidIdx):
-        '''
+        """
         Alters a input dict that relates each area with a centroid feature list. This list might be empty.
-        '''
+        """
         relateDict[cl] = dict()
         for areaFeat in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("cl = '%s'" % cl))):
             areaId = areaFeat.id()
@@ -187,9 +187,9 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                     relateDict[cl][areaId].append(feat)
 
     def makeIndex(self, centroidLyr):
-        '''
+        """
         creates a spatial index for the centroid layer
-        '''
+        """
         centroidIdx = QgsSpatialIndex()
         for feat in centroidLyr.getFeatures():
             centroidIdx.insertFeature(feat)
@@ -199,10 +199,10 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         return idx.intersects(bbox)
 
     def prepareReclassification(self, cl, areaLyr, centroidLyr, relateDict):
-        '''
+        """
         area without centroid: destid = -1
         area with conflicted centroid: destid = 0
-        '''
+        """
         destIdx = areaLyr.fieldNameIndex('destid')
         for id in relateDict[cl].keys():
             numberOfCentroids = len(relateDict[cl][id])
@@ -257,9 +257,9 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                         areaLyr.dataProvider().changeAttributeValues({id:{destIdx:-2000}})
     
     def reclassifyAreasWithCentroids(self, coverageClassList, areaLyr, centroidLyr, relateDict):
-        '''
+        """
         Reclassifies areas with centroids
-        '''
+        """
         lyrDict = dict()
         for cl in coverageClassList:
             lyr = QgsVectorLayer(self.abstractDb.getURI(cl, False).uri(), cl, "postgres")
@@ -275,10 +275,10 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             lyr.dataProvider().changeGeometryValues(reclassDict)
 
     def createAuxStruct(self, epsg):
-        '''
+        """
         creates the memory area layer to store the polygonize return
         creates the memory point to store all the centroids 
-        '''
+        """
         try:
             areaLyr = QgsVectorLayer("MultiPolygon?crs=EPSG:%d" % epsg,"tempArea",'memory')
             idField = QgsField('cl',QVariant.String)
@@ -296,12 +296,12 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             raise e 
     
     def populateCentroidLyr(self, coverageClassList, centroidLyr):
-        '''
+        """
         stores all the centroids defined in the earth covarage
         in a memory point layer with the following attributes:
         featid - centroid feature id
         cl - centroid original class name
-        '''
+        """
         for cl in coverageClassList:
             auxCentroidLyr = QgsVectorLayer(self.abstractDb.getURI(cl, False, geomColumn = 'centroid').uri(), cl, "postgres")
             newFeatList = []
@@ -316,9 +316,9 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             centroidLyr.dataProvider().addFeatures(newFeatList)
 
     def execute(self):
-        '''
+        """
         Reimplementation of the execute method from the parent class
-        '''
+        """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!

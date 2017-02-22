@@ -76,9 +76,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             self.abstractDb = None
     
     def populateClassList(self):
-        '''
+        """
         Populates the class list with all geometric classes from database
-        '''
+        """
         self.classListWidget.clear()
         self.geomClasses = []
         try:
@@ -90,25 +90,25 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.classListWidget.addItems(self.geomClasses)
         
     def on_filterEdit_textChanged(self, text):
-        '''
+        """
         Sets a filter to only show desired classes
-        '''
+        """
         classes = [edgvClass for edgvClass in self.geomClasses if text in edgvClass]
         self.classListWidget.clear()
         self.classListWidget.addItems(classes)
         self.classListWidget.sortItems()        
     
     def clearAttributeTableWidget(self):
-        '''
+        """
         Clears the attribute table widget. 
-        '''
+        """
         for i in range(self.attributeTableWidget.rowCount(),-1,-1):
             self.attributeTableWidget.removeRow(i)
     
     def makeValueRelationDict(self, table, codes):
-        '''
+        """
         Makes a query to obtain a dictionary with code names and related codes 
-        '''
+        """
         ret = dict()
 
         in_clause = '(%s)' % ",".join(map(str, codes))
@@ -127,11 +127,11 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(int)
     def on_classListWidget_currentRowChanged(self,row):
-        '''
+        """
         Creates the attribute table according to database.
         Creates specific widgets for each attribute, which can be a QCombobox, a QLineEdit or a QListWidget.
         All mandatory attributes are shown in RED.
-        '''
+        """
         if self.abstractDb.db.driverName() == 'QSQLITE':
             self.populateAttributeFormFromSpatialite(row)
         elif self.abstractDb.db.driverName() == 'QPSQL':
@@ -187,11 +187,11 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         return nullDict, notNullDict
     
     def populateAttributeFormFromSpatialite(self, row):
-        '''
+        """
         Creates the attribute table according to the QML file to spatialite
         Creates specific widgets for each attribute, which can be a QCombobox, a QLineEdit or a QListWidget.
         All mandatory attributes are shown in RED.
-        '''
+        """
         #reset the button name
         self.buttonNameLineEdit.setText('')
         #clear the attribute table
@@ -222,11 +222,11 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.createAttributeItems(fullTableName, self.nullDict, qmlDict, count)
     
     def populateAttributeFormFromPostgis(self, row):
-        '''
+        """
         Creates the attribute table according to the postgis dict
         Creates specific widgets for each attribute, which can be a QCombobox, a QLineEdit or a QListWidget.
         All mandatory attributes are shown in RED.
-        '''
+        """
         #reset the button name
         self.buttonNameLineEdit.setText('')
         #clear the attribute table
@@ -248,6 +248,10 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.createAttributeItems(fullTableName, self.nullDict, qmlDict, count)
 
     def createAttributeItems(self, fullTableName, currentDict, qmlDict, count, colour = None):
+        """
+        Creates a QTableWidgetItem for each attribute.
+        The cell can have different types according to the data type used (i.e QCombobox, QLineEdit or QListWidget)
+        """
         if fullTableName in currentDict.keys():
             for attr in currentDict[fullTableName]:
                 self.attributeTableWidget.insertRow(count)
@@ -261,9 +265,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 count+=1
                         
     def createCellWidget(self, qmlDict, attr, count):
-        '''
+        """
         Creates specific widgets for each attribute, which can be a QCombobox, a QLineEdit or a QListWidget.
-        '''
+        """
         if attr in qmlDict.keys():
             #case the type is dict the cell widget must be a combobox
             if isinstance(qmlDict[attr],dict):
@@ -288,9 +292,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_addUpdatePushButton_clicked(self):
-        '''
+        """
         Creates a new reclassification button ready to be used
-        '''
+        """
         #checking if the button name is defined
         if self.buttonNameLineEdit.text() == '':
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('Enter a button name!'))
@@ -384,9 +388,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             attributeItem.setText(1, value)
             
     def recreateAttributeTable(self, buttonItem):
-        '''
+        """
         Making the attribute table with the actual values present in the tree widget
-        '''
+        """
         # class row in the classListWidget
         classRow = self.classListWidget.currentRow()
 
@@ -435,9 +439,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                     value = widgetItem.setText(value)
             
     def makeReclassificationDict(self):
-        '''
+        """
         Makes the reclassification dictionary used to perform the actual reclassification
-        '''
+        """
         reclassificationDict = dict()
         
         reclassificationDict['version'] = self.edgvVersion
@@ -461,9 +465,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         return reclassificationDict
     
     def readJsonFile(self, filename):
-        '''
+        """
         Reads the json configuration file
-        '''
+        """
         try:
             file = open(filename, 'r')
             data = file.read()
@@ -474,9 +478,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             return dict()    
     
     def loadReclassificationConf(self, reclassificationDict):
-        '''
+        """
         Makes the treewidget using the reclassification dictionary obtained from the configuration file
-        '''
+        """
         index = self.edgvVersion
         
         self.treeWidget.clear()
@@ -501,9 +505,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                         attributeItem.setText(1, reclassificationDict[category][edgvClass][button][attribute])
                     
     def on_treeWidget_currentItemChanged(self, previous, current):
-        '''
+        """
         Adjusts the button visualization according to the selected item in the tree widget
-        '''
+        """
         self.filterEdit.setText('')
         depth = self.depth(previous)
         if depth == 1:
@@ -524,9 +528,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             self.recreateAttributeTable(previous.parent())
 
     def depth(self, item):
-        '''
+        """
         Calculates the item depth in the tree widget
-        '''
+        """
         #calculates the depth of the item
         depth = 0
         while item is not None:
@@ -535,9 +539,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         return depth   
     
     def createMenu(self, position):
-        '''
+        """
         Creates a menu that allows button removal by the user
-        '''
+        """
         menu = QMenu()
         
         item = self.treeWidget.itemAt(position)
@@ -547,17 +551,17 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
 
     def removeChildNode(self):
-        '''
+        """
         Removes a tree widget item and all its children
-        '''
+        """
         item = self.treeWidget.currentItem()
         item.parent().removeChild(item)     
         
     @pyqtSlot(bool)
     def on_loadButton_clicked(self):
-        '''
+        """
         Loads a configuration file
-        '''
+        """
         self.loadedFileEdit.setText('')
         
         filename = QFileDialog.getOpenFileName(self, self.tr('Open reclassification setup file'), self.folder, self.tr('Reclassification Setup Files (*.reclas)'))
@@ -572,9 +576,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot()    
     def on_buttonBox_accepted(self):
-        '''
+        """
         Saves the configuration work done so far.
-        '''
+        """
         if QMessageBox.question(self, self.tr('Question'), self.tr('Do you want to save this reclassification setup?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
             return
             

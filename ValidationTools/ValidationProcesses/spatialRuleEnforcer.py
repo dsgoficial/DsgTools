@@ -46,52 +46,52 @@ class SpatialRuleEnforcer(ValidationProcess):
                  1:False}
     
     def __init__(self, postgisDb, iface):
-        '''
+        """
         Constructor
-        '''
+        """
         super(self.__class__,self).__init__(postgisDb, iface)
         self.iface = iface
         self.rulesFile = os.path.join(os.path.dirname(__file__), '..', 'ValidationRules', 'ruleLibrary.rul')
         self.processAlias = self.tr('Spatial Rule Enforcer')
         
     def connectEditingSignals(self):
-        '''
+        """
         Connects all editing signals when the rule enforcer is turned on
-        '''
+        """
         self.abstractDb.deleteProcessFlags(self.getName()) #deleting old flags when we start the watch dog again
         for layer in self.iface.mapCanvas().layers():
             layer.geometryChanged.connect(self.enforceSpatialRulesForChanges)
             layer.featureAdded.connect(self.enforceSpatialRulesForAddition)
 
     def disconnectEditingSignals(self):
-        '''
+        """
         Disconnects all editing signals when the rule enforcer is turned off
-        '''
+        """
         for layer in self.iface.mapCanvas().layers():
             layer.geometryChanged.disconnect(self.enforceSpatialRulesForChanges)
             layer.featureAdded.disconnect(self.enforceSpatialRulesForAddition)
             
     def getFullLayerName(self, sender):
-        '''
+        """
         Gets the layer name as present in the rules
-        '''
+        """
         uri = sender.dataProvider().dataSourceUri()
         dsUri = QgsDataSourceURI(uri)
         name = '.'.join([dsUri.schema(), dsUri.table()])
         return name
     
     def getLayer(self, layername):
-        '''
+        """
         Gets the QgsVectorLayer involved in the rule that is about to be tested
-        '''
+        """
         for layer in self.iface.mapCanvas().layers():
             if layer.name() == layername:
                 return layer
             
     def testRule(self, rule, featureId, geometry):
-        '''
+        """
         Tests the rule against the geometry passed as parameter
-        '''        
+        """        
         layer1 = rule[0] #layer that defines the rule
         necessity = rule[1] #rule necessity
         predicate = rule[2] #spatial predicate
@@ -175,12 +175,12 @@ class SpatialRuleEnforcer(ValidationProcess):
                     self.makeBreaksPredicateFlag(layer1, featureId, rule, layer2, hexa)
                     
     def getGeometryProblem(self, geometry, feature):
-        '''
+        """
         Gets geometry problems.
         When this happens the rule is broken and we need to get the geometry of the actual problem.
         geometry: geometry used during edition mode
         feature: feature related to the geometry
-        '''
+        """
         #geom must be the intersection
         geom = geometry.intersection(feature.geometry())
         #case the intersection is WKBUnknown or WKBNoGeometry, we should use the original geometry
@@ -191,7 +191,7 @@ class SpatialRuleEnforcer(ValidationProcess):
         return hexa
                 
     def makeBreaksCardinalityFlag(self, layer1, featureId, rule, min_card, max_card, layer2, hexa):
-        '''
+        """
         Makes a flag when the cardinality is broken
         layer1: Layer1 name
         featureId: Id of the feature that violates the rule
@@ -200,30 +200,30 @@ class SpatialRuleEnforcer(ValidationProcess):
         max_card: maximum cardinality
         layer2: Layer2 name
         hexa: WKB geometry to be passed to the flag
-        '''
+        """
         #making the reason
         reason = self.tr('Feature id ') + str(featureId) + self.tr(' from ') + layer1 + self.tr(" violates cardinality ")
         reason += min_card + '..' + max_card + self.tr(' of rule: ') + rule + ' ' + layer2
         self.addFlag([(layer1, str(featureId), reason, hexa)])
                 
     def makeBreaksPredicateFlag(self, layer1, featureId, rule, layer2, hexa):
-        '''
+        """
         Makes a flag when the predicate is broken
         layer1: Layer1 name
         featureId: Id of the feature that violates the rule
         rule: Rule tested
         layer2: Layer2 name
         hexa: WKB geometry to be passed to the flag
-        '''
+        """
         #making the reason
         reason = self.tr('Feature id ') + str(featureId) + self.tr(' from ') + layer1 + self.tr(' violates rule: ') + rule + ' ' + layer2
         self.addFlag([(layer1, str(featureId), reason, hexa)])
 
     @pyqtSlot(int, QgsGeometry)      
     def enforceSpatialRulesForChanges(self, featureId, geometry):
-        '''
+        """
         Slot that is activated when a feature is modified by the user
-        '''
+        """
         #layer that sent the signal
         layer = self.sender()
         #layer name as present in the rules
@@ -236,9 +236,9 @@ class SpatialRuleEnforcer(ValidationProcess):
 
     @pyqtSlot(int)      
     def enforceSpatialRulesForAddition(self, featureId):
-        '''
+        """
         Slot that is activated when a feature is added by the user
-        '''
+        """
         #layer that sent the signal
         layer = self.sender()
         #layer name as present in the rules
@@ -255,9 +255,9 @@ class SpatialRuleEnforcer(ValidationProcess):
                 self.testRule(rule, featureId, features[featureId].geometry()) #actual test
                 
     def getRules(self, layerName):
-        '''
+        """
         Get a list of tuples (rules) using the configuration file
-        '''
+        """
         try:
             with open(self.rulesFile, 'r') as f:
                 rules = [line.rstrip('\n') for line in f]

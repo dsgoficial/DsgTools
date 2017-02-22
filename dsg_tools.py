@@ -196,9 +196,9 @@ class DsgTools:
         return action
 
     def addMenu(self, parent, name, title, icon_path):
-        '''
+        """
         Adds a QMenu
-        '''
+        """
         child = QMenu(parent)
         child.setObjectName(name)
         child.setTitle(self.tr(title))
@@ -207,9 +207,9 @@ class DsgTools:
         return child
 
     def createToolButton(self, parent, text):
-        '''
+        """
         Creates a tool button (pop up menu)
-        '''
+        """
         button = QToolButton(parent)
         button.setObjectName(text)
         button.setToolButtonStyle(Qt.ToolButtonIconOnly)
@@ -635,23 +635,23 @@ class DsgTools:
             pass
 
     def showAbout(self):
-        '''
+        """
         Shows the about dialog
-        '''
+        """
         dlg = AboutDialog()
         dlg.exec_()
 
     def showHelp(self):
-        '''
+        """
         Shows the help
-        '''
+        """
         index = os.path.join(os.path.dirname(__file__), 'help', 'index')
         showPluginHelp('DsgTools', index)
 
     def showConvertDatabase(self):
-        '''
+        """
         Show sthe convert database dialog
-        '''
+        """
         dlg = ConvertDatabase()
         dlg.show()
         result = dlg.exec_()
@@ -659,9 +659,9 @@ class DsgTools:
             pass
         
     def showImageProcessor(self):
-        '''
+        """
         Shows the processing tools dialog
-        '''
+        """
         dlg = ProcessingTools(self.iface)
         result = dlg.exec_()
         if result == 1:
@@ -670,9 +670,9 @@ class DsgTools:
             self.processManager.createDpiProcess(filesList, rasterType, minOutValue, maxOutValue, outDir, percent, epsg)
 
     def showInventoryTool(self):
-        '''
+        """
         Shows the inventory tools dialog
-        '''
+        """
         dlg = InventoryTools(self.iface)
         result = dlg.exec_()
         if result == 1:
@@ -681,9 +681,9 @@ class DsgTools:
             self.processManager.createInventoryProcess(parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, isOnlyGeo)
             
     def showCalcContour(self):
-        '''
+        """
         Shows the countour dock
-        '''
+        """
         if self.contourDock:
             self.iface.removeDockWidget(self.contourDock)
         else:
@@ -692,15 +692,17 @@ class DsgTools:
         self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.contourDock)
     
     def showCodeList(self):
+        """
+        Shows the Code list Dock
+        """
         if self.codeList:
             self.iface.removeDockWidget(self.codeList)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.codeList)
 
-
     def showFieldToolbox(self):
-        '''
+        """
         Shows the reclassification tool box dock
-        '''
+        """
         if self.fieldDock:
             self.iface.removeDockWidget(self.fieldToolbox)
         else:
@@ -708,6 +710,9 @@ class DsgTools:
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.fieldToolbox)
     
     def showValidationToolbox(self):
+        """
+        Shows the Validation Dock
+        """
         if self.validationToolbox:
             self.iface.removeDockWidget(self.validationToolbox)
         else:
@@ -715,6 +720,9 @@ class DsgTools:
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.validationToolbox)
 
     def showComplexDock(self):
+        """
+        Shows the Manage Complex features Dock
+        """
         if self.complexWindow:
             self.iface.removeDockWidget(self.complexWindow)
         else:
@@ -722,6 +730,9 @@ class DsgTools:
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
 
     def showMilitarySimbologyDock(self):
+        """
+        Shows the Military Simbology Dock
+        """
         if self.militaryDock:
             self.iface.removeDockWidget(self.militaryDock)
         else:
@@ -729,18 +740,18 @@ class DsgTools:
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.militaryDock)
             
     def installModelsAndScripts(self):
-        '''
+        """
         Shows the model and scripts installer dialog
-        '''
+        """
         dlg = ModelsAndScriptsInstaller()
         result = dlg.exec_()
         if result == 1:
             pass
 
     def createSpatialiteDatabase(self):
-        '''
+        """
         Shows the create spatialite dialog
-        '''
+        """
         try:
             self.databaseButton.setDefaultAction(self.toolbar.sender())
         except:
@@ -751,6 +762,9 @@ class DsgTools:
             pass
     
     def batchDatabaseCreation(self):
+        """
+        Shows the batch database creation dialog
+        """
         try:
             self.databaseButton.setDefaultAction(self.toolbar.sender())
         except:
@@ -761,9 +775,9 @@ class DsgTools:
             pass
 
     def createPostGISDatabase(self):
-        '''
+        """
         Shows the create postgis dialog
-        '''
+        """
         try:
             self.databaseButton.setDefaultAction(self.toolbar.sender())
         except:
@@ -777,9 +791,9 @@ class DsgTools:
 
 
     def loadAuxStruct(self):
-        '''
+        """
         Shows the load line-centroid configuration dialog
-        '''
+        """
         try:
             self.layerButton.setDefaultAction(self.toolbar.sender())
         except:
@@ -791,6 +805,9 @@ class DsgTools:
             pass
     
     def loadLayersFromServer(self):
+        """
+        Shows the dialog that loads layers from server
+        """
         try:
             self.layerButton.setDefaultAction(self.toolbar.sender())
         except:
@@ -802,9 +819,9 @@ class DsgTools:
             pass
 
     def createFrame(self):
-        '''
+        """
         Shows the create frame dialog
-        '''
+        """
         try:
             self.layerButton.setDefaultAction(self.toolbar.sender())
         except:
@@ -816,9 +833,9 @@ class DsgTools:
             pass
 
     def viewServers(self):
-        '''
+        """
         Shows the view servers dialog
-        '''
+        """
         dlg = ViewServers(self.iface)
         dlg.show()
         result = dlg.exec_()
@@ -826,9 +843,9 @@ class DsgTools:
             pass
     
     def exploreDB(self):
-        '''
+        """
         Shows the explore database dialog
-        '''
+        """
         dlg = ExploreDb()
         dlg.show()
         result = dlg.exec_()
@@ -836,6 +853,9 @@ class DsgTools:
             pass
 
     def batchDbManager(self):
+        """
+        Shows the database manager dialog
+        """
         dlg = BatchDbManager()
         dlg.show()
         result = dlg.exec_()
@@ -843,9 +863,9 @@ class DsgTools:
             pass
 
     def loadRapidEyeLayer(self):
-        '''
+        """
         Loads rapideye layer
-        '''
+        """
         urlWithParams = self.BDGExTools.getTileCache('RapidEye')
         if not urlWithParams:
             return
@@ -853,102 +873,102 @@ class DsgTools:
         self.iface.addRasterLayer(urlWithParams, 'RapidEye','wms')
 
     def loadLandsatLayer(self):
-        '''
+        """
         Loads landsat layer
-        '''
+        """
         urlWithParams = self.BDGExTools.getTileCache('Landsat7')
         if not urlWithParams:
             return
         self.iface.addRasterLayer(urlWithParams, 'Landsat7', 'wms')
 
     def load250kLayer(self):
-        '''
+        """
         Loads landsat layer
-        '''
+        """
         urlWithParams = self.BDGExTools.getTileCache('1:250k')
         if not urlWithParams:
             return
         self.iface.addRasterLayer(urlWithParams, '1:250k', 'wms')
     
     def load100kLayer(self):
-        '''
+        """
         Loads 100k layer
-        '''
+        """
         urlWithParams = self.BDGExTools.getTileCache('1:100k')
         if not urlWithParams:
             return
         self.iface.addRasterLayer(urlWithParams, '1:100k', 'wms')
 
     def load50kLayer(self):
-        '''
+        """
         Loads 50k layer
-        '''
+        """
         urlWithParams = self.BDGExTools.getTileCache('1:50k')
         if not urlWithParams:
             return
         self.iface.addRasterLayer(urlWithParams, '1:50k', 'wms')
 
     def load25kLayer(self):
-        '''
+        """
         Loads 25k layer
-        '''
+        """
         urlWithParams = self.BDGExTools.getTileCache('1:25k')
         if not urlWithParams:
             return
         self.iface.addRasterLayer(urlWithParams, '1:25k', 'wms')
 
     def load250kRasterIndex(self):
-        '''
+        """
         Loads 250k raster index layer
-        '''
+        """
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F250_WGS84_MATRICIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
         self.iface.addRasterLayer(urlWithParams, self.tr('1:250k Available Raster Charts'), 'wms')
 
     def load100kRasterIndex(self):
-        '''
+        """
         Loads 100k raster index layer
-        '''
+        """
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F100_WGS84_MATRICIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
         self.iface.addRasterLayer(urlWithParams, self.tr('1:100k Available Raster Charts'), 'wms')
 
     def load50kRasterIndex(self):
-        '''
+        """
         Loads 50 raster index layer
-        '''
+        """
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F50_WGS84_MATRICIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
         self.iface.addRasterLayer(urlWithParams, self.tr('1:50k Available Raster Charts'), 'wms')
 
     def load25kRasterIndex(self):
-        '''
+        """
         Loads 25k raster index layer
-        '''
+        """
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F25_WGS84_MATRICIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
         self.iface.addRasterLayer(urlWithParams, self.tr('1:25k Available Raster Charts'), 'wms')
 
     def load250kVectorIndex(self):
-        '''
+        """
         Loads 250k vector index layer
-        '''
+        """
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F250_WGS84_VETORIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
         self.iface.addRasterLayer(urlWithParams, self.tr('1:250k Available Vectorial Charts'), 'wms')
 
     def load100kVectorIndex(self):
-        '''
+        """
         Loads 100k vector index layer
-        '''
+        """
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F100_WGS84_VETORIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
         self.iface.addRasterLayer(urlWithParams, self.tr('1:100k Available Vectorial Charts'), 'wms')
 
     def load50kVectorIndex(self):
-        '''
+        """
         Loads 50k vector index layer
-        '''
+        """
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F50_WGS84_VETORIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
         self.iface.addRasterLayer(urlWithParams, self.tr('1:50k Available Vectorial Charts'), 'wms')
 
     def load25kVectorIndex(self):
-        '''
+        """
         Loads 25k vector index layer
-        '''
+        """
         urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F25_WGS84_VETORIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
         self.iface.addRasterLayer(urlWithParams, self.tr('1:25k Available Vectorial Charts'),'wms')

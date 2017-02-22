@@ -46,18 +46,18 @@ class SpatialRuleProcess(ValidationProcess):
                  1:'\'t\''}
     
     def __init__(self, postgisDb, iface):
-        '''
+        """
         Constructor
-        '''
+        """
         super(self.__class__,self).__init__(postgisDb, iface)
         
         self.rulesFile = os.path.join(os.path.dirname(__file__), '..', 'ValidationRules', 'ruleLibrary.rul')
         self.processAlias = self.tr('Spatial Rule Checker')
         
     def getRules(self):
-        '''
+        """
         Get a list of tuples (rules) using the configuration file
-        '''
+        """
         try:
             with open(self.rulesFile, 'r') as f:
                 rules = [line.rstrip('\n') for line in f]
@@ -81,9 +81,9 @@ class SpatialRuleProcess(ValidationProcess):
         return ret
 
     def execute(self):
-        '''
+        """
         Reimplementation of the execute method from the parent class
-        '''
+        """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!

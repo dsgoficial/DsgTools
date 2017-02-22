@@ -47,9 +47,9 @@ class ProcessParametersDialog(QtGui.QDialog):
                   QtGui.QCheckBox: lambda x: True}
 
     def __init__(self, parent, options, required=None, title=None):
-        '''
+        """
         Constructor
-        '''
+        """
         super(ProcessParametersDialog, self).__init__(parent)
         self.__widgets = dict()
         self.__values = dict()
@@ -111,9 +111,9 @@ class ProcessParametersDialog(QtGui.QDialog):
         _firstWidget.setFocus()
 
     def accept(self):
-        '''
+        """
         Sets the parameters and closes the dialog
-        '''
+        """
         for k, (label, widget) in self.widgets.iteritems():
             value = getattr(widget, self.GETTERS[type(widget)])()
             self.__values[k] = value
@@ -129,23 +129,23 @@ class ProcessParametersDialog(QtGui.QDialog):
 
     @property
     def widgets(self):
-        '''
+        """
         Gets the widgets
-        '''
+        """
         return self.__widgets
 
     @property
     def values(self):
-        '''
+        """
         Gets the values
-        '''
+        """
         return self.__values
 
 
 def beautifyText(camelCasedText):
-    '''
+    """
     Makes the text more beautiful
-    '''
+    """
     rval = ""
     for i, ch in enumerate(camelCasedText):
         if i == 0:
