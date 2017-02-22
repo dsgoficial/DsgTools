@@ -33,6 +33,7 @@ from qgis.utils import iface
 
 #DsgTools imports
 from DsgTools.Factories.LayerLoaderFactory.edgvLayerLoader import EDGVLayerLoader
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class SpatialiteLayerLoader(EDGVLayerLoader):
     def __init__(self, iface, abstractDb):
@@ -98,7 +99,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
                 for cat in lyrDict[prim].keys():
                     for lyr in lyrDict[prim][cat]:
                         primNumber += 1
-            localProgress = ProgressWidget(1,primNumber-1,self.tr('Loading layers... '), parent = parent)
+            localProgress = ProgressWidget(1, primNumber-1, self.tr('Loading layers... '), parent=parent)
         loadedDict = dict()
         for prim in lyrDict.keys():
             for cat in lyrDict[prim].keys():

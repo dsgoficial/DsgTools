@@ -243,4 +243,3 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         abstractDb.checkAndCreateStyleTable()
         styles = abstractDb.getStyleDict(dbVersion)
         self.styleChanged.emit(type, styles)
-    

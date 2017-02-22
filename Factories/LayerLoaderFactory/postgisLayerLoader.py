@@ -113,7 +113,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         constraintDict = self.abstractDb.getCheckConstraintDict()
         multiColumnsDict = self.abstractDb.getMultiColumnsDict()
         notNullDict = self.abstractDb.getNotNullDictV2()
-        lyrDict = self.getLyrDict(filteredLayerList, isEdgv = isEdgv)
+        lyrDict = self.getLyrDict(filteredLayerList, isEdgv=isEdgv)
         
         #4. Build Groups
         groupDict = self.prepareGroups(loadedGroups, dbGroup, lyrDict)
@@ -125,7 +125,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                 for cat in lyrDict[prim].keys():
                     for lyr in lyrDict[prim][cat]:
                         primNumber += 1
-            localProgress = ProgressWidget(1,primNumber-1,self.tr('Loading layers... '), parent = parent)
+            localProgress = ProgressWidget(1, primNumber-1, self.tr('Loading layers... '), parent=parent)
         for prim in lyrDict.keys():
             for cat in lyrDict[prim].keys():
                 for lyr in lyrDict[prim][cat]:

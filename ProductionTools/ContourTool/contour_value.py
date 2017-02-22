@@ -33,9 +33,10 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'contour_value.ui'))
 
 class ContourValue(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, contour_tool, parent = None):
+    def __init__(self, contour_tool, parent=None):
         """
-        Constructor"""
+        Constructor
+        """
         super(ContourValue, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -48,9 +49,9 @@ class ContourValue(QtGui.QDialog, FORM_CLASS):
         
     @pyqtSlot(bool)
     def on_cancel_push_button_clicked(self):
-        '''
+        """
         Closes the dialog
-        '''
+        """
         self.done(0)
         
     @pyqtSlot()    
@@ -58,4 +59,3 @@ class ContourValue(QtGui.QDialog, FORM_CLASS):
         value = self.value_line_edit.text()
         self.contour_tool.setFirstValue(int(value))
         self.done(1)
-        

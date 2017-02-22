@@ -22,7 +22,6 @@
 """
 
 from qgis.core import QgsFeatureRequest, QgsGeometry, QGis, QgsSpatialIndex, QgsCoordinateTransform
-
 from DsgTools.ProductionTools.ContourTool.contour_value import ContourValue
 
 class ContourTool():
@@ -121,6 +120,7 @@ class ContourTool():
         if len(ordered) == 0:
             return -1
 
+        self.reference.startEditing()
         #the first feature must have the initial value already assigned
         first_feature = ordered[0][1]
         #getting the filed index that must be updated
@@ -138,9 +138,7 @@ class ContourTool():
             else:
                 return -3
             self.first_value = None
-                
 
-        self.reference.startEditing()
         for i in range(1, len(ordered)):
             #value to be adjusted
             value = first_value + pace*i
@@ -149,5 +147,6 @@ class ContourTool():
             #feature id that will be updated
             id = feature.id()
             #actual update in the layer
-            if not self.reference.changeAttributeValue(id, fieldIndex, value):return 0
+            if not self.reference.changeAttributeValue(id, fieldIndex, value):
+                return 0
         return 1

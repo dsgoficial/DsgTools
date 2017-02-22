@@ -42,12 +42,11 @@ from DsgTools.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStruc
 from DsgTools.ServerTools.selectStyles import SelectStyles
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
-
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'loadLayersFromServer.ui'))
 
 class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, iface, parent = None):
+    def __init__(self, iface, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.iface = iface
@@ -70,8 +69,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         self.checkBoxOnlyWithElements.setCheckState(0)
         self.onlyParentsCheckBox.setCheckState(0)
         self.changePrimitiveCheckboxState(False)
-        pass
-    
+
     @pyqtSlot()
     def on_buttonBox_rejected(self):
         self.close()
@@ -79,7 +77,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
     def updateLayersFromDbs(self, type, dbList):
         errorDict = dict()
         if type == 'added':
-            progress = ProgressWidget(1,len(dbList),self.tr('Reading selected databases... '), parent = self)
+            progress = ProgressWidget(1, len(dbList), self.tr('Reading selected databases... '), parent=self)
             progress.initBar()
             for dbName in dbList:
                 try:
@@ -116,7 +114,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_showCategoriesRadioButton_toggled(self, enabled):
         self.changePrimitiveCheckboxState(enabled)
-        if self.lyrDict <> dict():
+        if self.lyrDict != dict():
             cats = []
             for lyr in self.lyrDict.keys():
                  if self.lyrDict[lyr]['cat'] not in cats:
@@ -125,7 +123,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_showClassesRadioButton_toggled(self):
-        if self.lyrDict <> dict():
+        if self.lyrDict != dict():
             self.layersCustomSelector.setInitialState(self.lyrDict.keys(),unique = True)
             
     @pyqtSlot()
@@ -157,7 +155,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
             isEdgv = False
         else:
             isEdgv = True
-        if self.styleComboBox.currentIndex() <> 0:
+        if self.styleComboBox.currentIndex() != 0:
             selectedStyle = self.customServerConnectionWidget.stylesDict[self.styleComboBox.currentText()]
         onlyParents = self.onlyParentsCheckBox.isChecked()
         #3- Build factory dict
@@ -167,18 +165,18 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
             factoryDict[dbName] = self.layerFactory.makeLoader(self.iface, self.customServerConnectionWidget.selectedDbsDict[dbName])
         #4- load for each db
         exceptionDict = dict()
-        progress = ProgressWidget(1,len(dbList),self.tr('Loading layers from selected databases... '), parent = self)
+        progress = ProgressWidget(1, len(dbList), self.tr('Loading layers from selected databases... '), parent=self)
         for dbName in factoryDict.keys():
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             try:
-                factoryDict[dbName].load(selectedClasses,onlyWithElements=withElements, stylePath = selectedStyle, useInheritance = onlyParents, geomFilterList = primitives, isEdgv = isEdgv, parent = self)
+                factoryDict[dbName].load(selectedClasses, onlyWithElements=withElements, stylePath=selectedStyle, useInheritance=onlyParents, geomFilterList=primitives, isEdgv=isEdgv, parent=self)
                 progress.step()
             except Exception as e:
                 exceptionDict[dbName] = ':'.join(e.args)
                 QApplication.restoreOverrideCursor()
                 progress.step()
             QApplication.restoreOverrideCursor()
-            if factoryDict[dbName].errorLog <> '':
+            if factoryDict[dbName].errorLog != '':
                 if dbName in exceptionDict.keys():
                     exceptionDict[dbName] += '\n'+factoryDict[dbName].errorLog
                 else:
@@ -190,12 +188,12 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
     def logInternalError(self, exceptionDict):
         msg = ''
         errorDbList = exceptionDict.keys()
-        if len(errorDbList)> 0:
+        if len(errorDbList) > 0:
             msg += self.tr('\nDatabases with error:')
-            msg+= ', '.join(errorDbList)
-            msg+= self.tr('\nError messages for each database were output in qgis log.')
+            msg += ', '.join(errorDbList)
+            msg += self.tr('\nError messages for each database were output in qgis log.')
             for errorDb in errorDbList:
-                QgsMessageLog.logMessage(self.tr('Error for database ')+ errorDb + ': ' +exceptionDict[errorDb], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('Error for database ') + errorDb + ': ' +exceptionDict[errorDb], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         return msg 
 
     def populateStyleCombo(self, styleDict):
