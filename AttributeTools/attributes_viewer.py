@@ -52,6 +52,9 @@ class AttributesViewer(QtGui.QDockWidget, FORM_CLASS):
         
     @pyqtSlot(int)
     def loadTable(self):
+        """
+        Loads the attribute table. This is still not working properly. QGIS crashes.
+        """
         currLayer = self.iface.activeLayer()
         if not currLayer:
             return

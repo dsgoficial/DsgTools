@@ -392,9 +392,8 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                 geom = feature.geometry()
                 geom.convertToMultiType()
                 if 'geometry' in dir(geom):
-                    if 'Multi' not in geom.geometry().geometryType():
-                        geom.geometry().dropMValue()
-                        geom.geometry().dropZValue()
+                    geom.geometry().dropMValue()
+                    geom.geometry().dropZValue()
                 #creating a new feature according to the reclassification layer
                 newFeature = QgsFeature(reclassificationLayer.pendingFields())
                 #transforming the geometry to the correct crs

@@ -61,41 +61,41 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         self.abstractDbFactory = DbFactory()
 
     def __del__(self):
-        '''
+        """
         Destructor
-        '''
+        """
         self.renewDb
             
     def renewDb(self):
-        '''
+        """
         Deletes the current abstractDb
-        '''
+        """
         if self.abstractDb:
             del self.abstractDb
             self.abstractDb = None
 
     def clearDock(self):
-        '''
+        """
         Clears the complex dock widget
-        '''
+        """
         self.treeWidget.clear()
         self.dbCombo.clear()
         self.complexCombo.clear()
 
     #verificar se é necessario
     def isSpatialiteDatabase(self, dbName):
-        '''
+        """
         Checks if the database in use is a spatialite database
-        '''
+        """
         (dataSourceUri, credentials) = self.databases[dbName]
         if dataSourceUri.host() == "":
             return True
         return False
 
     def getUserCredentials(self, lyr):
-        '''
+        """
         Gets user credentials to acess the database
-        '''
+        """
         dataSourceUri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
         if dataSourceUri.host() == '':
             return (None, None)
@@ -114,9 +114,9 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         return (user, passwd)
 
     def updateComplexClass(self):
-        '''
+        """
         Updates the complex classes in the complex combo box
-        '''
+        """
         self.renewDb()
 
         if self.dbCombo.currentIndex() == 0:
@@ -146,9 +146,9 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             QMessageBox.critical(self.iface.mainWindow(), self.tr("Critical!"), e.args[0])
 
     def populateComboBox(self):
-        '''
+        """
         Fills the complex combo box with complex classes
-        '''
+        """
         #getting all complex tables
         self.complexCombo.clear()
         self.complexCombo.addItem(self.tr("select a complex class"))
@@ -163,9 +163,9 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         self.complexCombo.addItems(complexClasses)
 
     def getDataSources(self):
-        '''
+        """
         Obtains the available databases from the layers loaded in the TOC
-        '''
+        """
         self.dbCombo.clear()
         self.dbCombo.addItem(self.tr("select a database"))
 
@@ -185,9 +185,9 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_managePushButton_clicked(self):
-        '''
+        """
         Opens the dialog to manage complex features
-        '''
+        """
         #opens a dialog to manage complexes
         dlg = ManageComplexDialog(self.iface, self.abstractDb, self.complexCombo.currentText())
         #connects a signal to update the tree widget when done
@@ -200,16 +200,16 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_associatePushButton_clicked(self):
-        '''
+        """
         Slot used to associate features to a complex
-        '''
+        """
         self.associateFeatures()
 
     @pyqtSlot(bool)
     def on_zoomButton_clicked(self):
-        '''
+        """
         Slot used to zoom the mapcanvas to the features associated to a complex
-        '''
+        """
         #case no item is selected we should warn the user
         if len(self.treeWidget.selectedItems()) == 0:
             QMessageBox.warning(self.iface.mainWindow(), self.tr("Warning!"), self.tr("Please, select an item to zoom."))
@@ -250,10 +250,10 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             return
 
     def disassociateFeatures(self, toBeRemoved):
-        '''
+        """
         Disassociates features from a complex
         toBeremoved: uuid of the complex that will have all its associated features disassociated
-        '''
+        """
         for uuid in toBeRemoved:
             items = self.treeWidget.findItems(uuid, Qt.MatchRecursive, 1)
             if len(items) == 0:
@@ -264,10 +264,10 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                 self.disassociateAggregatedClass(complexItem.child(i))
 
     def disassociateAggregatedClass(self, item):
-        '''
+        """
         Disassociates a particular class from a complex
         item: aggregated class to be disassociated
-        '''
+        """
         aggregated_class = item.text(0)
         uuid = item.parent().text(1)
         complex = item.parent().parent().text(0)
@@ -298,10 +298,10 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             self.updateLayerOnDisassociate(layer, aggregated_class, link_column, id)
 
     def disassociateAggregatedId(self, item):
-        '''
+        """
         Disassociates a particular feature from a complex
         item: aggregated feature to be disassociated
-        '''        
+        """        
         aggregated_class = item.parent().text(0)
         uuid = item.parent().parent().text(1)
         complex = item.parent().parent().parent().text(0)
@@ -331,13 +331,13 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         self.updateLayerOnDisassociate(layer, aggregated_class, link_column, id)
 
     def updateLayerOnDisassociate(self, layer, aggregated_class, link_column, id):
-        '''
+        """
         Updates the layer upon disassociation from complex
         layer: layer that will be afected
         aggregated_class: aggregated class
         link_column: link column between complex and class
         id: feature id
-        '''
+        """
         try:
             if self.abstractDb.isComplexClass(aggregated_class):
                     self.abstractDb.disassociateComplexFromComplex(aggregated_class, link_column, id)
@@ -354,11 +354,11 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_disassociatePushButton_clicked(self):
-        '''
+        """
         Starts the disassociation process.
         It will firts check the depth of the item that need to be disassociated and them call the correct method to to the job.
         It can be a particular class or a particular feature
-        '''
+        """
         #case no item is selected we should warn the user
         if len(self.treeWidget.selectedItems()) == 0:
             QMessageBox.warning(self.iface.mainWindow(), self.tr("Warning!"), self.tr("Please, select an aggregated class or aggregated id."))
@@ -377,9 +377,9 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         self.loadAssociatedFeatures()
 
     def loadAssociatedFeatures(self):
-        '''
+        """
         Loads all features associated to a complex
-        '''
+        """
         self.treeWidget.clear()
 
         if self.complexCombo.currentIndex() == 0:
@@ -402,9 +402,9 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                         self.addAssociatedFeature(complex, name, complex_uuid, aggregated_class, ogc_fid)
 
     def depth(self, item):
-        '''
+        """
         Calculates the item deth in the tree
-        '''
+        """
         #calculates the depth of the item
         depth = 0
         while item is not None:
@@ -413,9 +413,9 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         return depth
 
     def associateFeatures(self):
-        '''
+        """
         Associates all features selected in the map canvas to a complex.
-        '''
+        """
         #case no item is selected we should warn the user
         if len(self.treeWidget.selectedItems()) == 0:
             QMessageBox.warning(self.iface.mainWindow(), self.tr("Warning!"), self.tr("Please, select a complex."))
@@ -477,12 +477,12 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         self.loadAssociatedFeatures()
 
     def createTreeItem(self, parent, text, uuid = ""):
-        '''
+        """
         Creates tree items
         parent: parent item
         text: item text
         uuid: complex uuid
-        '''
+        """
         count = parent.childCount()
         children = []
         #making a list of item names
@@ -508,14 +508,14 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         return item
 
     def addAssociatedFeature(self, className, complexName, complexId, associatedClass, associatedId):
-        '''
+        """
         Adds a feature to a complex
         className: class name
         complexName: complex name
         complexId: complex uuid
         associatedClass: associated class
         associatedId: associated id
-        '''
+        """
         #get the corresponding top level item
         classNameItem = self.createTreeItem(self.treeWidget.invisibleRootItem(), className)
         #get the corresponding complex item

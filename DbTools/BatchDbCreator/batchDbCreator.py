@@ -38,7 +38,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class BatchDbCreator(QtGui.QWizard, FORM_CLASS):
     coverageChanged = pyqtSignal()
     def __init__(self, parent=None):
-        '''Constructor.'''
+        """Constructor."""
         super(self.__class__, self).__init__()
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing

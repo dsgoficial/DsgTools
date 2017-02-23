@@ -68,9 +68,9 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         self.fixDataRadioButton.setEnabled(False)   
 
     def setConversion(self,conversionType):
-        '''
+        """
         Sets the conversion type. It can be postgis2spatialite or spatialite2postgis
-        '''
+        """
         self.widget.setInitialState()
         self.widget_2.setInitialState()
         self.invalidatedDataDict = dict()
@@ -108,23 +108,23 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
             
     @pyqtSlot(int)
     def on_comboBox_currentIndexChanged(self):
-        '''
+        """
         Updates the conversion type when the combo box changes
-        '''
+        """
         self.setConversion(self.comboBox.currentText())
 
     @pyqtSlot(bool)
     def on_closeButton_clicked(self):
-        '''
+        """
         Closes dialog
-        '''
+        """
         self.close()
     
     @pyqtSlot(bool)
     def on_convertButton_clicked(self):
-        '''
+        """
         Performs the actual conversion
-        '''
+        """
         if not self.widget.abstractDb:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Enter input database!'))
             return
@@ -167,16 +167,16 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(str)
     def logUpdated(self,text):
-        '''
+        """
         Displays the conversion log
-        '''
+        """
         self.logDisplay.insertPlainText(text)
         
     @pyqtSlot()
     def logCleared(self):
-        '''
+        """
         Clears the conversion log
-        '''
+        """
         self.logDisplay.clear()
     
 
