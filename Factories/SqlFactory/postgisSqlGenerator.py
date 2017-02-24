@@ -1273,7 +1273,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getCustomizationPerspectiveDict(self, perspective):
-        if perspective == 'customization':
+        if perspective == 'property':
             sql = '''select row_to_json(a) from (
                         select name, array_agg(datname) from customization as custom 
                             left join applied_customization as appcust on custom.id = appcust.id_customization

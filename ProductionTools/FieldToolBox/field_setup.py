@@ -42,7 +42,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'field_setup.ui'))
 
 class FieldSetup(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, abstractDb, parent = None):
+    def __init__(self, abstractDb, returnDict = False, parent = None):
         """
         Constructor
         """
@@ -64,9 +64,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             self.geomDict = self.abstractDb.getGeomDict(self.geomTypeDict)
             self.domainDict = self.abstractDb.getDbDomainDict(self.geomDict)
             self.geomStructDict = self.abstractDb.getGeomStructDict()
-#             if self.edgvVersion == 'FTer_2a_Ed':
-#                 qmlPath = self.abstractDb.getQmlDir()
-#                 qmlDict = self.utils.parseMultiQml(qmlPath, layerList)
+        self.returnDict = returnDict
         
         self.folder = os.path.join(os.path.dirname(__file__), 'FieldSetupConfigs')
     
@@ -579,20 +577,24 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         """
         Saves the configuration work done so far.
         """
-        if QMessageBox.question(self, self.tr('Question'), self.tr('Do you want to save this reclassification setup?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
-            return
+        if not self.returnDict:
+            if QMessageBox.question(self, self.tr('Question'), self.tr('Do you want to save this reclassification setup?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
+                return
+                
+            filename = QFileDialog.getSaveFileName(self, self.tr('Save reclassification setup file'), self.folder, self.tr('Reclassification Setup Files (*.reclas)'))
+            if not filename:
+                QMessageBox.critical(self, self.tr('Critical!'), self.tr('Define a name for the reclassification setup file!'))
+                return
             
-        filename = QFileDialog.getSaveFileName(self, self.tr('Save reclassification setup file'), self.folder, self.tr('Reclassification Setup Files (*.reclas)'))
-        if not filename:
-            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Define a name for the reclassification setup file!'))
-            return
-        
-        if '.reclas' not in filename:
-            filename = filename + '.reclas'
+            if '.reclas' not in filename:
+                filename = filename + '.reclas'
 
-        reclassificationDict = self.makeReclassificationDict()
-        with open(filename, 'w') as outfile:
-            json.dump(reclassificationDict, outfile, sort_keys=True, indent=4)
-            
-        QMessageBox.information(self, self.tr('Information!'), self.tr('Reclassification setup file saved successfully!'))
+            reclassificationDict = self.makeReclassificationDict()
+            with open(filename, 'w') as outfile:
+                json.dump(reclassificationDict, outfile, sort_keys=True, indent=4)
+                
+            QMessageBox.information(self, self.tr('Information!'), self.tr('Reclassification setup file saved successfully!'))
+        else:
+            return self.makeReclassificationDict()
+
         

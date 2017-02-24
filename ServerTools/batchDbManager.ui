@@ -350,52 +350,20 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_9">
           <item row="0" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="QComboBox" name="comboBox"/>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Minimum</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>98</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="0">
-           <widget class="EarthCoverageWidget" name="widgetConv" native="true">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>100</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>50000</width>
-              <height>50000</height>
-             </size>
-            </property>
-           </widget>
+           <widget class="EarthCoverageManagerWidget" name="earthCoverageManagerWidget" native="true"/>
           </item>
          </layout>
         </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Field Toolbox Configuration</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_14">
+       <item row="0" column="0">
+        <widget class="FieldToolBoxConfigManagerWidget" name="widget_2" native="true"/>
        </item>
       </layout>
      </widget>
@@ -423,12 +391,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>EarthCoverageWidget</class>
-   <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.earthCoverageWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>PermissionWidget</class>
    <extends>QWidget</extends>
    <header>DsgTools.CustomWidgets.permissionWidget.h</header>
@@ -438,6 +400,18 @@
    <class>CustomizationManagerWidget</class>
    <extends>QWidget</extends>
    <header>DsgTools.CustomWidgets.customizationManagerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>EarthCoverageManagerWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.earthCoverageManagerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FieldToolBoxConfigManagerWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidget.fieldToolBoxConfigManagerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

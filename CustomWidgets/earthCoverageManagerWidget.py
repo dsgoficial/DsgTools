@@ -5,9 +5,9 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2017-02-08
+        begin                : 2017-02-24
         git sha              : $Format:%H$
-        copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        copyright            : (C) 2017 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
@@ -36,12 +36,12 @@ from DsgTools.Utils.utils import Utils
 from qgis.core import QgsMessageLog
 import json
 
-class CustomizationManagerWidget(GenericManagerWidget):
+class EarthCoverageManagerWidget(GenericManagerWidget):
     def __init__(self, manager = None, parent = None):
         """
         Constructor
         """
-        super(CustomizationManagerWidget, self).__init__(genericDbManager = manager, parent = parent)
+        super(self.__class__, self).__init__(genericDbManager = manager, parent = parent)
 
     def setParameters(self, serverAbstractDb):
         if serverAbstractDb:

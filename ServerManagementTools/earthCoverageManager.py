@@ -5,9 +5,9 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2016-11-22
+        begin                : 2017-02-24
         git sha              : $Format:%H$
-        copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        copyright            : (C) 2017 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
@@ -34,26 +34,26 @@ from DsgTools.Utils.utils import Utils
 #PyQt4 imports
 from PyQt4.Qt import QObject
 
-class CustomizationManager(GenericDbManager):
+class EarthCoverageManager(GenericDbManager):
     """
     This class manages the customizations on dsgtools databases.
     """
     def __init__(self, serverAbstractDb, dbDict, parentWidget = None):
         super(self.__class__,self).__init__(serverAbstractDb, dbDict, parentWidget = None)
     
-    def installCustomization(self, customizationName):
+    def installEarthCoverage(self, earthCoverageName):
         """
-        1. Get customization from dsgtools_admindb;
+        1. Get earth coverage from dsgtools_admindb;
         2. Get sql from dbCustomizer;
         3. For each db try to create custom;
         4. If custom applyied, save it on customization table on db and on dsgtools_admindb;
         """
         pass
     
-    def removeCustomization(self, customizationName):
+    def removeEarthCoverage(self, customizationName):
         pass
 
-    def updateCustomization(self, customizationName):
+    def updateEarthCoverage(self, customizationName):
         pass
 
     def validateJsonProfile(self, inputJsonDict):
