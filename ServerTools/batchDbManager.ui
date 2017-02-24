@@ -109,7 +109,7 @@
       <attribute name="title">
        <string>Database Administration</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_7">
+      <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox_3">
          <property name="sizePolicy">
@@ -121,13 +121,13 @@
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>80</height>
+           <height>16777215</height>
           </size>
          </property>
          <property name="title">
           <string>Database Administration</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_3">
+         <layout class="QGridLayout" name="gridLayout_7">
           <item row="0" column="0">
            <widget class="QPushButton" name="dropDatabasePushButton">
             <property name="text">
@@ -375,7 +375,7 @@
   <customwidget>
    <class>QgsCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qgis.gui</header>
+   <header>qgscollapsiblegroupbox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -411,7 +411,7 @@
   <customwidget>
    <class>FieldToolBoxConfigManagerWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidget.fieldToolBoxConfigManagerWidget.h</header>
+   <header>DsgTools.CustomWidgets.fieldToolBoxConfigManagerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
