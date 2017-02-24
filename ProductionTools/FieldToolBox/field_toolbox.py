@@ -212,7 +212,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         layer: Layer name
         """
         try:
-            return self.layerLoader.load([layer],uniqueLoad=True)[layer]
+            return self.layerLoader.load([layer], uniqueLoad=True)[layer]
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('Could not load the selected classes!\n')+str(e.args[0]))
             
@@ -251,11 +251,8 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             #reclassification layer name
             reclassificationClass = '_'.join(edgvClass.split('.')[1::])
             
-        #searching the QgsVectorLayer to perform the reclassification
-        root = QgsProject.instance().layerTreeRoot()
-        reclassificationLayer = self.searchLayer(root, reclassificationClass)
-        if not reclassificationLayer:
-            reclassificationLayer = self.loadLayer(reclassificationClass)
+        #getting the QgsVectorLayer to perform the reclassification
+        reclassificationLayer = self.loadLayer(reclassificationClass)
             
         if reclassificationLayer:
             self.iface.setActiveLayer(reclassificationLayer)

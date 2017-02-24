@@ -28,6 +28,12 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 
 class LayerLoaderFactory:
     def makeLoader(self, iface, abstractDb):
+        """
+        Returns the specific layer loader
+        :param iface:
+        :param abstractDb:
+        :return:
+        """
         driverName = abstractDb.getType()
         if driverName == "QSQLITE":
             return SpatialiteLayerLoader(iface, abstractDb)

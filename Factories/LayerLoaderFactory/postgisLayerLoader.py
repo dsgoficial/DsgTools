@@ -45,6 +45,12 @@ class PostGISLayerLoader(EDGVLayerLoader):
         self.buildUri()
 
     def checkLoaded(self, name, loadedLayers):
+        """
+        Checks if the layers is already loaded in the QGIS' TOC
+        :param name:
+        :param loadedLayers:
+        :return:
+        """
         loaded = None
         for ll in loadedLayers:
             if ll.name() == name:
@@ -54,6 +60,10 @@ class PostGISLayerLoader(EDGVLayerLoader):
         return loaded
     
     def setDatabaseConnection(self):
+        """
+        Sets database connection parameters
+        :return:
+        """
         self.host = self.abstractDb.db.hostName()
         self.port = self.abstractDb.db.port()
         self.database = self.abstractDb.db.databaseName()
@@ -61,9 +71,21 @@ class PostGISLayerLoader(EDGVLayerLoader):
         self.password = self.abstractDb.db.password()
     
     def buildUri(self):
+        """
+        Builds the database uri
+        :return:
+        """
         self.uri.setConnection(str(self.host),str(self.port), str(self.database), str(self.user), str(self.password))
     
     def filterLayerList(self, layerList, useInheritance, onlyWithElements, geomFilterList):
+        """
+        Filters the layers to be loaded
+        :param layerList: list of layers
+        :param useInheritance: should use inheritance
+        :param onlyWithElements: should only load non empty layers?
+        :param geomFilterList: geometry filter
+        :return:
+        """
         filterList = []
         if onlyWithElements:
             lyrsWithElements = self.abstractDb.getLayersWithElementsV2(layerList, useInheritance = useInheritance)
@@ -86,14 +108,14 @@ class PostGISLayerLoader(EDGVLayerLoader):
         return finalList
 
     def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True, parent = None):
-        '''
+        """
         1. Get loaded layers
         2. Filter layers;
         3. Load domains;
         4. Get Aux Dicts;
         5. Build Groups;
         6. Load Layers;
-        '''
+        """
         #1. Get Loaded Layers
         loadedLayers = self.iface.legendInterface().layers()
         loadedGroups = self.iface.legendInterface().groups()
@@ -142,9 +164,19 @@ class PostGISLayerLoader(EDGVLayerLoader):
         return loadedDict
 
     def loadLayer(self, lyrName, idSubgrupo, loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict):
+        """
+        Loads a layer
+        :param lyrName: Layer nmae
+        :param loadedLayers: list of loaded layers
+        :param idSubgrupo: sub group id
+        :param uniqueLoad: boolean to mark if the layer should only be loaded once
+        :param stylePath: path to the styles used
+        :param domLayerDict: domain dictionary
+        :return:
+        """
         #TODO: think about if geomColumn should be also an optional parameter
         if uniqueLoad:
-            lyr = self.checkLoaded(lyrName,loadedLayers)
+            lyr = self.checkLoaded(lyrName, loadedLayers)
             if lyr:
                 return lyr
         schema = self.geomDict['tablePerspective'][lyrName]['schema']
@@ -174,6 +206,14 @@ class PostGISLayerLoader(EDGVLayerLoader):
         return vlayer
 
     def getDomainsFromDb(self, layerList, loadedLayers, domainDict, multiColumnsDict):
+        """
+        Gets domain data for each layer to be loaded
+        :param layerList:
+        :param loadedLayers:
+        :param domainDict:
+        :param multiColumnsDict:
+        :return:
+        """
         domainList = []
         keys = domainDict.keys()
         multiLayers = multiColumnsDict.keys()
@@ -187,6 +227,12 @@ class PostGISLayerLoader(EDGVLayerLoader):
         return domainList
     
     def loadDomain(self, domainTableName, domainGroup):
+        """
+        Loads layer domains
+        :param domainTableName:
+        :param domainGroup:
+        :return:
+        """
         #TODO: Avaliar se o table = deve ser diferente
         uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (self.database, self.host, self.port, self.user, self.password, domainTableName)
         domLayer = iface.addVectorLayer(uri, domainTableName, self.provider)
@@ -194,9 +240,24 @@ class PostGISLayerLoader(EDGVLayerLoader):
         return domLayer
 
     def getStyleFromDb(self, edgvVersion, className):
-        return self.abstractDb.getLyrStyle(edgvVersion,className)
+        """
+        Gets the style for this layer in the database
+        :param edgvVersion:
+        :param className:
+        :return:
+        """
+        return self.abstractDb.getLyrStyle(edgvVersion, className)
 
     def setDomainsAndRestrictions(self, lyr, lyrName, domainDict, multiColumnsDict, domLayerDict):
+        """
+        Adjusts the domain restriction to all attributes in the layer
+        :param lyr:
+        :param lyrName:
+        :param domainDict:
+        :param multiColumnsDict:
+        :param domLayerDict:
+        :return:
+        """
         lyrAttributes = [i for i in lyr.pendingFields()]
         for i in range(len(lyrAttributes)):
             attrName = lyrAttributes[i].name()
@@ -237,12 +298,25 @@ class PostGISLayerLoader(EDGVLayerLoader):
         return lyr
 
     def checkMulti(self, tableName, attrName, multiColumnsDict):
+        """
+        Checks if an attribute is a value relation
+        :param tableName:
+        :param attrName:
+        :param multiColumnsDict:
+        :return:
+        """
         if tableName in multiColumnsDict.keys():
             if attrName in multiColumnsDict[tableName]:
                 return True
         return False
     
     def checkNotNull(self, lyrName, notNullDict):
+        """
+        Checks not null attributes
+        :param lyrName:
+        :param notNullDict:
+        :return:
+        """
         allowNull = True
         if lyrName in notNullDict.keys():
             if attrName in notNullDict[lyrName]['attributes']:

@@ -178,7 +178,3 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         Clears the conversion log
         """
         self.logDisplay.clear()
-    
-
-
-    

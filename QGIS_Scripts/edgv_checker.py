@@ -11,7 +11,7 @@ def edgv_checker(folder, output):
     """
     csvfile = open(output, 'wb')
     outwriter = csv.writer(csvfile)
-    outwriter.writero"w(['arquivo', 'edgv'])
+    outwriter.writerow(['arquivo', 'edgv'])
 
     for root, dirs, files in os.walk(folder):
         count = 0

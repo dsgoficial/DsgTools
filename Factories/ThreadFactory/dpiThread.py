@@ -69,7 +69,7 @@ class DpiThread(GenericThread):
         self.messenger = DpiMessages(self)
 
     def setParameters(self, filesList, rasterType, minOutValue, maxOutValue, outDir, percent, epsg, stopped, bands = []):
-        '''
+        """
         Sets thread parameters
         filesList: files processed
         rasterType: raster type (e.g byte)
@@ -80,7 +80,7 @@ class DpiThread(GenericThread):
         epsg: epsg code
         stopped: process stopped
         bands: bands used
-        '''
+        """
         self.filesList = filesList
         self.rasterType = rasterType
         self.minOutValue = minOutValue
@@ -92,18 +92,18 @@ class DpiThread(GenericThread):
         self.bands = bands
 
     def run(self):
-        '''
+        """
         Runs the thread
-        '''
+        """
         # Actual process
         (ret, msg) = self.processImages(self.filesList)
         self.signals.processingFinished.emit(ret, msg, self.getId())
 
     def processImages(self, filesList):
-        '''
+        """
         Processes the images
         filesList: file list to be processed
-        '''
+        """
         # Progress bar steps calculated
         self.signals.rangeCalculated.emit(len(filesList), self.getId())
 
@@ -170,7 +170,7 @@ class DpiThread(GenericThread):
             bands = range(0, imgIn.RasterCount)
 
         #Creating a temp image, with the same input parameters, to store the converted input image to 8 bits
-        imgOut = outDriver.Create(outFileTmp,imgIn.RasterXSize, imgIn.RasterYSize, len(bands), rasterType, options = createOptions)
+        imgOut = outDriver.Create(outFileTmp,imgIn.RasterXSize, imgIn.RasterYSize, len(bands), rasterType, options=createOptions)
         imgOut.SetProjection(imgIn.GetProjection())
         imgOut.SetGeoTransform(imgIn.GetGeoTransform())
 

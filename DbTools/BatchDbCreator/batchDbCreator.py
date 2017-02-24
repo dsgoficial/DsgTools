@@ -66,6 +66,3 @@ class BatchDbCreator(QtGui.QWizard, FORM_CLASS):
             return -1
         else:
             return -1
-
-    
-    

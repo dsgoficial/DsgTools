@@ -62,9 +62,9 @@ class CriaSpatialiteDialog(QtGui.QDialog, FORM_CLASS):
         QtCore.QObject.connect(self.pushButtonOkCriaSpatialite, QtCore.SIGNAL(("clicked()")), self.okselecionadoCriaSpatialite)
 
     def getTemplateLocation(self):
-        '''
+        """
         gets the template location
-        '''
+        """
         currentPath = os.path.dirname(__file__)
         if self.versionComboBox.currentText() == '2.1.3':
             edgvPath = os.path.join(currentPath, 'template', '213', 'seed_edgv213.sqlite')
@@ -73,9 +73,9 @@ class CriaSpatialiteDialog(QtGui.QDialog, FORM_CLASS):
         return edgvPath
 
     def restauraInicio(self):
-        '''
+        """
         Stes the initial state
-        '''
+        """
         self.filepath = ""
         self.carregado = False
         self.coordSysDefinido = False
@@ -87,9 +87,9 @@ class CriaSpatialiteDialog(QtGui.QDialog, FORM_CLASS):
         self.nomeLineEdit.setText("")
 
     def definePastaDestino(self):
-        '''
+        """
         Defines destination folder
-        '''
+        """
         fd = QtGui.QFileDialog()
         self.filepath = fd.getExistingDirectory()
         if self.filepath <> "":
@@ -97,9 +97,9 @@ class CriaSpatialiteDialog(QtGui.QDialog, FORM_CLASS):
             self.pastaDestinoCriaSpatialiteLineEdit.setText(self.filepath)
 
     def setaSistCoordCriaSpatialite(self):
-        '''
+        """
         Opens the CRS selector
-        '''
+        """
         projSelector = QgsGenericProjectionSelector()
         projSelector.setMessage(theMessage=self.tr('Please, select the coordinate system'))
         projSelector.exec_()
@@ -114,9 +114,9 @@ class CriaSpatialiteDialog(QtGui.QDialog, FORM_CLASS):
             pass
 
     def copiaSemente(self, destino, srid):
-        '''
+        """
         Copies the spatialite seed template
-        '''
+        """
         f = open(self.getTemplateLocation(),'rb')
         g = open(destino,'wb')
         x = f.readline()
@@ -134,9 +134,9 @@ class CriaSpatialiteDialog(QtGui.QDialog, FORM_CLASS):
         con.close()
 
     def okselecionadoCriaSpatialite(self):
-        '''
+        """
         Performs the database creation
-        '''
+        """
         if self.carregado and self.coordSysDefinido and len(self.nomeLineEdit.text()) > 0:
             try:
                 self.sqliteFileName = self.filepath+'/'+self.nomeLineEdit.text()+'.sqlite'

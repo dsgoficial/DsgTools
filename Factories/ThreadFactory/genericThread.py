@@ -32,7 +32,8 @@ class ProcessSignals(QObject):
 
 class GenericThread(QRunnable):
     def __init__(self):
-        """Constructor.
+        """
+        Constructor.
         """
         super(GenericThread, self).__init__()
 

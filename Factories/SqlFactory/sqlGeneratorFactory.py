@@ -27,6 +27,11 @@ from DsgTools.Factories.SqlFactory.postgisSqlGenerator import PostGISSqlGenerato
 
 class SqlGeneratorFactory:
     def createSqlGenerator(self, isSpatialite):
+        """
+        Returns the specific sql generator
+        :param isSpatialite:
+        :return:
+        """
         if isSpatialite:
             return SpatialiteSqlGenerator()
         else:

@@ -26,6 +26,11 @@ from DsgTools.Factories.ThreadFactory.inventoryThread import InventoryThread
 
 class ThreadFactory:
     def makeProcess(self, name):
+        """
+        Returns the specific thread to be initiated
+        :param name:
+        :return:
+        """
         if name == 'pgdb':
             return PostgisDbThread()
         elif name == 'dpi':

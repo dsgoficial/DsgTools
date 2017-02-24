@@ -51,9 +51,19 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         self.buildUri()
 
     def buildUri(self):
+        """
+        Builds the database uri
+        :return:
+        """
         self.uri.setDatabase(self.abstractDb.db.databaseName())
     
     def checkLoaded(self, name, loadedLayers):
+        """
+        Checks if the layers is already loaded in the QGIS' TOC
+        :param name: 
+        :param loadedLayers: 
+        :return:
+        """
         loaded = None
         database = self.abstractDb.db.databaseName()
         for ll in loadedLayers:
@@ -64,14 +74,14 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         return loaded
 
     def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True, parent = None):
-        '''
+        """
         1. Get loaded layers
         2. Filter layers;
         3. Load domains;
         4. Get Aux Dicts;
         5. Build Groups;
         6. Load Layers;
-        '''
+        """
         #1. Get Loaded Layers
         loadedLayers = self.iface.legendInterface().layers()
         loadedGroups = self.iface.legendInterface().groups()
@@ -115,6 +125,16 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         return loadedDict
 
     def loadLayer(self, lyrName, loadedLayers, idSubgrupo, uniqueLoad, stylePath, domLayerDict):
+        """
+        Loads a layer
+        :param lyrName: Layer nmae
+        :param loadedLayers: list of loaded layers
+        :param idSubgrupo: sub group id
+        :param uniqueLoad: boolean to mark if the layer should only be loaded once
+        :param stylePath: path to the styles used
+        :param domLayerDict: domain dictionary
+        :return:
+        """
         if uniqueLoad:
             lyr = self.checkLoaded(lyrName, loadedLayers)
             if lyr:
@@ -140,6 +160,12 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         return vlayer
 
     def loadDomain(self, domainTableName, domainGroup):
+        """
+        Loads layer domains
+        :param domainTableName:
+        :param domainGroup:
+        :return:
+        """
         #TODO: Avaliar se o table = deve ser diferente
         uri = QgsDataSourceURI()
         uri.setDatabase(self.abstractDb.db.databaseName())
@@ -153,9 +179,17 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         return None
 
     def filterLayerList(self, layerList, useInheritance, onlyWithElements, geomFilterList):
+        """
+        Filters the layers to be loaded
+        :param layerList: list of layers
+        :param useInheritance: should use inheritance
+        :param onlyWithElements: should only load non empty layers?
+        :param geomFilterList: geometry filter
+        :return:
+        """
         filterList = []
         if onlyWithElements:
-            semifinalList = self.abstractDb.getLayersWithElementsV2(layerList, useInheritance = False)
+            semifinalList = self.abstractDb.getLayersWithElementsV2(layerList, useInheritance=False)
         else:
             semifinalList = layerList
         if len(geomFilterList) > 0:
@@ -171,6 +205,12 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         return finalList
     
     def setMulti(self, vlayer, domLayerDict):
+        """
+        Sets attributes with value relation
+        :param vlayer:
+        :param domLayerDict:
+        :return:
+        """
         #sweep vlayer to find v2
         attrList = vlayer.pendingFields()
         for field in attrList:
@@ -179,5 +219,5 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
                 valueRelationDict = vlayer.editorWidgetV2Config(i)
                 domLayer = domLayerDict[vlayer.name()][field.name()]
                 valueRelationDict['Layer'] = domLayer.id()
-                vlayer.setEditorWidgetV2Config(i,valueRelationDict)
+                vlayer.setEditorWidgetV2Config(i, valueRelationDict)
         return vlayer

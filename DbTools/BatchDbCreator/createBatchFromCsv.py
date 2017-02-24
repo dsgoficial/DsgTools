@@ -90,4 +90,3 @@ class CreateBatchFromCsv(QtGui.QWizardPage, FORM_CLASS):
         QApplication.restoreOverrideCursor()
         if len(errorDict.keys())> 0:
             raise Exception(errorDict)
-    
