@@ -43,7 +43,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class PermissionWidget(QtGui.QWidget, FORM_CLASS):
     def __init__(self, parent=None):
-        '''Constructor.'''
+        """Constructor."""
         super(self.__class__, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -60,9 +60,9 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(bool, name='on_databasePerspectivePushButton_clicked')
     @pyqtSlot(bool, name='on_userPerspectivePushButton_clicked')
     def refresh(self):
-        '''
+        """
         Refreshes permission table according to selected view type.
-        '''
+        """
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         viewType = self.getViewType()
         self.permissionTreeWidget.clear()
@@ -135,9 +135,9 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         self.refresh()
     
     def createMenuAssigned(self, position):
-        '''
+        """
         Creates a pop up menu
-        '''
+        """
         viewType = self.getViewType()
         if viewType == 'database':
             self.createDbPerspectiveContextMenu(position)
@@ -161,11 +161,11 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         menu = QMenu()
         item = self.permissionTreeWidget.itemAt(position)
         if item:
-            if item.text(0) <> '':
+            if item.text(0) != '':
                 menu.addAction(self.tr('Revoke permissions on all granted databases'), self.revokeAllDbs)
-            elif item.text(1) <> '':
+            elif item.text(1) != '':
                 menu.addAction(self.tr('Manage Permissions on database'), self.managePermissionsOnDb)
-            elif item.text(2) <> '':
+            elif item.text(2) != '':
                 menu.addAction(self.tr('Revoke Permission'), self.revokeSelectedPermission)
         menu.exec_(self.permissionTreeWidget.viewport().mapToGlobal(position))
     

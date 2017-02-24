@@ -71,10 +71,10 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.customFileSelector.setType('multi')
         self.edgvType = None
     
-    def selectedDatabases(self,dbList,type):
-        '''
-        selectedDbsDict = { 'dbName' : 'abstractDb' }
-        '''
+    def selectedDatabases(self, dbList, type):
+        """
+        Selects databases from a name list and database type
+        """
         #TODO: build selectedDbsDict and emit dbDictChanged()
         #1- Iterate over dbList and check if all layers on dbList are on dict. If not, add it.
         if type == 'added':
@@ -111,10 +111,10 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
                     self.stylesDict.pop(key)
             self.styleChanged.emit(self.stylesDict)
     
-    def selectedFiles(self,dbList,type):
-        '''
-        selectedDbsDict = { 'dbName' : 'abstractDb' }
-        '''
+    def selectedFiles(self, dbList, type):
+        """
+        Selects databases from a name list and database type
+        """
         #TODO: build selectedDbsDict and emit dbDictChanged()
         #1- Iterate over dbList and check if all layers on dbList are on dict. If not, add it.
         if type == 'added':
@@ -151,6 +151,9 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
     
     @pyqtSlot(int)
     def on_serverConnectionTab_currentChanged(self, currentTab):
+        """
+        Changes the database type (spatialite/postgis)
+        """
         if currentTab == 0:
             self.clearSpatialiteTab()
             self.populatePostgisSelector()
@@ -160,6 +163,9 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         pass
     
     def populatePostgisSelector(self):
+        """
+        Populates the postgis database list according to the databse type
+        """
         self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[]}
         dbList = []
         try:
@@ -183,6 +189,9 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.postgisCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]]) 
     
     def populateSpatialiteSelector(self):
+        """
+        Populates the spatialite database list according to the databse type
+        """
         self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[]}
         self.spatialiteDict = dict()
         dbList = []
@@ -208,6 +217,9 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.spatialiteCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]]) 
     
     def clearSpatialiteTab(self):
+        """
+        Clears the postgis tab, returning it to the original state
+        """
         self.spatialiteCustomSelector.clearAll()
         self.serverWidget.clearAll()
         self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[]}
@@ -218,6 +230,9 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
     
     @pyqtSlot(int)
     def on_postgisEdgvComboFilter_currentIndexChanged(self):
+        """
+        Updates the postgis databases according to its type
+        """
         comboText = self.postgisEdgvComboFilter.currentText()
         self.postgisCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]])
         self.edgvType = self.comboDict[comboText]
@@ -225,12 +240,18 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
     
     @pyqtSlot(int)
     def on_spatialiteEdgvComboFilter_currentIndexChanged(self):
+        """
+        Updates the postgis databases according to its type
+        """
         comboText = self.spatialiteEdgvComboFilter.currentText()
         self.spatialiteCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]])
         self.edgvType = self.comboDict[comboText]
         self.resetAll.emit()
     
     def clearPostgisTab(self):
+        """
+        Clears the spatialite tab, returning it to the original state
+        """
         self.postgisCustomSelector.clearAll()
         self.serverWidget.clearAll()
         self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[]}
@@ -239,6 +260,9 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.resetAll.emit()
     
     def getStyles(self, type, abstractDb):
+        """
+        Gets database styles. If the structure to store styles is not yet created, we should create it.
+        """
         dbVersion = abstractDb.getDatabaseVersion()
         abstractDb.checkAndCreateStyleTable()
         styles = abstractDb.getStyleDict(dbVersion)

@@ -48,10 +48,16 @@ class TabDbSelectorWidget(QtGui.QWidget, FORM_CLASS):
     
     @pyqtSlot(int)
     def on_tabWidget_currentChanged(self):
+        """
+        Changes the database type tab and resets the previous one
+        """
         self.serverWidget.clearAll()
         self.outputDirSelector.resetAll()
 
     def validate(self):
+        """
+        Validates the selector widget
+        """
         if not self.getFactoryCreationParam():
             return False
         if self.tabWidget.currentIndex() == 0:
@@ -66,14 +72,20 @@ class TabDbSelectorWidget(QtGui.QWidget, FORM_CLASS):
                 return True
     
     def getFactoryCreationParam(self):
+        """
+        Adjusts the database selection according to the database type
+        """
         if self.tabWidget.currentIndex() == 0 and self.serverWidget.serversCombo.currentIndex() > 0:
             return self.serverWidget.abstractDb 
-        elif self.tabWidget.currentIndex() == 1 and self.outputDirSelector.fileNameList <> []:
+        elif self.tabWidget.currentIndex() == 1 and self.outputDirSelector.fileNameList != []:
             return self.outputDirSelector.fileNameList[0]
         else:
             return None
     
     def getType(self):
+        """
+        gets database type (QPSQL, QSQLITE)
+        """
         if self.tabWidget.currentIndex() == 0:
             return 'QPSQL'
         elif self.tabWidget.currentIndex() == 1:

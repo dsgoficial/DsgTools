@@ -28,6 +28,9 @@ import time
 
 class ProgressWidget(QgsMessageBar):
     def __init__(self, min, max, message, parent=None):
+        """
+        Constructs a progress widget
+        """
         super(self.__class__, self).__init__(parent)
         self.min = min
         self.max = max
@@ -44,9 +47,15 @@ class ProgressWidget(QgsMessageBar):
         self.pushWidget(self.msgBarItem)
     
     def initBar(self):
+        """
+        Initializes the progress bar
+        """
         self.progressBar.setValue(0)
     
     def step(self):
+        """
+        Increments the progress bar
+        """
         value = self.progressBar.value() + 1
         self.progressBar.setValue(value)
         if value == self.max:

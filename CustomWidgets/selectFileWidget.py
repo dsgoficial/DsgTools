@@ -48,33 +48,51 @@ class SelectFileWidget(QtGui.QWidget, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_selectFilePushButton_clicked(self):
+        """
+        Selects the correct way to choose files according to the type
+        """
         fd = QFileDialog()
         if self.type == 'multi':
-            self.fileNameList = fd.getOpenFileNames(caption=self.caption,filter=self.filter)
+            self.fileNameList = fd.getOpenFileNames(caption=self.caption, filter=self.filter)
             selectedFiles = ', '.join(self.fileNameList)
         elif self.type == 'single':
-            selectedFiles = fd.getOpenFileName(caption=self.caption,filter=self.filter)
-            if selectedFiles <> '':
+            selectedFiles = fd.getOpenFileName(caption=self.caption, filter=self.filter)
+            if selectedFiles != '':
                 self.fileNameList = selectedFiles
         elif self.type == 'dir':
-             selectedFiles = fd.getExistingDirectory(directory = os.path.expanduser('~'), caption=self.caption,options=QFileDialog.ShowDirsOnly)
-             if selectedFiles <> '':
+             selectedFiles = fd.getExistingDirectory(directory=os.path.expanduser('~'), caption=self.caption, options=QFileDialog.ShowDirsOnly)
+             if selectedFiles != '':
                  self.fileNameList = [selectedFiles]
         self.lineEdit.setText(selectedFiles)
         self.filesSelected.emit()
     
     def resetAll(self):
+        """
+        Resets all
+        """
         self.lineEdit.clear()
         self.fileNameList = []
     
-    def setTitle(self,text):
+    def setTitle(self, text):
+        """
+        Sets the label title
+        """
         self.label.setText(text)
     
     def setCaption(self, caption):
+        """
+        Sets the caption
+        """
         self.caption = caption
     
-    def setFilter(self,filter):
+    def setFilter(self, filter):
+        """
+        Sets the file filter
+        """
         self.filter = filter
     
-    def setType(self,type):
+    def setType(self, type):
+        """
+        Sets selection type (e.g multi, single, dir)
+        """
         self.type = type

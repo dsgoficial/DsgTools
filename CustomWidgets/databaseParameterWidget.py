@@ -48,32 +48,50 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
         self.setInitialState()
     
     def setInitialState(self):
+        """
+        Sets the initial state
+        """
         self.prefixVisible = True
         self.sufixVisible = True
         self.dbNameVisible = True
     
     def setPrefixVisible(self, visible):
+        """
+        Sets if the database prefix should be visible
+        """
         if isinstance(visible,bool):
             self.prefixLineEdit.setVisible(visible)
             self.prefixLabel.setVisible(visible)
             self.prefixVisible = visible
     
     def setSufixVisible(self, visible):
+        """
+        Sets if the database sufix should be visible
+        """
         if isinstance(visible,bool):
             self.sufixLineEdit.setVisible(visible)
             self.sufixLabel.setVisible(visible)
             self.sufixVisible = visible
     
     def setDbNameVisible(self, visible):
+        """
+        Sets if the database name should be visible
+        """
         if isinstance(visible,bool):
             self.dbNameLineEdit.setVisible(visible)
             self.dbNameLabel.setVisible(visible)
             self.dbNameVisible = visible
     
     def getVersion(self):
+        """
+        Get the database version
+        """
         return self.versionComboBox.currentText()
     
     def validate(self):
+        """
+        Validate database name
+        """
         errorMsg = ''
         if self.dbNameVisible:
             if self.dbNameLineEdit.text() == '':
@@ -81,7 +99,7 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
         if self.mQgsProjectionSelectionWidget.crs().authid() == '':        
             errorMsg += self.tr('Select a coordinate reference system!\n')
         
-        if errorMsg <> '':
+        if errorMsg != '':
             QMessageBox.critical(self, self.tr('Critical!'), errorMsg)
             return False
         else:

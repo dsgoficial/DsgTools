@@ -63,6 +63,9 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         self.changePrimitiveCheckboxState(False)
     
     def resetInterface(self):
+        """
+        Sets the initial state again
+        """
         self.layersCustomSelector.clearAll()
         self.styleComboBox.clear()
         #TODO: refresh optional parameters
@@ -72,9 +75,15 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot()
     def on_buttonBox_rejected(self):
+        """
+        Closes the dialog
+        """
         self.close()
     
     def updateLayersFromDbs(self, type, dbList):
+        """
+        
+        """
         errorDict = dict()
         if type == 'added':
             progress = ProgressWidget(1, len(dbList), self.tr('Reading selected databases... '), parent=self)
@@ -113,6 +122,9 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_showCategoriesRadioButton_toggled(self, enabled):
+        """
+        Shows database categories that can be chosen
+        """
         self.changePrimitiveCheckboxState(enabled)
         if self.lyrDict != dict():
             cats = []
@@ -123,11 +135,17 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_showClassesRadioButton_toggled(self):
+        """
+        Shows database classes that can be chosen
+        """
         if self.lyrDict != dict():
             self.layersCustomSelector.setInitialState(self.lyrDict.keys(),unique = True)
             
     @pyqtSlot()
     def on_buttonBox_accepted(self):
+        """
+        Loads the selected classes/categories
+        """
         #1- filter classes if categories is checked and build list.
         selected = self.layersCustomSelector.toLs
         selectedClasses = []
@@ -186,6 +204,9 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         self.close()
     
     def logInternalError(self, exceptionDict):
+        """
+        Logs internal errors during the load process in QGIS' log
+        """
         msg = ''
         errorDbList = exceptionDict.keys()
         if len(errorDbList) > 0:
@@ -197,6 +218,9 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         return msg 
 
     def populateStyleCombo(self, styleDict):
+        """
+        Loads styles saved in the database
+        """
         self.styleComboBox.clear()
         styleList = styleDict.keys()
         numberOfStyles = len(styleList)
@@ -208,6 +232,9 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
             self.styleComboBox.addItem(self.tr('No available styles'))
     
     def changePrimitiveCheckboxState(self, enabled):
+        """
+        Changes the primitives that will be loaded.
+        """
         self.checkBoxPoint.setEnabled(enabled)
         self.checkBoxLine.setEnabled(enabled)
         self.checkBoxPolygon.setEnabled(enabled)
@@ -215,6 +242,9 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_checkBoxAll_toggled(self, toggled):
+        """
+        Checks all primitives to be loaded
+        """
         self.checkBoxPoint.setChecked(toggled)
         self.checkBoxLine.setChecked(toggled)
         self.checkBoxPolygon.setChecked(toggled)

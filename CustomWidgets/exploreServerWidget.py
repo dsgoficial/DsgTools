@@ -56,9 +56,9 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         self.abstractDb = None
 
     def getServers(self):
-        '''
+        """
         Gets server from QSettings
-        '''
+        """
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers')
         currentConnections = settings.childGroups()
@@ -66,10 +66,10 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         return currentConnections
     
     def getServerConfiguration(self, name):
-        '''
+        """
         Gets server configuration
         name: server name 
-        '''
+        """
         settings = QSettings()
         settings.beginGroup('PostgreSQL/servers/'+name)
         host = settings.value('host')
@@ -81,14 +81,14 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
         return (host, port, user, password)
     
     def browseServer(self, dbList, host, port, user, password):
-        '''
+        """
         Browses server for EDGV databases
         dbList: databases list
         host: server host ip address
         port: server port
         user: user name
         password: password
-        '''
+        """
         canLoad = True
         if self.superNeeded:
             canLoad = False
@@ -120,10 +120,10 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
             return edvgDbList
     
     def getDbsFromServer(self, name):
-        '''
+        """
         Gets server databases
         name: server name
-        '''
+        """
         gen = self.factory.createSqlGenerator(False)
         
         (host, port, user, password) = self.getServerConfiguration(name)
@@ -145,17 +145,17 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_createNewServerPushButton_clicked(self):  
-        '''
+        """
         Opens the View Server dialog
-        '''
+        """
         createNewServer = ViewServers(self)
         result = createNewServer.exec_()
         self.populateServersCombo()
 
     def populateServersCombo(self):
-        '''
+        """
         Populates the server name combo box
-        '''
+        """
         self.serversCombo.clear()
         self.serversCombo.addItem(self.tr('Select Server'))
         currentConnections = self.getServers()
@@ -165,9 +165,9 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
     
     @pyqtSlot(int)
     def on_serversCombo_currentIndexChanged(self):
-        '''
+        """
         Updates the server databases
-        '''
+        """
         self.clearWidgets.emit()
         if self.serversCombo.currentIndex() != 0:
             self.abstractDb = self.dbFactory.createDbFactory('QPSQL')
@@ -188,12 +188,18 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
                 self.abstractDbLoaded.emit()
     
     def getServerParameters(self):
+        """
+        Gets postgis server parameters
+        """
         if self.serversCombo.currentIndex() != 0:
             return self.abstractDb.getServerConfiguration(self.serversCombo.currentText().split('(')[0][0:-1])
         else:
             return (None, None, None, None)
     
     def clearAll(self):
+        """
+        Resets the widget
+        """
         try:
             if self.abstractDb:
                 self.abstractDb.__del__()
