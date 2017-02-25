@@ -411,6 +411,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             return
         
         somethingMade = False
+        reclassifiedFeatures = 0
         
         #button that sent the signal
         self.buttonName = self.sender().text()
@@ -446,13 +447,14 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                 somethingMade = True
             #actual feature insertion
             reclassificationLayer.addFeatures(featList, False)
+            reclassifiedFeatures += len(featList)
         
             if len(mapLayer.selectedFeatures()) > 0:
                 mapLayer.startEditing()
                 mapLayer.deleteSelectedFeatures()
         
         if somethingMade:
-            self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('Features reclassified with success!'), level=QgsMessageBar.INFO, duration=3)
+            self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('{} features reclassified with success!').format(reclassifiedFeatures), level=QgsMessageBar.INFO, duration=3)
 
     def findReclassificationClass(self, button):
         """
