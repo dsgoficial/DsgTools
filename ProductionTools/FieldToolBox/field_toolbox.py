@@ -57,13 +57,22 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.category = ''
         self.widget.dbChanged.connect(self.defineFactory)
         self.releaseButtonConected = False
-        self.prevLayerConnected = False
-        self.dynamicList = []
+        self.addedFeatures = []
     
-    def defineFactory(self,abstractDb):
-        self.layerLoader = LayerLoaderFactory().makeLoader(self.iface,abstractDb)
+    def defineFactory(self, abstractDb):
+        """
+        Defines the layer loader by its type
+        :param abstractDb:
+        :return:
+        """
+        self.layerLoader = LayerLoaderFactory().makeLoader(self.iface, abstractDb)
     
     def setEditButtonEnabled(self, enabled):
+        """
+        Edits the current configuration settings
+        :param enabled:
+        :return:
+        """
         self.editCurrentConfigButton.setEnabled(enabled)
     
     @pyqtSlot(bool, name='on_setupButton_clicked')
@@ -86,6 +95,11 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.setEditButtonEnabled(True)
             
     def createButtonsOnInterface(self, dlg):
+        """
+        Creates button according to what is set in the configuration
+        :param dlg:
+        :return:
+        """
         #reclassification dictionary made from the field setup file
         self.reclassificationDict = dlg.makeReclassificationDict()
         #button size defined by the user
@@ -282,14 +296,18 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         Sets the attributes for the newly added feature
         featureId: added feature
         """
-        #layer that sent the signal
-        layer = self.sender()
-        layer.beginEditCommand(self.tr('DsgTools reclassification'))
-        self.dynamicList.append((featureId,layer))
+        self.addedFeatures.append(featureId)
 
     def updateAttributesAfterAdding(self):
-        while self.dynamicList:
-            featureId, layer = self.dynamicList.pop()
+        """
+        Updates feature attributes according to the button configuration
+        :return:
+        """
+        layer = self.sender()
+        while self.addedFeatures:
+            featureId = self.addedFeatures.pop()
+            #begining the edit command
+            layer.beginEditCommand(self.tr('DSG Tools reclassification tool: adjusting feature attributes'))
             #accessing added features
             editBuffer = layer.editBuffer()
             features = editBuffer.addedFeatures()
@@ -300,17 +318,8 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                     #setting the attributes using the reclassification dictionary
                     self.setFeatureAttributes(feature, editBuffer)
             layer.endEditCommand()
-        #accessing added features
-        editBuffer = layer.editBuffer()
-        features = editBuffer.addedFeatures()
-        for key in features.keys():
-            #just checking the newly added feature, the others, I don't care
-            if key == featureId:
-                feature = features[key]
-                #setting the attributes using the reclassification dictionary
-                self.setFeatureAttributes(feature, editBuffer)
-                
-    def setFeatureAttributes(self, newFeature, editBuffer = None):
+
+    def setFeatureAttributes(self, newFeature, editBuffer=None):
         """
         Changes attribute values according to the reclassification dict using the edit buffer
         newFeature: newly added
@@ -341,10 +350,6 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             try:
                 self.prevLayer.featureAdded.disconnect(self.setAttributesFromButton)
                 self.prevLayer.editCommandEnded.disconnect(self.updateAttributesAfterAdding)
-                self.prevLayerConnected = False
-            except:
-                pass
-            try:
                 self.prevLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOff)
             except:
                 pass
@@ -362,7 +367,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             #getting the object that sent the signal
             sender = self.sender()
             
-            #if the sender is out iface object, this means that the user made the click and changed the current layer
+            #if the sender is the iface object, this means that the user made the click and changed the current layer
             #when this happens we should untoggle all buttons
             if isinstance(sender, QgisInterface):
                 #checking if another button is checked
@@ -393,7 +398,6 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.iface.actionAddFeature().trigger()            
             #setting the previous layer             
             self.prevLayer = reclassificationLayer        
-            self.prevLayer = reclassificationLayer
         else:
             #disconnecting the previous layer
             self.disconnectLayerSignals()
@@ -464,15 +468,3 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                         #returning the desired edgvClass
                         return (category, edgvClass)
         return ()
-                    
-    def searchLayer(self, group, name):
-        """
-        Checks if a layer is already loaded in TOC. Case positive return it, case negative return None
-        group: Group name
-        name: Layer name
-        """
-        layerNodes = group.findLayers()
-        for node in layerNodes:
-            if node.layerName() == name:
-                return node.layer()
-        return None
