@@ -308,7 +308,10 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         if self.abstractDb.db.driverName() == 'QSQLITE':
             category = schemaName + '_' + tableName.split('_')[0]
         else:
-            category = schemaName + '.' + tableName.split('_')[0]
+            if self.edgvVersion == 'Non_EDGV':
+                category = schemaName
+            else:
+                category = schemaName + '.' + tableName.split('_')[0]
 
         # creating items in tree
         buttonInTree = False

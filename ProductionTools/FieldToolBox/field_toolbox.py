@@ -56,30 +56,43 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.buttonName = ''
         self.category = ''
         self.widget.dbChanged.connect(self.defineFactory)
+        self.releaseButtonConected = False
+        self.prevLayerConnected = False
     
     def defineFactory(self,abstractDb):
         self.layerLoader = LayerLoaderFactory().makeLoader(self.iface,abstractDb)
     
-    @pyqtSlot(bool)
-    def on_setupButton_clicked(self):
+    def setEditButtonEnabled(self, enabled):
+        self.editCurrentConfigButton.setEnabled(enabled)
+    
+    @pyqtSlot(bool, name='on_setupButton_clicked')
+    @pyqtSlot(bool, name='on_editCurrentConfigButton_clicked')
+    def populateWindow(self):
         """
         Creates the buttons according to the field setup
         """
         if self.widget.abstractDb == None:
             QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('First select a database!'))
             return
+        sender = self.sender().text()
         dlg = FieldSetup(self.widget.abstractDb)
+        if sender == self.tr('Edit Current Config'):
+            dlg.loadReclassificationConf(self.reclassificationDict)
         result = dlg.exec_()
         
         if result == 1:
-            #reclassification dictionary made from the field setup file
-            self.reclassificationDict = dlg.makeReclassificationDict()
-            #button size defined by the user
-            self.size = dlg.slider.value()
-            #check if the button must be grouped by category
-            withTabs = dlg.checkBox.isChecked()
-            #actual button creation step
-            self.createButtons(self.reclassificationDict, withTabs)
+            self.createButtonsOnInterface(dlg)
+            self.setEditButtonEnabled(True)
+            
+    def createButtonsOnInterface(self, dlg):
+        #reclassification dictionary made from the field setup file
+        self.reclassificationDict = dlg.makeReclassificationDict()
+        #button size defined by the user
+        self.size = dlg.slider.value()
+        #check if the button must be grouped by category
+        withTabs = dlg.checkBox.isChecked()
+        #actual button creation step
+        self.createButtons(self.reclassificationDict, withTabs)
             
     @pyqtSlot(int)
     def on_checkBox_stateChanged(self, state):
@@ -306,12 +319,16 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         Disconnecting the signals from the previous layer
         """
-        if self.prevLayer:
+        if self.prevLayer and self.prevLayerConnected:
             try:
                 self.prevLayer.featureAdded.disconnect(self.setAttributesFromButton)
+                self.prevLayerConnected = False
             except:
                 pass
-            self.prevLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOff)
+            try:
+                self.prevLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOff)
+            except:
+                pass
             
     @pyqtSlot(bool)
     def acquire(self, pressed):
@@ -320,6 +337,9 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         The difference here is the use of real time editing to make the reclassification
         """
         if pressed:
+            # if not self.releaseButtonConected:
+            #     self.iface.mapCanvas().mapToolSet.connect(self.disconnectOnReleaseButton)
+            #     self.releaseButtonConected = True
             if not self.checkConditions():
                 return
             
@@ -351,6 +371,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             reclassificationLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOn)
             #connecting addedFeature signal
             reclassificationLayer.featureAdded.connect(self.setAttributesFromButton)
+            reclassificationLayer.beforeRollBack.connect(self.resetToolBox)
             #triggering the add feature tool
             self.iface.actionAddFeature().trigger()            
 
@@ -439,3 +460,17 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             if node.layerName() == name:
                 return node.layer()
         return None
+
+    def disconnectOnReleaseButton(self, tool):
+        for button in self.buttons:
+            button.setChecked(False)
+        self.iface.mapCanvas().mapToolSet.disconnect(self.disconnectOnReleaseButton)
+        self.releaseButtonConected = False
+        self.disconnectLayerSignals()
+    
+    def resetToolBox(self):
+        for button in self.buttons:
+            button.setChecked(False)
+        sender = self.sender()
+        sender.beforeRollBack.disconnect(self.resetToolBox)
+        self.disconnectLayerSignals()
