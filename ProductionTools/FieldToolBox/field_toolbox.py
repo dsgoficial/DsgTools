@@ -160,7 +160,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.buttons.append(pushButton)
         return pushButton        
         
-    def createButtons(self, reclassificationDict, createTabs = False):
+    def createButtons(self, reclassificationDict, createTabs=False):
         """
         Convenience method to create buttons
         createTabs: Indicates if the buttons must be created within tabs
@@ -286,7 +286,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         editBuffer = layer.editBuffer()
         features = editBuffer.addedFeatures()
         for key in features.keys():
-            #just checking the newly added feature, the other I don't care
+            #just checking the newly added feature, the others, I don't care
             if key == featureId:
                 feature = features[key]
                 #setting the attributes using the reclassification dictionary
@@ -319,17 +319,13 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         Disconnecting the signals from the previous layer
         """
-        if self.prevLayer and self.prevLayerConnected:
+        if self.prevLayer:
             try:
                 self.prevLayer.featureAdded.disconnect(self.setAttributesFromButton)
-                self.prevLayerConnected = False
-            except:
-                pass
-            try:
                 self.prevLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOff)
             except:
                 pass
-            
+
     @pyqtSlot(bool)
     def acquire(self, pressed):
         """
@@ -337,9 +333,6 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         The difference here is the use of real time editing to make the reclassification
         """
         if pressed:
-            # if not self.releaseButtonConected:
-            #     self.iface.mapCanvas().mapToolSet.connect(self.disconnectOnReleaseButton)
-            #     self.releaseButtonConected = True
             if not self.checkConditions():
                 return
             
@@ -371,12 +364,11 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             reclassificationLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOn)
             #connecting addedFeature signal
             reclassificationLayer.featureAdded.connect(self.setAttributesFromButton)
-            reclassificationLayer.beforeRollBack.connect(self.resetToolBox)
             #triggering the add feature tool
             self.iface.actionAddFeature().trigger()            
 
             #setting the previous layer             
-            self.prevLayer = reclassificationLayer                
+            self.prevLayer = reclassificationLayer
         else:
             #disconnecting the previous layer
             self.disconnectLayerSignals()
@@ -433,7 +425,6 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         if somethingMade:
             self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('Features reclassified with success!'), level=QgsMessageBar.INFO, duration=3)
 
-
     def findReclassificationClass(self, button):
         """
         Finds the reclassification class according to the button
@@ -448,29 +439,3 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                         #returning the desired edgvClass
                         return (category, edgvClass)
         return ()
-                    
-    def searchLayer(self, group, name):
-        """
-        Checks if a layer is already loaded in TOC. Case positive return it, case negative return None
-        group: Group name
-        name: Layer name
-        """
-        layerNodes = group.findLayers()
-        for node in layerNodes:
-            if node.layerName() == name:
-                return node.layer()
-        return None
-
-    def disconnectOnReleaseButton(self, tool):
-        for button in self.buttons:
-            button.setChecked(False)
-        self.iface.mapCanvas().mapToolSet.disconnect(self.disconnectOnReleaseButton)
-        self.releaseButtonConected = False
-        self.disconnectLayerSignals()
-    
-    def resetToolBox(self):
-        for button in self.buttons:
-            button.setChecked(False)
-        sender = self.sender()
-        sender.beforeRollBack.disconnect(self.resetToolBox)
-        self.disconnectLayerSignals()
