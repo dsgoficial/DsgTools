@@ -1286,3 +1286,18 @@ class PostGISSqlGenerator(SqlGenerator):
                             left join pg_database as pgd on pgd.oid = appcust.dboid group by datname
                     ) as a'''
         return sql
+
+    def getFieldToolBoxConfigPerspectiveDict(self, perspective):
+        if perspective == 'property':
+            sql = '''select row_to_json(a) from (
+                        select name, array_agg(datname) from field_toolbox_config as custom 
+                            left join applied_field_toolbox_config as appcust on custom.id = appcust.id_applied_field_toolbox_config
+                            left join pg_database as pgd on pgd.oid = appcust.dboid group by name
+                    ) as a'''
+        if perspective == 'database':
+            sql = '''select row_to_json(a) from (
+                        select datname as name, array_agg(name) from field_toolbox_config as custom 
+                            left join applied_field_toolbox_config as appcust on custom.id = appcust.id_applied_field_toolbox_config
+                            left join pg_database as pgd on pgd.oid = appcust.dboid group by datname
+                    ) as a'''
+        return sql

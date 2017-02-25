@@ -29,8 +29,9 @@ from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog
 
 #DsgTools imports
 from DsgTools.ServerManagementTools.customizationManager import CustomizationManager
-from DsgTools.PostgisCustomization.createDatabaseCustomization import CreateDatabaseCustomization
+from DsgTools.CustomWidgets.genericParameterSetter import GenericParameterSetter
 from DsgTools.CustomWidgets.genericManagerWidget import GenericManagerWidget
+from DsgTools.ProductionTools.FieldToolBox.field_setup import FieldSetup
 from DsgTools.Utils.utils import Utils
 
 from qgis.core import QgsMessageLog
@@ -57,8 +58,24 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
         '''
         Slot that opens the create profile dialog
         '''
-        dlg = CreateDatabaseCustomization(self.serverAbstractDb, self.genericDbManager)
+        dlg = GenericParameterSetter()
         dlg.exec_()
+        edgvVersion, propertyName = dlg.getParameters()
+        if edgvVersion == self.tr('Select EDGV Version'):
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Enter a EDGV Version'))
+            return
+        if propertyName == '':
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Enter a Field Toolbox Configuration Name!'))
+            return
+        if propertyName in self.genericDbManager.getPropertyPerspectiveDict('property').keys():
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Field Toolbox Configuration Name already exists!'))
+            return
+        templateDb = self.genericDbManager.instantiateTemplateDb(edgvVersion)
+        fieldDlg = FieldSetup(templateDb,returnDict = True)
+        fieldSetupDict = fieldDlg.exec_()
+        if fieldSetupDict:
+            self.genericDbManager.createSetting(propertyName,edgvVersion,fieldSetupDict)
+            self.refresh()
     
     @pyqtSlot(bool)
     def on_deleteCustomizationPushButton_clicked(self):

@@ -57,7 +57,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         #setting the sql generator
         self.serverWidget.populateServersCombo()
         self.serverWidget.abstractDbLoaded.connect(self.checkSuperUser)
-        self.serverWidget.abstractDbLoaded.connect(self.populateCustomizationsInterface)
+        self.serverWidget.abstractDbLoaded.connect(self.populateOtherInterfaces)
         self.dbsCustomSelector.setTitle(self.tr('Server Databases'))
         self.dbsCustomSelector.selectionChanged.connect(self.showTabs)
         self.dbsCustomSelector.selectionChanged.connect(self.populateStylesInterface)
@@ -377,9 +377,9 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
             self.permissionWidget.setParameters(self.serverWidget.abstractDb, dbsDict)
             self.permissionWidget.refresh()
 
-    def populateCustomizationsInterface(self):
+    def populateOtherInterfaces(self):
         self.customizationManagerWidget.setParameters(self.serverWidget.abstractDb)
-        # self.customizationManagerWidget.refreshProfileList()
+        self.fieldToolBoxConfigManagerWidget.setParameters(self.serverWidget.abstractDb)
     
     @pyqtSlot(int)
     def on_tabWidget_currentChanged(self, index):
