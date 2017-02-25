@@ -58,6 +58,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.widget.dbChanged.connect(self.defineFactory)
         self.releaseButtonConected = False
         self.prevLayerConnected = False
+        self.dynamicList = []
     
     def defineFactory(self,abstractDb):
         self.layerLoader = LayerLoaderFactory().makeLoader(self.iface,abstractDb)
@@ -270,7 +271,8 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         if reclassificationLayer:
             self.iface.setActiveLayer(reclassificationLayer)
             #entering in editing mode
-            reclassificationLayer.startEditing()
+            if not reclassificationLayer.isEditable():
+                reclassificationLayer.startEditing()
 
         return (reclassificationLayer, category, edgvClass)
     
@@ -282,15 +284,22 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         #layer that sent the signal
         layer = self.sender()
-        #accessing added features
-        editBuffer = layer.editBuffer()
-        features = editBuffer.addedFeatures()
-        for key in features.keys():
-            #just checking the newly added feature, the other I don't care
-            if key == featureId:
-                feature = features[key]
-                #setting the attributes using the reclassification dictionary
-                self.setFeatureAttributes(feature, editBuffer)
+        layer.beginEditCommand(self.tr('DsgTools reclassification'))
+        self.dynamicList.append((featureId,layer))
+
+    def updateAttributesAfterAdding(self):
+        while self.dynamicList:
+            featureId, layer = self.dynamicList.pop()
+            #accessing added features
+            editBuffer = layer.editBuffer()
+            features = editBuffer.addedFeatures()
+            for key in features.keys():
+                #just checking the newly added feature, the other I don't care
+                if key == featureId:
+                    feature = features[key]
+                    #setting the attributes using the reclassification dictionary
+                    self.setFeatureAttributes(feature, editBuffer)
+            layer.endEditCommand()
                 
     def setFeatureAttributes(self, newFeature, editBuffer = None):
         """
@@ -319,9 +328,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         Disconnecting the signals from the previous layer
         """
-        if self.prevLayer and self.prevLayerConnected:
+        if self.prevLayer:
             try:
                 self.prevLayer.featureAdded.disconnect(self.setAttributesFromButton)
+                self.prevLayer.editCommandEnded.disconnect(self.updateAttributesAfterAdding)
                 self.prevLayerConnected = False
             except:
                 pass
@@ -337,9 +347,6 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         The difference here is the use of real time editing to make the reclassification
         """
         if pressed:
-            # if not self.releaseButtonConected:
-            #     self.iface.mapCanvas().mapToolSet.connect(self.disconnectOnReleaseButton)
-            #     self.releaseButtonConected = True
             if not self.checkConditions():
                 return
             
@@ -367,16 +374,16 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.disconnectLayerSignals()
     
             (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
+
             #suppressing the form dialog
             reclassificationLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOn)
             #connecting addedFeature signal
             reclassificationLayer.featureAdded.connect(self.setAttributesFromButton)
-            reclassificationLayer.beforeRollBack.connect(self.resetToolBox)
+            reclassificationLayer.editCommandEnded.connect(self.updateAttributesAfterAdding)
             #triggering the add feature tool
             self.iface.actionAddFeature().trigger()            
-
             #setting the previous layer             
-            self.prevLayer = reclassificationLayer                
+            self.prevLayer = reclassificationLayer        
         else:
             #disconnecting the previous layer
             self.disconnectLayerSignals()
@@ -466,11 +473,4 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             button.setChecked(False)
         self.iface.mapCanvas().mapToolSet.disconnect(self.disconnectOnReleaseButton)
         self.releaseButtonConected = False
-        self.disconnectLayerSignals()
-    
-    def resetToolBox(self):
-        for button in self.buttons:
-            button.setChecked(False)
-        sender = self.sender()
-        sender.beforeRollBack.disconnect(self.resetToolBox)
         self.disconnectLayerSignals()
