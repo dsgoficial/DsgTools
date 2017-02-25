@@ -72,4 +72,4 @@ class FieldToolBoxConfigManager(GenericDbManager):
         if viewType == 'customization': {customizationName: ['-list of databases with customization']}
         if viewType == 'database': {databaseName: ['-list of customizations with customization']}
         """
-        return self.adminDb.getCustomizationPerspectiveDict(viewType)
+        return self.adminDb.getFieldToolBoxConfigPerspectiveDict(viewType)
