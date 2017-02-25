@@ -41,17 +41,14 @@ class FieldToolBoxConfigManager(GenericDbManager):
     def __init__(self, serverAbstractDb, dbDict, parentWidget = None):
         super(self.__class__,self).__init__(serverAbstractDb, dbDict, parentWidget = None)
     
-    def installFieldToolBoxConfig(self, fieldToolBoxConfigName, edgvVersion, dbNameList):
+    def installFieldToolBoxConfig(self, fieldToolBoxConfigName, edgvVersion):
         """
         """
         errorDict = dict()
         settingType = self.getManagerType()
         recDict = self.genericDbManager.getRecordFromAdminDb(fieldToolBoxConfigName, edgvVersion)
-        for dbName in dbNameList:
-            if dbName not in self.dbDict.keys():
-                abstractDb = self.instantiateAbstractDb(dbName)
-            else:
-                abstractDb = self.dbDict[dbName]
+        for dbName in self.dbDict.keys():
+            abstractDb = self.dbDict[dbName]
             try:
                 if not abstractDb.checkIfExistsFieldToolBoxConfigTable():
                     abstractDb.createFieldToolBoxConfigTable()
@@ -89,7 +86,7 @@ class FieldToolBoxConfigManager(GenericDbManager):
         #TODO
         return True
     
-    def getPropertyPerspectiveDict(self, viewType):
+    def getPropertyPerspectiveDict(self, viewType = 'property'):
         """
         Gets a dict in the format:
         if viewType == 'customization': {customizationName: ['-list of databases with customization']}

@@ -31,6 +31,7 @@ from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog
 from DsgTools.ServerManagementTools.fieldToolBoxConfigManager import FieldToolBoxConfigManager
 from DsgTools.CustomWidgets.genericParameterSetter import GenericParameterSetter
 from DsgTools.CustomWidgets.genericManagerWidget import GenericManagerWidget
+from DsgTools.CustomWidgets.listSelector import ListSelector
 from DsgTools.ProductionTools.FieldToolBox.field_setup import FieldSetup
 from DsgTools.Utils.utils import Utils
 
@@ -80,7 +81,8 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
 
     @pyqtSlot(bool)
     def on_applyPushButton_clicked(self):
-        
+        availableConfig = self.genericDbManager.getPropertyPerspectiveDict().keys()
+
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.genericDbManager.deleteCustomization(customizationName, edgvVersion)
