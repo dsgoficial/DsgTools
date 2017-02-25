@@ -161,7 +161,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.buttons.append(pushButton)
         return pushButton        
         
-    def createButtons(self, reclassificationDict, createTabs = False):
+    def createButtons(self, reclassificationDict, createTabs=False):
         """
         Convenience method to create buttons
         createTabs: Indicates if the buttons must be created within tabs
@@ -300,6 +300,15 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                     #setting the attributes using the reclassification dictionary
                     self.setFeatureAttributes(feature, editBuffer)
             layer.endEditCommand()
+        #accessing added features
+        editBuffer = layer.editBuffer()
+        features = editBuffer.addedFeatures()
+        for key in features.keys():
+            #just checking the newly added feature, the others, I don't care
+            if key == featureId:
+                feature = features[key]
+                #setting the attributes using the reclassification dictionary
+                self.setFeatureAttributes(feature, editBuffer)
                 
     def setFeatureAttributes(self, newFeature, editBuffer = None):
         """
@@ -339,7 +348,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                 self.prevLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOff)
             except:
                 pass
-            
+
     @pyqtSlot(bool)
     def acquire(self, pressed):
         """
@@ -384,6 +393,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.iface.actionAddFeature().trigger()            
             #setting the previous layer             
             self.prevLayer = reclassificationLayer        
+            self.prevLayer = reclassificationLayer
         else:
             #disconnecting the previous layer
             self.disconnectLayerSignals()
@@ -440,7 +450,6 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         if somethingMade:
             self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('Features reclassified with success!'), level=QgsMessageBar.INFO, duration=3)
 
-
     def findReclassificationClass(self, button):
         """
         Finds the reclassification class according to the button
@@ -467,10 +476,3 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             if node.layerName() == name:
                 return node.layer()
         return None
-
-    def disconnectOnReleaseButton(self, tool):
-        for button in self.buttons:
-            button.setChecked(False)
-        self.iface.mapCanvas().mapToolSet.disconnect(self.disconnectOnReleaseButton)
-        self.releaseButtonConected = False
-        self.disconnectLayerSignals()
