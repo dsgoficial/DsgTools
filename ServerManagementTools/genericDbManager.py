@@ -198,3 +198,7 @@ class GenericDbManager(QObject):
         '''
         pass
 
+    
+    def getRecordFromAdminDb(self, propertyName, edgvVersion):
+        settingType = self.getManagerType()
+        return self.adminDb.getRecordFromAdminDb(settingType, propertyName, edgvVersion)

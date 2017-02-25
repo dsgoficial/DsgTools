@@ -41,16 +41,39 @@ class FieldToolBoxConfigManager(GenericDbManager):
     def __init__(self, serverAbstractDb, dbDict, parentWidget = None):
         super(self.__class__,self).__init__(serverAbstractDb, dbDict, parentWidget = None)
     
-    def installFieldToolBoxConfig(self, earthCoverageName):
+    def installFieldToolBoxConfig(self, fieldToolBoxConfigName, edgvVersion, dbNameList):
         """
-        1. Get earth coverage from dsgtools_admindb;
-        2. Get sql from dbCustomizer;
-        3. For each db try to create custom;
-        4. If custom applyied, save it on customization table on db and on dsgtools_admindb;
         """
-        pass
+        errorDict = dict()
+        settingType = self.getManagerType()
+        recDict = self.genericDbManager.getRecordFromAdminDb(fieldToolBoxConfigName, edgvVersion)
+        for dbName in dbNameList:
+            if dbName not in self.dbDict.keys():
+                abstractDb = self.instantiateAbstractDb(dbName)
+            else:
+                abstractDb = self.dbDict[dbName]
+            try:
+                if not abstractDb.checkIfExistsFieldToolBoxConfigTable():
+                    abstractDb.createFieldToolBoxConfigTable()
+            except Exception as e:
+                errorDict[dbName] = str(e.args[0])
+            try:
+                abstractDb.db.transaction()
+                self.adminDb.db.transaction()
+                abstractDb.insertRecordInsidePropertyTable(settingType, recDict)
+                dbOid = abstractDb.getDbOid()
+                self.adminDb.insertInstalledRecordIntoAdminDb(settingType, recDict, dbOid)
+                abstractDb.db.commit()
+                self.adminDb.db.commit()
+            except Exception as e:
+                abstractDb.db.rollback()
+                self.adminDb.db.rollback()
+                errorDict[dbName] = str(e.args[0])
+        if errorDict != dict():
+            errorString = '\n'.join([key+': '+errorDict[key] for key in errorDict.keys()])
+            raise Exception(self.tr('Unable installing field toolbox config:\n') + errorString)
     
-    def removeFieldToolBoxConfig(self, customizationName):
+    def removeFieldToolBoxConfig(self, fieldToolBoxConfigName, edgvVersion, dbNameList):
         pass
 
     def updateFieldToolBoxConfig(self, customizationName):

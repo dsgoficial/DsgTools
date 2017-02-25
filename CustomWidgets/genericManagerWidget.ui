@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>745</width>
-    <height>270</height>
+    <height>308</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,7 +20,7 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0" colspan="3">
+   <item row="0" column="0" colspan="2">
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0" colspan="2">
       <widget class="QTreeWidget" name="treeWidget">
@@ -149,7 +149,7 @@
      </item>
     </layout>
    </item>
-   <item row="0" column="3">
+   <item row="0" column="2">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QPushButton" name="importPushButton">
@@ -184,14 +184,14 @@
    <item row="1" column="0">
     <widget class="QPushButton" name="createPushButton">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="maximumSize">
       <size>
-       <width>160</width>
+       <width>16777215</width>
        <height>25</height>
       </size>
      </property>
@@ -206,6 +206,12 @@
    </item>
    <item row="1" column="1">
     <widget class="QPushButton" name="deletePushButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="maximumSize">
       <size>
        <width>16777215</width>
@@ -218,6 +224,20 @@
      <property name="icon">
       <iconset resource="../resources.qrc">
        <normaloff>:/plugins/DsgTools/icons/remove.png</normaloff>:/plugins/DsgTools/icons/remove.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QPushButton" name="applyPushButton">
+     <property name="text">
+      <string>Apply to Selected</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QPushButton" name="removeFromSelectedPushButton">
+     <property name="text">
+      <string>Remove from Selected</string>
      </property>
     </widget>
    </item>

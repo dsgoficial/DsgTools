@@ -1528,6 +1528,16 @@ class PostgisDb(AbstractDb):
         while query.next():
             return query.value(0)
     
+    def getDbOID():
+        self.checkAndOpenDb()
+        sql = self.gen.getDbOID(self.db.databaseName())
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            self.db.rollback()
+            raise Exception(self.tr('Problem getting db oid: ') + query.lastError().text())
+        while query.next():
+            return query.value(0)
+    
     def snapToGrid(self, classList, tol, srid):
         """
         Snaps tables to grid (i.e executes ST_SnapToGrid)
@@ -2832,3 +2842,68 @@ class PostgisDb(AbstractDb):
             jsonDict = json.loads(query.value(0))
             customDict[jsonDict['name']] = jsonDict['array_agg']
         return customDict
+    
+    def createFieldToolBoxConfigTable(self):
+        self.checkAndOpenDb()
+        self.db.transaction()
+        createSql = self.gen.createFieldToolBoxConfigTable()
+        query = QSqlQuery(self.db)
+        if not query.exec_(createSql):
+            self.db.rollback()
+            raise Exception(self.tr('Problem creating Field Toolbox Config table: ') + query.lastError().text())
+        self.db.commit()
+    
+    def checkIfTableExists(self, schema, tableName):
+        self.checkAndOpenDb()
+        sql = self.gen.checkIfTableExists(schema, tableName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting checking if table exists: ")+query.lastError().text())
+        while query.next():
+            if query.value(0):
+                return True
+        return False
+
+    def checkIfExistsFieldToolBoxConfigTable(self):
+        return self.checkIfTableExists('public','field_toolbox_config')
+    
+    def getRecordFromAdminDb(self, settingType, propertyName, edgvVersion):
+        self.checkAndOpenDb()
+        sql = self.gen.getRecordFromAdminDb(settingType, propertyName, edgvVersion)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting getting record from adminDb: ")+query.lastError().text())
+        retDict = dict()
+        while query.next():
+            retDict['id'] = query.value(0)
+            retDict['name'] = query.value(1)
+            retDict['jsondict'] = query.value(2)
+            retDict['edgvdict'] = query.value(2)
+            #yes, this return is inside the while. Why? Because I said so!
+            return retDict
+    
+    def insertRecordInsidePropertyTable(self, settingType, settingDict, useTransaction = False):
+        self.checkAndOpenDb()
+        if useTransaction:
+            self.db.transaction()
+        createSql = self.gen.insertRecordInsidePropertyTable(settingType, settingDict)
+        query = QSqlQuery(self.db)
+        if not query.exec_(createSql):
+            if useTransaction:
+                self.db.rollback()
+            raise Exception(self.tr('Problem inserting record inside property table: ') + query.lastError().text())
+        if useTransaction:
+            self.db.commit()
+    
+    def insertInstalledRecordIntoAdminDb(self, settingType, recDict, dbOid, useTransaction = False):
+        self.checkAndOpenDb()
+        if useTransaction:
+            self.db.transaction()
+        createSql = self.gen.insertInstalledRecordIntoAdminDb(settingType, recDict, dbOid)
+        query = QSqlQuery(self.db)
+        if not query.exec_(createSql):
+            if useTransaction:
+                self.db.rollback()
+            raise Exception(self.tr('Problem inserting installed record into adminDb: ') + query.lastError().text())
+        if useTransaction:
+            self.db.commit()

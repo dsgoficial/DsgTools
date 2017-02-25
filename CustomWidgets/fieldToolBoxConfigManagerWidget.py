@@ -28,7 +28,7 @@ from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
 from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog
 
 #DsgTools imports
-from DsgTools.ServerManagementTools.customizationManager import CustomizationManager
+from DsgTools.ServerManagementTools.fieldToolBoxConfigManager import FieldToolBoxConfigManager
 from DsgTools.CustomWidgets.genericParameterSetter import GenericParameterSetter
 from DsgTools.CustomWidgets.genericManagerWidget import GenericManagerWidget
 from DsgTools.ProductionTools.FieldToolBox.field_setup import FieldSetup
@@ -48,7 +48,7 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
         if serverAbstractDb:
             self.setComponentsEnabled(True)
             self.serverAbstractDb = serverAbstractDb
-            self.genericDbManager = CustomizationManager(serverAbstractDb, {})
+            self.genericDbManager = FieldToolBoxConfigManager(serverAbstractDb, {})
             self.refresh()
         else:
             self.setComponentsEnabled(False)
@@ -72,10 +72,24 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
             return
         templateDb = self.genericDbManager.instantiateTemplateDb(edgvVersion)
         fieldDlg = FieldSetup(templateDb,returnDict = True)
-        fieldSetupDict = fieldDlg.exec_()
-        if fieldSetupDict:
+        ret = fieldDlg.exec_()
+        if ret == 1:
+            fieldSetupDict = fieldDlg.makeReclassificationDict()
             self.genericDbManager.createSetting(propertyName,edgvVersion,fieldSetupDict)
             self.refresh()
+
+    @pyqtSlot(bool)
+    def on_applyPushButton_clicked(self):
+        
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.genericDbManager.deleteCustomization(customizationName, edgvVersion)
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Success!'), self.tr('Customization ') + customizationName + self.tr(' successfully deleted.'))
+            self.refreshProfileList()
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem deleting customization: ') + e.args[0])
     
     @pyqtSlot(bool)
     def on_deleteCustomizationPushButton_clicked(self):

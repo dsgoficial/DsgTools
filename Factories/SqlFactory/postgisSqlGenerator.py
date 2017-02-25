@@ -1301,3 +1301,40 @@ class PostGISSqlGenerator(SqlGenerator):
                             left join pg_database as pgd on pgd.oid = appcust.dboid group by datname
                     ) as a'''
         return sql
+    
+    def createFieldToolBoxConfigTable(self):
+        sql = '''CREATE TABLE IF NOT EXISTS public.field_toolbox_config(
+                id uuid NOT NULL DEFAULT uuid_generate_v4(),
+                name text,
+                jsondict text NOT NULL,
+                edgvversion text,
+                CONSTRAINT field_toolbox_config_pk PRIMARY KEY (id),
+                CONSTRAINT field_toolbox_config_unique_name_and_version UNIQUE (name,edgvversion)
+
+            );
+        '''
+        return sql
+    
+    def checkIfTableExists(self, schema, tableName):
+        sql = '''select table_name from information_schema.tables where table_schema = '{0}' and table_name = '{1}' limit 1'''.format(schema,tableName)
+        return sql
+    
+    def getRecordFromAdminDb(self, settingType, propertyName, edgvVersion):
+        tableName = self.getSettingTable(settingType)
+        sql = '''SELECT id, name, jsondict, edgvversion from public.{0} where name = '{1}' and edgvversion = '{2}' '''.format(tableName, propertyName, edgvVersion)
+        return sql
+    
+    def insertRecordInsidePropertyTable(self, settingType, settingDict):
+        tableName = self.getSettingTable(settingType)
+        sql = '''INSERT INTO public.{0} (name, jsondict, edgvversion) VALUES ('{1}','{2}','{3}')'''.format(tableName, settingDict['name'], settingDict['jsondict'], settingDict['edgvversion'])
+        return sql
+
+    def insertInstalledRecordIntoAdminDb(self, settingType, recDict, dbOid):
+        tableName = 'applied_'+self.getSettingTable(settingType)
+        idName = 'id_'+tableName
+        sql = '''INSERT INTO public.{0} ({1}, dboid) VALUES ('{2}',{3})'''.format(tableName, idName, recDict['id'], dbOid)
+        return sql
+    
+    def getDbOID(self, dbName):
+        sql = '''SELECT oid from pg_database where datname = {0}'''.format(dbName)
+        return sql
