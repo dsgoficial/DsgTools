@@ -225,7 +225,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         selected = dlg.getSelected()
         if selected == []:
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one configuration!'))
-            return
+            return (dict(),dict())
         successDict = dict()
         exceptionDict = dict()
         for config in selected:
