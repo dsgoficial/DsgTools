@@ -170,7 +170,7 @@ class DpiThread(GenericThread):
             bands = range(0, imgIn.RasterCount)
 
         #Creating a temp image, with the same input parameters, to store the converted input image to 8 bits
-        imgOut = outDriver.Create(outFileTmp,imgIn.RasterXSize, imgIn.RasterYSize, len(bands), rasterType, options=createOptions)
+        imgOut = outDriver.Create(outFileTmp, imgIn.RasterXSize, imgIn.RasterYSize, len(bands), rasterType, options=createOptions)
         imgOut.SetProjection(imgIn.GetProjection())
         imgOut.SetGeoTransform(imgIn.GetGeoTransform())
 
@@ -186,19 +186,23 @@ class DpiThread(GenericThread):
                 self.signals.stepProcessed.emit(self.getId())
 
                 #computing percentile
-                newArr=arr.flatten()
+                newArr = arr.flatten()
                 newArr.sort()
-                total=len(newArr)
-                minValue=float(newArr[int(bottomPercent*total)])
-                maxValue=float(newArr[int(math.ceil(topPercent*total))])
+                total = len(newArr)
+                if percent == 0:
+                    minValue = float(newArr[0])
+                    maxValue = float(newArr[total-1])
+                else:
+                    minValue = float(newArr[int(bottomPercent*total)])
+                    maxValue = float(newArr[int(math.ceil(topPercent*total))])
                 del newArr
                 # Updating progress
                 self.signals.stepProcessed.emit(self.getId())
 
                 #Transformation parameters
                 #Rouding the values out of bounds
-                numpy.putmask(arr, arr>maxValue,maxValue)
-                numpy.putmask(arr, arr<minValue,minValue)
+                numpy.putmask(arr, arr > maxValue, maxValue)
+                numpy.putmask(arr, arr < minValue, minValue)
                 # Updating progress
                 self.signals.stepProcessed.emit(self.getId())
 
@@ -215,7 +219,7 @@ class DpiThread(GenericThread):
                 # Updating progress
                 self.signals.stepProcessed.emit(self.getId())
 
-                QgsMessageLog.logMessage("Band "+ str(bandNumber)+ ": "+str(minValue)+" , "+str(maxValue),"DSG Tools Plugin", QgsMessageLog.INFO)
+                QgsMessageLog.logMessage("Band " + str(bandNumber) + ": "+str(minValue)+" , "+str(maxValue), "DSG Tools Plugin", QgsMessageLog.INFO)
             else:
                 QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
                 return -1
