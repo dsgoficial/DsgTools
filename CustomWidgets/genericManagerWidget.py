@@ -172,6 +172,9 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         self.treeWidget.clear()
         rootNode = self.treeWidget.invisibleRootItem()
         for key in propertyPerspectiveDict.keys():
+            if viewType == 'database':
+                if key not in self.genericDbManager.dbDict.keys():
+                    continue
             parentCustomItem = self.utils.createWidgetItem(rootNode, key, 0)
             for item in propertyPerspectiveDict[key]:
                 dbItem = self.utils.createWidgetItem(parentCustomItem, item, 1)
