@@ -202,3 +202,50 @@ class GenericDbManager(QObject):
     def getRecordFromAdminDb(self, propertyName, edgvVersion):
         settingType = self.getManagerType()
         return self.adminDb.getRecordFromAdminDb(settingType, propertyName, edgvVersion)
+
+    def installConfig(self, configName, dbNameList = []):
+        """
+        Generic install. Can be reinplenented in child methods.
+        """
+        errorDict = dict()
+        settingType = self.getManagerType()
+        if dbNameList == []:
+            dbNameList = self.dbDict.keys()
+        successList = []
+        for dbName in dbNameList:
+            abstractDb = self.dbDict[dbName]
+            edgvVersion = abstractDb.getDatabaseVersion()
+            recDict = self.adminDb.getRecordFromAdminDb(settingType, configName, edgvVersion)
+            try:
+                if not abstractDb.checkIfExistsConfigTable(settingType):
+                    abstractDb.createSettingTable(settingType)
+            except Exception as e:
+                errorDict[dbName] = str(e.args[0])
+                continue
+            try:
+                abstractDb.db.transaction()
+                self.adminDb.db.transaction()
+                abstractDb.insertRecordInsidePropertyTable(settingType, recDict, edgvVersion)
+                dbOid = abstractDb.getDbOID()
+                self.adminDb.insertInstalledRecordIntoAdminDb(settingType, recDict, dbOid)
+                abstractDb.db.commit()
+                self.adminDb.db.commit()
+            except Exception as e:
+                abstractDb.db.rollback()
+                self.adminDb.db.rollback()
+                errorDict[dbName] = str(e.args[0])
+            successList.append(dbName)
+        return (successList, errorDict)
+    
+    def removeConfig(self, configName, dbNameList = []):
+        '''
+        Generic remove. Can be reinplenented in child methods.
+        '''
+
+        pass
+
+    def updateConfig(self, configName):
+        '''
+        Generic update. Can be reinplenented in child methods.
+        '''
+        pass

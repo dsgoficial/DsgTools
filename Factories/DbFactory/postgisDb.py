@@ -2843,14 +2843,14 @@ class PostgisDb(AbstractDb):
             customDict[jsonDict['name']] = jsonDict['array_agg']
         return customDict
     
-    def createFieldToolBoxConfigTable(self):
+    def createSettingTable(self, settingType, ):
         self.checkAndOpenDb()
         self.db.transaction()
-        createSql = self.gen.createFieldToolBoxConfigTable()
+        createSql = self.gen.createSettingTable(settingType)
         query = QSqlQuery(self.db)
         if not query.exec_(createSql):
             self.db.rollback()
-            raise Exception(self.tr('Problem creating Field Toolbox Config table: ') + query.lastError().text())
+            raise Exception(self.tr('Problem creating Setting table: ') + query.lastError().text())
         self.db.commit()
     
     def checkIfTableExists(self, schema, tableName):
@@ -2864,8 +2864,9 @@ class PostgisDb(AbstractDb):
                 return True
         return False
 
-    def checkIfExistsFieldToolBoxConfigTable(self):
-        return self.checkIfTableExists('public','field_toolbox_config')
+    def checkIfExistsConfigTable(self, settingType):
+        settingTable = self.gen.getSettingTable(settingType)
+        return self.checkIfTableExists('public', settingTable)
     
     def getRecordFromAdminDb(self, settingType, propertyName, edgvVersion):
         self.checkAndOpenDb()

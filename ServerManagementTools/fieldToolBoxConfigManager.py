@@ -40,42 +40,6 @@ class FieldToolBoxConfigManager(GenericDbManager):
     """
     def __init__(self, serverAbstractDb, dbDict, parentWidget = None):
         super(self.__class__,self).__init__(serverAbstractDb, dbDict, parentWidget = None)
-    
-    def installFieldToolBoxConfig(self, fieldToolBoxConfigName):
-        """
-        """
-        errorDict = dict()
-        settingType = self.getManagerType()
-        for dbName in self.dbDict.keys():
-            abstractDb = self.dbDict[dbName]
-            edgvVersion = abstractDb.getDatabaseVersion()
-            recDict = self.adminDb.getRecordFromAdminDb(settingType, fieldToolBoxConfigName, edgvVersion)
-            try:
-                if not abstractDb.checkIfExistsFieldToolBoxConfigTable():
-                    abstractDb.createFieldToolBoxConfigTable()
-            except Exception as e:
-                errorDict[dbName] = str(e.args[0])
-            try:
-                abstractDb.db.transaction()
-                self.adminDb.db.transaction()
-                abstractDb.insertRecordInsidePropertyTable(settingType, recDict, edgvVersion)
-                dbOid = abstractDb.getDbOID()
-                self.adminDb.insertInstalledRecordIntoAdminDb(settingType, recDict, dbOid)
-                abstractDb.db.commit()
-                self.adminDb.db.commit()
-            except Exception as e:
-                abstractDb.db.rollback()
-                self.adminDb.db.rollback()
-                errorDict[dbName] = str(e.args[0])
-        if errorDict != dict():
-            errorString = '\n'.join([key+': '+errorDict[key] for key in errorDict.keys()])
-            raise Exception(self.tr('Unable installing field toolbox config:\n') + errorString)
-    
-    def removeFieldToolBoxConfig(self, fieldToolBoxConfigName, edgvVersion, dbNameList):
-        pass
-
-    def updateFieldToolBoxConfig(self, customizationName):
-        pass
 
     def validateJsonProfile(self, inputJsonDict):
         """

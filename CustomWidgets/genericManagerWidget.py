@@ -28,6 +28,7 @@ from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
 from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog
 
 #DsgTools imports
+from DsgTools.CustomWidgets.listSelector import ListSelector
 from DsgTools.Utils.utils import Utils
 
 from qgis.core import QgsMessageLog
@@ -182,3 +183,56 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
                     dbItem = self.utils.createWidgetItem(parentCustomItem, item, 1)
         self.treeWidget.sortItems(0, Qt.AscendingOrder)
         self.treeWidget.expandAll()
+    
+    def outputMessage(self, operation, header, successDict, exceptionDict):
+        '''
+        successDict = {-setting-:[--list of successful databases--]}
+        '''
+        viewType = self.setHeaders()
+        msg = header
+        for setting in successDict.keys():
+            successList = successDict[setting]
+            if len(successDict[setting]) > 0:
+                msg += self.tr('\nSuccessful ')
+                msg += operation + ' :'
+                msg += setting
+                if len(successList) > 0:
+                    msg += self.tr(' on databases ') + ','.join(successList)
+        msg += self.logInternalError(exceptionDict)
+        QMessageBox.warning(self, self.tr('Operation Complete!'), msg)
+    
+    def logInternalError(self, exceptionDict):
+        msg = ''
+        configErrorList = exceptionDict.keys()
+        if len(configErrorList)> 0:
+            msg += self.tr('\Config with error:')
+            msg+= ', '.join(configErrorList)
+            msg+= self.tr('\nError messages for each database were output in qgis log.')
+            for configError in configErrorList:
+                QgsMessageLog.logMessage(self.tr('Error for config ')+ configError + ': ' +exceptionDict[configError], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        return msg 
+
+    def manageSetting(self, config, manageType):
+        if manageType == 'install':
+            return self.genericDbManager.installConfig(config)
+        elif manageType == 'delete':
+            return self.genericDbManager.deleteConfig(config)
+
+    def manageSettings(self, manageType, dbList):
+        availableConfig = self.genericDbManager.getPropertyPerspectiveDict().keys()
+        dlg = ListSelector(availableConfig,[])
+        dlg.exec_()
+        selected = dlg.getSelected()
+        if selected == []:
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one configuration!'))
+            return
+        successDict = dict()
+        exceptionDict = dict()
+        for config in selected:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            sucessList, errorDict = self.manageSetting(config, manageType)
+            QApplication.restoreOverrideCursor()
+            successDict[config] = sucessList
+            exceptionDict[config] = errorDict
+            self.refresh()
+        return sucessList, exceptionDict
