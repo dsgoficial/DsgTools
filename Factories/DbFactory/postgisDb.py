@@ -1528,7 +1528,7 @@ class PostgisDb(AbstractDb):
         while query.next():
             return query.value(0)
     
-    def getDbOID():
+    def getDbOID(self):
         self.checkAndOpenDb()
         sql = self.gen.getDbOID(self.db.databaseName())
         query = QSqlQuery(sql, self.db)
@@ -2878,12 +2878,14 @@ class PostgisDb(AbstractDb):
             retDict['id'] = query.value(0)
             retDict['name'] = query.value(1)
             retDict['jsondict'] = query.value(2)
-            retDict['edgvdict'] = query.value(2)
+            retDict['edgvversion'] = query.value(3)
             #yes, this return is inside the while. Why? Because I said so!
             return retDict
     
-    def insertRecordInsidePropertyTable(self, settingType, settingDict, useTransaction = False):
+    def insertRecordInsidePropertyTable(self, settingType, settingDict, edgvVersion, useTransaction = False):
         self.checkAndOpenDb()
+        if edgvVersion != self.getDatabaseVersion():
+            raise Exception(self.tr('Invalid property with database version.'))
         if useTransaction:
             self.db.transaction()
         createSql = self.gen.insertRecordInsidePropertyTable(settingType, settingDict)
@@ -2894,6 +2896,22 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem inserting record inside property table: ') + query.lastError().text())
         if useTransaction:
             self.db.commit()
+    
+    def getPropertyDict(self, settingType):
+        self.checkAndOpenDb()
+        sql = self.gen.getAllPropertiesFromDb(settingType)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting getting property dict: ")+query.lastError().text())
+        propertyDict = dict()
+        while query.next():
+            edgvVersion = query.value(0)
+            name = query.value(1)
+            jsonDict = json.loads(query.value(2))
+            if edgvVersion not in propertyDict.keys():
+                propertyDict[edgvVersion] = dict()
+            propertyDict[edgvVersion][name] = jsonDict
+        return propertyDict
     
     def insertInstalledRecordIntoAdminDb(self, settingType, recDict, dbOid, useTransaction = False):
         self.checkAndOpenDb()

@@ -229,7 +229,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getTableDomains(self,tableList):
-        schemas = '\''+'\',\''.join(schemaList)+'\''
+        schemas = '\''+'\',\''.join(tableList)+'\''
         sql = '''SELECT
                 tc.table_schema,tc.table_name, kcu.column_name, 
                 ccu.table_name AS foreign_table_name,
@@ -660,7 +660,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sqls
     
     def getOrphanTableElementCount(self, orphan):
-        cl = '"'+'"."'.join(cl.replace('"','').split('.'))+'"'
+        orphan = '"'+'"."'.join(orphan.replace('"','').split('.'))+'"'
         sql = "select id from %s limit 1" % orphan
         return sql
     
@@ -1323,6 +1323,19 @@ class PostGISSqlGenerator(SqlGenerator):
         tableName = self.getSettingTable(settingType)
         sql = '''SELECT id, name, jsondict, edgvversion from public.{0} where name = '{1}' and edgvversion = '{2}' '''.format(tableName, propertyName, edgvVersion)
         return sql
+
+    def createPropertyTable(self, settingType):
+        tableName = self.getSettingTable(settingType)
+        sql = '''CREATE TABLE IF NOT EXISTS public.{0}(
+                id uuid NOT NULL DEFAULT uuid_generate_v4(),
+                name text,
+                jsondict text NOT NULL,
+                edgvversion text,
+                CONSTRAINT {0}_pk PRIMARY KEY (id),
+                CONSTRAINT {0}_unique_name_and_version UNIQUE (name,edgvversion)
+                );
+            '''
+        return sql
     
     def insertRecordInsidePropertyTable(self, settingType, settingDict):
         tableName = self.getSettingTable(settingType)
@@ -1336,5 +1349,10 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getDbOID(self, dbName):
-        sql = '''SELECT oid from pg_database where datname = {0}'''.format(dbName)
+        sql = '''SELECT oid from pg_database where datname = '{0}' '''.format(dbName)
+        return sql
+    
+    def getAllPropertiesFromDb(self, settingType):
+        tableName = self.getSettingTable(settingType)
+        sql = '''select edgvversion, name, jsondict from public.{0}'''.format(tableName)
         return sql

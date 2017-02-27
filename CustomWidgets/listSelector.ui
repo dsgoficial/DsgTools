@@ -11,22 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Select items</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="1">
-    <widget class="QPushButton" name="applyPushButton">
-     <property name="text">
-      <string>Select</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QPushButton" name="cancelPushButton">
-     <property name="text">
-      <string>Cancel</string>
-     </property>
-    </widget>
+   <item row="0" column="0" colspan="2">
+    <widget class="CustomSelector" name="listCustomSelector" native="true"/>
    </item>
    <item row="1" column="0">
     <spacer name="horizontalSpacer">
@@ -41,8 +30,12 @@
      </property>
     </spacer>
    </item>
-   <item row="0" column="0" colspan="3">
-    <widget class="CustomSelector" name="listCustomSelector" native="true"/>
+   <item row="1" column="1">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

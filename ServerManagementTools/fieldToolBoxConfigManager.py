@@ -41,14 +41,15 @@ class FieldToolBoxConfigManager(GenericDbManager):
     def __init__(self, serverAbstractDb, dbDict, parentWidget = None):
         super(self.__class__,self).__init__(serverAbstractDb, dbDict, parentWidget = None)
     
-    def installFieldToolBoxConfig(self, fieldToolBoxConfigName, edgvVersion):
+    def installFieldToolBoxConfig(self, fieldToolBoxConfigName):
         """
         """
         errorDict = dict()
         settingType = self.getManagerType()
-        recDict = self.genericDbManager.getRecordFromAdminDb(fieldToolBoxConfigName, edgvVersion)
         for dbName in self.dbDict.keys():
             abstractDb = self.dbDict[dbName]
+            edgvVersion = abstractDb.getDatabaseVersion()
+            recDict = self.adminDb.getRecordFromAdminDb(settingType, fieldToolBoxConfigName, edgvVersion)
             try:
                 if not abstractDb.checkIfExistsFieldToolBoxConfigTable():
                     abstractDb.createFieldToolBoxConfigTable()
@@ -57,8 +58,8 @@ class FieldToolBoxConfigManager(GenericDbManager):
             try:
                 abstractDb.db.transaction()
                 self.adminDb.db.transaction()
-                abstractDb.insertRecordInsidePropertyTable(settingType, recDict)
-                dbOid = abstractDb.getDbOid()
+                abstractDb.insertRecordInsidePropertyTable(settingType, recDict, edgvVersion)
+                dbOid = abstractDb.getDbOID()
                 self.adminDb.insertInstalledRecordIntoAdminDb(settingType, recDict, dbOid)
                 abstractDb.db.commit()
                 self.adminDb.db.commit()

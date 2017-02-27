@@ -35,7 +35,7 @@
      </spacer>
     </item>
     <item row="2" column="0" colspan="2">
-     <widget class="QComboBox" name="comboBox">
+     <widget class="QComboBox" name="configFromDbComboBox">
       <property name="enabled">
        <bool>false</bool>
       </property>

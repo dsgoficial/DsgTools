@@ -45,11 +45,11 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
         """
         super(self.__class__, self).__init__(genericDbManager = manager, parent = parent)
 
-    def setParameters(self, serverAbstractDb):
+    def setParameters(self, serverAbstractDb, dbsDict = {}):
         if serverAbstractDb:
             self.setComponentsEnabled(True)
             self.serverAbstractDb = serverAbstractDb
-            self.genericDbManager = FieldToolBoxConfigManager(serverAbstractDb, {})
+            self.genericDbManager = FieldToolBoxConfigManager(serverAbstractDb, dbsDict)
             self.refresh()
         else:
             self.setComponentsEnabled(False)
@@ -82,16 +82,22 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
     @pyqtSlot(bool)
     def on_applyPushButton_clicked(self):
         availableConfig = self.genericDbManager.getPropertyPerspectiveDict().keys()
-
-        try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.genericDbManager.deleteCustomization(customizationName, edgvVersion)
-            QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Success!'), self.tr('Customization ') + customizationName + self.tr(' successfully deleted.'))
-            self.refreshProfileList()
-        except Exception as e:
-            QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem deleting customization: ') + e.args[0])
+        dlg = ListSelector(availableConfig,[])
+        dlg.exec_()
+        selected = dlg.getSelected()
+        if selected == []:
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one configuration!'))
+            return
+        for config in availableConfig:
+            try:
+                QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+                self.genericDbManager.installFieldToolBoxConfig(config)
+                QApplication.restoreOverrideCursor()
+                QMessageBox.warning(self, self.tr('Success!'), self.tr('Field Toolbox config ') + config + self.tr(' successfully installed.'))
+                self.refresh()
+            except Exception as e:
+                QApplication.restoreOverrideCursor()
+                QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem applying field toolbox config: ') + e.args[0])
     
     @pyqtSlot(bool)
     def on_deleteCustomizationPushButton_clicked(self):

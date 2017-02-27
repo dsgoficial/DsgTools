@@ -58,6 +58,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.widget.dbChanged.connect(self.defineFactory)
         self.releaseButtonConected = False
         self.addedFeatures = []
+        self.configFromDbDict = dict()
     
     def defineFactory(self, abstractDb):
         """
@@ -66,6 +67,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         :return:
         """
         self.layerLoader = LayerLoaderFactory().makeLoader(self.iface, abstractDb)
+        self.populateConfigFromDb()
     
     def setEditButtonEnabled(self, enabled):
         """
@@ -86,7 +88,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             return
         sender = self.sender().text()
         dlg = FieldSetup(self.widget.abstractDb)
-        if sender == self.tr('Edit Current Config'):
+        if sender != self.tr('Setup'):
             dlg.loadReclassificationConf(self.reclassificationDict)
         result = dlg.exec_()
         
@@ -470,3 +472,24 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                         #returning the desired edgvClass
                         return (category, edgvClass)
         return ()
+    
+    def populateConfigFromDb(self):
+        driverName = self.widget.abstractDb.getType()
+        self.configFromDbComboBox.clear()
+        self.configFromDbComboBox.addItem(self.tr('Select Stored Config (optional)'))
+        if driverName == 'QPSQL':
+            propertyDict = self.widget.abstractDb.getPropertyDict('FieldToolBoxConfig')
+            dbVersion = self.widget.abstractDb.getDatabaseVersion()
+            if dbVersion in propertyDict.keys():
+                self.configFromDbDict = propertyDict[dbVersion]
+            for name in self.configFromDbDict.keys():
+                self.configFromDbComboBox.addItem(name)
+        else:
+            self.configFromDbComboBox.setEnabled(False)
+            self.configFromDbDict = dict()
+    
+    @pyqtSlot(int)
+    def on_configFromDbComboBox_currentIndexChanged(self, idx):
+        if idx != 0:
+            self.reclassificationDict = self.configFromDbDict[self.configFromDbComboBox.currentText()]
+            self.populateWindow()

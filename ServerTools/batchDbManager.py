@@ -62,6 +62,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         self.dbsCustomSelector.selectionChanged.connect(self.showTabs)
         self.dbsCustomSelector.selectionChanged.connect(self.populateStylesInterface)
         self.dbsCustomSelector.selectionChanged.connect(self.populatePermissionsInterface)
+        self.dbsCustomSelector.selectionChanged.connect(self.populateOtherInterfaces)
         self.previousTab = 0
 
     @pyqtSlot(bool)
@@ -378,8 +379,9 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
             self.permissionWidget.refresh()
 
     def populateOtherInterfaces(self):
-        self.customizationManagerWidget.setParameters(self.serverWidget.abstractDb)
-        self.fieldToolBoxConfigManagerWidget.setParameters(self.serverWidget.abstractDb)
+        dbsDict = self.instantiateAbstractDbs()
+        self.customizationManagerWidget.setParameters(self.serverWidget.abstractDb, dbsDict = dbsDict)
+        self.fieldToolBoxConfigManagerWidget.setParameters(self.serverWidget.abstractDb, dbsDict = dbsDict)
     
     @pyqtSlot(int)
     def on_tabWidget_currentChanged(self, index):
