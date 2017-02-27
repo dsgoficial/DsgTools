@@ -439,6 +439,19 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 else:
                     value = widgetItem.setText(value)
             
+    def getUiParameterJsonDict(self):
+        """
+        builds a dict with the following format:
+        {
+            'slider': --slider value --
+            'checkBox': --check state of checkBox --
+        }
+        """
+        uiParameterJsonDict = dict()
+        uiParameterJsonDict['slider'] = self.slider.value()
+        uiParameterJsonDict['checkBox'] = self.checkBox.isChecked()
+        return uiParameterJsonDict
+    
     def makeReclassificationDict(self):
         """
         Makes the reclassification dictionary used to perform the actual reclassification
@@ -446,7 +459,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         reclassificationDict = dict()
         
         reclassificationDict['version'] = self.edgvVersion
-        
+        reclassificationDict['uiParameterJsonDict'] = self.getUiParameterJsonDict()
         #invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
 
@@ -476,7 +489,20 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             file.close()
             return reclassificationDict
         except:
-            return dict()    
+            return dict()
+    
+    def populateFromUiParameterJsonDict(self, uiParameterJsonDict):
+        """
+        populates ui from  uiParameterJsonDict with the following keys:
+        {
+            'slider': --slider value --
+            'checkBox': --check state of checkBox --
+        }
+        """
+        if uiParameterJsonDict:
+            self.slider.setValue(uiParameterJsonDict['slider'])
+            if uiParameterJsonDict['checkBox']:
+                self.checkBox.setCheckState(2)
     
     def loadReclassificationConf(self, reclassificationDict):
         """
@@ -492,6 +518,8 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         for category in reclassificationDict.keys():
             if category == 'version':
                 continue
+            if category == 'uiParameterJsonDict':
+                self.populateFromUiParameterJsonDict(reclassificationDict[category])
             categoryItem = QTreeWidgetItem(rootItem)
             categoryItem.setText(0, category)
             for edgvClass in reclassificationDict[category].keys():

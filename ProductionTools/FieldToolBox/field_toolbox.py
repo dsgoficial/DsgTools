@@ -93,7 +93,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         dlg = FieldSetup(self.widget.abstractDb)
         if sender != self.tr('Setup'):
             dlg.loadReclassificationConf(self.reclassificationDict)
-        result = dlg.exec_()
+        if sender != '':
+            result = dlg.exec_()
+        else:
+            result = 1
         
         if result == 1:
             self.createButtonsOnInterface(dlg)
@@ -203,7 +206,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.createWidgetWithoutTabs(formLayout)
         sortedButtonNames = []
         for category in reclassificationDict.keys():
-            if category == 'version':
+            if category in ['version', 'uiParameterJsonDict']:
                 continue
             for edgvClass in reclassificationDict[category].keys():
                 for button in reclassificationDict[category][edgvClass].keys():
