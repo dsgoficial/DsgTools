@@ -1337,6 +1337,22 @@ class PostGISSqlGenerator(SqlGenerator):
             '''
         return sql
     
+    def getPropertyPerspectiveDict(self, settingType, perspective):
+        tableName = self.getSettingTable(settingType)
+        if perspective == 'property':
+            sql = '''select row_to_json(a) from (
+                        select name, array_agg(datname) from public.{0} as custom 
+                            left join applied_{0} as appcust on custom.id = appcust.id_applied_{0}
+                            left join pg_database as pgd on pgd.oid = appcust.dboid group by name
+                    ) as a'''.format(tableName)
+        if perspective == 'database':
+            sql = '''select row_to_json(a) from (
+                        select datname as name, array_agg(name) from public.{0} as custom 
+                            left join applied_{0} as appcust on custom.id = appcust.id_applied_{0}
+                            left join pg_database as pgd on pgd.oid = appcust.dboid group by datname
+                    ) as a'''.format(tableName)
+        return sql
+    
     def insertRecordInsidePropertyTable(self, settingType, settingDict):
         tableName = self.getSettingTable(settingType)
         sql = '''INSERT INTO public.{0} (name, jsondict, edgvversion) VALUES ('{1}','{2}','{3}')'''.format(tableName, settingDict['name'], settingDict['jsondict'], settingDict['edgvversion'])

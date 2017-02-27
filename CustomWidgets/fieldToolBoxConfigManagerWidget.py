@@ -87,7 +87,7 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
         self.outputMessage(operation, header, successDict, exceptionDict)
 
     @pyqtSlot(bool)
-    def on_deleteCustomizationPushButton_clicked(self):
+    def on_deletePushButton_clicked(self):
         dbList = []
         successDict, exceptionDict = self.manageSettings('delete', dbList)
         header = self.tr('Delete Field Toolbox configuration complete. \n')

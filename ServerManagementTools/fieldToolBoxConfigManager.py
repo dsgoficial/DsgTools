@@ -50,11 +50,3 @@ class FieldToolBoxConfigManager(GenericDbManager):
         """
         #TODO
         return True
-    
-    def getPropertyPerspectiveDict(self, viewType = 'property'):
-        """
-        Gets a dict in the format:
-        if viewType == 'customization': {customizationName: ['-list of databases with customization']}
-        if viewType == 'database': {databaseName: ['-list of customizations with customization']}
-        """
-        return self.adminDb.getFieldToolBoxConfigPerspectiveDict(viewType)

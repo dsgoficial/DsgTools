@@ -2831,9 +2831,9 @@ class PostgisDb(AbstractDb):
             customDict[jsonDict['name']] = jsonDict['array_agg']
         return customDict
 
-    def getFieldToolBoxConfigPerspectiveDict(self, perspective):
+    def getPropertyPerspectiveDict(self, settingType, perspective):
         self.checkAndOpenDb()
-        sql = self.gen.getFieldToolBoxConfigPerspectiveDict(perspective)
+        sql = self.gen.getPropertyPerspectiveDict(settingType, perspective)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting applied customizations: ")+query.lastError().text())

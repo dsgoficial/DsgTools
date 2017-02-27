@@ -192,6 +192,15 @@ class GenericDbManager(QObject):
             for profileName in settingDict[edgvVersion]:
                 self.exportSetting(profileName, edgvVersion, outputPath)
 
+    def getPropertyPerspectiveDict(self, viewType = 'property'):
+        """
+        Gets a dict in the format:
+        if viewType == 'customization': {customizationName: ['-list of databases with customization']}
+        if viewType == 'database': {databaseName: ['-list of customizations with customization']}
+        """
+        settingType = self.getManagerType()
+        return self.adminDb.getPropertyPerspectiveDict(settingType, viewType)
+    
     def validateJsonSetting(self, inputJsonDict):
         '''
         reimplemented in each child
@@ -239,13 +248,13 @@ class GenericDbManager(QObject):
     
     def removeConfig(self, configName, dbNameList = []):
         '''
-        Generic remove. Can be reinplenented in child methods.
+        Generic remove. Can be reimplenented in child methods.
         '''
 
         pass
 
     def updateConfig(self, configName):
         '''
-        Generic update. Can be reinplenented in child methods.
+        Generic update. Can be reimplenented in child methods.
         '''
         pass
