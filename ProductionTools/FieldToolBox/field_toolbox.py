@@ -24,8 +24,8 @@ import os
 
 # Qt imports
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, Qt
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
+from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
+from PyQt4.QtGui import QPushButton
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsDataSourceURI, QgsGeometry, QgsMapLayerRegistry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsEditFormConfig
@@ -86,7 +86,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         if self.widget.abstractDb == None:
             QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('First select a database!'))
             return
-        sender = self.sender().text()
+        if isinstance(self.sender, QPushButton):
+            sender = self.sender().text()
+        else:
+            sender = ''
         dlg = FieldSetup(self.widget.abstractDb)
         if sender != self.tr('Setup'):
             dlg.loadReclassificationConf(self.reclassificationDict)
@@ -298,6 +301,8 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         Sets the attributes for the newly added feature
         featureId: added feature
         """
+        layer = self.sender()
+        layer.beginEditCommand(self.tr('DsgTools reclassification'))
         self.addedFeatures.append(featureId)
 
     def updateAttributesAfterAdding(self):
@@ -309,7 +314,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         while self.addedFeatures:
             featureId = self.addedFeatures.pop()
             #begining the edit command
-            layer.beginEditCommand(self.tr('DSG Tools reclassification tool: adjusting feature attributes'))
+            # layer.beginEditCommand(self.tr("DSG Tools reclassification tool: adjusting feature's attributes"))
             #accessing added features
             editBuffer = layer.editBuffer()
             features = editBuffer.addedFeatures()
@@ -478,6 +483,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.configFromDbComboBox.clear()
         self.configFromDbComboBox.addItem(self.tr('Select Stored Config (optional)'))
         if driverName == 'QPSQL':
+            self.configFromDbComboBox.setEnabled(True)
             propertyDict = self.widget.abstractDb.getPropertyDict('FieldToolBoxConfig')
             dbVersion = self.widget.abstractDb.getDatabaseVersion()
             if dbVersion in propertyDict.keys():
@@ -490,6 +496,6 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
     
     @pyqtSlot(int)
     def on_configFromDbComboBox_currentIndexChanged(self, idx):
-        if idx != 0:
+        if idx != 0 and idx != -1:
             self.reclassificationDict = self.configFromDbDict[self.configFromDbComboBox.currentText()]
             self.populateWindow()
