@@ -228,7 +228,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.scrollArea.setWidget(tabWidget)
         
         for category in reclassificationDict.keys():
-            if category == 'version':
+            if category in ['version', 'uiParameterJsonDict']:
                 continue
             sortedButtonNames = []
             formLayout = QtGui.QFormLayout()
@@ -482,6 +482,9 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         return ()
     
     def populateConfigFromDb(self):
+        """
+        Populates configFromDbComboBox with config from public.field_toolbox_config
+        """
         driverName = self.widget.abstractDb.getType()
         self.configFromDbComboBox.clear()
         self.configFromDbComboBox.addItem(self.tr('Select Stored Config (optional)'))
@@ -502,3 +505,6 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         if idx != 0 and idx != -1:
             self.reclassificationDict = self.configFromDbDict[self.configFromDbComboBox.currentText()]
             self.populateWindow()
+        if idx == 0:
+            self.reclassificationDict = {}
+            self.createButtonsWithTabs(self.reclassificationDict)
