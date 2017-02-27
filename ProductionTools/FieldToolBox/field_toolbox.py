@@ -86,7 +86,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         if self.widget.abstractDb == None:
             QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('First select a database!'))
             return
-        if isinstance(self.sender, QPushButton):
+        if isinstance(self.sender(), QPushButton):
             sender = self.sender().text()
         else:
             sender = ''
@@ -494,7 +494,9 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             dbVersion = self.widget.abstractDb.getDatabaseVersion()
             if dbVersion in propertyDict.keys():
                 self.configFromDbDict = propertyDict[dbVersion]
-            for name in self.configFromDbDict.keys():
+            nameList = self.configFromDbDict.keys()
+            nameList.sort()
+            for name in nameList:
                 self.configFromDbComboBox.addItem(name)
         else:
             self.configFromDbComboBox.setEnabled(False)

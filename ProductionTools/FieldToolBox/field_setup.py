@@ -520,6 +520,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 continue
             if category == 'uiParameterJsonDict':
                 self.populateFromUiParameterJsonDict(reclassificationDict[category])
+                continue
             categoryItem = QTreeWidgetItem(rootItem)
             categoryItem.setText(0, category)
             for edgvClass in reclassificationDict[category].keys():
