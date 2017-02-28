@@ -51,6 +51,18 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
                             'Style':self.tr('Style'), 
                             'ValidationConfig':self.tr('Validation'), 
                             'FieldToolBoxConfig':self.tr('Field Toolbox Configuration')}
+        self.captionDict = {'EarthCoverage':self.tr('Earth Coverage'), 
+                            'Customization':self.tr('Customization'), 
+                            'Style':self.tr('Style'), 
+                            'ValidationConfig':self.tr('Validation'), 
+                            'FieldToolBoxConfig':self.tr('Reclassification Setup Files'),
+                            'Permission':self.tr('Select a dsgtools profile')}
+        self.filterDict = {'EarthCoverage':'.dsgearthcov', 
+                            'Customization':'.dsgcustom', 
+                            'Style':'.dsgstyle', 
+                            'ValidationConfig':'.dsgvalidcfg', 
+                            'FieldToolBoxConfig':'.reclas',
+                            'Permission':'.dsgperm'}
         self.widgetName = self.textDict[self.getWhoAmI()]
         self.genericDict = None
         self.setComponentsEnabled(False)
@@ -107,7 +119,8 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_importPushButton_clicked(self):
         fd = QFileDialog()
-        filename = fd.getOpenFileName(caption=self.tr('Select a dsgtools profile'),filter=self.tr('json file (*.json)'))
+        widgetType = self.getWhoAmI()
+        filename = fd.getOpenFileName(caption=self.captionDict[widgetType],filter=self.filterDict[widgetType])
         if filename == '':
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a file to import!'))
             return
