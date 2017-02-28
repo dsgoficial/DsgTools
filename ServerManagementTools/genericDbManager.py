@@ -48,7 +48,8 @@ class GenericDbManager(QObject):
                     'Customization':'.dsgcustom', 
                     'Style':'.dsgstyle', 
                     'ValidationConfig':'.dsgvalidcfg', 
-                    'FieldToolBoxConfig':'.reclas'}
+                    'FieldToolBoxConfig':'.reclas',
+                    'Permission':'.dsgperm'}
         self.edgvVersion = edgvVersion
 
     def getManagerType(self):

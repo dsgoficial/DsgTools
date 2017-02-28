@@ -50,13 +50,14 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
                             'Customization':self.tr('Customization'), 
                             'Style':self.tr('Style'), 
                             'ValidationConfig':self.tr('Validation'), 
-                            'FieldToolBoxConfig':self.tr('Field Toolbox Configuration')}
+                            'FieldToolBoxConfig':self.tr('Field Toolbox Configuration'),
+                            'Permission':self.tr('Permissions')}
         self.captionDict = {'EarthCoverage':self.tr('Earth Coverage'), 
                             'Customization':self.tr('Customization'), 
                             'Style':self.tr('Style'), 
                             'ValidationConfig':self.tr('Validation'), 
                             'FieldToolBoxConfig':self.tr('Reclassification Setup Files'),
-                            'Permission':self.tr('Select a dsgtools profile')}
+                            'Permission':self.tr('Select a dsgtools permission profile')}
         self.filterDict = {'EarthCoverage':'.dsgearthcov', 
                             'Customization':'.dsgcustom', 
                             'Style':'.dsgstyle', 
