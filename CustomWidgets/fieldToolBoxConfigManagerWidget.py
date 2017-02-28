@@ -71,9 +71,8 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Field Toolbox Configuration Name already exists!'))
             return
         templateDb = self.genericDbManager.instantiateTemplateDb(edgvVersion)
-        ret, fieldDlg = self.populateConfigInterface(templateDb)
-        if ret == 1:
-            fieldSetupDict = fieldDlg.makeReclassificationDict()
+        fieldSetupDict = self.populateConfigInterface(templateDb)
+        if fieldSetupDict:
             self.genericDbManager.createSetting(propertyName,edgvVersion,fieldSetupDict)
             self.refresh()
     
@@ -82,23 +81,25 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
         Must be reimplemented in each child
         '''
         fieldDlg = FieldSetup(templateDb,returnDict = True)
-        if not jsonDict:
+        if jsonDict:
             fieldDlg.loadReclassificationConf(jsonDict)
         ret = fieldDlg.exec_()
-        return ret, fieldDlg
+        if ret == 1:
+            return fieldDlg.makeReclassificationDict()
+        else:
+            return None
 
     @pyqtSlot(bool)
     def on_applyPushButton_clicked(self):
         dbList = self.genericDbManager.dbDict.keys()
-        successDict, exceptionDict = self.manageSettings('install', dbList)
+        successDict, exceptionDict = self.manageSettings('install', dbList = dbList)
         header = self.tr('Install Field Toolbox configuration complete. \n')
         operation = self.tr('field toolbox configurations')
         self.outputMessage(operation, header, successDict, exceptionDict)
 
     @pyqtSlot(bool)
     def on_deletePushButton_clicked(self):
-        dbList = []
-        successDict, exceptionDict = self.manageSettings('delete', dbList)
+        successDict, exceptionDict = self.manageSettings('delete')
         header = self.tr('Delete Field Toolbox configuration complete. \n')
         operation = self.tr('field toolbox configurations')
         self.outputMessage(operation, header, successDict, exceptionDict)
@@ -110,3 +111,8 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
         header = self.tr('Uninstall Field Toolbox configuration complete. \n')
         operation = self.tr('field toolbox configurations')
         self.outputMessage(operation, header, successDict, exceptionDict)
+    
+    def getUpdateSelectedSettingHeader(self):
+        header = self.tr('Update Field Toolbox configuration complete. \n')
+        operation = self.tr('field toolbox configuration')
+        return header, operation

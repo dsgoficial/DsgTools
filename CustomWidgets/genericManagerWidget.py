@@ -92,7 +92,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         self.databasePerspectivePushButton.setEnabled(enabled)
         self.propertyPerspectivePushButton.setEnabled(enabled)
 
-    def populateConfigInterface(self):
+    def populateConfigInterface(self, templateDb, jsonDict = None):
         '''
         Must be reimplemented in each child
         '''
@@ -233,15 +233,17 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
                         QgsMessageLog.logMessage(self.tr('Error for config ')+ config + ' in database ' +dbName+' : '+exceptionDict[config][dbName], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         return msg 
 
-    def manageSetting(self, config, manageType, dbList = []):
+    def manageSetting(self, config, manageType, dbList = [], parameterDict = dict()):
         if manageType == 'install':
             return self.genericDbManager.installSetting(config, dbNameList = dbList)
         elif manageType == 'delete':
             return self.genericDbManager.deleteSetting(config)
         elif manageType == 'uninstall':
             return self.genericDbManager.uninstallSetting(config)
+        elif manageType == 'update':
+            return self.genericDbManager.updateSetting(config, parameterDict['newJsonDict'])
 
-    def manageSettings(self, manageType, dbList, selectedConfig = []):
+    def manageSettings(self, manageType, dbList = [], selectedConfig = [], parameterDict = dict()):
         '''
         Executes the setting work according to manageType
         successDict = {configName: [--list of successful databases--]}
@@ -259,7 +261,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         exceptionDict = dict()
         for config in selectedConfig:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            sucessList, errorDict = self.manageSetting(config, manageType, dbList = dbList)
+            sucessList, errorDict = self.manageSetting(config, manageType, dbList = dbList, parameterDict = parameterDict)
             QApplication.restoreOverrideCursor()
             successDict[config] = sucessList
             if errorDict != dict():
@@ -317,7 +319,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
 
     def updateSelectedSetting(self):
         '''
-        1. get setting
+        1. get setting dict
         2. populate setting interface
         3. from new dict, update setting
         '''
@@ -326,9 +328,14 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             settingName = currItem.text(1)
         else:
             settingName = currItem.text(0)
-        edgvVersion = self.genericDbManager.getSettingVersion(settingName)
-
-
+        edgvVersion = self.genericDbManager.edgvVersion
+        templateDb = self.genericDbManager.instantiateTemplateDb(edgvVersion)
+        originalDict = self.genericDbManager.getSetting(settingName, edgvVersion)
+        newDict = self.populateConfigInterface(templateDb, jsonDict = originalDict)
+        if newDict:
+            successDict, exceptionDict = self.manageSettings('update', selectedConfig = [settingName], parameterDict = {'newJsonDict':newDict})
+            header, operation = self.getUpdateSelectedSettingHeader()
+            self.outputMessage(operation, header, successDict, exceptionDict)
     
     def cloneSelectedSetting(self):
         pass

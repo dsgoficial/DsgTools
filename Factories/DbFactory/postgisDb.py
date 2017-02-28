@@ -2791,16 +2791,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr("Problem deleting permission setting: ")+query.lastError().text())
-    
-    def updateSettingFromAdminDb(self, settingType, name, edgvversion, newjsondict):
-        """
-        Updates public.permission_profile with new definition.
-        """
-        self.checkAndOpenDb()
-        sql = self.gen.updateSettingFromAdminDb(settingType, name, edgvversion, newjsondict)
-        query = QSqlQuery(self.db)
-        if not query.exec_(sql):
-            raise Exception(self.tr("Problem updating permission profile: ")+query.lastError().text())
 
     def upgradePostgis(self):
         self.checkAndOpenDb()
@@ -2852,7 +2842,7 @@ class PostgisDb(AbstractDb):
             customDict[jsonDict['name']] = jsonDict['array_agg']
         return customDict
     
-    def createPropertyTable(self, settingType, ):
+    def createPropertyTable(self, settingType):
         self.checkAndOpenDb()
         self.db.transaction()
         createSql = self.gen.createPropertyTable(settingType)
@@ -2941,6 +2931,21 @@ class PostgisDb(AbstractDb):
         if useTransaction:
             self.db.transaction()
         createSql = self.gen.removeRecordFromPropertyTable(settingType, configName, edgvVersion)
+        query = QSqlQuery(self.db)
+        if not query.exec_(createSql):
+            if useTransaction:
+                self.db.rollback()
+            raise Exception(self.tr('Problem removing installed record into db: ') + query.lastError().text())
+        if useTransaction:
+            self.db.commit()
+
+    def updateRecordFromPropertyTable(self, settingType, configName, edgvVersion, jsonDict, useTransaction = False):
+        self.checkAndOpenDb()
+        if useTransaction:
+            self.db.transaction()
+        if isinstance(jsonDict,dict):
+            jsonDict = json.dumps(jsonDict, sort_keys=True, indent=4)
+        createSql = self.gen.updateRecordFromPropertyTable(settingType, configName, edgvVersion, jsonDict)
         query = QSqlQuery(self.db)
         if not query.exec_(createSql):
             if useTransaction:

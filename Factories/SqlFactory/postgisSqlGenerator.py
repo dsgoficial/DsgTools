@@ -1102,11 +1102,6 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """select jsondict as jsondict from "public"."{0}" where name = '{1}' and edgvversion = '{2}';""".format(tableName, name, edgvversion)
         return sql
     
-    def updateSettingFromAdminDb(self, settingType, name, edgvversion, newjsondict):
-        tableName = self.getSettingTable(settingType)
-        sql = """update "public"."{0}" set jsondict = '{3}' where name = '{1}' and edgvversion = '{2}'; """.format(tableName, name, edgvversion, newjsondict)
-        return sql
-    
     def deleteSettingFromAdminDb(self, settingType, name, edgvversion):
         tableName = self.getSettingTable(settingType)
         sql = """DELETE FROM "public"."{0}" where name = '{1}' and  edgvversion = '{2}';""".format(tableName, name, edgvversion)
@@ -1384,6 +1379,11 @@ class PostGISSqlGenerator(SqlGenerator):
     def removeRecordFromPropertyTable(self, settingType, configName, edgvVersion):
         tableName = self.getSettingTable(settingType)
         sql = '''DELETE FROM public.{0} where name = '{1}' and edgvversion = '{2}';'''.format(tableName, configName, edgvVersion)
+        return sql
+
+    def updateRecordFromPropertyTable(self, settingType, configName, edgvVersion, jsonDict):
+        tableName = self.getSettingTable(settingType)
+        sql = '''UPDATE public.{0} SET jsondict = '{1}' where name = '{2}' and edgvversion = '{3}';'''.format(tableName, jsonDict, configName, edgvVersion)
         return sql
     
     def uninstallPropertyOnAdminDb(self, settingType, configName, edgvVersion):
