@@ -109,28 +109,28 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         fd = QFileDialog()
         filename = fd.getOpenFileName(caption=self.tr('Select a dsgtools profile'),filter=self.tr('json file (*.json)'))
         if filename == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a file to import!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a file to import!'))
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.genericDbManager.importProfile(filename)
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Success!'), self.widgetName + self.tr(' successfully imported.'))
+            QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully imported.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem importing ') +self.widgetName + ': '  + e.args[0])
+            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem importing ') +self.widgetName + ': '  + e.args[0])
         self.refreshProfileList()
     
     @pyqtSlot(bool)
     def on_exportPushButton_clicked(self):
         #TODO
         if not self.profilesListWidget.currentItem():
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a profile to export!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a profile to export!'))
             return
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
         if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a output!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a output!'))
             return
         profileName = self.customListWidget.currentItem().text()
         edgvVersion = self.versionSelectionComboBox.currentText()
@@ -138,42 +138,42 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.genericDbManager.exportProfile(profileName, edgvVersion, folder)
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Success!'), self.widgetName + self.tr(' successfully exported.'))
+            QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully exported.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem exporting ') + self.widgetName + ': ' + e.args[0])
+            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem exporting ') + self.widgetName + ': ' + e.args[0])
         
     @pyqtSlot(bool)
     def on_batchExportPushButton_clicked(self):
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
         if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a output!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a output!'))
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.genericDbManager.batchExportCustomizations(folder)
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Success!'), + self.widgetName + self.tr(' successfully exported.'))
+            QMessageBox.information(self, self.tr('Success!'), + self.widgetName + self.tr(' successfully exported.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem exporting ') + self.widgetName + ': ' + e.args[0])
+            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem exporting ') + self.widgetName + ': ' + e.args[0])
     
     @pyqtSlot(bool)
     def on_batchImportPushButton_clicked(self):
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder with json files: '))
         if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a input folder!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a input folder!'))
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.genericDbManager.batchImportCustomizations(folder)
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Success!'), + self.widgetName + self.tr(' successfully imported.'))
+            QMessageBox.information(self, self.tr('Success!'), + self.widgetName + self.tr(' successfully imported.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem importing ') + self.widgetName + ': ' + e.args[0])
+            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem importing ') + self.widgetName + ': ' + e.args[0])
 
     def getViewType(self):
         if self.databasePerspectivePushButton.isChecked():

@@ -59,23 +59,24 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
         Slot that opens the create profile dialog
         '''
         dlg = GenericParameterSetter()
-        dlg.exec_()
+        if not dlg.exec_():
+            return
         edgvVersion, propertyName = dlg.getParameters()
         if edgvVersion == self.tr('Select EDGV Version'):
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Enter a EDGV Version'))
+            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Enter a EDGV Version'))
             return
         if propertyName == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Enter a Field Toolbox Configuration Name!'))
+            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Enter a Field Toolbox Configuration Name!'))
             return
         if propertyName in self.genericDbManager.getPropertyPerspectiveDict('property').keys():
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Field Toolbox Configuration Name already exists!'))
+            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Field Toolbox Configuration Name already exists!'))
             return
         templateDb = self.genericDbManager.instantiateTemplateDb(edgvVersion)
         fieldSetupDict = self.populateConfigInterface(templateDb)
         if fieldSetupDict:
-            self.genericDbManager.createSetting(propertyName,edgvVersion,fieldSetupDict)
+            self.genericDbManager.createSetting(propertyName, edgvVersion, fieldSetupDict)
             self.refresh()
-            QMessageBox.warning(self, self.tr('Success!'), self.tr('Field Toolbox Configuration ') + propertyName + self.tr(' created successfuly!'))        
+            QMessageBox.information(self, self.tr('Success!'), self.tr('Field Toolbox Configuration ') + propertyName + self.tr(' created successfuly!'))        
     
     def populateConfigInterface(self, templateDb, jsonDict = None):
         '''
@@ -84,8 +85,7 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
         fieldDlg = FieldSetup(templateDb,returnDict = True)
         if jsonDict:
             fieldDlg.loadReclassificationConf(jsonDict)
-        ret = fieldDlg.exec_()
-        if ret == 1:
+        if fieldDlg.exec_():
             return fieldDlg.makeReclassificationDict()
         else:
             return None
