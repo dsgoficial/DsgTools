@@ -61,9 +61,10 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         self.dbsCustomSelector.setTitle(self.tr('Server Databases'))
         self.dbsCustomSelector.selectionChanged.connect(self.showTabs)
         self.dbsCustomSelector.selectionChanged.connect(self.populateStylesInterface)
-        self.dbsCustomSelector.selectionChanged.connect(self.populatePermissionsInterface)
         self.dbsCustomSelector.selectionChanged.connect(self.populateOtherInterfaces)
         self.previousTab = 0
+        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[]}
+        self.correspondenceDict = {'Load EDGV v. 2.1.3':'2.1.3', 'Load EDGV v. FTer_2a_Ed':'FTer_2a_Ed', 'Load Non EDGV':'Non_EDGV'}
 
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
@@ -76,22 +77,22 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
             self.tabWidget.hide()
 
     def populateListWithDatabasesFromServer(self):
-        dbList = []
         try:
             dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer(parentWidget = self)
         except Exception as e:
             QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
 
         dbList.sort()
-        dbTextList = []
         for (dbname, dbversion) in dbList:
-            dbTextList.append(dbname+' (EDGV v. '+dbversion+')')
-        return dbTextList
+            self.dbDict[dbversion].append(dbname)
 
     def setDatabases(self):
-        dbList = self.populateListWithDatabasesFromServer()
-        self.dbsCustomSelector.setInitialState(dbList)
-        self.permissionWidget.setParameters(self.serverWidget.abstractDb,{})
+        self.populateListWithDatabasesFromServer()
+    
+    @pyqtSlot(int)
+    def on_edgvComboFilter_currentIndexChanged(self, idx):
+        if idx != -1 and idx != 0:
+            self.dbsCustomSelector.setInitialState(self.dbDict[self.correspondenceDict[self.edgvComboFilter.currentText()]])
 
     def checkSuperUser(self):
         try:
@@ -103,7 +104,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
             QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
 
     def getSelectedDbList(self):
-        return [i.split(' ')[0] for i in self.dbsCustomSelector.toLs]
+        return self.dbsCustomSelector.toLs
     
     def instantiateAbstractDbs(self, instantiateTemplates = False):
         dbsDict = dict()
@@ -111,7 +112,8 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         if instantiateTemplates:
             for templateName in ['template_213', 'template_FTer_2a_Ed']:
                 if templateName not in selectedDbNameList:
-                    selectedDbNameList.append(templateName)
+                    if templateName != 'dsgtools_admindb':
+                        selectedDbNameList.append(templateName)
         for dbName in selectedDbNameList:
             localDb = self.dbFactory.createDbFactory('QPSQL')
             localDb.connectDatabaseWithParameters(self.serverWidget.abstractDb.db.hostName(), self.serverWidget.abstractDb.db.port(), dbName, self.serverWidget.abstractDb.db.userName(), self.serverWidget.abstractDb.db.password())
@@ -371,19 +373,11 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
             except Exception as e:
                 exceptionDict[dbName] =  str(e.args[0])
         return successList, exceptionDict
-            
-    def populatePermissionsInterface(self):
-        if self.tabWidget.currentIndex() == 2:
-            dbsDict = self.instantiateAbstractDbs()
-            self.permissionWidget.setParameters(self.serverWidget.abstractDb, dbsDict)
-            self.permissionWidget.refresh()
 
     def populateOtherInterfaces(self):
         dbsDict = self.instantiateAbstractDbs()
-        self.customizationManagerWidget.setParameters(self.serverWidget.abstractDb, dbsDict = dbsDict)
-        self.fieldToolBoxConfigManagerWidget.setParameters(self.serverWidget.abstractDb, dbsDict = dbsDict)
-    
-    @pyqtSlot(int)
-    def on_tabWidget_currentChanged(self, index):
-        if index == 2:
-            self.populatePermissionsInterface()
+        if self.edgvComboFilter.currentIndex() != 0:
+            edgvVersion = self.correspondenceDict[self.edgvComboFilter.currentText()]
+            self.permissionWidget.setParameters(self.serverWidget.abstractDb, dbsDict, edgvVersion)
+            self.customizationManagerWidget.setParameters(self.serverWidget.abstractDb, edgvVersion, dbsDict = dbsDict)
+            self.fieldToolBoxConfigManagerWidget.setParameters(self.serverWidget.abstractDb, edgvVersion, dbsDict = dbsDict)

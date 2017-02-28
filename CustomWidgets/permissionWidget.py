@@ -109,10 +109,10 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         else:
             return 'user'
     
-    def setParameters(self, serverAbstractDb, dbDict):
+    def setParameters(self, serverAbstractDb, dbDict, edgvVersion):
         self.serverAbstractDb = serverAbstractDb
         self.dbDict = dbDict
-        self.permissionManager = PermissionManager(self.serverAbstractDb, self.dbDict)
+        self.permissionManager = PermissionManager(self.serverAbstractDb, self.dbDict, edgvVersion)
         self.refresh()
 
     @pyqtSlot(bool)

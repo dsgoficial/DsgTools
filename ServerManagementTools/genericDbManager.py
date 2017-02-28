@@ -37,7 +37,7 @@ class GenericDbManager(QObject):
     '''
     This class manages the permissions on dsgtools databases.
     '''
-    def __init__(self, serverAbstractDb, dbDict, parentWidget = None):
+    def __init__(self, serverAbstractDb, dbDict, edgvVersion, parentWidget = None):
         super(GenericDbManager,self).__init__()
         self.parentWidget = parentWidget
         self.dbDict = dbDict
@@ -49,6 +49,7 @@ class GenericDbManager(QObject):
                     'Style':'.dsgstyle', 
                     'ValidationConfig':'.dsgvalidcfg', 
                     'FieldToolBoxConfig':'.reclas'}
+        self.edgvVersion = edgvVersion
 
     def getManagerType(self):
         return str(self.__class__).split('.')[-1].replace('\'>', '').replace('Manager','')
@@ -199,6 +200,10 @@ class GenericDbManager(QObject):
         settingType = self.getManagerType()
         return self.adminDb.getPropertyPerspectiveDict(settingType, viewType)
     
+    def getSettingVersion(self, settingName):
+        settingType = self.getManagerType()
+        return self.adminDb.getSettingVersion(settingType, settingName)
+    
     def validateJsonSetting(self, inputJsonDict):
         '''
         reimplemented in each child
@@ -219,9 +224,13 @@ class GenericDbManager(QObject):
         if dbNameList == []:
             dbNameList = self.dbDict.keys()
         successList = []
+        configEdgvVersion = self.getSettingVersion(configName)
         for dbName in dbNameList:
             abstractDb = self.dbDict[dbName]
             edgvVersion = abstractDb.getDatabaseVersion()
+            if edgvVersion != configEdgvVersion:
+                errorDict[dbName] = self.tr('Database version missmatch.')
+                continue
             recDict = self.adminDb.getRecordFromAdminDb(settingType, configName, edgvVersion)
             try:
                 if not abstractDb.checkIfExistsConfigTable(settingType):

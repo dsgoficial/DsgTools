@@ -1337,20 +1337,28 @@ class PostGISSqlGenerator(SqlGenerator):
             '''.format(tableName)
         return sql
     
-    def getPropertyPerspectiveDict(self, settingType, perspective):
+    def getPropertyPerspectiveDict(self, settingType, perspective, versionFilter = None):
+        if versionFilter:
+            versionFilter = ''' where edgvversion = '{0}' '''.format(versionFilter)
+        else:
+            versionFilter = ''
         tableName = self.getSettingTable(settingType)
         if perspective == 'property':
             sql = '''select row_to_json(a) from (
                         select name, array_agg(datname) from public.{0} as custom 
                             left join applied_{0} as appcust on custom.id = appcust.id_applied_{0}
-                            left join pg_database as pgd on pgd.oid = appcust.dboid group by name
-                    ) as a'''.format(tableName)
+                            left join pg_database as pgd on pgd.oid = appcust.dboid 
+                            {1}
+                            group by name
+                    ) as a'''.format(tableName, versionFilter)
         if perspective == 'database':
             sql = '''select row_to_json(a) from (
                         select datname as name, array_agg(name) from public.{0} as custom 
-                            left join applied_{0} as appcust on custom.id = appcust.id_applied_{0}
-                            left join pg_database as pgd on pgd.oid = appcust.dboid group by datname
-                    ) as a'''.format(tableName)
+                            right join applied_{0} as appcust on custom.id = appcust.id_applied_{0}
+                            left join pg_database as pgd on pgd.oid = appcust.dboid 
+                            {1}
+                            group by datname
+                    ) as a'''.format(tableName, versionFilter)
         return sql
     
     def insertRecordInsidePropertyTable(self, settingType, settingDict):
@@ -1381,4 +1389,9 @@ class PostGISSqlGenerator(SqlGenerator):
     def uninstallPropertyOnAdminDb(self, settingType, configName, edgvVersion):
         tableName = self.getSettingTable(settingType)
         sql = '''DELETE FROM public.applied_{0} where id_applied_{0} in (select id from public.{0} where name = '{1}' and edgvversion = '{2}');'''.format(tableName, configName, edgvVersion)
+        return sql
+    
+    def getSettingVersion(self, settingType, settingName):
+        tableName = self.getSettingTable(settingType)
+        sql = '''select edgvversion from public.{0} where name = '{1}' '''.format(tableName, settingName)
         return sql

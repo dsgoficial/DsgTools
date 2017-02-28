@@ -43,11 +43,11 @@ class CustomizationManagerWidget(GenericManagerWidget):
         """
         super(CustomizationManagerWidget, self).__init__(genericDbManager = manager, parent = parent)
 
-    def setParameters(self, serverAbstractDb, dbsDict = {}):
+    def setParameters(self, serverAbstractDb, edgvVersion, dbsDict = {}):
         if serverAbstractDb:
             self.setComponentsEnabled(True)
             self.serverAbstractDb = serverAbstractDb
-            self.genericDbManager = CustomizationManager(serverAbstractDb, dbsDict)
+            self.genericDbManager = CustomizationManager(serverAbstractDb, dbsDict, edgvVersion)
             self.refresh()
         else:
             self.setComponentsEnabled(False)

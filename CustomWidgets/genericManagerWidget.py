@@ -25,7 +25,7 @@ import os
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
-from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog
+from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog, QMenu
 
 #DsgTools imports
 from DsgTools.CustomWidgets.listSelector import ListSelector
@@ -57,6 +57,8 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         self.utils = Utils()
         self.setHeaders()
         self.setButtons()
+        self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.treeWidget.customContextMenuRequested.connect(self.createMenuAssigned)
        
     def setButtons(self):
         createText = self.createPushButton.text()
@@ -89,7 +91,13 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         self.batchExportPushButton.setEnabled(enabled)
         self.databasePerspectivePushButton.setEnabled(enabled)
         self.propertyPerspectivePushButton.setEnabled(enabled)
-    
+
+    def populateConfigInterface(self):
+        '''
+        Must be reimplemented in each child
+        '''
+        pass    
+
     def readJsonFromDatabase(self, propertyName, edgvVersion):
         '''
         Reads the profile file, gets a dictionary of it and builds the tree widget
@@ -233,22 +241,23 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         elif manageType == 'uninstall':
             return self.genericDbManager.uninstallSetting(config)
 
-    def manageSettings(self, manageType, dbList):
+    def manageSettings(self, manageType, dbList, selectedConfig = []):
         '''
         Executes the setting work according to manageType
         successDict = {configName: [--list of successful databases--]}
         exceptionDict = {configName: {dbName: errorText}}
         '''
-        availableConfig = self.genericDbManager.getPropertyPerspectiveDict().keys()
-        dlg = ListSelector(availableConfig,[])
-        dlg.exec_()
-        selected = dlg.getSelected()
-        if selected == []:
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one configuration!'))
-            return (dict(),dict())
+        if selectedConfig == []:
+            availableConfig = self.genericDbManager.getPropertyPerspectiveDict().keys()
+            dlg = ListSelector(availableConfig,[])
+            dlg.exec_()
+            selectedConfig = dlg.getSelected()
+            if selectedConfig == []:
+                QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one configuration!'))
+                return (dict(),dict())
         successDict = dict()
         exceptionDict = dict()
-        for config in selected:
+        for config in selectedConfig:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             sucessList, errorDict = self.manageSetting(config, manageType, dbList = dbList)
             QApplication.restoreOverrideCursor()
@@ -257,3 +266,78 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
                 exceptionDict[config] = errorDict
             self.refresh()
         return successDict, exceptionDict
+    
+    def createMenuAssigned(self, position):
+        """
+        Creates a pop up menu
+        """
+        viewType = self.getViewType()
+        if viewType == 'database':
+            self.createDbPerspectiveContextMenu(position)
+        if viewType == 'property':
+            self.createPropertyPerspectiveContextMenu(position)
+
+    def createDbPerspectiveContextMenu(self, position):
+        menu = QMenu()
+        item = self.treeWidget.itemAt(position)
+        if item:
+            if item.text(0) != '':
+                menu.addAction(self.tr('Uninstall all settings from selected database'), self.uninstallAllSettingsFromDb)
+                menu.addAction(self.tr('Manage settings from selected database'), self.manageDbSettings)
+            elif item.text(1) != '':
+                menu.addAction(self.tr('Update selected setting'), self.updateSelectedSetting)
+                menu.addAction(self.tr('Clone selected setting'), self.cloneSelectedSetting)
+                menu.addAction(self.tr('Uninstall selected setting'), self.uninstallSelectedSetting)
+                menu.addAction(self.tr('Delete selected setting'), self.deleteSelectedSetting)
+        menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
+    
+    def createPropertyPerspectiveContextMenu(self, position):
+        menu = QMenu()
+        item = self.treeWidget.itemAt(position)
+        if item:
+            if item.text(0) != '':
+                menu.addAction(self.tr('Update selected setting'), self.updateSelectedSetting)
+                menu.addAction(self.tr('Clone selected setting'), self.cloneSelectedSetting)
+                menu.addAction(self.tr('Manage selected setting'), self.manageSelectedSetting)
+                menu.addAction(self.tr('Uninstall selected setting on all databases'), self.uninstallSelectedSettingAllDb)
+                menu.addAction(self.tr('Delete selected setting'), self.deleteSelectedSetting)                
+            elif item.text(1) != '':
+                menu.addAction(self.tr('Manage Permissions on database'), self.managePermissionsOnDb)
+                menu.addAction(self.tr('Uninstall selected setting on selected database'), self.uninstallSelectedSetting)
+        menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
+    
+    def uninstallAllSettingsFromDb(self):
+        pass
+    
+    def manageDbSettings(self):
+        pass
+
+    def manageSelectedSetting(self):
+        pass
+
+    def updateSelectedSetting(self):
+        '''
+        1. get setting
+        2. populate setting interface
+        3. from new dict, update setting
+        '''
+        currItem = self.treeWidget.currentItem()
+        if self.getViewType() == 'database':
+            settingName = currItem.text(1)
+        else:
+            settingName = currItem.text(0)
+        edgvVersion = self.genericDbManager.getSettingVersion(settingName)
+
+
+    
+    def cloneSelectedSetting(self):
+        pass
+
+    def uninstallSelectedSetting(self):
+        pass
+    
+    def deleteSelectedSetting(self):
+        pass
+
+    def uninstallSelectedSettingAllDb(self):
+        pass

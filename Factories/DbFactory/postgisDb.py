@@ -2758,6 +2758,15 @@ class PostgisDb(AbstractDb):
         while query.next():
             return query.value(0)
     
+    def getSettingVersion(self, settingType, settingName):
+        self.checkAndOpenDb()
+        sql = self.gen.getSettingVersion(settingType, settingName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting setting from adminDb: ")+query.lastError().text())
+        while query.next():
+            return query.value(0)
+    
     def getAllSettingsFromAdminDb(self, settingType):
         """
         Gets role from public.permission_profile and returns a dict with format {edgvVersion:[-list of roles-]}
@@ -2831,9 +2840,9 @@ class PostgisDb(AbstractDb):
             customDict[jsonDict['name']] = jsonDict['array_agg']
         return customDict
 
-    def getPropertyPerspectiveDict(self, settingType, perspective):
+    def getPropertyPerspectiveDict(self, settingType, perspective, versionFilter = None):
         self.checkAndOpenDb()
-        sql = self.gen.getPropertyPerspectiveDict(settingType, perspective)
+        sql = self.gen.getPropertyPerspectiveDict(settingType, perspective, versionFilter)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting applied customizations: ")+query.lastError().text())

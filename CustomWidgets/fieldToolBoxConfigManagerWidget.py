@@ -44,11 +44,11 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
         """
         super(self.__class__, self).__init__(genericDbManager = manager, parent = parent)
 
-    def setParameters(self, serverAbstractDb, dbsDict = {}):
+    def setParameters(self, serverAbstractDb, edgvVersion, dbsDict = {}):
         if serverAbstractDb:
             self.setComponentsEnabled(True)
             self.serverAbstractDb = serverAbstractDb
-            self.genericDbManager = FieldToolBoxConfigManager(serverAbstractDb, dbsDict)
+            self.genericDbManager = FieldToolBoxConfigManager(serverAbstractDb, dbsDict, edgvVersion)
             self.refresh()
         else:
             self.setComponentsEnabled(False)
@@ -71,12 +71,21 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Field Toolbox Configuration Name already exists!'))
             return
         templateDb = self.genericDbManager.instantiateTemplateDb(edgvVersion)
-        fieldDlg = FieldSetup(templateDb,returnDict = True)
-        ret = fieldDlg.exec_()
+        ret, fieldDlg = self.populateConfigInterface(templateDb)
         if ret == 1:
             fieldSetupDict = fieldDlg.makeReclassificationDict()
             self.genericDbManager.createSetting(propertyName,edgvVersion,fieldSetupDict)
             self.refresh()
+    
+    def populateConfigInterface(self, templateDb, jsonDict = None):
+        '''
+        Must be reimplemented in each child
+        '''
+        fieldDlg = FieldSetup(templateDb,returnDict = True)
+        if not jsonDict:
+            fieldDlg.loadReclassificationConf(jsonDict)
+        ret = fieldDlg.exec_()
+        return ret, fieldDlg
 
     @pyqtSlot(bool)
     def on_applyPushButton_clicked(self):

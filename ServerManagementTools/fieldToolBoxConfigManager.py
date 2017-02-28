@@ -38,8 +38,8 @@ class FieldToolBoxConfigManager(GenericDbManager):
     """
     This class manages the customizations on dsgtools databases.
     """
-    def __init__(self, serverAbstractDb, dbDict, parentWidget = None):
-        super(self.__class__,self).__init__(serverAbstractDb, dbDict, parentWidget = None)
+    def __init__(self, serverAbstractDb, dbDict, edgvVersion, parentWidget = None):
+        super(self.__class__,self).__init__(serverAbstractDb, dbDict, edgvVersion, parentWidget = None)
 
     def validateJsonProfile(self, inputJsonDict):
         """
