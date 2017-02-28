@@ -242,6 +242,8 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             return self.genericDbManager.uninstallSetting(config)
         elif manageType == 'update':
             return self.genericDbManager.updateSetting(config, parameterDict['newJsonDict'])
+        elif manageType == 'create':
+            return self.genericDbManager.createSetting(config, parameterDict['newJsonDict'])
 
     def manageSettings(self, manageType, dbList = [], selectedConfig = [], parameterDict = dict()):
         '''
@@ -266,7 +268,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             successDict[config] = sucessList
             if errorDict != dict():
                 exceptionDict[config] = errorDict
-            self.refresh()
+        self.refresh()
         return successDict, exceptionDict
     
     def createMenuAssigned(self, position):
@@ -338,7 +340,19 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             self.outputMessage(operation, header, successDict, exceptionDict)
     
     def cloneSelectedSetting(self):
-        pass
+        currItem = self.treeWidget.currentItem()
+        if self.getViewType() == 'database':
+            settingName = currItem.text(1)
+        else:
+            settingName = currItem.text(0)
+        edgvVersion = self.genericDbManager.edgvVersion
+        templateDb = self.genericDbManager.instantiateTemplateDb(edgvVersion)
+        originalDict = self.genericDbManager.getSetting(settingName, edgvVersion)
+        newDict = self.populateConfigInterface(templateDb, jsonDict = originalDict)
+        if newDict:
+            successDict, exceptionDict = self.manageSettings('create', selectedConfig = [settingName], parameterDict = {'newJsonDict':newDict})
+            header, operation = self.getUpdateSelectedSettingHeader()
+            self.outputMessage(operation, header, successDict, exceptionDict)
 
     def uninstallSelectedSetting(self):
         pass

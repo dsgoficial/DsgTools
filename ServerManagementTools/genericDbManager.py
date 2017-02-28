@@ -243,6 +243,10 @@ class GenericDbManager(QObject):
         settingType = self.getManagerType()
         return self.adminDb.getRecordFromAdminDb(settingType, propertyName, edgvVersion)
 
+    def createAndInstall(self, configName, newJsonDict, edgvVersion, dbList = []):
+        self.createSetting(configName, edgvVersion, newJsonDict)
+        self.installSetting(configName,dbNameList = dbList)
+
     def installSetting(self, configName, dbNameList = []):
         """
         Generic install. Can be reimplenented in child methods.

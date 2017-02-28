@@ -75,6 +75,7 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
         if fieldSetupDict:
             self.genericDbManager.createSetting(propertyName,edgvVersion,fieldSetupDict)
             self.refresh()
+            QMessageBox.warning(self, self.tr('Success!'), self.tr('Field Toolbox Configuration ') + propertyName + self.tr(' created successfuly!'))        
     
     def populateConfigInterface(self, templateDb, jsonDict = None):
         '''
