@@ -2843,10 +2843,10 @@ class PostgisDb(AbstractDb):
             customDict[jsonDict['name']] = jsonDict['array_agg']
         return customDict
     
-    def createSettingTable(self, settingType, ):
+    def createPropertyTable(self, settingType, ):
         self.checkAndOpenDb()
         self.db.transaction()
-        createSql = self.gen.createSettingTable(settingType)
+        createSql = self.gen.createPropertyTable(settingType)
         query = QSqlQuery(self.db)
         if not query.exec_(createSql):
             self.db.rollback()
@@ -2924,5 +2924,31 @@ class PostgisDb(AbstractDb):
             if useTransaction:
                 self.db.rollback()
             raise Exception(self.tr('Problem inserting installed record into adminDb: ') + query.lastError().text())
+        if useTransaction:
+            self.db.commit()
+    
+    def removeRecordFromPropertyTable(self, settingType, configName, edgvVersion, useTransaction = False):
+        self.checkAndOpenDb()
+        if useTransaction:
+            self.db.transaction()
+        createSql = self.gen.removeRecordFromPropertyTable(settingType, configName, edgvVersion)
+        query = QSqlQuery(self.db)
+        if not query.exec_(createSql):
+            if useTransaction:
+                self.db.rollback()
+            raise Exception(self.tr('Problem removing installed record into db: ') + query.lastError().text())
+        if useTransaction:
+            self.db.commit()
+    
+    def uninstallPropertyOnAdminDb(self, settingType, configName, edgvVersion, useTransaction = False):
+        self.checkAndOpenDb()
+        if useTransaction:
+            self.db.transaction()
+        createSql = self.gen.uninstallPropertyOnAdminDb(settingType, configName, edgvVersion)
+        query = QSqlQuery(self.db)
+        if not query.exec_(createSql):
+            if useTransaction:
+                self.db.rollback()
+            raise Exception(self.tr('Problem removing installed record into db: ') + query.lastError().text())
         if useTransaction:
             self.db.commit()

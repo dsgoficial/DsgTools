@@ -56,6 +56,13 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         self.setComponentsEnabled(False)
         self.utils = Utils()
         self.setHeaders()
+        self.setButtons()
+       
+    def setButtons(self):
+        createText = self.createPushButton.text()
+        self.createPushButton.setText(createText.replace(self.tr('Setting'),self.widgetName))
+        deleteText = self.deletePushButton.text()
+        self.deletePushButton.setText(deleteText.replace(self.tr('Setting'),self.widgetName))
     
     def setHeaders(self):
         viewType = self.getViewType()
@@ -108,6 +115,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_exportPushButton_clicked(self):
+        #TODO
         if not self.profilesListWidget.currentItem():
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a profile to export!'))
             return
@@ -186,39 +194,51 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
     
     def outputMessage(self, operation, header, successDict, exceptionDict):
         '''
-        successDict = {-setting-:[--list of successful databases--]}
+        successDict = {configName: [--list of successful databases--]}
+        exceptionDict = {configName: {dbName: errorText}}
         '''
-        viewType = self.setHeaders()
+        viewType = self.getViewType()
         msg = header
         for setting in successDict.keys():
             successList = successDict[setting]
             if len(successDict[setting]) > 0:
                 msg += self.tr('\nSuccessful ')
-                msg += operation + ' :'
+                msg += operation + ' : '
                 msg += setting
                 if len(successList) > 0:
-                    msg += self.tr(' on databases ') + ','.join(successList)
+                    msg += self.tr(' on databases ') + ', '.join(successList)
         msg += self.logInternalError(exceptionDict)
         QMessageBox.warning(self, self.tr('Operation Complete!'), msg)
     
     def logInternalError(self, exceptionDict):
+        '''
+        exceptionDict = {configName: {dbName: errorText}}
+        '''
         msg = ''
-        configErrorList = exceptionDict.keys()
-        if len(configErrorList)> 0:
-            msg += self.tr('\Config with error:')
-            msg+= ', '.join(configErrorList)
-            msg+= self.tr('\nError messages for each database were output in qgis log.')
-            for configError in configErrorList:
-                QgsMessageLog.logMessage(self.tr('Error for config ')+ configError + ': ' +exceptionDict[configError], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        configList = exceptionDict.keys()
+        if len(configList) > 0:
+            msg += self.tr('\nConfig with error:') + ','.join(configList)
+            msg+= self.tr('\nError messages for each config and database were output in qgis log.')
+            for config in configList:
+                for dbName in exceptionDict[config].keys():
+                    if exceptionDict[config][dbName] != dict():
+                        QgsMessageLog.logMessage(self.tr('Error for config ')+ config + ' in database ' +dbName+' : '+exceptionDict[config][dbName], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         return msg 
 
-    def manageSetting(self, config, manageType):
+    def manageSetting(self, config, manageType, dbList = []):
         if manageType == 'install':
-            return self.genericDbManager.installConfig(config)
+            return self.genericDbManager.installSetting(config, dbNameList = dbList)
         elif manageType == 'delete':
-            return self.genericDbManager.deleteConfig(config)
+            return self.genericDbManager.deleteSetting(config)
+        elif manageType == 'uninstall':
+            return self.genericDbManager.uninstallSetting(config)
 
     def manageSettings(self, manageType, dbList):
+        '''
+        Executes the setting work according to manageType
+        successDict = {configName: [--list of successful databases--]}
+        exceptionDict = {configName: {dbName: errorText}}
+        '''
         availableConfig = self.genericDbManager.getPropertyPerspectiveDict().keys()
         dlg = ListSelector(availableConfig,[])
         dlg.exec_()
@@ -230,9 +250,10 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         exceptionDict = dict()
         for config in selected:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            sucessList, errorDict = self.manageSetting(config, manageType)
+            sucessList, errorDict = self.manageSetting(config, manageType, dbList = dbList)
             QApplication.restoreOverrideCursor()
             successDict[config] = sucessList
-            exceptionDict[config] = errorDict
+            if errorDict != dict():
+                exceptionDict[config] = errorDict
             self.refresh()
-        return sucessList, exceptionDict
+        return successDict, exceptionDict

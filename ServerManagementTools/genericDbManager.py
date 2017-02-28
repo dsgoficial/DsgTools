@@ -44,6 +44,11 @@ class GenericDbManager(QObject):
         self.serverAbstractDb = serverAbstractDb
         self.adminDb = self.instantiateAdminDb(serverAbstractDb)
         self.utils = Utils()
+        self.extensionDict = {'EarthCoverage':'.dsgearthcov', 
+                    'Customization':'.dsgcustom', 
+                    'Style':'.dsgstyle', 
+                    'ValidationConfig':'.dsgvalidcfg', 
+                    'FieldToolBoxConfig':'.reclas'}
 
     def getManagerType(self):
         return str(self.__class__).split('.')[-1].replace('\'>', '').replace('Manager','')
@@ -128,13 +133,6 @@ class GenericDbManager(QObject):
         settingType = self.getManagerType()
         self.adminDb.updateSettingFromAdminDb(settingType, settingName, edgvVersion, newJsonDict)
 
-    def deleteSetting(self, settingName, edgvVersion):
-        """
-        Reimplemented in child if necessary.
-        """
-        settingType = self.getManagerType()
-        self.adminDb.deleteSettingFromAdminDb(settingType, settingName, edgvVersion)
-
     def importSetting(self, fullFilePath):
         '''
         Function to import profile into dsgtools_admindb. It has the following steps:
@@ -164,7 +162,7 @@ class GenericDbManager(QObject):
         '''
         importList = []
         for profile in os.walk(profilesDir).next()[2]:
-            if '.json' in os.path.basename(profile):
+            if self.extensionDict[self.getManagerType()] in os.path.basename(profile):
                 importList.append(os.path.join(profilesDir,profile))
         for profileFile in importList:
             self.importSetting(profileFile)
@@ -175,7 +173,7 @@ class GenericDbManager(QObject):
         2. Export it to outputPath.
         '''
         jsonDict = self.getSetting(profileName, edgvVersion)
-        outputFile = os.path.join(outputPath, profileName+'.json')
+        outputFile = os.path.join(outputPath, profileName+self.extensionDict[self.getManagerType()])
         with open(outputFile, 'w') as outfile:
             json.dump(jsonDict, outfile, sort_keys=True, indent=4)
     
@@ -212,9 +210,9 @@ class GenericDbManager(QObject):
         settingType = self.getManagerType()
         return self.adminDb.getRecordFromAdminDb(settingType, propertyName, edgvVersion)
 
-    def installConfig(self, configName, dbNameList = []):
+    def installSetting(self, configName, dbNameList = []):
         """
-        Generic install. Can be reinplenented in child methods.
+        Generic install. Can be reimplenented in child methods.
         """
         errorDict = dict()
         settingType = self.getManagerType()
@@ -227,7 +225,7 @@ class GenericDbManager(QObject):
             recDict = self.adminDb.getRecordFromAdminDb(settingType, configName, edgvVersion)
             try:
                 if not abstractDb.checkIfExistsConfigTable(settingType):
-                    abstractDb.createSettingTable(settingType)
+                    abstractDb.createPropertyTable(settingType)
             except Exception as e:
                 errorDict[dbName] = str(e.args[0])
                 continue
@@ -246,15 +244,61 @@ class GenericDbManager(QObject):
             successList.append(dbName)
         return (successList, errorDict)
     
-    def removeConfig(self, configName, dbNameList = []):
+    def deleteSetting(self, configName, dbNameList = []):
         '''
         Generic remove. Can be reimplenented in child methods.
+        1. Get property dict from adminDb 
         '''
+        errorDict = dict()
+        successList = []
+        settingType = self.getManagerType()
+        propertyDict = self.adminDb.getPropertyPerspectiveDict(settingType, 'property')
+        if configName in propertyDict.keys():
+            for dbName in propertyDict[configName]:
+                if dbName not in self.dbDict.keys():
+                    abstractDb = self.instantiateAbstractDb(dbName)
+                else:
+                    abstractDb = self.dbDict[dbName]
+                edgvVersion = abstractDb.getDatabaseVersion()
+                try:
+                    abstractDb.db.transaction()
+                    self.adminDb.db.transaction()
+                    abstractDb.removeRecordFromPropertyTable(settingType, configName, edgvVersion)
+                    self.adminDb.removeRecordFromPropertyTable(settingType, configName, edgvVersion)
+                    abstractDb.db.commit()
+                    self.adminDb.db.commit()
+                except Exception as e:
+                    abstractDb.db.rollback()
+                    self.adminDb.db.rollback()
+                    errorDict[dbName] = str(e.args[0])
+                successList.append(dbName)
+        return (successList, errorDict)
 
-        pass
-
-    def updateConfig(self, configName):
+    def uninstallSetting(self, configName):
         '''
         Generic update. Can be reimplenented in child methods.
         '''
-        pass
+        errorDict = dict()
+        successList = []
+        settingType = self.getManagerType()
+        propertyDict = self.adminDb.getPropertyPerspectiveDict(settingType, 'property')
+        if configName in propertyDict.keys():
+            for dbName in propertyDict[configName]:
+                if dbName not in self.dbDict.keys():
+                    abstractDb = self.instantiateAbstractDb(dbName)
+                else:
+                    abstractDb = self.dbDict[dbName]
+                edgvVersion = abstractDb.getDatabaseVersion()
+                try:
+                    abstractDb.db.transaction()
+                    self.adminDb.db.transaction()
+                    abstractDb.removeRecordFromPropertyTable(settingType, configName, edgvVersion)
+                    self.adminDb.uninstallPropertyOnAdminDb(settingType, configName, edgvVersion)
+                    abstractDb.db.commit()
+                    self.adminDb.db.commit()
+                except Exception as e:
+                    abstractDb.db.rollback()
+                    self.adminDb.db.rollback()
+                    errorDict[dbName] = str(e.args[0])
+                successList.append(dbName)
+        return (successList, errorDict)

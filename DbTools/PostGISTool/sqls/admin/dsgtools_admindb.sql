@@ -195,7 +195,7 @@ CREATE TABLE public.applied_field_toolbox_config(
 	id_applied_field_toolbox_config uuid NOT NULL,
 	dboid oid NOT NULL,
 	CONSTRAINT applied_field_toolbox_config_pk PRIMARY KEY (id),
-	CONSTRAINT applied_field_toolbox_config_id_field_toolbox_config_fk FOREIGN KEY (id_applied_field_toolbox_config) REFERENCES public.field_toolbox_config (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION 
+	CONSTRAINT applied_field_toolbox_config_id_field_toolbox_config_fk FOREIGN KEY (id_applied_field_toolbox_config) REFERENCES public.field_toolbox_config (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
 );
 -- ddl-end --
 ALTER TABLE public.applied_field_toolbox_config OWNER TO postgres;
@@ -205,7 +205,7 @@ CREATE TABLE public.applied_earth_coverage(
 	id_earth_coverage uuid NOT NULL,
 	dboid oid NOT NULL,
 	CONSTRAINT applied_earth_coverage_pk PRIMARY KEY (id),
-	CONSTRAINT applied_earth_coverage_id_earth_coverage_config_fk FOREIGN KEY (id_earth_coverage) REFERENCES public.earth_coverage (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION 
+	CONSTRAINT applied_earth_coverage_id_earth_coverage_config_fk FOREIGN KEY (id_earth_coverage) REFERENCES public.earth_coverage (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
 );
 -- ddl-end --
 ALTER TABLE public.applied_earth_coverage OWNER TO postgres;
@@ -215,7 +215,7 @@ CREATE TABLE public.applied_validation_config(
 	id_validation_config uuid NOT NULL,
 	dboid oid NOT NULL,
 	CONSTRAINT applied_validation_config_pk PRIMARY KEY (id),
-	CONSTRAINT applied_validation_config_id_validation_config_fk FOREIGN KEY (id_validation_config) REFERENCES public.validation_config (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION 
+	CONSTRAINT applied_validation_config_id_validation_config_fk FOREIGN KEY (id_validation_config) REFERENCES public.validation_config (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
 );
 -- ddl-end --
 ALTER TABLE public.applied_validation_config OWNER TO postgres;
@@ -225,7 +225,7 @@ CREATE TABLE public.applied_style(
 	id_style uuid NOT NULL,
 	dboid oid NOT NULL,
 	CONSTRAINT applied_style_pk PRIMARY KEY (id),
-	CONSTRAINT applied_style_config_id_style_fk FOREIGN KEY (id_style) REFERENCES public.style (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION 
+	CONSTRAINT applied_style_config_id_style_fk FOREIGN KEY (id_style) REFERENCES public.style (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
 );
 -- ddl-end --
 ALTER TABLE public.applied_style OWNER TO postgres;

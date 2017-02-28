@@ -93,3 +93,11 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
         header = self.tr('Delete Field Toolbox configuration complete. \n')
         operation = self.tr('field toolbox configurations')
         self.outputMessage(operation, header, successDict, exceptionDict)
+
+    @pyqtSlot(bool)
+    def on_uninstallFromSelectedPushButton_clicked(self):
+        dbList = []
+        successDict, exceptionDict = self.manageSettings('uninstall', dbList)
+        header = self.tr('Uninstall Field Toolbox configuration complete. \n')
+        operation = self.tr('field toolbox configurations')
+        self.outputMessage(operation, header, successDict, exceptionDict)

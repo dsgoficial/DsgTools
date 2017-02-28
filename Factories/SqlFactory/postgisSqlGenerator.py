@@ -1334,7 +1334,7 @@ class PostGISSqlGenerator(SqlGenerator):
                 CONSTRAINT {0}_pk PRIMARY KEY (id),
                 CONSTRAINT {0}_unique_name_and_version UNIQUE (name,edgvversion)
                 );
-            '''
+            '''.format(tableName)
         return sql
     
     def getPropertyPerspectiveDict(self, settingType, perspective):
@@ -1371,4 +1371,14 @@ class PostGISSqlGenerator(SqlGenerator):
     def getAllPropertiesFromDb(self, settingType):
         tableName = self.getSettingTable(settingType)
         sql = '''select edgvversion, name, jsondict from public.{0}'''.format(tableName)
+        return sql
+    
+    def removeRecordFromPropertyTable(self, settingType, configName, edgvVersion):
+        tableName = self.getSettingTable(settingType)
+        sql = '''DELETE FROM public.{0} where name = '{1}' and edgvversion = '{2}';'''.format(tableName, configName, edgvVersion)
+        return sql
+    
+    def uninstallPropertyOnAdminDb(self, settingType, configName, edgvVersion):
+        tableName = self.getSettingTable(settingType)
+        sql = '''DELETE FROM public.applied_{0} where id_applied_{0} in (select id from public.{0} where name = '{1}' and edgvversion = '{2}');'''.format(tableName, configName, edgvVersion)
         return sql
