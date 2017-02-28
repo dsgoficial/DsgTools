@@ -63,13 +63,13 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
             return
         edgvVersion, propertyName = dlg.getParameters()
         if edgvVersion == self.tr('Select EDGV Version'):
-            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Enter a EDGV Version'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Enter a EDGV Version'))
             return
         if propertyName == '':
-            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Enter a Field Toolbox Configuration Name!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Enter a Field Toolbox Configuration Name!'))
             return
         if propertyName in self.genericDbManager.getPropertyPerspectiveDict('property').keys():
-            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Field Toolbox Configuration Name already exists!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Field Toolbox Configuration Name already exists!'))
             return
         templateDb = self.genericDbManager.instantiateTemplateDb(edgvVersion)
         fieldSetupDict = self.populateConfigInterface(templateDb)
