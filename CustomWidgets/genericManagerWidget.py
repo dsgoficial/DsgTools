@@ -138,6 +138,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_exportPushButton_clicked(self):
         #TODO
+        exportList = self
         if not self.profilesListWidget.currentItem():
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a profile to export!'))
             return
@@ -258,6 +259,13 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             return self.genericDbManager.updateSetting(config, parameterDict['newJsonDict'])
         elif manageType == 'create':
             return self.genericDbManager.createSetting(config, parameterDict['newJsonDict'])
+    
+    def selectConfig(self):
+        availableConfig = self.genericDbManager.getPropertyPerspectiveDict().keys()
+        dlg = ListSelector(availableConfig,[])
+        dlg.exec_()
+        selectedConfig = dlg.getSelected()
+        return selectedConfig
 
     def manageSettings(self, manageType, dbList = [], selectedConfig = [], parameterDict = dict()):
         '''
@@ -266,10 +274,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         exceptionDict = {configName: {dbName: errorText}}
         '''
         if selectedConfig == []:
-            availableConfig = self.genericDbManager.getPropertyPerspectiveDict().keys()
-            dlg = ListSelector(availableConfig,[])
-            dlg.exec_()
-            selectedConfig = dlg.getSelected()
+            selectedConfig = self.selectConfig()
             if selectedConfig == []:
                 QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one configuration!'))
                 return (dict(),dict())
