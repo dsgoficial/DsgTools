@@ -38,6 +38,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'genericManagerWidget.ui'))
 
 class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
+    Install, Delete, Uninstall, Update, Create = range(5)
     def __init__(self, genericDbManager = None, parent = None):
         """
         Constructor
@@ -249,15 +250,15 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         return msg 
 
     def manageSetting(self, config, manageType, dbList = [], parameterDict = dict()):
-        if manageType == 'install':
+        if manageType == GenericManagerWidget.Install:
             return self.genericDbManager.installSetting(config, dbNameList = dbList)
-        elif manageType == 'delete':
+        elif manageType == GenericManagerWidget.Delete:
             return self.genericDbManager.deleteSetting(config)
-        elif manageType == 'uninstall':
+        elif manageType == GenericManagerWidget.Uninstall:
             return self.genericDbManager.uninstallSetting(config)
-        elif manageType == 'update':
+        elif manageType == GenericManagerWidget.Update:
             return self.genericDbManager.updateSetting(config, parameterDict['newJsonDict'])
-        elif manageType == 'create':
+        elif manageType == GenericManagerWidget.Create:
             return self.genericDbManager.createSetting(config, parameterDict['newJsonDict'])
     
     def selectConfig(self):

@@ -93,14 +93,14 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
     @pyqtSlot(bool)
     def on_applyPushButton_clicked(self):
         dbList = self.genericDbManager.dbDict.keys()
-        successDict, exceptionDict = self.manageSettings('install', dbList = dbList)
+        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, dbList = dbList)
         header = self.tr('Install Field Toolbox configuration complete. \n')
         operation = self.tr('field toolbox configurations')
         self.outputMessage(operation, header, successDict, exceptionDict)
 
     @pyqtSlot(bool)
     def on_deletePushButton_clicked(self):
-        successDict, exceptionDict = self.manageSettings('delete')
+        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Delete)
         header = self.tr('Delete Field Toolbox configuration complete. \n')
         operation = self.tr('field toolbox configurations')
         self.outputMessage(operation, header, successDict, exceptionDict)
@@ -108,7 +108,7 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
     @pyqtSlot(bool)
     def on_uninstallFromSelectedPushButton_clicked(self):
         dbList = []
-        successDict, exceptionDict = self.manageSettings('uninstall', dbList)
+        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, dbList)
         header = self.tr('Uninstall Field Toolbox configuration complete. \n')
         operation = self.tr('field toolbox configurations')
         self.outputMessage(operation, header, successDict, exceptionDict)
