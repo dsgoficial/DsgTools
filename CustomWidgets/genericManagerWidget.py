@@ -139,7 +139,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_exportPushButton_clicked(self):
         #TODO
-        exportList = self
+        # exportList = self
         if not self.profilesListWidget.currentItem():
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a profile to export!'))
             return
@@ -355,7 +355,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         originalDict = self.genericDbManager.getSetting(settingName, edgvVersion)
         newDict = self.populateConfigInterface(templateDb, jsonDict = originalDict)
         if newDict:
-            successDict, exceptionDict = self.manageSettings('update', selectedConfig = [settingName], parameterDict = {'newJsonDict':newDict})
+            successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Update, selectedConfig = [settingName], parameterDict = {'newJsonDict':newDict})
             header, operation = self.getUpdateSelectedSettingHeader()
             self.outputMessage(operation, header, successDict, exceptionDict)
     
@@ -370,7 +370,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         originalDict = self.genericDbManager.getSetting(settingName, edgvVersion)
         newDict = self.populateConfigInterface(templateDb, jsonDict = originalDict)
         if newDict:
-            successDict, exceptionDict = self.manageSettings('create', selectedConfig = [settingName], parameterDict = {'newJsonDict':newDict})
+            successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Create, selectedConfig = [settingName], parameterDict = {'newJsonDict':newDict})
             header, operation = self.getUpdateSelectedSettingHeader()
             self.outputMessage(operation, header, successDict, exceptionDict)
 
