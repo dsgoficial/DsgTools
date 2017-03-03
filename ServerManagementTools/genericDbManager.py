@@ -318,7 +318,7 @@ class GenericDbManager(QObject):
 
     def uninstallSetting(self, configName):
         """
-        Generic update. Can be reimplenented in child methods.
+        Generic uninstall. Can be reimplenented in child methods.
         """
         errorDict = dict()
         successList = []

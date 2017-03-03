@@ -39,7 +39,6 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
     Install, Delete, Uninstall, Update, Create = range(5)
-    Database, Property = range(2)
     def __init__(self, genericDbManager = None, parent = None):
         """
         Constructor
@@ -194,9 +193,11 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
 
     def getViewType(self):
         if self.databasePerspectivePushButton.isChecked():
-            return GenericManagerWidget.Database
+            # return GenericManagerWidget.Database ##we must think this through, because this solution here is messy
+            return 'database'
         else:
-            return GenericManagerWidget.Property
+            #return GenericManagerWidget.Property
+            return 'property'
 
     @pyqtSlot(bool, name='on_databasePerspectivePushButton_clicked')
     @pyqtSlot(bool, name='on_propertyPerspectivePushButton_clicked')
@@ -205,7 +206,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         propertyPerspectiveDict = self.genericDbManager.getPropertyPerspectiveDict(viewType)
         self.treeWidget.clear()
         rootNode = self.treeWidget.invisibleRootItem()
-        if viewType == GenericManagerWidget.Database:
+        if viewType == 'database':
             propertyList = self.genericDbManager.dbDict.keys()
         else:
             propertyList = propertyPerspectiveDict.keys()
@@ -297,9 +298,9 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         Creates a pop up menu
         """
         viewType = self.getViewType()
-        if viewType == GenericManagerWidget.Database:
+        if viewType == 'database':
             self.createDbPerspectiveContextMenu(position)
-        if viewType == GenericManagerWidget.Property:
+        if viewType == 'property':
             self.createPropertyPerspectiveContextMenu(position)
 
     def createDbPerspectiveContextMenu(self, position):
@@ -347,7 +348,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         3. from new dict, update setting
         '''
         currItem = self.treeWidget.currentItem()
-        if self.getViewType() == GenericManagerWidget.Database:
+        if self.getViewType() == 'database':
             settingName = currItem.text(1)
         else:
             settingName = currItem.text(0)
@@ -362,7 +363,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
     
     def cloneSelectedSetting(self):
         currItem = self.treeWidget.currentItem()
-        if self.getViewType() == GenericManagerWidget.Database:
+        if self.getViewType() == 'database':
             settingName = currItem.text(1)
         else:
             settingName = currItem.text(0)
