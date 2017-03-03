@@ -29,6 +29,7 @@ import codecs, os, json, binascii
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory 
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 from DsgTools.Utils.utils import Utils
+from DsgTools.dsgEnums import DsgEnums
 
 #PyQt4 imports
 from PyQt4.Qt import QObject
@@ -55,13 +56,16 @@ class GenericDbManager(QObject):
     def getManagerType(self):
         return str(self.__class__).split('.')[-1].replace('\'>', '').replace('Manager','')
 
-    def instantiateAbstractDb(self, name):
+    def instantiateAbstractDb(self, dbName):
         """
         Instantiates an abstractDb.
         """
-        (host, port, user, password) = self.serverAbstractDb.getParamsFromConectedDb()
-        abstractDb = DbFactory().createDbFactory('QPSQL')
-        abstractDb.connectDatabaseWithParameters(host, port, name, user, password)
+        if dbName not in self.dbDict.keys():
+            (host, port, user, password) = self.serverAbstractDb.getParamsFromConectedDb()
+            abstractDb = DbFactory().createDbFactory('QPSQL')
+            abstractDb.connectDatabaseWithParameters(host, port, dbName, user, password)
+        else:
+            abstractDb = self.dbDict[dbName]
         return abstractDb
 
     def instantiateAdminDb(self, serverAbstractDb):
@@ -138,16 +142,13 @@ class GenericDbManager(QObject):
         errorDict = dict()
         successList = []
         settingType = self.getManagerType()
-        propertyDict = self.adminDb.getPropertyPerspectiveDict(settingType, 'property', versionFilter = edgvVersion)
+        propertyDict = self.adminDb.getPropertyPerspectiveDict(settingType, DsgEnums.Property, versionFilter = edgvVersion)
         if settingName in propertyDict.keys():
             rollbackList = []
             self.adminDb.db.transaction()
             try:
                 for dbName in propertyDict[settingName]:
-                    if dbName not in self.dbDict.keys():
-                        abstractDb = self.instantiateAbstractDb(dbName)
-                    else:
-                        abstractDb = self.dbDict[dbName]
+                    abstractDb = self.instantiateAbstractDb(dbName)
                     abstractDb.db.transaction()
                     rollbackList.append(abstractDb)
                     abstractDb.updateRecordFromPropertyTable(settingType, settingName, edgvVersion, newJsonDict)
@@ -294,13 +295,10 @@ class GenericDbManager(QObject):
         errorDict = dict()
         successList = []
         settingType = self.getManagerType()
-        propertyDict = self.adminDb.getPropertyPerspectiveDict(settingType, 'property')
+        propertyDict = self.adminDb.getPropertyPerspectiveDict(settingType, DsgEnums.Property)
         if configName in propertyDict.keys():
             for dbName in propertyDict[configName]:
-                if dbName not in self.dbDict.keys():
-                    abstractDb = self.instantiateAbstractDb(dbName)
-                else:
-                    abstractDb = self.dbDict[dbName]
+                abstractDb = self.instantiateAbstractDb(dbName)
                 edgvVersion = abstractDb.getDatabaseVersion()
                 try:
                     abstractDb.db.transaction()
@@ -316,26 +314,28 @@ class GenericDbManager(QObject):
                 successList.append(dbName)
         return (successList, errorDict)
 
-    def uninstallSetting(self, configName):
+    def uninstallSetting(self, configName, dbNameList = []):
         """
         Generic uninstall. Can be reimplenented in child methods.
+        This can uninstall setting on a list of databases or in all databases (if dbNameList == [])
         """
         errorDict = dict()
         successList = []
         settingType = self.getManagerType()
-        propertyDict = self.adminDb.getPropertyPerspectiveDict(settingType, 'property')
+        propertyDict = self.adminDb.getPropertyPerspectiveDict(settingType, DsgEnums.Property)
         if configName in propertyDict.keys():
-            for dbName in propertyDict[configName]:
-                if dbName not in self.dbDict.keys():
-                    abstractDb = self.instantiateAbstractDb(dbName)
-                else:
-                    abstractDb = self.dbDict[dbName]
+            if dbNameList == []: #builds filter dbList to uninstall in all installed databases
+                dbList = propertyDict[configName]
+            else: #builds filter dbList to uninstall in databases in dbNameList
+                dbList = [i for i in propertyDict[configName] if i in dbNameList]
+            for dbName in dbList:
+                abstractDb = self.instantiateAbstractDb(dbName)
                 edgvVersion = abstractDb.getDatabaseVersion()
                 try:
                     abstractDb.db.transaction()
                     self.adminDb.db.transaction()
                     abstractDb.removeRecordFromPropertyTable(settingType, configName, edgvVersion)
-                    self.adminDb.uninstallPropertyOnAdminDb(settingType, configName, edgvVersion)
+                    self.adminDb.uninstallPropertyOnAdminDb(settingType, configName, edgvVersion, dbName = dbName)
                     abstractDb.db.commit()
                     self.adminDb.db.commit()
                 except Exception as e:

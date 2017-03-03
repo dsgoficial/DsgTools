@@ -331,8 +331,36 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
                 menu.addAction(self.tr('Uninstall selected setting on selected database'), self.uninstallSelectedSetting)
         menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
     
+    def getSettingListFromInterface(self):
+        """
+        Get database list from interface
+        """
+        settingList = []
+        rootNode = self.treeWidget.invisibleRootItem()
+        if self.getViewType() == DsgEnums.Database:
+            childCount = rootNode.childCount()
+            for i in range(childCount):
+                dbName = rootNode.child(i).text(0)
+                if dbName <> '' and dbName not in settingList:
+                    settingList.append(dbName)
+        else:
+            childCount = rootNode.childCount()
+            for i in range(childCount):
+                dbName = rootNode.child(i).text(0)
+                if dbName <> '' and dbName not in settingList:
+                    settingList.append(dbName)
+        return settingList
+
     def uninstallAllSettingsFromDb(self):
-        pass
+        """
+        1- get propertyDict in database perspective
+        2- for each database, uninstall property in database and in dsg_admindb
+        """
+        currItem = self.treeWidget.currentItem()
+        settingList = self.getSettingListFromInterface()
+        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, selectedConfig = settingList)
+        header, operation = self.getUpdateSelectedSettingHeader()
+        self.outputMessage(operation, header, successDict, exceptionDict)
     
     def manageDbSettings(self):
         pass

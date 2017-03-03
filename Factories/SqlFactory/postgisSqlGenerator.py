@@ -1388,9 +1388,13 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = '''UPDATE public.{0} SET jsondict = '{1}' where name = '{2}' and edgvversion = '{3}';'''.format(tableName, jsonDict, configName, edgvVersion)
         return sql
     
-    def uninstallPropertyOnAdminDb(self, settingType, configName, edgvVersion):
+    def uninstallPropertyOnAdminDb(self, settingType, configName, edgvVersion, dbName = None):
         tableName = self.getSettingTable(settingType)
-        sql = '''DELETE FROM public.applied_{0} where id_applied_{0} in (select id from public.{0} where name = '{1}' and edgvversion = '{2}');'''.format(tableName, configName, edgvVersion)
+        dbNameFilterClause = ''
+        if not dbName:
+            dbNameFilterClause = '''dboid in (select oid from pg_database where datname ='{0}') and '''.format(dbName)
+        else:
+            sql = '''DELETE FROM public.applied_{0} where {1} id_applied_{0} in (select id from public.{0} where name = '{2}' and edgvversion = '{3}');'''.format(tableName, dbNameFilterClause, configName, edgvVersion)
         return sql
     
     def getSettingVersion(self, settingType, settingName):

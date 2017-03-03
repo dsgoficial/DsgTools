@@ -2954,11 +2954,11 @@ class PostgisDb(AbstractDb):
         if useTransaction:
             self.db.commit()
     
-    def uninstallPropertyOnAdminDb(self, settingType, configName, edgvVersion, useTransaction = False):
+    def uninstallPropertyOnAdminDb(self, settingType, configName, edgvVersion, useTransaction = False, dbName = None):
         self.checkAndOpenDb()
         if useTransaction:
             self.db.transaction()
-        createSql = self.gen.uninstallPropertyOnAdminDb(settingType, configName, edgvVersion)
+        createSql = self.gen.uninstallPropertyOnAdminDb(settingType, configName, edgvVersion, dbName = dbName)
         query = QSqlQuery(self.db)
         if not query.exec_(createSql):
             if useTransaction:
