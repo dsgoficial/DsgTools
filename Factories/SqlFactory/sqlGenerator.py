@@ -20,6 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
+from DsgTools.dsgEnums import DsgEnums
+
 class SqlGenerator:
     def getComplexLinks(self, complex):
         return None

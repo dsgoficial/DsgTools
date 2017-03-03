@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 from DsgTools.Factories.SqlFactory.sqlGenerator import SqlGenerator
+from DsgTools.dsgEnums import DsgEnums
 
 class SpatialiteSqlGenerator(SqlGenerator):
     def getComplexLinks(self, complex):

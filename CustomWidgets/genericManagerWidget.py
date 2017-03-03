@@ -30,6 +30,7 @@ from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog, QMenu
 #DsgTools imports
 from DsgTools.CustomWidgets.listSelector import ListSelector
 from DsgTools.Utils.utils import Utils
+from DsgTools.dsgEnums import DsgEnums
 
 from qgis.core import QgsMessageLog
 import json
@@ -82,7 +83,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
     
     def setHeaders(self):
         viewType = self.getViewType()
-        if viewType == 'database':
+        if viewType == DsgEnums.Database:
             self.treeWidget.setHeaderLabels([self.tr('Database'), self.widgetName])
         else:
             self.treeWidget.setHeaderLabels([self.widgetName, self.tr('Database')])
@@ -193,11 +194,9 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
 
     def getViewType(self):
         if self.databasePerspectivePushButton.isChecked():
-            # return GenericManagerWidget.Database ##we must think this through, because this solution here is messy
-            return 'database'
+            return DsgEnums.Database
         else:
-            #return GenericManagerWidget.Property
-            return 'property'
+            return DsgEnums.Property
 
     @pyqtSlot(bool, name='on_databasePerspectivePushButton_clicked')
     @pyqtSlot(bool, name='on_propertyPerspectivePushButton_clicked')
@@ -206,7 +205,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         propertyPerspectiveDict = self.genericDbManager.getPropertyPerspectiveDict(viewType)
         self.treeWidget.clear()
         rootNode = self.treeWidget.invisibleRootItem()
-        if viewType == 'database':
+        if viewType == DsgEnums.Database:
             propertyList = self.genericDbManager.dbDict.keys()
         else:
             propertyList = propertyPerspectiveDict.keys()
@@ -298,9 +297,9 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         Creates a pop up menu
         """
         viewType = self.getViewType()
-        if viewType == 'database':
+        if viewType == DsgEnums.Database:
             self.createDbPerspectiveContextMenu(position)
-        if viewType == 'property':
+        if viewType == DsgEnums.Property:
             self.createPropertyPerspectiveContextMenu(position)
 
     def createDbPerspectiveContextMenu(self, position):
@@ -348,7 +347,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         3. from new dict, update setting
         '''
         currItem = self.treeWidget.currentItem()
-        if self.getViewType() == 'database':
+        if self.getViewType() == DsgEnums.Database:
             settingName = currItem.text(1)
         else:
             settingName = currItem.text(0)
@@ -363,7 +362,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
     
     def cloneSelectedSetting(self):
         currItem = self.treeWidget.currentItem()
-        if self.getViewType() == 'database':
+        if self.getViewType() == DsgEnums.Database:
             settingName = currItem.text(1)
         else:
             settingName = currItem.text(0)

@@ -21,6 +21,8 @@
  ***************************************************************************/
 """
 from DsgTools.Factories.SqlFactory.sqlGenerator import SqlGenerator
+from DsgTools.dsgEnums import DsgEnums
+
 import PyQt4
 
 class PostGISSqlGenerator(SqlGenerator):
@@ -1268,13 +1270,13 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getCustomizationPerspectiveDict(self, perspective):
-        if perspective == 'property':
+        if perspective == DsgEnums.Property:
             sql = '''select row_to_json(a) from (
                         select name, array_agg(datname) from customization as custom 
                             left join applied_customization as appcust on custom.id = appcust.id_customization
                             left join pg_database as pgd on pgd.oid = appcust.dboid group by name
                     ) as a'''
-        if perspective == 'database':
+        if perspective == DsgEnums.Database:
             sql = '''select row_to_json(a) from (
                         select datname as name, array_agg(name) from customization as custom 
                             left join applied_customization as appcust on custom.id = appcust.id_customization
@@ -1283,13 +1285,13 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getFieldToolBoxConfigPerspectiveDict(self, perspective):
-        if perspective == 'property':
+        if perspective == DsgEnums.Property:
             sql = '''select row_to_json(a) from (
                         select name, array_agg(datname) from field_toolbox_config as custom 
                             left join applied_field_toolbox_config as appcust on custom.id = appcust.id_applied_field_toolbox_config
                             left join pg_database as pgd on pgd.oid = appcust.dboid group by name
                     ) as a'''
-        if perspective == 'database':
+        if perspective == DsgEnums.Database:
             sql = '''select row_to_json(a) from (
                         select datname as name, array_agg(name) from field_toolbox_config as custom 
                             left join applied_field_toolbox_config as appcust on custom.id = appcust.id_applied_field_toolbox_config
@@ -1338,7 +1340,7 @@ class PostGISSqlGenerator(SqlGenerator):
         else:
             versionFilter = ''
         tableName = self.getSettingTable(settingType)
-        if perspective == 'property':
+        if perspective == DsgEnums.Property:
             sql = '''select row_to_json(a) from (
                         select name, array_agg(datname) from public.{0} as custom 
                             left join applied_{0} as appcust on custom.id = appcust.id_applied_{0}
@@ -1346,7 +1348,7 @@ class PostGISSqlGenerator(SqlGenerator):
                             {1}
                             group by name
                     ) as a'''.format(tableName, versionFilter)
-        if perspective == 'database':
+        if perspective == DsgEnums.Database:
             sql = '''select row_to_json(a) from (
                         select datname as name, array_agg(name) from public.{0} as custom 
                             right join applied_{0} as appcust on custom.id = appcust.id_applied_{0}
