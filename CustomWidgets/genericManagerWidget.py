@@ -256,7 +256,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         elif manageType == GenericManagerWidget.Delete:
             return self.genericDbManager.deleteSetting(config)
         elif manageType == GenericManagerWidget.Uninstall:
-            return self.genericDbManager.uninstallSetting(config)
+            return self.genericDbManager.uninstallSetting(config, dbNameList = dbList)
         elif manageType == GenericManagerWidget.Update:
             return self.genericDbManager.updateSetting(config, parameterDict['newJsonDict'])
         elif manageType == GenericManagerWidget.Create:
@@ -307,12 +307,12 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         item = self.treeWidget.itemAt(position)
         if item:
             if item.text(0) != '':
-                menu.addAction(self.tr('Uninstall all settings from selected database'), self.uninstallAllSettingsFromDb)
+                menu.addAction(self.tr('Uninstall all settings from selected database'), self.uninstallSettings)
                 menu.addAction(self.tr('Manage settings from selected database'), self.manageDbSettings)
             elif item.text(1) != '':
                 menu.addAction(self.tr('Update selected setting'), self.updateSelectedSetting)
                 menu.addAction(self.tr('Clone selected setting'), self.cloneSelectedSetting)
-                menu.addAction(self.tr('Uninstall selected setting'), self.uninstallSelectedSetting)
+                menu.addAction(self.tr('Uninstall selected setting'), self.uninstallSettings)
                 menu.addAction(self.tr('Delete selected setting'), self.deleteSelectedSetting)
         menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
     
@@ -324,32 +324,12 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
                 menu.addAction(self.tr('Update selected setting'), self.updateSelectedSetting)
                 menu.addAction(self.tr('Clone selected setting'), self.cloneSelectedSetting)
                 menu.addAction(self.tr('Manage selected setting'), self.manageSelectedSetting)
-                menu.addAction(self.tr('Uninstall selected setting on all databases'), self.uninstallSelectedSettingAllDb)
+                menu.addAction(self.tr('Uninstall selected setting on all databases'), self.uninstallSettings)
                 menu.addAction(self.tr('Delete selected setting'), self.deleteSelectedSetting)                
             elif item.text(1) != '':
                 menu.addAction(self.tr('Manage Permissions on database'), self.managePermissionsOnDb)
-                menu.addAction(self.tr('Uninstall selected setting on selected database'), self.uninstallSelectedSetting)
+                menu.addAction(self.tr('Uninstall selected setting on selected database'), self.uninstallSettings)
         menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
-    
-    def getSettingListFromInterface(self):
-        """
-        Get database list from interface
-        """
-        settingList = []
-        rootNode = self.treeWidget.invisibleRootItem()
-        if self.getViewType() == DsgEnums.Database:
-            childCount = rootNode.childCount()
-            for i in range(childCount):
-                dbName = rootNode.child(i).text(0)
-                if dbName <> '' and dbName not in settingList:
-                    settingList.append(dbName)
-        else:
-            childCount = rootNode.childCount()
-            for i in range(childCount):
-                dbName = rootNode.child(i).text(0)
-                if dbName <> '' and dbName not in settingList:
-                    settingList.append(dbName)
-        return settingList
 
     def uninstallAllSettingsFromDb(self):
         """
@@ -447,8 +427,12 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
                         dbList.append(dbName)
                 return {'databaseList':dbList, 'parameterList':[parameter]}
 
-    def uninstallSelectedSetting(self):
-        pass
+    def uninstallSettings(self):
+        edgvVersion = self.genericDbManager.edgvVersion
+        uiParameterDict = self.getParametersFromInterface()
+        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, dbList = uiParameterDict['databaseList'], selectedConfig = uiParameterDict['parameterList'])
+        header, operation = self.getUninstallSelectedSettingHeader()
+        self.outputMessage(operation, header, successDict, exceptionDict)
     
     def deleteSelectedSetting(self):
         pass

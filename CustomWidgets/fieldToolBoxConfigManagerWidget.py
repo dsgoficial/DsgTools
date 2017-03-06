@@ -117,3 +117,8 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
         header = self.tr('Update Field Toolbox configuration complete. \n')
         operation = self.tr('field toolbox configuration')
         return header, operation
+
+    def getUninstallSelectedSettingHeader(self):
+        header = self.tr('Uninstall Field Toolbox configuration complete. \n')
+        operation = self.tr('field toolbox configuration')
+        return header, operation
