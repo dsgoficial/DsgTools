@@ -99,6 +99,9 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         pass
     
     def setComponentsEnabled(self, enabled):
+        """
+        Changes states of all components of the widget, according to the boolean parameter enabled.
+        """
         self.treeWidget.setEnabled(enabled)
         self.importPushButton.setEnabled(enabled)
         self.batchImportPushButton.setEnabled(enabled)
@@ -108,19 +111,22 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         self.propertyPerspectivePushButton.setEnabled(enabled)
 
     def populateConfigInterface(self, templateDb, jsonDict = None):
-        '''
+        """
         Must be reimplemented in each child
-        '''
+        """
         pass    
 
     def readJsonFromDatabase(self, propertyName, edgvVersion):
-        '''
+        """
         Reads the profile file, gets a dictionary of it and builds the tree widget
-        '''
+        """
         self.genericDict = self.genericDbManager.getCustomization(propertyName, edgvVersion)
 
     @pyqtSlot(bool)
     def on_importPushButton_clicked(self):
+        """
+        Imports a property file into dsgtools_admindb
+        """
         fd = QFileDialog()
         widgetType = self.getWhoAmI()
         filename = fd.getOpenFileName(caption=self.captionDict[widgetType],filter=self.filterDict[widgetType])
@@ -139,9 +145,11 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_exportPushButton_clicked(self):
-        #TODO
-        # exportList = self
-        if not self.profilesListWidget.currentItem():
+        """
+        Export selected properties.
+        """
+        exportPropertyList = self.selectConfig()
+        if exportPropertyList == []:
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a profile to export!'))
             return
         fd = QFileDialog()
@@ -149,19 +157,21 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         if folder == '':
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a output!'))
             return
-        profileName = self.customListWidget.currentItem().text()
-        edgvVersion = self.versionSelectionComboBox.currentText()
-        try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.genericDbManager.exportProfile(profileName, edgvVersion, folder)
-            QApplication.restoreOverrideCursor()
-            QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully exported.'))
-        except Exception as e:
-            QApplication.restoreOverrideCursor()
-            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem exporting ') + self.widgetName + ': ' + e.args[0])
+        for exportProperty in exportPropertyList:
+            try:
+                QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+                self.genericDbManager.exportProfile(profileName, edgvVersion, folder)
+                QApplication.restoreOverrideCursor()
+                QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully exported.'))
+            except Exception as e:
+                QApplication.restoreOverrideCursor()
+                QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem exporting ') + self.widgetName + ': ' + e.args[0])
         
     @pyqtSlot(bool)
     def on_batchExportPushButton_clicked(self):
+        """
+        Exports all configs from dsgtools_admindb.
+        """
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
         if folder == '':
@@ -169,7 +179,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.genericDbManager.batchExportCustomizations(folder)
+            self.genericDbManager.batchExportSettings(folder)
             QApplication.restoreOverrideCursor()
             QMessageBox.information(self, self.tr('Success!'), + self.widgetName + self.tr(' successfully exported.'))
         except Exception as e:
@@ -178,6 +188,9 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_batchImportPushButton_clicked(self):
+        """
+        Imports all config files from a folder into dsgtools_admindb. It only works for a single type of config per time.
+        """
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder with json files: '))
         if folder == '':
@@ -185,7 +198,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.genericDbManager.batchImportCustomizations(folder)
+            self.genericDbManager.batchImportSettings(folder)
             QApplication.restoreOverrideCursor()
             QMessageBox.information(self, self.tr('Success!'), + self.widgetName + self.tr(' successfully imported.'))
         except Exception as e:
@@ -238,10 +251,10 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         self.treeWidget.expandAll()
     
     def outputMessage(self, operation, header, successDict, exceptionDict):
-        '''
+        """
         successDict = {configName: [--list of successful databases--]}
         exceptionDict = {configName: {dbName: errorText}}
-        '''
+        """
         viewType = self.getViewType()
         msg = header
         for setting in successDict.keys():
@@ -256,9 +269,9 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         QMessageBox.warning(self, self.tr('Operation Complete!'), msg)
     
     def logInternalError(self, exceptionDict):
-        '''
+        """
         exceptionDict = {configName: {dbName: errorText}}
-        '''
+        """
         msg = ''
         configList = exceptionDict.keys()
         if len(configList) > 0:
@@ -290,11 +303,11 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         return selectedConfig
 
     def manageSettings(self, manageType, dbList = [], selectedConfig = [], parameterDict = dict()):
-        '''
+        """
         Executes the setting work according to manageType
         successDict = {configName: [--list of successful databases--]}
         exceptionDict = {configName: {dbName: errorText}}
-        '''
+        """
         if selectedConfig == []:
             selectedConfig = self.selectConfig()
             if selectedConfig == []:
@@ -358,11 +371,11 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         pass
 
     def updateSelectedSetting(self):
-        '''
+        """
         1. get setting dict
         2. populate setting interface
         3. from new dict, update setting
-        '''
+        """
         currItem = self.treeWidget.currentItem()
         if self.getViewType() == DsgEnums.Database:
             settingName = currItem.text(1)
