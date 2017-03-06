@@ -192,6 +192,26 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem importing ') + self.widgetName + ': ' + e.args[0])
 
+    @pyqtSlot(bool)
+    def on_applyPushButton_clicked(self):
+        dbList = self.genericDbManager.dbDict.keys()
+        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, dbList = dbList)
+        header, operation = self.getApplyHeader()
+        self.outputMessage(operation, header, successDict, exceptionDict)
+
+    @pyqtSlot(bool)
+    def on_deletePushButton_clicked(self):
+        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Delete)
+        header, operation = self.getDeleteHeader()
+        self.outputMessage(operation, header, successDict, exceptionDict)
+
+    @pyqtSlot(bool)
+    def on_uninstallFromSelectedPushButton_clicked(self):
+        dbList = []
+        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, dbList)
+        header, operation = self.getUninstallFromSelected()
+        self.outputMessage(operation, header, successDict, exceptionDict)
+
     def getViewType(self):
         if self.databasePerspectivePushButton.isChecked():
             return DsgEnums.Database
@@ -327,20 +347,9 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
                 menu.addAction(self.tr('Uninstall selected setting on all databases'), self.uninstallSettings)
                 menu.addAction(self.tr('Delete selected setting'), self.deleteSelectedSetting)                
             elif item.text(1) != '':
-                menu.addAction(self.tr('Manage Permissions on database'), self.managePermissionsOnDb)
+                menu.addAction(self.tr('Manage Settings on database'), self.manageDbSettings)
                 menu.addAction(self.tr('Uninstall selected setting on selected database'), self.uninstallSettings)
         menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
-
-    def uninstallAllSettingsFromDb(self):
-        """
-        1- get propertyDict in database perspective
-        2- for each database, uninstall property in database and in dsg_admindb
-        """
-        currItem = self.treeWidget.currentItem()
-        settingList = self.getSettingListFromInterface()
-        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, selectedConfig = settingList)
-        header, operation = self.getUpdateSelectedSettingHeader()
-        self.outputMessage(operation, header, successDict, exceptionDict)
     
     def manageDbSettings(self):
         pass
@@ -435,7 +444,11 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         self.outputMessage(operation, header, successDict, exceptionDict)
     
     def deleteSelectedSetting(self):
-        pass
-
-    def uninstallSelectedSettingAllDb(self):
-        pass
+        edgvVersion = self.genericDbManager.edgvVersion
+        uiParameterDict = self.getParametersFromInterface()
+        settingTextList = ', '.join(uiParameterDict['parameterList'])
+        if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to delete ')+settingTextList+'?', QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+            return
+        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Delete, selectedConfig = uiParameterDict['parameterList'])
+        header, operation = self.getDeleteHeader()
+        self.outputMessage(operation, header, successDict, exceptionDict)

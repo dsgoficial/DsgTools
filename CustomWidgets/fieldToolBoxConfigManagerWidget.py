@@ -33,6 +33,7 @@ from DsgTools.CustomWidgets.genericParameterSetter import GenericParameterSetter
 from DsgTools.CustomWidgets.genericManagerWidget import GenericManagerWidget
 from DsgTools.ProductionTools.FieldToolBox.field_setup import FieldSetup
 from DsgTools.Utils.utils import Utils
+from DsgTools.dsgEnums import DsgEnums
 
 from qgis.core import QgsMessageLog
 import json
@@ -68,7 +69,7 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
         if propertyName == '':
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Enter a Field Toolbox Configuration Name!'))
             return
-        if propertyName in self.genericDbManager.getPropertyPerspectiveDict('property').keys():
+        if propertyName in self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Property).keys():
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Field Toolbox Configuration Name already exists!'))
             return
         templateDb = self.genericDbManager.instantiateTemplateDb(edgvVersion)
@@ -89,29 +90,6 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
             return fieldDlg.makeReclassificationDict()
         else:
             return None
-
-    @pyqtSlot(bool)
-    def on_applyPushButton_clicked(self):
-        dbList = self.genericDbManager.dbDict.keys()
-        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, dbList = dbList)
-        header = self.tr('Install Field Toolbox configuration complete. \n')
-        operation = self.tr('field toolbox configurations')
-        self.outputMessage(operation, header, successDict, exceptionDict)
-
-    @pyqtSlot(bool)
-    def on_deletePushButton_clicked(self):
-        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Delete)
-        header = self.tr('Delete Field Toolbox configuration complete. \n')
-        operation = self.tr('field toolbox configurations')
-        self.outputMessage(operation, header, successDict, exceptionDict)
-
-    @pyqtSlot(bool)
-    def on_uninstallFromSelectedPushButton_clicked(self):
-        dbList = []
-        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, dbList)
-        header = self.tr('Uninstall Field Toolbox configuration complete. \n')
-        operation = self.tr('field toolbox configurations')
-        self.outputMessage(operation, header, successDict, exceptionDict)
     
     def getUpdateSelectedSettingHeader(self):
         header = self.tr('Update Field Toolbox configuration complete. \n')
@@ -121,4 +99,19 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
     def getUninstallSelectedSettingHeader(self):
         header = self.tr('Uninstall Field Toolbox configuration complete. \n')
         operation = self.tr('field toolbox configuration')
+        return header, operation
+
+    def getApplyHeader(self):
+        header = self.tr('Install Field Toolbox configuration complete. \n')
+        operation = self.tr('field toolbox configurations')
+        return header, operation
+    
+    def getDeleteHeader(self):
+        header = self.tr('Delete Field Toolbox configuration complete. \n')
+        operation = self.tr('field toolbox configurations')
+        return header, operation
+    
+    def getUninstallFromSelected(self):
+        header = self.tr('Uninstall Field Toolbox configuration complete. \n')
+        operation = self.tr('field toolbox configurations')
         return header, operation

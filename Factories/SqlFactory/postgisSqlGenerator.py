@@ -1391,10 +1391,9 @@ class PostGISSqlGenerator(SqlGenerator):
     def uninstallPropertyOnAdminDb(self, settingType, configName, edgvVersion, dbName = None):
         tableName = self.getSettingTable(settingType)
         dbNameFilterClause = ''
-        if not dbName:
+        if dbName:
             dbNameFilterClause = '''dboid in (select oid from pg_database where datname ='{0}') and '''.format(dbName)
-        else:
-            sql = '''DELETE FROM public.applied_{0} where {1} id_applied_{0} in (select id from public.{0} where name = '{2}' and edgvversion = '{3}');'''.format(tableName, dbNameFilterClause, configName, edgvVersion)
+        sql = '''DELETE FROM public.applied_{0} where {1} id_applied_{0} in (select id from public.{0} where name = '{2}' and edgvversion = '{3}');'''.format(tableName, dbNameFilterClause, configName, edgvVersion)
         return sql
     
     def getSettingVersion(self, settingType, settingName):
