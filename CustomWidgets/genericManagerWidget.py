@@ -403,6 +403,50 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             header, operation = self.getUpdateSelectedSettingHeader()
             self.outputMessage(operation, header, successDict, exceptionDict)
 
+    def getParametersFromInterface(self):
+        """
+        Gets selected database and selected property. 
+        Returns {'databaseList':dbList, 'parameterList':parameterList}
+        """
+        currItem = self.treeWidget.currentItem()
+        if self.getViewType() == DsgEnums.Database:
+            #2 possibilities: leaf (if first column is '') or parent (if first column != '')
+            if currItem.text(0) == '':
+                #leaf -> must get 
+                parentNode = currItem.parent()
+                dbName = parentNode.text(0)
+                parameter = currItem.text(1)
+                return {'databaseList':[dbName], 'parameterList':[parameter]}
+            else:
+                #parent
+                dbName = currItem.text(0)
+                childCount = currItem.childCount()
+                parameterList = []
+                for i in range(childCount):
+                    childNode = currItem.child(i)
+                    parameterName = childNode.text(1)
+                    if parameterName not in parameterList:
+                        parameterList.append(parameterName)
+                return {'databaseList':[dbName], 'parameterList':parameterList}
+        else:
+            if currItem.text(0) == '':
+                #leaf
+                parentNode = currItem.parent()
+                parameter = parentNode.text(0)
+                dbName = currItem.text(1)
+                return {'databaseList':[dbName], 'parameterList':[parameter]}
+            else:
+                #parent
+                parameter = currItem.text(0)
+                childCount = currItem.childCount()
+                dbList = []
+                for i in range(childCount):
+                    childNode = currItem.child(i)
+                    dbName = childNode.text(1)
+                    if dbName not in dbList:
+                        dbList.append(dbName)
+                return {'databaseList':dbList, 'parameterList':[parameter]}
+
     def uninstallSelectedSetting(self):
         pass
     
