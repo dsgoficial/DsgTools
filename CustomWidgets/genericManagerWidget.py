@@ -157,10 +157,11 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         if folder == '':
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a output!'))
             return
+        edgvVersion = self.genericDbManager.edgvVersion
         for exportProperty in exportPropertyList:
             try:
                 QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-                self.genericDbManager.exportProfile(profileName, edgvVersion, folder)
+                self.genericDbManager.exportSetting(exportProperty, edgvVersion, folder)
                 QApplication.restoreOverrideCursor()
                 QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully exported.'))
             except Exception as e:
