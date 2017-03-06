@@ -180,7 +180,10 @@ class GenericDbManager(QObject):
             raise Exception(self.tr("Not valid DsgTools property file!"))
         if not self.validateJsonSetting(inputJsonDict):
             raise Exception(self.tr("Not valid DsgTools property file!"))
-        edgvVersion = inputJsonDict.keys()[0].split('_')[-1]
+        if 'version' in inputJsonDict.keys():
+            edgvVersion = inputJsonDict['version']
+        else:
+            edgvVersion = inputJsonDict.keys()[0].split('_')[-1]
         try:
             self.createSetting(settingName, edgvVersion, inputJson)
         except Exception as e:
@@ -239,7 +242,6 @@ class GenericDbManager(QObject):
         reimplemented in each child
         """
         return True
-
     
     def getRecordFromAdminDb(self, propertyName, edgvVersion):
         settingType = self.getManagerType()
