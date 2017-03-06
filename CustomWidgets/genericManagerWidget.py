@@ -60,12 +60,12 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
                             'ValidationConfig':self.tr('Validation'), 
                             'FieldToolBoxConfig':self.tr('Reclassification Setup Files'),
                             'Permission':self.tr('Select a dsgtools permission profile')}
-        self.filterDict = {'EarthCoverage':'.dsgearthcov', 
-                            'Customization':'.dsgcustom', 
-                            'Style':'.dsgstyle', 
-                            'ValidationConfig':'.dsgvalidcfg', 
-                            'FieldToolBoxConfig':'.reclas',
-                            'Permission':'.dsgperm'}
+        self.filterDict = {'EarthCoverage':self.tr('Earth Coverage Setup File (*.dsgearthcov)'), 
+                            'Customization':self.tr('DsgTools Customization File (*.dsgcustom)'), 
+                            'Style':self.tr('DsgTools Styles File (*.dsgstyle)'), 
+                            'ValidationConfig':self.tr('DsgTools Validation Configuration File (*.dsgvalidcfg)'), 
+                            'FieldToolBoxConfig':self.tr('Reclassification Setup Files (*.reclas)'),
+                            'Permission':self.tr('DsgTools Permission Profile File (*.dsgperm)')}
         self.widgetName = self.textDict[self.getWhoAmI()]
         self.genericDict = None
         self.setComponentsEnabled(False)
@@ -129,13 +129,13 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.genericDbManager.importProfile(filename)
+            self.genericDbManager.importSetting(filename)
             QApplication.restoreOverrideCursor()
             QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully imported.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem importing ') +self.widgetName + ': '  + e.args[0])
-        self.refreshProfileList()
+        self.refresh()
     
     @pyqtSlot(bool)
     def on_exportPushButton_clicked(self):

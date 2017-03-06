@@ -178,7 +178,7 @@ class GenericDbManager(QObject):
         #error handling and json validation
         if inputJsonDict == dict():
             raise Exception(self.tr("Not valid DsgTools property file!"))
-        if not self.validateJson(inputJsonDict):
+        if not self.validateJsonSetting(inputJsonDict):
             raise Exception(self.tr("Not valid DsgTools property file!"))
         edgvVersion = inputJsonDict.keys()[0].split('_')[-1]
         try:
@@ -238,7 +238,7 @@ class GenericDbManager(QObject):
         """
         reimplemented in each child
         """
-        pass
+        return True
 
     
     def getRecordFromAdminDb(self, propertyName, edgvVersion):
