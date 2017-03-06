@@ -221,7 +221,7 @@ class GenericDbManager(QObject):
             for profileName in settingDict[edgvVersion]:
                 self.exportSetting(profileName, edgvVersion, outputPath)
 
-    def getPropertyPerspectiveDict(self, viewType = 'property'):
+    def getPropertyPerspectiveDict(self, viewType = DsgEnums.Property):
         """
         Gets a dict in the format:
         if viewType == 'customization': {customizationName: ['-list of databases with customization']}
