@@ -109,7 +109,7 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
                     return
                 oldCoverage = json.loads(data)
             dlg = SetupEarthCoverage(self.abstractDb, areas, lines, oldCoverage)
-            dlg.coverageChanged.connect(self.loadEarthCoverage)
+            dlg.coverageChanged.connect(self.loadEarthCoverage) #continue here tomorrow
             dlg.exec_()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))

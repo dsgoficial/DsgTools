@@ -54,8 +54,6 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         self.setupWizard(oldCoverage, enableSetupFromFile)
         if not onlySetup:
             self.button(QtGui.QWizard.FinishButton).clicked.connect(self.writeIntoDb)
-        else:
-            self.button(QtGui.QWizard.FinishButton).clicked.connect(self.createDict)
         self.button(QtGui.QWizard.NextButton).clicked.connect(self.buildTree)
 
     def setupFromFile(self):
@@ -159,8 +157,8 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
                     earthCoverageDict[childClass.text(0)].append(childClass.child(j).text(1))
         return earthCoverageDict
     
-    def createDict(self):
-        pass
+    def getDict(self):
+        return self.getEarthCoverageDictFromTree()
 
     def writeIntoDb(self):
         """
