@@ -40,30 +40,13 @@ DSGTools 2.0 has the following features:
 
 -Tool to reclassify features (move them to another layer) with predefined attributes;
 
+-Validation Tools: fix geometry problems prior to creating a topology structure;
+
 Requirements for LINUX (Ubuntu/Debian):
 Install the following packages as follows:
 sudo apt-get install python-qt4-sql
-
-O DSGTools é um plugin para o QGIS (http://qgis.org/pt_BR/site/) que permite aos usuários a criação e utilização de produtos cartográficos de acordo com as especificações da ET-EDGV 2.1.3 e da ET-EDGV Defesa F Ter 2ª Edição. O DSGTools visa atender não apenas o Exército Brasileiro, mas também produtores e usuários de geoinformação da sociedade.
-Este projeto visa cumprir a missão estabelecida no Plano Estratégico do Exército 2016-2019 (PEEx 2016-2019), relativo ao seguinte Objetivo Estratégico do Exército (OEE):
-• OEE 7 - Aprimorar a Governança de Tecnologia da Informação;
-• Estratégia 7.2 - Reorganização do Sistema de Informação do Exército (SINFOEx);
-• Ação Estratégica 7.2.1 - Aperfeiçoar a produção e disponibilização da geoinformação;
-• Atividade imposta 7.2.1.5 - Implantar o SIG para ambiente desktop no âmbito do Exército.
-
-O plugin foi todo desenvolvido em python e está disponível para download pelo próprio QGIS ou pelo endereço http://plugins.qgis.org/plugins/DsgTools/.
-
-Estão disponíveis as seguintes funcionalidades no plugin em sua versão 2.0:
-
-Criação, armazenamento e remoção de configuração de servidores PostGIS;
-
-Criação de banco de dados em Spatialite e em PostGIS de acordo a ET-EDGV 2.1.3;
-
-Criação de banco de dados em Spatialite e em PostGIS de acordo com ET-EDGV Defesa F Ter 2ª Edição;
-
-Carregamento de camadas por classe e por categoria conforme definido na EDGV 2.1.3 e na ET-EDGV Defesa F Ter 2ª Edição;
-
-Manipulação de feições complexas (criação, edição, remoção, zoom, associação e desassociação);
+sudo apt-get install libqt4-sql-psql
+sudo apt-get install libqt4-sql-sqlite
 
 
 DSG Master Plugin (Versão em Português)
@@ -112,3 +95,5 @@ Visualizador de valores de códigos da EDGV para auxiliar em consultas por atrib
 Deleção de bancos EDGV feitos em PostgreSQL;
 
 Remoção informações de bancos de dados faltantes no QGIS;
+
+
