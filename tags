@@ -82,7 +82,7 @@ ExploreDb	ServerTools/exploreDb.py	/^class ExploreDb(QtGui.QDialog, FORM_CLASS):
 ExploreServerWidget	CustomWidgets/exploreServerWidget.py	/^class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):$/;"	kind:class	line:42
 FieldSetup	ProductionTools/FieldToolBox/field_setup.py	/^class FieldSetup(QtGui.QDialog, FORM_CLASS):$/;"	kind:class	line:44
 FieldToolBoxConfigManager	ServerManagementTools/fieldToolBoxConfigManager.py	/^class FieldToolBoxConfigManager(GenericDbManager):$/;"	kind:class	line:37
-FieldToolBoxConfigManagerWidget	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^class FieldToolBoxConfigManagerWidget(GenericManagerWidget):$/;"	kind:class	line:40
+FieldToolBoxConfigManagerWidget	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^class FieldToolBoxConfigManagerWidget(GenericManagerWidget):$/;"	kind:class	line:41
 FieldToolbox	ProductionTools/FieldToolBox/field_toolbox.py	/^class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):$/;"	kind:class	line:43
 FilterCustomization	Factories/DbCustomizationFactory/filterCustomization.py	/^class FilterCustomization(DbCustomization):$/;"	kind:class	line:26
 ForceValidityGeometriesProcess	ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py	/^class ForceValidityGeometriesProcess(ValidationProcess):$/;"	kind:class	line:26
@@ -263,7 +263,7 @@ __init__	CustomWidgets/databaseParameterWidget.py	/^    def __init__(self, paren
 __init__	CustomWidgets/earthCoverageManagerWidget.py	/^    def __init__(self, manager = None, parent = None):$/;"	kind:member	line:40
 __init__	CustomWidgets/earthCoverageWidget.py	/^    def __init__(self, parent=None):$/;"	kind:member	line:38
 __init__	CustomWidgets/exploreServerWidget.py	/^    def __init__(self, parent = None):$/;"	kind:member	line:45
-__init__	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^    def __init__(self, manager = None, parent = None):$/;"	kind:member	line:41
+__init__	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^    def __init__(self, manager = None, parent = None):$/;"	kind:member	line:42
 __init__	CustomWidgets/genericManagerWidget.py	/^    def __init__(self, genericDbManager = None, parent = None):$/;"	kind:member	line:43
 __init__	CustomWidgets/genericParameterSetter.py	/^    def __init__(self, parent = None):$/;"	kind:member	line:35
 __init__	CustomWidgets/listSelector.py	/^    def __init__(self, originList, destinationList, parent = None):$/;"	kind:member	line:38
@@ -517,9 +517,9 @@ batchDbManager	dsg_tools.py	/^    def batchDbManager(self):$/;"	kind:member	line
 batchDbManager.py	ServerTools/batchDbManager.py	1;"	kind:file	line:1
 batchDeleteStyles	ServerTools/batchDbManager.py	/^    def batchDeleteStyles(self, dbsDict, styleDict):$/;"	kind:member	line:337
 batchDropDbs	ServerTools/batchDbManager.py	/^    def batchDropDbs(self, dbList):$/;"	kind:member	line:196
-batchExportSettings	ServerManagementTools/genericDbManager.py	/^    def batchExportSettings(self, outputDir):$/;"	kind:member	line:211
+batchExportSettings	ServerManagementTools/genericDbManager.py	/^    def batchExportSettings(self, outputDir):$/;"	kind:member	line:214
 batchGetJsonTag	CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py	/^    def batchGetJsonTag(self, schema, tableName, jsonList, inhConstrDict):$/;"	kind:member	line:340
-batchImportSettings	ServerManagementTools/genericDbManager.py	/^    def batchImportSettings(self, profilesDir):$/;"	kind:member	line:189
+batchImportSettings	ServerManagementTools/genericDbManager.py	/^    def batchImportSettings(self, profilesDir):$/;"	kind:member	line:192
 batchImportStyles	ServerTools/batchDbManager.py	/^    def batchImportStyles(self, dbsDict, styleDir, styleList, version):$/;"	kind:member	line:259
 batchUpgradePostgis	ServerTools/batchDbManager.py	/^    def batchUpgradePostgis(self, dbList):$/;"	kind:member	line:177
 beautifyText	ValidationTools/processParametersDialog.py	/^def beautifyText(camelCasedText):$/;"	kind:function	line:145
@@ -635,7 +635,7 @@ clearSpatialiteTab	CustomWidgets/customServerConnectionWidget.py	/^    def clear
 clearTree	CustomWidgets/earthCoverageWidget.py	/^    def clearTree(self):$/;"	kind:member	line:99
 clearWidgets	CustomWidgets/exploreServerWidget.py	/^    clearWidgets = pyqtSignal()$/;"	kind:variable	line:44
 clearWidgets	PostgisCustomization/createDatabaseCustomization.py	/^    def clearWidgets(self):$/;"	kind:member	line:77
-cloneSelectedSetting	CustomWidgets/genericManagerWidget.py	/^    def cloneSelectedSetting(self):$/;"	kind:member	line:391
+cloneSelectedSetting	CustomWidgets/genericManagerWidget.py	/^    def cloneSelectedSetting(self):$/;"	kind:member	line:394
 closeAbstractDbs	ServerTools/batchDbManager.py	/^    def closeAbstractDbs(self, dbsDict):$/;"	kind:member	line:123
 closeDatabase	CustomWidgets/connectionWidget.py	/^    def closeDatabase(self):$/;"	kind:member	line:69
 closeEarthCoveragePolygonsProcess.py	ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py	1;"	kind:file	line:1
@@ -675,7 +675,7 @@ coverageChanged	DbTools/BatchDbCreator/createBatchFromCsv.py	/^    coverageChang
 coverageChanged	ValidationTools/setupEarthCoverage.py	/^    coverageChanged = pyqtSignal()$/;"	kind:variable	line:36
 createAdminDb	Factories/DbFactory/postgisDb.py	/^    def createAdminDb(self):$/;"	kind:member	line:2385
 createAdminDb	ServerManagementTools/genericDbManager.py	/^    def createAdminDb(self, serverAbstractDb, adminDb, host, port, user, password):$/;"	kind:member	line:99
-createAndInstall	ServerManagementTools/genericDbManager.py	/^    def createAndInstall(self, configName, newJsonDict, edgvVersion, dbList = []):$/;"	kind:member	line:248
+createAndInstall	ServerManagementTools/genericDbManager.py	/^    def createAndInstall(self, configName, newJsonDict, edgvVersion, dbList = []):$/;"	kind:member	line:250
 createAndPopulateTempTableFromMap	Factories/DbFactory/postgisDb.py	/^    def createAndPopulateTempTableFromMap(self, tableName, featureMap, geomColumnName):$/;"	kind:member	line:1627
 createAttributeItems	ProductionTools/FieldToolBox/field_setup.py	/^    def createAttributeItems(self, fullTableName, currentDict, qmlDict, count, colour = None):$/;"	kind:member	line:248
 createAuxStruct	ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py	/^    def createAuxStruct(self, epsg):$/;"	kind:member	line:277
@@ -711,7 +711,7 @@ createDbCreatorFactory	Factories/DbCreatorFactory/dbCreatorFactory.py	/^    def 
 createDbFactory	Factories/DbFactory/dbFactory.py	/^    def createDbFactory(self,driverName):$/;"	kind:member	line:34
 createDbFromMIList	Factories/DbCreatorFactory/dbCreator.py	/^    def createDbFromMIList(self, miList, srid, prefix = None, sufix = None, createFrame = False,  paramDict = dict()):$/;"	kind:member	line:104
 createDbFromTemplate	Factories/DbFactory/postgisDb.py	/^    def createDbFromTemplate(self,dbName,version,templateName = 'edgv'):$/;"	kind:member	line:2194
-createDbPerspectiveContextMenu	CustomWidgets/genericManagerWidget.py	/^    def createDbPerspectiveContextMenu(self, position):$/;"	kind:member	line:305
+createDbPerspectiveContextMenu	CustomWidgets/genericManagerWidget.py	/^    def createDbPerspectiveContextMenu(self, position):$/;"	kind:member	line:339
 createDbPerspectiveContextMenu	CustomWidgets/permissionWidget.py	/^    def createDbPerspectiveContextMenu(self, position):$/;"	kind:member	line:148
 createDbWithAutoIncrementingName	Factories/DbCreatorFactory/dbCreator.py	/^    def createDbWithAutoIncrementingName(self, dbInitialBaseName, srid, numberOfDatabases, prefix = None, sufix = None, paramDict = dict()):$/;"	kind:member	line:100
 createDict	ProductionTools/MinimumAreaTool/minimumAreaTool.py	/^    def createDict(self):$/;"	kind:member	line:62
@@ -744,7 +744,7 @@ createMeasureColumn	Factories/LayerLoaderFactory/edgvLayerLoader.py	/^    def cr
 createMemoryLayer	Factories/ThreadFactory/inventoryThread.py	/^    def createMemoryLayer(self):$/;"	kind:member	line:398
 createMenu	InventoryTools/inventoryTools.py	/^    def createMenu(self, position):$/;"	kind:member	line:75
 createMenu	ProductionTools/FieldToolBox/field_setup.py	/^    def createMenu(self, position):$/;"	kind:member	line:571
-createMenuAssigned	CustomWidgets/genericManagerWidget.py	/^    def createMenuAssigned(self, position):$/;"	kind:member	line:295
+createMenuAssigned	CustomWidgets/genericManagerWidget.py	/^    def createMenuAssigned(self, position):$/;"	kind:member	line:329
 createMenuAssigned	CustomWidgets/permissionWidget.py	/^    def createMenuAssigned(self, position):$/;"	kind:member	line:137
 createMenuAssigned	ServerTools/exploreDb.py	/^    def createMenuAssigned(self, position):$/;"	kind:member	line:147
 createMenuAssigned	UserTools/user_profiles.py	/^    def createMenuAssigned(self, position):$/;"	kind:member	line:95
@@ -753,7 +753,7 @@ createMenuInstalled	UserTools/user_profiles.py	/^    def createMenuInstalled(sel
 createPostGISDatabase	dsg_tools.py	/^    def createPostGISDatabase(self):$/;"	kind:member	line:777
 createPostgisDatabaseProcess	ProcessingTools/processManager.py	/^    def createPostgisDatabaseProcess(self, dbName, abstractDb, version,epsg):$/;"	kind:member	line:126
 createProfileWithProfileManager.py	UserTools/createProfileWithProfileManager.py	1;"	kind:file	line:1
-createPropertyPerspectiveContextMenu	CustomWidgets/genericManagerWidget.py	/^    def createPropertyPerspectiveContextMenu(self, position):$/;"	kind:member	line:319
+createPropertyPerspectiveContextMenu	CustomWidgets/genericManagerWidget.py	/^    def createPropertyPerspectiveContextMenu(self, position):$/;"	kind:member	line:353
 createPropertyTable	Factories/DbFactory/postgisDb.py	/^    def createPropertyTable(self, settingType):$/;"	kind:member	line:2845
 createPropertyTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def createPropertyTable(self, settingType):$/;"	kind:member	line:1324
 createRaster	ImageTools/raster_processing.py	/^    def createRaster(self, srcraster, destfile, pixelType):$/;"	kind:member	line:109
@@ -837,8 +837,8 @@ deleteFeaturesNotIn	Factories/SqlFactory/postgisSqlGenerator.py	/^    def delete
 deleteFlags	Factories/SqlFactory/postgisSqlGenerator.py	/^    def deleteFlags(self, processName):$/;"	kind:member	line:405
 deletePermissionProfile	Factories/DbFactory/postgisDb.py	/^    def deletePermissionProfile(self, name, edgvversion):$/;"	kind:member	line:2476
 deleteProcessFlags	Factories/DbFactory/postgisDb.py	/^    def deleteProcessFlags(self, processName):$/;"	kind:member	line:913
-deleteSelectedSetting	CustomWidgets/genericManagerWidget.py	/^    def deleteSelectedSetting(self):$/;"	kind:member	line:409
-deleteSetting	ServerManagementTools/genericDbManager.py	/^    def deleteSetting(self, configName, dbNameList = []):$/;"	kind:member	line:290
+deleteSelectedSetting	CustomWidgets/genericManagerWidget.py	/^    def deleteSelectedSetting(self):$/;"	kind:member	line:460
+deleteSetting	ServerManagementTools/genericDbManager.py	/^    def deleteSetting(self, configName, dbNameList = []):$/;"	kind:member	line:292
 deleteSetting	ServerManagementTools/permissionManager.py	/^    def deleteSetting(self, settingName, edgvVersion):$/;"	kind:member	line:192
 deleteSettingFromAdminDb	Factories/DbFactory/postgisDb.py	/^    def deleteSettingFromAdminDb(self, settingType, name, edgvversion):$/;"	kind:member	line:2785
 deleteSettingFromAdminDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def deleteSettingFromAdminDb(self, settingType, name, edgvversion):$/;"	kind:member	line:1107
@@ -921,7 +921,7 @@ executeSql	LayerTools/create_features_test.py	/^    def executeSql(self, query, 
 exploreDB	dsg_tools.py	/^    def exploreDB(self):$/;"	kind:member	line:845
 exploreDb.py	ServerTools/exploreDb.py	1;"	kind:file	line:1
 exploreServerWidget.py	CustomWidgets/exploreServerWidget.py	1;"	kind:file	line:1
-exportSetting	ServerManagementTools/genericDbManager.py	/^    def exportSetting(self, profileName, edgvVersion, outputPath):$/;"	kind:member	line:201
+exportSetting	ServerManagementTools/genericDbManager.py	/^    def exportSetting(self, profileName, edgvVersion, outputPath):$/;"	kind:member	line:204
 fieldToolBoxConfigManager.py	ServerManagementTools/fieldToolBoxConfigManager.py	1;"	kind:file	line:1
 fieldToolBoxConfigManagerWidget.py	CustomWidgets/fieldToolBoxConfigManagerWidget.py	1;"	kind:file	line:1
 field_setup.py	ProductionTools/FieldToolBox/field_setup.py	1;"	kind:file	line:1
@@ -973,6 +973,7 @@ getAllSettingsFromAdminDb	Factories/DbFactory/postgisDb.py	/^    def getAllSetti
 getAllSettingsFromAdminDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAllSettingsFromAdminDb(self, settingType):$/;"	kind:member	line:1112
 getAllStylesDict	Factories/DbFactory/postgisDb.py	/^    def getAllStylesDict(self, perspective = 'style'):$/;"	kind:member	line:1790
 getAllStylesFromDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAllStylesFromDb(self):$/;"	kind:member	line:906
+getApplyHeader	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^    def getApplyHeader(self):$/;"	kind:member	line:104
 getAssociatedFeaturesData	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getAssociatedFeaturesData(self, aggregated_schema, aggregated_class, column_name, complex_uuid):$/;"	kind:member	line:41
 getAssociatedFeaturesData	Factories/SqlFactory/spatialiteSqlGenerator.py	/^    def getAssociatedFeaturesData(self, aggregated_schema, aggregated_class, column_name, complex_uuid):$/;"	kind:member	line:39
 getAssociatedFeaturesData	Factories/SqlFactory/sqlGenerator.py	/^    def getAssociatedFeaturesData(self, aggregated_schema, aggregated_class, column_name, complex_uuid):$/;"	kind:member	line:35
@@ -1037,6 +1038,7 @@ getDbsFromServer	CustomWidgets/exploreServerWidget.py	/^    def getDbsFromServer
 getDbsFromServer	Factories/DbFactory/postgisDb.py	/^    def getDbsFromServer(self):$/;"	kind:member	line:791
 getDefaultFromDb	Factories/DbFactory/postgisDb.py	/^    def getDefaultFromDb(self, schema, tableName, attrName):$/;"	kind:member	line:2724
 getDefaultFromDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getDefaultFromDb(self, schema, tableName, attrName):$/;"	kind:member	line:1258
+getDeleteHeader	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^    def getDeleteHeader(self):$/;"	kind:member	line:109
 getDict	LayerTools/CreateFrameTool/map_index.py	/^    def getDict(self, file_name):    $/;"	kind:member	line:287
 getDimension	Factories/DbFactory/postgisDb.py	/^    def getDimension(self, geom):$/;"	kind:member	line:1050
 getDimension	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getDimension(self, geom):$/;"	kind:member	line:475
@@ -1198,6 +1200,7 @@ getParameters	DbTools/BatchDbCreator/createBatchIncrementing.py	/^    def getPar
 getParameters	DbTools/PostGISTool/postgisDBTool.py	/^    def getParameters(self):$/;"	kind:member	line:67
 getParameters	ImageTools/processingTools.py	/^    def getParameters(self):$/;"	kind:member	line:78
 getParameters	InventoryTools/inventoryTools.py	/^    def getParameters(self):$/;"	kind:member	line:108
+getParametersFromInterface	CustomWidgets/genericManagerWidget.py	/^    def getParametersFromInterface(self):$/;"	kind:member	line:409
 getParamsFromConectedDb	Factories/DbFactory/postgisDb.py	/^    def getParamsFromConectedDb(self):$/;"	kind:member	line:2377
 getParentGeomTables	Factories/DbFactory/postgisDb.py	/^    def getParentGeomTables(self, getTupple = False):$/;"	kind:member	line:2558
 getParentGeomTables	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getParentGeomTables(self, schemaList):$/;"	kind:member	line:1156
@@ -1216,7 +1219,7 @@ getPropertyPerspectiveDict	Factories/DbFactory/postgisDb.py	/^    def getPropert
 getPropertyPerspectiveDict	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getPropertyPerspectiveDict(self, settingType, perspective, versionFilter = None):$/;"	kind:member	line:1337
 getPropertyPerspectiveDict	ServerManagementTools/customizationManager.py	/^    def getPropertyPerspectiveDict(self, viewType):$/;"	kind:member	line:69
 getPropertyPerspectiveDict	ServerManagementTools/earthCoverageManager.py	/^    def getPropertyPerspectiveDict(self, viewType):$/;"	kind:member	line:69
-getPropertyPerspectiveDict	ServerManagementTools/genericDbManager.py	/^    def getPropertyPerspectiveDict(self, viewType = 'property'):$/;"	kind:member	line:224
+getPropertyPerspectiveDict	ServerManagementTools/genericDbManager.py	/^    def getPropertyPerspectiveDict(self, viewType = DsgEnums.Property):$/;"	kind:member	line:227
 getProxyConfiguration	BDGExTools/BDGExTools.py	/^    def getProxyConfiguration(self):$/;"	kind:member	line:74
 getQgsPolygonFrame	LayerTools/CreateFrameTool/map_index.py	/^    def getQgsPolygonFrame(self, map_index):$/;"	kind:member	line:222
 getQmlDir	Factories/DbFactory/abstractDb.py	/^    def getQmlDir(self):$/;"	kind:member	line:571
@@ -1224,7 +1227,7 @@ getQmlPath	CustomWidgets/connectionWidget.py	/^    def getQmlPath(self):$/;"	kin
 getRasterExtent	Factories/ThreadFactory/inventoryThread.py	/^    def getRasterExtent(self, gt, cols, rows):$/;"	kind:member	line:326
 getRecordFromAdminDb	Factories/DbFactory/postgisDb.py	/^    def getRecordFromAdminDb(self, settingType, propertyName, edgvVersion):$/;"	kind:member	line:2870
 getRecordFromAdminDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getRecordFromAdminDb(self, settingType, propertyName, edgvVersion):$/;"	kind:member	line:1319
-getRecordFromAdminDb	ServerManagementTools/genericDbManager.py	/^    def getRecordFromAdminDb(self, propertyName, edgvVersion):$/;"	kind:member	line:244
+getRecordFromAdminDb	ServerManagementTools/genericDbManager.py	/^    def getRecordFromAdminDb(self, propertyName, edgvVersion):$/;"	kind:member	line:246
 getRecursiveInheritance	Utils/utils.py	/^    def getRecursiveInheritance(self, parent, resultList, inhDict):$/;"	kind:member	line:155
 getRecursiveInheritanceTreeDict	Utils/utils.py	/^    def getRecursiveInheritanceTreeDict(self, parent, resultDict, inhDict):$/;"	kind:member	line:162
 getRoleFromAdminDb	Factories/DbFactory/postgisDb.py	/^    def getRoleFromAdminDb(self, roleName, edgvVersion):$/;"	kind:member	line:2449
@@ -1265,11 +1268,10 @@ getServers	ServerTools/viewServers.py	/^    def getServers(self):$/;"	kind:membe
 getSetting	ServerManagementTools/genericDbManager.py	/^    def getSetting(self, name, edgvVersion):$/;"	kind:member	line:116
 getSettingFromAdminDb	Factories/DbFactory/postgisDb.py	/^    def getSettingFromAdminDb(self, settingType, settingName, edgvVersion):$/;"	kind:member	line:2749
 getSettingFromAdminDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getSettingFromAdminDb(self, settingType, name, edgvversion):$/;"	kind:member	line:1102
-getSettingListFromInterface	CustomWidgets/genericManagerWidget.py	/^    def getSettingListFromInterface(self):$/;"	kind:member	line:334
 getSettingTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getSettingTable(self, settingType):$/;"	kind:member	line:1080
 getSettingVersion	Factories/DbFactory/postgisDb.py	/^    def getSettingVersion(self, settingType, settingName):$/;"	kind:member	line:2761
-getSettingVersion	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getSettingVersion(self, settingType, settingName):$/;"	kind:member	line:1400
-getSettingVersion	ServerManagementTools/genericDbManager.py	/^    def getSettingVersion(self, settingName):$/;"	kind:member	line:233
+getSettingVersion	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getSettingVersion(self, settingType, settingName):$/;"	kind:member	line:1399
+getSettingVersion	ServerManagementTools/genericDbManager.py	/^    def getSettingVersion(self, settingName):$/;"	kind:member	line:236
 getSettings	ServerManagementTools/genericDbManager.py	/^    def getSettings(self):$/;"	kind:member	line:109
 getSmallAreas	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getSmallAreas(self,schema,cl,areaTolerance):$/;"	kind:member	line:495
 getSmallAreasRecords	Factories/DbFactory/postgisDb.py	/^    def getSmallAreasRecords(self,classesWithGeom, tol):$/;"	kind:member	line:1135
@@ -1359,7 +1361,9 @@ getUiParameterJsonDict	CustomWidgets/CustomDbManagementWidgets/newClassWidget.py
 getUiParameterJsonDict	CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py	/^    def getUiParameterJsonDict(self):$/;"	kind:member	line:163
 getUiParameterJsonDict	CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py	/^    def getUiParameterJsonDict(self):$/;"	kind:member	line:203
 getUiParameterJsonDict	ProductionTools/FieldToolBox/field_setup.py	/^    def getUiParameterJsonDict(self):$/;"	kind:member	line:442
-getUpdateSelectedSettingHeader	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^    def getUpdateSelectedSettingHeader(self):$/;"	kind:member	line:116
+getUninstallFromSelected	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^    def getUninstallFromSelected(self):$/;"	kind:member	line:114
+getUninstallSelectedSettingHeader	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^    def getUninstallSelectedSettingHeader(self):$/;"	kind:member	line:99
+getUpdateSelectedSettingHeader	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^    def getUpdateSelectedSettingHeader(self):$/;"	kind:member	line:94
 getUserCanceledFeedbackMessage	Factories/ThreadFactory/dpiThread.py	/^    def getUserCanceledFeedbackMessage(self):$/;"	kind:member	line:49
 getUserCanceledFeedbackMessage	Factories/ThreadFactory/inventoryThread.py	/^    def getUserCanceledFeedbackMessage(self):$/;"	kind:member	line:73
 getUserCanceledFeedbackMessage	Factories/ThreadFactory/postgisDbThread.py	/^    def getUserCanceledFeedbackMessage(self):$/;"	kind:member	line:56
@@ -1380,7 +1384,7 @@ getValidationStatusText	Factories/DbFactory/postgisDb.py	/^    def getValidation
 getVersion	CustomWidgets/databaseParameterWidget.py	/^    def getVersion(self):$/;"	kind:member	line:85
 getVertexNearEdgesRecords	Factories/DbFactory/postgisDb.py	/^    def getVertexNearEdgesRecords(self, tableSchema, tableName, tol):$/;"	kind:member	line:1169
 getVertexNearEdgesStruct	Factories/SqlFactory/postgisSqlGenerator.py	/^    def getVertexNearEdgesStruct(self, epsg, tol):$/;"	kind:member	line:527
-getViewType	CustomWidgets/genericManagerWidget.py	/^    def getViewType(self):$/;"	kind:member	line:195
+getViewType	CustomWidgets/genericManagerWidget.py	/^    def getViewType(self):$/;"	kind:member	line:229
 getViewType	CustomWidgets/permissionWidget.py	/^    def getViewType(self):$/;"	kind:member	line:106
 getWhoAmI	CustomWidgets/genericManagerWidget.py	/^    def getWhoAmI(self):$/;"	kind:member	line:92
 getWhoAmI	Factories/DbFactory/postgisDb.py	/^    def getWhoAmI(self, cl, id):$/;"	kind:member	line:1516
@@ -1440,7 +1444,7 @@ inspectFeatures.py	ProductionTools/InspectFeatures/inspectFeatures.py	1;"	kind:f
 installCustomization	ServerManagementTools/customizationManager.py	/^    def installCustomization(self, customizationName):$/;"	kind:member	line:44
 installEarthCoverage	ServerManagementTools/earthCoverageManager.py	/^    def installEarthCoverage(self, earthCoverageName):$/;"	kind:member	line:44
 installModelsAndScripts	dsg_tools.py	/^    def installModelsAndScripts(self):$/;"	kind:member	line:742
-installSetting	ServerManagementTools/genericDbManager.py	/^    def installSetting(self, configName, dbNameList = []):$/;"	kind:member	line:252
+installSetting	ServerManagementTools/genericDbManager.py	/^    def installSetting(self, configName, dbNameList = []):$/;"	kind:member	line:254
 instantiateAbstractDb	ServerManagementTools/genericDbManager.py	/^    def instantiateAbstractDb(self, dbName):$/;"	kind:member	line:59
 instantiateAbstractDbs	ServerTools/batchDbManager.py	/^    def instantiateAbstractDbs(self, instantiateTemplates = False):$/;"	kind:member	line:109
 instantiateAdminDb	ServerManagementTools/genericDbManager.py	/^    def instantiateAdminDb(self, serverAbstractDb):$/;"	kind:member	line:71
@@ -1532,7 +1536,7 @@ load_by_class.py	LayerTools/load_by_class.py	1;"	kind:file	line:1
 logCleared	ConversionTools/convert_database.py	/^    def logCleared(self):$/;"	kind:member	line:176
 logError	Factories/LayerLoaderFactory/edgvLayerLoader.py	/^    def logError(self):$/;"	kind:member	line:162
 logEvent	Factories/DbCustomizationFactory/dbCustomization.py	/^    def logEvent(self,event):$/;"	kind:member	line:39
-logInternalError	CustomWidgets/genericManagerWidget.py	/^    def logInternalError(self, exceptionDict):$/;"	kind:member	line:238
+logInternalError	CustomWidgets/genericManagerWidget.py	/^    def logInternalError(self, exceptionDict):$/;"	kind:member	line:272
 logInternalError	LayerTools/LoadLayersFromServer/loadLayersFromServer.py	/^    def logInternalError(self, exceptionDict):$/;"	kind:member	line:206
 logInternalError	ServerTools/batchDbManager.py	/^    def logInternalError(self, exceptionDict):$/;"	kind:member	line:142
 logInternalError	UserTools/alter_user_password.py	/^    def logInternalError(self, exceptionDict):$/;"	kind:member	line:103
@@ -1570,12 +1574,12 @@ makeValueRelationDict	ProductionTools/FieldToolBox/field_setup.py	/^    def make
 makeVrtDict	QGIS_Scripts/virtual_raster.py	/^def makeVrtDict(candidates, camada):$/;"	kind:function	line:94
 manageComplex.py	ComplexTools/manageComplex.py	1;"	kind:file	line:1
 manageDBAuxiliarStructure.py	ServerTools/manageDBAuxiliarStructure.py	1;"	kind:file	line:1
-manageDbSettings	CustomWidgets/genericManagerWidget.py	/^    def manageDbSettings(self):$/;"	kind:member	line:365
+manageDbSettings	CustomWidgets/genericManagerWidget.py	/^    def manageDbSettings(self):$/;"	kind:member	line:368
 managePermissionsOnDb	CustomWidgets/permissionWidget.py	/^    def managePermissionsOnDb(self):$/;"	kind:member	line:230
-manageSelectedSetting	CustomWidgets/genericManagerWidget.py	/^    def manageSelectedSetting(self):$/;"	kind:member	line:368
+manageSelectedSetting	CustomWidgets/genericManagerWidget.py	/^    def manageSelectedSetting(self):$/;"	kind:member	line:371
 manageServerUsers.py	UserTools/manageServerUsers.py	1;"	kind:file	line:1
-manageSetting	CustomWidgets/genericManagerWidget.py	/^    def manageSetting(self, config, manageType, dbList = [], parameterDict = dict()):$/;"	kind:member	line:253
-manageSettings	CustomWidgets/genericManagerWidget.py	/^    def manageSettings(self, manageType, dbList = [], selectedConfig = [], parameterDict = dict()):$/;"	kind:member	line:272
+manageSetting	CustomWidgets/genericManagerWidget.py	/^    def manageSetting(self, config, manageType, dbList = [], parameterDict = dict()):$/;"	kind:member	line:287
+manageSettings	CustomWidgets/genericManagerWidget.py	/^    def manageSettings(self, manageType, dbList = [], selectedConfig = [], parameterDict = dict()):$/;"	kind:member	line:306
 manageUserPermissions	CustomWidgets/permissionWidget.py	/^    def manageUserPermissions(self):$/;"	kind:member	line:172
 manager	ValidationTools/validationManager.py	/^    manager = ValidationManager(abstractDb)$/;"	kind:variable	line:139
 mapCanvas	test/qgis_interface.py	/^    def mapCanvas(self):$/;"	kind:member	line:181
@@ -1627,16 +1631,16 @@ on_allTablesCheckBox_stateChanged	CustomWidgets/CustomDbManagementWidgets/newAtt
 on_alterPasswordButton_clicked	UserTools/alter_user_password.py	/^    def on_alterPasswordButton_clicked(self):$/;"	kind:member	line:51
 on_alterPasswordButton_clicked	UserTools/manageServerUsers.py	/^    def on_alterPasswordButton_clicked(self):$/;"	kind:member	line:106
 on_alterPasswordButton_clicked	UserTools/user_profiles.py	/^    def on_alterPasswordButton_clicked(self):$/;"	kind:member	line:212
-on_applyPushButton_clicked	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^    def on_applyPushButton_clicked(self):$/;"	kind:member	line:94
+on_applyPushButton_clicked	CustomWidgets/genericManagerWidget.py	/^    def on_applyPushButton_clicked(self):$/;"	kind:member	line:210
 on_applyPushButton_clicked	UserTools/dbProfileManager.py	/^    def on_applyPushButton_clicked(self):$/;"	kind:member	line:53
 on_applyPushButton_clicked	UserTools/profileUserManager.py	/^    def on_applyPushButton_clicked(self):$/;"	kind:member	line:53
 on_associatePushButton_clicked	ComplexTools/complexWindow.py	/^    def on_associatePushButton_clicked(self):$/;"	kind:member	line:202
 on_attributeComboBox_currentIndexChanged	CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py	/^    def on_attributeComboBox_currentIndexChanged(self, idx):$/;"	kind:member	line:158
 on_attributeRulesEditorPushButton_clicked	ValidationTools/validation_toolbox.py	/^    def on_attributeRulesEditorPushButton_clicked(self):$/;"	kind:member	line:274
 on_backInspectButton_clicked	ProductionTools/InspectFeatures/inspectFeatures.py	/^    def on_backInspectButton_clicked(self):$/;"	kind:member	line:88
-on_batchExportPushButton_clicked	CustomWidgets/genericManagerWidget.py	/^    def on_batchExportPushButton_clicked(self):$/;"	kind:member	line:164
+on_batchExportPushButton_clicked	CustomWidgets/genericManagerWidget.py	/^    def on_batchExportPushButton_clicked(self):$/;"	kind:member	line:172
 on_batchExportPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_batchExportPushButton_clicked(self):$/;"	kind:member	line:281
-on_batchImportPushButton_clicked	CustomWidgets/genericManagerWidget.py	/^    def on_batchImportPushButton_clicked(self):$/;"	kind:member	line:180
+on_batchImportPushButton_clicked	CustomWidgets/genericManagerWidget.py	/^    def on_batchImportPushButton_clicked(self):$/;"	kind:member	line:191
 on_batchImportPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_batchImportPushButton_clicked(self):$/;"	kind:member	line:297
 on_buttonBox_accepted	CustomWidgets/listSelector.py	/^    def on_buttonBox_accepted(self):$/;"	kind:member	line:52
 on_buttonBox_accepted	ImageTools/processingTools.py	/^    def on_buttonBox_accepted(self):$/;"	kind:member	line:59
@@ -1698,7 +1702,7 @@ on_createNewServerPushButton_clicked	CustomWidgets/exploreServerWidget.py	/^    
 on_createPermissionPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_createPermissionPushButton_clicked(self):$/;"	kind:member	line:180
 on_createPushButton_clicked	CustomWidgets/customizationManagerWidget.py	/^    def on_createPushButton_clicked(self):$/;"	kind:member	line:56
 on_createPushButton_clicked	CustomWidgets/earthCoverageManagerWidget.py	/^    def on_createPushButton_clicked(self):$/;"	kind:member	line:56
-on_createPushButton_clicked	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^    def on_createPushButton_clicked(self):$/;"	kind:member	line:57
+on_createPushButton_clicked	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^    def on_createPushButton_clicked(self):$/;"	kind:member	line:58
 on_createSqliteButton_clicked	MilitarySimbologyTools/militarySimbologyDock.py	/^    def on_createSqliteButton_clicked(self):$/;"	kind:member	line:59
 on_createUserButton_clicked	UserTools/create_user.py	/^    def on_createUserButton_clicked(self):$/;"	kind:member	line:58
 on_createUserButton_clicked	UserTools/manageServerUsers.py	/^    def on_createUserButton_clicked(self):$/;"	kind:member	line:73
@@ -1711,7 +1715,7 @@ on_defineEarthCoverageButton_clicked	CustomWidgets/earthCoverageWidget.py	/^    
 on_deleteCustomizationPushButton_clicked	CustomWidgets/customizationManagerWidget.py	/^    def on_deleteCustomizationPushButton_clicked(self):$/;"	kind:member	line:64
 on_deleteCustomizationPushButton_clicked	CustomWidgets/earthCoverageManagerWidget.py	/^    def on_deleteCustomizationPushButton_clicked(self):$/;"	kind:member	line:64
 on_deletePermissionPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_deletePermissionPushButton_clicked(self):$/;"	kind:member	line:213
-on_deletePushButton_clicked	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^    def on_deletePushButton_clicked(self):$/;"	kind:member	line:102
+on_deletePushButton_clicked	CustomWidgets/genericManagerWidget.py	/^    def on_deletePushButton_clicked(self):$/;"	kind:member	line:217
 on_deletePushButton_clicked	UserTools/profile_editor.py	/^    def on_deletePushButton_clicked(self):$/;"	kind:member	line:241
 on_deleteStyles_clicked	ServerTools/batchDbManager.py	/^    def on_deleteStyles_clicked(self):$/;"	kind:member	line:321
 on_disassociatePushButton_clicked	ComplexTools/complexWindow.py	/^    def on_disassociatePushButton_clicked(self):$/;"	kind:member	line:356
@@ -1725,7 +1729,7 @@ on_dropDatabasePushButton_clicked	ServerTools/batchDbManager.py	/^    def on_dro
 on_dropDatabasePushButton_clicked	ServerTools/exploreDb.py	/^    def on_dropDatabasePushButton_clicked(self):$/;"	kind:member	line:174
 on_edgvComboFilter_currentIndexChanged	ServerTools/batchDbManager.py	/^    def on_edgvComboFilter_currentIndexChanged(self, idx):$/;"	kind:member	line:93
 on_editButton_clicked	ServerTools/viewServers.py	/^    def on_editButton_clicked(self):$/;"	kind:member	line:96
-on_exportPushButton_clicked	CustomWidgets/genericManagerWidget.py	/^    def on_exportPushButton_clicked(self):$/;"	kind:member	line:141
+on_exportPushButton_clicked	CustomWidgets/genericManagerWidget.py	/^    def on_exportPushButton_clicked(self):$/;"	kind:member	line:147
 on_exportPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_exportPushButton_clicked(self):$/;"	kind:member	line:260
 on_filterCheckBox_stateChanged	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def on_filterCheckBox_stateChanged(self, idx):$/;"	kind:member	line:105
 on_filterEdit_textChanged	LayerTools/load_by_class.py	/^    def on_filterEdit_textChanged(self, text):$/;"	kind:member	line:113
@@ -1733,7 +1737,7 @@ on_filterEdit_textChanged	ProductionTools/FieldToolBox/field_setup.py	/^    def 
 on_filterLineEdit_textChanged	CustomWidgets/CustomDbManagementWidgets/domainSetter.py	/^    def on_filterLineEdit_textChanged(self, text):$/;"	kind:member	line:129
 on_filterLineEdit_textChanged	CustomWidgets/customSelector.py	/^    def on_filterLineEdit_textChanged(self, text):$/;"	kind:member	line:198
 on_historyButton_clicked	ValidationTools/validation_toolbox.py	/^    def on_historyButton_clicked(self):$/;"	kind:member	line:158
-on_importPushButton_clicked	CustomWidgets/genericManagerWidget.py	/^    def on_importPushButton_clicked(self):$/;"	kind:member	line:123
+on_importPushButton_clicked	CustomWidgets/genericManagerWidget.py	/^    def on_importPushButton_clicked(self):$/;"	kind:member	line:126
 on_importPushButton_clicked	UserTools/serverProfilesManager.py	/^    def on_importPushButton_clicked(self):$/;"	kind:member	line:243
 on_importStylesPushButton_clicked	ServerTools/batchDbManager.py	/^    def on_importStylesPushButton_clicked(self):$/;"	kind:member	line:210
 on_inomLineEdit_textEdited	LayerTools/CreateFrameTool/ui_create_inom_dialog.py	/^    def on_inomLineEdit_textEdited(self,s):$/;"	kind:member	line:130
@@ -1827,7 +1831,7 @@ on_testButton_clicked	ServerTools/viewServers.py	/^    def on_testButton_clicked
 on_theSelectionModel_selectionChanged	ValidationTools/validation_toolbox.py	/^    def on_theSelectionModel_selectionChanged(self):$/;"	kind:member	line:86
 on_treeWidget_currentItemChanged	ProductionTools/FieldToolBox/field_setup.py	/^    def on_treeWidget_currentItemChanged(self, previous, current):$/;"	kind:member	line:537
 on_typeComboBox_currentIndexChanged	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def on_typeComboBox_currentIndexChanged(self, idx):$/;"	kind:member	line:87
-on_uninstallFromSelectedPushButton_clicked	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^    def on_uninstallFromSelectedPushButton_clicked(self):$/;"	kind:member	line:109
+on_uninstallFromSelectedPushButton_clicked	CustomWidgets/genericManagerWidget.py	/^    def on_uninstallFromSelectedPushButton_clicked(self):$/;"	kind:member	line:223
 on_upgradePostgisPushButton_clicked	ServerTools/batchDbManager.py	/^    def on_upgradePostgisPushButton_clicked(self):$/;"	kind:member	line:168
 on_validationTabWidget_currentChanged	ValidationTools/validation_toolbox.py	/^    def on_validationTabWidget_currentChanged(self):$/;"	kind:member	line:240
 on_versionCombo_currentIndexChanged	UserTools/createProfileWithProfileManager.py	/^    def on_versionCombo_currentIndexChanged(self):$/;"	kind:member	line:149
@@ -1836,7 +1840,7 @@ on_versionSelectionComboBox_currentIndexChanged	UserTools/serverProfilesManager.
 on_zoomButton_clicked	ComplexTools/complexWindow.py	/^    def on_zoomButton_clicked(self):$/;"	kind:member	line:209
 openRaster	ImageTools/raster_processing.py	/^    def openRaster(self, file):$/;"	kind:member	line:41
 openRaster	QGIS_Scripts/HSV_fusion.py	/^    def openRaster(self, file):$/;"	kind:member	line:42
-outputMessage	CustomWidgets/genericManagerWidget.py	/^    def outputMessage(self, operation, header, successDict, exceptionDict):$/;"	kind:member	line:220
+outputMessage	CustomWidgets/genericManagerWidget.py	/^    def outputMessage(self, operation, header, successDict, exceptionDict):$/;"	kind:member	line:254
 outputMessage	ServerTools/batchDbManager.py	/^    def outputMessage(self, header, successList, exceptionDict):$/;"	kind:member	line:134
 outputMessage	UserTools/alter_user_password.py	/^    def outputMessage(self, header, successList, exceptionDict):$/;"	kind:member	line:92
 outputMessage	UserTools/dbProfileManager.py	/^    def outputMessage(self, header, successList, exceptionDict):$/;"	kind:member	line:81
@@ -1868,8 +1872,8 @@ populateClassList	ProductionTools/FieldToolBox/field_setup.py	/^    def populate
 populateClasses	ValidationTools/setupEarthCoverage.py	/^    def populateClasses(self):$/;"	kind:member	line:116
 populateComboBox	ComplexTools/complexWindow.py	/^    def populateComboBox(self):$/;"	kind:member	line:148
 populateConfigFromDb	ProductionTools/FieldToolBox/field_toolbox.py	/^    def populateConfigFromDb(self):$/;"	kind:member	line:484
-populateConfigInterface	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^    def populateConfigInterface(self, templateDb, jsonDict = None):$/;"	kind:member	line:81
-populateConfigInterface	CustomWidgets/genericManagerWidget.py	/^    def populateConfigInterface(self, templateDb, jsonDict = None):$/;"	kind:member	line:110
+populateConfigInterface	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^    def populateConfigInterface(self, templateDb, jsonDict = None):$/;"	kind:member	line:82
+populateConfigInterface	CustomWidgets/genericManagerWidget.py	/^    def populateConfigInterface(self, templateDb, jsonDict = None):$/;"	kind:member	line:113
 populateCustomizationCombo	PostgisCustomization/createDatabaseCustomization.py	/^    def populateCustomizationCombo(self):$/;"	kind:member	line:96
 populateDefaultCombo	CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py	/^    def populateDefaultCombo(self, domainName, domainDict, filterClause):$/;"	kind:member	line:113
 populateDelimiters	ValidationTools/setupEarthCoverage.py	/^    def populateDelimiters(self):$/;"	kind:member	line:127
@@ -1996,7 +2000,7 @@ readFile	ValidationTools/rules_editor.py	/^    def readFile(self):$/;"	kind:memb
 readJsonFile	ProductionTools/FieldToolBox/field_setup.py	/^    def readJsonFile(self, filename):$/;"	kind:member	line:481
 readJsonFile	UserTools/profile_editor.py	/^    def readJsonFile(self, filename):$/;"	kind:member	line:129
 readJsonFile	Utils/utils.py	/^    def readJsonFile(self, filename, returnFileAndDict=False):$/;"	kind:member	line:107
-readJsonFromDatabase	CustomWidgets/genericManagerWidget.py	/^    def readJsonFromDatabase(self, propertyName, edgvVersion):$/;"	kind:member	line:116
+readJsonFromDatabase	CustomWidgets/genericManagerWidget.py	/^    def readJsonFromDatabase(self, propertyName, edgvVersion):$/;"	kind:member	line:119
 readJsonFromDatabase	UserTools/serverProfilesManager.py	/^    def readJsonFromDatabase(self, profileName, edgvVersion):$/;"	kind:member	line:96
 readQGISElement	QmlTools/qmlParser.py	/^    def readQGISElement(self):$/;"	kind:member	line:47
 readTablesSqlite	MilitarySimbologyTools/militarySimbology.py	/^    def readTablesSqlite(self, uri):$/;"	kind:member	line:44
@@ -2007,7 +2011,7 @@ reclassifyAreasWithCentroids	ValidationTools/ValidationProcesses/closeEarthCover
 recreateAttributeTable	ProductionTools/FieldToolBox/field_setup.py	/^    def recreateAttributeTable(self, buttonItem):$/;"	kind:member	line:391
 recursiveSnap	Factories/DbFactory/postgisDb.py	/^    def recursiveSnap(self, classList, tol):$/;"	kind:member	line:1589
 recursiveSnapProcess.py	ValidationTools/ValidationProcesses/recursiveSnapProcess.py	1;"	kind:file	line:1
-refresh	CustomWidgets/genericManagerWidget.py	/^    def refresh(self):$/;"	kind:member	line:203
+refresh	CustomWidgets/genericManagerWidget.py	/^    def refresh(self):$/;"	kind:member	line:237
 refresh	CustomWidgets/permissionWidget.py	/^    def refresh(self):$/;"	kind:member	line:62
 refreshCombo	ProductionTools/MinimumAreaTool/minimumAreaTool.py	/^    def refreshCombo(self):$/;"	kind:member	line:132
 refreshProfileList	UserTools/serverProfilesManager.py	/^    def refreshProfileList(self):$/;"	kind:member	line:168
@@ -2087,7 +2091,7 @@ s	QGIS_Scripts/virtual_raster_inloco.py	/^s = QSettings()$/;"	kind:variable	line
 saveUserState	UserTools/user_profiles.py	/^    def saveUserState(self):$/;"	kind:member	line:233
 scanFolder	ToolboxTools/models_and_scripts_installer.py	/^    def scanFolder(self, folder, extension):$/;"	kind:member	line:70
 selectAll	LayerTools/load_by_class.py	/^    def selectAll(self):$/;"	kind:member	line:136
-selectConfig	CustomWidgets/genericManagerWidget.py	/^    def selectConfig(self):$/;"	kind:member	line:265
+selectConfig	CustomWidgets/genericManagerWidget.py	/^    def selectConfig(self):$/;"	kind:member	line:299
 selectFileWidget.py	CustomWidgets/selectFileWidget.py	1;"	kind:file	line:1
 selectItems	CustomWidgets/customSelector.py	/^    def selectItems(self, isSelected, selectedItems=[]):$/;"	kind:member	line:116
 selectLayer	ProductionTools/InspectFeatures/inspectFeatures.py	/^    def selectLayer(self, index, currentLayer):$/;"	kind:member	line:151
@@ -2148,7 +2152,7 @@ setModelData	ComplexTools/manageComplex.py	/^    def setModelData(self, editor, 
 setMulti	Factories/LayerLoaderFactory/spatialiteLayerLoader.py	/^    def setMulti(self, vlayer, domLayerDict):$/;"	kind:member	line:207
 setParameters	CustomWidgets/customizationManagerWidget.py	/^    def setParameters(self, serverAbstractDb, edgvVersion, dbsDict = {}):$/;"	kind:member	line:46
 setParameters	CustomWidgets/earthCoverageManagerWidget.py	/^    def setParameters(self, serverAbstractDb):$/;"	kind:member	line:46
-setParameters	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^    def setParameters(self, serverAbstractDb, edgvVersion, dbsDict = {}):$/;"	kind:member	line:47
+setParameters	CustomWidgets/fieldToolBoxConfigManagerWidget.py	/^    def setParameters(self, serverAbstractDb, edgvVersion, dbsDict = {}):$/;"	kind:member	line:48
 setParameters	CustomWidgets/permissionWidget.py	/^    def setParameters(self, serverAbstractDb, dbDict, edgvVersion):$/;"	kind:member	line:112
 setParameters	Factories/ThreadFactory/dpiThread.py	/^    def setParameters(self, filesList, rasterType, minOutValue, maxOutValue, outDir, percent, epsg, stopped, bands = []):$/;"	kind:member	line:71
 setParameters	Factories/ThreadFactory/inventoryThread.py	/^    def setParameters(self, parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, isOnlyGeo, stopped):$/;"	kind:member	line:95
@@ -2280,12 +2284,10 @@ translateLayerWithDataFix	Factories/DbFactory/abstractDb.py	/^    def translateL
 translateOGRLayerNameToOutputFormat	Factories/DbFactory/postgisDb.py	/^    def translateOGRLayerNameToOutputFormat(self, lyr, ogrOutput):$/;"	kind:member	line:372
 translateOGRLayerNameToOutputFormat	Factories/DbFactory/spatialiteDb.py	/^    def translateOGRLayerNameToOutputFormat(self, lyr, ogrOutput):$/;"	kind:member	line:222
 ui_create_inom_dialog.py	LayerTools/CreateFrameTool/ui_create_inom_dialog.py	1;"	kind:file	line:1
-uninstallAllSettingsFromDb	CustomWidgets/genericManagerWidget.py	/^    def uninstallAllSettingsFromDb(self):$/;"	kind:member	line:354
 uninstallPropertyOnAdminDb	Factories/DbFactory/postgisDb.py	/^    def uninstallPropertyOnAdminDb(self, settingType, configName, edgvVersion, useTransaction = False, dbName = None):$/;"	kind:member	line:2957
 uninstallPropertyOnAdminDb	Factories/SqlFactory/postgisSqlGenerator.py	/^    def uninstallPropertyOnAdminDb(self, settingType, configName, edgvVersion, dbName = None):$/;"	kind:member	line:1391
-uninstallSelectedSetting	CustomWidgets/genericManagerWidget.py	/^    def uninstallSelectedSetting(self):$/;"	kind:member	line:406
-uninstallSelectedSettingAllDb	CustomWidgets/genericManagerWidget.py	/^    def uninstallSelectedSettingAllDb(self):$/;"	kind:member	line:412
-uninstallSetting	ServerManagementTools/genericDbManager.py	/^    def uninstallSetting(self, configName, dbNameList = []):$/;"	kind:member	line:317
+uninstallSetting	ServerManagementTools/genericDbManager.py	/^    def uninstallSetting(self, configName, dbNameList = []):$/;"	kind:member	line:319
+uninstallSettings	CustomWidgets/genericManagerWidget.py	/^    def uninstallSettings(self):$/;"	kind:member	line:453
 unload	dsg_tools.py	/^    def unload(self):$/;"	kind:member	line:609
 updateAttributesAfterAdding	ProductionTools/FieldToolBox/field_toolbox.py	/^    def updateAttributesAfterAdding(self):$/;"	kind:member	line:311
 updateComplexClass	ComplexTools/complexWindow.py	/^    def updateComplexClass(self):$/;"	kind:member	line:116
@@ -2307,7 +2309,7 @@ updatePermissionProfile	Factories/DbFactory/postgisDb.py	/^    def updatePermiss
 updateRecordFromPropertyTable	Factories/DbFactory/postgisDb.py	/^    def updateRecordFromPropertyTable(self, settingType, configName, edgvVersion, jsonDict, useTransaction = False):$/;"	kind:member	line:2942
 updateRecordFromPropertyTable	Factories/SqlFactory/postgisSqlGenerator.py	/^    def updateRecordFromPropertyTable(self, settingType, configName, edgvVersion, jsonDict):$/;"	kind:member	line:1386
 updateReference	ProductionTools/ContourTool/contour_tool.py	/^    def updateReference(self, referenceLayer):$/;"	kind:member	line:28
-updateSelectedSetting	CustomWidgets/genericManagerWidget.py	/^    def updateSelectedSetting(self):$/;"	kind:member	line:371
+updateSelectedSetting	CustomWidgets/genericManagerWidget.py	/^    def updateSelectedSetting(self):$/;"	kind:member	line:374
 updateSetting	ServerManagementTools/genericDbManager.py	/^    def updateSetting(self, settingName, newJsonDict, edgvVersion = None):$/;"	kind:member	line:135
 updateSetting	ServerManagementTools/permissionManager.py	/^    def updateSetting(self, settingName, edgvVersion, newProfileDict):$/;"	kind:member	line:154
 updateStyle	Factories/DbFactory/postgisDb.py	/^    def updateStyle(self, styleName, table_name, qml, tableSchema):$/;"	kind:member	line:1734
@@ -2354,7 +2356,7 @@ validateJsonProfile	ServerManagementTools/customizationManager.py	/^    def vali
 validateJsonProfile	ServerManagementTools/earthCoverageManager.py	/^    def validateJsonProfile(self, inputJsonDict):$/;"	kind:member	line:59
 validateJsonProfile	ServerManagementTools/fieldToolBoxConfigManager.py	/^    def validateJsonProfile(self, inputJsonDict):$/;"	kind:member	line:44
 validateJsonProfile	ServerManagementTools/permissionManager.py	/^    def validateJsonProfile(self, inputJsonDict):$/;"	kind:member	line:223
-validateJsonSetting	ServerManagementTools/genericDbManager.py	/^    def validateJsonSetting(self, inputJsonDict):$/;"	kind:member	line:237
+validateJsonSetting	ServerManagementTools/genericDbManager.py	/^    def validateJsonSetting(self, inputJsonDict):$/;"	kind:member	line:240
 validateMI	LayerTools/CreateFrameTool/ui_create_inom_dialog.py	/^    def validateMI(self):$/;"	kind:member	line:260
 validatePage	DbTools/BatchDbCreator/createBatchFromCsv.py	/^    def validatePage(self):$/;"	kind:member	line:74
 validatePage	DbTools/BatchDbCreator/createBatchIncrementing.py	/^    def validatePage(self):$/;"	kind:member	line:66

@@ -47,6 +47,9 @@ class ListSelector(QtGui.QDialog, FORM_CLASS):
     
     def getSelected(self):
         return self.listCustomSelector.toLs
+    
+    def getInputAndOutputLists(self):
+        return (self.listCustomSelector.fromLs, self.listCustomSelector.toLs)
 
     @pyqtSlot()
     def on_buttonBox_accepted(self):

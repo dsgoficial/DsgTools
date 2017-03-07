@@ -158,15 +158,15 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a output!'))
             return
         edgvVersion = self.genericDbManager.edgvVersion
-        for exportProperty in exportPropertyList:
-            try:
-                QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            for exportProperty in exportPropertyList:
                 self.genericDbManager.exportSetting(exportProperty, edgvVersion, folder)
-                QApplication.restoreOverrideCursor()
-                QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully exported.'))
-            except Exception as e:
-                QApplication.restoreOverrideCursor()
-                QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem exporting ') + self.widgetName + ': ' + e.args[0])
+            QApplication.restoreOverrideCursor()
+            QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully exported.'))
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem exporting ') + self.widgetName + ': ' + e.args[0])
         
     @pyqtSlot(bool)
     def on_batchExportPushButton_clicked(self):
@@ -366,7 +366,29 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
     
     def manageDbSettings(self):
-        pass
+        """
+        1. get installed profiles and available profiles
+        2. populate selection with items from #1
+        3. get final lists and uninstall items and them install items
+        """
+        uiParameterDict = self.getParametersFromInterface()
+        propertyPerspectiveDict = self.genericDbManager.getPropertyPerspectiveDict()
+        availableConfig = [i for i in propertyPerspectiveDict.keys() if i not in uiParameterDict['parameterList']]
+        dlg = ListSelector(availableConfig,uiParameterDict['parameterList'])
+        dlg.exec_()
+        fromLs, toLs = dlg.getInputAndOutputLists()
+        #build install list: elements from toLs that were not in uiParameterDict['parameterList']
+        installList = [i for i in toLs if i not in uiParameterDict['parameterList']]
+        #build uninstall list: : elements from fromLs that were not in availableConfig
+        uninstallList = [i for i in fromLs if i in uiParameterDict['parameterList']]
+        #install:
+        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, selectedConfig = installList, dbList = uiParameterDict['databaseList'])
+        header, operation = self.getApplyHeader()
+        self.outputMessage(operation, header, successDict, exceptionDict)
+        #uninstall:
+        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, selectedConfig = uninstallList, dbList = uiParameterDict['databaseList'])
+        header, operation = self.getUninstallSelectedSettingHeader()
+        self.outputMessage(operation, header, successDict, exceptionDict)
 
     def manageSelectedSetting(self):
         pass
