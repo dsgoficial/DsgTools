@@ -262,7 +262,7 @@ class GenericDbManager(QObject):
         successList = []
         configEdgvVersion = self.getSettingVersion(configName)
         for dbName in dbNameList:
-            abstractDb = self.dbDict[dbName]
+            abstractDb = self.instantiateAbstractDb(dbName)
             edgvVersion = abstractDb.getDatabaseVersion()
             if edgvVersion != configEdgvVersion:
                 errorDict[dbName] = self.tr('Database version missmatch.')

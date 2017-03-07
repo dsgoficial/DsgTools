@@ -182,7 +182,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.genericDbManager.batchExportSettings(folder)
             QApplication.restoreOverrideCursor()
-            QMessageBox.information(self, self.tr('Success!'), + self.widgetName + self.tr(' successfully exported.'))
+            QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully exported.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem exporting ') + self.widgetName + ': ' + e.args[0])
@@ -201,7 +201,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.genericDbManager.batchImportSettings(folder)
             QApplication.restoreOverrideCursor()
-            QMessageBox.information(self, self.tr('Success!'), + self.widgetName + self.tr(' successfully imported.'))
+            QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully imported.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem importing ') + self.widgetName + ': ' + e.args[0])
@@ -247,7 +247,8 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             parentCustomItem = self.utils.createWidgetItem(rootNode, key, 0)
             if key in propertyPerspectiveDict.keys():
                 for item in propertyPerspectiveDict[key]:
-                    dbItem = self.utils.createWidgetItem(parentCustomItem, item, 1)
+                    if item and item <> '':
+                        dbItem = self.utils.createWidgetItem(parentCustomItem, item, 1)
         self.treeWidget.sortItems(0, Qt.AscendingOrder)
         self.treeWidget.expandAll()
         self.treeWidget.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
@@ -266,8 +267,9 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
                 msg += self.tr('\nSuccessful ')
                 msg += operation + ' : '
                 msg += setting
-                if len(successList) > 0:
-                    msg += self.tr(' on databases ') + ', '.join(successList)
+                if successList:
+                    if len(successList) > 0:
+                        msg += self.tr(' on databases ') + ', '.join(successList)
         msg += self.logInternalError(exceptionDict)
         QMessageBox.warning(self, self.tr('Operation Complete!'), msg)
     
@@ -383,7 +385,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         installList = [i for i in toLs if i not in uiParameterDict['parameterList']]
         #build uninstall list: : elements from fromLs that were not in availableConfig
         uninstallList = [i for i in fromLs if i in uiParameterDict['parameterList']]
-        if not (installList == [] and uninstallList == []):
+        if (installList == [] and uninstallList == []):
             QMessageBox.warning(self, self.tr('Error!'), self.tr('Select at least one configuration to manage!'))
             return
         if installList <> []:
@@ -403,6 +405,29 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         2. populate selection with items from #1
         3. get final lists and uninstall items and them install items
         """
+        uiParameterDict = self.getParametersFromInterface()
+        propertyPerspectiveDict = self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Database)
+        availableDb = [i for i in propertyPerspectiveDict.keys() if i not in uiParameterDict['databaseList']]
+        dlg = ListSelector(availableDb,uiParameterDict['databaseList'])
+        dlg.exec_()
+        fromLs, toLs = dlg.getInputAndOutputLists()
+        #build install list: elements from toLs that were not in uiParameterDict['parameterList']
+        installList = [i for i in toLs if i not in uiParameterDict['databaseList']]
+        #build uninstall list: : elements from fromLs that were not in availableConfig
+        uninstallList = [i for i in fromLs if i in uiParameterDict['databaseList']]
+        if (installList == [] and uninstallList == []):
+            QMessageBox.warning(self, self.tr('Error!'), self.tr('Select at least one configuration database to manage!'))
+            return
+        if installList <> []:
+            #install:
+            successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, selectedConfig = uiParameterDict['parameterList'], dbList = installList)
+            header, operation = self.getApplyHeader()
+            self.outputMessage(operation, header, successDict, exceptionDict)
+        if uninstallList <> []:
+            #uninstall:
+            successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, selectedConfig = uiParameterDict['parameterList'], dbList = uninstallList)
+            header, operation = self.getUninstallSelectedSettingHeader()
+            self.outputMessage(operation, header, successDict, exceptionDict)
 
     def updateSelectedSetting(self):
         """
