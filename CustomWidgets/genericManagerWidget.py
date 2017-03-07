@@ -25,7 +25,7 @@ import os
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
-from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog, QMenu
+from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog, QMenu, QHeaderView
 
 #DsgTools imports
 from DsgTools.CustomWidgets.listSelector import ListSelector
@@ -250,6 +250,8 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
                     dbItem = self.utils.createWidgetItem(parentCustomItem, item, 1)
         self.treeWidget.sortItems(0, Qt.AscendingOrder)
         self.treeWidget.expandAll()
+        self.treeWidget.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
+        self.treeWidget.header().setStretchLastSection(False)
     
     def outputMessage(self, operation, header, successDict, exceptionDict):
         """
