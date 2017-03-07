@@ -381,17 +381,26 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         installList = [i for i in toLs if i not in uiParameterDict['parameterList']]
         #build uninstall list: : elements from fromLs that were not in availableConfig
         uninstallList = [i for i in fromLs if i in uiParameterDict['parameterList']]
-        #install:
-        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, selectedConfig = installList, dbList = uiParameterDict['databaseList'])
-        header, operation = self.getApplyHeader()
-        self.outputMessage(operation, header, successDict, exceptionDict)
-        #uninstall:
-        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, selectedConfig = uninstallList, dbList = uiParameterDict['databaseList'])
-        header, operation = self.getUninstallSelectedSettingHeader()
-        self.outputMessage(operation, header, successDict, exceptionDict)
+        if not (installList == [] and uninstallList == []):
+            QMessageBox.warning(self, self.tr('Error!'), self.tr('Select at least one configuration to manage!'))
+            return
+        if installList <> []:
+            #install:
+            successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, selectedConfig = installList, dbList = uiParameterDict['databaseList'])
+            header, operation = self.getApplyHeader()
+            self.outputMessage(operation, header, successDict, exceptionDict)
+        if uninstallList <> []:
+            #uninstall:
+            successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, selectedConfig = uninstallList, dbList = uiParameterDict['databaseList'])
+            header, operation = self.getUninstallSelectedSettingHeader()
+            self.outputMessage(operation, header, successDict, exceptionDict)
 
     def manageSelectedSetting(self):
-        pass
+        """
+        1. get installed profiles and available profiles
+        2. populate selection with items from #1
+        3. get final lists and uninstall items and them install items
+        """
 
     def updateSelectedSetting(self):
         """
