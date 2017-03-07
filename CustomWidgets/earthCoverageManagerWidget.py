@@ -28,7 +28,7 @@ from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
 from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog
 
 #DsgTools imports
-from DsgTools.ServerManagementTools.customizationManager import CustomizationManager
+from DsgTools.ServerManagementTools.earthCoverageManager import EarthCoverageManager
 from DsgTools.PostgisCustomization.createDatabaseCustomization import CreateDatabaseCustomization
 from DsgTools.CustomWidgets.genericManagerWidget import GenericManagerWidget
 from DsgTools.Utils.utils import Utils
@@ -47,7 +47,7 @@ class EarthCoverageManagerWidget(GenericManagerWidget):
         if serverAbstractDb:
             self.setComponentsEnabled(True)
             self.serverAbstractDb = serverAbstractDb
-            self.genericDbManager = CustomizationManager(serverAbstractDb, {})
+            self.genericDbManager = EarthCoverageManager(serverAbstractDb, {})
             self.refresh()
         else:
             self.setComponentsEnabled(False)
@@ -76,3 +76,40 @@ class EarthCoverageManagerWidget(GenericManagerWidget):
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem deleting customization: ') + e.args[0])
+
+    def populateConfigInterface(self, templateDb, jsonDict = None):
+        '''
+        Must be reimplemented in each child
+        '''
+        fieldDlg = FieldSetup(templateDb,returnDict = True)
+        if jsonDict:
+            fieldDlg.loadReclassificationConf(jsonDict)
+        if fieldDlg.exec_():
+            return fieldDlg.makeReclassificationDict()
+        else:
+            return None
+    
+    def getUpdateSelectedSettingHeader(self):
+        header = self.tr('Update Earth Coverage configuration complete. \n')
+        operation = self.tr('earth coverage configuration')
+        return header, operation
+
+    def getUninstallSelectedSettingHeader(self):
+        header = self.tr('Uninstall Earth Coverage configuration complete. \n')
+        operation = self.tr('earth coverage configuration')
+        return header, operation
+
+    def getApplyHeader(self):
+        header = self.tr('Install Earth Coverage configuration complete. \n')
+        operation = self.tr('earth coverage configurations')
+        return header, operation
+    
+    def getDeleteHeader(self):
+        header = self.tr('Delete Earth Coverage configuration complete. \n')
+        operation = self.tr('earth coverage configurations')
+        return header, operation
+    
+    def getUninstallFromSelected(self):
+        header = self.tr('Uninstall Earth Coverage configuration complete. \n')
+        operation = self.tr('earth coverage configurations')
+        return header, operation

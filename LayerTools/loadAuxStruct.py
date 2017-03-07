@@ -70,37 +70,36 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_pushButtonCancel_clicked(self):
-        '''
+        """
         Closes the dialog
-        '''
+        """
         self.close()
         
     def pushMessage(self, msg):
-        '''
+        """
         Pushes a message into message bar
-        '''
+        """
         self.bar.pushMessage("", msg, level=QgsMessageBar.CRITICAL)
 
     @pyqtSlot(bool)
     def on_pushButtonOk_clicked(self):
-        '''
+        """
         Checks the linee-centroid structure and loads the correspondent layers 
-        '''
+        """
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         auxCreated = self.widget.abstractDb.checkCentroidAuxStruct()
         if not auxCreated:
             QApplication.restoreOverrideCursor()
             self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load auxiliary classes! Check log for details!"), level=QgsMessageBar.CRITICAL)
-                
         else:
             self.loadLayers()
         QApplication.restoreOverrideCursor()
         self.close()
 
     def loadLayers(self):
-        '''
+        """
         Loads the layers defined in the line-centroid structure
-        '''
+        """
         try:
             auxClassesDict = json.loads(self.widget.abstractDb.getEarthCoverageClasses()[0])
             auxClasses = []

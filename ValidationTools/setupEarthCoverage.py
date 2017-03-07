@@ -8,7 +8,7 @@
         begin                : 2016-02-18
         git sha              : $Format:%H$
         copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba@dsg.eb.mil.br
+        email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -24,7 +24,7 @@ import os
 import json
 
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import *
+from PyQt4.QtCore import Qt, pyqtSignal
 from PyQt4.QtGui import QMessageBox, QFileDialog
 from fileinput import filename
 from DsgTools.Utils.utils import Utils
@@ -34,7 +34,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
     coverageChanged = pyqtSignal()
-    def __init__(self, abstractDb, areas, lines, oldCoverage, parent=None):
+    def __init__(self, abstractDb, areas, lines, oldCoverage, enableSetupFromFile = True, onlySetup = False, parent=None):
         """
         Constructor
         """
@@ -51,8 +51,11 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         self.abstractDb = abstractDb
         self.areasCustomSelector.setTitle(self.tr('Areas'))
         self.linesCustomSelector.setTitle(self.tr('Lines'))
-        self.setupWizard(oldCoverage)
-        self.button(QtGui.QWizard.FinishButton).clicked.connect(self.writeIntoDb)
+        self.setupWizard(oldCoverage, enableSetupFromFile)
+        if not onlySetup:
+            self.button(QtGui.QWizard.FinishButton).clicked.connect(self.writeIntoDb)
+        else:
+            self.button(QtGui.QWizard.FinishButton).clicked.connect(self.createDict)
         self.button(QtGui.QWizard.NextButton).clicked.connect(self.buildTree)
 
     def setupFromFile(self):
@@ -64,14 +67,17 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         filename = QFileDialog.getOpenFileName(self, self.tr('Open Earth Coverage Setup configuration'), '', self.tr('Earth Coverage Files (*.json)'))
         return filename
 
-    def setupWizard(self, oldCoverage):
+    def setupWizard(self, oldCoverage, enableSetupFromFile):
         """
         Prepares the wizard
         oldCoverage: old configuration
         """
         if oldCoverage:
             self.abstractDb.dropCentroids(oldCoverage.keys())
-        filename = self.setupFromFile()
+        if enableSetupFromFile:
+            filename = self.setupFromFile()
+        else:
+            filename = None
         if filename:
             setupDict = self.utils.readJsonFile(filename)
             areasToList = setupDict.keys()
@@ -152,6 +158,9 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
                 if childClass.child(j).checkState(1) == Qt.Checked:
                     earthCoverageDict[childClass.text(0)].append(childClass.child(j).text(1))
         return earthCoverageDict
+    
+    def createDict(self):
+        pass
 
     def writeIntoDb(self):
         """

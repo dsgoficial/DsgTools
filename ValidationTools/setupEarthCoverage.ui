@@ -19,12 +19,46 @@
   <property name="options">
    <set>QWizard::HelpButtonOnRight</set>
   </property>
+  <widget class="QWizardPage" name="wizardPage_2">
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>1- Choose the frame layer</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLineEdit" name="filterLineEdit"/>
+      </item>
+      <item>
+       <widget class="QListView" name="listView"/>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="1">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>488</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
   <widget class="QWizardPage" name="wizardPage1">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <widget class="QLabel" name="label">
       <property name="text">
-       <string>1- Choose the area classes that build earth coverage (only parent classes are listed here).</string>
+       <string>2- Choose the area classes that build earth coverage (only parent classes are listed here).</string>
       </property>
      </widget>
     </item>
@@ -38,7 +72,7 @@
     <item row="0" column="0">
      <widget class="QLabel" name="label_2">
       <property name="text">
-       <string>2- Choose the line classes that, along with the frame, build the areas of earth coverage (only parent classes are listed here).
+       <string>3- Choose the line classes that, along with the frame, build the areas of earth coverage (only parent classes are listed here).
 If there is a constraint attribute in a selected class, right click it and define it.</string>
       </property>
      </widget>

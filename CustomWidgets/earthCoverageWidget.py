@@ -32,7 +32,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 from DsgTools.ValidationTools.setupEarthCoverage import SetupEarthCoverage
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from qgis.core import QgsMessageLog
+from DsgTools.ServerManagementTools.earthCoverageManager import EarthCoverageManager
 
 class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
     def __init__(self, parent=None):
@@ -46,6 +48,27 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.earthCoverageDict = dict()
         self.abstractDb = None
+        self.enableSetup(False)
+    
+    def checkSuperUser(self):
+        try:
+            if self.abstractDb.checkSuperUser():
+                self.enableSetup(True)
+                return True
+            else:
+                self.enableSetup(False)
+                return False
+        except Exception as e:
+            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+    
+    def enableSetup(self, enabled):
+        self.defineEarthCoverageButton.setEnabled(enabled)
+    
+    def instantiateServerAbstractDb(self, abstractDb):
+        (host, port, user, password) = abstractDb.getParamsFromConectedDb()
+        serverAbstractDb = DbFactory().createDbFactory('QPSQL')
+        serverAbstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
+        return serverAbstractDb
 
     @pyqtSlot(AbstractDb)
     def setDatabase(self, db):
@@ -54,7 +77,10 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
         """
         self.abstractDb = db
         if db:
-            self.abstractDb.checkAndCreateValidationStructure()
+            if self.checkSuperUser():
+                serverAbstractDb = self.instantiateServerAbstractDb(self.abstractDb)
+                self.genericManager = EarthCoverageManager(serverAbstractDb, {self.abstractDb.db.databaseName():self.abstractDb})
+                self.abstractDb.checkAndCreateValidationStructure()
             self.loadEarthCoverage()
 
     @pyqtSlot(bool)
@@ -74,15 +100,8 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
             return
         try:
             classList = self.abstractDb.getOrphanGeomTables()
-            areas = []
-            lines = []
-            for cl in classList:
-                if cl[-1] == 'a':
-                    areas.append(cl)
-                if cl[-1] == 'l':
-                    lines.append(cl)
-            if 'aux_linha_l' not in lines:        
-                lines.append('aux_linha_l')
+            areas = self.abstractDb.getParentGeomTables(getFullName = True, primitiveFilter = ['a'])
+            lines = self.abstractDb.getParentGeomTables(getFullName = True, primitiveFilter = ['l'])
             oldCoverage = None
             data = self.abstractDb.getEarthCoverageDict()
             if data:
