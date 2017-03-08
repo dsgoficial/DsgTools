@@ -31,6 +31,7 @@ from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog
 from DsgTools.ServerManagementTools.earthCoverageManager import EarthCoverageManager
 from DsgTools.PostgisCustomization.createDatabaseCustomization import CreateDatabaseCustomization
 from DsgTools.CustomWidgets.genericManagerWidget import GenericManagerWidget
+from DsgTools.ValidationTools.setupEarthCoverage import SetupEarthCoverage
 from DsgTools.Utils.utils import Utils
 
 from qgis.core import QgsMessageLog
@@ -43,11 +44,11 @@ class EarthCoverageManagerWidget(GenericManagerWidget):
         """
         super(self.__class__, self).__init__(genericDbManager = manager, parent = parent)
 
-    def setParameters(self, serverAbstractDb):
+    def setParameters(self, serverAbstractDb, edgvVersion, dbsDict = {}):
         if serverAbstractDb:
             self.setComponentsEnabled(True)
             self.serverAbstractDb = serverAbstractDb
-            self.genericDbManager = EarthCoverageManager(serverAbstractDb, {})
+            self.genericDbManager = EarthCoverageManager(serverAbstractDb, dbsDict, edgvVersion)
             self.refresh()
         else:
             self.setComponentsEnabled(False)
@@ -81,11 +82,17 @@ class EarthCoverageManagerWidget(GenericManagerWidget):
         '''
         Must be reimplemented in each child
         '''
-        fieldDlg = FieldSetup(templateDb,returnDict = True)
-        if jsonDict:
-            fieldDlg.loadReclassificationConf(jsonDict)
-        if fieldDlg.exec_():
-            return fieldDlg.makeReclassificationDict()
+        areas = templateDb.getParentGeomTables(getFullName = True, primitiveFilter = ['a'])
+        lines = templateDb.getParentGeomTables(getFullName = True, primitiveFilter = ['l'])
+        edgvVersion = templateDb.getDatabaseVersion()
+        settings = self.genericManager.getSettings()
+        if edgvVersion in settings.keys():
+            propertyList = settings
+        else:
+            propertyList = []
+        dlg = SetupEarthCoverage(edgvVersion, areas, lines, jsonDict, propertyList)
+        if dlg.exec_():
+            return dlg.configDict
         else:
             return None
     
