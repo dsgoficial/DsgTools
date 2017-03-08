@@ -41,3 +41,14 @@ class EarthCoverageManager(GenericDbManager):
     def __init__(self, serverAbstractDb, dbDict, edgvVersion, parentWidget = None):
         super(self.__class__,self).__init__(serverAbstractDb, dbDict, edgvVersion, parentWidget = None)
 
+    def materializeIntoDatabase(self, abstractDb):
+        """
+        Method that is reimplemented in each child when installing a property involves changing any sort of database structure
+        """
+        pass
+    
+    def undoMaterializationFromDatabase(self, abstractDb):
+        """
+        Method that is reimplemented in each child when uninstalling a property involves changing any sort of database structure
+        """
+        pass
