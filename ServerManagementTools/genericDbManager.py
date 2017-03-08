@@ -249,7 +249,7 @@ class GenericDbManager(QObject):
 
     def createAndInstall(self, configName, newJsonDict, edgvVersion, dbList = []):
         self.createSetting(configName, edgvVersion, newJsonDict)
-        self.installSetting(configName,dbNameList = dbList)
+        return self.installSetting(configName,dbNameList = dbList)
 
     def installSetting(self, configName, dbNameList = []):
         """

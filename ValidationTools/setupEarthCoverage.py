@@ -34,27 +34,23 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
     coverageChanged = pyqtSignal()
-    def __init__(self, abstractDb, areas, lines, oldCoverage, enableSetupFromFile = True, onlySetup = False, parent=None):
+    def __init__(self, edgvVersion, areas, lines, oldCoverage, propertyList, enableSetupFromFile = True, onlySetup = False, parent=None):
         """
         Constructor
         """
         super(self.__class__, self).__init__()
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.utils = Utils()
         self.areas = areas
         self.lines = lines
-        self.abstractDb = abstractDb
+        self.edgvVersion = edgvVersion
         self.areasCustomSelector.setTitle(self.tr('Areas'))
         self.linesCustomSelector.setTitle(self.tr('Lines'))
         self.setupWizard(oldCoverage, enableSetupFromFile)
-        if not onlySetup:
-            self.button(QtGui.QWizard.FinishButton).clicked.connect(self.writeIntoDb)
+        self.propertyList = propertyList
         self.button(QtGui.QWizard.NextButton).clicked.connect(self.buildTree)
+        self.button(QtGui.QWizard.FinishButton).clicked.connect(self.buildDict)
+        self.configDict = dict()
 
     def setupFromFile(self):
         """
@@ -71,30 +67,59 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         oldCoverage: old configuration
         """
         if oldCoverage:
-            self.abstractDb.dropCentroids(oldCoverage.keys())
+            # self.abstractDb.dropCentroids(oldCoverage.keys())
+            self.populateFrameListWidget(oldCoverage['earthCoverageDict'].keys())
+        else:
+            self.populateFrameListWidget(self.areas)
         if enableSetupFromFile:
             filename = self.setupFromFile()
         else:
             filename = None
         if filename:
-            setupDict = self.utils.readJsonFile(filename)
-            areasToList = setupDict.keys()
-            linesToList = []
-            for key in areasToList:
-                lines = setupDict[key]
-                for line in lines:
-                    if line not in linesToList:
-                        linesToList.append(line)
-            areasFromList = [area for area in self.areas if area not in areasToList]
-            linesFromList = [line for line in self.lines if line not in linesToList]
-            self.areasCustomSelector.setToList(areasToList)
-            self.areasCustomSelector.setFromList(areasFromList)
-            self.linesCustomSelector.setToList(linesToList)
-            self.linesCustomSelector.setFromList(linesFromList)  
-            self.checkDelimiters(setupDict)
+            self.setupUiFromFile(filename)
         else:
             self.areasCustomSelector.setFromList(self.areas)
             self.linesCustomSelector.setFromList(self.lines)
+    
+    def setupUiFromFile(self, filename):
+        """
+        Populates ui from parameters of json
+        """
+        #read json
+        jsonDict = self.utils.readJsonFile(filename)
+        #set nameLineEdit
+        self.nameLineEdit.setText(jsonDict['configName'])
+        #populate listWidget
+        self.populateFrameListWidget(jsonDict['earthCoverageDict'].keys())
+        #select frame layer
+        try:
+            frameItem = self.listWidget.findItems(jsonDict['frameLayer'], Qt.MatchExactly)[0]
+            self.listWidget.setCurrentItem(frameItem)
+        except:
+            pass
+        linesFromList, linesToList, areasFromList, areasToList = self.populateLists(jsonDict['earthCoverageDict'])
+        self.areasCustomSelector.setToList(areasToList)
+        self.areasCustomSelector.setFromList(areasFromList)
+        self.linesCustomSelector.setToList(linesToList)
+        self.linesCustomSelector.setFromList(linesFromList)  
+        self.checkDelimiters(jsonDict['earthCoverageDict'])
+    
+    def populateFrameListWidget(self, classes):
+        classes.sort()
+        self.listWidget.clear()
+        self.listWidget.addItems(classes)
+    
+    def populateLists(self, setupDict):
+        areasToList = setupDict.keys()
+        linesToList = []
+        for key in areasToList:
+            lines = setupDict[key]
+            for line in lines:
+                if line not in linesToList:
+                    linesToList.append(line)
+        areasFromList = [area for area in self.areas if area not in areasToList]
+        linesFromList = [line for line in self.lines if line not in linesToList]
+        return linesFromList, linesToList, areasFromList, areasToList
 
     def checkDelimiters(self, setupDict):
         """
@@ -112,7 +137,7 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         """
         Loads a json file
         """
-        filename = QFileDialog.getOpenFileName(self, self.tr('Open Field Setup configuration'), self.folder, self.tr('Field Setup Files (*.json)'))
+        filename = QFileDialog.getOpenFileName(self, self.tr('Open Field Setup configuration'), self.folder, self.tr('Earth Coverage Setup File (*.dsgearthcov)'))
         if not filename:
             return
         return self.readJsonFile(filename)
@@ -157,11 +182,18 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
                     earthCoverageDict[childClass.text(0)].append(childClass.child(j).text(1))
         return earthCoverageDict
     
-    def getDict(self):
-        return self.getEarthCoverageDictFromTree()
+    def buildDict(self):
+        '''
+        Gets earth coverage dict from interface
+        '''
+        self.configDict['edgvVersion'] = self.edgvVersion
+        self.configDict['configName'] = self.nameLineEdit.text()
+        self.configDict['frameLayer'] = self.listWidget.currentItem().text()
+        self.configDict['earthCoverageDict'] = self.getEarthCoverageDictFromTree()
 
     def writeIntoDb(self):
         """
+        Deprecated
         Writes the configuration in the database
         """
         try:
@@ -171,7 +203,7 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
             self.coverageChanged.emit()
             if QMessageBox.question(self, self.tr('Question'), self.tr('Do you want to save this earth coverage setup?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
                 return
-            filename = QFileDialog.getSaveFileName(self, self.tr('Save Earth Coverage Setup configuration'), '', self.tr('Earth Coverage Files (*.json)'))
+            filename = QFileDialog.getSaveFileName(self, self.tr('Save Earth Coverage Setup configuration'), '', self.tr('Earth Coverage Setup File (*.dsgearthcov)'))
             if not filename:
                 QMessageBox.critical(self, self.tr('Critical!'), self.tr('Define a name for the earth coverage file!'))
                 return
@@ -190,4 +222,69 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         """
         self.populateClasses()
         self.populateDelimiters()
-        
+        self.treeWidget.expandAll()
+        self.treeWidget.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
+        self.treeWidget.header().setStretchLastSection(False)
+    
+    def on_filterLineEdit_textChanged(self, text):
+        """
+        Filters the items to make it easier to spot and select them
+        """
+        classes = [edgvClass for edgvClass in self.areas if text in edgvClass]
+        self.listWidget.clear()
+        self.listWidget.addItems(classes)
+        self.listWidget.sortItems()
+    
+    def validateEarthCoverageTreeWidget(self):
+        rootNode = self.treeWidget.invisibleRootItem()
+        childCount = rootNode.childCount()
+        for i in range(childCount):
+            areaItem = rootNode.child(i)
+            lineChildCount = areaItem.childCount()
+            hasSelected = False
+            for j in range(lineChildCount):
+                lineChild = areaItem.child(j)
+                if lineChild.checkState(1) == Qt.Checked:
+                    hasSelected = True
+                    break
+            if not hasSelected:
+                return False
+        return True
+
+    def validateCurrentPage(self):
+        if self.currentId() == 0:
+            errorMsg = ''
+            isValidated = True
+            if self.nameLineEdit.text() == '':
+                errorMsg += self.tr('An Earth Coverage name must be set.\n')
+                isValidated = False
+            if self.nameLineEdit.text() in self.propertyList:
+                errorMsg += self.tr('An Earth Coverage with this name already exists.\n')
+                isValidated = False
+            if self.listWidget.currentRow() == -1:
+                errorMsg += self.tr('A frame layer must be chosen.\n')
+                isValidated = False
+            if not isValidated:
+                QMessageBox.warning(self, self.tr('Error!'), errorMsg)
+            return isValidated
+        elif self.currentId() == 1:
+            if self.areasCustomSelector.toLs == []:
+                errorMsg = self.tr('Areas must be chosen for Earth Coverage.\n')
+                QMessageBox.warning(self, self.tr('Error!'), errorMsg)
+                return False
+            return True
+        elif self.currentId() == 2:
+            if self.linesCustomSelector.toLs == []:
+                errorMsg = self.tr('Lines must be chosen for Earth Coverage.\n')
+                QMessageBox.warning(self, self.tr('Error!'), errorMsg)
+                return False
+            return True
+        elif self.currentId() == 3:
+        #at least one line selected for each area
+            if not self.validateEarthCoverageTreeWidget():
+                errorMsg = self.tr('At least one line must be chosen for each Earth Coverage area.\n')
+                QMessageBox.warning(self, self.tr('Error!'), errorMsg)
+                return False
+            return True
+        else:
+            return True

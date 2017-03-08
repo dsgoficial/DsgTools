@@ -2560,7 +2560,7 @@ class PostgisDb(AbstractDb):
         Lists all tables with geometries from schema that are parents.
         """
         self.checkAndOpenDb()
-        layerList = self.listGeomClassesFromDatabase(primitiveFilter = primitiveFilter)
+        layerList = self.listGeomClassesFromDatabase()
         geomTables = [i.split('.')[-1] for i in layerList]
         inhDict = self.getInheritanceDict()
         parentGeomTables = []
@@ -2583,7 +2583,13 @@ class PostgisDb(AbstractDb):
         for geomTable in geomTables:
             if geomTable not in childBlackList and geomTable not in parentGeomTables:
                 parentGeomTables.append(geomTable)
+        #filters in case of filter
+        if primitiveFilter != []:
+            filterList = [i.split('.')[-1] for i in self.listGeomClassesFromDatabase(primitiveFilter = primitiveFilter)]
+            aux = [i for i in parentGeomTables if i in filterList]
+            parentGeomTables = aux
         parentGeomTables.sort()
+        #output types
         if getFullName:
             parentFullList = []
             for parent in parentGeomTables:

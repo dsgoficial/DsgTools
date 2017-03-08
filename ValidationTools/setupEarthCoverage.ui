@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>840</width>
-    <height>499</height>
+    <width>600</width>
+    <height>395</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>600</width>
+    <height>272</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Define earth coverage areas and lines</string>
@@ -21,6 +27,13 @@
   </property>
   <widget class="QWizardPage" name="wizardPage_2">
    <layout class="QGridLayout" name="gridLayout_3">
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>2- Choose the frame layer</string>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="0">
      <widget class="QLabel" name="label_5">
       <property name="text">
@@ -31,20 +44,13 @@
     <item row="1" column="0">
      <widget class="QLineEdit" name="nameLineEdit"/>
     </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="label_4">
-      <property name="text">
-       <string>2- Choose the frame layer</string>
-      </property>
-     </widget>
-    </item>
     <item row="3" column="0">
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QLineEdit" name="filterLineEdit"/>
       </item>
       <item>
-       <widget class="QListView" name="listView"/>
+       <widget class="QListWidget" name="listWidget"/>
       </item>
      </layout>
     </item>
@@ -53,9 +59,12 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::MinimumExpanding</enum>
+      </property>
       <property name="sizeHint" stdset="0">
        <size>
-        <width>488</width>
+        <width>50</width>
         <height>20</height>
        </size>
       </property>
@@ -82,8 +91,8 @@
     <item row="0" column="0">
      <widget class="QLabel" name="label_2">
       <property name="text">
-       <string>4- Choose the line classes that, along with the frame, build the areas of earth coverage (only parent classes are listed here).
-If there is a constraint attribute in a selected class, right click it and define it.</string>
+       <string>4- Choose the line classes that, along with the frame, build the areas of earth coverage 
+(only parent classes are listed here).</string>
       </property>
      </widget>
     </item>

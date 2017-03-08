@@ -40,11 +40,6 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
     def __init__(self, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.earthCoverageDict = dict()
         self.abstractDb = None
@@ -79,7 +74,8 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
         if db:
             if self.checkSuperUser():
                 serverAbstractDb = self.instantiateServerAbstractDb(self.abstractDb)
-                self.genericManager = EarthCoverageManager(serverAbstractDb, {self.abstractDb.db.databaseName():self.abstractDb})
+                edgvVersion = self.abstractDb.getDatabaseVersion()
+                self.genericManager = EarthCoverageManager(serverAbstractDb, {self.abstractDb.db.databaseName():self.abstractDb}, edgvVersion)
                 self.abstractDb.checkAndCreateValidationStructure()
             self.loadEarthCoverage()
 
@@ -103,14 +99,19 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
             areas = self.abstractDb.getParentGeomTables(getFullName = True, primitiveFilter = ['a'])
             lines = self.abstractDb.getParentGeomTables(getFullName = True, primitiveFilter = ['l'])
             oldCoverage = None
-            data = self.abstractDb.getEarthCoverageDict()
+            data = self.abstractDb.getEarthCoverageDict() #REDO it.
             if data:
                 if QMessageBox.question(self, self.tr('Question'), self.tr('An earth coverage is already defined. Do you want to redefine it? All data will be lost.'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
                     return
                 oldCoverage = json.loads(data)
-            dlg = SetupEarthCoverage(self.abstractDb, areas, lines, oldCoverage)
-            dlg.coverageChanged.connect(self.loadEarthCoverage) #continue here tomorrow
+            edgvVersion = self.abstractDb.getDatabaseVersion()
+            propertyList = self.genericManager.getSettings()[edgvVersion]
+            dlg = SetupEarthCoverage(edgvVersion, areas, lines, oldCoverage, propertyList)
             dlg.exec_()
+            configDict = dlg.configDict
+            if configDict != dict():
+                self.genericManager.createAndInstall(configDict['configName'],configDict['configName'],edgvVersion, dbList = [self.abstractDb.db.databaseName()])
+                QtGui.QMessageBox.critical(self, self.tr('Success!'), self.tr('Earth Coverage created!'))
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

@@ -47,7 +47,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         super(GenericManagerWidget, self).__init__(parent)
         self.setupUi(self)
         self.genericDbManager = genericDbManager
-        self.versionDict = {'2.1.3':1, 'FTer_2a_Ed':2}
+        self.versionDict = {'2.1.3':1, 'FTer_2a_Ed':2, 'Non_Edgv':3}
         self.textDict = {'EarthCoverage':self.tr('Earth Coverage'), 
                             'Customization':self.tr('Customization'), 
                             'Style':self.tr('Style'), 
