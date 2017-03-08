@@ -185,17 +185,17 @@ CREATE TABLE public.applied_customization(
 	id_customization uuid NOT NULL,
 	dboid oid NOT NULL,
 	CONSTRAINT applied_custom_pk PRIMARY KEY (id),
-	CONSTRAINT applied_customization_id_customization_fk FOREIGN KEY (id_customization) REFERENCES public.customization (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION 
+	CONSTRAINT applied_customization_id_customization_fk FOREIGN KEY (id_customization) REFERENCES public.customization (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
 );
 -- ddl-end --
 ALTER TABLE public.applied_customization OWNER TO postgres;
 
 CREATE TABLE public.applied_field_toolbox_config(
 	id uuid NOT NULL DEFAULT uuid_generate_v4(),
-	id_applied_field_toolbox_config uuid NOT NULL,
+	id_field_toolbox_config uuid NOT NULL,
 	dboid oid NOT NULL,
 	CONSTRAINT applied_field_toolbox_config_pk PRIMARY KEY (id),
-	CONSTRAINT applied_field_toolbox_config_id_field_toolbox_config_fk FOREIGN KEY (id_applied_field_toolbox_config) REFERENCES public.field_toolbox_config (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
+	CONSTRAINT applied_field_toolbox_config_id_field_toolbox_config_fk FOREIGN KEY (id_field_toolbox_config) REFERENCES public.field_toolbox_config (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
 );
 -- ddl-end --
 ALTER TABLE public.applied_field_toolbox_config OWNER TO postgres;

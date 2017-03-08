@@ -105,12 +105,17 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
                     return
                 oldCoverage = json.loads(data)
             edgvVersion = self.abstractDb.getDatabaseVersion()
-            propertyList = self.genericManager.getSettings()[edgvVersion]
+            settings = self.genericManager.getSettings()
+            if edgvVersion in settings.keys():
+                propertyList = settings
+            else:
+                propertyList = []
             dlg = SetupEarthCoverage(edgvVersion, areas, lines, oldCoverage, propertyList)
             dlg.exec_()
             configDict = dlg.configDict
             if configDict != dict():
-                self.genericManager.createAndInstall(configDict['configName'],configDict['configName'],edgvVersion, dbList = [self.abstractDb.db.databaseName()])
+                newDict = json.dumps(configDict)
+                self.genericManager.createAndInstall(configDict['configName'], newDict, edgvVersion, dbList = [self.abstractDb.db.databaseName()])
                 QtGui.QMessageBox.critical(self, self.tr('Success!'), self.tr('Earth Coverage created!'))
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))

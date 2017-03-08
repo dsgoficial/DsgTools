@@ -892,6 +892,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def importStyle(self, styleName, table_name, parsedQml, tableSchema, dbName):
+        #TODO:REDO it
         if table_name[-1] == 'c':
             geomColumn = 'centroid'
         else:
@@ -1343,7 +1344,7 @@ class PostGISSqlGenerator(SqlGenerator):
         if perspective == DsgEnums.Property:
             sql = '''select row_to_json(a) from (
                         select name, array_agg(datname) from public.{0} as custom 
-                            left join applied_{0} as appcust on custom.id = appcust.id_applied_{0}
+                            left join applied_{0} as appcust on custom.id = appcust.id_{0}
                             left join pg_database as pgd on pgd.oid = appcust.dboid 
                             {1}
                             group by name
@@ -1351,7 +1352,7 @@ class PostGISSqlGenerator(SqlGenerator):
         if perspective == DsgEnums.Database:
             sql = '''select row_to_json(a) from (
                         select datname as name, array_agg(name) from public.{0} as custom 
-                            right join applied_{0} as appcust on custom.id = appcust.id_applied_{0}
+                            right join applied_{0} as appcust on custom.id = appcust.id_{0}
                             left join pg_database as pgd on pgd.oid = appcust.dboid 
                             {1}
                             group by datname
@@ -1364,8 +1365,9 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def insertInstalledRecordIntoAdminDb(self, settingType, recDict, dbOid):
-        tableName = 'applied_'+self.getSettingTable(settingType)
-        idName = 'id_'+tableName
+        settingTable = self.getSettingTable(settingType)
+        tableName = 'applied_'+settingTable
+        idName = 'id_'+settingTable
         sql = '''INSERT INTO public.{0} ({1}, dboid) VALUES ('{2}',{3})'''.format(tableName, idName, recDict['id'], dbOid)
         return sql
     
@@ -1393,7 +1395,7 @@ class PostGISSqlGenerator(SqlGenerator):
         dbNameFilterClause = ''
         if dbName:
             dbNameFilterClause = '''dboid in (select oid from pg_database where datname ='{0}') and '''.format(dbName)
-        sql = '''DELETE FROM public.applied_{0} where {1} id_applied_{0} in (select id from public.{0} where name = '{2}' and edgvversion = '{3}');'''.format(tableName, dbNameFilterClause, configName, edgvVersion)
+        sql = '''DELETE FROM public.applied_{0} where {1} id_{0} in (select id from public.{0} where name = '{2}' and edgvversion = '{3}');'''.format(tableName, dbNameFilterClause, configName, edgvVersion)
         return sql
     
     def getSettingVersion(self, settingType, settingName):
