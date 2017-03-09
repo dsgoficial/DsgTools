@@ -30,6 +30,7 @@ from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog
 #DsgTools imports
 from DsgTools.ServerManagementTools.earthCoverageManager import EarthCoverageManager
 from DsgTools.PostgisCustomization.createDatabaseCustomization import CreateDatabaseCustomization
+from DsgTools.CustomWidgets.genericParameterSetter import GenericParameterSetter
 from DsgTools.CustomWidgets.genericManagerWidget import GenericManagerWidget
 from DsgTools.ValidationTools.setupEarthCoverage import SetupEarthCoverage
 from DsgTools.Utils.utils import Utils
@@ -58,25 +59,26 @@ class EarthCoverageManagerWidget(GenericManagerWidget):
         '''
         Slot that opens the create profile dialog
         '''
-        dlg = CreateDatabaseCustomization(self.serverAbstractDb, self.genericDbManager)
-        dlg.exec_()
-    
-    @pyqtSlot(bool)
-    def on_deleteCustomizationPushButton_clicked(self):
-        #TODO: Reimplement
-        customizationName = self.customizationListWidget.currentItem().text()
-        edgvVersion = self.versionSelectionComboBox.currentText()
-        if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to delete customization ')+customizationName+'?', QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+        dlg = GenericParameterSetter()
+        if not dlg.exec_():
             return
-        try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.genericDbManager.deleteCustomization(customizationName, edgvVersion)
-            QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Success!'), self.tr('Customization ') + customizationName + self.tr(' successfully deleted.'))
-            self.refreshProfileList()
-        except Exception as e:
-            QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem deleting customization: ') + e.args[0])
+        edgvVersion, propertyName = dlg.getParameters()
+        if edgvVersion == self.tr('Select EDGV Version'):
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Enter a EDGV Version'))
+            return
+        if propertyName == '':
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Enter a Field Toolbox Configuration Name!'))
+            return
+        if propertyName in self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Property).keys():
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Field Toolbox Configuration Name already exists!'))
+            return
+        templateDb = self.genericDbManager.instantiateTemplateDb(edgvVersion)
+        fieldSetupDict = self.populateConfigInterface(templateDb)
+        if fieldSetupDict:
+            self.genericDbManager.createSetting(propertyName, edgvVersion, fieldSetupDict)
+            self.refresh()
+            QMessageBox.information(self, self.tr('Success!'), self.tr('Field Toolbox Configuration ') + propertyName + self.tr(' created successfuly!'))   
+
 
     def populateConfigInterface(self, templateDb, jsonDict = None):
         '''

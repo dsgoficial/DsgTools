@@ -277,7 +277,7 @@ class GenericDbManager(QObject):
             try:
                 abstractDb.db.transaction()
                 self.adminDb.db.transaction()
-                self.materializeIntoDatabase(abstractDb)  #step done when property management involves changing database structure
+                self.materializeIntoDatabase(abstractDb, recDict)  #step done when property management involves changing database structure
                 abstractDb.insertRecordInsidePropertyTable(settingType, recDict, edgvVersion)
                 dbOid = abstractDb.getDbOID()
                 self.adminDb.insertInstalledRecordIntoAdminDb(settingType, recDict, dbOid)
@@ -306,7 +306,7 @@ class GenericDbManager(QObject):
                 try:
                     abstractDb.db.transaction()
                     self.adminDb.db.transaction()
-                    self.undoMaterializationFromDatabase(abstractDb) #step done when property management involves changing database structure
+                    self.undoMaterializationFromDatabase(abstractDb, propertyDict) #step done when property management involves changing database structure
                     abstractDb.removeRecordFromPropertyTable(settingType, configName, edgvVersion)
                     self.adminDb.removeRecordFromPropertyTable(settingType, configName, edgvVersion)
                     abstractDb.db.commit()
@@ -350,13 +350,13 @@ class GenericDbManager(QObject):
                 successList.append(dbName)
         return (successList, errorDict)
     
-    def materializeIntoDatabase(self, abstractDb):
+    def materializeIntoDatabase(self, abstractDb, propertyDict):
         """
         Method that is reimplemented in each child when installing a property involves changing any sort of database structure
         """
         pass
 
-    def undoMaterializationFromDatabase(self, abstractDb):
+    def undoMaterializationFromDatabase(self, abstractDb, propertyDict):
         """
         Method that is reimplemented in each child when uninstalling a property involves changing any sort of database structure
         """

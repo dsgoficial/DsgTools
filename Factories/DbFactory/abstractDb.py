@@ -316,7 +316,7 @@ class AbstractDb(QObject):
         inSpatialRef = inputLayer.GetSpatialRef()
         outSpatialRef = outputLayer.GetSpatialRef()
         coordTrans = None
-        if inSpatialRef <> outSpatialRef:
+        if not inSpatialRef.IsSame(outSpatialRef):
             coordTrans = osr.CoordinateTransformation(inSpatialRef, outSpatialRef)
         initialCount = outputLayer.GetFeatureCount()
         count = 0
@@ -355,7 +355,6 @@ class AbstractDb(QObject):
                 else:
                     count += 1
             feat=inputLayer.GetNextFeature()
-            
         return count
     
     def translateDS(self, inputDS, outputDS, fieldMap, inputLayerList, errorDict,invalidated=None):
