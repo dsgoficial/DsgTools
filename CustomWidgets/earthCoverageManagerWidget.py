@@ -34,6 +34,7 @@ from DsgTools.CustomWidgets.genericParameterSetter import GenericParameterSetter
 from DsgTools.CustomWidgets.genericManagerWidget import GenericManagerWidget
 from DsgTools.ValidationTools.setupEarthCoverage import SetupEarthCoverage
 from DsgTools.Utils.utils import Utils
+from DsgTools.dsgEnums import DsgEnums
 
 from qgis.core import QgsMessageLog
 import json

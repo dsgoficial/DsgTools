@@ -1387,22 +1387,21 @@ class PostgisDb(AbstractDb):
         sql = self.gen.checkCentroidAuxStruct()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            self.db.rollback()
-            
             raise Exception(self.tr('Problem checking structure: ')+query.lastError().text())
         while query.next():
             if query.value(0) == None:
                 return False
         return True
     
-    def createCentroidAuxStruct(self, earthCoverageClasses):
+    def createCentroidAuxStruct(self, earthCoverageClasses, useTransaction = True):
         """
         Creates the centroid structure
         earthCoverageClasses: earth coverage configuration diciotnary
         """
         self.checkAndOpenDb()
         srid = self.findEPSG()
-        self.db.transaction()
+        if useTransaction:
+            self.db.transaction()
         for cl in earthCoverageClasses:
             # getting table schema
             tableSchema = self.getTableSchemaFromDb(cl)
@@ -1412,9 +1411,11 @@ class PostgisDb(AbstractDb):
             query = QSqlQuery(self.db)
             for sql2 in sqlList:
                 if not query.exec_(sql2):
-                    self.db.rollback()
+                    if useTransaction:
+                        self.db.rollback()
                     raise Exception(self.tr('Problem creating centroid structure: ') + query.lastError().text())
-        self.db.commit()
+        if useTransaction:
+            self.db.commit()
             
     def checkAndCreateCentroidAuxStruct(self, earthCoverageClasses):
         """
