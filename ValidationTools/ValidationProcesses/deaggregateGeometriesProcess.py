@@ -56,7 +56,6 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                     QgsMessageLog.logMessage(self.tr("Layer {0} failed to load!").format(cl))
                 layer.startEditing()
                 for id in self.explodeIdDict[cl]:
-                    layer.startEditing()
                     feat = layer.getFeatures(QgsFeatureRequest(id)).next()
                     parts = feat.geometry().asGeometryCollection()
                     for part in parts:

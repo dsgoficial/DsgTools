@@ -31,8 +31,12 @@ class RemoveEmptyGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Remove Empty Geometries')
     
-        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False)
-        self.parameters = {'Classes':classesWithElem.keys()}
+        # getting tables with elements
+        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements=True, getGeometryColumn=True)
+        # creating a list of tuples (layer names, geometry columns)
+        classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+        # adjusting process parameters
+        self.parameters = {'Classes': classesWithElem}
         
     def execute(self):
         """
@@ -48,8 +52,12 @@ class RemoveEmptyGeometriesProcess(ValidationProcess):
                 return 1
             for cl in classesWithElem:
                 # preparation
-                processTableName, lyr = self.prepareExecution(cl)
+                cl, geometryColumn = classAndGeom.split(':')
+                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+
+                # running the process
                 self.abstractDb.removeEmptyGeometries(processTableName)
+                
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
             msg = self.tr('Process executed successfully!')

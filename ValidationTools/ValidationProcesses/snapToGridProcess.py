@@ -31,8 +31,12 @@ class SnapToGridProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Snap to Grid')
         
-        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False)
-        self.parameters = {'Snap': 0.001, 'Classes':classesWithElem.keys()}
+        # getting tables with elements
+        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements=True, getGeometryColumn=True)
+        # creating a list of tuples (layer names, geometry columns)
+        classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+        # adjusting process parameters
+        self.parameters = {'Snap': 0.001, 'Classes': classesWithElem}
 
     def execute(self):
         """
@@ -49,13 +53,17 @@ class SnapToGridProcess(ValidationProcess):
             #getting parameters
             tol = self.parameters['Snap']
             srid = self.abstractDb.findEPSG()
-            for cl in classesWithElem:
+            for classAndGeom in classesWithElem:
                 # preparation
-                processTableName, lyr = self.prepareExecution(cl)
+                cl, geometryColumn = classAndGeom.split(':')
+                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+
                 #running the process in the temp table
                 self.abstractDb.snapToGrid([processTableName], tol, srid)
+
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
+                
                 #setting status
                 QgsMessageLog.logMessage(self.tr('All features from {} snapped successfully.').format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             #returning success

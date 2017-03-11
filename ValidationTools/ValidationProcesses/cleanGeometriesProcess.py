@@ -46,7 +46,7 @@ class CleanGeometriesProcess(ValidationProcess):
         alg = 'grass7:v.clean.advanced'
         
         #creating vector layer
-        input = QgsVectorLayer(self.abstractDb.getURI(tempTableName, useOnly = True, geomColumn = geometryColumn).uri(), tempTableName, "postgres")
+        input = QgsVectorLayer(self.abstractDb.getURI(tempTableName, useOnly=True, geomColumn=geometryColumn).uri(), tempTableName, "postgres")
         crs = input.crs()
         epsg = self.abstractDb.findEPSG()
         crs.createFromId(epsg)

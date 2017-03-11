@@ -31,8 +31,12 @@ class SnapLinesToFrameProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Snap Lines to Frame')
         
-        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False, primitiveFilter = ['l'])
-        self.parameters = {'Snap': 5.0, 'Classes':classesWithElem.keys()}
+        # getting tables with elements
+        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['l'], withElements=True, getGeometryColumn=True)
+        # creating a list of tuples (layer names, geometry columns)
+        classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+        # adjusting process parameters
+        self.parameters = {'Snap': 5.0, 'Classes': classesWithElem}
 
     def postProcess(self):
         """
@@ -53,13 +57,16 @@ class SnapLinesToFrameProcess(ValidationProcess):
                 QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             tol = self.parameters['Snap']
-            for cl in lines:
+            for classAndGeom in lines:
                 # preparation
-                processTableName, lyr = self.prepareExecution(cl)
+                cl, geometryColumn = classAndGeom.split(':')
+                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
                 frameTableName, frameLyr = self.prepareExecution('public.aux_moldura_a')
+
                 #running the process in the temp table
                 self.abstractDb.snapLinesToFrame([processTableName], frameTableName, tol)
                 self.abstractDb.densifyFrame([processTableName], frameTableName, self.parameters['Snap Tolerance'])
+                
                 # finalization
                 #TODO: Put try except to end process when error occur
                 self.postProcessSteps(processTableName, lyr)

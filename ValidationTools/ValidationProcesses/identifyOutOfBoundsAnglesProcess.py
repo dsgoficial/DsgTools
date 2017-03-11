@@ -67,7 +67,7 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
                     error = True
                     recordList = []
                     for tupple in result:
-                        recordList.append((tableSchema+'.'+tableName, tupple[0], self.tr('Angle out of bound.'), tupple[1]))
+                        recordList.append((cl, tupple[0], self.tr('Angle out of bound.'), tupple[1]))
                         self.addClassesToBeDisplayedList(tupple[0]) 
                     numberOfProblems = self.addFlag(recordList)
                     QgsMessageLog.logMessage(self.tr('{0} features from {1} have out of bounds angle(s). Check flags.').format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

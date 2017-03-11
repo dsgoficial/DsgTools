@@ -60,6 +60,7 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
 
             # storing flags
             if len(invalidGeomRecordList) > 0:
+                # the invalid geometries list already have the table names adjusted (i.e. not considering the "_temp" in the end)
                 numberOfInvGeom = self.addFlag(invalidGeomRecordList)
                 for tuple in invalidGeomRecordList:
                     self.addClassesToBeDisplayedList(tuple[0])  

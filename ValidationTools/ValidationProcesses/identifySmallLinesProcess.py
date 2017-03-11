@@ -64,6 +64,8 @@ class IdentifySmallLinesProcess(ValidationProcess):
                 recordList = []
                 for cl in result.keys():
                     tableSchema, tableName = self.abstractDb.getTableSchema(cl)
+                    # the flag should store the original table name
+                    tableName = tableName.replace('_temp', '')
                     for id in result[cl].keys():
                         recordList.append((tableSchema+'.'+tableName, id, self.tr('Small Length.'), result[cl][id]))
                 numberOfProblems = self.addFlag(recordList)

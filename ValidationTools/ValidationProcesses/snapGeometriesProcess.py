@@ -32,17 +32,21 @@ class SnapGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Snap Geometries')
         
-        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False, primitiveFilter = ['a', 'l'])
-        self.parameters = {'Snap': 1.0, 'MinArea':0.001, 'Classes':classesWithElem.keys()}
+        # getting tables with elements
+        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a', 'l'], withElements=True, getGeometryColumn=True)
+        # creating a list of tuples (layer names, geometry columns)
+        classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+        # adjusting process parameters
+        self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Classes': classesWithElem}
         
-    def runProcessinAlg(self, layer, tempTableName):
+    def runProcessinAlg(self, layer, tempTableName, geometryColumn):
         """
         Runs the actual grass process
         """
         alg = 'grass7:v.clean.advanced'
         
         #creating vector layer
-        input = QgsVectorLayer(self.abstractDb.getURI(tempTableName, True).uri(), tempTableName, "postgres")
+        input = QgsVectorLayer(self.abstractDb.getURI(tempTableName, useOnly=True, geomColumn=geometryColumn).uri(), tempTableName, "postgres")
         crs = input.crs()
         epsg = self.abstractDb.findEPSG()
         crs.createFromId(epsg)
@@ -89,17 +93,23 @@ class SnapGeometriesProcess(ValidationProcess):
                 QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             error = False
-            for cl in classesWithElem:
+            for classAndGeom in classesWithElem:
                 # preparation
-                processTableName, lyr = self.prepareExecution(cl)
-                #running the process in the temp table
-                result = self.runProcessinAlg(lyr, processTableName)
+                cl, geometryColumn = classAndGeom.split(':')
+                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+                
+                # running the process in the temp table
+                result = self.runProcessinAlg(lyr, processTableName, geometryColumn)
+                
+                # dropping temp table
                 self.abstractDb.dropTempTable(processTableName)
+                
+                # storing flags
                 if len(result) > 0:
                     error = True
                     recordList = []
                     for tupple in result:
-                        recordList.append((cl,tupple[0],self.tr('Snapping error.'),tupple[1]))
+                        recordList.append((cl, tupple[0], self.tr('Snapping error.'), tupple[1]))
                         self.addClassesToBeDisplayedList(cl) 
                     numberOfProblems = self.addFlag(recordList)
                     QgsMessageLog.logMessage(self.tr('{0} feature(s) of class {1} with snapping errors. Check flags.').format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

@@ -63,6 +63,8 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
                 dupGeomRecordList = []
                 for cl in duplicated.keys():
                     tableSchema, tableName = self.abstractDb.getTableSchema(cl)
+                    # the flag should store the original table name
+                    tableName = tableName.replace('_temp', '')
                     if tableSchema not in ('validation'):
                         for id in duplicated[cl].keys():
                             dupGeomRecordList.append((tableSchema+'.'+tableName, id, self.tr('Duplicated Geometry'), duplicated[cl][id]))

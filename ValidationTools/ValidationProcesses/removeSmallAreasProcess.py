@@ -31,8 +31,8 @@ class RemoveSmallAreasProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Remove Small Polygons')
         
-        flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifySmallAreasProcess')
-        self.parameters = {'Classes':flagsDict.keys()}
+        self.flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifySmallAreasProcess')
+        self.parameters = {'Classes': self.flagsDict.keys()}
 
     def preProcess(self):
         """
@@ -56,9 +56,11 @@ class RemoveSmallAreasProcess(ValidationProcess):
             for cl in flagsClasses:
                 # preparation
                 processTableName, lyr = self.prepareExecution(cl)
+                
                 #running the process in the temp table
-                problems = self.abstractDb.removeFeatures(processTableName,flagsDict[cl])
+                problems = self.abstractDb.removeFeatures(processTableName, self.flagsDict[cl])
                 numberOfProblems += problems
+                
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
                 QgsMessageLog.logMessage(self.tr('{0} features from {1} were removed.').format(problems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

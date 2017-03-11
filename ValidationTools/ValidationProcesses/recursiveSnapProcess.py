@@ -31,8 +31,12 @@ class RecursiveSnapProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Recursive Snap')
         
-        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False, primitiveFilter = ['a', 'l'])
-        self.parameters = {'Snap': 5.0, 'Classes':classesWithElem.keys()}
+        # getting tables with elements
+        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a', 'l'], withElements=True, getGeometryColumn=True)
+        # creating a list of tuples (layer names, geometry columns)
+        classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+        # adjusting process parameters
+        self.parameters = {'Snap': 5.0, 'Classes': classesWithElem}
 
     def execute(self):
         """
@@ -50,8 +54,12 @@ class RecursiveSnapProcess(ValidationProcess):
             tol = self.parameters['Snap']
             for cl in classesWithElem:
                 # preparation
-                processTableName, lyr = self.prepareExecution(cl)
+                cl, geometryColumn = classAndGeom.split(':')
+                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+                
+                # running the process
                 self.abstractDb.recursiveSnap([processTableName], tol)
+                
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
                 QgsMessageLog.logMessage(self.tr('All features from {} snapped successfully.').format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

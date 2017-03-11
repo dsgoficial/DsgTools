@@ -882,7 +882,9 @@ class PostgisDb(AbstractDb):
                 featId = query.value(0)
                 reason = query.value(1)
                 geom = query.value(2)
-                invalidRecordsList.append( (tableSchema+'.'+tableName,featId,reason,geom) )
+                # the flag should store the original table name
+                tableName = tableName.replace('_temp', '')
+                invalidRecordsList.append( (tableSchema+'.'+tableName, featId, reason, geom) )
         return invalidRecordsList
     
     def insertFlags(self, flagTupleList, processName):
