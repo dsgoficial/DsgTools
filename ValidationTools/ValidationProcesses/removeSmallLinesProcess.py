@@ -49,8 +49,8 @@ class RemoveSmallLinesProcess(ValidationProcess):
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             flagsClasses = self.parameters['Classes']
             if len(flagsClasses) == 0:
-                self.setStatus(self.tr('There are no small areas.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('There are no small areas.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus(self.tr('There are no small lines.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('There are no small lines.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             numberOfProblems = 0
             for cl in flagsClasses:

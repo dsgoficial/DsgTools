@@ -65,7 +65,7 @@ class SnapToGridProcess(ValidationProcess):
                 self.postProcessSteps(processTableName, lyr)
                 
                 #setting status
-                QgsMessageLog.logMessage(self.tr('All features from {} snapped successfully.').format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('All features from {} snapped to grid successfully.').format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             #returning success
             self.setStatus(self.tr('All features snapped successfully.').format(cl), 1) #Finished
             return 1

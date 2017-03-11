@@ -71,7 +71,7 @@ class SnapLinesToFrameProcess(ValidationProcess):
                 #TODO: Put try except to end process when error occur
                 self.postProcessSteps(processTableName, lyr)
                 self.postProcessSteps(frameTableName, frameLyr)
-            msg = self.tr('All features snapped succesfully.')
+            msg = self.tr('All features snapped to frame succesfully.')
             self.setStatus(msg, 1) #Finished
             QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
