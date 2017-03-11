@@ -31,9 +31,9 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Identify Duplicated Geometries')
         
-        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements = True, getGeometryColumn = True)
-        classesWithElem = [i['layerName']+' ({0})'.format(i['geometryColumn']) for i in classesWithElemDictList]
-        self.parameters = {'Classes':classesWithElem}
+        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements=True, getGeometryColumn=True)
+        classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+        self.parameters = {'Classes': classesWithElem}
 
     def execute(self):
         """
@@ -45,17 +45,27 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithGeom = []
             for classAndGeom in self.parameters['Classes']:
-                cl, geometryColumn = classAndGeom.split(' ')
-                if cl not in classesWithGeom:
-                    classesWithGeom.append(cl)
+                # preparation
+                cl, geometryColumn = classAndGeom.split(':')
+                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+                if processTableName not in classesWithGeom:
+                    classesWithGeom.append(processTableName)
+                    
+            # running the process
             duplicated = self.abstractDb.getDuplicatedGeomRecords(classesWithGeom)
+            
+            # dropping temp table
+            for processTableName in classesWithGeom:
+                self.abstractDb.dropTempTable(processTableName)
+                
+            # storing flags
             if len(duplicated.keys()) > 0:
                 dupGeomRecordList = []
                 for cl in duplicated.keys():
                     tableSchema, tableName = self.abstractDb.getTableSchema(cl)
                     if tableSchema not in ('validation'):
                         for id in duplicated[cl].keys():
-                            dupGeomRecordList.append((tableSchema+'.'+tableName,id,'Duplicated Geometry',duplicated[cl][id]))
+                            dupGeomRecordList.append((tableSchema+'.'+tableName, id, self.tr('Duplicated Geometry'), duplicated[cl][id]))
                 numberOfDupGeom = self.addFlag(dupGeomRecordList)
                 for tuple in dupGeomRecordList:
                     self.addClassesToBeDisplayedList(tuple[0])

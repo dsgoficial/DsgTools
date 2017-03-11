@@ -53,7 +53,7 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         self.toList.clear()
         self.filterLineEdit.clear()
     
-    def setInitialState(self, fromList, unique = False):
+    def setInitialState(self, fromList, unique=False):
         """
         Sets the initial state
         """
@@ -63,7 +63,7 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         self.toList.clear()
         self.setFromList(fromList, unique)
     
-    def setFromList(self, fromList, unique = False):
+    def setFromList(self, fromList, unique=False):
         """
         Setting the "from" items (QListWidget and python list)
         """
@@ -81,7 +81,7 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
             self.fromList.addItems(fromList)
             self.fromList.sortItems()
     
-    def addItems(self, addList, unique = False):
+    def addItems(self, addList, unique=False):
         """
         Adding "from" items (QListWidget and python list)
         """

@@ -31,8 +31,9 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Identify Vertex Near Edge')
         
-        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False, primitiveFilter = ['a', 'l'])
-        self.parameters = {self.tr('Tolerance'): 1.0, 'Classes':classesWithElem.keys()}
+        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a', 'l'], withElements=True, getGeometryColumn=True)
+        classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+        self.parameters = {self.tr('Tolerance'): 1.0, 'Classes': classesWithElem}
 
     def execute(self):
         """
@@ -43,20 +44,29 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithElem = self.parameters['Classes']
-            if len(classesWithGeom) == 0:
+            if len(classesWithElem) == 0:
                 self.setStatus(self.tr('Empty database.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
+            
             tol = self.parameters[self.tr('Tolerance')]
             error = False
-            for cl in classesWithElem:
-                tableSchema, tableName = self.abstractDb.getTableSchema(cl)
-                result = self.abstractDb.getVertexNearEdgesRecords(tableSchema, tableName, tol) #list only classes with elements.
+            
+            for classAndGeom in classesWithElem:
+                # preparation
+                cl, geometryColumn = classAndGeom.split(':')
+                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+                tableSchema, tableName = self.abstractDb.getTableSchema(processTableName)
+                
+                #running the process
+                result = self.abstractDb.getVertexNearEdgesRecords(tableSchema, tableName, tol)
+                
+                # storing flags
                 if len(result) > 0:
                     error = True
                     recordList = []
                     for tupple in result:
-                        recordList.append((tableSchema+'.'+tableName,tupple[0],self.tr('Vertex near edge.'),tupple[1]))
+                        recordList.append((tableSchema+'.'+tableName, tupple[0], self.tr('Vertex near edge.'), tupple[1]))
                         self.addClassesToBeDisplayedList(tupple[0]) 
                     numberOfProblems = self.addFlag(recordList)
                     QgsMessageLog.logMessage(self.tr('{0} features from {1} have vertex(es) near edge(s). Check flags.').format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

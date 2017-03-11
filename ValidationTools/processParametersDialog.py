@@ -78,7 +78,7 @@ class ProcessParametersDialog(QtGui.QDialog):
                 widget.setMinimum(-1000000)
             
             if self.WIDGETS[type(v)] == CustomSelector:
-                getattr(widget, self.SETTERS[type(widget)])(v,unique=True)
+                getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
                 widget.setTitle(self.tr('Select classes'))
             else:
                 getattr(widget, self.SETTERS[type(widget)])(v)

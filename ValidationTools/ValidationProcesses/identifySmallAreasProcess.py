@@ -31,8 +31,9 @@ class IdentifySmallAreasProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Identify Small Areas')
         
-        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False, primitiveFilter = ['a'])
-        self.parameters = {'Area': 125.0, 'Classes':classesWithElem.keys()}
+        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a'], withElements=True, getGeometryColumn=True)
+        classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+        self.parameters = {'Area': 125.0, 'Classes': classesWithElem}
 
     def execute(self):
         """
@@ -42,15 +43,29 @@ class IdentifySmallAreasProcess(ValidationProcess):
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            areas = self.parameters['Classes']
             tol = self.parameters['Area']
-            result = self.abstractDb.getSmallAreasRecords(areas, tol) #list only classes with elements.
+            classesWithGeom = []
+            for classAndGeom in self.parameters['Classes']:
+                # preparation
+                cl, geometryColumn = classAndGeom.split(':')
+                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+                if processTableName not in classesWithGeom:
+                    classesWithGeom.append(processTableName)
+
+            # running the process
+            result = self.abstractDb.getSmallAreasRecords(classesWithGeom, tol)
+            
+            # dropping temp table
+            for processTableName in classesWithGeom:
+                self.abstractDb.dropTempTable(processTableName)
+                
+            # storing flags
             if len(result.keys()) > 0:
                 recordList = []
                 for cl in result.keys():
                     tableSchema, tableName = self.abstractDb.getTableSchema(cl)
                     for id in result[cl].keys():
-                        recordList.append((tableSchema+'.'+tableName,id,'Small Area.',result[cl][id]))
+                        recordList.append((tableSchema+'.'+tableName, id, self.tr('Small Area.'), result[cl][id]))
                 numberOfProblems = self.addFlag(recordList)
                 for tuple in recordList:
                     self.addClassesToBeDisplayedList(tuple[0])   

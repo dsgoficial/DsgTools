@@ -31,8 +31,9 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Identify Out Of Bounds Angles')
         
-        classesWithElem = self.abstractDb.listClassesWithElementsFromDatabase(useComplex = False, primitiveFilter = ['a', 'l'])
-        self.parameters = {'Angle': 10.0, 'Classes': classesWithElem.keys()}
+        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a', 'l'], withElements=True, getGeometryColumn=True)
+        classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+        self.parameters = {'Angle': 10.0, 'Classes': classesWithElem}
 
     def execute(self):
         """
@@ -49,14 +50,24 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
                 return 1
             tol = self.parameters['Angle']
             error = False
-            for cl in classesWithElem:
-                tableSchema, tableName = self.abstractDb.getTableSchema(cl)
-                result = self.abstractDb.getOutOfBoundsAnglesRecords(tableSchema, tableName, tol) #list only classes with elements.
+            for classAndGeom in classesWithElem:
+                # preparation
+                cl, geometryColumn = classAndGeom.split(':')
+                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+                tableSchema, tableName = self.abstractDb.getTableSchema(processTableName)
+                
+                # running the process
+                result = self.abstractDb.getOutOfBoundsAnglesRecords(tableSchema, tableName, tol)
+
+                # dropping temp table
+                self.abstractDb.dropTempTable(processTableName)
+                
+                # storing flags
                 if len(result) > 0:
                     error = True
                     recordList = []
                     for tupple in result:
-                        recordList.append((tableSchema+'.'+tableName,tupple[0],'Angle out of bound.',tupple[1]))
+                        recordList.append((tableSchema+'.'+tableName, tupple[0], self.tr('Angle out of bound.'), tupple[1]))
                         self.addClassesToBeDisplayedList(tupple[0]) 
                     numberOfProblems = self.addFlag(recordList)
                     QgsMessageLog.logMessage(self.tr('{0} features from {1} have out of bounds angle(s). Check flags.').format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

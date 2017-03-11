@@ -32,9 +32,12 @@ class CleanGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Clean Geometries')
         
-        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter = ['a', 'l'], withElements = True, getGeometryColumn = True)
-        classesWithElem = [i['layerName']+' ({0})'.format(i['geometryColumn']) for i in classesWithElemDictList]
-        self.parameters = {'Snap': 1.0, 'MinArea':0.001, 'Classes':classesWithElem}
+        # getting tables with elements
+        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a', 'l'], withElements=True, getGeometryColumn=True)
+        # creating a list of tuples (layer names, geometry columns)
+        classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+        # adjusting process parameters
+        self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Classes': classesWithElem}
         
     def runProcessinAlg(self, layer, tempTableName, geometryColumn):
         """
@@ -92,12 +95,16 @@ class CleanGeometriesProcess(ValidationProcess):
             error = False
             for classAndGeom in classesWithElem:
                 # preparation
-                cl, geometryColumn = classAndGeom.split(' ')
-                geometryColumn = geometryColumn.replace('(','').replace(')','')
+                cl, geometryColumn = classAndGeom.split(':')
                 processTableName, lyr = self.prepareExecution(cl, geometryColumn)
-                #running the process in the temp table
+                
+                # running the process in the temp table
                 result = self.runProcessinAlg(lyr, processTableName, geometryColumn)
+                
+                # dropping temp table
                 self.abstractDb.dropTempTable(processTableName)
+                
+                # storing flags
                 if len(result) > 0:
                     error = True
                     recordList = []
