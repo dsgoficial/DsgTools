@@ -293,7 +293,7 @@ class ValidationProcess(QObject):
             isEdgv = False
         else:
             isEdgv = True
-        lyr = self.layerLoader.load([layer_name],uniqueLoad=True, isEdgv = isEdgv)[layer_name]
+        lyr = self.layerLoader.load([layer_name], uniqueLoad=True, isEdgv=isEdgv)[layer_name]
         return lyr
     
     def prepareExecution(self, cl, geometryColumn='geom'):

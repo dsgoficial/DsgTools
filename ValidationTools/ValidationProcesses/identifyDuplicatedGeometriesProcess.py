@@ -31,8 +31,11 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Identify Duplicated Geometries')
         
+        # getting tables with elements
         classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements=True, getGeometryColumn=True)
+        # creating a list of tuples (layer names, geometry columns)
         classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+        # adjusting process parameters
         self.parameters = {'Classes': classesWithElem}
 
     def execute(self):

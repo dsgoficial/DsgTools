@@ -1066,26 +1066,19 @@ class PostgisDb(AbstractDb):
             dimension = query.value(0)
         return dimension
     
-    def getExplodeCandidates(self):
+    def getExplodeCandidates(self, cl):
         """
         Gets multi geometries (i.e number of parts > 1) that will be deaggregated later
         """
         self.checkAndOpenDb()
-        explodeDict = dict()
-        classesWithElem = self.listClassesWithElementsFromDatabase()
-        for cl in classesWithElem:
-            sql= self.gen.getMulti(cl)
-            query = QSqlQuery(sql, self.db)
-            if not query.isActive():
-                self.db.rollback()
-                
-                raise Exception(self.tr('Problem exploding geometries: ') + query.lastError().text())
-            idList = []
-            while query.next():
-                idList.append(query.value(0))
-            if len(idList) > 0:
-                explodeDict = self.utils.buildNestedDict(explodeDict, [cl], idList)
-        return explodeDict
+        sql= self.gen.getMulti(cl)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem exploding candidates: ') + query.lastError().text())
+        idList = []
+        while query.next():
+            idList.append(query.value(0))
+        return idList
 
     def getURI(self, table, useOnly = True, geomColumn = 'geom'):
         """

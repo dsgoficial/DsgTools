@@ -31,8 +31,12 @@ class DeaggregateGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Deaggregate Geometries')
         
-        self.explodeIdDict = self.abstractDb.getExplodeCandidates()
-        self.parameters = {'Classes':self.explodeIdDict.keys()}
+        # getting tables with elements
+        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements=True, getGeometryColumn=True)
+        # creating a list of tuples (layer names, geometry columns)
+        classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+        # adjusting process parameters
+        self.parameters = {'Classes': classesWithElem}
 
     def execute(self):
         """
@@ -42,20 +46,19 @@ class DeaggregateGeometriesProcess(ValidationProcess):
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName())
-            classesWithElem = self.parameters['Classes'] #list only classes with elements.
-            if len(classesWithElem) == 0:
-                self.setStatus(self.tr('There are no multi parted geometries.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('There are no multi parted geometries.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                return 1
-            classesWithElem = self.parameters['Classes']
-            for cl in classesWithElem:
-                #creating vector layer
-                layer = self.loadLayerBeforeValidationProcess(cl)
-                provider = layer.dataProvider()
-                if not layer.isValid():
-                    QgsMessageLog.logMessage(self.tr("Layer {0} failed to load!").format(cl))
-                layer.startEditing()
-                for id in self.explodeIdDict[cl]:
+
+            for classAndGeom in self.parameters['Classes']:
+                # preparation
+                cl, geometryColumn = classAndGeom.split(':')
+                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+                    
+                # getting multi geometries ids
+                multiIds = self.abstractDb.getExplodeCandidates(processTableName)
+
+                # actual deaggregation
+                provider = lyr.dataProvider()
+                lyr.startEditing()
+                for id in multiIds:
                     feat = layer.getFeatures(QgsFeatureRequest(id)).next()
                     parts = feat.geometry().asGeometryCollection()
                     for part in parts:
