@@ -46,7 +46,7 @@ class CustomizationManager(GenericDbManager):
         1. Get customization from dsgtools_admindb;
         2. Get sql from dbCustomizer;
         3. For each db try to create custom;
-        4. If custom applyied, save it on customization table on db and on dsgtools_admindb;
+        4. If custom applied, save it on customization table on db and on dsgtools_admindb;
         """
         pass
     

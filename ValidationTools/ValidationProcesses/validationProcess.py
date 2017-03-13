@@ -220,13 +220,13 @@ class ValidationProcess(QObject):
                     featureMap[featid] = feat
         return featureMap
     
-    def prepareWorkingStructure(self, tableName, layer, geometryColumn):
+    def prepareWorkingStructure(self, tableName, layer, geometryColumn, keyColumn):
         """
         Creates a temp table where all features plus the edit buffer features from a layer
         will be inserted
         """
         try:
-            self.abstractDb.createAndPopulateTempTableFromMap(tableName, layer, geometryColumn)
+            self.abstractDb.createAndPopulateTempTableFromMap(tableName, layer, geometryColumn, keyColumn)
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
@@ -243,10 +243,10 @@ class ValidationProcess(QObject):
         idsToRemove = []
         #making the changes and inserts
         for feature in pgInputLayer.getFeatures():
-            id = feature['id']
+            id = feature.id()
             outFeats = []
             #getting the output features with the specific id
-            for gf in qgisOutputVector.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("id=%d"%id))):
+            for gf in qgisOutputVector.dataProvider().getFeatures(QgsFeatureRequest().setFilterFid(id)):
                 outFeats.append(gf)
             #starting to make changes
             for i in range(len(outFeats)):
@@ -262,8 +262,6 @@ class ValidationProcess(QObject):
                     newGeom = outFeats[i].geometry()
                     newGeom.convertToMultiType()
                     newFeat.setGeometry(newGeom)
-                    idx = newFeat.fieldNameIndex('id')
-                    newFeat.setAttribute(idx, provider.defaultValue(idx))
                     addList.append(newFeat)
             #in the case we don't find features in the output we should mark them to be removed
             if len(outFeats) == 0:
@@ -301,7 +299,11 @@ class ValidationProcess(QObject):
         Prepare the process to be executed
         cl: table name
         """
+        # loading layer prior to execution
         lyr = self.loadLayerBeforeValidationProcess(cl)
+        # getting keyColumn because we want to be generic
+        uri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
+        keyColumn = uri.keyColumn()
         #getting feature map including the edit buffer
         featureMap = self.mapInputLayer(lyr)
         #getting table name with schema
@@ -309,7 +311,7 @@ class ValidationProcess(QObject):
         #setting temp table name
         processTableName = tableName+'_temp'
         #creating temp table
-        self.prepareWorkingStructure(tableName, featureMap, geometryColumn)
+        self.prepareWorkingStructure(tableName, featureMap, geometryColumn, keyColumn)
         return processTableName, lyr
     
     def postProcessSteps(self, processTableName, lyr):

@@ -1620,7 +1620,7 @@ class PostgisDb(AbstractDb):
         self.db.commit()
         return result
 
-    def createAndPopulateTempTableFromMap(self, tableName, featureMap, geomColumnName):
+    def createAndPopulateTempTableFromMap(self, tableName, featureMap, geomColumnName, keyColumn):
         srid = self.findEPSG()
         self.checkAndOpenDb()
         self.db.transaction()
@@ -1636,8 +1636,12 @@ class PostgisDb(AbstractDb):
             if not attributes:
                 # getting only provider fields (we ignore expression fields - type = 6)
                 attributes = [field.name() for field in feat.fields() if field.type() != 6]
+            # getting keyColumn idx
+            keyIdx = feat.fieldNameIndex(keyColumn)
             # getting only the needed attribute values
             values = [feat.attribute(fieldname) for fieldname in attributes]
+            # setting the feature id
+            values[keyIdx] = feat.id()
             geometry = binascii.hexlify(feat.geometry().asWkb())
             insertSql = self.gen.populateTempTable(tableName, attributes, values, geometry, srid, geomColumnName)
             if not query.exec_(insertSql):
