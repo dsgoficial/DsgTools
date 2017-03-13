@@ -96,7 +96,7 @@ class CleanGeometriesProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
-                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
                 
                 # running the process in the temp table
                 result = self.runProcessinAlg(lyr, processTableName, geometryColumn)

@@ -31,8 +31,8 @@ class ForceValidityGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Force Geometries Validity')
         
-        flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyInvalidGeometriesProcess')
-        self.parameters = {'Classes':flagsDict.keys()}
+        self.flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyInvalidGeometriesProcess')
+        self.parameters = {'Classes': self.flagsDict.keys()}
         
     def preProcess(self):
         """
@@ -63,7 +63,7 @@ class ForceValidityGeometriesProcess(ValidationProcess):
                 # preparation
                 processTableName, lyr, keyColumn = self.prepareExecution(cl)
                 #running the process in the temp table
-                problems = self.abstractDb.forceValidity(processTableName, flagsDict[cl], keyColumn)
+                problems = self.abstractDb.forceValidity(processTableName, self.flagsDict[cl], keyColumn)
                 numberOfProblems += problems
                 # finalization
                 self.postProcessSteps(processTableName, lyr)

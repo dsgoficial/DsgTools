@@ -311,7 +311,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getInvalidGeom(self, tableSchema, tableName, geometryColumn, keyColumn):
-        return '''select  f.{3} as {3},(reason(ST_IsValidDetail(f.{2},0))), (location(ST_IsValidDetail(f.{2},0))) as {2} from (select {3}, {2} from only "{0}"."{1}"  where ST_IsValid({2}) = 'f') as f'''.format(tableSchema, tableName, geometryColumn, keyColumn)
+        return '''select  distinct f."{3}" as "{3}",(reason(ST_IsValidDetail(f."{2}",0))), (location(ST_IsValidDetail(f."{2}",0))) as "{2}" from (select "{3}", "{2}" from only "{0}"."{1}"  where ST_IsValid("{2}") = 'f') as f'''.format(tableSchema, tableName, geometryColumn, keyColumn)
     
     def getNonSimpleGeom(self, tableSchema, tableName):
         return '''select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only "{0}"."{1}"  where ST_IsSimple(geom) = 'f') as f'''.format(tableSchema,tableName)
@@ -389,14 +389,14 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "INSERT INTO validation.process_history (process_name, log, status) values ('%s','%s',%s)" % (processName,log,status)
         return sql
     
-    def insertFlagIntoDb(self,layer,feat_id,reason,geom,srid,processName, dimension):
+    def insertFlagIntoDb(self,layer,feat_id,reason,geom,srid,processName, dimension, geometryColumn):
         sql = ''
         if dimension == 0:
-            sql = "INSERT INTO validation.aux_flags_validacao_p (process_name, layer, feat_id, reason, geom, dimension) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s), %s);" % (processName, layer, str(feat_id), reason, geom, srid, dimension)
+            sql = "INSERT INTO validation.aux_flags_validacao_p (process_name, layer, feat_id, reason, geom, dimension, geometry_column) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s), %s, '%s');" % (processName, layer, str(feat_id), reason, geom, srid, dimension, geometryColumn)
         elif dimension == 1:
-            sql = "INSERT INTO validation.aux_flags_validacao_l (process_name, layer, feat_id, reason, geom, dimension) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s), %s);" % (processName, layer, str(feat_id), reason, geom, srid, dimension)
+            sql = "INSERT INTO validation.aux_flags_validacao_l (process_name, layer, feat_id, reason, geom, dimension, geometry_column) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s), %s, '%s');" % (processName, layer, str(feat_id), reason, geom, srid, dimension, geometryColumn)
         elif dimension == 2:
-            sql = "INSERT INTO validation.aux_flags_validacao_a (process_name, layer, feat_id, reason, geom, dimension) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s), %s);" % (processName, layer, str(feat_id), reason, geom, srid, dimension)
+            sql = "INSERT INTO validation.aux_flags_validacao_a (process_name, layer, feat_id, reason, geom, dimension, geometry_column) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s), %s, '%s');" % (processName, layer, str(feat_id), reason, geom, srid, dimension, geometryColumn)
         return sql
     
     def getRunningProc(self):
@@ -494,9 +494,9 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getSmallAreas(self, schema, cl, areaTolerance, geometryColumn, keyColumn):
-        sql = """select  foo2.{4}, foo2.{3} from (
-        select {4}, {3}, ST_Area({3}) as area from "{0}"."{1}" 
-        ) as foo2 where foo2.area < {2} order by foo2.{4}""".format(schema, cl, areaTolerance, geometryColumn, keyColumn)
+        sql = """select  foo2."{4}", foo2."{3}" from (
+        select "{4}", "{3}", ST_Area("{3}") as area from "{0}"."{1}" 
+        ) as foo2 where foo2.area < {2} order by foo2."{4}" """.format(schema, cl, areaTolerance, geometryColumn, keyColumn)
         return sql
     
     def getSmallLines(self, schema, cl, areaTolerance, geometryColumn, keyColumn):
@@ -529,9 +529,9 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """select pontos.{3}, ST_SetSRID(pontos.{2},{0}) as {2} from pontos, seg where ST_DWithin(seg.{2}, pontos.{2}, {1}) and ST_Distance(seg.{2}, pontos.{2}) > 0""".format(epsg, tol, geometryColumn, keyColumn)
         return sql
     
-    def deleteFeatures(self,schema,table,idList):
+    def deleteFeatures(self, schema, table, idList, keyColumn):
         sql = """DELETE FROM "{0}"."{1}" 
-        WHERE id in ({2})""".format(schema,table,','.join(idList))
+        WHERE "{3}" in ({2})""".format(schema, table, ','.join(idList), keyColumn)
         return sql
     
     def deleteFeaturesNotIn(self,schema,table,idList):
@@ -583,16 +583,15 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getFlagsByProcess(self, processName):
-        sql = """select layer, feat_id from validation.aux_flags_validacao where process_name = '%s'""" % processName
+        sql = """select layer, feat_id, geometry_column from validation.aux_flags_validacao where process_name = '%s'""" % processName
         return sql
     
-    def forceValidity(self, tableSchema, tableName, idList, srid, keyColumn):
-        #TODO: Put pk field
-        sql = """update "{0}"."{1}" set geom = ST_Multi(result.geom) from (
-        select distinct parts.{4}, ST_Union(parts.geom) as geom from "{0}"."{1}" as source, 
-                                        (select {4} as {4}, ST_Multi(((ST_Dump(ST_SetSRID(ST_MakeValid(geom), {3}))).geom)) as geom from 
-                                        "{0}"."{1}"  where {4} in ({2})) as parts where ST_GeometryType(parts.geom) = ST_GeometryType(source.geom) group by parts.{4}
-        ) as result where  result.{4} = "{0}"."{1}".{4}""".format(tableSchema,tableName, ','.join(idList), srid, keyColumn)
+    def forceValidity(self, tableSchema, tableName, idList, srid, keyColumn, geometryColumn):
+        sql = """update "{0}"."{1}" set "{5}" = ST_Multi(result."{5}") from (
+        select distinct parts."{4}", ST_Union(parts."{5}") as "{5}" from "{0}"."{1}" as source, 
+                                        (select "{4}" as "{4}", ST_Multi(((ST_Dump(ST_SetSRID(ST_MakeValid("{5}"), {3})))."{5}")) as "{5}" from 
+                                        "{0}"."{1}"  where "{4}" in ({2})) as parts where ST_GeometryType(parts."{5}") = ST_GeometryType(source."{5}") group by parts."{4}"
+        ) as result where  result."{4}" = "{0}"."{1}"."{4}" """.format(tableSchema, tableName, ','.join(idList), srid, keyColumn, geometryColumn)
         return sql
     
     def getTableExtent(self, tableSchema, tableName):

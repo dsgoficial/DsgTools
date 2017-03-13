@@ -1196,15 +1196,17 @@ class PostgisDb(AbstractDb):
         self.db.commit()
         return result
 
-    def removeFeatures(self, cl, idList):
+    def removeFeatures(self, cl, processList, keyColumn):
         """
         Removes features from class
         cl: class name
-        idList: id list to be removes
+        processList: list of dictionaries (id and geometry column)
+        keyColumn: pk column
         """
         self.checkAndOpenDb()
         tableSchema, tableName = self.getTableSchema(cl)
-        sql = self.gen.deleteFeatures(tableSchema, tableName, idList)
+        idList = [i['id'] for i in processList]
+        sql = self.gen.deleteFeatures(tableSchema, tableName, idList, keyColumn)
         query = QSqlQuery(self.db)
         self.db.transaction()
         if not query.exec_(sql):
@@ -1267,21 +1269,25 @@ class PostgisDb(AbstractDb):
         while query.next():
             cl = query.value(0)
             id = query.value(1)
+            geometry_column = query.value(2) 
             if cl not in flagsDict.keys():
                 flagsDict[cl] = []
-            flagsDict[cl].append(str(id))
+            flagsDict[cl].append({'id':str(id), 'geometry_column':geometry_column})
         return flagsDict
     
-    def forceValidity(self, cl, idList, keyColumn):
+    def forceValidity(self, cl, processList, keyColumn):
         """
         Forces geometry validity (i.e uses ST_MakeValid)
         cl: class
-        idList: feature ids to be processed
+        processList: list of dictionaries (id and geometry column)
+        keyColumn: pk column
         """
         self.checkAndOpenDb()
         tableSchema, tableName = self.getTableSchema(cl)
         srid = self.findEPSG()
-        sql = self.gen.forceValidity(tableSchema, tableName, idList, srid, keyColumn)
+        idList = [i['id'] for i in processList]
+        geometryColumn = processList[0]['geometry_column']
+        sql = self.gen.forceValidity(tableSchema, tableName, idList, srid, keyColumn, geometryColumn)
         query = QSqlQuery(self.db)
         self.db.transaction()
         if not query.exec_(sql):
