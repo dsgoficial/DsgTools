@@ -866,7 +866,7 @@ class PostgisDb(AbstractDb):
             file = os.path.join(currentPath,'..','..','DbTools','PostGISTool', 'sqls', 'FTer_2a_Ed', 'views_edgvFter_2a_Ed.sql')
         return file
     
-    def getInvalidGeomRecords(self, geomList):
+    def getInvalidGeomRecords(self, geomList, geometryColumn, keyColumn):
         """
         Gets invalid geometry data from database
         """
@@ -874,7 +874,7 @@ class PostgisDb(AbstractDb):
         invalidRecordsList = []
         for lyr in geomList:
             tableSchema, tableName = self.getTableSchema(lyr)
-            sql = self.gen.getInvalidGeom(tableSchema, tableName)
+            sql = self.gen.getInvalidGeom(tableSchema, tableName, geometryColumn, keyColumn)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
                 raise Exception(self.tr("Problem getting invalid geometries: ")+query.lastError().text())
@@ -884,7 +884,7 @@ class PostgisDb(AbstractDb):
                 geom = query.value(2)
                 # the flag should store the original table name
                 tableName = tableName.replace('_temp', '')
-                invalidRecordsList.append( (tableSchema+'.'+tableName, featId, reason, geom) )
+                invalidRecordsList.append( (tableSchema+'.'+tableName, featId, reason, geom, geometryColumn) )
         return invalidRecordsList
     
     def insertFlags(self, flagTupleList, processName):
@@ -903,7 +903,7 @@ class PostgisDb(AbstractDb):
                     dimension = self.getDimension(record[3]) # getting geometry dimension
                 except Exception as e:
                     raise e
-                sql = self.gen.insertFlagIntoDb(record[0], str(record[1]), record[2], record[3], srid, processName, dimension)
+                sql = self.gen.insertFlagIntoDb(record[0], record[1], record[2], record[3], srid, processName, dimension, record[4])
                 if not query.exec_(sql):
                     self.db.rollback()
                     raise Exception(self.tr('Problem inserting flags: ') + query.lastError().text())
@@ -1107,7 +1107,7 @@ class PostgisDb(AbstractDb):
         
         return uri
     
-    def getDuplicatedGeomRecords(self, classesWithGeom):
+    def getDuplicatedGeomRecords(self, classesWithGeom, geometryColumn, keyColumn):
         """
         Gets duplicated records
         classesWithGeom: list of classes with geomtries
@@ -1117,7 +1117,7 @@ class PostgisDb(AbstractDb):
         for cl in classesWithGeom:
             tableSchema, tableName = self.getTableSchema(cl)
             if tableSchema not in ('validation'):
-                sql = self.gen.getDuplicatedGeom(tableSchema, tableName)
+                sql = self.gen.getDuplicatedGeom(tableSchema, tableName, geometryColumn, keyColumn)
                 query = QSqlQuery(sql, self.db)
                 if not query.isActive():
                     self.db.rollback()
@@ -1127,7 +1127,7 @@ class PostgisDb(AbstractDb):
                     duplicatedDict = self.utils.buildNestedDict(duplicatedDict, [cl,query.value(0)], query.value(2))
         return duplicatedDict
 
-    def getSmallAreasRecords(self,classesWithGeom, tol):
+    def getSmallAreasRecords(self,classesWithGeom, tol, geometryColumn, keyColumn):
         """
         Gets duplicated records
         classesWithGeom: list of classes with geometries
@@ -1136,7 +1136,7 @@ class PostgisDb(AbstractDb):
         smallAreasDict = dict()
         for cl in classesWithGeom:
             tableSchema, tableName = self.getTableSchema(cl)
-            sql = self.gen.getSmallAreas(tableSchema, tableName, tol)
+            sql = self.gen.getSmallAreas(tableSchema, tableName, tol, geometryColumn, keyColumn)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
                 raise Exception(self.tr('Problem getting small areas: ') + query.lastError().text())
@@ -1144,16 +1144,18 @@ class PostgisDb(AbstractDb):
                 smallAreasDict = self.utils.buildNestedDict(smallAreasDict, [cl,query.value(0)], query.value(1))
         return smallAreasDict
 
-    def getSmallLinesRecords(self,classesWithGeom, tol):
+    def getSmallLinesRecords(self,classesWithGeom, tol, geometryColumn, keyColumn):
         """
         Gets small lines records 
         tol: tolerance
+        geometryColumn:
+        keyColumn:
         """
         self.checkAndOpenDb()
         smallLinesDict = dict()
         for cl in classesWithGeom:
             tableSchema, tableName = self.getTableSchema(cl)
-            sql = self.gen.getSmallLines(tableSchema, tableName, tol)
+            sql = self.gen.getSmallLines(tableSchema, tableName, tol, geometryColumn, keyColumn)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
                 raise Exception(self.tr('Problem getting small lines: ') + query.lastError().text())
@@ -1161,16 +1163,18 @@ class PostgisDb(AbstractDb):
                 smallLinesDict = self.utils.buildNestedDict(smallLinesDict, [cl,query.value(0)], query.value(1))
         return smallLinesDict
 
-    def getVertexNearEdgesRecords(self, tableSchema, tableName, tol):
+    def getVertexNearEdgesRecords(self, tableSchema, tableName, tol, geometryColumn, keyColumn):
         """
         Gets vertexes near edges. These vertexes are problematic and should be treated
         tableSchema: table schema
         tableName: table name
         tol: tolerance
+        geometryColumn:
+        keyColumn:
         """
         self.checkAndOpenDb()
         result = []
-        sql = self.gen.prepareVertexNearEdgesStruct(tableSchema, tableName)
+        sql = self.gen.prepareVertexNearEdgesStruct(tableSchema, tableName, geometryColumn, keyColumn)
         sqlList = sql.split('#')
         self.db.transaction()
         for sql2 in sqlList:
@@ -1180,7 +1184,7 @@ class PostgisDb(AbstractDb):
                 raise Exception(self.tr('Problem preparing auxiliary structure: ') + query.lastError().text())
 
         epsg = self.findEPSG()
-        sql = self.gen.getVertexNearEdgesStruct(epsg, tol)
+        sql = self.gen.getVertexNearEdgesStruct(epsg, tol, geometryColumn, keyColumn)
         query = QSqlQuery(sql,self.db)
         if not query.isActive():
             self.db.rollback()
@@ -1209,7 +1213,7 @@ class PostgisDb(AbstractDb):
         self.db.commit()
         return len(idList)
 
-    def getNotSimpleRecords(self, classesWithGeom):
+    def getNotSimpleRecords(self, classesWithGeom, geometryColumn, keyColumn):
         """
         Gets not simple geometries records
         classesWithGeom: class list
@@ -1218,17 +1222,16 @@ class PostgisDb(AbstractDb):
         notSimpleDict = dict()
         for cl in classesWithGeom:
             tableSchema, tableName = self.getTableSchema(cl)
-            sql = self.gen.getNotSimple(tableSchema, tableName)
+            sql = self.gen.getNotSimple(tableSchema, tableName, geometryColumn, keyColumn)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
                 self.db.rollback()
-                
                 raise Exception(self.tr('Problem getting not simple geometries: ') + query.lastError().text())
             while query.next():
                 notSimpleDict = self.utils.buildNestedDict(notSimpleDict, [cl,query.value(0)], query.value(1))
         return notSimpleDict
 
-    def getOutOfBoundsAnglesRecords(self, tableSchema, tableName, tol):
+    def getOutOfBoundsAnglesRecords(self, tableSchema, tableName, tol, geometryColumn, keyColumn):
         """
         Gets records with anchor points (points between segments) that are out of bounds (i.e outside a limit tolerance)
         tableSchema: table schema
@@ -1237,7 +1240,7 @@ class PostgisDb(AbstractDb):
         """
         self.checkAndOpenDb()
         result = []
-        sql = self.gen.getOutofBoundsAngles(tableSchema, tableName, tol)
+        sql = self.gen.getOutofBoundsAngles(tableSchema, tableName, tol, geometryColumn, keyColumn)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             self.db.rollback()
@@ -1251,7 +1254,7 @@ class PostgisDb(AbstractDb):
 
     def getFlagsDictByProcess(self, processName):
         """
-        Gets flags data dictionar by process name
+        Gets flags data dictionary by process name
         processName: process name
         """
         self.checkAndOpenDb()
@@ -1260,7 +1263,6 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             self.db.rollback()
-            
             raise Exception(self.tr('Problem getting flags dict: ') + query.lastError().text())
         while query.next():
             cl = query.value(0)
@@ -1270,7 +1272,7 @@ class PostgisDb(AbstractDb):
             flagsDict[cl].append(str(id))
         return flagsDict
     
-    def forceValidity(self, cl, idList):
+    def forceValidity(self, cl, idList, keyColumn):
         """
         Forces geometry validity (i.e uses ST_MakeValid)
         cl: class
@@ -1279,7 +1281,7 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         tableSchema, tableName = self.getTableSchema(cl)
         srid = self.findEPSG()
-        sql = self.gen.forceValidity(tableSchema, tableName, idList, srid)
+        sql = self.gen.forceValidity(tableSchema, tableName, idList, srid, keyColumn)
         query = QSqlQuery(self.db)
         self.db.transaction()
         if not query.exec_(sql):
@@ -1534,7 +1536,7 @@ class PostgisDb(AbstractDb):
         while query.next():
             return query.value(0)
     
-    def snapToGrid(self, classList, tol, srid):
+    def snapToGrid(self, classList, tol, srid, geometryColumn):
         """
         Snaps tables to grid (i.e executes ST_SnapToGrid)
         classList: classes to be altered
@@ -1544,13 +1546,13 @@ class PostgisDb(AbstractDb):
         self.db.transaction()
         query = QSqlQuery(self.db)
         for cl in classList:
-            sql = self.gen.snapToGrid(cl, tol, srid)
+            sql = self.gen.snapToGrid(cl, tol, srid, geometryColumn)
             if not query.exec_(sql):
                 self.db.rollback()
                 raise Exception(self.tr('Problem snapping to grid: ') + query.lastError().text())
         self.db.commit()
         
-    def snapLinesToFrame(self, classList, frameTable, tol):
+    def snapLinesToFrame(self, classList, frameTable, tol, geometryColumn, keyColumn, frameGeometryColumn):
         """
         Snaps lines to frame. This means the lines are prolonged to the frame according to the specified tolerance
         classList: classes to be altered
@@ -1560,14 +1562,14 @@ class PostgisDb(AbstractDb):
         self.db.transaction()
         query = QSqlQuery(self.db)
         for cl in classList:
-            sqls = self.gen.snapLinesToFrame(cl, frameTable, tol)
+            sqls = self.gen.snapLinesToFrame(cl, frameTable, tol, geometryColumn, keyColumn, frameGeometryColumn)
             for sql in sqls.split('#'):
                 if not query.exec_(sql):
                     self.db.rollback()
                     raise Exception(self.tr('Problem snapping to frame: ') + query.lastError().text())
         self.db.commit()
             
-    def densifyFrame(self, classList, frameTable, snapTolerance):
+    def densifyFrame(self, classList, frameTable, snapTolerance, geometryColumn, frameGeometryColumn):
         """
         Densifies the frame creating new vertexes where the lines were snapped
         classList: classes to be altered
@@ -1576,13 +1578,13 @@ class PostgisDb(AbstractDb):
         self.db.transaction()
         query = QSqlQuery(self.db)
         for cl in classList:
-            sql = self.gen.densifyFrame(cl, frameTable, snapTolerance)
+            sql = self.gen.densifyFrame(cl, frameTable, snapTolerance, geometryColumn, frameGeometryColumn)
             if not query.exec_(sql):
                 self.db.rollback()
                 raise Exception(self.tr('Problem densifying frame: ') + query.lastError().text())
         self.db.commit()
         
-    def recursiveSnap(self, classList, tol):
+    def recursiveSnap(self, classList, tol, geometryColumn, keyColumn):
         """
         Executes a recursive snap within the class
         classList: classes to be snapped
@@ -1591,7 +1593,7 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
-        sql = self.gen.makeRecursiveSnapFunction()
+        sql = self.gen.makeRecursiveSnapFunction(geometryColumn, keyColumn)
         if not query.exec_(sql):
             self.db.rollback()
             raise Exception(self.tr('Problem creating recursive snap function: ') + query.lastError().text())
@@ -2360,7 +2362,7 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem deleting flag: ') + query.lastError().text())
         self.db.commit()
         
-    def removeEmptyGeometries(self, layer):
+    def removeEmptyGeometries(self, layer, geometryColumn):
         """
         Removes empty geometries from layer
         layer: layer name
@@ -2368,7 +2370,7 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         self.db.transaction()
         query = QSqlQuery(self.db)
-        sql = self.gen.removeEmptyGeomtriesFromDb(layer)
+        sql = self.gen.removeEmptyGeomtriesFromDb(layer, geometryColumn)
         if not query.exec_(sql):
             self.db.rollback()
             raise Exception(self.tr('Problem removing empty geometries: ') + query.lastError().text())

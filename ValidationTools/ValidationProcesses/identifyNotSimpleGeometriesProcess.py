@@ -31,8 +31,11 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Identify Not Simple Geometries')
 
+        # getting tables with elements
         classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a', 'l'], withElements=True, getGeometryColumn=True)
+        # creating a list of tuples (layer names, geometry columns)
         classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+        # adjusting process parameters
         self.parameters = {'Classes': classesWithElem}
 
     def execute(self):
@@ -52,12 +55,12 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
-                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
                 if processTableName not in classesWithGeom:
                     classesWithGeom.append(processTableName)
                     
             # running the process
-            result = self.abstractDb.getNotSimpleRecords(classesWithGeom)
+            result = self.abstractDb.getNotSimpleRecords(classesWithGeom, geometryColumn, keyColumn)
 
             # dropping temp table
             for processTableName in classesWithGeom:
@@ -71,7 +74,7 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
                     # the flag should store the original table name
                     tableName = tableName.replace('_temp', '')
                     for id in result[cl].keys():
-                        recordList.append((tableSchema+'.'+tableName, id, self.tr('Not simple geometry.'), result[cl][id]))
+                        recordList.append((tableSchema+'.'+tableName, id, self.tr('Not simple geometry.'), result[cl][id], geometryColumn))
                 numberOfProblems = self.addFlag(recordList)
                 for tuple in recordList:
                     self.addClassesToBeDisplayedList(tuple[0])

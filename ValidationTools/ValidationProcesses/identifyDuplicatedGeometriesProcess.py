@@ -55,12 +55,12 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
-                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
                 if processTableName not in classesWithGeom:
                     classesWithGeom.append(processTableName)
                     
             # running the process
-            duplicated = self.abstractDb.getDuplicatedGeomRecords(classesWithGeom)
+            duplicated = self.abstractDb.getDuplicatedGeomRecords(classesWithGeom, geometryColumn, keyColumn)
             
             # dropping temp table
             for processTableName in classesWithGeom:
@@ -75,7 +75,7 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
                     tableName = tableName.replace('_temp', '')
                     if tableSchema not in ('validation'):
                         for id in duplicated[cl].keys():
-                            dupGeomRecordList.append((tableSchema+'.'+tableName, id, self.tr('Duplicated Geometry'), duplicated[cl][id]))
+                            dupGeomRecordList.append((tableSchema+'.'+tableName, id, self.tr('Duplicated Geometry'), duplicated[cl][id], geometryColumn))
                 numberOfDupGeom = self.addFlag(dupGeomRecordList)
                 for tuple in dupGeomRecordList:
                     self.addClassesToBeDisplayedList(tuple[0])

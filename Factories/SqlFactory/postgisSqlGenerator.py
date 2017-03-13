@@ -310,8 +310,8 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = 'SELECT rolsuper FROM pg_roles WHERE rolname = \'%s\'' % user 
         return sql
 
-    def getInvalidGeom(self, tableSchema, tableName):
-        return '''select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only "{0}"."{1}"  where ST_IsValid(geom) = 'f') as f'''.format(tableSchema,tableName)
+    def getInvalidGeom(self, tableSchema, tableName, geometryColumn, keyColumn):
+        return '''select  f.{3} as {3},(reason(ST_IsValidDetail(f.{2},0))), (location(ST_IsValidDetail(f.{2},0))) as {2} from (select {3}, {2} from only "{0}"."{1}"  where ST_IsValid({2}) = 'f') as f'''.format(tableSchema, tableName, geometryColumn, keyColumn)
     
     def getNonSimpleGeom(self, tableSchema, tableName):
         return '''select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only "{0}"."{1}"  where ST_IsSimple(geom) = 'f') as f'''.format(tableSchema,tableName)
@@ -329,6 +329,7 @@ class PostGISSqlGenerator(SqlGenerator):
             reason varchar(200) NOT NULL,
             user_fixed boolean NOT NULL DEFAULT FALSE,
             dimension smallint NOT NULL,
+            geometry_column varchar(200) NOT NULL,
             CONSTRAINT aux_flags_validacao_pk PRIMARY KEY (id)
              WITH (FILLFACTOR = 100)
         )#
@@ -482,50 +483,50 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """select id from only {0} where ST_NumGeometries(geom) > 1""".format(cl)
         return sql
 
-    def getDuplicatedGeom(self,schema,cl):
+    def getDuplicatedGeom(self, schema, cl, geometryColumn, keyColumn):
         sql = """select * from (
-        SELECT id,
-        ROW_NUMBER() OVER(PARTITION BY geom ORDER BY id asc) AS Row,
+        SELECT {3},
+        ROW_NUMBER() OVER(PARTITION BY {2} ORDER BY {3} asc) AS Row,
         geom FROM ONLY "{0}"."{1}" 
         ) dups
         where     
-        dups.Row > 1""".format(schema,cl)
+        dups.Row > 1""".format(schema, cl, geometryColumn, keyColumn)
         return sql
     
-    def getSmallAreas(self,schema,cl,areaTolerance):
-        sql = """select  foo2.id, foo2.geom from (
-        select id, geom, ST_Area(geom) as area from "{0}"."{1}" 
-        ) as foo2 where foo2.area < {2} order by foo2.id""".format(schema,cl,areaTolerance)
+    def getSmallAreas(self, schema, cl, areaTolerance, geometryColumn, keyColumn):
+        sql = """select  foo2.{4}, foo2.{3} from (
+        select {4}, {3}, ST_Area({3}) as area from "{0}"."{1}" 
+        ) as foo2 where foo2.area < {2} order by foo2.{4}""".format(schema, cl, areaTolerance, geometryColumn, keyColumn)
         return sql
     
-    def getSmallLines(self,schema,cl,areaTolerance):
-        sql = """select  foo2.id, foo2.geom from (
-        select id, geom, ST_Length(geom) as len from "{0}"."{1}" 
-        ) as foo2 where len < {2} order by foo2.id""".format(schema,cl,areaTolerance)
+    def getSmallLines(self, schema, cl, areaTolerance, geometryColumn, keyColumn):
+        sql = """select  foo2.{4}, foo2.{3} from (
+        select {4}, {3}, ST_Length({3}) as len from "{0}"."{1}" 
+        ) as foo2 where len < {2} order by foo2.{4}""".format(schema, cl, areaTolerance, geometryColumn, keyColumn)
         return sql
     
-    def prepareVertexNearEdgesStruct(self, tableSchema, tableName):
+    def prepareVertexNearEdgesStruct(self, tableSchema, tableName, geometryColumn, keyColumn):
         sql = """drop table if exists seg#
         create temp table seg as (
-        SELECT segments.id as id, ST_MakeLine(sp,ep) as geom
+        SELECT segments.{3} as {3}, ST_MakeLine(sp,ep) as {2}
         FROM
            (SELECT
-              ST_PointN(geom, generate_series(1, ST_NPoints(geom)-1)) as sp,
-              ST_PointN(geom, generate_series(2, ST_NPoints(geom)  )) as ep,
-              linestrings.id as id
+              ST_PointN({2}, generate_series(1, ST_NPoints({2})-1)) as sp,
+              ST_PointN({2}, generate_series(2, ST_NPoints({2})  )) as ep,
+              linestrings.{3} as {3}
             FROM
-              (SELECT id as id, (ST_Dump(ST_Boundary(geom))).geom
+              (SELECT {3} as {3}, (ST_Dump(ST_Boundary({2}))).{2}
                FROM only "{0}"."{1}" 
                ) AS linestrings
             ) AS segments)#
         drop table if exists pontos#
-        create temp table pontos as select id as id, (ST_DumpPoints(geom)).geom as geom from only "{0}"."{1}"#
-        create index pontos_gist on pontos using gist (geom)#
-        create index seg_gist on seg using gist (geom)""".format(tableSchema, tableName)
+        create temp table pontos as select {3} as {3}, (ST_DumpPoints({2})).{2} as {2} from only "{0}"."{1}"#
+        create index pontos_gist on pontos using gist ({2})#
+        create index seg_gist on seg using gist ({2})""".format(tableSchema, tableName, geometryColumn, keyColumn)
         return sql
 
-    def getVertexNearEdgesStruct(self, epsg, tol):
-        sql = """select pontos.id, ST_SetSRID(pontos.geom,{0}) as geom from pontos, seg where ST_DWithin(seg.geom, pontos.geom, {1}) and ST_Distance(seg.geom, pontos.geom) > 0""".format(epsg,tol)
+    def getVertexNearEdgesStruct(self, epsg, tol, geometryColumn, keyColumn):
+        sql = """select pontos.{3}, ST_SetSRID(pontos.{2},{0}) as {2} from pontos, seg where ST_DWithin(seg.{2}, pontos.{2}, {1}) and ST_Distance(seg.{2}, pontos.{2}) > 0""".format(epsg, tol, geometryColumn, keyColumn)
         return sql
     
     def deleteFeatures(self,schema,table,idList):
@@ -538,60 +539,60 @@ class PostGISSqlGenerator(SqlGenerator):
         WHERE id not in ({2})""" .format(schema,table,','.join(map(str,idList)))
         return sql        
     
-    def getNotSimple(self, tableSchema, tableName):
-        sql = """select foo.id as id, ST_MULTI(st_startpoint(foo.geom)) as geom from (
-        select id as id, (ST_Dump(ST_Node(ST_SetSRID(ST_MakeValid(geom),ST_SRID(geom))))).geom as geom from "{0}"."{1}"  
-        where ST_IsSimple(geom) = 'f') as foo where st_equals(st_startpoint(foo.geom),st_endpoint(foo.geom))""".format(tableSchema, tableName)
+    def getNotSimple(self, tableSchema, tableName, geometryColumn, keyColumn):
+        sql = """select foo.{3} as {3}, ST_MULTI(st_startpoint(foo.{2})) as {2} from (
+        select {3} as {3}, (ST_Dump(ST_Node(ST_SetSRID(ST_MakeValid({2}),ST_SRID({2}))))).{2} as {2} from "{0}"."{1}"  
+        where ST_IsSimple({2}) = 'f') as foo where st_equals(st_startpoint(foo.{2}),st_endpoint(foo.{2}))""".format(tableSchema, tableName, geometryColumn, keyColumn)
         return sql
 
-    def getOutofBoundsAngles(self, tableSchema, tableName, angle):
+    def getOutofBoundsAngles(self, tableSchema, tableName, angle, geometryColumn, keyColumn):
         if tableName.split('_')[-1] == 'l':
             sql = """
-            WITH result AS (SELECT points.id, points.anchor, (degrees
+            WITH result AS (SELECT points.{4}, points.anchor, (degrees
                                         (
                                             ST_Azimuth(points.anchor, points.pt1) - ST_Azimuth(points.anchor, points.pt2)
                                         )::decimal + 360) % 360 as angle
                         FROM
                         (SELECT
-                              ST_PointN(geom, generate_series(1, ST_NPoints(geom)-2)) as pt1,
-                              ST_PointN(geom, generate_series(2, ST_NPoints(geom)-1)) as anchor,
-                              ST_PointN(geom, generate_series(3, ST_NPoints(geom))) as pt2,
-                              linestrings.id as id
+                              ST_PointN({3}, generate_series(1, ST_NPoints({3})-2)) as pt1,
+                              ST_PointN({3}, generate_series(2, ST_NPoints({3})-1)) as anchor,
+                              ST_PointN({3}, generate_series(3, ST_NPoints({3}))) as pt2,
+                              linestrings.{4} as {4}
                             FROM
-                              (SELECT id as id, (ST_Dump(geom)).geom as geom
+                              (SELECT {4} as {4}, (ST_Dump({3})).{3} as {3}
                                FROM only "{0}"."{1}"
-                               ) AS linestrings WHERE ST_NPoints(linestrings.geom) > 2 ) as points)
-            select distinct id, anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle)
+                               ) AS linestrings WHERE ST_NPoints(linestrings.{3}) > 2 ) as points)
+            select distinct {4}, anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle, geometryColumn, keyColumn)
         elif  tableName.split('_')[-1] == 'a':
             sql = """
-            WITH result AS (SELECT points.id, points.anchor, (degrees
+            WITH result AS (SELECT points.{4}, points.anchor, (degrees
                                         (
                                             ST_Azimuth(points.anchor, points.pt1) - ST_Azimuth(points.anchor, points.pt2)
                                         )::decimal + 360) % 360 as angle
                         FROM
                         (SELECT
-                              ST_PointN(geom, generate_series(1, ST_NPoints(geom)-1)) as pt1,
-                              ST_PointN(geom, generate_series(1, ST_NPoints(geom)-1) %  (ST_NPoints(geom)-1)+1) as anchor,
-                              ST_PointN(geom, generate_series(2, ST_NPoints(geom)) %  (ST_NPoints(geom)-1)+1) as pt2,
-                              linestrings.id as id
+                              ST_PointN({3}, generate_series(1, ST_NPoints({3})-1)) as pt1,
+                              ST_PointN({3}, generate_series(1, ST_NPoints({3})-1) %  (ST_NPoints({3})-1)+1) as anchor,
+                              ST_PointN({3}, generate_series(2, ST_NPoints({3})) %  (ST_NPoints({3})-1)+1) as pt2,
+                              linestrings.{4} as {4}
                             FROM
-                              (SELECT id as id, ST_Boundary((ST_Dump(ST_ForceRHR(geom))).geom) as geom
+                              (SELECT {4} as {4}, ST_Boundary((ST_Dump(ST_ForceRHR({3}))).{3}) as {3}
                                FROM only "{0}"."{1}"
-                               ) AS linestrings WHERE ST_NPoints(linestrings.geom) > 2 ) as points)
-            select distinct id, anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle)
+                               ) AS linestrings WHERE ST_NPoints(linestrings.{3}) > 2 ) as points)
+            select distinct {4}, anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle, geometryColumn, keyColumn)
         return sql
     
     def getFlagsByProcess(self, processName):
         sql = """select layer, feat_id from validation.aux_flags_validacao where process_name = '%s'""" % processName
         return sql
     
-    def forceValidity(self, tableSchema, tableName, idList, srid):
+    def forceValidity(self, tableSchema, tableName, idList, srid, keyColumn):
         #TODO: Put pk field
         sql = """update "{0}"."{1}" set geom = ST_Multi(result.geom) from (
-        select distinct parts.id, ST_Union(parts.geom) as geom from "{0}"."{1}" as source, 
-                                        (select id as id, ST_Multi(((ST_Dump(ST_SetSRID(ST_MakeValid(geom), {3}))).geom)) as geom from 
-                                        "{0}"."{1}"  where id in ({2})) as parts where ST_GeometryType(parts.geom) = ST_GeometryType(source.geom) group by parts.id
-        ) as result where  result.id = "{0}"."{1}".id""".format(tableSchema,tableName,','.join(idList),srid)
+        select distinct parts.{4}, ST_Union(parts.geom) as geom from "{0}"."{1}" as source, 
+                                        (select {4} as {4}, ST_Multi(((ST_Dump(ST_SetSRID(ST_MakeValid(geom), {3}))).geom)) as geom from 
+                                        "{0}"."{1}"  where {4} in ({2})) as parts where ST_GeometryType(parts.geom) = ST_GeometryType(source.geom) group by parts.{4}
+        ) as result where  result.{4} = "{0}"."{1}".{4}""".format(tableSchema,tableName, ','.join(idList), srid, keyColumn)
         return sql
     
     def getTableExtent(self, tableSchema, tableName):
@@ -714,94 +715,93 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "select p.relname from {0} as c, pg_class as p where c.tableoid = p.oid and c.id = {1}".format(cl,id)
         return sql
     
-    def snapLinesToFrame(self, cl, frameTable, tol):
+    def snapLinesToFrame(self, cl, frameTable, tol, geometryColumn, keyColumn, frameGeometryColumn):
         schema, table = cl.split('.')
         sql = """
-        update "{0}"."{1}" as classe set geom = ST_Multi(agrupado.geom)
+        update "{0}"."{1}" as classe set {4} = ST_Multi(agrupado.{4})
         from
             (
-                select simplelines.id as id, ST_Union(simplelines.newline) as geom
+                select simplelines.{5} as {5}, ST_Union(simplelines.newline) as {4}
                 from
                 (
-                    select short.id, St_SetPoint((ST_Dump(short.geom)).geom, 0, 
+                    select short.{5}, St_SetPoint((ST_Dump(short.{4})).{4}, 0, 
                     ST_EndPoint(from_start)) as newline
                     from
-                    (   select a.id as id, a.geom as geom,
-                        ST_ShortestLine(st_startpoint((ST_Dump(a.geom)).geom), 
-                        ST_Boundary(m.geom)) as from_start
+                    (   select a.{5} as {5}, a.{4} as {4},
+                        ST_ShortestLine(st_startpoint((ST_Dump(a.{4})).{4}), 
+                        ST_Boundary(m.{6})) as from_start
                         from "{0}"."{1}" a, {3} m
                     ) as short
                     where ST_Length(from_start) < {2}
-                ) as simplelines group by simplelines.id
+                ) as simplelines group by simplelines.{5}
             ) as agrupado
-        where classe.id = agrupado.id#
-        update "{0}"."{1}" as classe set geom = ST_Multi(agrupado.geom)
+        where classe.{5} = agrupado.5#
+        update "{0}"."{1}" as classe set {4} = ST_Multi(agrupado.{4})
         from
             (
-                select simplelines.id as id, ST_Union(simplelines.newline) as geom
+                select simplelines.{5} as {5}, ST_Union(simplelines.newline) as {4}
                 from
                 (
-                    select short.id, St_SetPoint((ST_Dump(short.geom)).geom, 
+                    select short.{5}, St_SetPoint((ST_Dump(short.{4})).{4}, 
                     short.index - 1, ST_EndPoint(from_start)) as newline
                     from
-                    (   select a.id as id, a.geom as geom,
-                        ST_ShortestLine(st_endpoint((ST_Dump(a.geom)).geom), 
-                        ST_Boundary(m.geom)) as from_start,
-                        ST_NPoints((ST_Dump(a.geom)).geom) as index
+                    (   select a.{5} as {5}, a.{4} as {4},
+                        ST_ShortestLine(st_endpoint((ST_Dump(a.{4})).{4}), 
+                        ST_Boundary(m.{6})) as from_start,
+                        ST_NPoints((ST_Dump(a.{4})).{4}) as index
                         from "{0}"."{1}" a, {3} m
                     ) as short
                     where ST_Length(from_start) < {2}
-                ) as simplelines group by simplelines.id
+                ) as simplelines group by simplelines.{5}
             ) as agrupado
-        where classe.id = agrupado.id        
-        """.format(schema, table, str(tol), frameTable)
+        where classe.{5} = agrupado.{5}        
+        """.format(schema, table, str(tol), frameTable, geometryColumn, keyColumn, frameGeometryColumn)
         return sql
     
-    def densifyFrame(self, cl, frameTable, snapTolerance):
+    def densifyFrame(self, cl, frameTable, snapTolerance, geometryColumn, frameGeometryColumn):
         cl = '"'+'"."'.join(cl.replace('"','').split('.'))+'"'
         frameTable = '"'+'"."'.join(frameTable.replace('"','').split('.'))+'"'
         sql = """
-        update {2} m set geom = st_multi(st_snap(m.geom, 
+        update {2} m set {4} = st_multi(st_snap(m.{4}, 
         foo.vertices, {1}))
         from
         (
-            select st_union(st_boundary(a.geom)) as vertices from 
+            select st_union(st_boundary(a.{3})) as vertices from 
         {0} a
         ) as foo        
-        """.format(cl, snapTolerance, frameTable)
+        """.format(cl, snapTolerance, frameTable, geometryColumn, frameGeometryColumn)
         return sql
 
-    def snapToGrid(self, cl, precision, srid):
-        #TODO: add geometry
+    def snapToGrid(self, cl, precision, srid, geometryColumn):
         cl = '"'+'"."'.join(cl.replace('"','').split('.'))+'"'
-        sql = 'update {0} set geom = ST_SetSRID(ST_SnapToGrid(geom,{1}),{2})'.format(cl, precision, srid)
+        sql = 'update {0} set {3} = ST_SetSRID(ST_SnapToGrid({3},{1}),{2})'.format(cl, precision, srid, geometryColumn)
         return sql
     
-    def makeRecursiveSnapFunction(self):
+    def makeRecursiveSnapFunction(self, geometryColumn, keyColumn):
         sql = """
         CREATE OR REPLACE FUNCTION dsgsnap(tabela text, snap float) RETURNS void AS 
         $BODY$
             DECLARE
-            id int;
+            {1} int;
             BEGIN
-                FOR id in execute('select id from '||tabela)
+                FOR {1} in execute('select {1} from '||tabela)
                 LOOP
                     EXECUTE     
-                'update '||tabela||' as classe set geom = st_multi(res.geom) 
+                'update '||tabela||' as classe set {0} = st_multi(res.{0}) 
                 from 
                     (
-                        select st_snap(a.geom, st_collect(b.geom), '||snap||') as geom, a.id as id 
+                        select st_snap(a.{0}, st_collect(b.{0}), '||snap||') as {0}, a.{1} as {1} 
                         from '||tabela||' a, '||tabela||' b 
-                        where a.id != b.id and st_isempty(a.geom) = FALSE and a.id = '||id||'
-                        group by a.id, a.geom
+                        where a.{1} != b.{1} and st_isempty(a.{0}) = FALSE and a.{1} = '||{1}||'
+                        group by a.{1}, a.{1}
                     ) as res 
-                where res.id = classe.id';
+                where res.{1} = classe.{1}';
                 END LOOP;
                 RETURN;                        
             END
         $BODY$
         LANGUAGE plpgsql;
-        """
+        """.format(geometryColumn, keyColumn)
         return sql
     
     def executeRecursiveSnap(self, cl, tol):
@@ -1062,9 +1062,9 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "DELETE FROM validation.aux_flags_validacao WHERE process_name = '{0}' AND layer = '{1}' AND feat_id = {2}".format(processName, layer, feat_id)
         return sql
     
-    def removeEmptyGeomtriesFromDb(self, layer):
+    def removeEmptyGeomtriesFromDb(self, layer, geometryColumn):
         layer = '"'+'"."'.join(layer.replace('"','').split('.'))
-        sql = "DELETE FROM {0} WHERE st_isempty(geom) = TRUE".format(layer)
+        sql = "DELETE FROM {0} WHERE st_isempty({1}) = TRUE".format(layer, geometryColumn)
         return sql
     
     def hasAdminDb(self):

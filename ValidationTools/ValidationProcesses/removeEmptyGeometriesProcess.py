@@ -53,10 +53,10 @@ class RemoveEmptyGeometriesProcess(ValidationProcess):
             for cl in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
-                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
 
                 # running the process
-                self.abstractDb.removeEmptyGeometries(processTableName)
+                self.abstractDb.removeEmptyGeometries(processTableName, geometryColumn)
                 
                 # finalization
                 self.postProcessSteps(processTableName, lyr)

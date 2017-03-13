@@ -55,10 +55,10 @@ class RecursiveSnapProcess(ValidationProcess):
             for cl in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
-                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
                 
                 # running the process
-                self.abstractDb.recursiveSnap([processTableName], tol)
+                self.abstractDb.recursiveSnap([processTableName], tol, geometryColumn, keyColumn)
                 
                 # finalization
                 self.postProcessSteps(processTableName, lyr)

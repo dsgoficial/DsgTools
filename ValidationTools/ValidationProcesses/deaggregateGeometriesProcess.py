@@ -54,10 +54,7 @@ class DeaggregateGeometriesProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
-                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
-                # getting keyColumn because we want to be generic
-                uri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
-                keyColumn = uri.keyColumn()
+                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
                     
                 # getting multi geometries ids
                 multiIds = self.abstractDb.getExplodeCandidates(processTableName)

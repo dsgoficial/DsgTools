@@ -31,8 +31,11 @@ class IdentifySmallLinesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Identify Small Lines')
         
+        # getting tables with elements
         classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['l'], withElements=True, getGeometryColumn=True)
+        # creating a list of tuples (layer names, geometry columns)
         classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+        # adjusting process parameters
         self.parameters = {self.tr('Length'): 5.0, 'Classes': classesWithElem}
 
     def execute(self):
@@ -53,12 +56,12 @@ class IdentifySmallLinesProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
-                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
                 if processTableName not in classesWithGeom:
                     classesWithGeom.append(processTableName)
 
             # running the process
-            result = self.abstractDb.getSmallLinesRecords(classesWithGeom, tol)
+            result = self.abstractDb.getSmallLinesRecords(classesWithGeom, tol, geometryColumn, keyColumn)
             
             # dropping temp table
             for processTableName in classesWithGeom:
@@ -72,7 +75,7 @@ class IdentifySmallLinesProcess(ValidationProcess):
                     # the flag should store the original table name
                     tableName = tableName.replace('_temp', '')
                     for id in result[cl].keys():
-                        recordList.append((tableSchema+'.'+tableName, id, self.tr('Small Length.'), result[cl][id]))
+                        recordList.append((tableSchema+'.'+tableName, id, self.tr('Small Length.'), result[cl][id], geometryColumn))
                 numberOfProblems = self.addFlag(recordList)
                 for tuple in recordList:
                     self.addClassesToBeDisplayedList(tuple[0])    

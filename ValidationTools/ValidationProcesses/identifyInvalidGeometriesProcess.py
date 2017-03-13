@@ -31,8 +31,11 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Identify Invalid Geometries')
         
+        # getting tables with elements
         classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements=True, getGeometryColumn=True)
+        # creating a list of tuples (layer names, geometry columns)
         classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+        # adjusting process parameters
         self.parameters = {'Classes': classesWithElem}
 
     def execute(self):
@@ -52,12 +55,12 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
-                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
                 if processTableName not in classesWithGeom:
                     classesWithGeom.append(processTableName)
                     
             # running the process
-            invalidGeomRecordList = self.abstractDb.getInvalidGeomRecords(classesWithGeom)
+            invalidGeomRecordList = self.abstractDb.getInvalidGeomRecords(classesWithGeom, geometryColumn, keyColumn)
 
             # dropping temp table
             for processTableName in classesWithGeom:

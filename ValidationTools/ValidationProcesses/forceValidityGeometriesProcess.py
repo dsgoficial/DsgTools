@@ -61,9 +61,9 @@ class ForceValidityGeometriesProcess(ValidationProcess):
             numberOfProblems = 0
             for cl in classesWithFlags:
                 # preparation
-                processTableName, lyr = self.prepareExecution(cl)
+                processTableName, lyr, keyColumn = self.prepareExecution(cl)
                 #running the process in the temp table
-                problems = self.abstractDb.forceValidity(processTableName, flagsDict[cl])
+                problems = self.abstractDb.forceValidity(processTableName, flagsDict[cl], keyColumn)
                 numberOfProblems += problems
                 # finalization
                 self.postProcessSteps(processTableName, lyr)

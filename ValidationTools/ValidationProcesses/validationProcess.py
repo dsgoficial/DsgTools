@@ -318,7 +318,7 @@ class ValidationProcess(QObject):
         processTableName = tableName+'_temp'
         #creating temp table
         self.prepareWorkingStructure(tableName, featureMap, geometryColumn, keyColumn)
-        return processTableName, lyr
+        return processTableName, lyr, keyColumn
     
     def postProcessSteps(self, processTableName, lyr):
         """

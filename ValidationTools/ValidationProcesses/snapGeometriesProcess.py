@@ -96,7 +96,7 @@ class SnapGeometriesProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
-                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
                 
                 # running the process in the temp table
                 result = self.runProcessinAlg(lyr, processTableName, geometryColumn)
@@ -109,7 +109,7 @@ class SnapGeometriesProcess(ValidationProcess):
                     error = True
                     recordList = []
                     for tupple in result:
-                        recordList.append((cl, tupple[0], self.tr('Snapping error.'), tupple[1]))
+                        recordList.append((cl, tupple[0], self.tr('Snapping error.'), tupple[1], geometryColumn))
                         self.addClassesToBeDisplayedList(cl) 
                     numberOfProblems = self.addFlag(recordList)
                     QgsMessageLog.logMessage(self.tr('{0} feature(s) of class {1} with snapping errors. Check flags.').format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

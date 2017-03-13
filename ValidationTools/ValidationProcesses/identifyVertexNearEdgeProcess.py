@@ -31,8 +31,11 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface)
         self.processAlias = self.tr('Identify Vertex Near Edge')
         
+        # getting tables with elements
         classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a', 'l'], withElements=True, getGeometryColumn=True)
+        # creating a list of tuples (layer names, geometry columns)
         classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+        # adjusting process parameters
         self.parameters = {self.tr('Tolerance'): 1.0, 'Classes': classesWithElem}
 
     def execute(self):
@@ -53,18 +56,18 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
-                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
+                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
                 tableSchema, tableName = self.abstractDb.getTableSchema(processTableName)
                 
                 #running the process
-                result = self.abstractDb.getVertexNearEdgesRecords(tableSchema, tableName, tol)
+                result = self.abstractDb.getVertexNearEdgesRecords(tableSchema, tableName, tol, geometryColumn, keyColumn)
                 
                 # storing flags
                 if len(result) > 0:
                     error = True
                     recordList = []
                     for tupple in result:
-                        recordList.append((cl, tupple[0], self.tr('Vertex near edge.'), tupple[1]))
+                        recordList.append((cl, tupple[0], self.tr('Vertex near edge.'), tupple[1], geometryColumn))
                         self.addClassesToBeDisplayedList(tupple[0]) 
                     numberOfProblems = self.addFlag(recordList)
                     QgsMessageLog.logMessage(self.tr('{0} features from {1} have vertex(es) near edge(s). Check flags.').format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

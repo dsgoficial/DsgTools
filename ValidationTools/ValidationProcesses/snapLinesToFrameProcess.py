@@ -35,8 +35,12 @@ class SnapLinesToFrameProcess(ValidationProcess):
         classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['l'], withElements=True, getGeometryColumn=True)
         # creating a list of tuples (layer names, geometry columns)
         classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+        # getting tables with elements
+        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a'], withElements=True, getGeometryColumn=True)
+        # creating a list of tuples (layer names, geometry columns)
+        frameWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
         # adjusting process parameters
-        self.parameters = {'Snap': 5.0, 'Classes': classesWithElem}
+        self.parameters = {'Snap': 5.0, 'Classes': classesWithElem, 'Frame': frameWithElem}
 
     def postProcess(self):
         """
@@ -52,6 +56,11 @@ class SnapLinesToFrameProcess(ValidationProcess):
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             lines = self.parameters['Classes']
+            
+            # getting frame parameters
+            frameParameters = self.parameters['Frame']
+            frame, frameGeometryColumn = classAndGeom[0].split(':')
+            
             if len(lines) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
@@ -60,12 +69,12 @@ class SnapLinesToFrameProcess(ValidationProcess):
             for classAndGeom in lines:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
-                processTableName, lyr = self.prepareExecution(cl, geometryColumn)
-                frameTableName, frameLyr = self.prepareExecution('public.aux_moldura_a')
+                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
+                frameTableName, frameLyr, frameKeyColumn = self.prepareExecution(frame, frameGeometryColumn)
 
                 #running the process in the temp table
-                self.abstractDb.snapLinesToFrame([processTableName], frameTableName, tol)
-                self.abstractDb.densifyFrame([processTableName], frameTableName, self.parameters['Snap Tolerance'])
+                self.abstractDb.snapLinesToFrame([processTableName], frameTableName, tol, geometryColumn, keyColumn, frameGeometryColumn)
+                self.abstractDb.densifyFrame([processTableName], frameTableName, self.parameters['Snap Tolerance'], geometryColumn, frameGeometryColumn)
                 
                 # finalization
                 #TODO: Put try except to end process when error occur
