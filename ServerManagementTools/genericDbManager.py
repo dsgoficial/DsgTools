@@ -338,7 +338,7 @@ class GenericDbManager(QObject):
                 try:
                     abstractDb.db.transaction()
                     self.adminDb.db.transaction()
-                    self.undoMaterializationFromDatabase(abstractDb) #step done when property management involves changing database structure
+                    self.undoMaterializationFromDatabase(abstractDb, propertyDict) #step done when property management involves changing database structure
                     abstractDb.removeRecordFromPropertyTable(settingType, configName, edgvVersion)
                     self.adminDb.uninstallPropertyOnAdminDb(settingType, configName, edgvVersion, dbName = dbName)
                     abstractDb.db.commit()
@@ -361,3 +361,9 @@ class GenericDbManager(QObject):
         Method that is reimplemented in each child when uninstalling a property involves changing any sort of database structure
         """
         pass
+    
+    def hasStructuralChanges(self, dbNameList):
+        """
+        Method that is reimplemented in each child
+        """
+        return []

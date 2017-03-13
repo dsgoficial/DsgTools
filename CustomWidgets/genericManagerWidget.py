@@ -524,3 +524,17 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Delete, selectedConfig = uiParameterDict['parameterList'])
         header, operation = self.getDeleteHeader()
         self.outputMessage(operation, header, successDict, exceptionDict)
+    
+    def lookAndPromptForStructuralChanges(self, dbList = []):
+        '''
+        Returns True if user accepts the process
+        '''
+        structuralChanges = self.genericDbManager.hasStructuralChanges(dbList)
+        if structuralChanges != []:
+            dbChangeList = ', '.join(structuralChanges)
+            if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to apply selected operation on ')+dbChangeList+'?'+self.tr(' (Data may be lost in the process)'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+                return False
+            else:
+                return True
+        else:
+            return True
