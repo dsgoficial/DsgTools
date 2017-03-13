@@ -45,13 +45,11 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithElem = self.parameters['Classes']
             if len(classesWithElem) == 0:
-                self.setStatus(self.tr('Empty database.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                return 1
-            
+                self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 1            
             tol = self.parameters[self.tr('Tolerance')]
             error = False
-            
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')

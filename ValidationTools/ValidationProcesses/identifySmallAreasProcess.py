@@ -44,8 +44,13 @@ class IdentifySmallAreasProcess(ValidationProcess):
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             tol = self.parameters['Area']
+            classesWithElem = self.parameters['Classes']
+            if len(classesWithElem) == 0:
+                self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 1
             classesWithGeom = []
-            for classAndGeom in self.parameters['Classes']:
+            for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
                 processTableName, lyr = self.prepareExecution(cl, geometryColumn)

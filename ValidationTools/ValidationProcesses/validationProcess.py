@@ -238,6 +238,10 @@ class ValidationProcess(QObject):
         grassOutputLyr: grass output layer
         """
         provider = pgInputLayer.dataProvider()
+        # getting keyColumn because we want to be generic
+        uri = QgsDataSourceURI(pgInputLayer.dataProvider().dataSourceUri())
+        keyColumn = uri.keyColumn()
+        # starting edition mode
         pgInputLayer.startEditing()
         addList = []
         idsToRemove = []
@@ -262,6 +266,8 @@ class ValidationProcess(QObject):
                     newGeom = outFeats[i].geometry()
                     newGeom.convertToMultiType()
                     newFeat.setGeometry(newGeom)
+                    idx = newFeat.fieldNameIndex(keyColumn)
+                    newFeat.setAttribute(idx, provider.defaultValue(idx))
                     addList.append(newFeat)
             #in the case we don't find features in the output we should mark them to be removed
             if len(outFeats) == 0:

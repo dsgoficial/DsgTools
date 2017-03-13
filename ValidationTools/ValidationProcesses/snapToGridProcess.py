@@ -47,8 +47,8 @@ class SnapToGridProcess(ValidationProcess):
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             classesWithElem = self.parameters['Classes']
             if len(classesWithElem) == 0:
-                self.setStatus(self.tr('Empty database.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('Empty database.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             #getting parameters
             tol = self.parameters['Snap']
