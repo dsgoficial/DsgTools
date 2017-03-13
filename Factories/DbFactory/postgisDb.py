@@ -1555,6 +1555,7 @@ class PostgisDb(AbstractDb):
         Snaps tables to grid (i.e executes ST_SnapToGrid)
         classList: classes to be altered
         tol: tolerance
+        geometryColumn: geometryColumn
         """
         self.checkAndOpenDb()
         self.db.transaction()
@@ -1571,6 +1572,9 @@ class PostgisDb(AbstractDb):
         Snaps lines to frame. This means the lines are prolonged to the frame according to the specified tolerance
         classList: classes to be altered
         tol: tolerance
+        geometryColumn: line geometry column
+        keyColumn: line ok column
+        frameGeometryColumn: frame geometry column
         """
         self.checkAndOpenDb()
         self.db.transaction()

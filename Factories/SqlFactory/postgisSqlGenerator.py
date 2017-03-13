@@ -717,43 +717,43 @@ class PostGISSqlGenerator(SqlGenerator):
     def snapLinesToFrame(self, cl, frameTable, tol, geometryColumn, keyColumn, frameGeometryColumn):
         schema, table = cl.split('.')
         sql = """
-        update "{0}"."{1}" as classe set {4} = ST_Multi(agrupado.{4})
+        update "{0}"."{1}" as classe set "{4}" = ST_Multi(agrupado."{4}")
         from
             (
-                select simplelines.{5} as {5}, ST_Union(simplelines.newline) as {4}
+                select simplelines."{5}" as "{5}", ST_Union(simplelines.newline) as "{4}"
                 from
                 (
-                    select short.{5}, St_SetPoint((ST_Dump(short.{4})).{4}, 0, 
+                    select short."{5}", St_SetPoint((ST_Dump(short."{4}"))."{4}", 0, 
                     ST_EndPoint(from_start)) as newline
                     from
-                    (   select a.{5} as {5}, a.{4} as {4},
-                        ST_ShortestLine(st_startpoint((ST_Dump(a.{4})).{4}), 
-                        ST_Boundary(m.{6})) as from_start
-                        from "{0}"."{1}" a, {3} m
+                    (   select a."{5}" as "{5}", a."{4}" as "{4}",
+                        ST_ShortestLine(st_startpoint((ST_Dump(a."{4}"))."{4}"), 
+                        ST_Boundary(m."{6}")) as from_start
+                        from "{0}"."{1}" a, "{3}" m
                     ) as short
                     where ST_Length(from_start) < {2}
-                ) as simplelines group by simplelines.{5}
+                ) as simplelines group by simplelines."{5}"
             ) as agrupado
-        where classe.{5} = agrupado.5#
-        update "{0}"."{1}" as classe set {4} = ST_Multi(agrupado.{4})
+        where classe."{5}" = agrupado."{5}"#
+        update "{0}"."{1}" as classe set "{4}" = ST_Multi(agrupado."{4}")
         from
             (
-                select simplelines.{5} as {5}, ST_Union(simplelines.newline) as {4}
+                select simplelines."{5}" as "{5}", ST_Union(simplelines.newline) as "{4}"
                 from
                 (
-                    select short.{5}, St_SetPoint((ST_Dump(short.{4})).{4}, 
+                    select short."{5}", St_SetPoint((ST_Dump(short."{4}"))."{4}", 
                     short.index - 1, ST_EndPoint(from_start)) as newline
                     from
-                    (   select a.{5} as {5}, a.{4} as {4},
-                        ST_ShortestLine(st_endpoint((ST_Dump(a.{4})).{4}), 
-                        ST_Boundary(m.{6})) as from_start,
-                        ST_NPoints((ST_Dump(a.{4})).{4}) as index
-                        from "{0}"."{1}" a, {3} m
+                    (   select a."{5}" as "{5}", a."{4}" as "{4}",
+                        ST_ShortestLine(st_endpoint((ST_Dump(a."{4}"))."{4}"), 
+                        ST_Boundary(m."{6}")) as from_start,
+                        ST_NPoints((ST_Dump(a."{4}"))."{4}") as index
+                        from "{0}"."{1}" a, "{3}" m
                     ) as short
                     where ST_Length(from_start) < {2}
-                ) as simplelines group by simplelines.{5}
+                ) as simplelines group by simplelines."{5}"
             ) as agrupado
-        where classe.{5} = agrupado.{5}        
+        where classe."{5}" = agrupado."{5}"        
         """.format(schema, table, str(tol), frameTable, geometryColumn, keyColumn, frameGeometryColumn)
         return sql
     
@@ -772,8 +772,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def snapToGrid(self, cl, precision, srid, geometryColumn):
-        cl = '"'+'"."'.join(cl.replace('"','').split('.'))+'"'
-        sql = 'update {0} set {3} = ST_SetSRID(ST_SnapToGrid({3},{1}),{2})'.format(cl, precision, srid, geometryColumn)
+        sql = 'update "{0}" set "{3}" = ST_SetSRID(ST_SnapToGrid("{3}",{1}),{2})'.format(cl, precision, srid, geometryColumn)
         return sql
     
     def makeRecursiveSnapFunction(self, geometryColumn, keyColumn):
@@ -781,20 +780,20 @@ class PostGISSqlGenerator(SqlGenerator):
         CREATE OR REPLACE FUNCTION dsgsnap(tabela text, snap float) RETURNS void AS 
         $BODY$
             DECLARE
-            {1} int;
+            id int;
             BEGIN
-                FOR {1} in execute('select {1} from '||tabela)
+                FOR id in execute('select "{1}" from '||tabela)
                 LOOP
                     EXECUTE     
-                'update '||tabela||' as classe set {0} = st_multi(res.{0}) 
+                'update '||tabela||' as classe set "{0}" = st_multi(res."{0}") 
                 from 
                     (
-                        select st_snap(a.{0}, st_collect(b.{0}), '||snap||') as {0}, a.{1} as {1} 
+                        select st_snap(a."{0}", st_collect(b."{0}"), '||snap||') as "{0}", a."{1}" as "{1}" 
                         from '||tabela||' a, '||tabela||' b 
-                        where a.{1} != b.{1} and st_isempty(a.{0}) = FALSE and a.{1} = '||{1}||'
-                        group by a.{1}, a.{1}
+                        where a."{1}" != b."{1}" and st_isempty(a."{0}") = FALSE and a."{1}" = '||id||'
+                        group by a."{1}", a."{1}"
                     ) as res 
-                where res.{1} = classe.{1}';
+                where res."{1}" = classe."{1}" ';
                 END LOOP;
                 RETURN;                        
             END
