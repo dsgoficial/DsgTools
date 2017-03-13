@@ -1133,6 +1133,8 @@ class PostgisDb(AbstractDb):
         """
         Gets duplicated records
         classesWithGeom: list of classes with geometries
+        geometryColumn: geometryColumn
+        keyColumn: pk column
         """
         self.checkAndOpenDb()
         smallAreasDict = dict()
@@ -1150,8 +1152,8 @@ class PostgisDb(AbstractDb):
         """
         Gets small lines records 
         tol: tolerance
-        geometryColumn:
-        keyColumn:
+        geometryColumn: geometryColumn
+        keyColumn: pk column
         """
         self.checkAndOpenDb()
         smallLinesDict = dict()
@@ -1171,8 +1173,8 @@ class PostgisDb(AbstractDb):
         tableSchema: table schema
         tableName: table name
         tol: tolerance
-        geometryColumn:
-        keyColumn:
+        geometryColumn: geometryColumn
+        keyColumn: pk column
         """
         self.checkAndOpenDb()
         result = []
