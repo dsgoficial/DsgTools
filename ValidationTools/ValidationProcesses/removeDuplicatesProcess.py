@@ -55,9 +55,9 @@ class RemoveDuplicatesProcess(ValidationProcess):
             numberOfProblems = 0
             for cl in flagsClasses:
                 # preparation
-                processTableName, lyr = self.prepareExecution(cl)
+                processTableName, lyr, keyColumn = self.prepareExecution(cl)
                 #running the process in the temp table
-                problems = self.abstractDb.removeFeatures(processTableName,self.flagsDict[cl])
+                problems = self.abstractDb.removeFeatures(processTableName,self.flagsDict[cl], keyColumn)
                 numberOfProblems += problems
                 # finalization
                 self.postProcessSteps(processTableName, lyr)

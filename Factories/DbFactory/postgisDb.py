@@ -1111,6 +1111,8 @@ class PostgisDb(AbstractDb):
         """
         Gets duplicated records
         classesWithGeom: list of classes with geomtries
+        geometryColumn: geometryColumn
+        keyColumn: pk column
         """
         self.checkAndOpenDb()
         duplicatedDict = dict()
@@ -1219,6 +1221,8 @@ class PostgisDb(AbstractDb):
         """
         Gets not simple geometries records
         classesWithGeom: class list
+        geometryColumn: geometryColumn
+        keyColumn: pk column
         """
         self.checkAndOpenDb()
         notSimpleDict = dict()
@@ -1239,6 +1243,8 @@ class PostgisDb(AbstractDb):
         tableSchema: table schema
         tableName: table name
         tol: tolerance
+        geometryColumn: geometryColumn
+        keyColumn: pk column
         """
         self.checkAndOpenDb()
         result = []
@@ -2372,6 +2378,7 @@ class PostgisDb(AbstractDb):
         """
         Removes empty geometries from layer
         layer: layer name
+        geometryColumn: geometryColumn
         """
         self.checkAndOpenDb()
         self.db.transaction()

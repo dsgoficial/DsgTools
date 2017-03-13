@@ -485,8 +485,8 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def getDuplicatedGeom(self, schema, cl, geometryColumn, keyColumn):
         sql = """select * from (
-        SELECT {3},
-        ROW_NUMBER() OVER(PARTITION BY {2} ORDER BY {3} asc) AS Row,
+        SELECT "{3}",
+        ROW_NUMBER() OVER(PARTITION BY "{2}" ORDER BY "{3}" asc) AS Row,
         geom FROM ONLY "{0}"."{1}" 
         ) dups
         where     
@@ -540,46 +540,46 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql        
     
     def getNotSimple(self, tableSchema, tableName, geometryColumn, keyColumn):
-        sql = """select foo.{3} as {3}, ST_MULTI(st_startpoint(foo.{2})) as {2} from (
-        select {3} as {3}, (ST_Dump(ST_Node(ST_SetSRID(ST_MakeValid({2}),ST_SRID({2}))))).{2} as {2} from "{0}"."{1}"  
-        where ST_IsSimple({2}) = 'f') as foo where st_equals(st_startpoint(foo.{2}),st_endpoint(foo.{2}))""".format(tableSchema, tableName, geometryColumn, keyColumn)
+        sql = """select foo."{3}" as "{3}", ST_MULTI(st_startpoint(foo."{2}")) as "{2}" from (
+        select "{3}" as "{3}", (ST_Dump(ST_Node(ST_SetSRID(ST_MakeValid("{2}"),ST_SRID("{2}")))))."{2}" as "{2}" from "{0}"."{1}"  
+        where ST_IsSimple("{2}") = 'f') as foo where st_equals(st_startpoint(foo."{2}"),st_endpoint(foo."{2}"))""".format(tableSchema, tableName, geometryColumn, keyColumn)
         return sql
 
     def getOutofBoundsAngles(self, tableSchema, tableName, angle, geometryColumn, keyColumn):
         if tableName.split('_')[-1] == 'l':
             sql = """
-            WITH result AS (SELECT points.{4}, points.anchor, (degrees
+            WITH result AS (SELECT points."{4}", points.anchor, (degrees
                                         (
                                             ST_Azimuth(points.anchor, points.pt1) - ST_Azimuth(points.anchor, points.pt2)
                                         )::decimal + 360) % 360 as angle
                         FROM
                         (SELECT
-                              ST_PointN({3}, generate_series(1, ST_NPoints({3})-2)) as pt1,
-                              ST_PointN({3}, generate_series(2, ST_NPoints({3})-1)) as anchor,
-                              ST_PointN({3}, generate_series(3, ST_NPoints({3}))) as pt2,
-                              linestrings.{4} as {4}
+                              ST_PointN("{3}", generate_series(1, ST_NPoints("{3}")-2)) as pt1,
+                              ST_PointN("{3}", generate_series(2, ST_NPoints("{3}")-1)) as anchor,
+                              ST_PointN("{3}", generate_series(3, ST_NPoints("{3}"))) as pt2,
+                              linestrings."{4}" as "{4}"
                             FROM
-                              (SELECT {4} as {4}, (ST_Dump({3})).{3} as {3}
+                              (SELECT "{4}" as "{4}", (ST_Dump("{3}"))."{3}" as "{3}"
                                FROM only "{0}"."{1}"
-                               ) AS linestrings WHERE ST_NPoints(linestrings.{3}) > 2 ) as points)
-            select distinct {4}, anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle, geometryColumn, keyColumn)
+                               ) AS linestrings WHERE ST_NPoints(linestrings."{3}") > 2 ) as points)
+            select distinct "{4}", anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle, geometryColumn, keyColumn)
         elif  tableName.split('_')[-1] == 'a':
             sql = """
-            WITH result AS (SELECT points.{4}, points.anchor, (degrees
+            WITH result AS (SELECT points."{4}", points.anchor, (degrees
                                         (
                                             ST_Azimuth(points.anchor, points.pt1) - ST_Azimuth(points.anchor, points.pt2)
                                         )::decimal + 360) % 360 as angle
                         FROM
                         (SELECT
-                              ST_PointN({3}, generate_series(1, ST_NPoints({3})-1)) as pt1,
-                              ST_PointN({3}, generate_series(1, ST_NPoints({3})-1) %  (ST_NPoints({3})-1)+1) as anchor,
-                              ST_PointN({3}, generate_series(2, ST_NPoints({3})) %  (ST_NPoints({3})-1)+1) as pt2,
-                              linestrings.{4} as {4}
+                              ST_PointN("{3}", generate_series(1, ST_NPoints("{3}")-1)) as pt1,
+                              ST_PointN("{3}", generate_series(1, ST_NPoints("{3}")-1) %  (ST_NPoints("{3}")-1)+1) as anchor,
+                              ST_PointN("{3}", generate_series(2, ST_NPoints("{3}")) %  (ST_NPoints("{3}")-1)+1) as pt2,
+                              linestrings."{4}" as "{4}"
                             FROM
-                              (SELECT {4} as {4}, ST_Boundary((ST_Dump(ST_ForceRHR({3}))).{3}) as {3}
+                              (SELECT "{4}" as "{4}", ST_Boundary((ST_Dump(ST_ForceRHR("{3}")))."{3}") as "{3}"
                                FROM only "{0}"."{1}"
-                               ) AS linestrings WHERE ST_NPoints(linestrings.{3}) > 2 ) as points)
-            select distinct {4}, anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle, geometryColumn, keyColumn)
+                               ) AS linestrings WHERE ST_NPoints(linestrings."{3}") > 2 ) as points)
+            select distinct "{4}", anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle, geometryColumn, keyColumn)
         return sql
     
     def getFlagsByProcess(self, processName):
@@ -1062,8 +1062,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def removeEmptyGeomtriesFromDb(self, layer, geometryColumn):
-        layer = '"'+'"."'.join(layer.replace('"','').split('.'))
-        sql = "DELETE FROM {0} WHERE st_isempty({1}) = TRUE".format(layer, geometryColumn)
+        sql = """DELETE FROM "{0}" WHERE st_isempty("{1}") = TRUE""".format(layer, geometryColumn)
         return sql
     
     def hasAdminDb(self):
