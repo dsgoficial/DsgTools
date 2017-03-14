@@ -68,7 +68,7 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         """
         if oldCoverage:
             # self.abstractDb.dropCentroids(oldCoverage.keys())
-            self.populateFrameListWidget(oldCoverage['earthCoverageDict'].keys())
+            self.populateFrameListWidget(self.areas, frame = oldCoverage['frameLayer'])
         else:
             self.populateFrameListWidget(self.areas)
         if enableSetupFromFile:
@@ -87,16 +87,16 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         """
         #read json
         jsonDict = self.utils.readJsonFile(filename)
+        self.setupUiFromDict(jsonDict)
+
+    def setupUiFromDict(self, jsonDict):
+        """
+        Populates ui from parameters of json
+        """
         #set nameLineEdit
         self.nameLineEdit.setText(jsonDict['configName'])
         #populate listWidget
-        self.populateFrameListWidget(jsonDict['earthCoverageDict'].keys())
-        #select frame layer
-        try:
-            frameItem = self.listWidget.findItems(jsonDict['frameLayer'], Qt.MatchExactly)[0]
-            self.listWidget.setCurrentItem(frameItem)
-        except:
-            pass
+        self.populateFrameListWidget(self.areas, frame = jsonDict['frameLayer'])
         linesFromList, linesToList, areasFromList, areasToList = self.populateLists(jsonDict['earthCoverageDict'])
         self.areasCustomSelector.setToList(areasToList)
         self.areasCustomSelector.setFromList(areasFromList)
@@ -104,10 +104,16 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         self.linesCustomSelector.setFromList(linesFromList)  
         self.checkDelimiters(jsonDict['earthCoverageDict'])
     
-    def populateFrameListWidget(self, classes):
-        classes.sort()
+    def populateFrameListWidget(self, areas, frame = None):
+        areas.sort()
         self.listWidget.clear()
-        self.listWidget.addItems(classes)
+        self.listWidget.addItems(areas)
+        if frame:
+            try:
+                frameItem = self.listWidget.findItems(frame, Qt.MatchExactly)[0]
+                self.listWidget.setCurrentItem(frameItem)
+            except:
+                pass
     
     def populateLists(self, setupDict):
         areasToList = setupDict.keys()

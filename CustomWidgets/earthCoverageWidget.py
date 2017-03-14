@@ -103,7 +103,7 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
             if self.earthCoverageDict == dict():
                 self.getEarthCoverageDict()
             oldCoverage = None
-            data = self.earthCoverageDict
+            data = self.settingDict
             if data != dict():
                 if QMessageBox.question(self, self.tr('Question'), self.tr('An earth coverage is already defined. Do you want to redefine it? All data will be lost.'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
                     self.loadEarthCoverage()
