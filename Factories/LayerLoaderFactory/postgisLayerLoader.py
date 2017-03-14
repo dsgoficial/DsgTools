@@ -152,7 +152,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             for cat in lyrDict[prim].keys():
                 for lyr in lyrDict[prim][cat]:
                     try:
-                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict)
+                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion)
                         if vlayer:
                             loadedLayers.append(vlayer)
                             loadedDict[lyr]=vlayer
@@ -163,7 +163,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                         localProgress.step()
         return loadedDict
 
-    def loadLayer(self, lyrName, idSubgrupo, loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict):
+    def loadLayer(self, lyrName, idSubgrupo, loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion):
         """
         Loads a layer
         :param lyrName: Layer nmae
@@ -185,7 +185,11 @@ class PostGISLayerLoader(EDGVLayerLoader):
         if useInheritance:
             sql = ''
         else:
-            sql = self.abstractDb.gen.loadLayerFromDatabase('''"{0}"."{1}"'''.format(schema,lyrName))            
+            if geomColumn == 'centroid' and edgvVersion != 'Non_EDGV':
+                auxLyrName = '_'.join(lyrName.split('_')[0:-1]) + '_a'
+                sql = self.abstractDb.gen.loadLayerFromDatabase('''"{0}"."{1}"'''.format(schema,auxLyrName))
+            else:    
+                sql = self.abstractDb.gen.loadLayerFromDatabase('''"{0}"."{1}"'''.format(schema,lyrName))            
         self.setDataSource(schema, self.geomDict['tablePerspective'][lyrName]['tableName'], geomColumn, sql)
 
         vlayer = iface.addVectorLayer(self.uri.uri(), lyrName, self.provider)

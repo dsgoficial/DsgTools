@@ -104,16 +104,20 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
                 isEdgv = False
             else:
                 isEdgv = True
-            auxClassesDict = self.widgetConv.settingDict
+            auxClassesDict = self.widgetConv.settingDict['earthCoverageDict']
             auxClasses = []
             for key in auxClassesDict.keys():
                 for cl in auxClassesDict[key]:
                     if cl not in auxClasses:
-                        auxClasses.append(cl)
+                        if '.' in cl:
+                            classToLoad = cl.split('.')[-1]
+                        else:
+                            classToLoad = cl
+                        auxClasses.append(classToLoad)
             auxCentroids = self.widgetConv.abstractDb.getEarthCoverageCentroids()
             auxClasses = auxClasses + auxCentroids
             auxClasses.sort(reverse=True)
-            auxClasses = [self.widget.settingDict['frameLayer']]+auxClasses
+            auxClasses = [self.widgetConv.settingDict['frameLayer'].split('.')[-1]]+auxClasses
             factory = self.layerFactory.makeLoader(self.iface, self.widget.abstractDb)
             factory.load(auxClasses, uniqueLoad = True, isEdgv = isEdgv)
         except Exception as e:
