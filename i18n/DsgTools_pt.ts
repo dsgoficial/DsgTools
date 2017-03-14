@@ -1709,7 +1709,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="32"/>
         <source>Deaggregate Geometries</source>
-        <translation>Desagregar Geometrias</translation>
+        <translation>Desagregar geometrias</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="38"/>

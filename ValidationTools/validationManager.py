@@ -100,7 +100,7 @@ class ValidationManager(QObject):
         try:
             runningProc = self.postgisDb.getRunningProc()
         except Exception as e:
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 0
             
         #if there is a running process we should stop

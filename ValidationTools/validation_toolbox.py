@@ -179,7 +179,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.databaseLineEdit.setText(database)
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(self.tr('Error loading db: ')+e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(self.tr('Error loading db: ')+':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.processTreeWidget.clear()
     
     def populateProcessList(self):
@@ -201,7 +201,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
                 status = self.configWindow.widget.abstractDb.getValidationStatusText(self.validationManager.processDict[procList[i]])
             except Exception as e:
                 QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-                QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 status = 'Error! Check log!'
                 
             if not status:
@@ -223,7 +223,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             procReturn = self.validationManager.executeProcess(processName)
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             procReturn = 0
             QApplication.restoreOverrideCursor()
         QApplication.restoreOverrideCursor()

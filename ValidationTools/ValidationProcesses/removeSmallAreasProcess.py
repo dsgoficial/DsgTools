@@ -29,7 +29,7 @@ class RemoveSmallAreasProcess(ValidationProcess):
         Constructor
         """
         super(self.__class__,self).__init__(postgisDb, iface)
-        self.processAlias = self.tr('Remove Small Polygons')
+        self.processAlias = self.tr('Remove Small Areas')
         
         self.flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifySmallAreasProcess')
         self.parameters = {'Classes': self.flagsDict.keys()}

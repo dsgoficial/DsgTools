@@ -75,11 +75,11 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
                 msg = self.tr('{} features are invalid. Check flags.').format(numberOfInvGeom)
                 self.setStatus(msg, 4) #Finished with flags
                 QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                return 1
             else:
                 msg = self.tr('All features are valid.')
                 self.setStatus(msg, 1) #Finished
                 QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
