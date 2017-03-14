@@ -41,7 +41,7 @@ class SnapLinesToFrameProcess(ValidationProcess):
             # creating a list of tuples (layer names, geometry columns)
             frameWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
             # adjusting process parameters
-            self.parameters = {'Snap': 5.0, 'Classes': classesWithElem, 'Frame': frameWithElem}
+            self.parameters = {'Snap': 5.0, 'Snap Tolerance': 5.0, 'Classes': classesWithElem, 'Frame': frameWithElem}
 
     def postProcess(self):
         """
