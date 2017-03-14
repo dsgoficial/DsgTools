@@ -185,8 +185,14 @@ class PostGISLayerLoader(EDGVLayerLoader):
         if useInheritance:
             sql = ''
         else:
-            if geomColumn == 'centroid' and edgvVersion != 'Non_EDGV':
-                auxLyrName = '_'.join(lyrName.split('_')[0:-1]) + '_a'
+            if geomColumn == 'centroid':
+                if edgvVersion != 'Non_EDGV':
+                    auxLyrName = '_'.join(lyrName.split('_')[0:-1]) + '_a'
+                else:
+                    if lyrName[-3:-1] == '_c':
+                        auxLyrName = lyrName[0:-3]+'_a'
+                    else:
+                        auxLyrName = lyrName
                 sql = self.abstractDb.gen.loadLayerFromDatabase('''"{0}"."{1}"'''.format(schema,auxLyrName))
             else:    
                 sql = self.abstractDb.gen.loadLayerFromDatabase('''"{0}"."{1}"'''.format(schema,lyrName))            

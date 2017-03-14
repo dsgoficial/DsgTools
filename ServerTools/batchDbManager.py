@@ -46,6 +46,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'batchDbManager.ui'))
 
 class BatchDbManager(QtGui.QDialog, FORM_CLASS):
+    EDGV213, EDGV_FTer_2a_Ed, Non_EDGV = range(3)
     def __init__(self, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
@@ -64,7 +65,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         self.dbsCustomSelector.selectionChanged.connect(self.populateOtherInterfaces)
         self.previousTab = 0
         self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[]}
-        self.correspondenceDict = {'Load EDGV v. 2.1.3':'2.1.3', 'Load EDGV v. FTer_2a_Ed':'FTer_2a_Ed', 'Load Non EDGV':'Non_EDGV'}
+        self.correspondenceDict = {self.tr('Load EDGV v. 2.1.3'):'2.1.3', self.tr('Load EDGV v. FTer_2a_Ed'):'FTer_2a_Ed', self.tr('Load Non EDGV'):'Non_EDGV'}
 
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):

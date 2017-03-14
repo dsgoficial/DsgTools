@@ -115,6 +115,8 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
                 propertyList = settings
             else:
                 propertyList = []
+
+            
             dlg = SetupEarthCoverage(edgvVersion, areas, lines, oldCoverage, propertyList)
             dlg.exec_()
             configDict = dlg.configDict
