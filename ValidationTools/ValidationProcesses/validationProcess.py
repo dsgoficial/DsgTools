@@ -247,7 +247,7 @@ class ValidationProcess(QObject):
         idsToRemove = []
         #making the changes and inserts
         for feature in pgInputLayer.getFeatures():
-            id = feature[keyColumn]
+            id = feature.id()
             outFeats = []
             #getting the output features with the specific id
             for gf in qgisOutputVector.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("{0}={1}".format(keyColumn, id)))):
@@ -266,8 +266,8 @@ class ValidationProcess(QObject):
                     newGeom = outFeats[i].geometry()
                     newGeom.convertToMultiType()
                     newFeat.setGeometry(newGeom)
-#                     idx = newFeat.fieldNameIndex(keyColumn)
-#                     newFeat.setAttribute(idx, provider.defaultValue(idx))
+                    idx = newFeat.fieldNameIndex(keyColumn)
+                    newFeat.setAttribute(idx, provider.defaultValue(idx))
                     addList.append(newFeat)
             #in the case we don't find features in the output we should mark them to be removed
             if len(outFeats) == 0:
