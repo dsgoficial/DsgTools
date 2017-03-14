@@ -716,45 +716,46 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def snapLinesToFrame(self, cl, frameTable, tol, geometryColumn, keyColumn, frameGeometryColumn):
         schema, table = cl.split('.')
+        frameSchema, frameTable = frameTable.split('.')
         sql = """
-        update "{0}"."{1}" as classe set "{4}" = ST_Multi(agrupado."{4}")
+        update "{0}"."{1}" as classe set "{5}" = ST_Multi(agrupado."{5}")
         from
             (
-                select simplelines."{5}" as "{5}", ST_Union(simplelines.newline) as "{4}"
+                select simplelines."{6}" as "{6}", ST_Union(simplelines.newline) as "{5}"
                 from
                 (
-                    select short."{5}", St_SetPoint((ST_Dump(short."{4}"))."{4}", 0, 
+                    select short."{6}", St_SetPoint((ST_Dump(short."{5}"))."{5}", 0, 
                     ST_EndPoint(from_start)) as newline
                     from
-                    (   select a."{5}" as "{5}", a."{4}" as "{4}",
-                        ST_ShortestLine(st_startpoint((ST_Dump(a."{4}"))."{4}"), 
-                        ST_Boundary(m."{6}")) as from_start
-                        from "{0}"."{1}" a, "{3}" m
+                    (   select a."{6}" as "{6}", a."{5}" as "{5}",
+                        ST_ShortestLine(st_startpoint((ST_Dump(a."{5}"))."{5}"), 
+                        ST_Boundary(m."{7}")) as from_start
+                        from "{0}"."{1}" a, "{3}"."{4}" m
                     ) as short
                     where ST_Length(from_start) < {2}
-                ) as simplelines group by simplelines."{5}"
+                ) as simplelines group by simplelines."{6}"
             ) as agrupado
-        where classe."{5}" = agrupado."{5}"#
-        update "{0}"."{1}" as classe set "{4}" = ST_Multi(agrupado."{4}")
+        where classe."{6}" = agrupado."{6}"#
+        update "{0}"."{1}" as classe set "{5}" = ST_Multi(agrupado."{5}")
         from
             (
-                select simplelines."{5}" as "{5}", ST_Union(simplelines.newline) as "{4}"
+                select simplelines."{6}" as "{6}", ST_Union(simplelines.newline) as "{5}"
                 from
                 (
-                    select short."{5}", St_SetPoint((ST_Dump(short."{4}"))."{4}", 
+                    select short."{6}", St_SetPoint((ST_Dump(short."{5}"))."{5}", 
                     short.index - 1, ST_EndPoint(from_start)) as newline
                     from
-                    (   select a."{5}" as "{5}", a."{4}" as "{4}",
-                        ST_ShortestLine(st_endpoint((ST_Dump(a."{4}"))."{4}"), 
-                        ST_Boundary(m."{6}")) as from_start,
-                        ST_NPoints((ST_Dump(a."{4}"))."{4}") as index
-                        from "{0}"."{1}" a, "{3}" m
+                    (   select a."{6}" as "{6}", a."{5}" as "{5}",
+                        ST_ShortestLine(st_endpoint((ST_Dump(a."{5}"))."{5}"), 
+                        ST_Boundary(m."{7}")) as from_start,
+                        ST_NPoints((ST_Dump(a."{5}"))."{5}") as index
+                        from "{0}"."{1}" a, "{3}"."{4}" m
                     ) as short
                     where ST_Length(from_start) < {2}
-                ) as simplelines group by simplelines."{5}"
+                ) as simplelines group by simplelines."{6}"
             ) as agrupado
-        where classe."{5}" = agrupado."{5}"        
-        """.format(schema, table, str(tol), frameTable, geometryColumn, keyColumn, frameGeometryColumn)
+        where classe."{6}" = agrupado."{6}"        
+        """.format(schema, table, str(tol), frameSchema, frameTable, geometryColumn, keyColumn, frameGeometryColumn)
         return sql
     
     def densifyFrame(self, cl, frameTable, snapTolerance, geometryColumn, frameGeometryColumn):
