@@ -52,7 +52,7 @@ class RecursiveSnapProcess(ValidationProcess):
                 return 1
             #getting parameters
             tol = self.parameters['Snap']
-            for cl in classesWithElem:
+            for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
                 processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)

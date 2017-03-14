@@ -772,7 +772,8 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def snapToGrid(self, cl, precision, srid, geometryColumn):
-        sql = 'update "{0}" set "{3}" = ST_SetSRID(ST_SnapToGrid("{3}",{1}),{2})'.format(cl, precision, srid, geometryColumn)
+        schema, table = cl.split('.')
+        sql = 'update "{0}"."{1}" set "{4}" = ST_SetSRID(ST_SnapToGrid("{4}",{2}),{3})'.format(schema, table, precision, srid, geometryColumn)
         return sql
     
     def makeRecursiveSnapFunction(self, geometryColumn, keyColumn):
@@ -791,7 +792,7 @@ class PostGISSqlGenerator(SqlGenerator):
                         select st_snap(a."{0}", st_collect(b."{0}"), '||snap||') as "{0}", a."{1}" as "{1}" 
                         from '||tabela||' a, '||tabela||' b 
                         where a."{1}" != b."{1}" and st_isempty(a."{0}") = FALSE and a."{1}" = '||id||'
-                        group by a."{1}", a."{1}"
+                        group by a."{1}", a."{0}"
                     ) as res 
                 where res."{1}" = classe."{1}" ';
                 END LOOP;
@@ -1061,7 +1062,8 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def removeEmptyGeomtriesFromDb(self, layer, geometryColumn):
-        sql = """DELETE FROM "{0}" WHERE st_isempty("{1}") = TRUE""".format(layer, geometryColumn)
+        schema, table = cl.split('.')
+        sql = """DELETE FROM "{0}"."{1}" WHERE st_isempty("{2}") = TRUE""".format(schema, table, geometryColumn)
         return sql
     
     def hasAdminDb(self):
