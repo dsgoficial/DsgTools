@@ -68,7 +68,8 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         """
         if oldCoverage:
             # self.abstractDb.dropCentroids(oldCoverage.keys())
-            self.populateFrameListWidget(self.areas, frame = oldCoverage['frameLayer'])
+            self.setupUiFromDict(oldCoverage)
+            return
         else:
             self.populateFrameListWidget(self.areas)
         if enableSetupFromFile:
