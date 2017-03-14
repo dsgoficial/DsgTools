@@ -211,7 +211,7 @@ class ValidationProcess(QObject):
                     featureMap[featid] = feat
             #3 -added
             for feat in editBuffer.addedFeatures().values():
-                featureMap[featid] = feat
+                featureMap[feat.id()] = feat
         else:
             #2 - just the old
             for feat in inputLyr.getFeatures():
@@ -266,8 +266,8 @@ class ValidationProcess(QObject):
                     newGeom = outFeats[i].geometry()
                     newGeom.convertToMultiType()
                     newFeat.setGeometry(newGeom)
-                    idx = newFeat.fieldNameIndex(keyColumn)
-                    newFeat.setAttribute(idx, provider.defaultValue(idx))
+#                     idx = newFeat.fieldNameIndex(keyColumn)
+#                     newFeat.setAttribute(idx, provider.defaultValue(idx))
                     addList.append(newFeat)
             #in the case we don't find features in the output we should mark them to be removed
             if len(outFeats) == 0:
