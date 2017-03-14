@@ -24,23 +24,24 @@ from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class SnapLinesToFrameProcess(ValidationProcess):
-    def __init__(self, postgisDb, iface):
+    def __init__(self, postgisDb, iface, instantiating=False):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface)
+        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Snap Lines to Frame')
         
-        # getting tables with elements
-        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['l'], withElements=True, getGeometryColumn=True)
-        # creating a list of tuples (layer names, geometry columns)
-        classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
-        # getting tables with elements
-        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a'], withElements=True, getGeometryColumn=True)
-        # creating a list of tuples (layer names, geometry columns)
-        frameWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
-        # adjusting process parameters
-        self.parameters = {'Snap': 5.0, 'Classes': classesWithElem, 'Frame': frameWithElem}
+        if not self.instantiating:
+            # getting tables with elements
+            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['l'], withElements=True, getGeometryColumn=True)
+            # creating a list of tuples (layer names, geometry columns)
+            classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            # getting tables with elements
+            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a'], withElements=True, getGeometryColumn=True)
+            # creating a list of tuples (layer names, geometry columns)
+            frameWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            # adjusting process parameters
+            self.parameters = {'Snap': 5.0, 'Classes': classesWithElem, 'Frame': frameWithElem}
 
     def postProcess(self):
         """

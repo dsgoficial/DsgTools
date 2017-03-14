@@ -24,11 +24,11 @@ from qgis.core import QgsMessageLog, QgsVectorLayer
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class ForceValidityGeometriesProcess(ValidationProcess):
-    def __init__(self, postgisDb, iface):
+    def __init__(self, postgisDb, iface, instantiating=False):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface)
+        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Force Geometries Validity')
         
         self.flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyInvalidGeometriesProcess')

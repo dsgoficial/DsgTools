@@ -32,7 +32,7 @@ from qgis.core import QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry,
 from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 
 class ValidationProcess(QObject):
-    def __init__(self, postgisDb, iface):
+    def __init__(self, postgisDb, iface, instantiating=False):
         """
         Constructor
         """
@@ -45,6 +45,7 @@ class ValidationProcess(QObject):
         self.iface = iface
         self.layerLoader = LayerLoaderFactory().makeLoader(self.iface, self.abstractDb)
         self.processAlias = self.tr('Validation Process')
+        self.instantiating = instantiating
         
     def setParameters(self, params):
         """

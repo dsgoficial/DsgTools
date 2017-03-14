@@ -25,19 +25,20 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 import processing, binascii
 
 class SnapGeometriesProcess(ValidationProcess):
-    def __init__(self, postgisDb, iface):
+    def __init__(self, postgisDb, iface, instantiating=False):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface)
+        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Snap Geometries')
         
-        # getting tables with elements
-        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a', 'l'], withElements=True, getGeometryColumn=True)
-        # creating a list of tuples (layer names, geometry columns)
-        classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
-        # adjusting process parameters
-        self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Classes': classesWithElem}
+        if not self.instantiating:
+            # getting tables with elements
+            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a', 'l'], withElements=True, getGeometryColumn=True)
+            # creating a list of tuples (layer names, geometry columns)
+            classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            # adjusting process parameters
+            self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Classes': classesWithElem}
         
     def runProcessinAlg(self, layer, tempTableName, geometryColumn):
         """

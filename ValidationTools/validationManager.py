@@ -64,9 +64,9 @@ class ValidationManager(QObject):
                 chars[0] = chars[0].upper()
                 processClass = ''.join(chars)
                 self.processList.append(processClass)
-                self.processDict[self.instantiateProcessByName(processClass).processAlias] = processClass 
+                self.processDict[self.instantiateProcessByName(processClass, True).processAlias] = processClass 
             
-    def instantiateProcessByName(self, processName):
+    def instantiateProcessByName(self, processName, instantiating):
         """
         This method instantiate a process by its name.
         The import is made dynamically using the __import__ function.
@@ -86,7 +86,7 @@ class ValidationManager(QObject):
                 #obtaining the class name
                 klass = getattr(mod, processClass)
                 #instantiating the class
-                currProc = klass(self.postgisDb, self.iface)
+                currProc = klass(self.postgisDb, self.iface, instantiating)
                 return currProc
 
     def executeProcess(self, process):
@@ -108,7 +108,7 @@ class ValidationManager(QObject):
             QgsMessageLog.logMessage('Unable to run process %s. Process %s is already running.\n' % (processName, runningProc), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 0
         else:
-            currProc = self.instantiateProcessByName(processName)
+            currProc = self.instantiateProcessByName(processName, False)
             #checking for existing pre process
             preProcessName = currProc.preProcess()
             if preProcessName:

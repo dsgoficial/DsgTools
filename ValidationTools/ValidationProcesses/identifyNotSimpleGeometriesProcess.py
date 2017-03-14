@@ -24,19 +24,20 @@ from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
-    def __init__(self, postgisDb, iface):
+    def __init__(self, postgisDb, iface, instantiating=False):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface)
+        super(self.__class__,self).__init__(postgisDb, iface, instantiating=False)
         self.processAlias = self.tr('Identify Not Simple Geometries')
 
-        # getting tables with elements
-        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a', 'l'], withElements=True, getGeometryColumn=True)
-        # creating a list of tuples (layer names, geometry columns)
-        classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
-        # adjusting process parameters
-        self.parameters = {'Classes': classesWithElem}
+        if not self.instantiating:
+            # getting tables with elements
+            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a', 'l'], withElements=True, getGeometryColumn=True)
+            # creating a list of tuples (layer names, geometry columns)
+            classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            # adjusting process parameters
+            self.parameters = {'Classes': classesWithElem}
 
     def execute(self):
         """

@@ -45,11 +45,11 @@ class SpatialRuleEnforcer(ValidationProcess):
     necessity = {0:True,
                  1:False}
     
-    def __init__(self, postgisDb, iface):
+    def __init__(self, postgisDb, iface, instantiating=False):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface)
+        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
         self.iface = iface
         self.rulesFile = os.path.join(os.path.dirname(__file__), '..', 'ValidationRules', 'ruleLibrary.rul')
         self.processAlias = self.tr('Spatial Rule Enforcer')

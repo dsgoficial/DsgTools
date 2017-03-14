@@ -24,19 +24,20 @@ from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class IdentifySmallAreasProcess(ValidationProcess):
-    def __init__(self, postgisDb, iface):
+    def __init__(self, postgisDb, iface, instantiating=False):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface)
+        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Identify Small Areas')
         
-        # getting tables with elements
-        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a'], withElements=True, getGeometryColumn=True)
-        # creating a list of tuples (layer names, geometry columns)
-        classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
-        # adjusting process parameters
-        self.parameters = {'Area': 125.0, 'Classes': classesWithElem}
+        if not self.instantiating:
+            # getting tables with elements
+            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a'], withElements=True, getGeometryColumn=True)
+            # creating a list of tuples (layer names, geometry columns)
+            classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            # adjusting process parameters
+            self.parameters = {'Area': 125.0, 'Classes': classesWithElem}
 
     def execute(self):
         """

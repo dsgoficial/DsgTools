@@ -24,19 +24,20 @@ from qgis.core import QgsVectorLayer,QgsDataSourceURI, QgsMessageLog, QgsFeature
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class DeaggregateGeometriesProcess(ValidationProcess):
-    def __init__(self, postgisDb, iface):
+    def __init__(self, postgisDb, iface, instantiating=False):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface)
+        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Deaggregate Geometries')
         
-        # getting tables with elements
-        classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements=True, getGeometryColumn=True)
-        # creating a list of tuples (layer names, geometry columns)
-        classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
-        # adjusting process parameters
-        self.parameters = {'Classes': classesWithElem}
+        if not self.instantiating:
+            # getting tables with elements
+            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements=True, getGeometryColumn=True)
+            # creating a list of tuples (layer names, geometry columns)
+            classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            # adjusting process parameters
+            self.parameters = {'Classes': classesWithElem}
 
     def execute(self):
         """
@@ -63,7 +64,7 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                 provider = lyr.dataProvider()
                 lyr.startEditing()
                 for id in multiIds:
-                    feat = layer.getFeatures(QgsFeatureRequest(id)).next()
+                    feat = lyr.getFeatures(QgsFeatureRequest(id)).next()
                     parts = feat.geometry().asGeometryCollection()
                     for part in parts:
                         part.convertToMultiType()
@@ -75,8 +76,8 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                         newFeat.setAttribute(idx,provider.defaultValue(idx))
                         addList.append(newFeat)
                     feat.setGeometry(parts[0])
-                    layer.updateFeature(feat)
-                    layer.addFeatures(addList,True)
+                    lyr.updateFeature(feat)
+                    lyr.addFeatures(addList,True)
             msg = self.tr('All geometries are now single parted.')
             self.setStatus(msg, 1) #Finished
             QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
