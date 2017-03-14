@@ -60,7 +60,7 @@ class SnapLinesToFrameProcess(ValidationProcess):
             
             # getting frame parameters
             frameParameters = self.parameters['Frame']
-            frame, frameGeometryColumn = classAndGeom[0].split(':')
+            frame, frameGeometryColumn = frameParameters[0].split(':')
             
             if len(lines) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
