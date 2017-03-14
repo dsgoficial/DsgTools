@@ -320,15 +320,19 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
                 return (dict(),dict())
         successDict = dict()
         exceptionDict = dict()
-        for config in selectedConfig:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            sucessList, errorDict = self.manageSetting(config, manageType, dbList = dbList, parameterDict = parameterDict)
-            QApplication.restoreOverrideCursor()
-            successDict[config] = sucessList
-            if errorDict != dict():
-                exceptionDict[config] = errorDict
-        self.refresh()
-        return successDict, exceptionDict
+        if self.lookAndPromptForStructuralChanges(dbList = dbList):
+            for config in selectedConfig:
+                QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+                sucessList, errorDict = self.manageSetting(config, manageType, dbList = dbList, parameterDict = parameterDict)
+                QApplication.restoreOverrideCursor()
+                successDict[config] = sucessList
+                if errorDict != dict():
+                    exceptionDict[config] = errorDict
+            self.refresh()
+            return successDict, exceptionDict
+        else:
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Operation canceled by user!'))
+            return (dict(),dict())
     
     def createMenuAssigned(self, position):
         """

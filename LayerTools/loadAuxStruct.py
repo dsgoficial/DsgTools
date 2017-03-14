@@ -87,8 +87,7 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
         Checks the linee-centroid structure and loads the correspondent layers 
         """
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        auxCreated = self.widget.abstractDb.checkCentroidAuxStruct()
-        if not auxCreated:
+        if self.widget.settingDict == dict():
             QApplication.restoreOverrideCursor()
             self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load auxiliary classes! Check log for details!"), level=QgsMessageBar.CRITICAL)
         else:

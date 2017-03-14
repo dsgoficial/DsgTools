@@ -45,11 +45,21 @@ class EarthCoverageManager(GenericDbManager):
         """
         Method that is reimplemented in each child when installing a property involves changing any sort of database structure
         """
-        abstractDb.createCentroidAuxStruct(propertyDict['earthCoverageDict'].keys())
-        pass
+        abstractDb.createCentroidAuxStruct(propertyDict['earthCoverageDict'].keys(), useTransaction = False)
     
     def undoMaterializationFromDatabase(self, abstractDb, propertyDict):
         """
         Method that is reimplemented in each child when uninstalling a property involves changing any sort of database structure
         """
-        pass
+        abstractDb.dropCentroids(propertyDict['earthCoverageDict'].keys(), useTransaction = False)
+    
+    def hasStructuralChanges(self, dbNameList):
+        """
+        Method that is reimplemented in each child
+        """
+        structuralChanges = []
+        for dbName in dbNameList:
+            abstractDb = self.instantiateAbstractDb(dbName)
+            if abstractDb.checkCentroidAuxStruct():
+                structuralChanges.append(dbName)
+        return structuralChanges

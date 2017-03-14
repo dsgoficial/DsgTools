@@ -35,6 +35,7 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from qgis.core import QgsMessageLog
 from DsgTools.ServerManagementTools.earthCoverageManager import EarthCoverageManager
+from DsgTools.dsgEnums import DsgEnums
 
 class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
     def __init__(self, parent=None):
@@ -43,6 +44,7 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.earthCoverageDict = dict()
         self.abstractDb = None
+        self.settingDict = dict()
         self.enableSetup(False)
     
     def checkSuperUser(self):
@@ -133,10 +135,16 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
         """
         try:
             self.clearTree()
-            data = self.abstractDb.getEarthCoverageDict()
-            if not data:
+            propertyDict = self.genericManager.getPropertyPerspectiveDict(viewType = DsgEnums.Database)
+            dbName = self.abstractDb.db.databaseName()
+            if dbName not in propertyDict.keys():
+                self.settingDict = dict()
                 return
-            earthCoverageDict = json.loads(data)
+            else:
+                propertyName = propertyDict[dbName]
+                edgvVersion = self.abstractDb.getDatabaseVersion()
+                self.settingDict = self.genericManager.getSetting(propertyName,edgvVersion)
+                earthCoverageDict = self.settingDict['earthCoverageDict']
             rootItem = self.earthCoverageTreeWidget.invisibleRootItem()
             #database item
             for key in earthCoverageDict.keys():

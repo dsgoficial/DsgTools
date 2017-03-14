@@ -1478,13 +1478,14 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem setting earth coverage structure: ') + query.lastError().text())
         self.db.commit()
         
-    def dropCentroids(self, classList):
+    def dropCentroids(self, classList, useTransaction = True):
         """
         Drops the centroid structure
         classList: classes to be altered
         """
         self.checkAndOpenDb()
-        self.db.transaction()
+        if useTransaction:
+            self.db.transaction()
         query = QSqlQuery(self.db)
         for cl in classList:
             # getting table schema
@@ -1492,9 +1493,11 @@ class PostgisDb(AbstractDb):
             # making the query using table schema and table name
             sql = self.gen.dropCentroid(tableSchema+'.'+cl)
             if not query.exec_(sql):
-                self.db.rollback()
+                if useTransaction:
+                    self.db.rollback()
                 raise Exception(self.tr('Problem dropping centroids: ') + query.lastError().text())
-        self.db.commit()
+        if useTransaction:
+            self.db.commit()
 
     def rollbackEarthCoverage(self, classList):
         """
