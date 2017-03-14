@@ -191,31 +191,6 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         self.configDict['frameLayer'] = self.listWidget.currentItem().text()
         self.configDict['earthCoverageDict'] = self.getEarthCoverageDictFromTree()
 
-    def writeIntoDb(self):
-        """
-        Deprecated
-        Writes the configuration in the database
-        """
-        try:
-            earthDict = self.getEarthCoverageDictFromTree()
-            self.abstractDb.setEarthCoverageDict(json.dumps(earthDict))
-            self.abstractDb.createCentroidAuxStruct(earthDict.keys())
-            self.coverageChanged.emit()
-            if QMessageBox.question(self, self.tr('Question'), self.tr('Do you want to save this earth coverage setup?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
-                return
-            filename = QFileDialog.getSaveFileName(self, self.tr('Save Earth Coverage Setup configuration'), '', self.tr('Earth Coverage Setup File (*.dsgearthcov)'))
-            if not filename:
-                QMessageBox.critical(self, self.tr('Critical!'), self.tr('Define a name for the earth coverage file!'))
-                return
-            with open(filename, 'w') as outfile:
-                json.dump(earthDict, outfile, sort_keys=True, indent=4)
-            QMessageBox.information(self, self.tr('Information!'), self.tr('Field setup file saved successfully!'))
-            
-        except Exception as e:
-            self.abstractDb.rollbackEarthCoverage(earthDict.keys())
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving into database! \n')+e.args[0])
-            return
-
     def buildTree(self):
         """
         Builds the earth coverage tree using the selected areas and lines

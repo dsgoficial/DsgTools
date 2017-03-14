@@ -100,12 +100,15 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
             classList = self.abstractDb.getOrphanGeomTables()
             areas = self.abstractDb.getParentGeomTables(getFullName = True, primitiveFilter = ['a'])
             lines = self.abstractDb.getParentGeomTables(getFullName = True, primitiveFilter = ['l'])
+            if self.earthCoverageDict == dict():
+                self.getEarthCoverageDict()
             oldCoverage = None
-            data = self.abstractDb.getEarthCoverageDict() #REDO it.
-            if data:
+            data = self.earthCoverageDict
+            if data != dict():
                 if QMessageBox.question(self, self.tr('Question'), self.tr('An earth coverage is already defined. Do you want to redefine it? All data will be lost.'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
+                    self.loadEarthCoverage()
                     return
-                oldCoverage = json.loads(data)
+                oldCoverage = data
             edgvVersion = self.abstractDb.getDatabaseVersion()
             settings = self.genericManager.getSettings()
             if edgvVersion in settings.keys():
@@ -119,6 +122,7 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
                 newDict = json.dumps(configDict)
                 self.genericManager.createAndInstall(configDict['configName'], newDict, edgvVersion, dbList = [self.abstractDb.db.databaseName()])
                 QtGui.QMessageBox.critical(self, self.tr('Success!'), self.tr('Earth Coverage created!'))
+                self.loadEarthCoverage()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
@@ -129,29 +133,33 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
         """
         self.earthCoverageTreeWidget.invisibleRootItem().takeChildren()
 
+    def getEarthCoverageDict(self):
+        propertyDict = self.genericManager.getPropertyPerspectiveDict(viewType = DsgEnums.Database)
+        dbName = self.abstractDb.db.databaseName()
+        if dbName not in propertyDict.keys():
+            self.settingDict = dict()
+            return
+        else:
+            propertyName = propertyDict[dbName]
+            edgvVersion = self.abstractDb.getDatabaseVersion()
+            self.settingDict = self.genericManager.getSetting(propertyName,edgvVersion)
+            self.earthCoverageDict = self.settingDict['earthCoverageDict']
+
     def loadEarthCoverage(self):
         """
         Loads a previously saved earth coverage configuration
         """
         try:
             self.clearTree()
-            propertyDict = self.genericManager.getPropertyPerspectiveDict(viewType = DsgEnums.Database)
-            dbName = self.abstractDb.db.databaseName()
-            if dbName not in propertyDict.keys():
-                self.settingDict = dict()
-                return
-            else:
-                propertyName = propertyDict[dbName]
-                edgvVersion = self.abstractDb.getDatabaseVersion()
-                self.settingDict = self.genericManager.getSetting(propertyName,edgvVersion)
-                earthCoverageDict = self.settingDict['earthCoverageDict']
+            if self.earthCoverageDict == dict():
+                self.getEarthCoverageDict()
             rootItem = self.earthCoverageTreeWidget.invisibleRootItem()
             #database item
-            for key in earthCoverageDict.keys():
+            for key in self.earthCoverageDict.keys():
                 item = QTreeWidgetItem(rootItem)
                 item.setText(0,key)
                 item.setExpanded(True)
-                for cl in earthCoverageDict[key]:
+                for cl in self.earthCoverageDict[key]:
                     covItem = QTreeWidgetItem(item)
                     covItem.setText(1,cl)
                     covItem.setExpanded(True)

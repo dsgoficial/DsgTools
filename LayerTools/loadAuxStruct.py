@@ -100,7 +100,11 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
         Loads the layers defined in the line-centroid structure
         """
         try:
-            auxClassesDict = json.loads(self.widget.abstractDb.getEarthCoverageClasses()[0])
+            if self.widget.abstractDb.getDatabaseVersion() == 'Non_EDGV':
+                isEdgv = False
+            else:
+                isEdgv = True
+            auxClassesDict = self.widget.settingDict
             auxClasses = []
             for key in auxClassesDict.keys():
                 for cl in auxClassesDict[key]:
@@ -109,9 +113,9 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
             auxCentroids = self.widget.abstractDb.getEarthCoverageCentroids()
             auxClasses = auxClasses + auxCentroids
             auxClasses.sort(reverse=True)
-            auxClasses = ['aux_moldura_a']+auxClasses
+            auxClasses = [self.widget.settingDict['frameLayer']]+auxClasses
             factory = self.layerFactory.makeLoader(self.iface, self.widget.abstractDb)
-            factory.load(auxClasses)
+            factory.load(auxClasses, uniqueLoad = True, isEdgv = isEdgv)
         except Exception as e:
                 QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load auxiliary classes! Check log for details!"), level=QgsMessageBar.CRITICAL)
