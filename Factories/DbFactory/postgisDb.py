@@ -1415,9 +1415,14 @@ class PostgisDb(AbstractDb):
             self.db.transaction()
         for cl in earthCoverageClasses:
             # getting table schema
-            tableSchema = self.getTableSchemaFromDb(cl)
+            if '.' in cl:
+                tableSchema = cl.split('.')[0]
+                tableName = cl.split('.')[-1]
+            else:
+                tableSchema = self.getTableSchemaFromDb(cl)
+                tableName = cl
             # making the query using table schema and table name
-            sqltext = self.gen.createCentroidColumn(tableSchema, cl, srid)
+            sqltext = self.gen.createCentroidColumn(tableSchema, tableName, srid)
             sqlList = sqltext.split('#')
             query = QSqlQuery(self.db)
             for sql2 in sqlList:

@@ -87,7 +87,7 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
         Checks the linee-centroid structure and loads the correspondent layers 
         """
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        if self.widget.settingDict == dict():
+        if self.widgetConv.settingDict == dict():
             QApplication.restoreOverrideCursor()
             self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load auxiliary classes! Check log for details!"), level=QgsMessageBar.CRITICAL)
         else:
@@ -104,13 +104,13 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
                 isEdgv = False
             else:
                 isEdgv = True
-            auxClassesDict = self.widget.settingDict
+            auxClassesDict = self.widgetConv.settingDict
             auxClasses = []
             for key in auxClassesDict.keys():
                 for cl in auxClassesDict[key]:
                     if cl not in auxClasses:
                         auxClasses.append(cl)
-            auxCentroids = self.widget.abstractDb.getEarthCoverageCentroids()
+            auxCentroids = self.widgetConv.abstractDb.getEarthCoverageCentroids()
             auxClasses = auxClasses + auxCentroids
             auxClasses.sort(reverse=True)
             auxClasses = [self.widget.settingDict['frameLayer']]+auxClasses

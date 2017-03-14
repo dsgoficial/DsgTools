@@ -120,7 +120,9 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
             configDict = dlg.configDict
             if configDict != dict():
                 newDict = json.dumps(configDict)
-                self.genericManager.createAndInstall(configDict['configName'], newDict, edgvVersion, dbList = [self.abstractDb.db.databaseName()])
+                successList, errorDict = self.genericManager.createAndInstall(configDict['configName'], newDict, edgvVersion, dbList = [self.abstractDb.db.databaseName()])
+                if errorDict != dict():
+                    raise errorDict.values()[0]
                 QtGui.QMessageBox.critical(self, self.tr('Success!'), self.tr('Earth Coverage created!'))
                 self.loadEarthCoverage()
         except Exception as e:
@@ -140,7 +142,7 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
             self.settingDict = dict()
             return
         else:
-            propertyName = propertyDict[dbName]
+            propertyName = propertyDict[dbName][0]
             edgvVersion = self.abstractDb.getDatabaseVersion()
             self.settingDict = self.genericManager.getSetting(propertyName,edgvVersion)
             self.earthCoverageDict = self.settingDict['earthCoverageDict']
