@@ -51,7 +51,7 @@ class RemoveEmptyGeometriesProcess(ValidationProcess):
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
-            for cl in classesWithElem:
+            for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
                 processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)

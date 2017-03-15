@@ -78,7 +78,6 @@ class SnapLinesToFrameProcess(ValidationProcess):
                 self.abstractDb.densifyFrame([processTableName], frameTableName, self.parameters['Snap Tolerance'], geometryColumn, frameGeometryColumn)
                 
                 # finalization
-                #TODO: Put try except to end process when error occur
                 self.postProcessSteps(processTableName, lyr)
                 self.postProcessSteps(frameTableName, frameLyr)
             msg = self.tr('All features snapped to frame succesfully.')
