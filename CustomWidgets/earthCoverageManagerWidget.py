@@ -32,7 +32,7 @@ from DsgTools.ServerManagementTools.earthCoverageManager import EarthCoverageMan
 from DsgTools.PostgisCustomization.createDatabaseCustomization import CreateDatabaseCustomization
 from DsgTools.CustomWidgets.genericParameterSetter import GenericParameterSetter
 from DsgTools.CustomWidgets.genericManagerWidget import GenericManagerWidget
-from DsgTools.ValidationTools.setupEarthCoverage import SetupEarthCoverage
+from DsgTools.CustomWidgets.setupEarthCoverage import SetupEarthCoverage
 from DsgTools.Utils.utils import Utils
 from DsgTools.dsgEnums import DsgEnums
 
@@ -88,7 +88,7 @@ class EarthCoverageManagerWidget(GenericManagerWidget):
         areas = templateDb.getParentGeomTables(getFullName = True, primitiveFilter = ['a'])
         lines = templateDb.getParentGeomTables(getFullName = True, primitiveFilter = ['l'])
         edgvVersion = templateDb.getDatabaseVersion()
-        settings = self.genericManager.getSettings()
+        settings = self.genericDbManager.getSettings()
         if edgvVersion in settings.keys():
             propertyList = settings
         else:

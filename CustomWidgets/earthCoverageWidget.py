@@ -30,7 +30,6 @@ from PyQt4.QtGui import QTreeWidgetItem, QMessageBox
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'earthCoverageWidget.ui'))
 
-from DsgTools.ValidationTools.setupEarthCoverage import SetupEarthCoverage
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from qgis.core import QgsMessageLog

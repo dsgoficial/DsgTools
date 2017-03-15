@@ -30,7 +30,6 @@ from PyQt4.QtGui import QTreeWidgetItem
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'validation_config.ui'))
 
-from DsgTools.ValidationTools.setupEarthCoverage import SetupEarthCoverage
 from qgis.core import QgsMessageLog
 
 class ValidationConfig(QtGui.QDialog, FORM_CLASS):
