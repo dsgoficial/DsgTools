@@ -26,7 +26,6 @@ import json
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import Qt, pyqtSignal
 from PyQt4.QtGui import QMessageBox, QFileDialog
-from fileinput import filename
 from DsgTools.Utils.utils import Utils
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
