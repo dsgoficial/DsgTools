@@ -907,8 +907,9 @@ class PostgisDb(AbstractDb):
                 except Exception as e:
                     raise e
                 tableSchema, tableName = record[0].split('.')
+                # specific EPSG search
                 parameters = {'tableSchema':tableSchema, 'tableName':tableName, 'geometryColumn':record[4]}
-                srid = self.findEPSG(parameters = parameters)
+                srid = self.findEPSG(parameters=parameters)
                 sql = self.gen.insertFlagIntoDb(record[0], record[1], record[2], record[3], srid, processName, dimension, record[4])
                 if not query.exec_(sql):
                     if useTransaction:
@@ -1185,7 +1186,9 @@ class PostgisDb(AbstractDb):
                 if useTransaction:
                     self.db.rollback()
                 raise Exception(self.tr('Problem preparing auxiliary structure: ') + query.lastError().text())
-        epsg = self.findEPSG()
+        # specific EPSG search
+        parameters = {'tableSchema': tableSchema, 'tableName': tableName, 'geometryColumn': geometryColumn}
+        epsg = self.findEPSG(parameters=parameters)
         sql = self.gen.getVertexNearEdgesStruct(epsg, tol, geometryColumn, keyColumn)
         query = QSqlQuery(sql,self.db)
         if not query.isActive():
@@ -1293,6 +1296,7 @@ class PostgisDb(AbstractDb):
         tableSchema, tableName = self.getTableSchema(cl)
         idList = [i['id'] for i in processList]
         geometryColumn = processList[0]['geometry_column']
+        # specific EPSG search
         parameters = {'tableSchema':tableSchema, 'tableName':tableName, 'geometryColumn':geometryColumn}
         srid = self.findEPSG(parameters = parameters)
         sql = self.gen.forceValidity(tableSchema, tableName, idList, srid, keyColumn, geometryColumn)
@@ -1420,7 +1424,7 @@ class PostgisDb(AbstractDb):
             else:
                 tableSchema = self.getTableSchemaFromDb(cl)
                 tableName = cl
-            # making the query using table schema and table name
+            # specific EPSG search
             parameters = {'tableSchema':tableSchema, 'tableName':tableName}
             srid = self.findEPSG(parameters = parameters)
             sqltext = self.gen.createCentroidColumn(tableSchema, tableName, srid)
@@ -1662,8 +1666,9 @@ class PostgisDb(AbstractDb):
 
     def createAndPopulateTempTableFromMap(self, tableName, featureMap, geomColumnName, keyColumn, useTransaction = True):
         ts, tn = tableName.split('.')
+        # specific EPSG search
         parameters = {'tableSchema':ts, 'tableName':tn, 'geometryColumn':geomColumnName}
-        srid = self.findEPSG(parameters = parameters)
+        srid = self.findEPSG(parameters=parameters)
         self.checkAndOpenDb()
         if useTransaction:
             self.db.transaction()
