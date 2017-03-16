@@ -489,7 +489,6 @@ class SpatialiteDb(AbstractDb):
         return frame
     
     def insertFrame(self, scale, mi, inom, frame):
-        #TODO: use sqlite3 or ogr
         self.checkAndOpenDb()
         srid = self.findEPSG()
         geoSrid = QgsCoordinateReferenceSystem(int(srid)).geographicCRSAuthId().split(':')[-1]

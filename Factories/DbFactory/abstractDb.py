@@ -123,12 +123,12 @@ class AbstractDb(QObject):
                 lyrWithElemList.append(lyr)
         return lyrWithElemList
     
-    def findEPSG(self, parameters = dict()):
+    def findEPSG(self, parameters=dict()):
         '''
         Finds the database EPSG
         '''
         self.checkAndOpenDb()
-        sql = self.gen.getSrid(parameters = parameters)
+        sql = self.gen.getSrid(parameters=parameters)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem finding EPSG: ")+query.lastError().text())
@@ -637,11 +637,11 @@ class AbstractDb(QObject):
         frame = self.utmGrid.getQgsPolygonFrame(inom)
         return frame
     
-    def insertFrame(self,scale,mi,inom,frame):
+    def insertFrame(self, scale, mi, inom, frame):
         self.checkAndOpenDb()
         srid = self.findEPSG()
         geoSrid = QgsCoordinateReferenceSystem(int(srid)).geographicCRSAuthId().split(':')[-1]
-        sql = self.gen.insertFrame(scale,mi,inom,frame,srid,geoSrid)
+        sql = self.gen.insertFrame(scale, mi, inom, frame, srid, geoSrid)
         self.db.transaction()
         query = QSqlQuery(self.db)
         if not query.exec_(sql):

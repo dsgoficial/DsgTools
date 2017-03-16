@@ -53,11 +53,15 @@ class SnapToGridProcess(ValidationProcess):
                 return 1
             #getting parameters
             tol = self.parameters['Snap']
-            srid = self.abstractDb.findEPSG()
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
                 processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
+                
+                tableSchema, tableName = cl.split('.')
+                # specific EPSG search
+                parameters = {'tableSchema': tableSchema, 'tableName': tableName, 'geometryColumn': geometryColumn}
+                srid = self.findEPSG(parameters=parameters)                
 
                 #running the process in the temp table
                 self.abstractDb.snapToGrid([processTableName], tol, srid, geometryColumn)

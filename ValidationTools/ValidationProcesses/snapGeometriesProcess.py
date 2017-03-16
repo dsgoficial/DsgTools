@@ -40,7 +40,7 @@ class SnapGeometriesProcess(ValidationProcess):
             # adjusting process parameters
             self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Classes': classesWithElem}
         
-    def runProcessinAlg(self, layer, tempTableName, geometryColumn):
+    def runProcessinAlg(self, layer, tempTableName, geometryColumn, epsg):
         """
         Runs the actual grass process
         """
@@ -49,7 +49,6 @@ class SnapGeometriesProcess(ValidationProcess):
         #creating vector layer
         input = QgsVectorLayer(self.abstractDb.getURI(tempTableName, useOnly=True, geomColumn=geometryColumn).uri(), tempTableName, "postgres")
         crs = input.crs()
-        epsg = self.abstractDb.findEPSG()
         crs.createFromId(epsg)
         input.setCrs(crs)
         
@@ -99,8 +98,13 @@ class SnapGeometriesProcess(ValidationProcess):
                 cl, geometryColumn = classAndGeom.split(':')
                 processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
                 
+                tableSchema, tableName = cl.split('.')
+                # specific EPSG search
+                parameters = {'tableSchema': tableSchema, 'tableName': tableName, 'geometryColumn': geometryColumn}
+                srid = self.findEPSG(parameters=parameters)                        
+
                 # running the process in the temp table
-                result = self.runProcessinAlg(lyr, processTableName, geometryColumn)
+                result = self.runProcessinAlg(lyr, processTableName, geometryColumn, srid)
                 
                 # dropping temp table
                 self.abstractDb.dropTempTable(processTableName)

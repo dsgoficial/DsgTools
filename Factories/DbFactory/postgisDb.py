@@ -1298,7 +1298,7 @@ class PostgisDb(AbstractDb):
         geometryColumn = processList[0]['geometry_column']
         # specific EPSG search
         parameters = {'tableSchema':tableSchema, 'tableName':tableName, 'geometryColumn':geometryColumn}
-        srid = self.findEPSG(parameters = parameters)
+        srid = self.findEPSG(parameters=parameters)
         sql = self.gen.forceValidity(tableSchema, tableName, idList, srid, keyColumn, geometryColumn)
         query = QSqlQuery(self.db)
         if useTransaction:
@@ -1426,7 +1426,7 @@ class PostgisDb(AbstractDb):
                 tableName = cl
             # specific EPSG search
             parameters = {'tableSchema':tableSchema, 'tableName':tableName}
-            srid = self.findEPSG(parameters = parameters)
+            srid = self.findEPSG(parameters=parameters)
             sqltext = self.gen.createCentroidColumn(tableSchema, tableName, srid)
             sqlList = sqltext.split('#')
             query = QSqlQuery(self.db)
@@ -1664,7 +1664,7 @@ class PostgisDb(AbstractDb):
             self.db.commit()
         return result
 
-    def createAndPopulateTempTableFromMap(self, tableName, featureMap, geomColumnName, keyColumn, useTransaction = True):
+    def createAndPopulateTempTableFromMap(self, tableName, featureMap, geomColumnName, keyColumn, useTransaction=True):
         ts, tn = tableName.split('.')
         # specific EPSG search
         parameters = {'tableSchema':ts, 'tableName':tn, 'geometryColumn':geomColumnName}
