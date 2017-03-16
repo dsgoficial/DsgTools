@@ -1063,7 +1063,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def removeEmptyGeomtriesFromDb(self, layer, geometryColumn):
-        schema, table = cl.split('.')
+        schema, table = layer.split('.')
         sql = """DELETE FROM "{0}"."{1}" WHERE st_isempty("{2}") = TRUE""".format(schema, table, geometryColumn)
         return sql
     
