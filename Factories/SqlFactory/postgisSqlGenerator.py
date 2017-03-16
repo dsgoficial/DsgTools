@@ -526,7 +526,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getVertexNearEdgesStruct(self, epsg, tol, geometryColumn, keyColumn):
-        sql = """select pontos.{3}, ST_SetSRID(pontos.{2},{0}) as {2} from pontos, seg where ST_DWithin(seg.{2}, pontos.{2}, {1}) and ST_Distance(seg.{2}, pontos.{2}) > 0""".format(epsg, tol, geometryColumn, keyColumn)
+        sql = """select pontos."{3}", ST_SetSRID(pontos."{2}",{0}) as "{2}" from pontos, seg where ST_DWithin(seg."{2}", pontos."{2}", {1}) and ST_Distance(seg."{2}", pontos."{2}") > 0""".format(epsg, tol, geometryColumn, keyColumn)
         return sql
     
     def deleteFeatures(self, schema, table, idList, keyColumn):
@@ -821,22 +821,10 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = '''DROP TABLE IF EXISTS {0}'''.format(tableName)
         return sql
     
-    def populateTempTable(self, tableName, attributes, values, geometry, srid, geomColumnName):
+    def populateTempTable(self, tableName, attributes, prepareValues, geometry, srid, geomColumnName):
         tableName = '"'+'"."'.join(tableName.split('.'))
         columnTupleString = '"'+'","'.join(map(str,attributes))+'"'
-        columnTupleString += ',{0}'.format(geomColumnName)
-        valueTupple = []
-        for value in values:
-            # surrouding texts with '' to make the sql
-            if isinstance(value, str) or isinstance(value, unicode):
-                valueTupple.append("'{0}'".format(value))
-            elif isinstance(value, PyQt4.QtCore.QDate):
-                value = 'NULL'
-                valueTupple.append(value)
-            else:
-                valueTupple.append(value)
-        valueTupple.append("ST_SetSRID(ST_Multi('{0}'),{1})".format(geometry,str(srid)))
-        valueTuppleString = ','.join(map(str,valueTupple))
+        valueTuppleString = ','.join(map(str,prepareValues))
         sql = """INSERT INTO {0}_temp"({1}) VALUES ({2})""".format(tableName, columnTupleString, valueTuppleString)
         return sql
     

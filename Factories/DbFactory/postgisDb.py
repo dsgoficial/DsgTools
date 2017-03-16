@@ -1681,8 +1681,25 @@ class PostgisDb(AbstractDb):
             # setting the feature id
             values[keyIdx] = feat.id()
             geometry = binascii.hexlify(feat.geometry().asWkb())
-            insertSql = self.gen.populateTempTable(tableName, attributes, values, geometry, srid, geomColumnName)
-            if not query.exec_(insertSql):
+            # adding the geometry column to attributes
+            attributes.append(geomColumnName)
+            # adding the geometry value to values
+            values.append(geometry)
+            # preparing 
+            prepareValues = []
+            for attr in attributes:
+                if attr == geomColumnName:
+                    prepareValues.append("""ST_SetSRID(ST_Multi(:{0}),{1})""".format(attr,str(srid)))
+                else:
+                    prepareValues.append(':'+attr)
+            #getting sql
+            insertSql = self.gen.populateTempTable(tableName, attributes, prepareValues, geometry, srid, geomColumnName)
+            query.prepare(insertSql)
+            # binding my values to avoid injections
+            for i in range(len(attributes)):
+                query.bindValue(prepareValues[i], values[i])
+            # actual query execution
+            if not query.exec_():
                 if useTransaction:
                     self.db.rollback()
                 raise Exception(self.tr('Problem populating temp table: ') + query.lastError().text())
