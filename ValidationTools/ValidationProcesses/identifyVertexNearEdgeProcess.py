@@ -63,6 +63,9 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
                 #running the process
                 result = self.abstractDb.getVertexNearEdgesRecords(tableSchema, tableName, tol, geometryColumn, keyColumn)
                 
+                # dropping temp table
+                self.abstractDb.dropTempTable(processTableName)
+                
                 # storing flags
                 if len(result) > 0:
                     error = True
