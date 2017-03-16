@@ -897,7 +897,6 @@ class PostgisDb(AbstractDb):
         processName: process name
         """
         self.checkAndOpenDb()
-        srid = self.findEPSG()
         if len(flagTupleList) > 0:
             if useTransaction:
                 self.db.transaction()
@@ -907,6 +906,9 @@ class PostgisDb(AbstractDb):
                     dimension = self.getDimension(record[3]) # getting geometry dimension
                 except Exception as e:
                     raise e
+                tableSchema, tableName = record[0].split('.')
+                parameters = {'tableSchema':tableSchema, 'tableName':tableName, 'geometryColumn':record[4]}
+                srid = self.findEPSG(parameters = parameters)
                 sql = self.gen.insertFlagIntoDb(record[0], record[1], record[2], record[3], srid, processName, dimension, record[4])
                 if not query.exec_(sql):
                     if useTransaction:
@@ -1289,9 +1291,10 @@ class PostgisDb(AbstractDb):
         """
         self.checkAndOpenDb()
         tableSchema, tableName = self.getTableSchema(cl)
-        srid = self.findEPSG()
         idList = [i['id'] for i in processList]
         geometryColumn = processList[0]['geometry_column']
+        parameters = {'tableSchema':tableSchema, 'tableName':tableName, 'geometryColumn':geometryColumn}
+        srid = self.findEPSG(parameters = parameters)
         sql = self.gen.forceValidity(tableSchema, tableName, idList, srid, keyColumn, geometryColumn)
         query = QSqlQuery(self.db)
         if useTransaction:
@@ -1407,7 +1410,6 @@ class PostgisDb(AbstractDb):
         earthCoverageClasses: earth coverage configuration diciotnary
         """
         self.checkAndOpenDb()
-        srid = self.findEPSG()
         if useTransaction:
             self.db.transaction()
         for cl in earthCoverageClasses:
@@ -1419,6 +1421,8 @@ class PostgisDb(AbstractDb):
                 tableSchema = self.getTableSchemaFromDb(cl)
                 tableName = cl
             # making the query using table schema and table name
+            parameters = {'tableSchema':tableSchema, 'tableName':tableName}
+            srid = self.findEPSG(parameters = parameters)
             sqltext = self.gen.createCentroidColumn(tableSchema, tableName, srid)
             sqlList = sqltext.split('#')
             query = QSqlQuery(self.db)
@@ -1657,7 +1661,9 @@ class PostgisDb(AbstractDb):
         return result
 
     def createAndPopulateTempTableFromMap(self, tableName, featureMap, geomColumnName, keyColumn, useTransaction = True):
-        srid = self.findEPSG()
+        ts, tn = tableName.split('.')
+        parameters = {'tableSchema':ts, 'tableName':tn, 'geometryColumn':geomColumnName}
+        srid = self.findEPSG(parameters = parameters)
         self.checkAndOpenDb()
         if useTransaction:
             self.db.transaction()
@@ -1670,6 +1676,7 @@ class PostgisDb(AbstractDb):
                     self.db.rollback()
                 raise Exception(self.tr('Problem creating temp table: ') + query.lastError().text())
         attributes = None
+        auxAttributes = None
         for feat in featureMap.values():
             if not attributes:
                 # getting only provider fields (we ignore expression fields - type = 6)
@@ -1682,21 +1689,23 @@ class PostgisDb(AbstractDb):
             values[keyIdx] = feat.id()
             geometry = binascii.hexlify(feat.geometry().asWkb())
             # adding the geometry column to attributes
-            attributes.append(geomColumnName)
+            if not auxAttributes:
+                auxAttributes = attributes[:] #this is done not to mess up original attributes list
+                auxAttributes.append(geomColumnName)
             # adding the geometry value to values
             values.append(geometry)
             # preparing 
             prepareValues = []
-            for attr in attributes:
+            for attr in auxAttributes:
                 if attr == geomColumnName:
                     prepareValues.append("""ST_SetSRID(ST_Multi(:{0}),{1})""".format(attr,str(srid)))
                 else:
                     prepareValues.append(':'+attr)
             #getting sql
-            insertSql = self.gen.populateTempTable(tableName, attributes, prepareValues, geometry, srid, geomColumnName)
+            insertSql = self.gen.populateTempTable(tableName, auxAttributes, prepareValues, geometry, srid, geomColumnName)
             query.prepare(insertSql)
             # binding my values to avoid injections
-            for i in range(len(attributes)):
+            for i in range(len(auxAttributes)):
                 query.bindValue(prepareValues[i], values[i])
             # actual query execution
             if not query.exec_():

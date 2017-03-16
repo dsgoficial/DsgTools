@@ -123,12 +123,12 @@ class AbstractDb(QObject):
                 lyrWithElemList.append(lyr)
         return lyrWithElemList
     
-    def findEPSG(self):
+    def findEPSG(self, parameters = dict()):
         '''
         Finds the database EPSG
         '''
         self.checkAndOpenDb()
-        sql = self.gen.getSrid()
+        sql = self.gen.getSrid(parameters = parameters)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem finding EPSG: ")+query.lastError().text())

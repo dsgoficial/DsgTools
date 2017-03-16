@@ -50,7 +50,7 @@ class SpatialiteSqlGenerator(SqlGenerator):
             sql = 'SELECT column_name from public_complex_schema where complex = \''+complexClass+'\''+' and aggregated_class = '+'\''+aggregatedClass+'\''
         return sql
 
-    def getSrid(self):
+    def getSrid(self, parameters = dict()):
         sql = "SELECT srid from geometry_columns"
         return sql
 

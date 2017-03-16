@@ -46,8 +46,19 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "SELECT column_name from complex_schema where complex = \'"+complexClass+'\''+" and aggregated_class = "+'\''+aggregatedClass+'\''
         return sql
 
-    def getSrid(self):
-        sql = "SELECT DISTINCT srid from geometry_columns WHERE f_table_schema <> \'tiger\' and f_table_schema <> \'topology\' LIMIT 1"
+    def getSrid(self, parameters = dict()):
+        if parameters == dict():
+            sql = "SELECT DISTINCT srid from geometry_columns WHERE f_table_schema <> \'tiger\' and f_table_schema <> \'topology\' LIMIT 1"
+        else:
+            whereClauseList = []
+            if 'tableSchema' in parameters.keys():
+                whereClauseList.append("""f_table_schema = '{0}'""".format(parameters['tableSchema']))
+            if 'tableName' in parameters.keys():
+                whereClauseList.append("""f_table_name = '{0}'""".format(parameters['tableName']))
+            if 'geometryColumn' in parameters.keys():
+                whereClauseList.append("""f_geometry_column = '{0}'""".format(parameters['geometryColumn']))
+            whereClause = ' AND '.join(whereClauseList)
+            sql = """SELECT DISTINCT srid from geometry_columns WHERE {0} LIMIT 1""".format(whereClause)
         return sql
 
     def getTablesFromDatabase(self):

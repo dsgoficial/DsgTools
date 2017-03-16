@@ -116,7 +116,7 @@ class ValidationProcess(QObject):
         try:
             return self.abstractDb.insertFlags(flagTupleList, self.getName())
         except Exception as e:
-            QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred inserting flags! Check log for details.'))
             QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             
     def removeFeatureFlags(self, layer, featureId):
@@ -169,6 +169,14 @@ class ValidationProcess(QObject):
         Clears the classes to be displayed
         """
         self.setStatus(self.tr('Process finished with errors.'), 2) #Failed status
+        #drop temps
+        try:
+            classesWithElem = self.parameters['Classes']
+            for cl in classesWithElem:
+                tempName = cl.split(':')[0]+'_temp'
+                self.abstractDb.dropTempTable(tempName)
+        except:
+            pass
         self.clearClassesToBeDisplayedAfterProcess()
     
     def inputData(self):
@@ -226,11 +234,7 @@ class ValidationProcess(QObject):
         Creates a temp table where all features plus the edit buffer features from a layer
         will be inserted
         """
-        try:
-            self.abstractDb.createAndPopulateTempTableFromMap(tableName, layer, geometryColumn, keyColumn)
-        except Exception as e:
-            QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.abstractDb.createAndPopulateTempTableFromMap(tableName, layer, geometryColumn, keyColumn)
 
     def updateOriginalLayer(self, pgInputLayer, qgisOutputVector):
         """
