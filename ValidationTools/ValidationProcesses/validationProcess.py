@@ -229,13 +229,6 @@ class ValidationProcess(QObject):
                     featureMap[featid] = feat
         return featureMap
     
-    def prepareWorkingStructure(self, tableName, layer, geometryColumn, keyColumn):
-        """
-        Creates a temp table where all features plus the edit buffer features from a layer
-        will be inserted
-        """
-        self.abstractDb.createAndPopulateTempTableFromMap(tableName, layer, geometryColumn, keyColumn)
-
     def updateOriginalLayer(self, pgInputLayer, qgisOutputVector):
         """
         Updates the original layer using the grass output layer
@@ -321,8 +314,12 @@ class ValidationProcess(QObject):
         tableName = self.getTableNameFromLayer(lyr)
         #setting temp table name
         processTableName = tableName+'_temp'
+        # specific EPSG search
+        ts, tn = cl.split('.')
+        parameters = {'tableSchema':ts, 'tableName':tn, 'geometryColumn':geomColumnName}
+        srid = self.findEPSG(parameters=parameters)
         #creating temp table
-        self.prepareWorkingStructure(tableName, featureMap, geometryColumn, keyColumn)
+        self.abstractDb.createAndPopulateTempTableFromMap(tableName, featureMap, geometryColumn, keyColumn)
         return processTableName, lyr, keyColumn
     
     def postProcessSteps(self, processTableName, lyr):

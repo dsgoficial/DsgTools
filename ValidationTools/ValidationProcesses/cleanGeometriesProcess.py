@@ -101,7 +101,7 @@ class CleanGeometriesProcess(ValidationProcess):
                 tableSchema, tableName = cl.split('.')
                 # specific EPSG search
                 parameters = {'tableSchema': tableSchema, 'tableName': tableName, 'geometryColumn': geometryColumn}
-                srid = self.findEPSG(parameters=parameters)                        
+                srid = self.abstractDb.findEPSG(parameters=parameters)                        
 
                 # running the process in the temp table
                 result = self.runProcessinAlg(lyr, processTableName, geometryColumn, srid)

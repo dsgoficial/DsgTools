@@ -1665,10 +1665,6 @@ class PostgisDb(AbstractDb):
         return result
 
     def createAndPopulateTempTableFromMap(self, tableName, featureMap, geomColumnName, keyColumn, useTransaction=True):
-        ts, tn = tableName.split('.')
-        # specific EPSG search
-        parameters = {'tableSchema':ts, 'tableName':tn, 'geometryColumn':geomColumnName}
-        srid = self.findEPSG(parameters=parameters)
         self.checkAndOpenDb()
         if useTransaction:
             self.db.transaction()
