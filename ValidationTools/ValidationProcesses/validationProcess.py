@@ -316,10 +316,10 @@ class ValidationProcess(QObject):
         processTableName = tableName+'_temp'
         # specific EPSG search
         ts, tn = cl.split('.')
-        parameters = {'tableSchema':ts, 'tableName':tn, 'geometryColumn':geomColumnName}
-        srid = self.findEPSG(parameters=parameters)
+        parameters = {'tableSchema':ts, 'tableName':tn, 'geometryColumn':geometryColumn}
+        srid = self.abstractDb.findEPSG(parameters=parameters)
         #creating temp table
-        self.abstractDb.createAndPopulateTempTableFromMap(tableName, featureMap, geometryColumn, keyColumn)
+        self.abstractDb.createAndPopulateTempTableFromMap(tableName, featureMap, geometryColumn, keyColumn, srid)
         return processTableName, lyr, keyColumn
     
     def postProcessSteps(self, processTableName, lyr):

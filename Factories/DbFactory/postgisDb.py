@@ -1664,7 +1664,7 @@ class PostgisDb(AbstractDb):
             self.db.commit()
         return result
 
-    def createAndPopulateTempTableFromMap(self, tableName, featureMap, geomColumnName, keyColumn, useTransaction=True):
+    def createAndPopulateTempTableFromMap(self, tableName, featureMap, geomColumnName, keyColumn, srid, useTransaction=True):
         self.checkAndOpenDb()
         if useTransaction:
             self.db.transaction()
