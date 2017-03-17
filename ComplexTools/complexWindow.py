@@ -24,12 +24,12 @@ import os
 
 #PyQt4 imports
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import *
+from PyQt4.QtCore import pyqtSlot, QObject, SIGNAL, Qt
 from PyQt4.QtGui import QTreeWidgetItem, QMessageBox
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
 #QGIS imports
-from qgis.core import *
+from qgis.core import QgsDataSourceURI, QgsCredentials, QgsMessageLog, QgsRectangle, QgsFeatureRequest, QgsMapLayer
 
 #DsgTools imports
 from DsgTools.ComplexTools.manageComplex import ManageComplexDialog
