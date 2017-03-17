@@ -1034,7 +1034,7 @@ class PostgisDb(AbstractDb):
         else:
             return False
         
-    def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card, rule):
+    def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card, rule, geometryColumn):
         """
         Tests spatial predicates to check whether a rule is broken
         """
@@ -1048,7 +1048,7 @@ class PostgisDb(AbstractDb):
             feat_id = query.value(0)
             reason = 'Feature id %s from %s violates rule %s %s' % (feat_id, class_a, rule, class_b)
             geom = query.value(1)
-            ret.append((class_a, feat_id, reason, geom))
+            ret.append((class_a, feat_id, reason, geom, geometryColumn))
         return ret
 
     def getDimension(self, geom):

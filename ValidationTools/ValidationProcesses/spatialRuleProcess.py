@@ -91,7 +91,12 @@ class SpatialRuleProcess(ValidationProcess):
             
             rules = self.getRules()
             for rule in rules:
-                invalidGeomRecordList = self.abstractDb.testSpatialRule(rule[0], rule[1], rule[2], rule[3], rule[4], rule[5], rule[6])
+                # preparation
+                class_a, lyrA, aKeyColumn = self.prepareExecution(rule[0])
+                class_b, lyrB, bKeyColumn = self.prepareExecution(rule[3])
+                geometryColumn = 'geom'
+
+                invalidGeomRecordList = self.abstractDb.testSpatialRule(class_a, rule[1], rule[2], class_b, rule[4], rule[5], rule[6], geometryColumn)
                 if len(invalidGeomRecordList) > 0:
                     numberOfInvGeom = self.addFlag(invalidGeomRecordList)
                     for tuple in invalidGeomRecordList:
