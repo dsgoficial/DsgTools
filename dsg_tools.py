@@ -20,8 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtCore import QSettings, qVersion, QCoreApplication, QTranslator, Qt
+from PyQt4.QtGui import QIcon, QToolButton, QMenu, QAction
 
 import os.path
 import sys

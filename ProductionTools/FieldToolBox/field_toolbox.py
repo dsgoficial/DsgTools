@@ -472,7 +472,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         button: Button clicked by the user to perform the reclassification
         """
         for category in self.reclassificationDict.keys():
-            if category == 'version':
+            if category == 'version' or category == 'uiParameterJsonDict':
                 continue
             for edgvClass in self.reclassificationDict[category].keys():
                 for buttonName in self.reclassificationDict[category][edgvClass].keys():
