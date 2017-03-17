@@ -1044,11 +1044,12 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr('Problem testing spatial rule: ') + query.lastError().text()) 
         ret = []
+        flagClass = class_a.replace('_temp', '')
         while query.next():
             feat_id = query.value(0)
             reason = 'Feature id %s from %s violates rule %s %s' % (feat_id, class_a, rule, class_b)
             geom = query.value(1)
-            ret.append((class_a, feat_id, reason, geom, geometryColumn))
+            ret.append((flagClass, feat_id, reason, geom, geometryColumn))
         return ret
 
     def getDimension(self, geom):

@@ -167,13 +167,11 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         Updates the database information
         """
-        database, self.scale, self.tolerance = '', '', ''
+        database = ''
         try:
             self.configWindow.widget.abstractDb.checkAndOpenDb()
             database = self.configWindow.widget.comboBoxPostgis.currentText()
             self.databaseLineEdit.setText(database)
-            self.scale = self.configWindow.scaleComboBox.currentText()
-            self.tolerance = self.configWindow.toleranceLineEdit.text()
             self.validationManager = ValidationManager(self.configWindow.widget.abstractDb, self.iface)
             self.populateProcessList()
             self.databaseLineEdit.setText(database)
