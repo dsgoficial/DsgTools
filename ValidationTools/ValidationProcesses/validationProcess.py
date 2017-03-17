@@ -209,10 +209,11 @@ class ValidationProcess(QObject):
             blackList = editBuffer.deletedFeatureIds()
             #1 - changed
             changedMap = editBuffer.changedGeometries()
-            for featid in changedMap.keys():
-                newFeat = inputLyr.getFeatures(QgsFeatureRequest(featid)).next()
-                newFeat.setGeometry(changedMap[featid])
-                featureMap[featid] = newFeat
+            request = QgsFeatureRequest().setFilterFids(changedMap.keys())
+            for newFeat in inputLyr.getFeatures(request):
+                featId = newFeat.id()
+                newFeat.setGeometry(changedMap[featId])
+                featureMap[featId] = newFeat
             #2 - old
             for feat in inputLyr.getFeatures():
                 featid = feat.id()
