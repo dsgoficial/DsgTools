@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-from qgis.core import QgsGeometryUtils, QgsVector, QgsPointV2
+from qgis.core import QgsVector, QgsPointV2
 
 from DsgTools.DsgGeometrySnapper.snapItem import SnapItem
 
@@ -42,7 +42,7 @@ class SegmentSnapItem(SnapItem):
         :param p: QgsPointV2
         :return:
         """
-        return QgsGeometryUtils.projPointOnSegment(p, self.idxFrom.point(), self.idxTo.point())
+        return self.projPointOnSegment(p, self.idxFrom.point(), self.idxTo.point())
 
     def getIntersection(self, p1, p2, inter):
         """

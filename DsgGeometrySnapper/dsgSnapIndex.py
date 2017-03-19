@@ -22,7 +22,7 @@
 """
 import sys, math
 
-from qgis.core import QgsAbstractGeometryV2, QgsVertexId, QgsPointV2, QgsGeometryUtils, QgsVector, QgsCurvePolygonV2, QgsCircularStringV2
+from qgis.core import QgsAbstractGeometryV2, QgsVertexId, QgsPointV2, QgsVector, QgsCurvePolygonV2, QgsCircularStringV2
 
 from DsgTools.DsgGeometrySnapper.raytracer import Raytracer
 from DsgTools.DsgGeometrySnapper.coordIdx import CoordIdx
@@ -166,7 +166,7 @@ class DsgSnapIndex:
                 if item.type == self.SnapSegment:
                     inter = None
                 if isinstance(item.getIntersection(p, p2, inter), SegmentSnapItem):
-                    dist = QgsGeometryUtils.sqrDistance2D(q, inter)
+                    dist = math.sqrt(q.closestSegment(inter))
                     if dist < dMin:
                         dMin = dist
                         pMin = inter
@@ -200,7 +200,7 @@ class DsgSnapIndex:
 
         for item in items:
             if item.type == self.SnapPoint:
-                dist = QgsGeometryUtils.sqrDistance2D(item.getSnapPoint(pos), pos)
+                dist = math.sqrt(item.getSnapPoint(pos).closestSegment(pos))
                 if dist < minDistPoint:
                     minDistPoint = dist
                     snapPoint = PointSnapItem(item)
@@ -208,7 +208,7 @@ class DsgSnapIndex:
                 pProj = None
                 if not SegmentSnapItem(item).getProjection( pos, pProj):
                     continue
-                dist = QgsGeometryUtils.sqrDistance2D(pProj, pos)
+                dist = math.sqrt(pProj.closestSegment(pos))
                 if dist < minDistSegment:
                     minDistSegment = dist
                     snapSegment = SegmentSnapItem(item)
