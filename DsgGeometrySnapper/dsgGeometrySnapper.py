@@ -200,5 +200,5 @@ if __name__ == '__main__':
     polygonGeom = QgsGeometry.fromWkt("Polygon((0.1 -0.1, 10.1 0, 9.9 10.1, 0 10, 0.1 -0.1))");
     snapper = DsgGeometrySnapper(rl)
     result = snapper.snapGeometry(polygonGeom, 1)
-    print 'saida' result.exportToWkt()
+    print 'saida', result.exportToWkt()
     print 'esperado', "Polygon ((0 0, 10 0, 10 10, 0 10, 0 0))"
