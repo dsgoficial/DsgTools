@@ -187,3 +187,18 @@ class DsgGeometrySnapper(QObject):
                             # Don't delete vertices if this would result in a degenerate geometry
                             break
         return QgsGeometry(subjGeom)
+
+if name == '__main__':
+    rl = QgsVectorLayer(QStringLiteral("Polygon"), QStringLiteral("x"), QStringLiteral("memory"));
+    ff = QgsFeature()
+    refGeom = QgsGeometry.fromWkt(QStringLiteral("Polygon((0 0, 10 0, 10 10, 0 10, 0 0))"));
+    ff.setGeometry(refGeom)
+    flist = []
+    flist.append(ff)
+    rl.dataProvider().addFeatures(flist)
+
+    polygonGeom = QgsGeometry::fromWkt(QStringLiteral("Polygon((0.1 -0.1, 10.1 0, 9.9 10.1, 0 10, 0.1 -0.1))"));
+    snapper = QgsGeometrySnapper(rl)
+    result = snapper.snapGeometry(polygonGeom, 1)
+    print 'saida' result.exportToWkt()
+    print 'esperado', "Polygon ((0 0, 10 0, 10 10, 0 10, 0 0))"
