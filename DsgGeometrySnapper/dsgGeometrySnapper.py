@@ -22,7 +22,7 @@
 """
 import sys
 
-from PyQt4.QtCore import QObject, QtConcurrent
+from PyQt4.QtCore import QObject
 
 from qgis.core import QgsFeatureRequest, QgsAttributeList, QgsSpatialIndex, QgsGeometry, QgsPointV2, QgsGeometryUtils, QgsFeatureRequest, QgsFeatureIterator, QgsFeature, QgsVertexId, QgsPointV2, QgsCurvePolygonV2, QgsVertexId
 
