@@ -188,7 +188,7 @@ class DsgGeometrySnapper(QObject):
                             break
         return QgsGeometry(subjGeom)
 
-if name == '__main__':
+if __name__ == '__main__':
     rl = QgsVectorLayer("Polygon", "x", "memory");
     ff = QgsFeature()
     refGeom = QgsGeometry.fromWkt("Polygon((0 0, 10 0, 10 10, 0 10, 0 0))");
