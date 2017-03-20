@@ -36,7 +36,7 @@ class GridRow:
         :return: Cell
         """
         if col < self.colStartIdx:
-            for i in range(col, self.colStartIdx-1):
+            for i in range(col, self.colStartIdx):
                 self.cells.insert(0, [])
             self.colStartIdx = col
             return self.cells[0]

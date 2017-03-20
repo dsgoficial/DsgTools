@@ -74,7 +74,7 @@ class DsgSnapIndex:
         :return:
         """
         if row < self.rowsStartIdx:
-            for i in range(row, self.rowsStartIdx-1):
+            for i in range(row, self.rowsStartIdx):
                 self.gridRows.insert(0, GridRow())
             self.rowsStartIdx = row
             return self.gridRows[0].getCreateCell(col)
