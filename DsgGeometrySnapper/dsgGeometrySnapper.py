@@ -73,7 +73,7 @@ class DsgGeometrySnapper:
             return QgsPointV2( s1.x() + ( s2.x() - s1.x() ) * t, s1.y() + ( s2.y() - s1.y() ) * t )
 
     def snapGeometry(self, geometry, snapTolerance, mode=PreferNodes):
-        center = QgsPointV2(geometry.geometry().boundingBox().center())
+        center = QgsPointV2(geometry.boundingBox().center())
 
         # Get potential reference features and construct snap index
         refGeometries = []
@@ -207,14 +207,14 @@ class DsgGeometrySnapper:
 if __name__ == '__main__':
     rl = QgsVectorLayer("Polygon", "x", "memory")
     ff = QgsFeature()
-    refGeom = QgsGeometry.fromWkt("Polygon((0 0, 10 0, 10 10, 0 10, 0 0))")
+    refGeom = QgsGeometry.fromWkt("Point(0 0)")
     ff.setGeometry(refGeom)
     flist = []
     flist.append(ff)
     rl.dataProvider().addFeatures(flist)
 
-    polygonGeom = QgsGeometry.fromWkt("Polygon((0.1 -0.1, 10.1 0, 9.9 10.1, 0 10, 0.1 -0.1))");
+    polygonGeom = QgsGeometry.fromWkt("Point(0.1 0.1)");
     snapper = DsgGeometrySnapper(rl)
     result = snapper.snapGeometry(polygonGeom.geometry(), 1)
     print 'saida', result.exportToWkt()
-    print 'esperado', "Polygon ((0 0, 10 0, 10 10, 0 10, 0 0))"
+    print 'esperado', "Point(0 0)"

@@ -20,9 +20,11 @@
  *                                                                         *
  ***************************************************************************/
 """
+from DsgTools.DsgGeometrySnapper.cell import Cell
+
 class GridRow:
     def __init__(self):
-        self.cells = [[]]
+        self.cells = []
         self.colStartIdx = 0
         
     def __del__(self):
@@ -37,12 +39,12 @@ class GridRow:
         """
         if col < self.colStartIdx:
             for i in range(col, self.colStartIdx):
-                self.cells.insert(0, [])
+                self.cells.insert(0, Cell())
             self.colStartIdx = col
             return self.cells[0]
         elif col >= self.colStartIdx + len(self.cells):
-            for i in range(self.colStartIdx + len(self.cells), col):
-                self.cells.append([])
+            for i in range(self.colStartIdx + len(self.cells), col + 1):
+                self.cells.append(Cell())
             return self.cells[-1]
         else:
             return self.cells[col - self.colStartIdx]
@@ -69,6 +71,6 @@ class GridRow:
         colEnd = min(colEnd, self.colStartIdx + len(self.cells) - 1)
 
         items = []
-        for col in range(colStart, colEnd):
+        for col in range(colStart, colEnd + 1):
             items.append(self.cells[col - self.colStartIdx])
         return items

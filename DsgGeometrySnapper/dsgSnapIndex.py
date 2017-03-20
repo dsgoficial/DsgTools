@@ -79,7 +79,7 @@ class DsgSnapIndex:
             self.rowsStartIdx = row
             return self.gridRows[0].getCreateCell(col)
         elif row >= self.rowsStartIdx + len(self.gridRows):
-            for  i in range(self.rowsStartIdx + len(self.gridRows), row):
+            for  i in range(self.rowsStartIdx + len(self.gridRows), row + 1):
                 self.gridRows.append(GridRow())
             return self.gridRows[-1].getCreateCell(col)
         else:
