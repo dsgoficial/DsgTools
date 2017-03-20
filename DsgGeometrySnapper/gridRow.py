@@ -22,7 +22,7 @@
 """
 class GridRow:
     def __init__(self):
-        self.cells = []
+        self.cells = [[]]
         self.colStartIdx = 0
         
     def __del__(self):

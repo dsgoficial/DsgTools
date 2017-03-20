@@ -92,8 +92,8 @@ class DsgSnapIndex:
         :return:
         """
         p = idx.point()
-        col = math.floor((p.x() - self.origin.x()) / self.cellSize)
-        row = math.floor((p.y() - self.origin.y()) / self.cellSize)
+        col = int(math.floor((p.x() - self.origin.x()) / self.cellSize))
+        row = int(math.floor((p.y() - self.origin.y()) / self.cellSize))
         self.getCreateCell(col, row).append(PointSnapItem(idx))
 
     def addSegment(self, idxFrom, idxTo):
@@ -130,8 +130,8 @@ class DsgSnapIndex:
                 elif isinstance(geom, QgsCircularStringV2):
                     nVerts -= 1
                 for iVert in range(nVerts-1):
-                    idx = CoordIdx( geom, QgsVertexId( iPart, iRing, iVert ) )
-                    idx1 = CoordIdx( geom, QgsVertexId( iPart, iRing, iVert + 1 ) )
+                    idx = CoordIdx( geom, QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex))
+                    idx1 = CoordIdx( geom, QgsVertexId(iPart, iRing, iVert + 1, QgsVertexId.SegmentVertex))
                     self.coordIdxs.append(idx)
                     self.coordIdxs.append(idx1)
                     self.addPoint(idx)
@@ -181,10 +181,10 @@ class DsgSnapIndex:
         :param pSnapSegment: SegmentSnapItem
         :return:
         """
-        colStart = math.math.floor((pos.x() - tol - self.origin.x()) / self.cellSize)
-        rowStart = math.math.floor((pos.y() - tol - self.origin.y()) / self.cellSize)
-        colEnd = math.math.floor((pos.x() + tol - self.origin.x()) / self.cellSize)
-        rowEnd = math.math.floor((pos.y() + tol - self.origin.y()) / self.cellSize)
+        colStart = int(math.floor((pos.x() - tol - self.origin.x()) / self.cellSize))
+        rowStart = int(math.floor((pos.y() - tol - self.origin.y()) / self.cellSize))
+        colEnd = int(math.floor((pos.x() + tol - self.origin.x()) / self.cellSize))
+        rowEnd = int(math.floor((pos.y() + tol - self.origin.y()) / self.cellSize))
 
         rowStart = max(rowStart, self.rowsStartIdx)
         rowEnd = min(rowEnd, self.rowsStartIdx + len(self.gridRows) - 1)

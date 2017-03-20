@@ -20,13 +20,13 @@
  *                                                                         *
  ***************************************************************************/
 """
-class SnapItem:
-    def __init__(self, type):
+class SnapItem(object):
+    def __init__(self, snapType):
         """
         Constructor
         :param type: SnapPoint, SnapSegment
         """
-        self.type = type
+        self.snapType = snapType
 
     def getSnapPoint(self):
         """

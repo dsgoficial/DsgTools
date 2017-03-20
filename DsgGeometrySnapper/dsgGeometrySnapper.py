@@ -40,8 +40,8 @@ class DsgGeometrySnapper:
     def polyLineSize(self, geom, iPart, iRing):   
         nVerts = geom.vertexCount( iPart, iRing)
         if QgsCurvePolygonV2(geom):
-            front = geom.vertexAt(QgsVertexId( iPart, iRing, 0))
-            back = geom.vertexAt(QgsVertexId( iPart, iRing, nVerts - 1))
+            front = geom.vertexAt(QgsVertexId( iPart, iRing, 0, QgsVertexId.SegmentVertex))
+            back = geom.vertexAt(QgsVertexId( iPart, iRing, nVerts - 1, QgsVertexId.SegmentVertex))
         if front == back:
             return nVerts - 1
         return nVerts
@@ -168,7 +168,7 @@ class DsgGeometrySnapper:
                             if not origSubjSnapIndex.getSnapItem(point, snapTolerance):
                                 continue
                             idx = snapSegment.idxFrom
-                            subjGeom.insertVertex(QgsVertexId(idx.vidx.part, idx.vidx.ring, idx.vidx.vertex + 1 ), point)
+                            subjGeom.insertVertex(QgsVertexId(idx.vidx.part, idx.vidx.ring, idx.vidx.vertex + 1, QgsVertexId.SegmentVertex), point)
                             subjPointFlags[idx.vidx.part][idx.vidx.ring].insert(idx.vidx.vertex + 1, DsgGeometrySnapper.SnappedToRefNode )
                             subjSnapIndex = DsgSnapIndex(center, 10*snapTolerance)
                             subjSnapIndex.addGeometry(subjGeom)
@@ -180,21 +180,21 @@ class DsgGeometrySnapper:
         # Pass 3: remove superfluous vertices: all vertices which are snapped to a segment and not preceded or succeeded by an unsnapped vertex
         for iPart in range(subjGeom.partCount()):
             for iRing in range(subjGeom.ringCount(iPart)):
-                ringIsClosed = subjGeom.vertexAt(QgsVertexId(iPart, iRing, 0)) == subjGeom.vertexAt(QgsVertexId(iPart, iRing, subjGeom.vertexCount( iPart, iRing ) - 1))
+                ringIsClosed = subjGeom.vertexAt(QgsVertexId(iPart, iRing, 0, QgsVertexId.SegmentVertex)) == subjGeom.vertexAt(QgsVertexId(iPart, iRing, subjGeom.vertexCount( iPart, iRing ) - 1, QgsVertexId.SegmentVertex))
                 nVerts = self.polyLineSize(subjGeom, iPart, iRing)
                 for iVert in range(nVerts):
                     iPrev = ( iVert - 1 + nVerts ) % nVerts
                     iNext = ( iVert + 1 ) % nVerts
-                    pMid = subjGeom.vertexAt(QgsVertexId( iPart, iRing, iVert))
-                    pPrev = subjGeom.vertexAt(QgsVertexId( iPart, iRing, iPrev))
-                    pNext = subjGeom.vertexAt(QgsVertexId( iPart, iRing, iNext))
+                    pMid = subjGeom.vertexAt(QgsVertexId( iPart, iRing, iVert, QgsVertexId.SegmentVertex))
+                    pPrev = subjGeom.vertexAt(QgsVertexId( iPart, iRing, iPrev, QgsVertexId.SegmentVertex))
+                    pNext = subjGeom.vertexAt(QgsVertexId( iPart, iRing, iNext, QgsVertexId.SegmentVertex))
 
                     if subjPointFlags[iPart][iRing][iVert] == DsgGeometrySnapper.SnappedToRefSegment \
                      and subjPointFlags[iPart][iRing][iPrev] != DsgGeometrySnapper.Unsnapped \
                      and subjPointFlags[iPart][iRing][iNext] != DsgGeometrySnapper.Unsnapped \
                      and self.projPointOnSegment( pMid, pPrev, pNext).closestSegment(pMid) < 1E-12: #removed QgsGeometryUtils due to unexisting python binding
                         if (ringIsClosed and nVerts > 3 ) or ( not ringIsClosed and nVerts > 2 ):
-                            subjGeom.deleteVertex(QgsVertexId(iPart, iRing, iVert))
+                            subjGeom.deleteVertex(QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex))
                             del subjPointFlags[iPart][iRing][iVert]
                             iVert -= 1
                             nVerts -= 1

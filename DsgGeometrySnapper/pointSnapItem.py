@@ -26,13 +26,13 @@ from qgis.core import QgsVertexId, QgsPointV2, QgsGeometry
 from DsgTools.DsgGeometrySnapper.snapItem import SnapItem
 
 class PointSnapItem(SnapItem):
-    def __init__(self, _idx, type=0):
+    def __init__(self, _idx):
         """
         Constructor
         :param _idx: CoordIdx
         :param type: SnapPoint
         """
-        super(PointSnapItem, self).__init__(type)
+        super(PointSnapItem, self).__init__(0)
         self.idx = _idx
 
     def getSnapPoint(self):
