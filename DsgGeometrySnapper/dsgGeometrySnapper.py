@@ -24,7 +24,8 @@ import sys
 
 import math
 
-from qgis.core import QgsFeatureRequest, QgsSpatialIndex, QgsGeometry, QgsPointV2, QgsFeatureRequest, QgsFeatureIterator, QgsFeature, QgsVertexId, QgsCurvePolygonV2, QgsVectorLayer
+from qgis.core import QgsFeatureRequest, QgsSpatialIndex, QgsGeometry, QgsPointV2, QgsFeatureRequest, QgsFeatureIterator\
+, QgsFeature, QgsVertexId, QgsCurvePolygonV2, QgsVectorLayer, QgsMultiPolygonV2, QgsPolygonV2
 
 from DsgTools.DsgGeometrySnapper.dsgSnapIndex import DsgSnapIndex
 
@@ -39,7 +40,7 @@ class DsgGeometrySnapper:
         
     def polyLineSize(self, geom, iPart, iRing):   
         nVerts = geom.vertexCount( iPart, iRing)
-        if QgsCurvePolygonV2(geom):
+        if isinstance(geom, QgsMultiPolygonV2) or isinstance(geom, QgsPolygonV2):
             front = geom.vertexAt(QgsVertexId( iPart, iRing, 0, QgsVertexId.SegmentVertex))
             back = geom.vertexAt(QgsVertexId( iPart, iRing, nVerts - 1, QgsVertexId.SegmentVertex))
         if front == back:
@@ -201,7 +202,8 @@ class DsgGeometrySnapper:
                         else:
                             # Don't delete vertices if this would result in a degenerate geometry
                             break
-        return QgsGeometry(subjGeom)
+        print subjGeom.exportToWkt()
+        return subjGeom
 
 if __name__ == '__main__':
     rl = QgsVectorLayer("Polygon", "x", "memory")
