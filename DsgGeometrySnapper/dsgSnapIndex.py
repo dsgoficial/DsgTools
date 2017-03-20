@@ -122,8 +122,8 @@ class DsgSnapIndex:
         :param geom:QgsAbstractGeometryV2
         :return:
         """
-        for iPart in range(len(geom.partCount())):
-            for iRing in range(len(geom.ringCount(iPart))):
+        for iPart in range(geom.partCount()):
+            for iRing in range(geom.ringCount(iPart)):
                 nVerts = geom.vertexCount(iPart, iRing)
                 if isinstance(geom, QgsCurvePolygonV2):
                     nVerts -= 1

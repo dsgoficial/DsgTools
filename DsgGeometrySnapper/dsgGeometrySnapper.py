@@ -24,18 +24,15 @@ import sys
 
 import math
 
-from PyQt4.QtCore import QObject
-
 from qgis.core import QgsFeatureRequest, QgsSpatialIndex, QgsGeometry, QgsPointV2, QgsFeatureRequest, QgsFeatureIterator, QgsFeature, QgsVertexId, QgsCurvePolygonV2, QgsVectorLayer
 
 from DsgTools.DsgGeometrySnapper.dsgSnapIndex import DsgSnapIndex
 
-class DsgGeometrySnapper(QObject):
+class DsgGeometrySnapper:
     SnappedToRefNode, SnappedToRefSegment, Unsnapped = range(3)
     PreferNodes, PreferClosest = range(2)
 
     def __init__(self, referenceLayer):
-        super(DsgGeometrySnapper, self).__init__()        
         self.referenceLayer = referenceLayer
         # Build spatial index
         self.index = QgsSpatialIndex(self.referenceLayer.getFeatures())        
@@ -49,7 +46,7 @@ class DsgGeometrySnapper(QObject):
             return nVerts - 1
         return nVerts
 
-    def snapFeatures(self, features, snapTolerance, mode=DsgGeometrySnapper.PreferNodes):
+    def snapFeatures(self, features, snapTolerance, mode=PreferNodes):
         for feature in features:
             self.processFeature(feature, snapTolerance, mode)
         return features
@@ -74,10 +71,8 @@ class DsgGeometrySnapper(QObject):
         else:
             return QgsPointV2( s1.x() + ( s2.x() - s1.x() ) * t, s1.y() + ( s2.y() - s1.y() ) * t )
 
-    def snapGeometry(self, geometry, snapTolerance, mode=DsgGeometrySnapper.PreferNodes):
-        center = QgsPointV2(geometry.geometry())
-        if not center:
-            center = QgsPointV2(geometry.geometry().boundingBox().center())
+    def snapGeometry(self, geometry, snapTolerance, mode=PreferNodes):
+        center = QgsPointV2(geometry.geometry().boundingBox().center())
 
         # Get potential reference features and construct snap index
         refGeometries = []
@@ -86,10 +81,8 @@ class DsgGeometrySnapper(QObject):
         refFeatureIds = self.index.intersects(searchBounds)
 
         refFeatureRequest = QgsFeatureRequest().setFilterFids(refFeatureIds)
-        refFeature = None
-        refFeatureIt = self.referenceLayer.getFeatures(refFeatureRequest)
 
-        while refFeatureIt.nextFeature(refFeature):
+        for refFeature in self.referenceLayer.getFeatures(refFeatureRequest):
             refGeometries.append(refFeature.geometry())
 
         refSnapIndex = DsgSnapIndex(center, 10*snapTolerance)
@@ -101,9 +94,9 @@ class DsgGeometrySnapper(QObject):
         subjPointFlags = [[[]]]
 
         # Pass 1: snap vertices of subject geometry to reference vertices
-        for iPart in range(len(subjGeom.partCount())):
+        for iPart in range(subjGeom.partCount()):
             subjPointFlags.append([[]])
-            for iRing in range(len(subjGeom.ringCount(iPart))):
+            for iRing in range(subjGeom.ringCount(iPart)):
                 subjPointFlags[iPart].append([])
                 for iVert in range(self.polyLineSize(subjGeom, iPart, iRing)):
                     snapPoint = None
@@ -111,7 +104,7 @@ class DsgGeometrySnapper(QObject):
                     vidx = QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex)
                     p = QgsPointV2(subjGeom.vertexAt(vidx))
                     if not refSnapIndex.getSnapItem(p, snapTolerance, snapPoint, snapSegment):
-                        subjPointFlags[iPart][iRing].append( DsgGeometrySnapper.Unsnapped )
+                        subjPointFlags[iPart][iRing].append(DsgGeometrySnapper.Unsnapped )
                     else:
                         if mode == DsgGeometrySnapper.PreferNodes:
                             # Prefer snapping to point
@@ -153,9 +146,9 @@ class DsgGeometrySnapper(QObject):
         
         # Pass 2: add missing vertices to subject geometry
         for refGeom in refGeometries:
-            for iPart in range(len(refGeom.geometry().partCount())):
+            for iPart in range(refGeom.geometry().partCount()):
                 subjPointFlags.append([[]])
-                for iRing in range(len(refGeom.geometry().ringCount(iPart))):
+                for iRing in range(refGeom.geometry().ringCount(iPart)):
                     subjPointFlags[iPart].append([])
                     for iVert in range(self.polyLineSize(refGeom.geometry(), iPart, iRing)):
                         snapPoint = None
@@ -185,8 +178,8 @@ class DsgGeometrySnapper(QObject):
         origSubjGeom = None
 
         # Pass 3: remove superfluous vertices: all vertices which are snapped to a segment and not preceded or succeeded by an unsnapped vertex
-        for iPart in range(len(subjGeom.partCount())):
-            for iRing in range(len(subjGeom.ringCount(iPart))):
+        for iPart in range(subjGeom.partCount()):
+            for iRing in range(subjGeom.ringCount(iPart)):
                 ringIsClosed = subjGeom.vertexAt(QgsVertexId(iPart, iRing, 0)) == subjGeom.vertexAt(QgsVertexId(iPart, iRing, subjGeom.vertexCount( iPart, iRing ) - 1))
                 nVerts = self.polyLineSize(subjGeom, iPart, iRing)
                 for iVert in range(nVerts):
@@ -221,6 +214,6 @@ if __name__ == '__main__':
 
     polygonGeom = QgsGeometry.fromWkt("Polygon((0.1 -0.1, 10.1 0, 9.9 10.1, 0 10, 0.1 -0.1))");
     snapper = DsgGeometrySnapper(rl)
-    result = snapper.snapGeometry(polygonGeom, 1)
+    result = snapper.snapGeometry(polygonGeom.geometry(), 1)
     print 'saida', result.exportToWkt()
     print 'esperado', "Polygon ((0 0, 10 0, 10 10, 0 10, 0 0))"

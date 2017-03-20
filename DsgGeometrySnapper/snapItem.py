@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-class SnapItem(object):
+class SnapItem:
     def __init__(self, type):
         """
         Constructor

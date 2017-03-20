@@ -24,7 +24,6 @@
 from qgis.core import QgsVertexId, QgsPointV2, QgsGeometry
 
 from DsgTools.DsgGeometrySnapper.snapItem import SnapItem
-from DsgTools.DsgGeometrySnapper.coordIdx import CoordIdx
 
 class PointSnapItem(SnapItem):
     def __init__(self, _idx, type=0):
