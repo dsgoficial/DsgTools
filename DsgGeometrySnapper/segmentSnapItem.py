@@ -24,10 +24,9 @@
 from qgis.core import QgsVector, QgsPointV2
 
 from DsgTools.DsgGeometrySnapper.snapItem import SnapItem
-from DsgTools.DsgGeometrySnapper.dsgSnapIndex import DsgSnapIndex
 
 class SegmentSnapItem(SnapItem):
-    def __init__(self, _idxFrom, _idxTo, type=DsgSnapIndex.SnapSegment):
+    def __init__(self, _idxFrom, _idxTo, type=1):
         """
         Constructor
         :param _idxFrom: CoordIdx
