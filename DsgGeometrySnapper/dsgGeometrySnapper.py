@@ -43,8 +43,8 @@ class DsgGeometrySnapper:
         if isinstance(geom, QgsMultiPolygonV2) or isinstance(geom, QgsPolygonV2):
             front = geom.vertexAt(QgsVertexId( iPart, iRing, 0, QgsVertexId.SegmentVertex))
             back = geom.vertexAt(QgsVertexId( iPart, iRing, nVerts - 1, QgsVertexId.SegmentVertex))
-        if front == back:
-            return nVerts - 1
+            if front == back:
+                return nVerts - 1
         return nVerts
 
     def snapFeatures(self, features, snapTolerance, mode=PreferNodes):
@@ -84,7 +84,7 @@ class DsgGeometrySnapper:
         refFeatureRequest = QgsFeatureRequest().setFilterFids(refFeatureIds)
 
         for refFeature in self.referenceLayer.getFeatures(refFeatureRequest):
-            refGeometries.append(refFeature.geometry())
+            refGeometries.append(QgsGeometry(refFeature.geometry()))
 
         refSnapIndex = DsgSnapIndex(center, 10*snapTolerance)
         for geom in refGeometries:
@@ -202,7 +202,6 @@ class DsgGeometrySnapper:
                         else:
                             # Don't delete vertices if this would result in a degenerate geometry
                             break
-        print subjGeom.exportToWkt()
         return subjGeom
 
 if __name__ == '__main__':

@@ -129,7 +129,7 @@ class DsgSnapIndex:
                     nVerts -= 1
                 elif isinstance(geom, QgsCircularStringV2):
                     nVerts -= 1
-                for iVert in range(nVerts-1):
+                for iVert in range(nVerts):
                     idx = CoordIdx( geom, QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex))
                     idx1 = CoordIdx( geom, QgsVertexId(iPart, iRing, iVert + 1, QgsVertexId.SegmentVertex))
                     self.coordIdxs.append(idx)
@@ -163,7 +163,7 @@ class DsgSnapIndex:
             if not cell:
                 continue
             for item in cell:
-                if item.type == DsgSnapIndex.SnapSegment:
+                if item.snapType == DsgSnapIndex.SnapSegment:
                     inter = None
                 if item.getIntersection(p, p2, inter):
                     dist = q.closestSegment(inter)
@@ -190,28 +190,32 @@ class DsgSnapIndex:
         rowEnd = min(rowEnd, self.rowsStartIdx + len(self.gridRows) - 1)
 
         items = []
-        for row in range(rowStart, rowEnd):
+        for row in range(rowStart, rowEnd+1):
             items.append(self.gridRows[row - self.rowsStartIdx].getSnapItems(colStart, colEnd))
 
         minDistSegment = sys.float_info.max
         minDistPoint = sys.float_info.max
         snapSegment = None
         snapPoint = None
-
-        for item in items:
-            if item.type == DsgSnapIndex.SnapPoint:
-                dist = item.getSnapPoint(pos).closestSegment(pos)
-                if dist < minDistPoint:
-                    minDistPoint = dist
-                    snapPoint = item
-            elif item.type == DsgSnapIndex.SnapSegment:
-                pProj = None
-                if not item.getProjection( pos, pProj):
-                    continue
-                dist = pProj.closestSegment(pos)
-                if dist < minDistSegment:
-                    minDistSegment = dist
-                    snapSegment = item
+        for cellList in items:
+            for cell in cellList:
+                for item in cell:
+                    if item.snapType == DsgSnapIndex.SnapPoint:
+                        segmentPt = None
+                        vertexAfter = None
+                        leftOfBool = None
+                        dist = item.getSnapPoint().closestSegment(pos, segmentPt, vertexAfter, leftOfBool)
+                        if dist < minDistPoint:
+                            minDistPoint = dist
+                            snapPoint = item
+                    elif item.snapType == DsgSnapIndex.SnapSegment:
+                        pProj = None
+                        if not item.getProjection( pos, pProj):
+                            continue
+                        dist = pProj.closestSegment(pos)
+                        if dist < minDistSegment:
+                            minDistSegment = dist
+                            snapSegment = item
 
         snapPoint = snapPoint if minDistPoint < tol * tol else None
         snapSegment = snapSegment if minDistSegment < tol * tol else None
