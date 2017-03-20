@@ -36,13 +36,13 @@ class GridRow:
         :return: Cell
         """
         if col < self.colStartIdx:
-            for i in range(col, self.colStartIdx):
-                self.cells.insert(0, Cell())
+            for i in range(col, self.colStartIdx-1):
+                self.cells.insert(0, [])
             self.colStartIdx = col
             return self.cells[0]
-        elif col >= self.colStartIdx + self.cells.size():
-            for i in range(self.colStartIdx + self.cells.size(), col):
-                self.cells.append(Cell())
+        elif col >= self.colStartIdx + len(self.cells):
+            for i in range(self.colStartIdx + len(self.cells), col):
+                self.cells.append([])
             return self.cells[-1]
         else:
             return self.cells[col - self.colStartIdx]

@@ -38,9 +38,7 @@ class DsgGeometrySnapper(QObject):
         super(DsgGeometrySnapper, self).__init__()        
         self.referenceLayer = referenceLayer
         # Build spatial index
-        req = QgsFeatureRequest()
-        req.setSubsetOfAttributes([])
-        self.index = QgsSpatialIndex(self.referenceLayer.getFeatures(req))        
+        self.index = QgsSpatialIndex(self.referenceLayer.getFeatures())        
         
     def polyLineSize(self, geom, iPart, iRing):   
         nVerts = geom.vertexCount( iPart, iRing)
@@ -51,13 +49,13 @@ class DsgGeometrySnapper(QObject):
             return nVerts - 1
         return nVerts
 
-    def snapFeatures(self, features, snapTolerance, mode):
+    def snapFeatures(self, features, snapTolerance, mode=DsgGeometrySnapper.PreferNodes):
         for feature in features:
             self.processFeature(feature, snapTolerance, mode)
         return features
 
     def processFeature(self, feature, snapTolerance, mode):
-        if not feature.geometry().isNull():
+        if feature.geometry():
             feature.setGeometry(self.snapGeometry(feature.geometry(), snapTolerance, mode))
     
     def projPointOnSegment(self, p, s1, s2):
@@ -76,7 +74,7 @@ class DsgGeometrySnapper(QObject):
         else:
             return QgsPointV2( s1.x() + ( s2.x() - s1.x() ) * t, s1.y() + ( s2.y() - s1.y() ) * t )
 
-    def snapGeometry(self, geometry, snapTolerance, mode):
+    def snapGeometry(self, geometry, snapTolerance, mode=DsgGeometrySnapper.PreferNodes):
         center = QgsPointV2(geometry.geometry())
         if not center:
             center = QgsPointV2(geometry.geometry().boundingBox().center())
@@ -87,17 +85,16 @@ class DsgGeometrySnapper(QObject):
         searchBounds.grow(snapTolerance)
         refFeatureIds = self.index.intersects(searchBounds)
 
-        refFeatureRequest = QgsFeatureRequest().setFilterFids( refFeatureIds ).setSubsetOfAttributes([])
+        refFeatureRequest = QgsFeatureRequest().setFilterFids(refFeatureIds)
         refFeature = None
-        refFeatureIt = self.referenceLayer.getFeatures( refFeatureRequest )
+        refFeatureIt = self.referenceLayer.getFeatures(refFeatureRequest)
 
         while refFeatureIt.nextFeature(refFeature):
             refGeometries.append(refFeature.geometry())
 
-        refSnapIndex = DsgSnapIndex(center, 10 * snapTolerance)
+        refSnapIndex = DsgSnapIndex(center, 10*snapTolerance)
         for geom in refGeometries:
-            refSnapIndex.addGeometry( geom.geometry() )
-
+            refSnapIndex.addGeometry(geom.geometry())
 
         # Snap geometries
         subjGeom = geometry.geometry().clone()
@@ -111,48 +108,48 @@ class DsgGeometrySnapper(QObject):
                 for iVert in range(self.polyLineSize(subjGeom, iPart, iRing)):
                     snapPoint = None
                     snapSegment = None
-                    vidx = QgsVertexId(iPart, iRing, iVert)
+                    vidx = QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex)
                     p = QgsPointV2(subjGeom.vertexAt(vidx))
                     if not refSnapIndex.getSnapItem(p, snapTolerance, snapPoint, snapSegment):
-                        subjPointFlags[iPart][iRing].append( self.Unsnapped )
+                        subjPointFlags[iPart][iRing].append( DsgGeometrySnapper.Unsnapped )
                     else:
-                        if mode == self.PreferNodes:
+                        if mode == DsgGeometrySnapper.PreferNodes:
                             # Prefer snapping to point
                             if snapPoint:
                                 subjGeom.moveVertex(vidx, snapPoint.getSnapPoint(p))
-                                subjPointFlags[iPart][iRing].append(self.SnappedToRefNode)
+                                subjPointFlags[iPart][iRing].append(DsgGeometrySnapper.SnappedToRefNode)
                             elif snapSegment:
                                 subjGeom.moveVertex( vidx, snapSegment.getSnapPoint(p))
-                                subjPointFlags[iPart][iRing].append(self.SnappedToRefSegment)
-                        elif mode == self.PreferClosest:
+                                subjPointFlags[iPart][iRing].append(DsgGeometrySnapper.SnappedToRefSegment)
+                        elif mode == DsgGeometrySnapper.PreferClosest:
                             nodeSnap = None
                             segmentSnap = None
                             distanceNode = sys.float_info.max
                             distanceSegment = sys.float_info.max
                             if snapPoint:
                                 nodeSnap = snapPoint.getSnapPoint(p)
-                                distanceNode = nodeSnap.distanceSquared(p)
+                                distanceNode = nodeSnap.closestSegment(p)
                             if snapSegment:
                                 segmentSnap = snapSegment.getSnapPoint(p)
-                                distanceSegment = segmentSnap.distanceSquared(p)
-                            if snapPoint and distanceNode < distanceSegment:
+                                distanceSegment = segmentSnap.closestSegment(p)
+                            if snapPoint and (distanceNode < distanceSegment):
                                 subjGeom.moveVertex( vidx, nodeSnap )
-                                subjPointFlags[iPart][iRing].append(self.SnappedToRefNode)
+                                subjPointFlags[iPart][iRing].append(DsgGeometrySnapper.SnappedToRefNode)
                             elif snapSegment:
-                                subjGeom.moveVertex( vidx, segmentSnap )
-                                subjPointFlags[iPart][iRing].append(self.SnappedToRefSegment)
+                                subjGeom.moveVertex(vidx, segmentSnap)
+                                subjPointFlags[iPart][iRing].append(DsgGeometrySnapper.SnappedToRefSegment)
 
         #nothing more to do for points
-        if QgsPointV2(subjGeom):
+        if isinstance(subjGeom, QgsPointV2):
             return QgsGeometry(subjGeom)
         
         # SnapIndex for subject feature
-        subjSnapIndex = DsgSnapIndex(center, 10 * snapTolerance)
+        subjSnapIndex = DsgSnapIndex(center, 10*snapTolerance)
         subjSnapIndex.addGeometry(subjGeom)
         
         origSubjGeom = subjGeom.clone()
-        origSubjSnapIndex =  DsgSnapIndex(center, 10 * snapTolerance)
-        origSubjSnapIndex.addGeometry(origSubjGeom.get())
+        origSubjSnapIndex = DsgSnapIndex(center, 10*snapTolerance)
+        origSubjSnapIndex.addGeometry(origSubjGeom)
         
         # Pass 2: add missing vertices to subject geometry
         for refGeom in refGeometries:
@@ -163,25 +160,29 @@ class DsgGeometrySnapper(QObject):
                     for iVert in range(self.polyLineSize(refGeom.geometry(), iPart, iRing)):
                         snapPoint = None
                         snapSegment = None
-                        point = refGeom.geometry().vertexAt(QgsVertexId(iPart, iRing, iVert))
+                        point = refGeom.geometry().vertexAt(QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex))
                         if subjSnapIndex.getSnapItem( point, snapTolerance, snapPoint, snapSegment):
                             # Snap to segment, unless a subject point was already snapped to the reference point
-                            if snapPoint and math.sqrt(snapPoint.getSnapPoint(point).closestSegment(point)) < 1E-16:
+                            if snapPoint and (snapPoint.getSnapPoint(point).closestSegment(point) < 1E-16):
                                 continue
                             elif snapSegment:
                                 # Look if there is a closer reference segment, if so, ignore this point
                                 pProj = snapSegment.getSnapPoint(point)
                                 closest = refSnapIndex.getClosestSnapToPoint(point, pProj)
-                            if math.sqrt(point.closestSegment(pProj))  > math.sqrt(closest.closestSegment(pProj)):
+                            if point.closestSegment(pProj)  > pProj.closestSegment(closest):
                                 continue
                             # If we are too far away from the original geometry, do nothing
-                            if not origSubjSnapIndex.getSnapItem( point, snapTolerance):
+                            if not origSubjSnapIndex.getSnapItem(point, snapTolerance):
                                 continue
                             idx = snapSegment.idxFrom
                             subjGeom.insertVertex(QgsVertexId(idx.vidx.part, idx.vidx.ring, idx.vidx.vertex + 1 ), point)
-                            subjPointFlags[idx.vidx.part][idx.vidx.ring].insert(idx.vidx.vertex + 1, self.SnappedToRefNode )
-                            subjSnapIndex = DsgSnapIndex(center, 10 * snapTolerance)
+                            subjPointFlags[idx.vidx.part][idx.vidx.ring].insert(idx.vidx.vertex + 1, DsgGeometrySnapper.SnappedToRefNode )
+                            subjSnapIndex = DsgSnapIndex(center, 10*snapTolerance)
                             subjSnapIndex.addGeometry(subjGeom)
+
+        subjSnapIndex = None
+        origSubjSnapIndex = None
+        origSubjGeom = None
 
         # Pass 3: remove superfluous vertices: all vertices which are snapped to a segment and not preceded or succeeded by an unsnapped vertex
         for iPart in range(len(subjGeom.partCount())):
@@ -195,10 +196,13 @@ class DsgGeometrySnapper(QObject):
                     pPrev = subjGeom.vertexAt(QgsVertexId( iPart, iRing, iPrev))
                     pNext = subjGeom.vertexAt(QgsVertexId( iPart, iRing, iNext))
 
-                    if subjPointFlags[iPart][iRing][iVert] == self.SnappedToRefSegment and subjPointFlags[iPart][iRing][iPrev] != self.Unsnapped and subjPointFlags[iPart][iRing][iNext] != self.Unsnapped and math.sqrt(self.projPointOnSegment( pMid, pPrev, pNext).closestSegment(pMid)) < 1E-12: #removed QgsGeometryUtils due to unexisting python binding
+                    if subjPointFlags[iPart][iRing][iVert] == DsgGeometrySnapper.SnappedToRefSegment \
+                     and subjPointFlags[iPart][iRing][iPrev] != DsgGeometrySnapper.Unsnapped \
+                     and subjPointFlags[iPart][iRing][iNext] != DsgGeometrySnapper.Unsnapped \
+                     and self.projPointOnSegment( pMid, pPrev, pNext).closestSegment(pMid) < 1E-12: #removed QgsGeometryUtils due to unexisting python binding
                         if (ringIsClosed and nVerts > 3 ) or ( not ringIsClosed and nVerts > 2 ):
                             subjGeom.deleteVertex(QgsVertexId(iPart, iRing, iVert))
-                            subjPointFlags[iPart][iRing].removeAt(iVert)
+                            del subjPointFlags[iPart][iRing][iVert]
                             iVert -= 1
                             nVerts -= 1
                         else:
@@ -207,9 +211,9 @@ class DsgGeometrySnapper(QObject):
         return QgsGeometry(subjGeom)
 
 if __name__ == '__main__':
-    rl = QgsVectorLayer("Polygon", "x", "memory");
+    rl = QgsVectorLayer("Polygon", "x", "memory")
     ff = QgsFeature()
-    refGeom = QgsGeometry.fromWkt("Polygon((0 0, 10 0, 10 10, 0 10, 0 0))");
+    refGeom = QgsGeometry.fromWkt("Polygon((0 0, 10 0, 10 10, 0 10, 0 0))")
     ff.setGeometry(refGeom)
     flist = []
     flist.append(ff)

@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-from qgis.core import QgsAbstractGeometryV2, QgsVertexId
+from qgis.core import QgsAbstractGeometryV2, QgsVertexId, QgsGeometry
 
 class CoordIdx:
     def __init__(self, _geom, _vidx):
@@ -35,3 +35,10 @@ class CoordIdx:
 
     def point(self):
         return self.geom.vertexAt(self.vidx)
+
+if __name__ == '__main__':
+    refGeom = QgsGeometry.fromWkt("Polygon((0 0, 10 0, 10 10, 0 10, 0 0))")
+    absGeomV2 = refGeom.geometry()
+    vidx = QgsVertexId(0, 0, 0, QgsVertexId.SegmentVertex)
+    coordIdx = CoordIdx(absGeomV2, vidx)
+    print 'saida', coordIdx.point()

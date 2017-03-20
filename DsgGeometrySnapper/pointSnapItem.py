@@ -21,16 +21,18 @@
  ***************************************************************************/
 """
 
-from qgis.core import QgsVertexId, QgsPointV2
+from qgis.core import QgsVertexId, QgsPointV2, QgsGeometry
 
 from DsgTools.DsgGeometrySnapper.snapItem import SnapItem
+from DsgTools.DsgGeometrySnapper.dsgSnapIndex import DsgSnapIndex
+from DsgTools.DsgGeometrySnapper.coordIdx import CoordIdx
 
 class PointSnapItem(SnapItem):
-    def __init__(self, _idx, type):
+    def __init__(self, _idx, type=DsgSnapIndex.SnapPoint):
         """
         Constructor
         :param _idx: CoordIdx
-        :param type: SnapPoint, SnapSegment
+        :param type: SnapPoint
         """
         super(PointSnapItem, self).__init__(type)
         self.idx = _idx
@@ -41,19 +43,4 @@ class PointSnapItem(SnapItem):
         :return:
         """
         return self.idx.point()
-
-    def projPointOnSegment(self, p, s1, s2):
-        """
-        p: QgsPointV2
-        s1: QgsPointV2 of segment
-        s2: QgsPointV2 of segment
-        """
-        nx = s2.y() - s1.y()
-        ny = -( s2.x() - s1.x() )
-        t = ( p.x() * ny - p.y() * nx - s1.x() * ny + s1.y() * nx ) / ( ( s2.x() - s1.x() ) * ny - ( s2.y() - s1.y() ) * nx )
-        if t < 0.:
-            return s1
-        elif t > 1.:
-            return s2
-        else:
-            return QgsPointV2( s1.x() + ( s2.x() - s1.x() ) * t, s1.y() + ( s2.y() - s1.y() ) * t )
+        

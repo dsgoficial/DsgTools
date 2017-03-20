@@ -49,9 +49,10 @@ class DsgSnapIndex:
     def __del__(self):
         """
         Destructor
-        :return:
+        :return: list of CoordIdx
         """
-        del self.coordIdxs
+        for coordIdx in self.coordIdxs:
+            del coordIdx
 
     def getCell(self, col, row):
         """
@@ -73,13 +74,13 @@ class DsgSnapIndex:
         :return:
         """
         if row < self.rowsStartIdx:
-            for i in range(row, self.rowsStartIdx):
+            for i in range(row, self.rowsStartIdx-1):
                 self.gridRows.insert(0, GridRow())
             self.rowsStartIdx = row
             return self.gridRows[0].getCreateCell(col)
         elif row >= self.rowsStartIdx + len(self.gridRows):
             for  i in range(self.rowsStartIdx + len(self.gridRows), row):
-                self.gridRows.insert(0, GridRow())
+                self.gridRows.append(GridRow())
             return self.gridRows[-1].getCreateCell(col)
         else:
             return self.gridRows[row - self.rowsStartIdx].getCreateCell(col)
@@ -128,7 +129,7 @@ class DsgSnapIndex:
                     nVerts -= 1
                 elif isinstance(geom, QgsCircularStringV2):
                     nVerts -= 1
-                for iVert in range(nVerts):
+                for iVert in range(nVerts-1):
                     idx = CoordIdx( geom, QgsVertexId( iPart, iRing, iVert ) )
                     idx1 = CoordIdx( geom, QgsVertexId( iPart, iRing, iVert + 1 ) )
                     self.coordIdxs.append(idx)
@@ -136,7 +137,6 @@ class DsgSnapIndex:
                     self.addPoint(idx)
                     if iVert < nVerts - 1:
                         self.addSegment(idx, idx1)
-
 
     def getClosestSnapToPoint(self, p, q):
         """
@@ -163,19 +163,19 @@ class DsgSnapIndex:
             if not cell:
                 continue
             for item in cell:
-                if item.type == self.SnapSegment:
+                if item.type == DsgSnapIndex.SnapSegment:
                     inter = None
-                if isinstance(item.getIntersection(p, p2, inter), SegmentSnapItem):
-                    dist = math.sqrt(q.closestSegment(inter))
+                if item.getIntersection(p, p2, inter):
+                    dist = q.closestSegment(inter)
                     if dist < dMin:
                         dMin = dist
                         pMin = inter
         return pMin
 
-    def getSnapItem(self, pos, tol, pSnapPoint, pSnapSegment):
+    def getSnapItem(self, pos, tol, pSnapPoint=None, pSnapSegment=None):
         """
         Gets snap item
-        :param pos: int
+        :param pos: QgsPointV2
         :param tol: double
         :param pSnapPoint: PointSnapItem
         :param pSnapSegment: SegmentSnapItem
@@ -199,19 +199,19 @@ class DsgSnapIndex:
         snapPoint = None
 
         for item in items:
-            if item.type == self.SnapPoint:
-                dist = math.sqrt(item.getSnapPoint(pos).closestSegment(pos))
+            if item.type == DsgSnapIndex.SnapPoint:
+                dist = item.getSnapPoint(pos).closestSegment(pos)
                 if dist < minDistPoint:
                     minDistPoint = dist
-                    snapPoint = PointSnapItem(item)
-            elif item.type == self.SnapSegment:
+                    snapPoint = item
+            elif item.type == DsgSnapIndex.SnapSegment:
                 pProj = None
-                if not SegmentSnapItem(item).getProjection( pos, pProj):
+                if not item.getProjection( pos, pProj):
                     continue
-                dist = math.sqrt(pProj.closestSegment(pos))
+                dist = pProj.closestSegment(pos)
                 if dist < minDistSegment:
                     minDistSegment = dist
-                    snapSegment = SegmentSnapItem(item)
+                    snapSegment = item
 
         snapPoint = snapPoint if minDistPoint < tol * tol else None
         snapSegment = snapSegment if minDistSegment < tol * tol else None
@@ -219,5 +219,5 @@ class DsgSnapIndex:
             pSnapPoint = snapPoint
         if pSnapSegment:
             pSnapSegment = snapSegment
-        return SnapItem(snapPoint) if minDistPoint < minDistSegment else SnapItem(snapSegment)
+        return snapPoint if minDistPoint < minDistSegment else snapSegment
 
