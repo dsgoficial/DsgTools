@@ -50,13 +50,15 @@ class DsgGeometrySnapper:
         return nVerts
 
     def snapFeatures(self, features, snapTolerance, mode=PreferNodes):
+        returnList = []
         for feature in features:
-            self.processFeature(feature, snapTolerance, mode)
-        return features
+            returnList.append(self.processFeature(feature, snapTolerance, mode))
+        return returnList
 
     def processFeature(self, feature, snapTolerance, mode):
         if feature.geometry():
-            feature.setGeometry(self.snapGeometry(feature.geometry(), snapTolerance, mode))
+            # feature.setGeometry(self.snapGeometry(feature.geometry(), snapTolerance, mode))
+            return self.snapGeometry(feature.geometry(), snapTolerance, mode)
     
     def projPointOnSegment(self, p, s1, s2):
         """
@@ -224,6 +226,5 @@ class DsgGeometrySnapper:
                             # Don't delete vertices if this would result in a degenerate geometry
                             break
                     iVert += 1
-
         return QgsGeometry(subjGeom)
 

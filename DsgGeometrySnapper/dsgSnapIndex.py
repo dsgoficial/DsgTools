@@ -196,7 +196,7 @@ class DsgSnapIndex:
 
         items = []
         for row in range(rowStart, rowEnd+1):
-            items.append(self.gridRows[row - self.rowsStartIdx].getSnapItems(colStart, colEnd))
+            items.append(self.gridRows[row - self.rowsStartIdx].getSnapItems(colStart, colEnd))    
 
         minDistSegment = sys.float_info.max
         minDistPoint = sys.float_info.max
