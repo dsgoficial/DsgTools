@@ -68,7 +68,7 @@ class DsgGeometrySnapper:
         ny = -( s2.x() - s1.x() )
         a = ( p.x() * ny - p.y() * nx - s1.x() * ny + s1.y() * nx )
         b = ( ( s2.x() - s1.x() ) * ny - ( s2.y() - s1.y() ) * nx )
-        if b == 0.:
+        if s1 == s2:
             return s1
         t = a / b
         if t < 0.:
@@ -108,6 +108,7 @@ class DsgGeometrySnapper:
                 for iVert in range(self.polyLineSize(subjGeom, iPart, iRing)):
                     vidx = QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex)
                     p = QgsPointV2(subjGeom.vertexAt(vidx))
+                    pF = QgsPoint(p.toQPointF())
                     item = refSnapIndex.getSnapItem(p, snapTolerance)
                     if not item:
                         subjPointFlags[iPart][iRing].append(DsgGeometrySnapper.Unsnapped )
@@ -127,14 +128,16 @@ class DsgGeometrySnapper:
                             distanceSegment = sys.float_info.max
                             if isinstance(item, PointSnapItem):
                                 nodeSnap = item.getSnapPoint(p)
-                                distanceNode = nodeSnap.closestSegment(p)
+                                nodeSnapF = QgsPoint(nodeSnap.toQPointF())
+                                distanceNode = nodeSnapF.sqrDist(pF)
                             if isinstance(item, SegmentSnapItem):
                                 segmentSnap = item.getSnapPoint(p)
-                                distanceSegment = segmentSnap.closestSegment(p)
-                            if snapPoint and (distanceNode < distanceSegment):
+                                segmentSnapF = QgsPoint(segmentSnap.toQPointF())
+                                distanceSegment = segmentSnapF.sqrDist(pF)
+                            if isinstance(item, PointSnapItem) and (distanceNode < distanceSegment):
                                 subjGeom.moveVertex( vidx, nodeSnap )
                                 subjPointFlags[iPart][iRing].append(DsgGeometrySnapper.SnappedToRefNode)
-                            elif snapSegment:
+                            elif isinstance(item, SegmentSnapItem):
                                 subjGeom.moveVertex(vidx, segmentSnap)
                                 subjPointFlags[iPart][iRing].append(DsgGeometrySnapper.SnappedToRefSegment)
 
@@ -160,7 +163,7 @@ class DsgGeometrySnapper:
                         point = refGeom.geometry().vertexAt(QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex))
                         # QgsPoint used to calculate squared distance
                         pointF = QgsPoint(point.toQPointF())
-                        item = refSnapIndex.getSnapItem(p, snapTolerance)
+                        item = subjSnapIndex.getSnapItem(p, snapTolerance)
                         if item:
                             # Snap to segment, unless a subject point was already snapped to the reference point
                             if isinstance(item, PointSnapItem) and (QgsPoint(item.getSnapPoint(point).toQPointF()).sqrDist(pointF) < 1E-16):

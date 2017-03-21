@@ -59,10 +59,10 @@ class Raytracer:
             self.error -= (y0 - int(math.floor(y0))) * self.dx
 
     def curCol(self):
-        return self.x
+        return int(self.x)
 
     def curRow(self):
-        return self.y
+        return int(self.y)
 
     def next(self):
         if self.error > 0:

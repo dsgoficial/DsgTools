@@ -114,7 +114,7 @@ class DsgSnapIndex:
         rt = Raytracer(x0, y0, x1, y1)
         while rt.isValid():
             rt.next()
-            self.getCreateCell(rt.curCol(), rt.curRow()).append(SegmentSnapItem(idxFrom, idxTo))
+            self.getCreateCell(int(rt.curCol()), int(rt.curRow())).append(SegmentSnapItem(idxFrom, idxTo))
 
     def addGeometry(self, geom):
         """
@@ -169,7 +169,7 @@ class DsgSnapIndex:
                         if inter:
                             qF = QgsPoint(q.toQPointF())
                             interF = QgsPoint(inter.toQPointF())
-                            dist = qF.sqrDist(inter)
+                            dist = qF.sqrDist(interF)
                             if dist < dMin:
                                 dMin = dist
                                 pMin = inter
