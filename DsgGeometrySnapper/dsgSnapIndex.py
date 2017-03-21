@@ -22,7 +22,7 @@
 """
 import sys, math
 
-from qgis.core import QgsAbstractGeometryV2, QgsVertexId, QgsPointV2, QgsVector, QgsCurvePolygonV2, QgsCircularStringV2
+from qgis.core import QgsAbstractGeometryV2, QgsVertexId, QgsPoint, QgsPointV2, QgsVector, QgsCurvePolygonV2, QgsCircularStringV2
 
 from DsgTools.DsgGeometrySnapper.raytracer import Raytracer
 from DsgTools.DsgGeometrySnapper.coordIdx import CoordIdx
@@ -172,7 +172,7 @@ class DsgSnapIndex:
                         pMin = inter
         return pMin
 
-    def getSnapItem(self, pos, tol, pSnapPoint=None, pSnapSegment=None):
+    def getSnapItem(self, pos, tol):
         """
         Gets snap item
         :param pos: QgsPointV2
@@ -197,14 +197,13 @@ class DsgSnapIndex:
         minDistPoint = sys.float_info.max
         snapSegment = None
         snapPoint = None
+        
         for cellList in items:
             for cell in cellList:
                 for item in cell:
                     if item.snapType == DsgSnapIndex.SnapPoint:
-                        segmentPt = None
-                        vertexAfter = None
-                        leftOfBool = None
-                        dist = item.getSnapPoint().closestSegment(pos, segmentPt, vertexAfter, leftOfBool)
+                        posF = QgsPoint(pos.toQPointF())
+                        dist = QgsPoint(item.getSnapPoint(pos).toQPointF()).sqrDist(posF)
                         if dist < minDistPoint:
                             minDistPoint = dist
                             snapPoint = item
@@ -219,9 +218,5 @@ class DsgSnapIndex:
 
         snapPoint = snapPoint if minDistPoint < tol * tol else None
         snapSegment = snapSegment if minDistSegment < tol * tol else None
-        if pSnapPoint:
-            pSnapPoint = snapPoint
-        if pSnapSegment:
-            pSnapSegment = snapSegment
         return snapPoint if minDistPoint < minDistSegment else snapSegment
 

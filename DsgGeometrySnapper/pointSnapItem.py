@@ -35,7 +35,7 @@ class PointSnapItem(SnapItem):
         super(PointSnapItem, self).__init__(0)
         self.idx = _idx
 
-    def getSnapPoint(self):
+    def getSnapPoint(self, p):
         """
         Get snap point
         :return:

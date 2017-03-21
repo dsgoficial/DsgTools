@@ -28,7 +28,7 @@ class SnapItem(object):
         """
         self.snapType = snapType
 
-    def getSnapPoint(self):
+    def getSnapPoint(self, p):
         """
         Virtual method, must be reimplemented in PointSnapItem and in SegmentSnapItem
         :return:

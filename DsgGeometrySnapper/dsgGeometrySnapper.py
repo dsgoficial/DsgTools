@@ -28,6 +28,8 @@ from qgis.core import QgsFeatureRequest, QgsSpatialIndex, QgsGeometry, QgsPointV
 , QgsFeature, QgsVertexId, QgsCurvePolygonV2, QgsVectorLayer, QgsMultiPolygonV2, QgsPolygonV2
 
 from DsgTools.DsgGeometrySnapper.dsgSnapIndex import DsgSnapIndex
+from DsgTools.DsgGeometrySnapper.pointSnapItem import PointSnapItem
+from DsgTools.DsgGeometrySnapper.segmentSnapItem import SegmentSnapItem
 
 class DsgGeometrySnapper:
     SnappedToRefNode, SnappedToRefSegment, Unsnapped = range(3)
@@ -91,7 +93,7 @@ class DsgGeometrySnapper:
             refSnapIndex.addGeometry(geom.geometry())
 
         # Snap geometries
-        subjGeom = geometry.geometry().clone()
+        subjGeom = geometry.clone()
         subjPointFlags = [[[]]]
 
         # Pass 1: snap vertices of subject geometry to reference vertices
@@ -100,31 +102,30 @@ class DsgGeometrySnapper:
             for iRing in range(subjGeom.ringCount(iPart)):
                 subjPointFlags[iPart].append([])
                 for iVert in range(self.polyLineSize(subjGeom, iPart, iRing)):
-                    snapPoint = None
-                    snapSegment = None
                     vidx = QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex)
                     p = QgsPointV2(subjGeom.vertexAt(vidx))
-                    if not refSnapIndex.getSnapItem(p, snapTolerance, snapPoint, snapSegment):
+                    item = refSnapIndex.getSnapItem(p, snapTolerance)
+                    if not item:
                         subjPointFlags[iPart][iRing].append(DsgGeometrySnapper.Unsnapped )
                     else:
                         if mode == DsgGeometrySnapper.PreferNodes:
                             # Prefer snapping to point
-                            if snapPoint:
-                                subjGeom.moveVertex(vidx, snapPoint.getSnapPoint(p))
+                            if isinstance(item, PointSnapItem):
+                                subjGeom.moveVertex(vidx, item.getSnapPoint(p))
                                 subjPointFlags[iPart][iRing].append(DsgGeometrySnapper.SnappedToRefNode)
-                            elif snapSegment:
-                                subjGeom.moveVertex( vidx, snapSegment.getSnapPoint(p))
+                            elif isinstance(item, SegmentSnapItem):
+                                subjGeom.moveVertex( vidx, item.getSnapPoint(p))
                                 subjPointFlags[iPart][iRing].append(DsgGeometrySnapper.SnappedToRefSegment)
                         elif mode == DsgGeometrySnapper.PreferClosest:
                             nodeSnap = None
                             segmentSnap = None
                             distanceNode = sys.float_info.max
                             distanceSegment = sys.float_info.max
-                            if snapPoint:
-                                nodeSnap = snapPoint.getSnapPoint(p)
+                            if isinstance(item, PointSnapItem):
+                                nodeSnap = item.getSnapPoint(p)
                                 distanceNode = nodeSnap.closestSegment(p)
-                            if snapSegment:
-                                segmentSnap = snapSegment.getSnapPoint(p)
+                            if isinstance(item, SegmentSnapItem):
+                                segmentSnap = item.getSnapPoint(p)
                                 distanceSegment = segmentSnap.closestSegment(p)
                             if snapPoint and (distanceNode < distanceSegment):
                                 subjGeom.moveVertex( vidx, nodeSnap )

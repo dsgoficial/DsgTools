@@ -640,6 +640,23 @@ class DsgTools:
         """
         dlg = AboutDialog()
         dlg.exec_()
+        
+        from DsgTools.DsgGeometrySnapper.dsgGeometrySnapper import DsgGeometrySnapper
+        from qgis.core import QgsVectorLayer, QgsFeature, QgsGeometry
+        
+        rl = QgsVectorLayer("Point", "x", "memory")
+        ff = QgsFeature()
+        refGeom = QgsGeometry.fromWkt("Point(0 0)")
+        ff.setGeometry(refGeom)
+        flist = []
+        flist.append(ff)
+        rl.dataProvider().addFeatures(flist)
+        
+        polygonGeom = QgsGeometry.fromWkt("Point(0.1 0.1)");
+        snapper = DsgGeometrySnapper(rl)
+        result = snapper.snapGeometry(polygonGeom.geometry(), 1)
+        print 'saida', result.exportToWkt()
+        print 'esperado', "Point(0 0)"        
 
     def showHelp(self):
         """
