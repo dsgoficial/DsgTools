@@ -35,7 +35,7 @@ class SegmentSnapItem(SnapItem):
         """
         super(SegmentSnapItem, self).__init__(1)
         self.idxFrom = _idxFrom
-        self.idxto = _idxTo
+        self.idxTo = _idxTo
 
     def getSnapPoint(self, p):
         """
@@ -44,7 +44,7 @@ class SegmentSnapItem(SnapItem):
         """
         return self.projPointOnSegment(p, self.idxFrom.point(), self.idxTo.point())
 
-    def getIntersection(self, p1, p2, inter):
+    def getIntersection(self, p1, p2):
         """
         Get intersection on segment
         :param p1: QgsPointV2
@@ -60,7 +60,7 @@ class SegmentSnapItem(SnapItem):
         wl = w.length()
 
         if self.isclose(vl, 0.) or self.isclose(wl, 0.):
-            return False
+            return None
 
         v = v / vl
         w = w / wl
@@ -68,7 +68,7 @@ class SegmentSnapItem(SnapItem):
         d = v.y() * w.x() - v.x() * w.y()
 
         if d == 0:
-            return False
+            return None
 
         dx = q1.x() - p1.x()
         dy = q1.y() - p1.y()
@@ -78,13 +78,13 @@ class SegmentSnapItem(SnapItem):
 
         lambdav = QgsVector(inter.x() - p1.x(), inter.y() - p1.y()) * v
         if lambdav < 0. + 1E-8 or lambdav > vl - 1E-8:
-            return False
+            return None
 
         lambdaw = QgsVector(inter.x() - q1.x(), inter.y() - q1.y()) * w
         if lambdaw < 0. + 1E-8 or lambdaw >= wl - 1E-8:
-            return False
+            return None
 
-        return True
+        return inter
 
     def isclose(self, a, b, rel_tol=1e-09, abs_tol=0.0):
         """
@@ -97,7 +97,7 @@ class SegmentSnapItem(SnapItem):
         """
         return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
-    def getProjection(self, p, pProj):
+    def getProjection(self, p):
         """
         Get the p projection on segment
         :param p: QgsPointV2
@@ -113,7 +113,7 @@ class SegmentSnapItem(SnapItem):
             return False
 
         pProj = QgsPointV2(s1.x() + (s2.x() - s1.x()) * t, s1.y() + (s2.y() - s1.y()) * t)
-        return True
+        return pProj
 
     def projPointOnSegment(self, p, s1, s2):
         """

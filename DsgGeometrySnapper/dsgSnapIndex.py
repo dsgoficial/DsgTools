@@ -157,19 +157,22 @@ class DsgSnapIndex:
         rt = Raytracer(x0, y0, x1, y1)
         dMin = sys.float_info.max
         pMin = p
-        while rt.isValid:
+        while rt.isValid():
             rt.next()
-            cell = self.getCell(rt.curCol(), rt.curRow())
+            cell = self.getCell(int(rt.curCol()), int(rt.curRow()))
             if not cell:
                 continue
             for item in cell:
                 if item.snapType == DsgSnapIndex.SnapSegment:
-                    inter = None
-                if item.getIntersection(p, p2, inter):
-                    dist = q.closestSegment(inter)
-                    if dist < dMin:
-                        dMin = dist
-                        pMin = inter
+                    if isinstance(item, SegmentSnapItem):
+                        inter = item.getIntersection(p, p2)
+                        if inter:
+                            qF = QgsPoint(q.toQPointF())
+                            interF = QgsPoint(inter.toQPointF())
+                            dist = qF.sqrDist(inter)
+                            if dist < dMin:
+                                dMin = dist
+                                pMin = inter
         return pMin
 
     def getSnapItem(self, pos, tol):
@@ -198,20 +201,22 @@ class DsgSnapIndex:
         snapSegment = None
         snapPoint = None
         
+        # QgsPoint used to calculate squared distance
+        posF = QgsPoint(pos.toQPointF())
         for cellList in items:
             for cell in cellList:
                 for item in cell:
                     if item.snapType == DsgSnapIndex.SnapPoint:
-                        posF = QgsPoint(pos.toQPointF())
                         dist = QgsPoint(item.getSnapPoint(pos).toQPointF()).sqrDist(posF)
                         if dist < minDistPoint:
                             minDistPoint = dist
                             snapPoint = item
                     elif item.snapType == DsgSnapIndex.SnapSegment:
-                        pProj = None
-                        if not item.getProjection( pos, pProj):
+                        pProj = item.getProjection(pos)
+                        if not pProj:
                             continue
-                        dist = pProj.closestSegment(pos)
+                        pProjF = QgsPoint(pProj.toQPointF())
+                        dist = pProjF.sqrDist(posF)
                         if dist < minDistSegment:
                             minDistSegment = dist
                             snapSegment = item
