@@ -223,7 +223,8 @@ class DsgSnapIndex:
                             minDistSegment = dist
                             snapSegment = item
 
-        snapPoint = snapPoint if minDistPoint <= tol * tol else None
-        snapSegment = snapSegment if minDistSegment <= tol * tol else None
-        return snapPoint if minDistPoint < minDistSegment else snapSegment
+        snapPoint = snapPoint if minDistPoint < tol * tol else None
+        snapSegment = snapSegment if minDistSegment < tol * tol else None
+        return snapPoint, snapSegment
+
 

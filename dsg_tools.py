@@ -644,42 +644,43 @@ class DsgTools:
         from DsgTools.DsgGeometrySnapper.dsgGeometrySnapper import DsgGeometrySnapper
         from qgis.core import QgsVectorLayer, QgsFeature, QgsGeometry
         
-        # rl = QgsVectorLayer("Polygon", "x", "memory")
-        # ff = QgsFeature()
-        # refGeom = QgsGeometry.fromWkt("Polygon((0 0, 10 0, 10 10, 0 10, 0 0))")
-        # ff.setGeometry(refGeom)
-        # flist = []
-        # flist.append(ff)
-        # rl.dataProvider().addFeatures(flist)
-        # snapper = DsgGeometrySnapper(rl)
+        rl = QgsVectorLayer("Polygon", "x", "memory")
+        ff = QgsFeature()
+        refGeom = QgsGeometry.fromWkt("Polygon((0 0, 10 0, 10 10, 0 10, 0 0))")
+        ff.setGeometry(refGeom)
+        flist = []
+        flist.append(ff)
+        rl.dataProvider().addFeatures(flist)
+        snapper = DsgGeometrySnapper(rl)
         
-        # polygonGeom = QgsGeometry.fromWkt("Polygon((0.1 -0.1, 10.1 0, 9.9 10.1, 0 10, 0.1 -0.1))" )
-        # result = snapper.snapGeometry( polygonGeom, 1)
-        # print 'saida', result.exportToWkt()
-        # print 'esperado', "Polygon ((0 0, 10 0, 10 10, 0 10, 0 0))"
-        # print
+        polygonGeom = QgsGeometry.fromWkt("Polygon((0.1 -0.1, 10.1 0, 9.9 10.1, 0 10, 0.1 -0.1))" )
+        result = snapper.snapGeometry( polygonGeom, 1)
+        print 'saida', result.exportToWkt()
+        print 'esperado', "Polygon ((0 0, 10 0, 10 10, 0 10, 0 0))"
+        print
 
-        # polygonGeom2 = QgsGeometry.fromWkt(  "Polygon((0.1 -0.1, 10.1 0, 0 10, 0.1 -0.1))" )
-        # result = snapper.snapGeometry( polygonGeom2, 1)
-        # print 'saida', result.exportToWkt()
-        # print 'esperado',  "Polygon ((0 0, 10 0, 0 10, 0 0))"
-        # print
+        polygonGeom2 = QgsGeometry.fromWkt(  "Polygon((0.1 -0.1, 10.1 0, 0 10, 0.1 -0.1))" )
+        result = snapper.snapGeometry( polygonGeom2, 1)
+        print 'saida', result.exportToWkt()
+        print 'esperado',  "Polygon ((0 0, 10 0, 0 10, 0 0))"
+        print
 
-        # # insert new vertex
-        # polygonGeom3 = QgsGeometry.fromWkt(  "Polygon((0.1 -0.1, 20.5 0.5, 20 10, 0 9.9, 0.1 -0.1))" )
-        # result = snapper.snapGeometry( polygonGeom3, 1)
-        # print 'insert new vertex'
-        # print 'saida', result.exportToWkt()
-        # print 'esperado',  "Polygon ((0 0, 10 0, 20.5 0.5, 20 10, 10 10, 0 10, 0 0))"
-        # print
+        # insert new vertex
+        polygonGeom3 = QgsGeometry.fromWkt(  "Polygon((0.1 -0.1, 20.5 0.5, 20 10, 0 9.9, 0.1 -0.1))" )
+        result = snapper.snapGeometry( polygonGeom3, 1)
+        print 'insert new vertex'
+        print 'input', "Polygon((0.1 -0.1, 20.5 0.5, 20 10, 0 9.9, 0.1 -0.1))"
+        print 'saida', result.exportToWkt()
+        print 'esperado', "Polygon ((0 0, 10 0, 20.5 0.5, 20 10, 10 10, 0 10, 0 0))"
+        print
 
-        # # remove vertex
-        # polygonGeom4 = QgsGeometry.fromWkt(  "Polygon((0.1 -0.1, 10.1 0, 9.9 10.1, 5 10, 0 10, 0.1 -0.1))" )
-        # result = snapper.snapGeometry( polygonGeom4, 1)
-        # print 'remove vertex'
-        # print 'saida', result.exportToWkt()
-        # print 'esperado', "Polygon ((0 0, 10 0, 10 10, 0 10, 0 0))"
-        # print
+        # remove vertex
+        polygonGeom4 = QgsGeometry.fromWkt(  "Polygon((0.1 -0.1, 10.1 0, 9.9 10.1, 5 10, 0 10, 0.1 -0.1))" )
+        result = snapper.snapGeometry( polygonGeom4, 1)
+        print 'remove vertex'
+        print 'saida', result.exportToWkt()
+        print 'esperado', "Polygon ((0 0, 10 0, 10 10, 0 10, 0 0))"
+        print
 
         rl = QgsVectorLayer("Linestring", "x", "memory")
         ff = QgsFeature()
@@ -692,7 +693,7 @@ class DsgTools:
 
         # add vertex
         linestring = QgsGeometry.fromWkt( "Linestring(0 2, 20 2)" )
-        result = snapper.snapGeometry( linestring, 2)
+        result = snapper.snapGeometry( linestring, 2.1)
         print 'add vertex'
         print 'saida', result.exportToWkt()
         print 'esperado', "Linestring(0 0, 10 1, 20 0)"
