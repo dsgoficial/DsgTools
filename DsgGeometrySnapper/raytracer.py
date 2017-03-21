@@ -82,8 +82,3 @@ class Raytracer:
     def isValid(self):
         return self.n > 0
 
-if __name__ == '__main__':
-    rt = Raytracer(0, 0, 10, 10)
-    while rt.isValid():
-        rt.next()
-        print rt.n, rt.error, rt.x, rt.y

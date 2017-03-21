@@ -97,7 +97,7 @@ class DsgGeometrySnapper:
             refSnapIndex.addGeometry(geom.geometry())
 
         # Snap geometries
-        subjGeom = geometry.clone()
+        subjGeom = geometry.geometry().clone()
         subjPointFlags = [[[]]]
 
         # Pass 1: snap vertices of subject geometry to reference vertices
@@ -156,9 +156,7 @@ class DsgGeometrySnapper:
         # Pass 2: add missing vertices to subject geometry
         for refGeom in refGeometries:
             for iPart in range(refGeom.geometry().partCount()):
-                subjPointFlags.append([[]])
                 for iRing in range(refGeom.geometry().ringCount(iPart)):
-                    subjPointFlags[iPart].append([])
                     for iVert in range(self.polyLineSize(refGeom.geometry(), iPart, iRing)):
                         point = refGeom.geometry().vertexAt(QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex))
                         # QgsPoint used to calculate squared distance
@@ -174,7 +172,7 @@ class DsgGeometrySnapper:
                                 pProjF = QgsPoint(pProj.toQPointF())
                                 closest = refSnapIndex.getClosestSnapToPoint(point, pProj)
                                 closestF = QgsPoint(closest.toQPointF())
-                                if pProjF.sqrDist(pointF)  > pProjF.sqrDist(closestF):
+                                if pProjF.sqrDist(pointF)  >= pProjF.sqrDist(closestF):
                                     continue
                                 # If we are too far away from the original geometry, do nothing
                                 if not origSubjSnapIndex.getSnapItem(point, snapTolerance):
@@ -194,41 +192,34 @@ class DsgGeometrySnapper:
             for iRing in range(subjGeom.ringCount(iPart)):
                 ringIsClosed = subjGeom.vertexAt(QgsVertexId(iPart, iRing, 0, QgsVertexId.SegmentVertex)) == subjGeom.vertexAt(QgsVertexId(iPart, iRing, subjGeom.vertexCount( iPart, iRing ) - 1, QgsVertexId.SegmentVertex))
                 nVerts = self.polyLineSize(subjGeom, iPart, iRing)
-                for iVert in range(nVerts):
+                while iVert < nVerts:
                     iPrev = ( iVert - 1 + nVerts ) % nVerts
                     iNext = ( iVert + 1 ) % nVerts
                     pMid = subjGeom.vertexAt(QgsVertexId( iPart, iRing, iVert, QgsVertexId.SegmentVertex))
                     pPrev = subjGeom.vertexAt(QgsVertexId( iPart, iRing, iPrev, QgsVertexId.SegmentVertex))
                     pNext = subjGeom.vertexAt(QgsVertexId( iPart, iRing, iNext, QgsVertexId.SegmentVertex))
+                    
+                    pPrevF = QgsPoint(pPrev.toQPointF())
+                    pMidF = QgsPoint(pMid.toQPointF())
+                    pNextF = QgsPoint(pNext.toQPointF())
+
+                    pointOnSeg = self.projPointOnSegment( pMid, pPrev, pNext)
+                    pointOnSegF = QgsPoint(pointOnSeg.toQPointF())
+                    pMidF = QgsPoint(pMid.toQPointF())
+                    dist = pointOnSegF.sqrDist(pMidF)
 
                     if subjPointFlags[iPart][iRing][iVert] == DsgGeometrySnapper.SnappedToRefSegment \
                      and subjPointFlags[iPart][iRing][iPrev] != DsgGeometrySnapper.Unsnapped \
-                     and subjPointFlags[iPart][iRing][iNext] != DsgGeometrySnapper.Unsnapped:
-                        pointOnSeg = self.projPointOnSegment( pMid, pPrev, pNext)
-                        pointOnSegF = QgsPoint(pointOnSeg.toQPointF())
-                        pMidF = QgsPoint(pMid.toQPointF())
-                        if pointOnSegF.sqrDist(pMidF) < 1E-12:
-                            if (ringIsClosed and nVerts > 3 ) or ( not ringIsClosed and nVerts > 2 ):
-                                subjGeom.deleteVertex(QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex))
-                                del subjPointFlags[iPart][iRing][iVert]
-                                iVert -= 1
-                                nVerts -= 1
-                            else:
-                                # Don't delete vertices if this would result in a degenerate geometry
-                                break
+                     and subjPointFlags[iPart][iRing][iNext] != DsgGeometrySnapper.Unsnapped \
+                     and dist < 1E-12:
+                        if (ringIsClosed and nVerts > 3 ) or ( not ringIsClosed and nVerts > 2 ):
+                            subjGeom.deleteVertex(QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex))
+                            del subjPointFlags[iPart][iRing][iVert]
+                            iVert -= 1
+                            nVerts -= 1
+                        else:
+                            # Don't delete vertices if this would result in a degenerate geometry
+                            break
+                    iVert += 1
         return QgsGeometry(subjGeom)
 
-if __name__ == '__main__':
-    rl = QgsVectorLayer("Polygon", "x", "memory")
-    ff = QgsFeature()
-    refGeom = QgsGeometry.fromWkt("Point(0 0)")
-    ff.setGeometry(refGeom)
-    flist = []
-    flist.append(ff)
-    rl.dataProvider().addFeatures(flist)
-
-    polygonGeom = QgsGeometry.fromWkt("Point(0.1 0.1)");
-    snapper = DsgGeometrySnapper(rl)
-    result = snapper.snapGeometry(polygonGeom.geometry(), 1)
-    print 'saida', result.exportToWkt()
-    print 'esperado', "Point(0 0)"
