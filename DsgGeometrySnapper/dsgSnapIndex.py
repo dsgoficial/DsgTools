@@ -22,7 +22,7 @@
 """
 import sys, math
 
-from qgis.core import QgsAbstractGeometryV2, QgsVertexId, QgsPoint, QgsPointV2, QgsVector, QgsCurvePolygonV2, QgsCircularStringV2
+from qgis.core import QgsAbstractGeometryV2, QgsVertexId, QgsPoint, QgsPointV2, QgsVector, QgsCurvePolygonV2, QgsCircularStringV2, QgsMultiPolygonV2, QgsPolygonV2
 
 from DsgTools.DsgGeometrySnapper.raytracer import Raytracer
 from DsgTools.DsgGeometrySnapper.coordIdx import CoordIdx
@@ -125,7 +125,9 @@ class DsgSnapIndex:
         for iPart in range(geom.partCount()):
             for iRing in range(geom.ringCount(iPart)):
                 nVerts = geom.vertexCount(iPart, iRing)
-                if isinstance(geom, QgsCurvePolygonV2):
+                if isinstance(geom, QgsMultiPolygonV2):
+                    nVerts -= 1
+                elif isinstance(geom, QgsPolygonV2):
                     nVerts -= 1
                 elif isinstance(geom, QgsCircularStringV2):
                     nVerts -= 1
