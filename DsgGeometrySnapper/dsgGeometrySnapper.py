@@ -172,7 +172,7 @@ class DsgGeometrySnapper:
                                 pProjF = QgsPoint(pProj.toQPointF())
                                 closest = refSnapIndex.getClosestSnapToPoint(point, pProj)
                                 closestF = QgsPoint(closest.toQPointF())
-                                if pProjF.sqrDist(pointF)  >= pProjF.sqrDist(closestF):
+                                if pProjF.sqrDist(pointF)  > pProjF.sqrDist(closestF):
                                     continue
                                 # If we are too far away from the original geometry, do nothing
                                 if not origSubjSnapIndex.getSnapItem(point, snapTolerance):
@@ -188,6 +188,7 @@ class DsgGeometrySnapper:
             for iRing in range(subjGeom.ringCount(iPart)):
                 ringIsClosed = subjGeom.vertexAt(QgsVertexId(iPart, iRing, 0, QgsVertexId.SegmentVertex)) == subjGeom.vertexAt(QgsVertexId(iPart, iRing, subjGeom.vertexCount( iPart, iRing ) - 1, QgsVertexId.SegmentVertex))
                 nVerts = self.polyLineSize(subjGeom, iPart, iRing)
+                iVert = 0
                 while iVert < nVerts:
                     iPrev = ( iVert - 1 + nVerts ) % nVerts
                     iNext = ( iVert + 1 ) % nVerts
@@ -217,5 +218,6 @@ class DsgGeometrySnapper:
                             # Don't delete vertices if this would result in a degenerate geometry
                             break
                     iVert += 1
+
         return QgsGeometry(subjGeom)
 
