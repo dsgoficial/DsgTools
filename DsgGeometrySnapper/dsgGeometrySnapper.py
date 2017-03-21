@@ -25,7 +25,7 @@ import sys
 import math
 
 from qgis.core import QgsFeatureRequest, QgsSpatialIndex, QgsGeometry, QgsPointV2, QgsFeatureRequest, QgsFeatureIterator\
-, QgsFeature, QgsVertexId, QgsCurvePolygonV2, QgsVectorLayer, QgsMultiPolygonV2, QgsPolygonV2, QgsPoint
+, QgsFeature, QgsVertexId, QgsCurvePolygonV2, QgsVectorLayer, QgsMultiPolygonV2, QgsPolygonV2, QgsPoint, QgsCircularStringV2
 
 from DsgTools.DsgGeometrySnapper.dsgSnapIndex import DsgSnapIndex
 from DsgTools.DsgGeometrySnapper.pointSnapItem import PointSnapItem
@@ -42,7 +42,7 @@ class DsgGeometrySnapper:
         
     def polyLineSize(self, geom, iPart, iRing):   
         nVerts = geom.vertexCount( iPart, iRing)
-        if isinstance(geom, QgsMultiPolygonV2) or isinstance(geom, QgsPolygonV2):
+        if isinstance(geom, QgsMultiPolygonV2) or isinstance(geom, QgsPolygonV2) or isinstance(geom, QgsCircularStringV2):
             front = geom.vertexAt(QgsVertexId( iPart, iRing, 0, QgsVertexId.SegmentVertex))
             back = geom.vertexAt(QgsVertexId( iPart, iRing, nVerts - 1, QgsVertexId.SegmentVertex))
             if front == back:
@@ -182,10 +182,6 @@ class DsgGeometrySnapper:
                                 subjPointFlags[idx.vidx.part][idx.vidx.ring].insert(idx.vidx.vertex + 1, DsgGeometrySnapper.SnappedToRefNode )
                                 subjSnapIndex = DsgSnapIndex(center, 10*snapTolerance)
                                 subjSnapIndex.addGeometry(subjGeom)
-
-        subjSnapIndex = None
-        origSubjSnapIndex = None
-        origSubjGeom = None
 
         # Pass 3: remove superfluous vertices: all vertices which are snapped to a segment and not preceded or succeeded by an unsnapped vertex
         for iPart in range(subjGeom.partCount()):
