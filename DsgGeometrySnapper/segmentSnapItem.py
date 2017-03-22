@@ -125,6 +125,8 @@ class SegmentSnapItem(SnapItem):
         """
         nx = s2.y() - s1.y()
         ny = -( s2.x() - s1.x() )
+        if s1 == s2:
+            return s1
         t = ( p.x() * ny - p.y() * nx - s1.x() * ny + s1.y() * nx ) / ( ( s2.x() - s1.x() ) * ny - ( s2.y() - s1.y() ) * nx )
         if t < 0.:
             return s1
