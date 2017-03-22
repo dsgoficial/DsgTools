@@ -38,7 +38,7 @@ class DsgGeometrySnapper:
     def __init__(self, referenceLayer):
         self.referenceLayer = referenceLayer
         # Build spatial index
-        self.index = QgsSpatialIndex(self.referenceLayer.getFeatures())        
+        self.index = QgsSpatialIndex(self.referenceLayer.getFeatures())
         
     def polyLineSize(self, geom, iPart, iRing):   
         nVerts = geom.vertexCount( iPart, iRing)
@@ -92,12 +92,13 @@ class DsgGeometrySnapper:
         if len(refFeatureIds) == 0:
             return geometry
 
-        refFeatureRequest = QgsFeatureRequest().setFilterFids(refFeatureIds)
         # speeding up the process to consider only intersecting geometries
+        refFeatureRequest = QgsFeatureRequest().setFilterFids(refFeatureIds)
         for refFeature in self.referenceLayer.getFeatures(refFeatureRequest):
-            if refFeature.geometry().intersects(searchBounds):
-                for refFeature in self.referenceLayer.getFeatures(refFeatureRequest):
-                    refGeometries.append(QgsGeometry(refFeature.geometry()))
+            refGeometry = refFeature.geometry()
+            # testing intersection
+            if refGeometry.intersects(searchBounds):
+                refGeometries.append(refGeometry)
 
         # End here in case we don't find geometries
         if len(refGeometries) == 0:
