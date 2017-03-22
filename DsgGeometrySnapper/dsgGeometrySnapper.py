@@ -50,15 +50,13 @@ class DsgGeometrySnapper:
         return nVerts
 
     def snapFeatures(self, features, snapTolerance, mode=PreferNodes):
-        returnList = []
         for feature in features:
-            returnList.append(self.processFeature(feature, snapTolerance, mode))
-        return returnList
+            self.processFeature(feature, snapTolerance, mode)
+        return features
 
     def processFeature(self, feature, snapTolerance, mode):
         if feature.geometry():
-            # feature.setGeometry(self.snapGeometry(feature.geometry(), snapTolerance, mode))
-            return self.snapGeometry(feature.geometry(), snapTolerance, mode)
+            feature.setGeometry(self.snapGeometry(feature.geometry(), snapTolerance, mode))
     
     def projPointOnSegment(self, p, s1, s2):
         """

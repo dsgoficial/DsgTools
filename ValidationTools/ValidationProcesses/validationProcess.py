@@ -230,7 +230,7 @@ class ValidationProcess(QObject):
                     featureMap[featid] = feat
         return featureMap
     
-    def updateOriginalLayer(self, pgInputLayer, qgisOutputVector):
+    def updateOriginalLayer(self, pgInputLayer, qgisOutputVector, featureList=None):
         """
         Updates the original layer using the grass output layer
         pgInputLyr: postgis input layer
@@ -249,8 +249,12 @@ class ValidationProcess(QObject):
             id = feature.id()
             outFeats = []
             #getting the output features with the specific id
-            for gf in qgisOutputVector.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("{0}={1}".format(keyColumn, id)))):
-                outFeats.append(gf)
+            if qgisOutputVector:
+                for gf in qgisOutputVector.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("{0}={1}".format(keyColumn, id)))):
+                    outFeats.append(gf)
+            else:
+                for gf in [gf for gf in featureList if gf.id() == id]:
+                    outFeats.append(gf)
             #starting to make changes
             for i in range(len(outFeats)):
                 if i == 0:
