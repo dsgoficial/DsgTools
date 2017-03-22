@@ -35,7 +35,7 @@ class Raytracer:
         self.n = 1
 
         if self.dx == 0.:
-            self.xInc = 0.
+            self.xInc = 0
             self.error = float("inf")
         elif x1 > x0:
             self.xInc = 1
@@ -47,7 +47,7 @@ class Raytracer:
             self.error = (x0 - int(math.floor(x0))) * self.dy
         
         if self.dy == 0.:
-            self.yInc = 0.
+            self.yInc = 0
             self.error = -float("inf")
         elif y1 > y0:
             self.yInc = 1
@@ -59,10 +59,10 @@ class Raytracer:
             self.error -= (y0 - int(math.floor(y0))) * self.dx
 
     def curCol(self):
-        return int(self.x)
+        return self.x
 
     def curRow(self):
-        return int(self.y)
+        return self.y
 
     def next(self):
         if self.error > 0:

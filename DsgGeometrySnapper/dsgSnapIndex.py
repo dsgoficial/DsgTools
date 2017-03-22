@@ -114,7 +114,7 @@ class DsgSnapIndex:
         rt = Raytracer(x0, y0, x1, y1)
         while rt.isValid():
             rt.next()
-            self.getCreateCell(int(rt.curCol()), int(rt.curRow())).append(SegmentSnapItem(idxFrom, idxTo))
+            self.getCreateCell(rt.curCol(), rt.curRow()).append(SegmentSnapItem(idxFrom, idxTo))
 
     def addGeometry(self, geom):
         """
@@ -161,7 +161,7 @@ class DsgSnapIndex:
         pMin = p
         while rt.isValid():
             rt.next()
-            cell = self.getCell(int(rt.curCol()), int(rt.curRow()))
+            cell = self.getCell(rt.curCol(), rt.curRow())
             if not cell:
                 continue
             for item in cell:

@@ -699,7 +699,6 @@ class DsgTools:
         polygonGeom3 = QgsGeometry.fromWkt(  "Polygon((0.1 -0.1, 20.5 0.5, 20 10, 0 9.9, 0.1 -0.1))" )
         result = snapper.snapGeometry( polygonGeom3, 1)
         print 'insert new vertex'
-        print 'input', "Polygon((0.1 -0.1, 20.5 0.5, 20 10, 0 9.9, 0.1 -0.1))"
         print 'saida   ', result.exportToWkt()
         print 'esperado', "Polygon ((0 0, 10 0, 20.5 0.5, 20 10, 10 10, 0 10, 0 0))"
         print
