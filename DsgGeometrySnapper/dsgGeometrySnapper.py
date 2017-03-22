@@ -98,7 +98,7 @@ class DsgGeometrySnapper:
             refGeometry = refFeature.geometry()
             # testing intersection
             if refGeometry.intersects(searchBounds):
-                refGeometries.append(refGeometry)
+                refGeometries.append(QgsGeometry(refGeometry))
 
         # End here in case we don't find geometries
         if len(refGeometries) == 0:
