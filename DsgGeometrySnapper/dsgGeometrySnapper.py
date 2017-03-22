@@ -85,13 +85,21 @@ class DsgGeometrySnapper:
         refGeometries = []
         searchBounds = geometry.boundingBox()
         searchBounds.grow(snapTolerance)
+        # filter by bounding box to get candidates
         refFeatureIds = self.index.intersects(searchBounds)
 
+        # End here in case we don't find candidates
+        if len(refFeatureIds) == 0:
+            return geometry
+
         refFeatureRequest = QgsFeatureRequest().setFilterFids(refFeatureIds)
-
+        # speeding up the process to consider only intersecting geometries
         for refFeature in self.referenceLayer.getFeatures(refFeatureRequest):
-            refGeometries.append(QgsGeometry(refFeature.geometry()))
+            if refFeature.geometry().intersects(searchBounds):
+                for refFeature in self.referenceLayer.getFeatures(refFeatureRequest):
+                    refGeometries.append(QgsGeometry(refFeature.geometry()))
 
+        # building geometry index
         refSnapIndex = DsgSnapIndex(center, 10*snapTolerance)
         for geom in refGeometries:
             refSnapIndex.addGeometry(geom.geometry())
