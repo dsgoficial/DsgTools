@@ -99,6 +99,10 @@ class DsgGeometrySnapper:
                 for refFeature in self.referenceLayer.getFeatures(refFeatureRequest):
                     refGeometries.append(QgsGeometry(refFeature.geometry()))
 
+        # End here in case we don't find geometries
+        if len(refGeometries) == 0:
+            return geometry
+
         # building geometry index
         refSnapIndex = DsgSnapIndex(center, 10*snapTolerance)
         for geom in refGeometries:
