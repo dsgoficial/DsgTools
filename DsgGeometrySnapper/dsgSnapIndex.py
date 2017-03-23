@@ -74,12 +74,12 @@ class DsgSnapIndex:
         :return:
         """
         if row < self.rowsStartIdx:
-            for i in range(row, self.rowsStartIdx):
+            for i in xrange(row, self.rowsStartIdx):
                 self.gridRows.insert(0, GridRow())
             self.rowsStartIdx = row
             return self.gridRows[0].getCreateCell(col)
         elif row >= self.rowsStartIdx + len(self.gridRows):
-            for  i in range(self.rowsStartIdx + len(self.gridRows), row + 1):
+            for  i in xrange(self.rowsStartIdx + len(self.gridRows), row + 1):
                 self.gridRows.append(GridRow())
             return self.gridRows[-1].getCreateCell(col)
         else:
@@ -122,8 +122,8 @@ class DsgSnapIndex:
         :param geom:QgsAbstractGeometryV2
         :return:
         """
-        for iPart in range(geom.partCount()):
-            for iRing in range(geom.ringCount(iPart)):
+        for iPart in xrange(geom.partCount()):
+            for iRing in xrange(geom.ringCount(iPart)):
                 nVerts = geom.vertexCount(iPart, iRing)
                 if isinstance(geom, QgsMultiPolygonV2):
                     nVerts -= 1
@@ -131,7 +131,7 @@ class DsgSnapIndex:
                     nVerts -= 1
                 elif isinstance(geom, QgsCircularStringV2):
                     nVerts -= 1
-                for iVert in range(nVerts):
+                for iVert in xrange(nVerts):
                     idx = CoordIdx( geom, QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex))
                     idx1 = CoordIdx( geom, QgsVertexId(iPart, iRing, iVert + 1, QgsVertexId.SegmentVertex))
                     self.coordIdxs.append(idx)
@@ -195,7 +195,7 @@ class DsgSnapIndex:
         rowEnd = min(rowEnd, self.rowsStartIdx + len(self.gridRows) - 1)
 
         items = []
-        for row in range(rowStart, rowEnd+1):
+        for row in xrange(rowStart, rowEnd+1):
             items.append(self.gridRows[row - self.rowsStartIdx].getSnapItems(colStart, colEnd))    
 
         minDistSegment = sys.float_info.max

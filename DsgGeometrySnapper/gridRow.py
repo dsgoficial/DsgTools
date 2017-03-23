@@ -38,12 +38,12 @@ class GridRow:
         :return: Cell
         """
         if col < self.colStartIdx:
-            for i in range(col, self.colStartIdx):
+            for i in xrange(col, self.colStartIdx):
                 self.cells.insert(0, Cell())
             self.colStartIdx = col
             return self.cells[0]
         elif col >= self.colStartIdx + len(self.cells):
-            for i in range(self.colStartIdx + len(self.cells), col + 1):
+            for i in xrange(self.colStartIdx + len(self.cells), col + 1):
                 self.cells.append(Cell())
             return self.cells[-1]
         else:
@@ -71,6 +71,6 @@ class GridRow:
         colEnd = min(colEnd, self.colStartIdx + len(self.cells) - 1)
 
         items = []
-        for col in range(colStart, colEnd + 1):
+        for col in xrange(colStart, colEnd + 1):
             items.append(self.cells[col - self.colStartIdx])
         return items

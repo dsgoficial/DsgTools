@@ -194,11 +194,11 @@ class DsgGeometrySnapper:
         subjPointFlags = []
 
         # Pass 1: snap vertices of subject geometry to reference vertices
-        for iPart in range(subjGeom.partCount()):
+        for iPart in xrange(subjGeom.partCount()):
             subjPointFlags.append([])
-            for iRing in range(subjGeom.ringCount(iPart)):
+            for iRing in xrange(subjGeom.ringCount(iPart)):
                 subjPointFlags[iPart].append([])
-                for iVert in range(self.polyLineSize(subjGeom, iPart, iRing)):
+                for iVert in xrange(self.polyLineSize(subjGeom, iPart, iRing)):
                     vidx = QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex)
                     p = QgsPointV2(subjGeom.vertexAt(vidx))
                     pF = QgsPoint(p.toQPointF())
@@ -249,9 +249,9 @@ class DsgGeometrySnapper:
         
         # Pass 2: add missing vertices to subject geometry
         for refGeom in refGeometries:
-            for iPart in range(refGeom.geometry().partCount()):
-                for iRing in range(refGeom.geometry().ringCount(iPart)):
-                    for iVert in range(self.polyLineSize(refGeom.geometry(), iPart, iRing)):
+            for iPart in xrange(refGeom.geometry().partCount()):
+                for iRing in xrange(refGeom.geometry().ringCount(iPart)):
+                    for iVert in xrange(self.polyLineSize(refGeom.geometry(), iPart, iRing)):
                         point = refGeom.geometry().vertexAt(QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex))
                         # QgsPoint used to calculate squared distance
                         pointF = QgsPoint(point.toQPointF())
@@ -283,8 +283,8 @@ class DsgGeometrySnapper:
                                 subjSnapIndex.addGeometry(subjGeom)
 
         # Pass 3: remove superfluous vertices: all vertices which are snapped to a segment and not preceded or succeeded by an unsnapped vertex
-        for iPart in range(subjGeom.partCount()):
-            for iRing in range(subjGeom.ringCount(iPart)):
+        for iPart in xrange(subjGeom.partCount()):
+            for iRing in xrange(subjGeom.ringCount(iPart)):
                 ringIsClosed = subjGeom.vertexAt(QgsVertexId(iPart, iRing, 0, QgsVertexId.SegmentVertex)) == subjGeom.vertexAt(QgsVertexId(iPart, iRing, subjGeom.vertexCount( iPart, iRing ) - 1, QgsVertexId.SegmentVertex))
                 nVerts = self.polyLineSize(subjGeom, iPart, iRing)
                 iVert = 0
