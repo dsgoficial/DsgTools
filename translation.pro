@@ -23,6 +23,7 @@
 					ValidationTools/ValidationProcesses/validationProcess.py \
 					ValidationTools/ValidationProcesses/spatialRuleEnforcer.py \
 					ValidationTools/ValidationProcesses/__init__.py \
+					ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py \
 					ValidationTools/ValidationProcesses/snapGeometriesProcess.py \
 					ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py \
 					ValidationTools/validation_toolbox.py \
