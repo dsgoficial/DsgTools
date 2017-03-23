@@ -101,6 +101,16 @@ class DsgGeometrySnapper:
         else:
             return QgsPointV2( s1.x() + ( s2.x() - s1.x() ) * t, s1.y() + ( s2.y() - s1.y() ) * t )
 
+    def buildReferenceIndex(self, segments):
+        refDict = {}
+        index = QgsSpatialIndex()
+        for i, segment in enumerate(segments):
+            refDict[i] = segment
+            feature = QgsFeature(i)
+            feature.setGeometry(segment)
+            index.insertFeature(feature)
+        return refDict, index
+
     def segmentFromPoints(self, start, end):
         """
         Makes a QgsGeometry from start and end points
@@ -185,6 +195,7 @@ class DsgGeometrySnapper:
             return geometry
 
         # building geometry index
+        refDict, index = self.buildReferenceIndex(refGeometries)
         refSnapIndex = DsgSnapIndex(center, 10*snapTolerance)
         for geom in refGeometries:
             refSnapIndex.addGeometry(geom.geometry())
@@ -202,6 +213,9 @@ class DsgGeometrySnapper:
                     vidx = QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex)
                     p = QgsPointV2(subjGeom.vertexAt(vidx))
                     pF = QgsPoint(p.toQPointF())
+                    point2Snap = QgsGeometry.fromPoint(pF)
+                    candidateIds = index.intersects(point2Snap.boundingBox())
+                    features = [refDict[i] for i in candidateIds]
                     snapPoint, snapSegment = refSnapIndex.getSnapItem(p, snapTolerance)
                     success = snapPoint or snapSegment
                     if not success:
@@ -241,11 +255,13 @@ class DsgGeometrySnapper:
         
         # SnapIndex for subject feature
         subjSnapIndex = DsgSnapIndex(center, 10*snapTolerance)
-        subjSnapIndex.addGeometry(subjGeom)
+        segments = self.breakQgsGeometryIntoSegments(QgsGeometry(subjGeom.clone()))
+        for segment in segments:
+            subjSnapIndex.addGeometry(segment.geometry())
         
-        origSubjGeom = subjGeom.clone()
         origSubjSnapIndex = DsgSnapIndex(center, 10*snapTolerance)
-        origSubjSnapIndex.addGeometry(origSubjGeom)
+        for segment in segments:
+            origSubjSnapIndex.addGeometry(segment.geometry())
         
         # Pass 2: add missing vertices to subject geometry
         for refGeom in refGeometries:
@@ -267,12 +283,8 @@ class DsgGeometrySnapper:
                                 pProjF = QgsPoint(pProj.toQPointF())
                                 closest = refSnapIndex.getClosestSnapToPoint(point, pProj)
                                 closestF = QgsPoint(closest.toQPointF())
-                                if isinstance(subjGeom, QgsSurfaceV2):
-                                    if pProjF.sqrDist(pointF) > pProjF.sqrDist(closestF):
-                                        continue
-                                else:
-                                    if pProjF.sqrDist(pointF) > pProjF.sqrDist(closestF):
-                                        continue
+                                if pProjF.sqrDist(pointF) > pProjF.sqrDist(closestF):
+                                    continue
                                 # If we are too far away from the original geometry, do nothing
                                 if not origSubjSnapIndex.getSnapItem(point, snapTolerance):
                                     continue
