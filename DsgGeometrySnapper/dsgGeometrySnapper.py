@@ -22,9 +22,7 @@
 """
 import sys
 
-import math
-
-from qgis.core import QgsFeatureRequest, QgsSpatialIndex, QgsGeometry, QgsPointV2, QgsFeatureRequest, QgsFeatureIterator\
+from qgis.core import QGis, QgsFeatureRequest, QgsSpatialIndex, QgsGeometry, QgsPointV2, QgsFeatureRequest, QgsFeatureIterator\
 , QgsFeature, QgsVertexId, QgsCurvePolygonV2, QgsVectorLayer, QgsMultiPolygonV2, QgsPolygonV2, QgsPoint, QgsCircularStringV2, QgsSurfaceV2
 
 from DsgTools.DsgGeometrySnapper.dsgSnapIndex import DsgSnapIndex
@@ -36,11 +34,22 @@ class DsgGeometrySnapper:
     PreferNodes, PreferClosest = range(2)
 
     def __init__(self, referenceLayer):
+        """
+        Constructor
+        :param referenceLayer: QgsVectorLayer
+        """
         self.referenceLayer = referenceLayer
         # Build spatial index
         self.index = QgsSpatialIndex(self.referenceLayer.getFeatures())
         
-    def polyLineSize(self, geom, iPart, iRing):   
+    def polyLineSize(self, geom, iPart, iRing):
+        """
+        Gets the number of vertexes
+        :param geom: QgsAbstractGeometryV2
+        :param iPart: int
+        :param iRing: int
+        :return:
+        """
         nVerts = geom.vertexCount( iPart, iRing)
         if isinstance(geom, QgsMultiPolygonV2) or isinstance(geom, QgsPolygonV2) or isinstance(geom, QgsCircularStringV2):
             front = geom.vertexAt(QgsVertexId( iPart, iRing, 0, QgsVertexId.SegmentVertex))
@@ -50,11 +59,25 @@ class DsgGeometrySnapper:
         return nVerts
 
     def snapFeatures(self, features, snapTolerance, mode=PreferNodes):
+        """
+        Snap features from a layer
+        :param features: list of QgsFeatures
+        :param snapTolerance: float
+        :param mode: DsgGeometrySnapper.PreferNodes or DsgGeometrySnapper.PreferClosest
+        :return:
+        """
         for feature in features:
             self.processFeature(feature, snapTolerance, mode)
         return features
 
     def processFeature(self, feature, snapTolerance, mode):
+        """
+        Process QgsFeature
+        :param feature: QgsFeature
+        :param snapTolerance: float
+        :param mode: DsgGeometrySnapper.PreferNodes or DsgGeometrySnapper.PreferClosest
+        :return:
+        """
         if feature.geometry():
             feature.setGeometry(self.snapGeometry(feature.geometry(), snapTolerance, mode))
     
@@ -78,7 +101,62 @@ class DsgGeometrySnapper:
         else:
             return QgsPointV2( s1.x() + ( s2.x() - s1.x() ) * t, s1.y() + ( s2.y() - s1.y() ) * t )
 
+    def segmentFromPoints(self, start, end):
+        """
+        Makes a QgsGeometry from start and end points
+        :param start: QgsPoint
+        :param end: QgsPoint
+        :return:
+        """
+        return QgsGeometry.fromPolyline([start, end])
+
+    def breakQgsGeometryIntoSegments(self, geometry):
+        """
+        Makes a list of QgsGeometry made with segments
+        :param geometry: QgsGeometry
+        :return: list of QgsGeometry
+        """
+        segments = []
+        wbkType = geometry.wkbType()
+        if wbkType == QGis.WKBPoint:
+            return []
+        elif wbkType == QGis.WKBMultiPoint:
+            return []
+        elif wbkType == QGis.WKBLineString:
+            line = geometry.asPolyline()
+            for i in xrange(len(line) - 1):
+                segments.append(self.segmentFromPoints(line[i], line[i + 1]))
+        elif wbkType == QGis.WKBMultiLineString:
+            multiLine = geometry.asMultiPolyline()
+            for j in xrange(len(multiLine)):
+                line = multiLine[j]
+                for i in xrange(len(line) - 1):
+                    segments.append(self.segmentFromPoints(line[i], line[i + 1]))
+        elif wbkType == QGis.WKBPolygon:
+            poly = geometry.asPolygon()
+            for j in xrange(len(poly)):
+                line = poly[j]
+                for i in xrange(len(line) - 1):
+                    segments.append(self.segmentFromPoints(line[i], line[i + 1]))
+        elif wbkType == QGis.WKBMultiPolygon:
+            multiPoly = geometry.asMultiPolygon()
+            for k in xrange(len(multiPoly)):
+                poly = multiPoly[k]
+                for j in xrange(len(poly)):
+                    line = poly[j]
+                    for i in xrange(len(line) - 1):
+                        segments.append(self.segmentFromPoints(line[i], line[i + 1]))
+
+        return segments
+
     def snapGeometry(self, geometry, snapTolerance, mode=PreferNodes):
+        """
+        Snaps a QgsGeometry in the reference layer
+        :param geometry: QgsGeometry
+        :param snapTolerance: float
+        :param mode: DsgGeometrySnapper.PreferNodes or DsgGeometrySnapper.PreferClosest
+        :return:
+        """
         center = QgsPointV2(geometry.boundingBox().center())
 
         # Get potential reference features and construct snap index
@@ -96,9 +174,11 @@ class DsgGeometrySnapper:
         refFeatureRequest = QgsFeatureRequest().setFilterFids(refFeatureIds)
         for refFeature in self.referenceLayer.getFeatures(refFeatureRequest):
             refGeometry = refFeature.geometry()
+            segments = self.breakQgsGeometryIntoSegments(refGeometry)
             # testing intersection
-            if refGeometry.intersects(searchBounds):
-                refGeometries.append(QgsGeometry(refGeometry))
+            for segment in segments:
+                if segment.intersects(searchBounds):
+                    refGeometries.append(segment)
 
         # End here in case we don't find geometries
         if len(refGeometries) == 0:
@@ -214,10 +294,6 @@ class DsgGeometrySnapper:
                     pMid = subjGeom.vertexAt(QgsVertexId( iPart, iRing, iVert, QgsVertexId.SegmentVertex))
                     pPrev = subjGeom.vertexAt(QgsVertexId( iPart, iRing, iPrev, QgsVertexId.SegmentVertex))
                     pNext = subjGeom.vertexAt(QgsVertexId( iPart, iRing, iNext, QgsVertexId.SegmentVertex))
-                    
-                    pPrevF = QgsPoint(pPrev.toQPointF())
-                    pMidF = QgsPoint(pMid.toQPointF())
-                    pNextF = QgsPoint(pNext.toQPointF())
 
                     pointOnSeg = self.projPointOnSegment( pMid, pPrev, pNext)
                     pointOnSegF = QgsPoint(pointOnSeg.toQPointF())
