@@ -255,13 +255,11 @@ class DsgGeometrySnapper:
         
         # SnapIndex for subject feature
         subjSnapIndex = DsgSnapIndex(center, 10*snapTolerance)
-        segments = self.breakQgsGeometryIntoSegments(QgsGeometry(subjGeom.clone()))
-        for segment in segments:
-            subjSnapIndex.addGeometry(segment.geometry())
+        subjSnapIndex.addGeometry(subjGeom)
         
+        origSubjGeom = subjGeom.clone()
         origSubjSnapIndex = DsgSnapIndex(center, 10*snapTolerance)
-        for segment in segments:
-            origSubjSnapIndex.addGeometry(segment.geometry())
+        origSubjSnapIndex.addGeometry(origSubjGeom)
         
         # Pass 2: add missing vertices to subject geometry
         for refGeom in refGeometries:
