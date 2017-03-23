@@ -28,6 +28,7 @@ from qgis.core import QGis, QgsFeatureRequest, QgsSpatialIndex, QgsGeometry, Qgs
 from DsgTools.DsgGeometrySnapper.dsgSnapIndex import DsgSnapIndex
 from DsgTools.DsgGeometrySnapper.pointSnapItem import PointSnapItem
 from DsgTools.DsgGeometrySnapper.segmentSnapItem import SegmentSnapItem
+from DsgTools.DsgGeometrySnapper.coordIdx import CoordIdx
 
 class DsgGeometrySnapper:
     SnappedToRefNode, SnappedToRefSegment, Unsnapped = range(3)
@@ -213,10 +214,16 @@ class DsgGeometrySnapper:
                     vidx = QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex)
                     p = QgsPointV2(subjGeom.vertexAt(vidx))
                     pF = QgsPoint(p.toQPointF())
-                    point2Snap = QgsGeometry.fromPoint(pF)
-                    candidateIds = index.intersects(point2Snap.boundingBox())
-                    features = [refDict[i] for i in candidateIds]
-                    snapPoint, snapSegment = refSnapIndex.getSnapItem(p, snapTolerance)
+
+                    nearestId = index.nearestNeighbor(pF, 1)[0]
+                    snapGeometry = refDict[nearestId].geometry()
+                    idxFrom = CoordIdx(snapGeometry, QgsVertexId(0, 0, 0, QgsVertexId.SegmentVertex))
+                    idxTo = CoordIdx(snapGeometry, QgsVertexId(0, 0, 1, QgsVertexId.SegmentVertex))
+
+                    snapPoint = None
+                    snapSegment = SegmentSnapItem(idxFrom, idxTo)
+
+                    # snapPoint, snapSegment = refSnapIndex.getSnapItem(p, snapTolerance)
                     success = snapPoint or snapSegment
                     if not success:
                         subjPointFlags[iPart][iRing].append(DsgGeometrySnapper.Unsnapped )
