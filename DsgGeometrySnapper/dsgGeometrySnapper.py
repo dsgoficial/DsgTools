@@ -119,9 +119,9 @@ class DsgGeometrySnapper:
         segments = []
         wbkType = geometry.wkbType()
         if wbkType == QGis.WKBPoint:
-            return []
+            return [geometry]
         elif wbkType == QGis.WKBMultiPoint:
-            return []
+            return [geometry]
         elif wbkType == QGis.WKBLineString:
             line = geometry.asPolyline()
             for i in xrange(len(line) - 1):
