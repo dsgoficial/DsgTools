@@ -97,6 +97,24 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
             self.fromList.addItems(toAddList)
             self.fromList.sortItems()
             self.fromLs.sort()
+    
+    def removeItem(self, removeItem):
+        """
+        Removing items (QListWidget and python list)
+        """
+        for i in range(self.fromList.__len__()):
+            fromItem = self.fromList.item(i)
+            if fromItem:
+                if fromItem.text() == removeItem:
+                    item = self.fromList.takeItem(i)
+                    self.fromLs.remove(fromItem.text())
+        for i in range(self.toList.__len__()):
+            toItem = self.toList.item(i)
+            if toItem:
+                if toItem.text() == removeItem:
+                    self.toLs.remove(toItem.text())
+                    item = self.toList.takeItem(i)
+
 
     def setToList(self, toList):
         """

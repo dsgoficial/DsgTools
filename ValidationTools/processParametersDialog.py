@@ -21,7 +21,10 @@
 """
 import sys
 from PyQt4 import QtGui, QtCore
+from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QApplication, QCursor, QMenu
 from DsgTools.CustomWidgets.customSelector import CustomSelector
+from DsgTools.CustomWidgets.customSnaperParameterSelector import CustomSnaperParameterSelector
 
 class ProcessParametersDialog(QtGui.QDialog):
     WIDGETS = {str: QtGui.QLineEdit,
@@ -29,20 +32,24 @@ class ProcessParametersDialog(QtGui.QDialog):
                int: QtGui.QSpinBox,
                float: QtGui.QDoubleSpinBox,
                list: CustomSelector,
+               tuple: CustomSnaperParameterSelector,
                bool: QtGui.QCheckBox}
     GETTERS = {QtGui.QLineEdit: "text",
                QtGui.QSpinBox: "value",
                QtGui.QDoubleSpinBox: "value",
+               CustomSnaperParameterSelector: "getParameters",
                CustomSelector: "getToList",
                QtGui.QCheckBox: "isChecked"}
     SETTERS = {QtGui.QLineEdit: "setText",
                QtGui.QSpinBox: "setValue",
                QtGui.QDoubleSpinBox: "setValue",
+               CustomSnaperParameterSelector: "setInitialState",
                CustomSelector: "setInitialState",
                QtGui.QCheckBox: "setChecked"}
     VALIDATORS = {QtGui.QLineEdit: lambda x: bool(len(x)),
                   QtGui.QSpinBox: lambda x: True,
                   QtGui.QDoubleSpinBox: lambda x: True,
+                  CustomSnaperParameterSelector: lambda x: True,
                   CustomSelector: lambda x: True,
                   QtGui.QCheckBox: lambda x: True}
 
@@ -51,6 +58,7 @@ class ProcessParametersDialog(QtGui.QDialog):
         Constructor
         """
         super(ProcessParametersDialog, self).__init__(parent)
+        QApplication.restoreOverrideCursor()
         self.__widgets = dict()
         self.__values = dict()
 
@@ -64,7 +72,7 @@ class ProcessParametersDialog(QtGui.QDialog):
         _firstWidget = None
         formLayout = QtGui.QFormLayout()
         for k, v in options.iteritems():
-            if isinstance(v, (list, tuple)):
+            if isinstance(v, (list)):
                 v = [str(x) for x in v]
 
             label = QtGui.QLabel(beautifyText(k))
@@ -80,6 +88,9 @@ class ProcessParametersDialog(QtGui.QDialog):
             if self.WIDGETS[type(v)] == CustomSelector:
                 getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
                 widget.setTitle(self.tr('Select classes'))
+            if self.WIDGETS[type(v)] == CustomSnaperParameterSelector:
+                getattr(widget, self.SETTERS[type(widget)])(list(v), unique=True)
+                widget.setTitle(self.tr('Select layers to be snapped'))
             else:
                 getattr(widget, self.SETTERS[type(widget)])(v)
 
@@ -124,7 +135,7 @@ class ProcessParametersDialog(QtGui.QDialog):
             if not self.VALIDATORS[type(widget)](value) and widget.isVisible():
                 widget.setFocus()
                 return
-
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         return super(ProcessParametersDialog, self).accept()
 
     @property

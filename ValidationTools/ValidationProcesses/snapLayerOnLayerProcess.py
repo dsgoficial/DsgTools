@@ -38,7 +38,7 @@ class SnapLayerOnLayerProcess(ValidationProcess):
             # creating a list of tuples (layer names, geometry columns)
             classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
             # adjusting process parameters
-            self.parameters = {'Snap': 5.0, 'Classes': classesWithElem, 'Reference': classesWithElem}
+            self.parameters = {'Snap': 5.0, 'Reference and Layers': tuple(classesWithElem)}
 
     def execute(self):
         """
@@ -47,25 +47,25 @@ class SnapLayerOnLayerProcess(ValidationProcess):
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
-            classesWithElem = self.parameters['Classes']
-            refWithElem = self.parameters['Reference']
+            refWithElem = self.parameters['Reference and Layers'][0]
+            classesWithElem = self.parameters['Reference and Layers'][1]
             if len(classesWithElem) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
 
-            if len(refWithElem) != 1:
-                self.setStatus(self.tr('Only one reference must be selected! Stopping.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('Only one reference must be selected! Stopping.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            if not refWithElem:
+                self.setStatus(self.tr('One reference must be selected! Stopping.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('One reference must be selected! Stopping.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
 
             # preparing reference layer
-            refcl, refGeometryColumn = refWithElem[0].split(':')
+            refcl, refGeometryColumn = refWithElem.split(':')
             reflyr = self.loadLayerBeforeValidationProcess(refcl)
             snapper = DsgGeometrySnapper(reflyr)
 
             tol = self.parameters['Snap']
-
+            msg = ''
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
@@ -75,8 +75,9 @@ class SnapLayerOnLayerProcess(ValidationProcess):
                 features = [feature for feature in lyr.getFeatures()]
                 snappedFeatures = snapper.snapFeatures(features, tol)
                 self.updateOriginalLayer(lyr, None, featureList=snappedFeatures)
-                
-            msg = self.tr('All features snapped to reference succesfully.')
+                localMsg = self.tr('All features from ') +cl+ self.tr(' snapped to reference ') +refcl+ self.tr(' succesfully.\n')
+                QgsMessageLog.logMessage(localMsg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                msg += localMsg
             self.setStatus(msg, 1) #Finished
             QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1

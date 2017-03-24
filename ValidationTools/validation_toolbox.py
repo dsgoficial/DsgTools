@@ -189,6 +189,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.flagLyr = None
         rootItem = self.processTreeWidget.invisibleRootItem()
         procList = sorted(self.validationManager.processDict)
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         for i in range(len(procList)):
             item = QtGui.QTreeWidgetItem(rootItem)
             item.setText(0, str(i+1))
@@ -209,7 +210,8 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         
         for i in range(3):
             self.processTreeWidget.resizeColumnToContents(i)
-    
+        QApplication.restoreOverrideCursor()
+
     @pyqtSlot(bool)
     def on_runButton_clicked(self):
         """
