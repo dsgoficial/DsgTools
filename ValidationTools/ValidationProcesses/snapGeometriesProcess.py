@@ -40,20 +40,11 @@ class SnapGeometriesProcess(ValidationProcess):
             # adjusting process parameters
             self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Classes': classesWithElem}
         
-    def runProcessinAlg(self, layer, tempTableName, geometryColumn, epsg):
+    def runProcessinAlg(self, layer):
         """
         Runs the actual grass process
         """
         alg = 'grass7:v.clean.advanced'
-        
-        #creating vector layer
-        input = QgsVectorLayer(self.abstractDb.getURI(tempTableName, useOnly=True, geomColumn=geometryColumn).uri(), tempTableName, "postgres")
-        crs = input.crs()
-        crs.createFromId(epsg)
-        input.setCrs(crs)
-        
-        #Adding to registry
-        QgsMapLayerRegistry.instance().addMapLayer(input)
         
         #setting tools
         tools = 'snap'
@@ -62,11 +53,11 @@ class SnapGeometriesProcess(ValidationProcess):
         snap = self.parameters['Snap']
 
         #getting table extent (bounding box)
-        tableSchema, tableName = self.abstractDb.getTableSchema(tempTableName)        
-        (xmin, xmax, ymin, ymax) = self.abstractDb.getTableExtent(tableSchema, tableName)
+        extent = layer.extent()
+        (xmin, xmax, ymin, ymax) = extent.xMinimum(), extent.xMaximum(), extent.yMinimum(), extent.yMaximum()
         extent = '{0},{1},{2},{3}'.format(xmin, xmax, ymin, ymax)
         
-        ret = processing.runalg(alg, input, tools, threshold, extent, snap, minArea, None, None)
+        ret = processing.runalg(alg, layer, tools, threshold, extent, snap, minArea, None, None)
 
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
@@ -75,7 +66,6 @@ class SnapGeometriesProcess(ValidationProcess):
         #getting error flags
         errorLayer = processing.getObject(ret['error'])
         #removing from registry
-        QgsMapLayerRegistry.instance().removeMapLayer(input.id())
         return self.getProcessingErrors(errorLayer)
 
     def execute(self):
@@ -96,7 +86,7 @@ class SnapGeometriesProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
-                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
+                lyr = self.loadLayerBeforeValidationProcess(cl)
                 
                 tableSchema, tableName = cl.split('.')
                 # specific EPSG search
@@ -104,10 +94,7 @@ class SnapGeometriesProcess(ValidationProcess):
                 srid = self.abstractDb.findEPSG(parameters=parameters)                        
 
                 # running the process in the temp table
-                result = self.runProcessinAlg(lyr, processTableName, geometryColumn, srid)
-                
-                # dropping temp table
-                self.abstractDb.dropTempTable(processTableName)
+                result = self.runProcessinAlg(lyr)
                 
                 # storing flags
                 if len(result) > 0:
