@@ -58,7 +58,9 @@ class SnapGeometriesProcess(ValidationProcess):
         extent = '{0},{1},{2},{3}'.format(xmin, xmax, ymin, ymax)
         
         ret = processing.runalg(alg, layer, tools, threshold, extent, snap, minArea, None, None)
-
+        if not ret:
+            raise Exception(self.tr('Problem executing grass7:v.clean.advanced. Check your installed libs.\n'))
+            
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
         self.updateOriginalLayer(layer, outputLayer)

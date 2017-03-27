@@ -59,7 +59,9 @@ class CleanGeometriesProcess(ValidationProcess):
         minArea = self.parameters['MinArea']
         
         ret = processing.runalg(alg, layer, tools, threshold, extent, snap, minArea, None, None)
-
+        if not ret:
+            raise Exception(self.tr('Problem executing grass7:v.clean.advanced. Check your installed libs.\n'))
+        
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
         self.updateOriginalLayer(layer, outputLayer)
