@@ -478,7 +478,7 @@ class PostGISSqlGenerator(SqlGenerator):
                 else:
                     sameClassRestriction=' AND a.id <> b.id '
                 
-                sql = """SELECT DISTINCT a.id id, ST_Intersection(a.geom, b.geom) as geom
+                sql = """SELECT DISTINCT a.id id, (ST_Dump(ST_Intersection(a.geom, b.geom))).geom as geom
                 FROM %s as a, %s as b 
                     WHERE %s(a.geom,b.geom) = %s %s
                 """ % (class_a, class_b, predicate_function, necessity, sameClassRestriction)
