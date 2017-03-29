@@ -30,6 +30,7 @@ from qgis.core import QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry,
 
 # DSGTools imports
 from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class ValidationProcess(QObject):
     def __init__(self, postgisDb, iface, instantiating=False):

@@ -22,6 +22,7 @@
 """
 from qgis.core import QgsMessageLog, QgsVectorLayer
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class ForceValidityGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
@@ -61,9 +62,15 @@ class ForceValidityGeometriesProcess(ValidationProcess):
             numberOfProblems = 0
             for cl in classesWithFlags:
                 # preparation
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress.step()
                 processTableName, lyr, keyColumn = self.prepareExecution(cl)
+                localProgress.step()
                 #running the process in the temp table
+                localProgress = ProgressWidget(0, 1, self.tr('Running process on {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress.step()
                 problems = self.abstractDb.forceValidity(processTableName, self.flagsDict[cl], keyColumn)
+                localProgress.step()
                 numberOfProblems += problems
                 # finalization
                 self.postProcessSteps(processTableName, lyr)

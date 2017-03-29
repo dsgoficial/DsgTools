@@ -22,6 +22,7 @@
 """
 from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class IdentifyVertexNearEdgeProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
@@ -57,11 +58,17 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress.step()
                 processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
                 tableSchema, tableName = self.abstractDb.getTableSchema(processTableName)
+                localProgress.step()
                 
                 #running the process
+                localProgress = ProgressWidget(0, 1, self.tr('Running process on {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress.step()
                 result = self.abstractDb.getVertexNearEdgesRecords(tableSchema, tableName, tol, geometryColumn, keyColumn)
+                localProgress.step()
                 
                 # dropping temp table
                 self.abstractDb.dropTempTable(processTableName)

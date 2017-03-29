@@ -27,6 +27,7 @@ from PyQt4 import QtGui
 from qgis.core import QgsMessageLog
 
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class SpatialRuleProcess(ValidationProcess):
     #this relates the predicate with the PostGIS ST functions
@@ -92,12 +93,18 @@ class SpatialRuleProcess(ValidationProcess):
             rules = self.getRules()
             for rule in rules:
                 # preparation
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(rule[0]), parent=self.iface.mapCanvas())
+                localProgress.step()
                 class_a, lyrA, aKeyColumn = self.prepareExecution(rule[0])
                 class_b, lyrB, bKeyColumn = self.prepareExecution(rule[3])
+                localProgress.step()
                 geometryColumn = 'geom'
 
                 #running the process in the temp table
+                localProgress = ProgressWidget(0, 1, self.tr('Running process on {}').format(class_a), parent=self.iface.mapCanvas())
+                localProgress.step()
                 invalidGeomRecordList = self.abstractDb.testSpatialRule(class_a, rule[1], rule[2], class_b, rule[4], rule[5], rule[6], geometryColumn)
+                localProgress.step()
                                 
                 # dropping temp table
                 self.abstractDb.dropTempTable(class_a)

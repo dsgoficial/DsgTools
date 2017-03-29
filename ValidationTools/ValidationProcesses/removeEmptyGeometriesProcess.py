@@ -22,6 +22,7 @@
 """
 from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class RemoveEmptyGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
@@ -54,10 +55,16 @@ class RemoveEmptyGeometriesProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress.step()
                 processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
+                localProgress.step()
 
                 # running the process
+                localProgress = ProgressWidget(0, 1, self.tr('Running process on {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress.step()
                 self.abstractDb.removeEmptyGeometries(processTableName, geometryColumn)
+                localProgress.step()
                 
                 # finalization
                 self.postProcessSteps(processTableName, lyr)

@@ -22,6 +22,7 @@
 """
 from qgis.core import QgsVectorLayer,QgsDataSourceURI, QgsMessageLog, QgsFeature, QgsFeatureRequest
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class DeaggregateGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
@@ -55,12 +56,17 @@ class DeaggregateGeometriesProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress.step()
                 processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
+                localProgress.step()
                     
                 # getting multi geometries ids
                 multiIds = self.abstractDb.getExplodeCandidates(processTableName)
 
                 # actual deaggregation
+                localProgress = ProgressWidget(0, 1, self.tr('Running process on {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress.step()
                 provider = lyr.dataProvider()
                 lyr.startEditing()
                 for id in multiIds:
@@ -78,6 +84,7 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                     feat.setGeometry(parts[0])
                     lyr.updateFeature(feat)
                     lyr.addFeatures(addList,True)
+                localProgress.step()
             msg = self.tr('All geometries are now single parted.')
             self.setStatus(msg, 1) #Finished
             QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)

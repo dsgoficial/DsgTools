@@ -22,6 +22,7 @@
 """
 from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
@@ -56,12 +57,18 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress.step()
                 processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
                 if processTableName not in classesWithGeom:
                     classesWithGeom.append(processTableName)
+                localProgress.step()
                     
             # running the process
+            localProgress = ProgressWidget(0, 1, self.tr('Running process').format(cl), parent=self.iface.mapCanvas())
+            localProgress.step()
             result = self.abstractDb.getNotSimpleRecords(classesWithGeom, geometryColumn, keyColumn)
+            localProgress.step()
 
             # dropping temp table
             for processTableName in classesWithGeom:

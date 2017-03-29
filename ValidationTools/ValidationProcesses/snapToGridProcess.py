@@ -22,6 +22,7 @@
 """
 from qgis.core import QgsMessageLog, QgsVectorLayer
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class SnapToGridProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
@@ -56,7 +57,10 @@ class SnapToGridProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress.step()
                 processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
+                localProgress.step()
                 
                 tableSchema, tableName = cl.split('.')
                 # specific EPSG search
@@ -64,7 +68,10 @@ class SnapToGridProcess(ValidationProcess):
                 srid = self.abstractDb.findEPSG(parameters=parameters)                
 
                 #running the process in the temp table
+                localProgress = ProgressWidget(0, 1, self.tr('Running process on {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress.step()
                 self.abstractDb.snapToGrid([processTableName], tol, srid, geometryColumn)
+                localProgress.step()
 
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
