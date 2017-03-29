@@ -41,7 +41,7 @@ class SnapLinesToFrameProcess(ValidationProcess):
             # creating a list of tuples (layer names, geometry columns)
             frameWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
             # adjusting process parameters
-            self.parameters = {'Snap': 5.0, 'Snap Tolerance': 5.0, 'Classes': classesWithElem, 'Frame': frameWithElem}
+            self.parameters = {'Snap': 5.0, 'Reference and Layers': (frameWithElem, classesWithElem)}
 
     def postProcess(self):
         """
@@ -56,17 +56,24 @@ class SnapLinesToFrameProcess(ValidationProcess):
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
-            lines = self.parameters['Classes']
-            
-            # getting frame parameters
-            frameParameters = self.parameters['Frame']
-            frame, frameGeometryColumn = frameParameters[0].split(':')
+
+            # getting frame and reference parameters
+            refWithElem = self.parameters['Reference and Layers'][0]
+            lines = self.parameters['Reference and Layers'][1]
+            frame, frameGeometryColumn = refWithElem.split(':')
             
             if len(lines) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
+
+            if not refWithElem:
+                self.setStatus(self.tr('One reference must be selected! Stopping.'), 1) #Finished
+                QgsMessageLog.logMessage(self.tr('One reference must be selected! Stopping.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 1
+                
             tol = self.parameters['Snap']
+
             for classAndGeom in lines:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
@@ -75,7 +82,7 @@ class SnapLinesToFrameProcess(ValidationProcess):
 
                 #running the process in the temp table
                 self.abstractDb.snapLinesToFrame([processTableName], frameTableName, tol, geometryColumn, keyColumn, frameGeometryColumn)
-                self.abstractDb.densifyFrame([processTableName], frameTableName, self.parameters['Snap Tolerance'], geometryColumn, frameGeometryColumn)
+                self.abstractDb.densifyFrame([processTableName], frameTableName, tol, geometryColumn, frameGeometryColumn)
                 
                 # finalization
                 self.postProcessSteps(processTableName, lyr)

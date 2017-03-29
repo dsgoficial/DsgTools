@@ -23,6 +23,7 @@
 from qgis.core import QgsMessageLog, QgsVectorLayer
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.DsgGeometrySnapper.dsgGeometrySnapper import DsgGeometrySnapper
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class SnapLayerOnLayerProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
@@ -38,7 +39,7 @@ class SnapLayerOnLayerProcess(ValidationProcess):
             # creating a list of tuples (layer names, geometry columns)
             classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
             # adjusting process parameters
-            self.parameters = {'Snap': 5.0, 'Reference and Layers': tuple(classesWithElem)}
+            self.parameters = {'Snap': 5.0, 'Reference and Layers': ([], classesWithElem)}
 
     def execute(self):
         """
@@ -63,6 +64,7 @@ class SnapLayerOnLayerProcess(ValidationProcess):
             refcl, refGeometryColumn = refWithElem.split(':')
             reflyr = self.loadLayerBeforeValidationProcess(refcl)
             snapper = DsgGeometrySnapper(reflyr)
+            snapper.featureSnapped.connect(self.updateProgress)
 
             tol = self.parameters['Snap']
             msg = ''
@@ -73,8 +75,11 @@ class SnapLayerOnLayerProcess(ValidationProcess):
 
                 # snapping lyr to reference
                 features = [feature for feature in lyr.getFeatures()]
+                self.localProgress = ProgressWidget(1, len(features)-1, self.tr('Processing features'))
+
                 snappedFeatures = snapper.snapFeatures(features, tol)
                 self.updateOriginalLayer(lyr, None, featureList=snappedFeatures)
+
                 localMsg = self.tr('All features from ') +cl+ self.tr(' snapped to reference ') +refcl+ self.tr(' succesfully.\n')
                 QgsMessageLog.logMessage(localMsg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 msg += localMsg
@@ -85,3 +90,6 @@ class SnapLayerOnLayerProcess(ValidationProcess):
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
             return 0
+
+    def updateProgress(self):
+        self.localProgress.step()

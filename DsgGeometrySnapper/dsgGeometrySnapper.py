@@ -22,6 +22,8 @@
 """
 import sys
 
+from PyQt4.QtCore import QObject, pyqtSignal
+
 from qgis.core import QGis, QgsFeatureRequest, QgsSpatialIndex, QgsGeometry, QgsPointV2, QgsFeatureRequest, QgsFeatureIterator\
 , QgsFeature, QgsVertexId, QgsCurvePolygonV2, QgsVectorLayer, QgsMultiPolygonV2, QgsPolygonV2, QgsPoint, QgsCircularStringV2, QgsSurfaceV2
 
@@ -30,15 +32,18 @@ from DsgTools.DsgGeometrySnapper.pointSnapItem import PointSnapItem
 from DsgTools.DsgGeometrySnapper.segmentSnapItem import SegmentSnapItem
 from DsgTools.DsgGeometrySnapper.coordIdx import CoordIdx
 
-class DsgGeometrySnapper:
+class DsgGeometrySnapper(QObject):
     SnappedToRefNode, SnappedToRefSegment, Unsnapped = range(3)
     PreferNodes, PreferClosest = range(2)
+
+    featureSnapped = pyqtSignal()
 
     def __init__(self, referenceLayer):
         """
         Constructor
         :param referenceLayer: QgsVectorLayer
         """
+        super(self.__class__,self).__init__()
         self.referenceLayer = referenceLayer
         # Build spatial index
         self.index = QgsSpatialIndex(self.referenceLayer.getFeatures())
@@ -69,6 +74,7 @@ class DsgGeometrySnapper:
         """
         for feature in features:
             self.processFeature(feature, snapTolerance, mode)
+            self.featureSnapped.emit()
         return features
 
     def processFeature(self, feature, snapTolerance, mode):

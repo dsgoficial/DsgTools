@@ -42,24 +42,24 @@ class CustomSnaperParameterSelector(QtGui.QWidget, FORM_CLASS):
     
     def setTitle(self, title):
         self.customSelectorWidget.setTitle(title)
-
     
     @pyqtSlot(int)
     def on_referenceComboBox_currentIndexChanged(self, idx):
         if idx == 0:
-            if self.referenceLayer:
-                self.customSelectorWidget.addItems([self.referenceLayer], unique = False)
+            if self.referenceLayer and self.unifiedList:
+                self.customSelectorWidget.addItems([self.referenceLayer], unique=False)
                 self.referenceLayer = None
             self.customSelectorWidget.setEnabled(False)
         else:
-            if self.referenceLayer:
+            if self.referenceLayer and self.unifiedList:
                 addItem = [self.referenceLayer]
-                self.customSelectorWidget.addItems(addItem, unique = False)
+                self.customSelectorWidget.addItems(addItem, unique=False)
             self.customSelectorWidget.setEnabled(True)
             self.referenceLayer = self.referenceComboBox.currentText()
-            self.customSelectorWidget.removeItem(self.referenceLayer)
+            if self.unifiedList:
+                self.customSelectorWidget.removeItem(self.referenceLayer)
     
-    def setInitialState(self, originalList, unique=False):
+    def setInitialState(self, referenceList, originalList, unique=False):
         """
         Sets the initial state
         """
@@ -67,7 +67,12 @@ class CustomSnaperParameterSelector(QtGui.QWidget, FORM_CLASS):
         self.customSelectorWidget.addItems(originalList)
         self.referenceComboBox.addItem(self.tr('Select a layer'))
         originalList.sort()
-        self.referenceComboBox.addItems(originalList)
+        if len(referenceList) == 0:
+            self.unifiedList = True
+            self.referenceComboBox.addItems(originalList)
+        else:
+            self.unifiedList = False
+            self.referenceComboBox.addItems(referenceList)
     
     def getParameters(self):
         """
