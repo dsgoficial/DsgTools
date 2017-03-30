@@ -58,33 +58,32 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                 cl, geometryColumn = classAndGeom.split(':')
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(cl), parent=self.iface.mapCanvas())
                 localProgress.step()
-                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
+                lyr = self.loadLayerBeforeValidationProcess(cl)
                 localProgress.step()
-                    
-                # getting multi geometries ids
-                multiIds = self.abstractDb.getExplodeCandidates(processTableName)
 
-                # actual deaggregation
-                localProgress = ProgressWidget(0, 1, self.tr('Running process on {}').format(cl), parent=self.iface.mapCanvas())
-                localProgress.step()
-                provider = lyr.dataProvider()
+                allIds = lyr.allFeatureIds()
+                localProgress = ProgressWidget(1, len(allIds) - 1, self.tr('Running process on {}').format(cl), parent=self.iface.mapCanvas())
                 lyr.startEditing()
-                for id in multiIds:
-                    feat = lyr.getFeatures(QgsFeatureRequest(id)).next()
-                    parts = feat.geometry().asGeometryCollection()
-                    for part in parts:
-                        part.convertToMultiType()
-                    addList = []
-                    for i in range(1,len(parts)):
-                        newFeat = QgsFeature(feat)
-                        newFeat.setGeometry(parts[i])
-                        idx = newFeat.fieldNameIndex(keyColumn)
-                        newFeat.setAttribute(idx,provider.defaultValue(idx))
-                        addList.append(newFeat)
-                    feat.setGeometry(parts[0])
-                    lyr.updateFeature(feat)
-                    lyr.addFeatures(addList,True)
-                localProgress.step()
+                provider = lyr.dataProvider()
+                uri = QgsDataSourceURI(provider.dataSourceUri())
+                keyColumn = uri.keyColumn()
+                for feat in lyr.getFeatures():
+                    geom = feat.geometry()
+                    if geom.geometry().partCount() > 1:
+                        parts = geom.asGeometryCollection()
+                        for part in parts:
+                            part.convertToMultiType()
+                        addList = []
+                        for i in range(1,len(parts)):
+                            newFeat = QgsFeature(feat)
+                            newFeat.setGeometry(parts[i])
+                            idx = newFeat.fieldNameIndex(keyColumn)
+                            newFeat.setAttribute(idx,provider.defaultValue(idx))
+                            addList.append(newFeat)
+                        feat.setGeometry(parts[0])
+                        lyr.updateFeature(feat)
+                        lyr.addFeatures(addList,True)
+                    localProgress.step()
             msg = self.tr('All geometries are now single parted.')
             self.setStatus(msg, 1) #Finished
             QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
