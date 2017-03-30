@@ -45,8 +45,17 @@ class EarthCoverageManager(GenericDbManager):
         """
         Method that is reimplemented in each child when installing a property involves changing any sort of database structure
         """
-        jsonDict = json.loads(propertyDict['jsondict'])
+        if isinstance(propertyDict['jsondict'], dict):
+            jsonDict = propertyDict['jsondict']
+        else:
+            jsonDict = json.loads(propertyDict['jsondict'])
         abstractDb.createCentroidAuxStruct(jsonDict['earthCoverageDict'].keys(), useTransaction = False)
+
+    def updateMaterializationFromDatabase(self, abstractDb, propertyDict):
+        """
+        Method that is reimplemented in each child when uninstalling a property involves changing any sort of database structure
+        """
+        pass
     
     def undoMaterializationFromDatabase(self, abstractDb, propertyDict):
         """
