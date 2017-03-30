@@ -151,6 +151,7 @@ class GenericDbManager(QObject):
                     abstractDb = self.instantiateAbstractDb(dbName)
                     abstractDb.db.transaction()
                     rollbackList.append(abstractDb)
+                    self.updateMaterializationFromDatabase(abstractDb,propertyDict)
                     abstractDb.updateRecordFromPropertyTable(settingType, settingName, edgvVersion, newJsonDict)
                 self.adminDb.updateRecordFromPropertyTable(settingType, settingName, edgvVersion, newJsonDict)
                 for abstractDb in rollbackList:
