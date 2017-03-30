@@ -27,6 +27,7 @@ import processing, binascii
 import json
 
 #update imports
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class CloseEarthCoveragePolygonsProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
@@ -349,13 +350,17 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             
             relateDict = dict()
             for cl in coverageClassList:
+                localProgress = ProgressWidget(0, 1, self.tr('Processing earth coverage on {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress.step()
                 #must gather all lines (including frame) to close areas
                 lineLyr = self.defineQueryLayer(earthCoverageDict[cl])
                 #close areas from lines
                 self.runPolygonize(cl, areaLyr, lineLyr)
                 self.relateAreasWithCentroids(cl, areaLyr, centroidLyr, relateDict, centroidIdx)
+                # reclassifying areas
                 self.prepareReclassification(cl, areaLyr, centroidLyr, relateDict)
                 self.reclassifyAreasWithCentroids(coverageClassList, areaLyr, centroidLyr, relateDict)
+                localProgress.step()
             self.raiseFlags(areaLyr)     
             return 1
         except Exception as e:
