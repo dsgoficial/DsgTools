@@ -212,3 +212,9 @@ class Utils:
     def getNodeLineage(self, node, inputDict):
         return self.find_all_paths(inputDict, 'root', node)[0][1::]
 
+    def instantiateJsonDict(self, jsonDict):
+        if isinstance(jsonDict, dict):
+            return jsonDict
+        else:
+            return json.loads(jsonDict)
+

@@ -1489,6 +1489,24 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem setting earth coverage structure: ') + query.lastError().text())
         if useTransaction:
             self.db.commit()
+
+    def updateEarthCoverageDict(self, updateDict, oldDict, useTransaction = True):
+        """
+        Updates earthCoverage, creating new centroids and removing old unused ones.
+        """
+        creationList = []
+        removalList = []
+        updateList = updateDict.keys()
+        oldList = oldDict.keys()
+        for centroid in updateList:
+            if centroid not in oldList:
+                creationList.append(centroid)
+        for centroid in oldList:
+            if centroid not in updateList:
+                removalList.append(centroid)
+        self.createCentroidAuxStruct(creationList, useTransaction = useTransaction)
+        self.dropCentroids(removalList, useTransaction = useTransaction)
+
         
     def dropCentroids(self, classList, useTransaction = True):
         """
