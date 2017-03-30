@@ -58,18 +58,19 @@ class RemoveSmallLinesProcess(ValidationProcess):
                 # preparation
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(cl), parent=self.iface.mapCanvas())
                 localProgress.step()
-                processTableName, lyr, keyColumn = self.prepareExecution(cl)
+                lyr = self.loadLayerBeforeValidationProcess(cl)
                 localProgress.step()
                 
-                #running the process in the temp table
+                #running the process on cl
                 localProgress = ProgressWidget(0, 1, self.tr('Running process on {}').format(cl), parent=self.iface.mapCanvas())
                 localProgress.step()
-                problems = self.abstractDb.removeFeatures(processTableName, self.flagsDict[cl], keyColumn)
+                problems = len(self.flagsDict[cl])
+                smallIds = [int(flag['id']) for flag in self.flagsDict[cl]]
+                lyr.startEditing()
+                lyr.deleteFeatures(smallIds)
                 localProgress.step()
                 numberOfProblems += problems
                 
-                # finalization
-                self.postProcessSteps(processTableName, lyr)
                 QgsMessageLog.logMessage(self.tr('{0} features from {1}were changed.').format(problems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.setStatus(self.tr('{} features were removed.').format(numberOfProblems), 1) #Finished with flags
             return 1

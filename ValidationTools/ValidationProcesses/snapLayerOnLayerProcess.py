@@ -78,7 +78,7 @@ class SnapLayerOnLayerProcess(ValidationProcess):
 
                 # snapping lyr to reference
                 features = [feature for feature in lyr.getFeatures()]
-                self.localProgress = ProgressWidget(1, len(features)-1, self.tr('Processing features on {}').format(cl), parent=self.iface.mapCanvas())
+                self.localProgress = ProgressWidget(1, len(features) - 1, self.tr('Processing features on {}').format(cl), parent=self.iface.mapCanvas())
 
                 snappedFeatures = snapper.snapFeatures(features, tol)
                 self.updateOriginalLayer(lyr, None, featureList=snappedFeatures)

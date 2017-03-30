@@ -23,6 +23,7 @@
 from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+import binascii
 
 class IdentifySmallLinesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
@@ -55,39 +56,27 @@ class IdentifySmallLinesProcess(ValidationProcess):
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             classesWithGeom = []
+            recordList = []
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(cl), parent=self.iface.mapCanvas())
                 localProgress.step()
-                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
-                if processTableName not in classesWithGeom:
-                    classesWithGeom.append(processTableName)
+                lyr = self.loadLayerBeforeValidationProcess(cl)
                 localProgress.step()
 
-            # running the process
-            localProgress = ProgressWidget(0, 1, self.tr('Running process'), parent=self.iface.mapCanvas())
-            localProgress.step()
-            result = self.abstractDb.getSmallLinesRecords(classesWithGeom, tol, geometryColumn, keyColumn)
-            localProgress.step()
-            
-            # dropping temp table
-            for processTableName in classesWithGeom:
-                self.abstractDb.dropTempTable(processTableName)
-                
-            # storing flags
-            if len(result.keys()) > 0:
-                recordList = []
-                for cl in result.keys():
-                    tableSchema, tableName = self.abstractDb.getTableSchema(cl)
-                    # the flag should store the original table name
-                    tableName = tableName.replace('_temp', '')
-                    for id in result[cl].keys():
-                        recordList.append((tableSchema+'.'+tableName, id, self.tr('Small Length.'), result[cl][id], geometryColumn))
+                allIds = lyr.allFeatureIds()
+                tableSchema, tableName = self.abstractDb.getTableSchema(cl)
+                localProgress = ProgressWidget(1, len(allIds) - 1, self.tr('Running process on {}').format(cl), parent=self.iface.mapCanvas())
+                for feat in lyr.getFeatures():
+                    if feat.geometry().length() < tol:
+                        geometry = binascii.hexlify(feat.geometry().asWkb())
+                        recordList.append((tableSchema+'.'+tableName, feat.id(), self.tr('Small Line.'), geometry, geometryColumn))
+                    localProgress.step()
+
+            if len(recordList) > 0:
                 numberOfProblems = self.addFlag(recordList)
-                for tuple in recordList:
-                    self.addClassesToBeDisplayedList(tuple[0])    
-                msg = self.tr('{0} features have small length. Check flags.').format(numberOfProblems)
+                msg = self.tr('{0} features have small lines. Check flags.').format(numberOfProblems) 
                 self.setStatus(msg, 4) #Finished with flags
                 QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
