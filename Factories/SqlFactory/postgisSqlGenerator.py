@@ -839,9 +839,9 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """INSERT INTO {0}_temp"({1}) VALUES ({2})""".format(tableName, columnTupleString, valueTuppleString)
         return sql
     
-    def createSpatialIndex(self, tableName):
+    def createSpatialIndex(self, tableName, geomColumnName='geom'):
         tableName = '"'+'"."'.join(tableName.replace('"','').split('.'))
-        sql = 'create index "{0}_temp_gist" on {1}_temp" using gist (geom)'.format(tableName.split('.')[-1].replace('"',''), tableName)
+        sql = 'create index "{0}_temp_gist" on {1}_temp" using gist ({2})'.format(tableName.split('.')[-1].replace('"',''), tableName, geomColumnName)
         return sql
     
     def getStyles(self):

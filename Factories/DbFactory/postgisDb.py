@@ -1732,7 +1732,7 @@ class PostgisDb(AbstractDb):
                 if useTransaction:
                     self.db.rollback()
                 raise Exception(self.tr('Problem populating temp table: ') + query.lastError().text())
-        indexSql = self.gen.createSpatialIndex(tableName)
+        indexSql = self.gen.createSpatialIndex(tableName, geomColumnName)
         if not query.exec_(indexSql):
             if useTransaction:
                 self.db.rollback()
