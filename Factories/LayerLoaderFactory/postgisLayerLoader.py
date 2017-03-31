@@ -193,10 +193,14 @@ class PostGISLayerLoader(EDGVLayerLoader):
                         auxLyrName = lyrName[0:-3]+'_a'
                     else:
                         auxLyrName = lyrName
-                sql = self.abstractDb.gen.loadLayerFromDatabase('''"{0}"."{1}"'''.format(schema,auxLyrName))
-            else:    
-                sql = self.abstractDb.gen.loadLayerFromDatabase('''"{0}"."{1}"'''.format(schema,lyrName))            
-        self.setDataSource(schema, self.geomDict['tablePerspective'][lyrName]['tableName'], geomColumn, sql)
+                fullName = '''"{0}"."{1}"'''.format(schema, auxLyrName)
+                pkColumn = self.abstractDb.getPrimaryKeyColumn(fullName)
+                sql = self.abstractDb.gen.loadLayerFromDatabase(fullName, pkColumn=pkColumn)
+            else:   
+                fullName = '''"{0}"."{1}"'''.format(schema, lyrName)
+                pkColumn = self.abstractDb.getPrimaryKeyColumn(fullName)
+                sql = self.abstractDb.gen.loadLayerFromDatabase(fullName, pkColumn=pkColumn)            
+        self.setDataSource(schema, self.geomDict['tablePerspective'][lyrName]['tableName'], geomColumn, sql, pkColumn=pkColumn)
 
         vlayer = iface.addVectorLayer(self.uri.uri(), lyrName, self.provider)
         crs = QgsCoordinateReferenceSystem(int(srid), QgsCoordinateReferenceSystem.EpsgCrsId)

@@ -165,8 +165,8 @@ class EDGVLayerLoader(QObject):
             msg += self.tr('Error for lyr ')+ lyr + ': ' +self.logErrorDict[lyr] + '\n'
         self.errorLog += msg
 
-    def setDataSource(self, schema, layer, geomColumn, sql):
-        self.uri.setDataSource(schema, layer, geomColumn, sql, 'id')
+    def setDataSource(self, schema, layer, geomColumn, sql, pkColumn='id'):
+        self.uri.setDataSource(schema, layer, geomColumn, sql, pkColumn)
         self.uri.disableSelectAtId(True)
 
     def setDomainsAndRestrictionsWithQml(self, vlayer):

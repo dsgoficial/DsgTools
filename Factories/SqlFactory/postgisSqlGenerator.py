@@ -77,14 +77,14 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "ALTER DATABASE "+name+" SET search_path = public, topology, cb, cc, complexos, ct;"
         return sql
 
-    def loadLayerFromDatabase(self, layer_name):
+    def loadLayerFromDatabase(self, layer_name, pkColumn='id'):
         layer_name = '"."'.join(layer_name.replace('"','').split('.'))
-        sql = '''id in (SELECT id FROM ONLY "{0}")'''.format(layer_name)
+        sql = '''{1} in (SELECT {1} FROM ONLY "{0}")'''.format(layer_name, pkColumn)
         return sql
 
-    def loadLayerFromDatabaseUsingInh(self, layer_name):
+    def loadLayerFromDatabaseUsingInh(self, layer_name, pkColumn='id'):
         layer_name = '"."'.join(layer_name.replace('"','').split('.'))
-        sql = '''id in (SELECT id FROM ONLY "{0}")'''.format(layer_name)
+        sql = '''{1} in (SELECT {1} FROM ONLY "{0}")'''.format(layer_name, pkColumn)
         return sql
 
     def getCreateDatabase(self, name, dropIfExists = False):
@@ -1400,4 +1400,15 @@ class PostGISSqlGenerator(SqlGenerator):
     def getSettingVersion(self, settingType, settingName):
         tableName = self.getSettingTable(settingType)
         sql = '''select edgvversion from public.{0} where name = '{1}' '''.format(tableName, settingName)
+        return sql
+    
+    def getPrimaryKeyColumn(self, tableName):
+        sql = '''
+        SELECT a.attname, format_type(a.atttypid, a.atttypmod) AS data_type
+        FROM   pg_index i
+        JOIN   pg_attribute a ON a.attrelid = i.indrelid
+                             AND a.attnum = ANY(i.indkey)
+        WHERE  i.indrelid = '{}'::regclass
+        AND    i.indisprimary;        
+        '''.format(tableName)
         return sql

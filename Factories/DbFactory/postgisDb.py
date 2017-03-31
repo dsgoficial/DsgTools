@@ -3109,3 +3109,12 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem removing installed record into db: ') + query.lastError().text())
         if useTransaction:
             self.db.commit()
+            
+    def getPrimaryKeyColumn(self, tableName):
+        self.checkAndOpenDb()
+        sql = self.gen.getPrimaryKeyColumn(tableName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting primary key column: ")+query.lastError().text())
+        while query.next():
+            return query.value(0)        
