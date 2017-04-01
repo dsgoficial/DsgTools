@@ -281,15 +281,3 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             dlg.exec_()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+str(e.args[0]))
-            
-            
-    @pyqtSlot(bool)
-    def on_ruleEnforcerRadio_toggled(self, checked):
-        """
-        Toggles the spatial rule enforcer
-        """
-        if checked:
-            self.ruleEnforcer = SpatialRuleEnforcer(self.validationManager.postgisDb, self.iface)
-            self.ruleEnforcer.connectEditingSignals()
-        else:
-            self.ruleEnforcer.disconnectEditingSignals()
