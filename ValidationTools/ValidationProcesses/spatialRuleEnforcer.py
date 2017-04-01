@@ -108,7 +108,7 @@ class SpatialRuleEnforcer(ValidationProcess):
         method = getattr(geometry, predicate) #getting the correspondent QgsGeometry method to be used in the rule
         
         #querying the features that intersect the geometry's bounding box (i.e. our candidates)
-        candidatesIter = vectorlayer2.dataProvider().getFeatures(QgsFeatureRequest(geometry.boundingBox()))
+        candidatesIter = vectorlayer2.getFeatures(QgsFeatureRequest(geometry.boundingBox()))
         
         #first, lets separate the problem in disjoint case and not disjoint
         #case 1: disjoint
@@ -202,9 +202,10 @@ class SpatialRuleEnforcer(ValidationProcess):
         hexa: WKB geometry to be passed to the flag
         """
         #making the reason
+        geometryColumn = 'geom'
         reason = self.tr('Feature id ') + str(featureId) + self.tr(' from ') + layer1 + self.tr(" violates cardinality ")
         reason += min_card + '..' + max_card + self.tr(' of rule: ') + rule + ' ' + layer2
-        self.addFlag([(layer1, str(featureId), reason, hexa)])
+        self.addFlag([(layer1, str(featureId), reason, hexa, geometryColumn)])
                 
     def makeBreaksPredicateFlag(self, layer1, featureId, rule, layer2, hexa):
         """
@@ -216,8 +217,9 @@ class SpatialRuleEnforcer(ValidationProcess):
         hexa: WKB geometry to be passed to the flag
         """
         #making the reason
+        geometryColumn = 'geom'
         reason = self.tr('Feature id ') + str(featureId) + self.tr(' from ') + layer1 + self.tr(' violates rule: ') + rule + ' ' + layer2
-        self.addFlag([(layer1, str(featureId), reason, hexa)])
+        self.addFlag([(layer1, str(featureId), reason, hexa, geometryColumn)])
 
     @pyqtSlot(int, QgsGeometry)      
     def enforceSpatialRulesForChanges(self, featureId, geometry):
