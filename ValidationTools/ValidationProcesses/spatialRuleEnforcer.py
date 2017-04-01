@@ -160,7 +160,7 @@ class SpatialRuleEnforcer(ValidationProcess):
             else:
                 breaksCardinality = occurrences < int(min_card)
     
-            if breaksCardinality:
+            if breaksCardinality and necessity == True:
                 self.makeBreaksCardinalityFlag(layer1, featureId, rule, min_card, max_card, layer2, binascii.hexlify(geometry.asWkb()))
     
             #predicate broken case
