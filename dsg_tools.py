@@ -54,8 +54,8 @@ from DsgTools.AttributeTools.attributes_viewer import AttributesViewer
 from DsgTools.ValidationTools.validation_toolbox import ValidationToolbox
 from DsgTools.ProductionTools.MinimumAreaTool.minimumAreaTool import MinimumAreaTool
 from DsgTools.ProductionTools.InspectFeatures.inspectFeatures import InspectFeatures
-from DsgTools.MilitarySimbologyTools.militarySimbologyDock import MilitarySimbologyDock
 from DsgTools.DbTools.BatchDbCreator.batchDbCreator import BatchDbCreator
+from DsgTools.DsgToolsOp.dsgToolsOpInstaller import DsgToolsOpInstaller
 
 from qgis.utils import showPluginHelp
 try:
@@ -225,6 +225,7 @@ class DsgTools:
         self.dsgTools = QMenu(self.iface.mainWindow())
         self.dsgTools.setObjectName(u'DsgTools')
         self.dsgTools.setTitle(self.tr('DSG Tools'))
+        self.fieldToolbox = None
 
         self.menuBar.insertMenu(self.iface.firstRightStandardMenu().menuAction(), self.dsgTools)
 
@@ -236,7 +237,6 @@ class DsgTools:
         bdgex = self.addMenu(self.dsgTools, u'bdgex', self.tr('BDGEx'),':/plugins/DsgTools/icons/eb.png')
         productiontools = self.addMenu(self.dsgTools, u'productiontools', self.tr('Production Tools'),':/plugins/DsgTools/icons/productiontools.png')
         validationtools = self.addMenu(productiontools, u'validationtools', self.tr('Validation Tools'),':/plugins/DsgTools/icons/validationtools.png')
-        militarysimbologytools = self.addMenu(self.dsgTools, u'militarysimbologytools', self.tr('Military Simbology Tools'),':/plugins/DsgTools/icons/militarySimbology.png')
         topocharts = self.addMenu(bdgex, u'topocharts', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
         coverageLyr = self.addMenu(bdgex, u'coverageLyr', self.tr('Coverage Layers'),':/plugins/DsgTools/icons/eb.png')
         indexes = self.addMenu(bdgex, u'indexes', self.tr('Product Indexes'),':/plugins/DsgTools/icons/eb.png')
@@ -557,16 +557,6 @@ class DsgTools:
             add_to_toolbar=False)
         productiontools.addAction(action)
         self.productionButton.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/militarySimbology.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Create and Load Military Simbology'),
-            callback=self.showMilitarySimbologyDock,
-            parent=militarysimbologytools,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        militarysimbologytools.addAction(action)
     
         icon_path = ':/plugins/DsgTools/icons/category.png'
         action = self.add_action(
@@ -605,6 +595,14 @@ class DsgTools:
         self.toolbar.addWidget(self.minimumAreaTool)
         self.toolbar.addWidget(self.inspectFeatures)
 
+        self.createMilitaryMenu(self.dsgTools)
+    
+    def createMilitaryMenu(self, parentMenu):
+        self.opInstaller = DsgToolsOpInstaller()
+        if self.opInstaller.checkIfInstalled():
+            icon_path = ':/plugins/DsgTools/icons/militarySimbology.png'
+            dsgtoolsop = self.addMenu(parentMenu, u'dsgtoolsop', self.tr('Dsg Tools Military Tools'), icon_path)
+            self.opInstaller.loadTools(dsgtoolsop, self, icon_path)
 
     def unload(self):
         """
@@ -728,16 +726,6 @@ class DsgTools:
         else:
             self.complexWindow = ComplexWindow(self.iface)
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
-
-    def showMilitarySimbologyDock(self):
-        """
-        Shows the Military Simbology Dock
-        """
-        if self.militaryDock:
-            self.iface.removeDockWidget(self.militaryDock)
-        else:
-            self.militaryDock = MilitarySimbologyDock(self.iface)
-        self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.militaryDock)
             
     def installModelsAndScripts(self):
         """
