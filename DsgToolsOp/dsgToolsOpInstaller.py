@@ -72,7 +72,7 @@ class DsgToolsOpInstaller(QObject):
     
     def checkIfInstalled(self):
         installPath = os.path.join(os.path.dirname(__file__),'MilitaryTools')
-        w = os.walk('/home/borba/.qgis2/python/plugins/DsgTools/DsgToolsOp/MilitaryTools/').next()[2]
+        w = os.walk(installPath).next()[2]
         if len(w)<=2:
             return False
         else:
